@@ -1,0 +1,107 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groups", "Groups\Groups.csproj", "{5167D049-B052-435C-BD6C-6A002AF15009}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Networks", "Networks\Networks.csproj", "{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gallery", "Gallery\Gallery.csproj", "{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook", "GuestBook\GuestBook.csproj", "{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar", "Calendar\Calendar.csproj", "{28571091-8A91-49BB-B69E-E33FA70B7ACE}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blog", "Blog\Blog.csproj", "{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pages", "Pages\Pages.csproj", "{1985F418-4B69-4296-AB99-F6B8DDC580EC}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial", "BoxSocial\BoxSocial.csproj", "{D512CB3A-602F-4893-9E1C-EF11E8D86760}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{06617779-D3DE-4A43-8FD9-4BCEB63BF07C} = {06617779-D3DE-4A43-8FD9-4BCEB63BF07C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Internals", "BoxSocial.Internals\BoxSocial.Internals.csproj", "{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5167D049-B052-435C-BD6C-6A002AF15009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5167D049-B052-435C-BD6C-6A002AF15009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5167D049-B052-435C-BD6C-6A002AF15009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5167D049-B052-435C-BD6C-6A002AF15009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28571091-8A91-49BB-B69E-E33FA70B7ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28571091-8A91-49BB-B69E-E33FA70B7ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28571091-8A91-49BB-B69E-E33FA70B7ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28571091-8A91-49BB-B69E-E33FA70B7ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D512CB3A-602F-4893-9E1C-EF11E8D86760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D512CB3A-602F-4893-9E1C-EF11E8D86760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D512CB3A-602F-4893-9E1C-EF11E8D86760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D512CB3A-602F-4893-9E1C-EF11E8D86760}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

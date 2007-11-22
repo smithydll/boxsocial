@@ -1,0 +1,85 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BoxSocial.Internals</RootNamespace>
+    <AssemblyName>BoxSocial.Internals</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Lachlan.Web.Database, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lachlan.Web\Lachlan.Web.Database\bin\Release\Lachlan.Web.Database.dll</HintPath>
+    </Reference>
+    <Reference Include="Lachlan.Web.Template, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lachlan.Web\Lachlan.Web.Template\bin\Release\Lachlan.Web.Template.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Access.cs" />
+    <Compile Include="Account.cs" />
+    <Compile Include="AccountModule.cs" />
+    <Compile Include="Ajax.cs" />
+    <Compile Include="Application.cs" />
+    <Compile Include="ApplicationEntry.cs" />
+    <Compile Include="Bbcode.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="CommentHandle.cs" />
+    <Compile Include="Core.cs" />
+    <Compile Include="Display.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="Feed.cs" />
+    <Compile Include="Functions.cs" />
+    <Compile Include="IAppInfo.cs" />
+    <Compile Include="PageHandle.cs" />
+    <Compile Include="PPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Primitive.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="rssdocument.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="Time.cs" />
+    <Compile Include="TPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Uri.cs" />
+    <Compile Include="User.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

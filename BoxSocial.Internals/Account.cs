@@ -3,7 +3,7 @@
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
  * 
- * $Id: AccountBlog.cs,v 1.1 2007/11/18 00:22:42 Bakura\lachlan Exp $
+ * $Id:$
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3 as

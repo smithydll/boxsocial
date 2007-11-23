@@ -24,7 +24,7 @@ using System.Configuration;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Security;
-using Lachlan.Web;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {

@@ -30,7 +30,7 @@ using System.Web.Configuration;
 using System.Web.Security;
 using System.Web.Services;
 using System.Web.Services.Protocols;
-using Lachlan.Web;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {

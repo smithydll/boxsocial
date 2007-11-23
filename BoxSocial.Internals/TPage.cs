@@ -28,8 +28,8 @@ using System.IO;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Security;
-using Lachlan.Web;
 using System.Drawing;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {

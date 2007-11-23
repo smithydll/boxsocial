@@ -23,6 +23,7 @@ using System.Data;
 using System.Configuration;
 using System.Web;
 using System.Web.Security;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {

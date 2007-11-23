@@ -32,7 +32,7 @@ using System.Web;
 using System.Web.Security;
 using System.Xml;
 using System.Xml.Serialization;
-using Lachlan.Web;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {

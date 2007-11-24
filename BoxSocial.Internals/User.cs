@@ -914,6 +914,11 @@ namespace BoxSocial.Internals
         {
             Relation returnValue = Relation.None;
 
+            if (member == null)
+            {
+                return Relation.None;
+            }
+
             if (member.UserId == userId)
             {
                 return Relation.Owner;

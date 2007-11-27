@@ -49,9 +49,6 @@ namespace BoxSocial.Internals
         public const string USER_PROFILE_FIELDS = "up.profile_comments, up.profile_country, c.country_name, up.profile_religion, up.profile_name_title, up.profile_name_suffix, up.profile_name_first, up.profile_name_middle, up.profile_name_last, up.profile_access, up.profile_views, up.profile_date_of_birth+0, up.profile_maritial_status, up.profile_autobiography, up.profile_sexuality, up.profile_gender, up.profile_date_of_birth_ut";
         public const string USER_ICON_FIELDS = "gi.gallery_item_parent_path, gi.gallery_item_uri";
 
-        public const int HOMEPAGE_PROFILE = -1;
-        public const int HOMEPAGE_BLOG = -2;
-
         public static long lastEmailId;
 
         protected Mysql db;
@@ -82,7 +79,7 @@ namespace BoxSocial.Internals
         private short religion;
         private byte showBbcode;
         private bool showCustomStyles;
-        private long profileHomepage = -1;
+        private string profileHomepage = "/profile";
         private int friends;
         private string alternateEmail;
         private bool emailNotifications;
@@ -121,6 +118,14 @@ namespace BoxSocial.Internals
             get
             {
                 return "USER";
+            }
+        }
+
+        public override AppPrimitives AppPrimitive
+        {
+            get
+            {
+                return AppPrimitives.Member;
             }
         }
 
@@ -563,7 +568,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public long ProfileHomepage
+        public string ProfileHomepage
         {
             get
             {
@@ -675,7 +680,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    throw new Exception("Invalid User Exception");
+                    throw new InvalidUserException();
                 }
             }
             else
@@ -690,7 +695,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    throw new Exception("Invalid User Exception");
+                    throw new InvalidUserException();
                 }
             }
         }
@@ -728,7 +733,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new Exception("Invalid User Exception");
+                throw new InvalidUserException();
             }
         }
 
@@ -743,7 +748,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new Exception("Invalid User Exception");
+                throw new InvalidUserException();
             }
         }
 
@@ -763,7 +768,10 @@ namespace BoxSocial.Internals
             blogSubscriptions = (uint)userRow["user_blog_subscriptions"];
             showBbcode = (byte)userRow["user_show_bbcode"];
             showCustomStyles = ((byte)userRow["user_show_custom_styles"] > 0) ? true : false;
-            profileHomepage = (long)userRow["user_home_page"];
+            if (!(userRow["user_home_page"] is DBNull))
+            {
+                profileHomepage = (string)userRow["user_home_page"];
+            }
             friends = (int)userRow["user_friends"];
             alternateEmail = (string)userRow["user_alternate_email"];
             emailNotifications = ((byte)userRow["user_email_notifications"] > 0) ? true : false;
@@ -1040,6 +1048,62 @@ namespace BoxSocial.Internals
                 userId), false);
 
             Member newUser = new Member(db, userId);
+
+            // Install a couple of applications
+            try
+            {
+                ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
+                profileAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
+                galleryAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
+                guestbookAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
+                groupsAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry networksAe = new ApplicationEntry(db, null, "Networks");
+                networksAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry calendarAe = new ApplicationEntry(db, null, "Calendar");
+                calendarAe.Install(newUser);
+            }
+            catch
+            {
+            }
+
             string activateUri = string.Format("http://zinzam.com/register/?mode=activate&id={0}&key={1}",
                 userId, activateKey);
 
@@ -1587,5 +1651,123 @@ namespace BoxSocial.Internals
             }
             return loggedIdUid;
         }
+
+        public static void ShowProfile(Core core, PPage page)
+        {
+            core.template.SetTemplate("viewprofile.html");
+            page.Signature = PageSignature.viewprofile;
+
+            bool hasProfileInfo = false;
+
+            page.ProfileOwner.LoadProfileInfo();
+
+            page.ProfileOwner.ProfileAccess.SetViewer(core.session.LoggedInMember);
+
+            if (!page.ProfileOwner.ProfileAccess.CanRead)
+            {
+                Functions.Generate403(core);
+                return;
+            }
+
+            if (core.session.IsLoggedIn)
+            {
+                if (page.ProfileOwner.ProfileAccess.CanComment)
+                {
+                    core.template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            string age;
+            int ageInt = page.ProfileOwner.Age;
+            if (ageInt == 0)
+            {
+                age = "FALSE";
+            }
+            else
+            {
+                age = ageInt.ToString() + " years old";
+            }
+
+            core.template.ParseVariables("USER_SEXUALITY", HttpUtility.HtmlEncode(page.ProfileOwner.Sexuality));
+            core.template.ParseVariables("USER_GENDER", HttpUtility.HtmlEncode(page.ProfileOwner.Gender));
+            core.template.ParseVariables("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(page.ProfileOwner.Autobiography), core.session.LoggedInMember));
+            core.template.ParseVariables("USER_MARITIAL_STATUS", HttpUtility.HtmlEncode(page.ProfileOwner.MaritialStatus));
+            core.template.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(age));
+            core.template.ParseVariables("USER_JOINED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate)));
+            core.template.ParseVariables("USER_LAST_SEEN", HttpUtility.HtmlEncode(core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true)));
+            core.template.ParseVariables("USER_PROFILE_VIEWS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews)));
+            core.template.ParseVariables("USER_SUBSCRIPTIONS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions)));
+            core.template.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(page.ProfileOwner.Country));
+            core.template.ParseVariables("USER_ICON", HttpUtility.HtmlEncode(page.ProfileOwner.UserThumbnail));
+
+            core.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(page.ProfileOwner)));
+            core.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
+            core.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
+            core.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
+
+            core.template.ParseVariables("IS_PROFILE", "TRUE");
+
+            if (page.ProfileOwner.MaritialStatusRaw != "UNDEF")
+            {
+                hasProfileInfo = true;
+            }
+            if (page.ProfileOwner.GenderRaw != "UNDEF")
+            {
+                hasProfileInfo = true;
+            }
+            if (page.ProfileOwner.SexualityRaw != "UNDEF")
+            {
+                hasProfileInfo = true;
+            }
+
+            if (hasProfileInfo)
+            {
+                core.template.ParseVariables("HAS_PROFILE_INFO", "TRUE");
+            }
+
+            core.template.ParseVariables("U_ADD_FRIEND", HttpUtility.HtmlEncode(ZzUri.BuildAddFriendUri(page.ProfileOwner.UserId)));
+            core.template.ParseVariables("U_BLOCK_USER", HttpUtility.HtmlEncode(ZzUri.BuildBlockUserUri(page.ProfileOwner.UserId)));
+
+            string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
+
+            core.template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(page.ProfileOwner.Friends.ToString()));
+            core.template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
+
+            List<Member> friends = page.ProfileOwner.GetFriends(1, 8);
+            foreach (Member friend in friends)
+            {
+                VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
+
+                friendVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(friend.DisplayName));
+                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(friend)));
+                friendVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(friend.UserIcon));
+            }
+
+            ushort readAccessLevel = page.ProfileOwner.GetAccessLevel(core.session.LoggedInMember);
+            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+
+            /* Show a list of lists */
+            DataTable listTable = core.db.SelectQuery(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",
+                page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
+
+            for (int i = 0; i < listTable.Rows.Count; i++)
+            {
+                VariableCollection listVariableCollection = core.template.CreateChild("list_list");
+
+                listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)listTable.Rows[i]["list_title"]));
+                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode("/" + page.ProfileOwner.UserName + "/lists/" + ZzUri.AppendSid((string)listTable.Rows[i]["list_path"])));
+            }
+
+            core.template.ParseVariables("LISTS", listTable.Rows.Count.ToString());
+
+            /* pages */
+            core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
+
+            core.InvokeHooks(page);
+        }
+    }
+
+    public class InvalidUserException : Exception
+    {
     }
 }

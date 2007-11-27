@@ -33,12 +33,51 @@ namespace BoxSocial.Applications.Calendar
 {
     public class AppInfo : Application
     {
+        public override string Title
+        {
+            get
+            {
+                return "Calendar";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        public override bool UsesComments
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+        }
+
+        public override ApplicationInstallationInfo Install()
+        {
+            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+
+            aii.AddSlug("calendar", @"^/calendar(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+
+            aii.AddModule("calendar");
+
+            return aii;
         }
 
         void core_LoadApplication(Core core, object sender)

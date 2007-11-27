@@ -64,6 +64,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.IO", "BoxSocial.I
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Profile", "Profile\Profile.csproj", "{BC7327B8-F476-409B-BEFD-5E1C1D417A79}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +116,10 @@ Global
 		{D4B59B41-0120-4245-A6D7-648419928D0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4B59B41-0120-4245-A6D7-648419928D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4B59B41-0120-4245-A6D7-648419928D0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC7327B8-F476-409B-BEFD-5E1C1D417A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC7327B8-F476-409B-BEFD-5E1C1D417A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC7327B8-F476-409B-BEFD-5E1C1D417A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC7327B8-F476-409B-BEFD-5E1C1D417A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

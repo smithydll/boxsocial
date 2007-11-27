@@ -30,7 +30,8 @@ namespace BoxSocial.Internals
         Member = 0x01,
         Group = 0x02,
         Network = 0x04,
-        Any = 0x08,
+        Application = 0x08,
+        Any = 0x01 | 0x02 | 0x04 | 0x08,
     }
 
     public interface IAppInfo

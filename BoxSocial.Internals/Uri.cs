@@ -66,7 +66,7 @@ namespace BoxSocial.Internals
 
         public static string BuildProfileUri(Member member)
         {
-            if (member.ProfileHomepage == Member.HOMEPAGE_PROFILE)
+            if (member.ProfileHomepage == "/profile")
             {
                 return AppendSid(string.Format("/{0}",
                     member.UserName.ToLower())); 
@@ -116,7 +116,7 @@ namespace BoxSocial.Internals
 
         public static string BuildBlogUri(Member member)
         {
-            if (member.ProfileHomepage == Member.HOMEPAGE_BLOG)
+            if (member.ProfileHomepage == "/blog")
             {
                 return AppendSid(string.Format("/{0}",
                     member.UserName.ToLower()));

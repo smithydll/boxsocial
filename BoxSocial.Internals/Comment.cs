@@ -115,7 +115,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new Exception("Comment not valid Exception");
+                throw new InvalidCommentException();
             }
         }
 
@@ -341,6 +341,10 @@ namespace BoxSocial.Internals
         {
             return FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
+    }
+
+    public class InvalidCommentException : Exception
+    {
     }
 
     public class CommentTooLongException : Exception

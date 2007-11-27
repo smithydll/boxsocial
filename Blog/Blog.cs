@@ -396,7 +396,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 string pageUri = "";
-                string breadcrumbExtension = (page.ProfileOwner.ProfileHomepage == Member.HOMEPAGE_BLOG) ? "" : "blog/";
+                string breadcrumbExtension = (page.ProfileOwner.ProfileHomepage == "/blog") ? "" : "blog/";
 
                 if (!string.IsNullOrEmpty(category))
                 {

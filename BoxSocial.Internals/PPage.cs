@@ -82,17 +82,21 @@ namespace BoxSocial.Internals
 
             try
             {
-
                 profileOwner = new Member(db, profileUserName);
             }
-            catch
+            catch (InvalidUserException)
             {
                 Functions.Generate404(Core);
                 return;
             }
 
-            BoxSocial.Internals.Application.LoadApplications(BoxSocial.Internals.Application.GetApplications(Core, profileOwner));
-            BoxSocial.Internals.Application.InitialiseApplications(Core, AppPrimitives.Member);
+            core.PagePath = core.PagePath.Substring(profileOwner.UserName.Length + 1);
+            if (core.PagePath.Trim(new char[] { '/' }) == "")
+            {
+                core.PagePath = profileOwner.ProfileHomepage;
+            }
+
+            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, profileOwner));
 
             PageTitle = profileOwner.DisplayName;
 
@@ -130,117 +134,5 @@ namespace BoxSocial.Internals
                 template.ParseVariables("SELF", "FALSE");
             }
         }
-
-        protected void ShowProfile()
-        {
-            bool hasProfileInfo = false;
-
-            profileOwner.ProfileAccess.SetViewer(loggedInMember);
-
-            if (!profileOwner.ProfileAccess.CanRead)
-            {
-                Functions.Generate403(Core);
-                return;
-            }
-
-            if (session.IsLoggedIn)
-            {
-                if (profileOwner.ProfileAccess.CanComment)
-                {
-                    template.ParseVariables("CAN_COMMENT", "TRUE");
-                }
-            }
-
-            string age;
-            int ageInt = profileOwner.Age;
-            if (ageInt == 0)
-            {
-                age = "FALSE";
-            }
-            else
-            {
-                age = ageInt.ToString() + " years old";
-            }
-
-            template.ParseVariables("USER_SEXUALITY", HttpUtility.HtmlEncode(profileOwner.Sexuality));
-            template.ParseVariables("USER_GENDER", HttpUtility.HtmlEncode(profileOwner.Gender));
-            template.ParseVariables("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(profileOwner.Autobiography), loggedInMember));
-            template.ParseVariables("USER_MARITIAL_STATUS", HttpUtility.HtmlEncode(profileOwner.MaritialStatus));
-            template.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(age));
-            template.ParseVariables("USER_JOINED", HttpUtility.HtmlEncode(tz.DateTimeToString(profileOwner.RegistrationDate)));
-            template.ParseVariables("USER_LAST_SEEN", HttpUtility.HtmlEncode(tz.DateTimeToString(profileOwner.LastOnlineTime, true)));
-            template.ParseVariables("USER_PROFILE_VIEWS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(profileOwner.ProfileViews)));
-            template.ParseVariables("USER_SUBSCRIPTIONS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(profileOwner.BlogSubscriptions)));
-            template.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(profileOwner.Country));
-            template.ParseVariables("USER_ICON", HttpUtility.HtmlEncode(profileOwner.UserThumbnail));
-
-            template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(profileOwner)));
-            template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(profileOwner))));
-            template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(profileOwner))));
-            template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(profileOwner))));
-
-            template.ParseVariables("IS_PROFILE", "TRUE");
-
-            if (profileOwner.MaritialStatusRaw != "UNDEF")
-            {
-                hasProfileInfo = true;
-            }
-            if (profileOwner.GenderRaw != "UNDEF")
-            {
-                hasProfileInfo = true;
-            }
-            if (profileOwner.SexualityRaw != "UNDEF")
-            {
-                hasProfileInfo = true;
-            }
-
-            if (hasProfileInfo)
-            {
-                template.ParseVariables("HAS_PROFILE_INFO", "TRUE");
-            }
-
-            template.ParseVariables("U_ADD_FRIEND", HttpUtility.HtmlEncode(ZzUri.BuildAddFriendUri(profileOwner.UserId)));
-            template.ParseVariables("U_BLOCK_USER", HttpUtility.HtmlEncode(ZzUri.BuildBlockUserUri(profileOwner.UserId)));
-
-            string langFriends = (profileOwner.Friends != 1) ? "friends" : "friend";
-
-            template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(profileOwner.Friends.ToString()));
-            template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
-
-            List<Member> friends = profileOwner.GetFriends(1, 8);
-            foreach (Member friend in friends)
-            {
-                VariableCollection friendVariableCollection = template.CreateChild("friend_list");
-
-                friendVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(friend.DisplayName));
-                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(friend)));
-                friendVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(friend.UserIcon));
-            }
-
-            ushort readAccessLevel = profileOwner.GetAccessLevel(loggedInMember);
-            long loggedIdUid = Member.GetMemberId(loggedInMember);
-
-            /* Show a list of lists */
-            DataTable listTable = db.SelectQuery(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",
-                profileOwner.UserId, loggedIdUid, readAccessLevel));
-
-            for (int i = 0; i < listTable.Rows.Count; i++)
-            {
-                VariableCollection listVariableCollection = template.CreateChild("list_list");
-
-                listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)listTable.Rows[i]["list_title"]));
-                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode("/" + profileOwner.UserName + "/lists/" + ZzUri.AppendSid((string)listTable.Rows[i]["list_path"])));
-            }
-
-            template.ParseVariables("LISTS", listTable.Rows.Count.ToString());
-
-            /* pages */
-            template.ParseVariables("PAGE_LIST", Display.GeneratePageList(db, profileOwner, loggedInMember, true));
-
-            Core.InvokeHooks(this);
-
-            EndResponse();
-        }
-
     }
 }

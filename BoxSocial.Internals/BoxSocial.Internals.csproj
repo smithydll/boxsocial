@@ -40,8 +40,12 @@
     <Compile Include="Account.cs" />
     <Compile Include="AccountModule.cs" />
     <Compile Include="Ajax.cs" />
+    <Compile Include="APage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Application.cs" />
     <Compile Include="ApplicationEntry.cs" />
+    <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="Bbcode.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />
@@ -57,7 +61,7 @@
     </Compile>
     <Compile Include="Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="rssdocument.cs" />
+    <Compile Include="RssDocument.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TPage.cs">

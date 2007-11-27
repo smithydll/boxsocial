@@ -42,6 +42,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract AppPrimitives AppPrimitive
+        {
+            get;
+        }
+
         public abstract string Uri
         {
             get;

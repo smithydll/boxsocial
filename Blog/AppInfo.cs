@@ -32,6 +32,30 @@ namespace BoxSocial.Applications.Blog
 {
     public class AppInfo : Application
     {
+        public override string Title
+        {
+            get
+            {
+                return "Blog";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        public override bool UsesComments
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;
@@ -40,6 +64,23 @@ namespace BoxSocial.Applications.Blog
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
             core.RegisterCommentHandle("BLOGPOST", blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount);
+        }
+
+        public override ApplicationInstallationInfo Install()
+        {
+            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+
+            aii.AddSlug("blog", @"^/blog(|/)$", AppPrimitives.Member);
+            aii.AddSlug("blog", @"^/blog/category/([a-z0-9\-]+)(|/)$", AppPrimitives.Member);
+            aii.AddSlug("blog", @"^/blog/([0-9]{4})(|/)$", AppPrimitives.Member);
+            aii.AddSlug("blog", @"^/blog/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member);
+            aii.AddSlug("blog", @"^/blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)(|/)$", AppPrimitives.Member);
+
+            aii.AddModule("blog");
+
+            aii.AddCommentType("BLOGPOST");
+
+            return aii;
         }
 
         void core_LoadApplication(Core core, object sender)

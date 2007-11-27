@@ -32,10 +32,47 @@ namespace BoxSocial.Applications.Pages
 {
     public class AppInfo : Application
     {
+        public override string Title
+        {
+            get
+            {
+                return "Pages";
+            }
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        public override bool UsesComments
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+        }
+
+        public override ApplicationInstallationInfo Install()
+        {
+            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+
+            aii.AddSlug("lists", @"^/lists(|/)$", AppPrimitives.Member);
+            aii.AddSlug("lists", @"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
+            aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member);
+
+            aii.AddModule("pages");
+
+            return aii;
         }
 
         void core_LoadApplication(Core core, object sender)

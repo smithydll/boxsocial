@@ -53,6 +53,7 @@ namespace BoxSocial.Internals
         viewblog,
         viewpage,
         today,
+        viewapplication,
     }
 
     /// <summary>
@@ -218,13 +219,14 @@ namespace BoxSocial.Internals
             // Ensure that core applications are loaded
             try
             {
+                System.Reflection.Assembly.Load("Profile");
                 System.Reflection.Assembly.Load("Groups");
                 System.Reflection.Assembly.Load("Networks");
-                System.Reflection.Assembly.Load("Calendar");
+                /*System.Reflection.Assembly.Load("Calendar");
                 System.Reflection.Assembly.Load("GuestBook");
                 System.Reflection.Assembly.Load("Gallery");
                 System.Reflection.Assembly.Load("Blog");
-                System.Reflection.Assembly.Load("Pages");
+                System.Reflection.Assembly.Load("Pages");*/
             }
             catch
             {
@@ -249,7 +251,7 @@ namespace BoxSocial.Internals
         public void EndResponse()
         {
             display.Header(this);
-            Response.Write(template.ToString());
+            HttpContext.Current.Response.Write(template.ToString());
             timer.Stop();
             double seconds = (timer.ElapsedTicks) / 10000000.0;
             //Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
@@ -258,7 +260,8 @@ namespace BoxSocial.Internals
             {
                 db.CloseConnection();
             }
-            Response.End();
+
+            HttpContext.Current.Response.End();
         }
 
         ~TPage()

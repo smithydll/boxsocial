@@ -1041,8 +1041,8 @@ namespace BoxSocial.Internals
             long userId = db.UpdateQuery(string.Format("INSERT INTO user_keys (user_name) VALUES ('{0}')",
                 Mysql.Escape(userName)), true);
 
-            db.UpdateQuery(string.Format("INSERT INTO user_info (user_id, user_name, user_alternate_email, user_password, user_reg_date_ut, user_activate_code, user_reg_ip) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), '{4}', '{5}');",
-                userId, Mysql.Escape(userName), Mysql.Escape(eMail), password, Mysql.Escape(activateKey), Mysql.Escape(session.IPAddress.ToString())), true);
+            db.UpdateQuery(string.Format("INSERT INTO user_info (user_id, user_name, user_alternate_email, user_password, user_reg_date_ut, user_activate_code, user_reg_ip, user_home_page) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', '{6}');",
+                userId, Mysql.Escape(userName), Mysql.Escape(eMail), password, Mysql.Escape(activateKey), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape("/profile")), true);
 
             db.UpdateQuery(string.Format("INSERT INTO user_profile (user_id) VALUES ({0});",
                 userId), false);

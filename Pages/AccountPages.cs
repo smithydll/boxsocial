@@ -297,21 +297,12 @@ namespace BoxSocial.Applications.Pages
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            Dictionary<string, string> licenses = new Dictionary<string, string>();
-            DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
-
-            licenses.Add("0", "Default ZinZam License");
-            foreach (DataRow licenseRow in licensesTable.Rows)
-            {
-                licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
-            }
-
             if (pageId > 0)
             {
                 disabledItems.Add(pageId.ToString());
             }
             template.ParseVariables("S_PAGE_PARENT", Functions.BuildSelectBox("page-parent", pages, pageParentId.ToString(), disabledItems));
-            template.ParseVariables("S_PAGE_LICENSE", Functions.BuildSelectBox("license", licenses, licenseId.ToString()));
+            template.ParseVariables("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
             template.ParseVariables("S_PAGE_PERMS", Functions.BuildPermissionsBox(pagePermissions, permissions));
 
             template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode(pageTitle));

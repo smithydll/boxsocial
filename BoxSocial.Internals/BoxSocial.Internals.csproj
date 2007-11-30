@@ -55,6 +55,7 @@
     <Compile Include="Feed.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="IAppInfo.cs" />
+    <Compile Include="License.cs" />
     <Compile Include="PageHandle.cs" />
     <Compile Include="PPage.cs">
       <SubType>ASPXCodeBehind</SubType>

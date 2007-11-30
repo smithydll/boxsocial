@@ -482,6 +482,11 @@ namespace BoxSocial.Internals
             return AppendSid("/site-map");
         }
 
+        public static string BuildCopyrightUri()
+        {
+            return AppendSid("/copyright");
+        }
+
         public static string BuildAccountUri()
         {
             return AppendSid("/account");

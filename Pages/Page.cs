@@ -48,7 +48,7 @@ namespace BoxSocial.Applications.Pages
         private string body;
         private ushort permissions;
         private Access pageAccess;
-        private byte license;
+        private byte licenseId;
         private ulong views;
         private string status;
         private string ipRaw;
@@ -58,8 +58,7 @@ namespace BoxSocial.Applications.Pages
         // TODO: hierarchy
         private long createdRaw;
         private long modifiedRaw;
-
-        private string licenseTitle;
+        private ContentLicense license;
 
         public long PageId
         {
@@ -113,15 +112,15 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return license;
+                return licenseId;
             }
         }
 
-        public string LicenseTitle
+        public ContentLicense License
         {
             get
             {
-                return licenseTitle;
+                return license;
             }
         }
 
@@ -172,8 +171,8 @@ namespace BoxSocial.Applications.Pages
             this.owner = owner;
 
             string[] paths = pageName.Split('/');
-            DataTable pageTable = db.SelectQuery(string.Format("SELECT li.license_id, li.license_title, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
-                owner.UserId, Mysql.Escape(paths[paths.GetUpperBound(0)]), Mysql.Escape(pageName.Remove(pageName.Length - paths[paths.GetUpperBound(0)].Length).TrimEnd('/')), Page.PAGE_FIELDS));
+            DataTable pageTable = db.SelectQuery(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
+                owner.UserId, Mysql.Escape(paths[paths.GetUpperBound(0)]), Mysql.Escape(pageName.Remove(pageName.Length - paths[paths.GetUpperBound(0)].Length).TrimEnd('/')), Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
 
             if (pageTable.Rows.Count == 1)
             {
@@ -191,8 +190,8 @@ namespace BoxSocial.Applications.Pages
             this.db = db;
             this.owner = owner;
 
-            DataTable pageTable = db.SelectQuery(string.Format("SELECT li.license_id, li.license_title, {2} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_id = {1};",
-                owner.UserId, pageId, Page.PAGE_FIELDS));
+            DataTable pageTable = db.SelectQuery(string.Format("SELECT {3}, {2} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_id = {1};",
+                owner.UserId, pageId, Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
 
             if (pageTable.Rows.Count == 1)
             {
@@ -216,7 +215,7 @@ namespace BoxSocial.Applications.Pages
                 body = (string)pageRow["page_text"];
             }
             permissions = (ushort)pageRow["page_access"];
-            license = (byte)pageRow["page_license"];
+            licenseId = (byte)pageRow["page_license"];
             views = (ulong)pageRow["page_views"];
             status = (string)pageRow["page_status"];
             ipRaw = (string)pageRow["page_ip"];
@@ -232,16 +231,7 @@ namespace BoxSocial.Applications.Pages
 
         private void loadLicenseInfo(DataRow pageRow)
         {
-            try
-            {
-                if (!(pageRow["license_title"] is DBNull))
-                {
-                    licenseTitle = (string)pageRow["license_title"];
-                }
-            }
-            catch
-            {
-            }
+            license = new ContentLicense(db, pageRow);
         }
 
         public static void Show(Core core, PPage page, string pageName)
@@ -307,10 +297,16 @@ namespace BoxSocial.Applications.Pages
                 }
             }
 
-            if (!string.IsNullOrEmpty(thePage.LicenseTitle))
+            if (!string.IsNullOrEmpty(thePage.License.Title))
             {
-                core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.LicenseTitle));
+                core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
             }
+            if (!string.IsNullOrEmpty(thePage.License.Icon))
+            {
+                core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
+            }
+
+            core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
 
             core.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));
 

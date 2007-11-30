@@ -448,6 +448,7 @@ namespace BoxSocial.Internals
             template.ParseVariables("U_REGISTER", HttpUtility.HtmlEncode(ZzUri.BuildRegisterUri()));
             template.ParseVariables("U_HELP", HttpUtility.HtmlEncode(ZzUri.BuildHelpUri()));
             template.ParseVariables("U_SITEMAP", HttpUtility.HtmlEncode(ZzUri.BuildSitemapUri()));
+            template.ParseVariables("U_COPYRIGHT", HttpUtility.HtmlEncode(ZzUri.BuildCopyrightUri()));
             template.ParseVariables("U_ACCOUNT", HttpUtility.HtmlEncode(ZzUri.BuildAccountUri()));
 
             if (session != null)

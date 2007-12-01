@@ -1,0 +1,1121 @@
+/*
+ * Box Social™
+ * http://boxsocial.net/
+ * Copyright © 2007, David Lachlan Smith
+ * 
+ * $Id:$
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.Security;
+using BoxSocial;
+using BoxSocial.Internals;
+using BoxSocial.IO;
+
+namespace BoxSocial.Groups
+{
+    public class AccountGroups : AccountModule
+    {
+        public AccountGroups(Account account)
+            : base(account)
+        {
+            RegisterSubModule += new RegisterSubModuleHandler(ManageGroups);
+            RegisterSubModule += new RegisterSubModuleHandler(ManageGroupMemberships);
+            RegisterSubModule += new RegisterSubModuleHandler(EditGroup);
+            RegisterSubModule += new RegisterSubModuleHandler(JoinGroup);
+            RegisterSubModule += new RegisterSubModuleHandler(LeaveGroup);
+            RegisterSubModule += new RegisterSubModuleHandler(InviteGroup);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupMakeOfficer);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupMakeOperator);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupRemoveOfficer);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupResignOperator);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupApproveMember);
+        }
+
+        protected override void RegisterModule(Core core, EventArgs e)
+        {
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return "Groups";
+            }
+        }
+
+        public override string Key
+        {
+            get
+            {
+                return "groups";
+            }
+        }
+
+        public override int Order
+        {
+            get
+            {
+                return 7;
+            }
+        }
+
+        private void ManageGroups(string submodule)
+        {
+            subModules.Add("groups", "Manage Groups");
+            if (submodule != "groups" && !string.IsNullOrEmpty(submodule)) return;
+
+            template.SetTemplate("account_group_manage.html");
+
+            template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(ZzUri.AppendSid("/groups/create")));
+
+            DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
+                loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
+
+            for (int i = 0; i < groupsTable.Rows.Count; i++)
+            {
+                VariableCollection groupVariableCollection = template.CreateChild("group_list");
+
+                UserGroup thisGroup = new UserGroup(db, groupsTable.Rows[i]);
+
+                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
+                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+
+                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
+                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                groupVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(thisGroup.EditUri));
+                groupVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(thisGroup.EditUri)); // TODO: DELETE URI
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        break;
+                    case "CLOSED":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        break;
+                    case "PRIVATE":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        break;
+                }
+            }
+        }
+
+        private void EditGroup(string submodule)
+        {
+            subModules.Add("edit", null);
+            if (submodule != "edit") return;
+
+            if (Request.Form["save"] != null)
+            {
+                EditGroupSave();
+                return;
+            }
+
+            long groupId;
+
+            template.SetTemplate("account_group_edit.html");
+
+            try
+            {
+                groupId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            UserGroup thisGroup = new UserGroup(db, groupId);
+
+            if (!thisGroup.IsGroupOperator(loggedInMember))
+            {
+                Display.ShowMessage(core, "Cannot Edit Group", "You must be an operator of the group to edit it.");
+                return;
+            }
+
+            short category = thisGroup.RawCategory;
+
+            Dictionary<string, string> categories = new Dictionary<string, string>();
+            DataTable categoriesTable = db.SelectQuery("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+            foreach (DataRow categoryRow in categoriesTable.Rows)
+            {
+                categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
+            }
+
+            template.ParseVariables("S_EDIT_GROUP", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
+            template.ParseVariables("S_GROUP_ID", HttpUtility.HtmlEncode(thisGroup.GroupId.ToString()));
+            template.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
+            template.ParseVariables("GROUP_DESCRIPTION", HttpUtility.HtmlEncode(thisGroup.Description));
+
+            string selected = "checked=\"checked\" ";
+            switch (thisGroup.GroupType)
+            {
+                case "OPEN":
+                    template.ParseVariables("S_OPEN_CHECKED", selected);
+                    break;
+                case "CLOSED":
+                    template.ParseVariables("S_CLOSED_CHECKED", selected);
+                    break;
+                case "PRIVATE":
+                    template.ParseVariables("S_PRIVATE_CHECKED", selected);
+                    break;
+            }
+        }
+
+        private void EditGroupSave()
+        {
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            short category;
+            string title;
+            string description;
+            string type;
+
+            try
+            {
+                groupId = long.Parse(Request.Form["id"]);
+                category = short.Parse(Request.Form["category"]);
+                title = Request.Form["title"];
+                description = Request.Form["description"];
+                type = Request.Form["type"];
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            switch (type)
+            {
+                case "open":
+                    type = "OPEN";
+                    break;
+                case "closed":
+                    type = "CLOSED";
+                    break;
+                case "private":
+                    type = "PRIVATE";
+                    break;
+                default:
+                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    return;
+            }
+
+            UserGroup thisGroup = new UserGroup(db, groupId);
+
+            if (!thisGroup.IsGroupOperator(loggedInMember))
+            {
+                Display.ShowMessage(core, "Cannot Edit Group", "You must be an operator of the group to edit it.");
+                return;
+            }
+            else
+            {
+
+                // update the public viewcount is necessary
+                if (type != "PRIVATE" && thisGroup.GroupType == "PRIVATE")
+                {
+                    db.UpdateQuery(string.Format("UPDATE global_categories SET category_groups = category_groups + 1 WHERE category_id = {0}",
+                        category), true);
+                }
+                else if (type == "PRIVATE" && thisGroup.GroupType != "PRIVATE")
+                {
+                    db.UpdateQuery(string.Format("UPDATE global_categories SET category_groups = category_groups - 1 WHERE category_id = {0}",
+                        category), true);
+                }
+
+                // save the edits to the group
+                db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}' WHERE group_id = {0}",
+                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)), false);
+
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                Display.ShowMessage(core, "Group Saved", "You have successfully edited the group.");
+                return;
+            }
+        }
+
+        private void DeleteGroup()
+        {
+            // TODO: delete group
+        }
+
+        private void DeleteGroupSave()
+        {
+            // TODO: save delete group
+        }
+
+        private void ManageGroupMemberships(string submodule)
+        {
+            subModules.Add("memberships", "Manage Memberships");
+            if (submodule != "memberships") return;
+
+            // TODO: show pending memberships
+            template.SetTemplate("account_group_membership.html");
+
+            DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
+                loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
+
+            for (int i = 0; i < groupsTable.Rows.Count; i++)
+            {
+                VariableCollection groupVariableCollection = template.CreateChild("group_list");
+
+                UserGroup thisGroup = new UserGroup(db, groupsTable.Rows[i]);
+
+                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
+                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+
+                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
+                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                if (!(groupsTable.Rows[i]["user_id_go"] is DBNull))
+                {
+                    if ((int)groupsTable.Rows[i]["user_id_go"] != loggedInMember.UserId)
+                    {
+                        groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+                    }
+                }
+                else
+                {
+                    groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+                }
+                groupVariableCollection.ParseVariables("U_INVITE", HttpUtility.HtmlEncode(thisGroup.InviteUri));
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        break;
+                    case "CLOSED":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        break;
+                    case "PRIVATE":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        break;
+                }
+            }
+        }
+
+        private void JoinGroup(string submodule)
+        {
+            subModules.Add("join", null);
+            if (submodule != "join") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId = 0;
+
+            try
+            {
+                groupId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "Unable to complete action, missing data. Go back and try again.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+                int activated = 0;
+
+                DataTable membershipTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
+                    thisGroup.GroupId, loggedInMember.UserId));
+
+                if (membershipTable.Rows.Count > 0)
+                {
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    Display.ShowMessage(core, "Already a Member", "You are already a member of this group.");
+                    return;
+                }
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                    case "PRIVATE": // assume as you've been invited that it is enough for activation
+                        activated = 1;
+                        break;
+                    case "CLOSED":
+                        activated = 0;
+                        break;
+                }
+
+                bool isInvited = thisGroup.IsGroupInvitee(loggedInMember);
+
+                // do not need an invite unless the group is private
+                // private groups you must be invited to
+                if (thisGroup.GroupType != "PRIVATE" || (thisGroup.GroupType == "PRIVATE" && isInvited))
+                {
+                    db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
+                        thisGroup.GroupId, loggedInMember.UserId, activated, Mysql.Escape(session.IPAddress.ToString()), true));
+
+                    if (activated == 1)
+                    {
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
+                            thisGroup.GroupId), true);
+                    }
+
+                    // just do it anyway, can be invited to any type of group
+                    db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
+                        thisGroup.GroupId, loggedInMember.UserId), false);
+
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
+                    {
+                        Display.ShowMessage(core, "Joined Group", "You have joined this group.");
+                    }
+                    else if (thisGroup.GroupType == "CLOSED")
+                    {
+                        Display.ShowMessage(core, "Joined Group", "You applied to join this group. A group operator must approve your membership before you will be admitted into the group.");
+                    }
+                    return;
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Cannot join group", "This group is private, you must be invited to be able to join it.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Group does not Exist", "The group you are trying to join does not exist.");
+                return;
+            }
+        }
+
+        private void LeaveGroup(string submodule)
+        {
+            subModules.Add("leave", null);
+            if (submodule != "leave") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId = 0;
+
+            try
+            {
+                groupId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "Unable to complete action, missing data. Go back and try again.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                /*DataTable membershipTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
+                    thisGroup.GroupId, loggedInMember.UserId));*/
+                bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
+                bool isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
+
+                /*if (!isGroupMember)
+                {
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.BuildGroupUri(thisGroup)));
+                    Display.ShowMessage(core, "Already not a Member", "You cannot leave a group you are not a member of.");
+                    return;
+                }
+                else
+                {*/
+                DataTable operatorsTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
+                    thisGroup.GroupId, loggedInMember.UserId));
+
+                if (operatorsTable.Rows.Count > 0)
+                {
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    Display.ShowMessage(core, "Cannot Leave Group", "You cannot leave this group while you are an operator of the group.");
+                    return;
+                }
+                else
+                {
+                    if (isGroupMember)
+                    {
+                        db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
+                            thisGroup.GroupId, loggedInMember.UserId), true);
+
+                        long officerRowsChanged = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1};",
+                            thisGroup.GroupId, loggedInMember.UserId), true);
+
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members - 1, group_officers = group_officers - {1} WHERE group_id = {0}",
+                            thisGroup.GroupId, officerRowsChanged), false);
+
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        Display.ShowMessage(core, "Left Group", "You have left the group.");
+                        return;
+                    }
+                    else if (isGroupMemberPending)
+                    {
+                        db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
+                            thisGroup.GroupId, loggedInMember.UserId));
+
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        Display.ShowMessage(core, "Left Group", "You are no longer pending membership of the group.");
+                        return;
+                    }
+                    else
+                    {
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        Display.ShowMessage(core, "Not a Member", "You cannot leave a group you are not a member of.");
+                        return;
+                    }
+                }
+                /*}*/
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Group does not Exist", "The group you are trying to leave does not exist.");
+                return;
+            }
+        }
+
+        private void InviteGroup(string submodule)
+        {
+            subModules.Add("invite", null);
+            if (submodule != "invite") return;
+
+            if (Request.Form["send"] != null)
+            {
+                InviteGroupSend();
+                return;
+            }
+
+            long groupId;
+
+            template.SetTemplate("account_group_invite.html");
+
+            try
+            {
+                groupId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            UserGroup thisGroup = new UserGroup(db, groupId);
+
+            if (!thisGroup.IsGroupMember(loggedInMember))
+            {
+                Display.ShowMessage(core, "Error", "You must be a member of a group to invite someone to it.");
+                return;
+            }
+
+            switch (thisGroup.GroupType)
+            {
+                case "OPEN":
+                case "CLOSED":
+                case "PRIVATE":
+                    break;
+            }
+
+            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(groupId.ToString()));
+        }
+
+        private void InviteGroupSend()
+        {
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            string username;
+
+            try
+            {
+                groupId = long.Parse(Request.Form["id"]);
+                username = Request.Form["username"];
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                try
+                {
+                    Member inviteMember = new Member(db, username);
+
+                    if (!thisGroup.IsGroupMember(loggedInMember))
+                    {
+                        Display.ShowMessage(core, "Error", "You must be a member of a group to invite someone to it.");
+                        return;
+                    }
+
+                    if (!thisGroup.IsGroupMember(inviteMember))
+                    {
+                        // use their relation, otherwise you could just create a billion pending friends and still SPAM them with group invites
+                        DataTable friendsTable = db.SelectQuery(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND';",
+                            inviteMember.UserId, loggedInMember.UserId));
+
+                        if (friendsTable.Rows.Count > 0)
+                        {
+                            db.UpdateQuery(string.Format("INSERT INTO group_invites (group_id, user_id, inviter_id, invite_date_ut) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP());",
+                                thisGroup.GroupId, inviteMember.UserId, loggedInMember.UserId));
+
+                            if (inviteMember.EmailNotifications)
+                            {
+                                Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
+
+                                emailTemplate.ParseVariables("TO_NAME", inviteMember.DisplayName);
+                                emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
+                                emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
+                                emailTemplate.ParseVariables("GROUP_NAME", thisGroup.DisplayName);
+                                emailTemplate.ParseVariables("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
+
+                                Email.SendEmail(core, inviteMember.AlternateEmail, string.Format("{0} invited you to join a group",
+                                    loggedInMember.DisplayName),
+                                    emailTemplate.ToString());
+                            }
+
+                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                            Display.ShowMessage(core, "Invited Friend", "You have invited a friend to the group.");
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Cannot Invite User", "You can only invite people who are friends with you to join a group.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Display.ShowMessage(core, "Already in Group", "The person you are trying to invite is already a member of the group. An invitation has not been sent.");
+                        return;
+                    }
+                }
+                catch
+                {
+                    Display.ShowMessage(core, "Username does not exist", "The username you have entered does not exist, go back.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        public void GroupMakeOperator(string submodule)
+        {
+            subModules.Add("make-operator", null);
+            if (submodule != "make-operator") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    try
+                    {
+                        Member member = new Member(db, userId);
+                        if (!thisGroup.IsGroupOperator(member))
+                        {
+                            db.UpdateQuery(string.Format("INSERT INTO group_operators (group_id, user_id) VALUES ({0}, {1});",
+                                thisGroup.GroupId, userId), true);
+
+                            db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators + 1 WHERE group_id = {0}",
+                                thisGroup.GroupId), false);
+
+                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                            Display.ShowMessage(core, "Operator Appointed to Group", "You have successfully appointed an operator to the group.");
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Already an Officer", "This member is already an officer.");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an operator.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        public void GroupMakeOfficer(string submodule)
+        {
+            subModules.Add("make-officer", null);
+            if (submodule != "make-officer") return;
+
+            if (Request.Form["save"] != null)
+            {
+                GroupMakeOfficerSave();
+                return;
+            }
+
+            template.SetTemplate("account_group_appoint_officer.html");
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    try
+                    {
+                        Member member = new Member(db, userId);
+
+                        if (thisGroup.IsGroupMember(member))
+                        {
+                            // all ok, don't really need to do much, so let's do it
+                            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(string.Format("{0},{1}", groupId, userId)));
+                            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+                            template.ParseVariables("S_USERNAME", HttpUtility.HtmlEncode(member.UserName));
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an operator.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        public void GroupMakeOfficerSave()
+        {
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId = 0;
+            long userId = 0;
+            string title;
+
+            try
+            {
+                string[] idString = Request.Form["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+                title = Request.Form["title"];
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(title))
+            {
+                Display.ShowMessage(core, "Officer Title Empty", "The officer title must not be empty, go back and enter an officer title.");
+                return;
+            }
+            else
+            {
+                if (title.Length < 4)
+                {
+                    Display.ShowMessage(core, "Officer Title Too Short", "The officer title must be at least four characters, go back and enter an officer title.");
+                    return;
+                }
+                else if (title.Length > 24)
+                {
+                    Display.ShowMessage(core, "Officer Title Too Long", "The officer title must be at most twenty four characters, go back and enter an officer title.");
+                    return;
+                }
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    try
+                    {
+                        Member member = new Member(db, userId);
+
+                        if (thisGroup.IsGroupMember(member))
+                        {
+                            // allow to be an officer to many things
+                            long status = db.UpdateQuery(string.Format("INSERT INTO group_officers (group_id, user_id, officer_title) VALUES ({0}, {1}, '{2}');",
+                                thisGroup.GroupId, member.UserId, Mysql.Escape(title)), true);
+
+                            if (status >= 0)
+                            {
+                                db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers + 1 WHERE group_id = {0}",
+                                    thisGroup.GroupId), false);
+
+                                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                                Display.ShowMessage(core, "Officer Appointed to Group", "You have successfully appointed an officer to the group.");
+                            }
+                            else
+                            {
+                                Display.ShowMessage(core, "Already Officer", "This member is already appointed as this officer.");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an officer.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back. 0x01");
+                return;
+            }
+        }
+
+        public void GroupRemoveOfficer(string submodule)
+        {
+            subModules.Add("remove-officer", null);
+            if (submodule != "remove-officer") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            long userId;
+            string title;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+                title = UTF8Encoding.UTF8.GetString(Convert.FromBase64String(idString[2]));
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1} AND officer_title = '{2}'",
+                        groupId, userId, Mysql.Escape(title)), true);
+
+                    if (deletedRows >= 0)
+                    {
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers - {1} WHERE group_id = {0}",
+                            thisGroup.GroupId, deletedRows), false);
+
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        Display.ShowMessage(core, "Officer Removed from Group", "You have successfully removed an officer from the group.");
+                    }
+                    else
+                    {
+                        Display.ShowMessage(core, "Error", "Could not delete officer, they may have already been delted.");
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        public void GroupResignOperator(string submodule)
+        {
+            subModules.Add("resign-operator", null);
+            if (submodule != "resign-operator") return;
+
+            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            {
+                GroupResignOperatorSave();
+                return;
+            }
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+
+            try
+            {
+                groupId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+            hiddenFieldList.Add("module", "groups");
+            hiddenFieldList.Add("sub", "resign-operator");
+            hiddenFieldList.Add("id", groupId.ToString());
+
+            Display.ShowConfirmBox(page,
+                HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+                "Are you sure you want to resign as operator from this group?",
+                "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
+                hiddenFieldList);
+        }
+
+        public void GroupResignOperatorSave()
+        {
+            long groupId;
+
+            try
+            {
+                groupId = long.Parse(Request.Form["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            UserGroup thisGroup = new UserGroup(db, groupId);
+
+            if (Request.Form["1"] != null)
+            {
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    if (thisGroup.Operators > 1)
+                    {
+                        long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_operators WHERE group_id = {0} AND user_id = {1}",
+                            thisGroup.GroupId, loggedInMember.UserId), true);
+
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators - {1} WHERE group_id = {0}",
+                            thisGroup.GroupId, deletedRows), false);
+
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        Display.ShowMessage(core, "Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
+                    }
+                    else
+                    {
+                        Display.ShowMessage(core, "Cannot resign as operator", "Groups must have at least one operator, you cannot resign from this group at this moment.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Error", "An error has occured. You are not an operator of this group, go back.");
+                    return;
+                }
+            }
+            else if (Request.Form["0"] != null)
+            {
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                Display.ShowMessage(core, "Cancelled", "You cancelled resignation from being a group operator.");
+            }
+        }
+
+        public void GroupApproveMember(string submodule)
+        {
+            subModules.Add("approve", null);
+            if (submodule != "approve") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(db, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    try
+                    {
+                        Member member = new Member(db, userId);
+
+                        if (thisGroup.IsGroupMemberPending(member))
+                        {
+                            // we can approve the pending membership
+                            long rowsChanged = db.UpdateQuery(string.Format("UPDATE group_members SET group_member_approved = 1, group_member_date_ut = UNIX_TIMESTAMP() WHERE group_id = {0} AND user_id = {1} AND group_member_approved = 0;",
+                                thisGroup.GroupId, member.UserId), true);
+
+                            if (rowsChanged > 0) // committ the change
+                            {
+                                db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
+                                    thisGroup.GroupId), false);
+
+                                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                                Display.ShowMessage(core, "Membership Approved", "You have approved the membership for the user.");
+                                return;
+                            }
+                            else
+                            {
+                                Display.ShowMessage(core, "Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        Display.ShowMessage(core, "Error", "An error has occured, group member does not exist, go back.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage(core, "Not Group Operator", "You must be an operator of the group to approve new memberships.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, group does not exist, go back.");
+                return;
+            }
+        }
+    }
+}

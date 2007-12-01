@@ -135,7 +135,7 @@ namespace BoxSocial.Applications.Pages
                     levelString += "&mdash; ";
                 }
 
-                pagesVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(levelString + (string)pagesRow["page_title"]));
+                pagesVariableCollection.ParseVariables("TITLE", levelString + HttpUtility.HtmlEncode((string)pagesRow["page_title"]));
                 pagesVariableCollection.ParseVariables("UPDATED", HttpUtility.HtmlEncode(tz.MysqlToString(pagesRow["page_modified_ut"])));
                 if ((string)pagesTable.Rows[i]["page_parent_path"] != "")
                 {
@@ -148,9 +148,9 @@ namespace BoxSocial.Applications.Pages
                         loggedInMember.UserName, (string)pagesRow["page_slug"])));
                 }
 
-                pagesVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(string.Format("/account/?module=pages&amp;sub=write&amp;action=edit&amp;id={0}",
+                pagesVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(string.Format("/account/pages/write?action=edit&id={0}",
                     (long)pagesRow["page_id"])));
-                pagesVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(string.Format("/account/?module=pages&amp;sub=write&amp;action=delete&amp;id={0}",
+                pagesVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(string.Format("/account/pages/write?action=delete&id={0}",
                     (long)pagesRow["page_id"])));
 
                 if (i % 2 == 0)
@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.Pages
                         db.UpdateQuery(string.Format("DELETE FROM user_pages WHERE user_id = {0} AND page_id = {1};",
                             loggedInMember.UserId, pageId), false);
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=manage"));
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
                         Display.ShowMessage(core, "Page Deleted", "The page has been deleted from the database.");
                         return;
                     }
@@ -504,12 +504,12 @@ namespace BoxSocial.Applications.Pages
 
                 if (status == "DRAFT")
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=drafts"));
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "drafts")));
                     Display.ShowMessage(core, "New Draft Saved", "Your draft has been saved.");
                 }
                 else
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=manage"));
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
                     Display.ShowMessage(core, "New Page Published", "Your page has been published");
                 }
 
@@ -548,12 +548,12 @@ namespace BoxSocial.Applications.Pages
 
             if (status == "DRAFT")
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=drafts"));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "drafts")));
                 Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
             }
             else
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=manage"));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
                 Display.ShowMessage(core, "Page Published", "Your page has been published");
             }
         }
@@ -687,7 +687,7 @@ namespace BoxSocial.Applications.Pages
                         listId = db.UpdateQuery(string.Format("INSERT INTO user_lists (user_id, list_title, list_path, list_type, list_abstract, list_access) VALUES ({0}, '{1}', '{2}', {3}, '{4}', {5});",
                             loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission(Request)));
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=lists"));
+                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
                         Display.ShowMessage(core, "List Created", "You have created a new list");
                     }
                     else
@@ -713,7 +713,7 @@ namespace BoxSocial.Applications.Pages
                     db.UpdateQuery(string.Format("UPDATE user_lists SET list_title = '{1}', list_access = {2}, list_path = '{3}', list_abstract = '{4}', list_type = {5} WHERE list_id = {0}",
                         listId, Mysql.Escape(title), Functions.GetPermission(Request), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=lists"));
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
                     Display.ShowMessage(core, "List Saved", "You have saved the list");
                 }
                 else
@@ -823,7 +823,7 @@ namespace BoxSocial.Applications.Pages
                 db.UpdateQuery(string.Format("DELETE FROM user_lists WHERE user_id = {0} AND list_id = {1}",
                     loggedInMember.UserId, listId), false);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=pages&sub=lists"));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
                 Display.ShowMessage(core, "List Deleted", "You have deleted a list.");
                 return;
             }

@@ -205,7 +205,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_date_of_birth = '{1}', profile_gender = '{2}', profile_country = '{3}', profile_autobiography = '{4}' WHERE user_id = {0};",
                 loggedInMember.UserId, Mysql.Escape(dob), Mysql.Escape(Request.Form["gender"]), Mysql.Escape(Request.Form["country"]), Mysql.Escape(Request.Form["auto-biography"])));
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=profile&sub=info"));
+            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("profile", "info")));
             Display.ShowMessage(core, "Information Saved", "Your information has been saved in the database.<br /><a href=\"/account/?module=profile&sub=info\">Return</a>");
         }
 
@@ -239,7 +239,7 @@ namespace BoxSocial
                     loggedInMember.UserId, Mysql.Escape(Request.Form["css-style"])));
             }
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=profile&sub=style"));
+            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("profile", "style")));
             Display.ShowMessage(core, "Style Saved", "Your profile style has been saved in the database.<br /><a href=\"/account/?module=profile&sub=style\">Return</a>");
         }
 
@@ -271,7 +271,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
                 loggedInMember.UserId, permission));
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=profile&sub=permissions"));
+            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("profile", "permissions")));
             Display.ShowMessage(core, "Permissions Saved", "Your profile permissions have been saved in the database.<br /><a href=\"/account/?module=profile&sub=permissions\">Return</a>");
         }
 

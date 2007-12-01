@@ -192,7 +192,7 @@ namespace BoxSocial.Applications.Blog
                     db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries - 1 WHERE user_id = {0}",
                         loggedInMember.UserId), false);
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=blog&sub=manage"));
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "manage")));
                     Display.ShowMessage(core, "Blog Post Deleted", "The blog post has been deleted from the database.");
                     return;
                 }
@@ -394,12 +394,12 @@ namespace BoxSocial.Applications.Blog
 
             if (status == "DRAFT")
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=blog&sub=drafts"));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "drafts")));
                 Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
             }
             else
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=blog&sub=manage"));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "manage")));
                 Display.ShowMessage(core, "Blog Post Published", "Your blog post has been published.");
             }
         }

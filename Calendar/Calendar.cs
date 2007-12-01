@@ -177,6 +177,14 @@ namespace BoxSocial.Applications.Calendar
             core.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
             core.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
 
+            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
+            {
+                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                    string.Format("year={0}", year),
+                    string.Format("month={0}", month),
+                    string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1)))));
+            }
+
             int days = DateTime.DaysInMonth(year, month);
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
@@ -253,6 +261,12 @@ namespace BoxSocial.Applications.Calendar
                     }
                 }
             }
+
+            List<string[]> calendarPath = new List<string[]>();
+            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { year.ToString(), year.ToString() });
+            calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
+            core.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
         }
 
         public static void Show(Core core, Primitive owner, int year, int month, int day)
@@ -265,8 +279,10 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(ZzUri.AppendSid(string.Format("/account/calendar/new-event?year={0}&month={1}&day={2}",
-                    year, month, day), true)));
+                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                    string.Format("year={0}", year),
+                    string.Format("month={0}", month),
+                    string.Format("day={0}", day))));
             }
 
             long startTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
@@ -285,6 +301,13 @@ namespace BoxSocial.Applications.Calendar
 
                 showHourEvents(core, owner, year, month, day, hour, timeslotVariableCollection, events);
             }
+
+            List<string[]> calendarPath = new List<string[]>();
+            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { year.ToString(), year.ToString() });
+            calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
+            calendarPath.Add(new string[] { day.ToString(), day.ToString() });
+            core.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
         }
 
         private static void showDayEvents(Core core, Primitive owner, int year, int month, int day, VariableCollection weekVariableCollection, List<Event> events)

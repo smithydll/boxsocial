@@ -302,7 +302,7 @@ namespace BoxSocial.Applications.Gallery
                 UserGallery gallery = new UserGallery(db, loggedInMember, galleryId);
                 Gallery.Delete(page, gallery);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/?module=galleries&sub=galleries")));
+                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries")));
                 Display.ShowMessage(core, "Gallery Deleted", "You have successfully deleted a gallery.");
             }
             catch
@@ -356,7 +356,8 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (UserGallery.Create(page, parent, title, ref slug, description, Functions.GetPermission(Request)) != null)
                         {
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/?module=galleries&sub=galleries&id=" + parent.GalleryId.ToString())));
+                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
+                                string.Format("id={0}", parent.GalleryId))));
                             Display.ShowMessage(core, "Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
@@ -401,7 +402,8 @@ namespace BoxSocial.Applications.Gallery
                         {
                             gallery.Update(page, title, slug, description, Functions.GetPermission(Request));
 
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/?module=galleries&sub=galleries&id=" + gallery.ParentId.ToString())));
+                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
+                                string.Format("id={0}", gallery.ParentId))));
                             Display.ShowMessage(core, "Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }

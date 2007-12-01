@@ -120,5 +120,65 @@ namespace BoxSocial.Internals
             if (!(obj is AccountModule)) return -1;
             return Order.CompareTo(((AccountModule)obj).Order);
         }
+
+        public static string BuildModuleUri(string module)
+        {
+            return ZzUri.AppendSid(string.Format("/account/{0}",
+                module));
+        }
+
+        public static string BuildModuleUri(string module, string sub)
+        {
+            return ZzUri.AppendSid(string.Format("/account/{0}/{1}",
+                module, sub));
+        }
+
+        public static string BuildModuleUri(string module, string sub, Dictionary<string, string> arguments)
+        {
+            string argumentList = "";
+            foreach (string key in arguments.Keys)
+            {
+                if (argumentList == "")
+                {
+                    argumentList = string.Format("?{0}={1}",
+                        key, arguments[key]);
+                }
+                else
+                {
+                    argumentList = string.Format("{0}&{1}={2}",
+                        argumentList, key, arguments[key]);
+                }
+            }
+
+            return ZzUri.AppendSid(string.Format("/account/{0}/{1}{2}",
+                module, sub, argumentList));
+        }
+
+        public static string BuildModuleUri(string module, string sub, params string[] arguments)
+        {
+            return BuildModuleUri(module, sub, false, arguments);
+        }
+
+        public static string BuildModuleUri(string module, string sub, bool appendSid, params string[] arguments)
+        {
+            string argumentList = "";
+
+            foreach (string argument in arguments)
+            {
+                if (argumentList == "")
+                {
+                    argumentList = string.Format("?{0}",
+                        argument);
+                }
+                else
+                {
+                    argumentList = string.Format("{0}&{1}",
+                        argumentList, argument);
+                }
+            }
+
+            return ZzUri.AppendSid(string.Format("/account/{0}/{1}{2}",
+                module, sub, argumentList), appendSid);
+        }
     }
 }

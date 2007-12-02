@@ -266,7 +266,7 @@ namespace BoxSocial
 
         public void PermissionsSave()
         {
-            ushort permission = Functions.GetPermission(Request);
+            ushort permission = Functions.GetPermission();
 
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
                 loggedInMember.UserId, permission));

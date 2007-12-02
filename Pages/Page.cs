@@ -177,7 +177,13 @@ namespace BoxSocial.Applications.Pages
             if (pageTable.Rows.Count == 1)
             {
                 loadPageInfo(pageTable.Rows[0]);
-                loadLicenseInfo(pageTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(pageTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -196,7 +202,13 @@ namespace BoxSocial.Applications.Pages
             if (pageTable.Rows.Count == 1)
             {
                 loadPageInfo(pageTable.Rows[0]);
-                loadLicenseInfo(pageTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(pageTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -297,16 +309,21 @@ namespace BoxSocial.Applications.Pages
                 }
             }
 
-            if (!string.IsNullOrEmpty(thePage.License.Title))
+            if (thePage.License != null)
             {
-                core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
+                if (!string.IsNullOrEmpty(thePage.License.Title))
+                {
+                    core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
+                }
+                if (!string.IsNullOrEmpty(thePage.License.Icon))
+                {
+                    core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
+                }
+                if (!string.IsNullOrEmpty(thePage.License.Link))
+                {
+                    core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
+                }
             }
-            if (!string.IsNullOrEmpty(thePage.License.Icon))
-            {
-                core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
-            }
-
-            core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
 
             core.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));
 

@@ -64,6 +64,7 @@ namespace BoxSocial.Applications.Gallery
         protected string contentType;
         protected string storagePath;
         protected string itemAbstract;
+        private ContentLicense license;
 
         public long ItemId
         {
@@ -161,17 +162,32 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public ContentLicense License
+        {
+            get
+            {
+                return license;
+            }
+        }
+
         protected GalleryItem(Mysql db, Primitive owner, string path)
         {
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
-                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(Gallery.GetParentPath(path)), Mysql.Escape(Gallery.GetNameFromPath(path)), owner.Type));
+            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {5} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
+                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(Gallery.GetParentPath(path)), Mysql.Escape(Gallery.GetNameFromPath(path)), Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(galleryItemTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -185,6 +201,13 @@ namespace BoxSocial.Applications.Gallery
             this.owner = owner;
 
             loadItemInfo(itemRow);
+            try
+            {
+                loadLicenseInfo(itemRow);
+            }
+            catch (NonexistantLicenseException)
+            {
+            }
         }
 
         protected GalleryItem(Mysql db, Primitive owner, DataRow itemRow)
@@ -193,6 +216,13 @@ namespace BoxSocial.Applications.Gallery
             this.owner = owner;
 
             loadItemInfo(itemRow);
+            try
+            {
+                loadLicenseInfo(itemRow);
+            }
+            catch (NonexistantLicenseException)
+            {
+            }
         }
 
         public GalleryItem(Mysql db, DataRow itemRow)
@@ -201,6 +231,13 @@ namespace BoxSocial.Applications.Gallery
             // TODO: owner not set, no big worry
 
             loadItemInfo(itemRow);
+            try
+            {
+                loadLicenseInfo(itemRow);
+            }
+            catch (NonexistantLicenseException)
+            {
+            }
         }
 
         public GalleryItem(Mysql db, Member owner, Gallery parent, string path)
@@ -208,12 +245,19 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = {3} AND gi.user_id = {0}",
-                owner.UserId, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(parent.FullPath), Mysql.Escape(path)));
+            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = {3} AND gi.user_id = {0}",
+                owner.UserId, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(parent.FullPath), Mysql.Escape(path), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(galleryItemTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -226,12 +270,19 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
-                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, owner.Type));
+            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
+                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(galleryItemTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -259,12 +310,19 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             // TODO: owner not set, no big worry
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {0} FROM gallery_items gi WHERE gi.gallery_item_id = {1};",
-                GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId));
+            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {0}, {2} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {1};",
+                GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(galleryItemTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
             }
             else
             {
@@ -289,6 +347,11 @@ namespace BoxSocial.Applications.Gallery
                 itemAbstract = (string)itemRow["gallery_item_abstract"];
             }
             parentId = (long)itemRow["gallery_id"];
+        }
+
+        private void loadLicenseInfo(DataRow itemRow)
+        {
+            license = new ContentLicense(db, itemRow);
         }
 
         public void Viewed(Member viewer)
@@ -479,61 +542,60 @@ namespace BoxSocial.Applications.Gallery
 
             page.ProfileOwner.LoadProfileInfo();
 
-            string[] paths = photoPath.Split('/');
-            DataTable photoTable = core.db.SelectQuery(string.Format("SELECT gallery_item_id, gallery_item_rating, gallery_item_access, gallery_item_abstract, gallery_item_parent_path, gallery_item_uri, gallery_item_title, gallery_item_comments, gallery_id FROM gallery_items WHERE gallery_item_parent_path = '{2}' AND user_id = {0} AND gallery_item_uri = '{1}';",
-                page.ProfileOwner.UserId, Mysql.Escape(photoName), Mysql.Escape(photoPath)));
-
-            if (photoTable.Rows.Count == 1)
+            try
             {
-                Access photoAccess = new Access(core.db, (ushort)photoTable.Rows[0]["gallery_item_access"], page.ProfileOwner);
-                long loggedIdUid = 0;
-                //ushort readAccessLevel; // TODO: investigate not used
-                if (core.session.IsLoggedIn)
-                {
-                    loggedIdUid = core.session.LoggedInMember.UserId;
-                }
+                GalleryItem photo = new UserGalleryItem(core.db, page.ProfileOwner, photoPath + "/" + photoName);
 
-                photoAccess.SetViewer(core.session.LoggedInMember);
+                photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
-                if (!photoAccess.CanRead)
+                if (!photo.ItemAccess.CanRead)
                 {
                     Functions.Generate403(core);
                     return;
                 }
 
-                if (core.session.IsLoggedIn)
-                {
-                    if (core.session.LoggedInMember.UserId != page.ProfileOwner.UserId)
-                    {
-                        core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_views = gallery_item_views + 1 WHERE gallery_item_id = {0};",
-                            (long)photoTable.Rows[0]["gallery_item_id"]));
-                    }
-                }
+                photo.Viewed(core.session.LoggedInMember);
 
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
-                    page.ProfileOwner.UserName, photoPath, (string)photoTable.Rows[0]["gallery_item_uri"]);
+                    page.ProfileOwner.UserName, photoPath, photo.Path);
                 core.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                core.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode((string)photoTable.Rows[0]["gallery_item_title"]));
-                core.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(((long)photoTable.Rows[0]["gallery_item_id"]).ToString()));
-                core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri((long)photoTable.Rows[0]["gallery_id"])));
+                core.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(photo.ItemTitle));
+                core.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
+                core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(photo.ParentId)));
 
-                if (!(photoTable.Rows[0]["gallery_item_abstract"] is DBNull))
+                if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
-                    core.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode((string)photoTable.Rows[0]["gallery_item_abstract"]), core.session.LoggedInMember));
+                    core.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
                 }
                 else
                 {
                     core.template.ParseVariables("PHOTO_DESCRIPTION", "FALSE");
                 }
 
-                core.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString((long)photoTable.Rows[0]["gallery_item_comments"])));
+                core.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(photo.ItemComments)));
 
-                Display.RatingBlock((float)photoTable.Rows[0]["gallery_item_rating"], core.template, (long)photoTable.Rows[0]["gallery_item_id"], "PHOTO");
+                Display.RatingBlock(photo.ItemRating, core.template, photo.ItemId, "PHOTO");
 
-                core.template.ParseVariables("ID", HttpUtility.HtmlEncode(((long)photoTable.Rows[0]["gallery_item_id"]).ToString()));
-                core.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri((long)photoTable.Rows[0]["gallery_item_id"])));
-                core.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri((long)photoTable.Rows[0]["gallery_item_id"])));
-                core.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
+                core.template.ParseVariables("ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
+                core.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri(photo.ItemId)));
+                core.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
+                core.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
+
+                if (photo.License != null)
+                {
+                    if (!string.IsNullOrEmpty(photo.License.Title))
+                    {
+                        core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Title));
+                    }
+                    if (!string.IsNullOrEmpty(photo.License.Icon))
+                    {
+                        core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Icon));
+                    }
+                    if (!string.IsNullOrEmpty(photo.License.Link))
+                    {
+                        core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Link));
+                    }
+                }
 
                 int p = 1;
 
@@ -545,20 +607,20 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (photoAccess.CanComment)
+                if (photo.ItemAccess.CanComment)
                 {
                     core.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page, page.ProfileOwner, (long)photoTable.Rows[0]["gallery_item_id"], "PHOTO", (long)photoTable.Rows[0]["gallery_item_comments"]);
+                Display.DisplayComments(page, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
                     HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling((long)photoTable.Rows[0]["gallery_item_comments"] / 10.0)));
+                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
 
-                core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + (string)photoTable.Rows[0]["gallery_item_parent_path"] + "/" + (string)photoTable.Rows[0]["gallery_item_uri"]));
+                core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
 
             }
-            else
+            catch (GalleryItemNotFoundException)
             {
                 Functions.Generate404(core);
                 return;

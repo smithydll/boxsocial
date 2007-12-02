@@ -191,12 +191,12 @@ namespace BoxSocial.Applications.Pages
             {
                 if (Request.Form["license"] != null)
                 {
-                    licenseId = byte.Parse(Request.Form["license"]);
+                    licenseId = Functions.GetLicense();
                 }
                 if (Request.Form["id"] != null)
                 {
                     pageId = long.Parse(Request.Form["id"]);
-                    pagePermissions = Functions.GetPermission(Request);
+                    pagePermissions = Functions.GetPermission();
                 }
                 if (Request.Form["page-parent"] != null)
                 {
@@ -320,7 +320,6 @@ namespace BoxSocial.Applications.Pages
             string parentPath = "";
             ushort order = 0;
             ushort oldOrder = 0;
-            short license = 0;
             long pageId = 0;
             bool parentChanged = false;
             bool titleChanged = false;
@@ -347,7 +346,6 @@ namespace BoxSocial.Applications.Pages
             try
             {
                 parent = long.Parse(Request.Form["page-parent"]);
-                license = short.Parse(Request.Form["license"]);
             }
             catch
             {
@@ -500,7 +498,7 @@ namespace BoxSocial.Applications.Pages
                     order, loggedInMember.UserId), true);
 
                 db.UpdateQuery(string.Format("INSERT INTO user_pages (user_id, page_slug, page_parent_path, page_date_ut, page_title, page_modified_ut, page_ip, page_text, page_license, page_access, page_order, page_parent_id, page_status) VALUES ({0}, '{1}', '{2}', UNIX_TIMESTAMP(), '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', {6}, {7}, {8}, {9}, '{10}')",
-                    loggedInMember.UserId, Mysql.Escape(slug), Mysql.Escape(parentPath), Mysql.Escape(title), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(pageBody), license, Functions.GetPermission(Request), order, parent, Mysql.Escape(status)), false);
+                    loggedInMember.UserId, Mysql.Escape(slug), Mysql.Escape(parentPath), Mysql.Escape(title), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, parent, Mysql.Escape(status)), false);
 
                 if (status == "DRAFT")
                 {
@@ -543,7 +541,7 @@ namespace BoxSocial.Applications.Pages
                 }
 
                 db.UpdateQuery(string.Format("UPDATE user_pages SET {0} {1} page_slug = '{2}', page_modified_ut = UNIX_TIMESTAMP(), page_ip = '{3}', page_text = '{4}', page_license = {5}, page_access = {6}, page_order = {7}, page_status = '{10}' WHERE page_id = {8} AND user_id = {9};",
-                    changeParent, changeTitle, Mysql.Escape(slug), session.IPAddress.ToString(), Mysql.Escape(pageBody), license, Functions.GetPermission(Request), order, pageId, loggedInMember.UserId, status), false);
+                    changeParent, changeTitle, Mysql.Escape(slug), session.IPAddress.ToString(), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, pageId, loggedInMember.UserId, status), false);
             }
 
             if (status == "DRAFT")
@@ -685,7 +683,7 @@ namespace BoxSocial.Applications.Pages
                     if (listTypeTable.Rows.Count == 1)
                     {
                         listId = db.UpdateQuery(string.Format("INSERT INTO user_lists (user_id, list_title, list_path, list_type, list_abstract, list_access) VALUES ({0}, '{1}', '{2}', {3}, '{4}', {5});",
-                            loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission(Request)));
+                            loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission()));
 
                         template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
                         Display.ShowMessage(core, "List Created", "You have created a new list");
@@ -711,7 +709,7 @@ namespace BoxSocial.Applications.Pages
                     loggedInMember.UserId, Mysql.Escape(slug), listId)).Rows.Count == 0)
                 {
                     db.UpdateQuery(string.Format("UPDATE user_lists SET list_title = '{1}', list_access = {2}, list_path = '{3}', list_abstract = '{4}', list_type = {5} WHERE list_id = {0}",
-                        listId, Mysql.Escape(title), Functions.GetPermission(Request), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
+                        listId, Mysql.Escape(title), Functions.GetPermission(), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
 
                     template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
                     Display.ShowMessage(core, "List Saved", "You have saved the list");

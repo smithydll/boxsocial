@@ -119,6 +119,10 @@ namespace BoxSocial.Applications.Blog
             {
                 loadUserBlog(blogTable.Rows[0]);
             }
+            else
+            {
+                throw new InvalidBlogException();
+            }
         }
 
         private void loadUserBlog(DataRow blogRow)
@@ -130,6 +134,10 @@ namespace BoxSocial.Applications.Blog
             permissions = (ushort)blogRow["blog_access"];
             blogAccess = new Access(db, permissions, owner);
         }
+
+        /*public static Blog Create()
+        {
+        }*/
 
         public List<BlogEntry> GetEntries(PPage page, string category, int post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
@@ -201,7 +209,15 @@ namespace BoxSocial.Applications.Blog
             long comments = 0;
             int p = 1;
 
-            Blog myBlog = new Blog(core.db, page.ProfileOwner);
+            Blog myBlog;
+            try
+            {
+                myBlog = new Blog(core.db, page.ProfileOwner);
+            }
+            catch (InvalidBlogException)
+            {
+                return;
+            }
 
             long loggedIdUid = myBlog.BlogAccess.SetSessionViewer(core.session);
             ushort readAccessLevel = 0x0000;
@@ -440,5 +456,9 @@ namespace BoxSocial.Applications.Blog
                 }
             }
         }
+    }
+
+    public class InvalidBlogException : Exception
+    {
     }
 }

@@ -320,11 +320,12 @@ namespace BoxSocial.Applications.Gallery
             long loggedIdUid = Member.GetMemberId(page.loggedInMember);
 
             DataTable photoTable = db.SelectQuery(string.Format(
-                @"SELECT {2}
+                @"SELECT {2}, {8}
                     FROM gallery_items gi
+                    LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license
                     WHERE (gi.gallery_item_access & {3:0} OR gi.user_id = {1}) AND gi.gallery_id = {0} AND gi.gallery_item_item_id = {6} AND gi.gallery_item_item_type = '{7}'
                     LIMIT {4}, {5};",
-                galleryId, loggedIdUid, GalleryItem.GALLERY_ITEM_INFO_FIELDS, readAccessLevel, (currentPage - 1) * perPage, perPage, owner.Id, owner.Type));
+                galleryId, loggedIdUid, GalleryItem.GALLERY_ITEM_INFO_FIELDS, readAccessLevel, (currentPage - 1) * perPage, perPage, owner.Id, Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
 
             return photoTable.Rows;
         }

@@ -262,7 +262,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission(Request));
+                Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
 
                 template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
                 Display.ShowMessage(core, "Event Created", "You have successfully created a new event.");
@@ -270,7 +270,7 @@ namespace BoxSocial.Applications.Calendar
             else
             {
                 db.UpdateQuery(string.Format("UPDATE events SET event_subject = '{2}', event_location = '{3}', event_description = '{4}', event_time_start_ut = {5}, event_time_end_ut = {6}, event_access = {7} WHERE user_id = {0} AND event_id = {1};",
-                    loggedInMember.UserId, eventId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission(Request)));
+                    loggedInMember.UserId, eventId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission()));
 
                 Event calendarEvent = new Event(db, loggedInMember, eventId);
 

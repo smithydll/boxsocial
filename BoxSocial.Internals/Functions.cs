@@ -174,19 +174,24 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static ushort GetPermission(HttpRequest Request)
+        public static ushort GetPermission()
         {
             ushort permission = 0;
 
             for (int i = 0; i < 16; i++)
             {
-                if (Request.Form[string.Format("perm-{0:X4}", 1 << i)] != null)
+                if (HttpContext.Current.Request.Form[string.Format("perm-{0:X4}", 1 << i)] != null)
                 {
                     permission = (ushort)(permission | (ushort)(1 << i));
                 }
             }
 
             return permission;
+        }
+
+        public static byte GetLicense()
+        {
+            return byte.Parse(HttpContext.Current.Request.Form["license"]);
         }
 
         public static string BuildPermissionsBox(ushort permission, List<string> permissions)

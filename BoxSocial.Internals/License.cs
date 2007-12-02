@@ -102,7 +102,14 @@ namespace BoxSocial.Internals
 
         private void loadLicenseInfo(DataRow licenseRow)
         {
-            licenseId = (byte)licenseRow["license_id"];
+            if (!(licenseRow["license_id"] is DBNull))
+            {
+                licenseId = (byte)licenseRow["license_id"];
+            }
+            else
+            {
+                throw new NonexistantLicenseException();
+            }
             if (!(licenseRow["license_title"] is DBNull))
             {
                 title = (string)licenseRow["license_title"];
@@ -111,7 +118,10 @@ namespace BoxSocial.Internals
             {
                 icon = (string)licenseRow["license_icon"];
             }
-            link = (string)licenseRow["license_link"];
+            if (!(licenseRow["license_link"] is DBNull))
+            {
+                link = (string)licenseRow["license_link"];
+            }
         }
 
         public static string BuildLicenseSelectBox(Mysql db, byte selectedLicense)
@@ -133,6 +143,10 @@ namespace BoxSocial.Internals
     }
 
     public class InvalidLicenseException : Exception
+    {
+    }
+
+    public class NonexistantLicenseException : Exception
     {
     }
 }

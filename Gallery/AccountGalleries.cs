@@ -354,7 +354,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (parent.FullPath.Length + slug.Length + 1 < 192)
                     {
-                        if (UserGallery.Create(page, parent, title, ref slug, description, Functions.GetPermission(Request)) != null)
+                        if (UserGallery.Create(page, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
                             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
                                 string.Format("id={0}", parent.GalleryId))));
@@ -400,7 +400,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (gallery.ParentPath.Length + slug.Length + 1 < 192)
                         {
-                            gallery.Update(page, title, slug, description, Functions.GetPermission(Request));
+                            gallery.Update(page, title, slug, description, Functions.GetPermission());
 
                             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
                                 string.Format("id={0}", gallery.ParentId))));
@@ -479,16 +479,7 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                Dictionary<string, string> licenses = new Dictionary<string, string>();
-                DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
-
-                licenses.Add("0", "Default ZinZam License");
-                foreach (DataRow licenseRow in licensesTable.Rows)
-                {
-                    licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
-                }
-
-                template.ParseVariables("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
+                template.ParseVariables("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
                 template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
                 template.ParseVariables("S_GALLERY_ID", HttpUtility.HtmlEncode(galleryId.ToString()));
                 template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
@@ -548,16 +539,7 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                Dictionary<string, string> licenses = new Dictionary<string, string>();
-                DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
-
-                licenses.Add("0", "Default ZinZam License");
-                foreach (DataRow licenseRow in licensesTable.Rows)
-                {
-                    licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
-                }
-
-                template.ParseVariables("S_PHOTO_LICENSE", Functions.BuildSelectBox("license", licenses, license.ToString()));
+                template.ParseVariables("S_PHOTO_LICENSE", ContentLicense.BuildLicenseSelectBox(db, license));
                 template.ParseVariables("S_PHOTO_PERMS", Functions.BuildPermissionsBox(photoAccess, permissions));
                 template.ParseVariables("S_PHOTO_TITLE", HttpUtility.HtmlEncode(title));
                 template.ParseVariables("S_PHOTO_DESCRIPTION", HttpUtility.HtmlEncode(description));
@@ -719,13 +701,11 @@ namespace BoxSocial.Applications.Gallery
             long photoId = 0;
             string title = "";
             string description = "";
-            byte license = 0;
             bool edit = false;
 
             try
             {
                 galleryId = long.Parse(Request.Form["id"]);
-                license = byte.Parse(Request.Form["license"]);
                 title = Request.Form["title"];
                 description = Request.Form["description"];
             }
@@ -766,7 +746,7 @@ namespace BoxSocial.Applications.Gallery
                             Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(Request), license);
+                        UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense());
 
                         template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug)));
                         Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
@@ -806,7 +786,7 @@ namespace BoxSocial.Applications.Gallery
                 try
                 {
                     UserGalleryItem galleryItem = new UserGalleryItem(db, loggedInMember, photoId);
-                    galleryItem.Update(page, title, description, Functions.GetPermission(Request), license);
+                    galleryItem.Update(page, title, description, Functions.GetPermission(), Functions.GetLicense());
 
                     template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path)));
                     Display.ShowMessage(core, "Changes to Photo Saved", "You have successfully saved the changes to the photo.");

@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Blog
 
         private void ManageBlog(string submodule, bool drafts)
         {
-            template.SetTemplate("account_blog_manage.html");
+            template.SetTemplate("Blog", "account_blog_manage");
 
             string status = "PUBLISH";
 
@@ -221,7 +221,7 @@ namespace BoxSocial.Applications.Blog
             template.ParseVariables("S_POST_HOUR", HttpUtility.HtmlEncode(postTime.Hour.ToString()));
             template.ParseVariables("S_POST_MINUTE", HttpUtility.HtmlEncode(postTime.Minute.ToString()));
 
-            template.SetTemplate("account_post.html");
+            template.SetTemplate("Blog", "account_post");
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");

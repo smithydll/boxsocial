@@ -242,6 +242,7 @@ namespace BoxSocial.Internals
                                         || primitive == AppPrimitives.Any)
                                     {
                                         newApplication.Initialise(core);
+                                        core.template.AddPageAssembly(assembly);
                                     }
                                 }
                             }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -69,6 +70,15 @@ namespace BoxSocial.Internals
             {
                 return feedObject;
             }
+        }
+
+        public static List<Feed> GetItems(Mysql db, Member owner)
+        {
+            List<Feed> feedItems = new List<Feed>();
+
+            DataTable feedTable = db.SelectQuery(string.Format(""));
+
+            return feedItems;
         }
     }
 }

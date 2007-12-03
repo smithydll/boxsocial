@@ -280,7 +280,7 @@ namespace BoxSocial.Applications.Pages
 
         private static void Show(Core core, PPage page, Page thePage)
         {
-            core.template.SetTemplate("viewpage.html");
+            core.template.SetTemplate("Pages", "viewpage");
 
             long loggedIdUid = thePage.PageAccess.SetSessionViewer(core.session);
 

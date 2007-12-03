@@ -203,7 +203,7 @@ namespace BoxSocial.Applications.Blog
 
         public static void Show(Core core, PPage page, string category, int post, int year, int month)
         {
-            core.template.SetTemplate("viewblog.html");
+            core.template.SetTemplate("Blog", "viewblog");
 
             bool rss = false;
             long comments = 0;

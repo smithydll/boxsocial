@@ -1,0 +1,79 @@
+<!-- INCLUDE page_header.html -->
+<div id="pane-profile">
+	<div id="pane-pages" class="pane">
+		<h3>Pages</h3>
+		<ul>
+			<li><a href="{U_PROFILE}">Profile</a></li>
+			<li><a href="{U_BLOG}">Blog</a></li>
+			<li><a href="{U_GALLERY}">Photo Gallery</a></li>
+			<li><a href="{U_FRIENDS}">Friends</a></li>
+			{PAGE_LIST}
+		</ul>
+	</div>
+	<!-- IF ARCHIVES -->
+	<div id="pane-blog-archive" class="pane">
+		<h3>Archive</h3>
+		<ul>
+		<!-- BEGIN archive_list -->
+			<li><a href="{archive_list.URL}">{archive_list.TITLE}</a></li>
+		<!-- END archive_list -->
+		</ul>
+	</div>
+	<!-- ENDIF -->
+	<!-- IF CATEGORIES -->
+	<div id="pane-blog-categories" class="pane">
+		<h3>Categories</h3>
+		<ul>
+		<!-- BEGIN category_list -->
+		<li><a href="{category_list.URL}">{category_list.TITLE}</a></li>
+		<!-- END category_list -->
+		</ul>
+	</div>
+	<!-- ENDIF -->
+	<!-- IF BLOGROLLS -->
+	<div id="pange-blog-roll" class="pane">
+		<h3>Blogroll</h3>
+		<ul>
+		</ul>
+	</div>
+	<!-- ENDIF -->
+	<div id="pange-blog-feed" class="pane">
+		<h3>Feed</h3>
+		<p style="padding-left: 10px;"><a href="{U_RSS}">RSS Feed</a></p>
+	</div>
+</div>
+<div id="profile">
+<div id="pane-blog" class="pane">
+<p>{BREADCRUMBS}</p>
+	<div id="page-body">
+		<h2>{PAGE_TITLE}</h2>
+		<p>{PAGE_BODY}</p>
+		
+		<!-- IF BLOGPOSTS -->
+		<!-- BEGIN blog_list -->
+		<div class="blog-post normal-writing">
+			<h3><a href="{blog_list.URL}">{blog_list.TITLE}</a></h3>
+			<p class="blog-date">{blog_list.DATE}</p>
+			<p>{blog_list.POST}</p>
+			<!-- IF blog_list.COMMENTS -->
+			<p><a href="{blog_list.URL}#comments">{blog_list.COMMENTS} Comments</a></p>
+			<!-- ELSE -->
+			<p><a href="{blog_list.URL}#comments">No Comments</a></p>
+			<!-- ENDIF -->
+		</div>
+		<!-- END blog_list -->
+		<!-- ELSE -->
+		<p>No blog posts.</p>
+		<!-- ENDIF -->
+		<!-- IF SINGLE -->
+		<div id="comments" class="comment-pane">
+		<!-- INCLUDE pane.comments.html -->
+		</div>
+		<!-- ENDIF -->
+	</div>
+<!-- IF PAGINATION -->
+<p>{PAGINATION}</p>
+<!-- ENDIF -->
+</div>
+</div>
+<!-- INCLUDE page_footer.html -->

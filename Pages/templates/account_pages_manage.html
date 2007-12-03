@@ -1,0 +1,30 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Pages</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Page Title</th>
+	<th>Last Updated</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN page_list -->
+<!-- IF page_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{page_list.TITLE}</td>
+	<td>{page_list.UPDATED}</td>
+	<td><a href="{page_list.U_VIEW}">View</a></td>
+	<td><a href="{page_list.U_EDIT}">Edit</a></td>
+	<td><a href="{page_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END page_list -->
+</table>
+
+<a href="/account/?module=pages&sub=write">Write New Page</a>
+
+<!-- INCLUDE account_footer.html -->

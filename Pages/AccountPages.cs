@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Pages
                 }
             }
 
-            template.SetTemplate("account_pages_manage.html");
+            template.SetTemplate("Pages", "account_pages_manage");
 
             string status = "PUBLISH";
 
@@ -176,7 +176,7 @@ namespace BoxSocial.Applications.Pages
                 WritePageSave();
             }
 
-            template.SetTemplate("account_write.html");
+            template.SetTemplate("Pages", "account_write");
 
             long pageId = 0;
             long pageParentId = 0;
@@ -586,7 +586,7 @@ namespace BoxSocial.Applications.Pages
 
             ushort listPermissions = 4369;
 
-            template.SetTemplate("account_lists.html");
+            template.SetTemplate("Pages", "account_lists");
 
             DataTable listsTable = db.SelectQuery(string.Format("SELECT list_id, list_title, list_items, list_type_title, list_path FROM user_lists INNER JOIN list_types ON list_type_id = list_type WHERE user_id = {0}",
                 loggedInMember.UserId));
@@ -745,7 +745,7 @@ namespace BoxSocial.Applications.Pages
                 return;
             }
 
-            template.SetTemplate("account_list_edit.html");
+            template.SetTemplate("Pages", "account_list_edit");
 
             DataTable listTable = db.SelectQuery(string.Format("SELECT list_id, list_title, list_access, list_path, list_abstract, list_type FROM user_lists WHERE user_id = {0} AND list_id = {1};",
                 loggedInMember.UserId, listId));

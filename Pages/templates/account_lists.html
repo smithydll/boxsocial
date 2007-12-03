@@ -1,0 +1,60 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Lists</h3>
+<p>Lists let you stored structured data such as your favourite bands, books, and movies.</p>
+
+<table style="width: 100%">
+<tr>
+	<th>List Title</th>
+	<th>List Type</th>
+	<th>List Items</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN list_list -->
+<!-- IF list_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{list_list.TITLE}</td>
+	<td>{list_list.TYPE}</td>
+	<td>{list_list.ITEMS}</td>
+	<td><a href="{list_list.U_VIEW}">View</a></td>
+	<td><a href="{list_list.U_EDIT}">Edit</a></td>
+	<td><a href="{list_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END list_list -->
+</table>
+
+<h4>Add List</h4>
+<p>Add a new list, you can store lists of all kinds of information such as favourite bands, tracks, CDs you own, or your collection of postage stamps.</p>
+<form action="/account/" method="post">
+	<fieldset>
+		<legend>Add List</legend>
+		<dl>
+			<dt><label for="title">List Title</label></dt>
+			<dd><input type="text" id="title" name="title" value="{LIST_TITLE}" /></dd>
+			<dt><label for="type">List Type</label></dt>
+			<dd>{S_LIST_TYPES}</dd>
+			<dt><label for="abstract">List Abstract</label></dt>
+			<dd>
+				<textarea id="abstract" name="abstract" style="margin: 0px; width: 100%; height: 50px; border: solid 1px #666666;" cols="70" rows="4">{S_ABSTRACT}</textarea>
+				<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+					<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+				</div>
+			</dd>
+			<dt><label>List Permissions</label></dt>
+			<dd>
+				{S_LIST_PERMS}
+			</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="pages" />
+		<input type="hidden" name="sub" value="lists" />
+	</fieldset>
+</form>
+
+<!-- INCLUDE account_footer.html -->

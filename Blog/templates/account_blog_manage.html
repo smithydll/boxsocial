@@ -1,0 +1,30 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Blog</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Posted</th>
+	<th>Title</th>
+	<th>Comments</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN blog_list -->
+<!-- IF blog_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{blog_list.POSTED}</td>
+	<td>{blog_list.TITLE}</td>
+	<td><a href="{blog_list.U_COMMENTS}">{blog_list.COMMENTS}</a></td>
+	<td><a href="{blog_list.U_VIEW}">View</a></td>
+	<td><a href="{blog_list.U_EDIT}">Edit</a></td>
+	<td><a href="{blog_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END blog_list -->
+</table>
+
+<!-- INCLUDE account_footer.html -->

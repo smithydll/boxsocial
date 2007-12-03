@@ -21,6 +21,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Resources;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Caching;
@@ -136,12 +138,19 @@ namespace BoxSocial.IO
     public class Template
     {
         private VariableCollection variables = new VariableCollection();
+        private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>();
 
         private string template;
         private Dictionary<string, string> loopTemplates;
 
         private string path;
         private string templateName;
+        private string templateAssembly;
+
+        public void AddPageAssembly(Assembly value)
+        {
+            pageAssembly.Add(value.GetName().Name, value);
+        }
 
         public Template(string path, string fileName)
         {
@@ -151,6 +160,13 @@ namespace BoxSocial.IO
 
         public void SetTemplate(string fileName)
         {
+            templateAssembly = null;
+            templateName = fileName;
+        }
+
+        public void SetTemplate(string assembly, string fileName)
+        {
+            templateAssembly = assembly;
             templateName = fileName;
         }
 
@@ -175,7 +191,23 @@ namespace BoxSocial.IO
         /// <returns></returns>
         public override string ToString()
         {
-            template = Template.OpenTextFile(Path.Combine(path, templateName));
+            if (templateAssembly != null)
+            {
+                try
+                {
+                    ResourceManager rm = new ResourceManager(templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                    template = (string)rm.GetObject(templateName);
+                }
+                catch
+                {
+                    template = string.Format("Could not load template {1} from assembly {0}",
+                        templateAssembly, templateName);
+                }
+            }
+            else
+            {
+                template = Template.OpenTextFile(Path.Combine(path, templateName));
+            }
             StringBuilder output = new StringBuilder();
             string[] lines = template.Replace("\r", "").Split('\n');
             int lineAdjust = 0;
@@ -492,6 +524,23 @@ namespace BoxSocial.IO
             catch
             {
                 temp = "";
+            }
+            return temp;
+        }
+
+        protected static string OpenTextStream(Stream file)
+        {
+            StreamReader myStreamReader;
+            string temp;
+            try
+            {
+                myStreamReader = new StreamReader(file);
+                temp = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+            }
+            catch (Exception ex)
+            {
+                temp = "Error reading stream.<br />" + ex.ToString();
             }
             return temp;
         }

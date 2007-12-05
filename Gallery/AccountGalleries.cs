@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.Gallery
                 template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(0)));
             }
 
-            template.SetTemplate("account_galleries.html");
+            template.SetTemplate("Gallery", "account_galleries");
 
             DataTable galleriesTable = db.SelectQuery(string.Format("SELECT gallery_id, gallery_items, gallery_title, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' ORDER BY gallery_title ASC",
                 loggedInMember.UserId, Mysql.Escape(galleryParentPath)));
@@ -203,7 +203,7 @@ namespace BoxSocial.Applications.Gallery
                 edit = true;
             }
 
-            template.SetTemplate("account_galleries_add.html");
+            template.SetTemplate("Gallery", "account_galleries_add");
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
@@ -464,7 +464,7 @@ namespace BoxSocial.Applications.Gallery
                 return;
             }
 
-            template.SetTemplate("account_galleries_upload.html");
+            template.SetTemplate("Gallery", "account_galleries_upload");
 
             DataTable galleryTable = db.SelectQuery(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
                 galleryId, loggedInMember.UserId));
@@ -518,7 +518,7 @@ namespace BoxSocial.Applications.Gallery
                 return;
             }
 
-            template.SetTemplate("account_galleries_photo_edit.html");
+            template.SetTemplate("Gallery", "account_galleries_photo_edit");
 
             DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
                 loggedInMember.UserId, photoId));

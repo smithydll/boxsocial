@@ -742,7 +742,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, PPage page, string galleryPath)
         {
-            core.template.SetTemplate("viewgallery.html");
+            core.template.SetTemplate("Gallery", "viewgallery");
 
             int p = 1;
             char[] trimStartChars = { '.', '/' };
@@ -871,7 +871,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, GPage page)
         {
-            core.template.SetTemplate("viewgroupgallery.html");
+            core.template.SetTemplate("Gallery", "viewgroupgallery");
 
             string mode = HttpContext.Current.Request.QueryString["mode"];
 
@@ -949,7 +949,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else if (mode == "upload")
             {
-                core.template.SetTemplate("groupgalleryupload.html");
+                core.template.SetTemplate("Gallery", "groupgalleryupload");
 
                 if (!page.IsGroupMember)
                 {
@@ -1041,7 +1041,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, NPage page)
         {
-            core.template.SetTemplate("viewgroupgallery.html");
+            core.template.SetTemplate("Gallery", "viewgroupgallery");
 
             string mode = HttpContext.Current.Request.QueryString["mode"];
 
@@ -1119,7 +1119,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else if (mode == "upload")
             {
-                core.template.SetTemplate("groupgalleryupload.html");
+                core.template.SetTemplate("Gallery", "groupgalleryupload");
 
                 if (!page.IsNetworkMember)
                 {

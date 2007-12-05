@@ -1,0 +1,48 @@
+<!-- INCLUDE account_header.html -->
+
+<!-- IF EDIT -->
+<h3>Edit Gallery</h3>
+<!-- ELSE -->
+<h3>Add New Gallery</h3>
+<!-- ENDIF -->
+
+<form action="/account/" method="post" enctype="multipart/form-data">
+	<fieldset>
+		<!-- IF EDIT -->
+		<legend>Edit Gallery</legend>
+		<!-- ELSE -->
+		<legend>Add New Gallery</legend>
+		<!-- ENDIF -->
+		<dl>
+			<dt><label for="title">Title</label></dt>
+			<dd><input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" /></dd>
+			<dt><label for="description">Description</label></dt>
+			<dd>
+				<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 50px; border: solid 1px #666666;" cols="70" rows="4">{S_DESCRIPTION}</textarea>
+				<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+					<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+				</div>
+			</dd>
+			<dt><label>Gallery Permissions</label></dt>
+			<dd>
+				{S_GALLERY_PERMS}
+			</dd>
+			<dt></dt>
+			<dd>
+				<!-- IF EDIT -->
+				<input type="submit" name="save" value="Save Edit" />
+				<!-- ELSE -->
+				<input type="submit" name="save" value="Create" />
+				<!-- ENDIF -->
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="galleries" />
+		<input type="hidden" name="sub" value="new" />
+		<input type="hidden" name="id" value="{S_GALLERY_ID}" />
+		<!-- IF EDIT -->
+		<input type="hidden" name="mode" value="edit" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>
+
+<!-- INCLUDE account_footer.html -->

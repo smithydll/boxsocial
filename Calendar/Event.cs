@@ -241,7 +241,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, Primitive owner, long eventId)
         {
-            core.template.SetTemplate("viewcalendarevent.html");
+            core.template.SetTemplate("Calendar", "viewcalendarevent");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {

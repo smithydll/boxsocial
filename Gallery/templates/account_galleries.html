@@ -1,0 +1,36 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Galleries</h3>
+
+<div id="new-stuff">
+	<!-- IF U_UPLOAD_PHOTO -->
+	<span id="new-photo" class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
+	<!-- ENDIF -->
+	<span id="new-gallery" class="post-button"><a href="{U_NEW_GALLERY}">New Gallery</a></span>
+</div>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th>Items</th>
+	<th></th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN gallery_list -->
+<!-- IF gallery_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{gallery_list.U_MANAGE}">{gallery_list.NAME}</a></td>
+	<td>{gallery_list.ITEMS}</td>
+	<td><a href="{gallery_list.U_VIEW}">View</a></td>
+	<td><a href="{gallery_list.U_EDIT}">Edit</a></td>
+	<td><a href="{gallery_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END gallery_list -->
+</table>
+
+<!-- INCLUDE account_footer.html -->

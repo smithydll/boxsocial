@@ -99,7 +99,7 @@ namespace BoxSocial.Applications.Calendar
                 edit = true;
             }
 
-            template.SetTemplate("account_calendar_event_new.html");
+            template.SetTemplate("Calendar", "account_calendar_event_new");
 
             int year = Functions.RequestInt("year", tz.Now.Year);
             int month = Functions.RequestInt("month", tz.Now.Month);

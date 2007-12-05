@@ -1,0 +1,27 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Appoint Group Officer</h3>
+<p>Officers are special people in groups. They do not get any special privledges other than being grated a title. Enter a title for the officer you are appointing below.</p>
+
+<form action="{S_FORM_ACTION}" method="post">
+	<fieldset>
+		<legend>Appoint Group Officer</legend>
+		<dl>
+			<dt>User</dt>
+			<dd><strong>{S_USERNAME}</strong></dd>
+			<dt><label for="title">Officer Title</label></dt>
+			<dd><input type="text" id="title" name="title" value="{S_TITLE}" /></dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="Create Officer" />
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="groups" />
+		<input type="hidden" name="sub" value="make-officer" />
+		<!-- IF S_ID -->
+		<input type="hidden" name="id" value="{S_ID}" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>
+
+<!-- INCLUDE account_footer.html -->

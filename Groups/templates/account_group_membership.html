@@ -1,0 +1,43 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Group Memberships</h3>
+<p>Manage the memberships to groups you are a member of.</p>
+<span id="join-group" class="post-button"><a href="/groups">Join a Group</a></span>
+<table style="width: 100%">
+<tr>
+	<th>Title</th>
+	<th>Type</th>
+	<th>Members</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN group_list -->
+<!-- IF group_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{group_list.GROUP_DISPLAY_NAME}</td>
+	<td>{group_list.GROUP_TYPE}</td>
+	<td><a href="{group_list.U_MEMBERLIST}">{group_list.MEMBERS}</a></td>
+	<td><a href="{group_list.U_VIEW}">View</a></td>
+	<td>
+		<!-- IF U_LEAVE -->
+		<a href="{group_list.U_LEAVE}">Leave</a>
+		<!-- ELSE -->
+		<span title="Cannot Leave this Group">Leave</span>
+		<!-- ENDIF -->
+	</td>
+	<td>
+		<!-- IF U_INVITE -->
+		<a href="{group_list.U_INVITE}">Invite</a>
+		<!-- ELSE -->
+		<span title="Cannot Invite people to this Group">Invite</span>
+		<!-- ENDIF -->
+	</td>
+</tr>
+<!-- END group_list -->
+</table>
+
+<!-- INCLUDE account_footer.html -->

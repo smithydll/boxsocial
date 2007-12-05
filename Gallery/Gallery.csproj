@@ -44,6 +44,11 @@
     <Compile Include="NetworkGallery.cs" />
     <Compile Include="NetworkGalleryItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Templates.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
     <Compile Include="UserGallery.cs" />
     <Compile Include="UserGalleryItem.cs" />
   </ItemGroup>
@@ -64,6 +69,23 @@
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
       <Name>Networks</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\account_galleries.html" />
+    <Content Include="templates\account_galleries_add.html" />
+    <Content Include="templates\account_galleries_photo_edit.html" />
+    <Content Include="templates\account_galleries_upload.html" />
+    <Content Include="templates\groupgalleryupload.html" />
+    <Content Include="templates\viewgallery.html" />
+    <Content Include="templates\viewgroupgallery.html" />
+    <Content Include="templates\viewphoto.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -897,7 +897,7 @@ namespace BoxSocial.Groups
 
         public static void Show(Core core, GPage page)
         {
-            core.template.SetTemplate("viewgroup.html");
+            core.template.SetTemplate("Groups", "viewgroup");
 
             core.template.ParseVariables("U_GROUP", HttpUtility.HtmlEncode(page.ThisGroup.Uri));
             core.template.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(page.ThisGroup.DisplayName));
@@ -1009,7 +1009,7 @@ namespace BoxSocial.Groups
 
         public static void ShowMemberlist(Core core, GPage page)
         {
-            core.template.SetTemplate("viewgroupmemberlist.html");
+            core.template.SetTemplate("Groups", "viewgroupmemberlist");
 
             int p = Functions.RequestInt("p", 1);
 

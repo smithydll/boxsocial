@@ -1,0 +1,115 @@
+<!-- INCLUDE page_header.html -->
+	<h2><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h2>
+	<div id="pane-profile">
+		<div id="pane-profile-overview" class="pane">
+			<h3><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h3>
+			<dl>
+			<dt>Group Created:</dt>
+			<dd>{DATE_CREATED}</dd>
+			</dl>
+			<!-- IF U_JOIN -->
+			<p><span id="join-group" class="post-button"><a href="{U_JOIN}">Join This Group</a></span></p>
+			<!-- ENDIF -->
+			<!-- IF U_LEAVE -->
+			<p><span id="leave-group" class="post-button"><a href="{U_LEAVE}">Leave This Group</a></span></p>
+			<!-- ENDIF -->
+			<!-- IF U_CANCEL -->
+			<p><span id="cancel-group" class="post-button"><a href="{U_CANCEL}">Cancel Membership Request</a></span></p>
+			<!-- ENDIF -->
+			<!-- IF U_INVITE -->
+			<p><span id="invite-group" class="post-button"><a href="{U_INVITE}">Invite to This Group</a></span></p>
+			<!-- ENDIF -->
+		</div>
+		<!-- IF OPERATORS -->
+		<div class="pane">
+			<h3>Group Operators ({OPERATORS})</h3>
+			<!-- BEGIN operator_list -->
+			<ul>
+				<li>
+					<a href="{operator_list.U_PROFILE}">{operator_list.USER_DISPLAY_NAME}</a>
+					<!-- IF operator_list.U_RESIGN -->
+					<span class="post-button"><a href="{operator_list.U_RESIGN}">Resign</a></span>
+					<!-- ENDIF -->
+				</li>
+			</ul>
+			<!-- END operator_list -->
+		</div>
+		<!-- ENDIF -->
+		<!-- IF OFFICERS -->
+		<div class="pane">
+			<h3>Group Officers ({OFFICERS})</h3>
+			<!-- BEGIN officer_list -->
+			<ul>
+				<li>
+					<a href="{officer_list.U_PROFILE}">{officer_list.USER_DISPLAY_NAME}</a>
+					<span class="officer-title"><em>{officer_list.OFFICER_TITLE}</em></span>
+					<!-- IF IS_OPERATOR -->
+					<span class="post-button"><a href="{officer_list.U_REMOVE}">Remove</a></span>
+					<!-- ENDIF -->
+				</li>
+			</ul>
+			<!-- END officer_list -->
+		</div>
+		<!-- ENDIF -->
+	</div>
+	<div id="profile">
+	<div id="profile-group-info-pane" class="pane">
+	<h3>Group Information</h3>
+	<dl>
+		<dt>Category:</dt>
+		<dd>{CATEGORY}</dd>
+		<!-- IF DESCRIPTION -->
+		<dt>Description:</dt>
+		<dd>{DESCRIPTION}</dd>
+		<!-- ENDIF -->
+	</dl>
+	</div>
+	<div id="profile-gallery-pane" class="pane">
+	<h3>Group Gallery ({PHOTOS})</h3>
+	<!-- IF PHOTOS -->
+	<ul id="photo-list">
+		<!-- BEGIN photo_list -->
+		<li>
+			<dl>
+				<dt><a href="{photo_list.PHOTO_URI}"><img src="{photo_list.THUMBNAIL}" alt="{photo_list.TITLE}" /></a></dt>
+			</dl>
+		</li>
+		<!-- END photo_list -->
+	</ul>
+	<!-- ENDIF -->
+	<div class="cheat-clear-left"></div>
+	<p><a href="{U_GROUP_GALLERY}">View All Photos</a></p>
+	</div>
+	<div id="profile-friends-pane" class="pane">
+	<h3>Group Memberships ({MEMBERS})</h3>
+	<!-- IF MEMBERS -->
+	<p><a href="{U_MEMBERLIST}">View All</a></p>
+	<ul id="profile-friends">
+	<!-- BEGIN member_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{member_list.U_PROFILE}">
+				<!-- IF member_list.ICON -->
+				<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<span style="width: 100px; height: 100px; display: block;">No picture</span>
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END member_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+	<p>There {L_IS_ARE} <a href="{U_MEMBERLIST}">{MEMBERS} {L_MEMBERS}</a> in this group.</p>
+	<!-- ELSE -->
+	<p>There are no members in this group.</p>
+	<!-- ENDIF -->
+	</div>
+	<div id="profile-comments" class="pane">
+	<div class="comment-pane">
+		<!-- INCLUDE pane.comments.html -->
+	</div>
+	</div>
+	</div>
+<!-- INCLUDE page_footer.html -->

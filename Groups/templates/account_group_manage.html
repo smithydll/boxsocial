@@ -1,0 +1,31 @@
+<!-- INCLUDE account_header.html -->
+
+<h3>Manage Groups</h3>
+<p>Manage groups you have operator status over. You can change the title, description, type, and category the group is in.</p>
+<span id="create-group" class="post-button"><a href="{U_CREATE_GROUP}">Create a New Group</a></span>
+<table style="width: 100%">
+<tr>
+	<th>Title</th>
+	<th>Type</th>
+	<th>Members</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN group_list -->
+<!-- IF group_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{group_list.GROUP_DISPLAY_NAME}</td>
+	<td>{group_list.GROUP_TYPE}</td>
+	<td><a href="{group_list.U_MEMBERLIST}">{group_list.MEMBERS}</a></td>
+	<td><a href="{group_list.U_VIEW}">View</a></td>
+	<td><a href="{group_list.U_EDIT}">Edit</a></td>
+	<td><a href="{group_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END group_list -->
+</table>
+
+<!-- INCLUDE account_footer.html -->

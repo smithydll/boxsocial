@@ -1,0 +1,27 @@
+<!-- INCLUDE page_header.html -->
+	<h2>{CURRENT_DAY} {CURRENT_MONTH} {CURRENT_YEAR}</h2>
+	<p>{BREADCRUMBS}</p>
+	<!-- IF U_NEW_EVENT -->
+	<div id="new-stuff">
+		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
+	</div>
+	<!-- ENDIF -->
+	<ul id="day-timeslots">
+		<!-- BEGIN timeslot -->
+		<li>
+			<dl>
+				<dt>{timeslot.TIME}</dt>
+				<dd>
+					<!-- IF timeslot.EVENTS -->
+					<ul class="day-events">
+						<!-- BEGIN timeslot.event -->
+						<li class="event" style="width: 100%; height: {timeslot.event.HEIGHT}px;"><a href="{timeslot.event.URI}">{timeslot.event.TITLE}</a></li>
+						<!-- END timeslot.event -->
+					</ul>
+					<!-- ENDIF -->
+				</dd>
+			</dl>
+		</li>
+		<!-- END timeslot -->
+	</ul>
+<!-- INCLUDE page_footer.html -->

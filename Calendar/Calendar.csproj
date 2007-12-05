@@ -40,6 +40,11 @@
     <Compile Include="Event.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task.cs" />
+    <Compile Include="Templates.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">
@@ -58,6 +63,19 @@
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
       <Name>Networks</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\account_calendar_event_new.html" />
+    <Content Include="templates\viewcalendarday.html" />
+    <Content Include="templates\viewcalendarevent.html" />
+    <Content Include="templates\viewcalendarmonth.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

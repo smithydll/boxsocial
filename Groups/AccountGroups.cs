@@ -87,7 +87,7 @@ namespace BoxSocial.Groups
             subModules.Add("groups", "Manage Groups");
             if (submodule != "groups" && !string.IsNullOrEmpty(submodule)) return;
 
-            template.SetTemplate("account_group_manage.html");
+            template.SetTemplate("Groups", "account_group_manage");
 
             template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(ZzUri.AppendSid("/groups/create")));
 
@@ -136,7 +136,7 @@ namespace BoxSocial.Groups
 
             long groupId;
 
-            template.SetTemplate("account_group_edit.html");
+            template.SetTemplate("Groups", "account_group_edit");
 
             try
             {
@@ -278,7 +278,7 @@ namespace BoxSocial.Groups
             if (submodule != "memberships") return;
 
             // TODO: show pending memberships
-            template.SetTemplate("account_group_membership.html");
+            template.SetTemplate("Groups", "account_group_membership");
 
             DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
@@ -518,7 +518,7 @@ namespace BoxSocial.Groups
 
             long groupId;
 
-            template.SetTemplate("account_group_invite.html");
+            template.SetTemplate("Groups", "account_group_invite");
 
             try
             {
@@ -722,7 +722,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            template.SetTemplate("account_group_appoint_officer.html");
+            template.SetTemplate("Groups", "account_group_appoint_officer");
 
             if (Request.QueryString["sid"] != session.SessionId)
             {

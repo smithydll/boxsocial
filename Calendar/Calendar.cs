@@ -172,7 +172,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, Primitive owner, int year, int month)
         {
-            core.template.SetTemplate("viewcalendarmonth.html");
+            core.template.SetTemplate("Calendar", "viewcalendarmonth");
 
             core.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
             core.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
@@ -271,7 +271,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, Primitive owner, int year, int month, int day)
         {
-            core.template.SetTemplate("viewcalendarday.html");
+            core.template.SetTemplate("Calendar", "viewcalendarday");
 
             core.template.ParseVariables("CURRENT_DAY", HttpUtility.HtmlEncode(day.ToString()));
             core.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));

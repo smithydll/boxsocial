@@ -1,0 +1,36 @@
+<!-- INCLUDE page_header.html -->
+	<h2>{CURRENT_MONTH} {CURRENT_YEAR}</h2>
+	<p>{BREADCRUMBS}</p>
+	<!-- IF U_NEW_EVENT -->
+	<div id="new-stuff">
+		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
+	</div>
+	<!-- ENDIF -->
+		<div class="month">
+			<div class="week-head">
+				<div class="day">Monday</div>
+				<div class="day">Tuesday</div>
+				<div class="day">Wednesday</div>
+				<div class="day">Thursday</div>
+				<div class="day">Friday</div>
+				<div class="day">Saturday</div>
+				<div class="day">Sunday</div>
+			</div>
+			<!-- BEGIN week -->
+			<div class="week">
+				<!-- BEGIN week.day -->
+				<div class="day">
+					<a href="{week.day.URI}">{week.day.DATE}</a>
+					<!-- IF week.day.EVENTS -->
+					<ul>
+						<!-- BEGIN week.day.event -->
+						<li><a href="{week.day.event.URI}">{week.day.event.START_TIME} {week.day.event.TITLE}</a></li>
+						<!-- END week.day.event -->
+					</ul>
+					<!-- ENDIF -->
+				</div>
+				<!-- END week.day -->
+			</div>
+			<!-- END week -->
+		</div>
+<!-- INCLUDE page_footer.html -->

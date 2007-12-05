@@ -528,7 +528,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, PPage page, string photoPath, string photoName)
         {
-            core.template.SetTemplate("viewphoto.html");
+            core.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
             if (photoPath != null)
@@ -629,7 +629,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, GPage page, string photoName)
         {
-            core.template.SetTemplate("viewphoto.html");
+            core.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
 
@@ -700,7 +700,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, NPage page, string photoName)
         {
-            core.template.SetTemplate("viewphoto.html");
+            core.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
 

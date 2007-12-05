@@ -56,7 +56,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public static void Show(Core core, PPage page)
         {
-            core.template.SetTemplate("viewguestbook.html");
+            core.template.SetTemplate("GuestBook", "viewguestbook");
 
             page.ProfileOwner.LoadProfileInfo();
             int p = Functions.RequestInt("p", 1);
@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public static void Show(Core core, GPage page)
         {
-            core.template.SetTemplate("viewguestbook.html");
+            core.template.SetTemplate("GuestBook", "viewguestbook");
 
             int p = Functions.RequestInt("p", 1);
 
@@ -104,7 +104,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public static void Show(Core core, NPage page)
         {
-            core.template.SetTemplate("viewguestbook.html");
+            core.template.SetTemplate("GuestBook", "viewguestbook");
 
             int p = Functions.RequestInt("p", 1);
 
@@ -125,7 +125,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public static void Show(Core core, APage page)
         {
-            core.template.SetTemplate("viewguestbook.html");
+            core.template.SetTemplate("GuestBook", "viewguestbook");
 
             int p = Functions.RequestInt("p", 1);
 

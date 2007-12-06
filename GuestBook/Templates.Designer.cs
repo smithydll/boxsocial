@@ -78,5 +78,18 @@ namespace GuestBook {
                 return ResourceManager.GetString("viewguestbook", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;div id=&quot;profile-comments&quot; class=&quot;pane&quot;&gt;
+        ///	&lt;div class=&quot;comment-pane&quot;&gt;
+        ///		&lt;!-- INCLUDE pane.comments.html --&gt;
+        ///	&lt;/div&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        internal static string viewprofileguestbook {
+            get {
+                return ResourceManager.GetString("viewprofileguestbook", resourceCulture);
+            }
+        }
     }
 }

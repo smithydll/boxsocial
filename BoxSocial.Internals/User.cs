@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
         private string suffix;
         private string title;
         private short religion;
-        private byte showBbcode;
+        private BbcodeOptions showBbcode;
         private bool showCustomStyles;
         private string profileHomepage = "/profile";
         private int friends;
@@ -527,7 +527,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return (showBbcode & (1 << 0)) > 0;
+                return (showBbcode & BbcodeOptions.ShowImages) == BbcodeOptions.ShowImages;
             }
         }
 
@@ -535,7 +535,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return (showBbcode & (1 << 1)) > 0;
+                return (showBbcode & BbcodeOptions.ShowFlash) == BbcodeOptions.ShowFlash;
             }
         }
 
@@ -543,28 +543,15 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return (showBbcode & (1 << 2)) > 0;
+                return (showBbcode & BbcodeOptions.ShowVideo) == BbcodeOptions.ShowVideo;
             }
         }
 
-        public List<BbcodeOptions> GetUserBbcodeOptions
+        public BbcodeOptions GetUserBbcodeOptions
         {
             get
             {
-                List<BbcodeOptions> bbcodeOptions = new List<BbcodeOptions>();
-                if (!BbcodeShowImages)
-                {
-                    bbcodeOptions.Add(BbcodeOptions.DisableImages);
-                }
-                if (!BbcodeShowFlash)
-                {
-                    bbcodeOptions.Add(BbcodeOptions.DisableFlash);
-                }
-                if (!BbcodeShowVideos)
-                {
-                    bbcodeOptions.Add(BbcodeOptions.DisableVideo);
-                }
-                return bbcodeOptions;
+                return showBbcode;
             }
         }
 
@@ -669,8 +656,15 @@ namespace BoxSocial.Internals
 
             if (loadProfileInfo)
             {
-                DataTable userTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_profile up ON uk.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
-                    userId, USER_INFO_FIELDS, USER_PROFILE_FIELDS, USER_ICON_FIELDS));
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
+                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id"));
+                query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
+                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
+                query.condition.Add("uk.user_id", userId);
+
+                DataTable userTable = db.SelectQuery(query);
 
                 if (userTable.Rows.Count == 1)
                 {
@@ -685,8 +679,13 @@ namespace BoxSocial.Internals
             }
             else
             {
-                DataTable userTable = db.SelectQuery(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
-                userId, USER_INFO_FIELDS, USER_ICON_FIELDS));
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
+                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
+                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
+                query.condition.Add("uk.user_id", userId);
+
+                DataTable userTable = db.SelectQuery(query);
 
                 if (userTable.Rows.Count == 1)
                 {
@@ -714,13 +713,22 @@ namespace BoxSocial.Internals
             DataTable userTable;
             if (loadIcon)
             {
-                userTable = db.SelectQuery(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_name = '{0}'",
-                    Mysql.Escape(userName), USER_INFO_FIELDS, USER_ICON_FIELDS));
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
+                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
+                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
+                query.condition.Add("uk.user_name", userName);
+
+                userTable = db.SelectQuery(query);
             }
             else
             {
-                userTable = db.SelectQuery(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}'",
-                    Mysql.Escape(userName), USER_INFO_FIELDS));
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS);
+                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
+                query.condition.Add("uk.user_name", userName);
+
+                userTable = db.SelectQuery(query);
             }
 
             if (userTable.Rows.Count == 1)
@@ -739,8 +747,13 @@ namespace BoxSocial.Internals
 
         public void LoadProfileInfo()
         {
-            DataTable userTable = db.SelectQuery(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_profile up ON uk.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country WHERE uk.user_id = {0}",
-                userId, USER_PROFILE_FIELDS));
+            SelectQuery query = new SelectQuery("user_keys uk");
+            query.AddFields(Member.USER_PROFILE_FIELDS);
+            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id"));
+            query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
+            query.condition.Add("uk.user_id", userId);
+
+            DataTable userTable = db.SelectQuery(query);
 
             if (userTable.Rows.Count == 1)
             {
@@ -766,7 +779,7 @@ namespace BoxSocial.Internals
             registrationDate = timeZone.DateTimeFromMysql(userRow["user_reg_date_ut"]);
             lastOnlineTime = timeZone.DateTimeFromMysql(userRow["user_last_visit_ut"]);
             blogSubscriptions = (uint)userRow["user_blog_subscriptions"];
-            showBbcode = (byte)userRow["user_show_bbcode"];
+            showBbcode = (BbcodeOptions)(byte)userRow["user_show_bbcode"];
             showCustomStyles = ((byte)userRow["user_show_custom_styles"] > 0) ? true : false;
             if (!(userRow["user_home_page"] is DBNull))
             {
@@ -891,8 +904,19 @@ namespace BoxSocial.Internals
         {
             List<Member> friends = new List<Member>();
 
-            DataTable friendsTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3} FROM user_relations uf INNER JOIN user_info ui ON uf.relation_you = ui.user_id INNER JOIN user_profile up ON uf.relation_you = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE uf.relation_me = {0} and uf.relation_type = 'FRIEND' ORDER BY (uf.relation_order - 1) LIMIT {4}, {5}",
-                userId, Member.USER_PROFILE_FIELDS, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, (page - 1) * perPage, perPage));
+            SelectQuery query = new SelectQuery("user_relations uf");
+            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id"));
+            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id"));
+            query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
+            query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
+            query.condition.Add("uf.relation_me", userId);
+            query.condition.Add("uf.relation_type", "FRIEND");
+            query.sorts.Add(new TableSort(SortOrder.Ascending, "(uf.relation_order - 1)"));
+            query.limitStart = (page - 1) * perPage;
+            query.limitCount = perPage;
+
+            DataTable friendsTable = db.SelectQuery(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {
@@ -1038,14 +1062,52 @@ namespace BoxSocial.Internals
 
             string activateKey = Member.GenerateActivationSecurityToken();
 
-            long userId = db.UpdateQuery(string.Format("INSERT INTO user_keys (user_name) VALUES ('{0}')",
-                Mysql.Escape(userName)), true);
+            /*long userId = db.UpdateQuery(string.Format("INSERT INTO user_keys (user_name) VALUES ('{0}')",
+                Mysql.Escape(userName)), true);*/
 
-            db.UpdateQuery(string.Format("INSERT INTO user_info (user_id, user_name, user_alternate_email, user_password, user_reg_date_ut, user_activate_code, user_reg_ip, user_home_page) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', '{6}');",
-                userId, Mysql.Escape(userName), Mysql.Escape(eMail), password, Mysql.Escape(activateKey), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape("/profile")), true);
+            InsertQuery query = new InsertQuery("user_keys");
+            query.fieldValues.Add("user_name", userName);
 
-            db.UpdateQuery(string.Format("INSERT INTO user_profile (user_id) VALUES ({0});",
-                userId), false);
+            long userId = db.UpdateQuery(query, true);
+
+            if (userId < 0)
+            {
+                throw new InvalidUserException();
+            }
+
+            query = new InsertQuery("user_info");
+            query.fieldValues.Add("user_id", userId);
+            query.fieldValues.Add("user_name", userName);
+            query.fieldValues.Add("user_alternate_email", eMail);
+            query.fieldValues.Add("user_password", password);
+            query.fieldValues.Add("user_reg_date_ut", core.tz.GetUnixTimeStamp(core.tz.Now));
+            query.fieldValues.Add("user_activate_code", activateKey);
+            query.fieldValues.Add("user_reg_ip", session.IPAddress.ToString());
+            query.fieldValues.Add("user_home_page", "/profile");
+            query.fieldValues.Add("user_bytes", 0);
+            query.fieldValues.Add("user_last_visit_ut", 0);
+            query.fieldValues.Add("user_show_bbcode", 0x07);
+            query.fieldValues.Add("user_show_custom_styles", true);
+
+            if (db.UpdateQuery(query, true) < 0)
+            {
+                HttpContext.Current.Response.Write(query.ToString());
+                HttpContext.Current.Response.End();
+
+                throw new InvalidUserException();
+            }
+
+            query = new InsertQuery("user_profile");
+            query.fieldValues.Add("user_id", userId);
+            query.fieldValues.Add("profile_access", 0x3331);
+
+            db.UpdateQuery(query, false);
+
+            /*db.UpdateQuery(string.Format("INSERT INTO user_info (user_id, user_name, user_alternate_email, user_password, user_reg_date_ut, user_activate_code, user_reg_ip, user_home_page) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', '{6}');",
+                userId, Mysql.Escape(userName), Mysql.Escape(eMail), password, Mysql.Escape(activateKey), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape("/profile")), true);*/
+
+            /*db.UpdateQuery(string.Format("INSERT INTO user_profile (user_id) VALUES ({0});",
+                userId), false);*/
 
             Member newUser = new Member(db, userId);
 
@@ -1669,14 +1731,6 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (core.session.IsLoggedIn)
-            {
-                if (page.ProfileOwner.ProfileAccess.CanComment)
-                {
-                    core.template.ParseVariables("CAN_COMMENT", "TRUE");
-                }
-            }
-
             string age;
             int ageInt = page.ProfileOwner.Age;
             if (ageInt == 0)
@@ -1763,7 +1817,7 @@ namespace BoxSocial.Internals
             /* pages */
             core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
 
-            core.InvokeHooks(page);
+            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));
         }
     }
 

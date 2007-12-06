@@ -79,6 +79,7 @@
     <Content Include="templates\viewgallery.html" />
     <Content Include="templates\viewgroupgallery.html" />
     <Content Include="templates\viewphoto.html" />
+    <Content Include="templates\viewprofilegallery.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates.resx">

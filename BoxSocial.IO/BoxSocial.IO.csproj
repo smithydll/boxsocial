@@ -39,9 +39,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="DeleteQuery.cs" />
+    <Compile Include="InsertQuery.cs" />
     <Compile Include="Mysql.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query.cs" />
+    <Compile Include="SelectQuery.cs" />
     <Compile Include="Template.cs" />
+    <Compile Include="UpdateQuery.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

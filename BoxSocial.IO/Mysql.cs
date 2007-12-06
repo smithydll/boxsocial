@@ -100,9 +100,24 @@ namespace BoxSocial.IO
             }
         }
 
+        public DataTable SelectQuery(SelectQuery query)
+        {
+            return SelectQuery(query.ToString());
+        }
+
         public new long UpdateQuery(string sqlquery)
         {
             return this.UpdateQuery(sqlquery, false);
+        }
+
+        public long UpdateQuery(Query query)
+        {
+            return UpdateQuery(query.ToString());
+        }
+
+        public long UpdateQuery(Query query, bool startTransaction)
+        {
+            return UpdateQuery(query.ToString(), startTransaction);
         }
 
         /// <summary>

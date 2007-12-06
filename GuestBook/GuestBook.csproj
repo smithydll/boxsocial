@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="templates\viewguestbook.html" />
+    <Content Include="templates\viewprofileguestbook.htm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates.resx">

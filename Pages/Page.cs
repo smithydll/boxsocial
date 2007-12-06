@@ -280,14 +280,14 @@ namespace BoxSocial.Applications.Pages
 
         private static void Show(Core core, PPage page, Page thePage)
         {
-            core.template.SetTemplate("Pages", "viewpage");
+            page.template.SetTemplate("Pages", "viewpage");
 
             long loggedIdUid = thePage.PageAccess.SetSessionViewer(core.session);
 
             page.ProfileOwner.LoadProfileInfo();
 
             // TODO: generate page list
-            core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
+            page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
 
             if (!thePage.PageAccess.CanRead)
             {
@@ -295,10 +295,10 @@ namespace BoxSocial.Applications.Pages
                 return;
             }
 
-            core.template.ParseVariables("PAGE_TITLE", HttpUtility.HtmlEncode(thePage.Title));
-            core.template.ParseVariables("PAGE_BODY", Bbcode.Parse(HttpUtility.HtmlEncode(thePage.Body), core.session.LoggedInMember, page.ProfileOwner));
+            page.template.ParseVariables("PAGE_TITLE", HttpUtility.HtmlEncode(thePage.Title));
+            page.template.ParseVariables("PAGE_BODY", Bbcode.Parse(HttpUtility.HtmlEncode(thePage.Body), core.session.LoggedInMember, page.ProfileOwner));
             DateTime pageDateTime = thePage.GetModifiedDate(core.tz);
-            core.template.ParseVariables("PAGE_LAST_MODIFIED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(pageDateTime)));
+            page.template.ParseVariables("PAGE_LAST_MODIFIED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(pageDateTime)));
 
             if (core.session.LoggedInMember != null)
             {
@@ -313,26 +313,26 @@ namespace BoxSocial.Applications.Pages
             {
                 if (!string.IsNullOrEmpty(thePage.License.Title))
                 {
-                    core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
+                    page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
                 }
                 if (!string.IsNullOrEmpty(thePage.License.Icon))
                 {
-                    core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
+                    page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
                 }
                 if (!string.IsNullOrEmpty(thePage.License.Link))
                 {
-                    core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
+                    page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
                 }
             }
 
-            core.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));
+            page.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));
 
-            core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, thePage.FullPath));
+            page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, thePage.FullPath));
 
-            core.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode((ZzUri.BuildProfileUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
+            page.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode((ZzUri.BuildProfileUri(page.ProfileOwner))));
+            page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
+            page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
+            page.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
         }
     }
 

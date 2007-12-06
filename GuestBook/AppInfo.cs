@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -289,76 +290,97 @@ namespace BoxSocial.Applications.GuestBook
             return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs e)
         {
-            if (sender is PPage)
+            if (e.PageType == AppPrimitives.Member)
             {
-                PPage page = (PPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewprofile:
-                        ShowMemberGuestBook(page.db, page);
-                        break;
-                }
+                ShowMemberGuestBook(e);
             }
-            if (sender is GPage)
+            if (e.PageType == AppPrimitives.Group)
             {
-                GPage page = (GPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewgroup:
-                        ShowGroupGuestBook(page.db, page);
-                        break;
-                }
+                ShowGroupGuestBook(e);
             }
-            if (sender is NPage)
+            if (e.PageType == AppPrimitives.Network)
             {
-                NPage page = (NPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewnetwork:
-                        ShowNetworkGuestBook(page.db, page);
-                        break;
-                }
+                ShowNetworkGuestBook(e);
             }
-            if (sender is APage)
+            if (e.PageType == AppPrimitives.Application)
             {
-                APage page = (APage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewapplication:
-                        ShowApplicationGuestBook(page.db, page);
-                        break;
-                }
+                ShowApplicationGuestBook(e);
             }
         }
 
-        public void ShowMemberGuestBook(Mysql db, PPage page)
+        public void ShowMemberGuestBook(HookEventArgs e)
         {
-            Display.DisplayComments(page, page.ProfileOwner, page.ProfileOwner.UserId, "USER", (long)page.ProfileOwner.ProfileComments, false);
-            page.template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(page.ProfileOwner)));
+            Member profileOwner = (Member)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+
+            if (e.core.session.IsLoggedIn)
+            {
+                if (profileOwner.ProfileAccess.CanComment)
+                {
+                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            Display.DisplayComments(core, template, profileOwner, profileOwner.Id, "USER", (long)profileOwner.ProfileComments, false);
+            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
+
+            e.core.AddMainPanel(template);
         }
 
-        public void ShowGroupGuestBook(Mysql db, GPage page)
+        public void ShowGroupGuestBook(HookEventArgs e)
         {
-            Display.DisplayComments(page, page.ThisGroup, page.ThisGroup.GroupId, "GROUP", (long)page.ThisGroup.Comments, false);
-            page.template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(page.ThisGroup)));
+            UserGroup thisGroup = (UserGroup)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+
+            if (e.core.session.IsLoggedIn)
+            {
+                if (thisGroup.IsGroupMember(e.core.session.LoggedInMember))
+                {
+                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            Display.DisplayComments(e.core, template, thisGroup, thisGroup.GroupId, "GROUP", (long)thisGroup.Comments, false);
+            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(thisGroup)));
+
+            e.core.AddMainPanel(template);
         }
 
-        public void ShowNetworkGuestBook(Mysql db, NPage page)
+        public void ShowNetworkGuestBook(HookEventArgs e)
         {
-            Display.DisplayComments(page, page.TheNetwork, page.TheNetwork.NetworkId, "NETWORK", (long)page.TheNetwork.Comments, false);
-            page.template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(page.TheNetwork)));
+            Network theNetwork = (Network)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+
+            if (e.core.session.IsLoggedIn)
+            {
+                if (theNetwork.IsNetworkMember(e.core.session.LoggedInMember))
+                {
+                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            Display.DisplayComments(e.core, template, theNetwork, theNetwork.NetworkId, "NETWORK", (long)theNetwork.Comments, false);
+            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(theNetwork)));
+
+            e.core.AddMainPanel(template);
         }
 
-        public void ShowApplicationGuestBook(Mysql db, APage page)
+        public void ShowApplicationGuestBook(HookEventArgs e)
         {
-            Display.DisplayComments(page, page.AnApplication, page.AnApplication.ApplicationId, "APPLICATION", (long)page.AnApplication.Comments, false);
-            page.template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(page.AnApplication)));
+            ApplicationEntry anApplication = (ApplicationEntry)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+
+            if (e.core.session.IsLoggedIn)
+            {
+                template.ParseVariables("CAN_COMMENT", "TRUE");
+            }
+
+            Display.DisplayComments(e.core, template, anApplication, anApplication.ApplicationId, "APPLICATION", (long)anApplication.Comments, false);
+            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(anApplication)));
+
+            e.core.AddMainPanel(template);
         }
     }
 }

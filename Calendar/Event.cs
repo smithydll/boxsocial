@@ -239,17 +239,17 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.owner.Uri, calendarEvent.EventId));
         }
 
-        public static void Show(Core core, Primitive owner, long eventId)
+        public static void Show(Core core, TPage page, Primitive owner, long eventId)
         {
-            core.template.SetTemplate("Calendar", "viewcalendarevent");
+            page.template.SetTemplate("Calendar", "viewcalendarevent");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day))));
-                core.template.ParseVariables("U_EDIT_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.ParseVariables("U_EDIT_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
                     "mode=edit",
                     string.Format("id={0}", eventId))));
             }
@@ -266,17 +266,17 @@ namespace BoxSocial.Applications.Calendar
                     return;
                 }
 
-                core.template.ParseVariables("SUBJECT", HttpUtility.HtmlEncode(calendarEvent.Subject));
-                core.template.ParseVariables("LOCATION", HttpUtility.HtmlEncode(calendarEvent.Location));
-                core.template.ParseVariables("DESCRIPTION", HttpUtility.HtmlEncode(calendarEvent.Description));
-                core.template.ParseVariables("START_TIME", HttpUtility.HtmlEncode(calendarEvent.GetStartTime(core.tz).ToString()));
-                core.template.ParseVariables("END_TIME", HttpUtility.HtmlEncode(calendarEvent.GetEndTime(core.tz).ToString()));
+                page.template.ParseVariables("SUBJECT", HttpUtility.HtmlEncode(calendarEvent.Subject));
+                page.template.ParseVariables("LOCATION", HttpUtility.HtmlEncode(calendarEvent.Location));
+                page.template.ParseVariables("DESCRIPTION", HttpUtility.HtmlEncode(calendarEvent.Description));
+                page.template.ParseVariables("START_TIME", HttpUtility.HtmlEncode(calendarEvent.GetStartTime(core.tz).ToString()));
+                page.template.ParseVariables("END_TIME", HttpUtility.HtmlEncode(calendarEvent.GetEndTime(core.tz).ToString()));
 
                 List<string[]> calendarPath = new List<string[]>();
                 calendarPath.Add(new string[] { "calendar", "Calendar" });
                 //calendarPath.Add(new string[] { "events", "Events" });
                 calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
-                core.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+                page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
             }
             catch
             {

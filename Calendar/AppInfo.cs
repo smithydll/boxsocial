@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
@@ -96,7 +97,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is PPage)
             {
                 PPage page = (PPage)sender;
-                Calendar.Show(core, page.ProfileOwner);
+                Calendar.Show(core, page, page.ProfileOwner);
             }
         }
 
@@ -109,7 +110,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is PPage)
             {
                 PPage page = (PPage)sender;
-                Calendar.Show(core, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
+                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 
@@ -118,7 +119,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is PPage)
             {
                 PPage page = (PPage)sender;
-                Calendar.Show(core, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
+                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
             }
         }
 
@@ -127,7 +128,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is PPage)
             {
                 PPage page = (PPage)sender;
-                Event.Show(core, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
+                Event.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
             }
         }
 
@@ -136,46 +137,56 @@ namespace BoxSocial.Applications.Calendar
             return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs e)
         {
-            if (sender is TPage)
+            if (e.PageType == AppPrimitives.None)
             {
-                TPage page = (TPage)sender;
-
-                switch (page.Signature)
+                if (e.core.PagePath == "/default.aspx")
                 {
-                    case PageSignature.today:
-                        Calendar.DisplayMiniCalendar(core, page.session.LoggedInMember, page.tz.Now.Year, page.tz.Now.Month);
-                        ShowToday(core.db, page);
-                        break;
+                    ShowMiniCalendar(e);
+                    ShowToday(e);
                 }
             }
         }
 
-        void ShowToday(Mysql db, TPage page)
+        void ShowMiniCalendar(HookEventArgs e)
         {
-            long startTime = page.tz.GetUnixTimeStamp(new DateTime(page.tz.Now.Year, page.tz.Now.Month, page.tz.Now.Day, 0, 0, 0));
+            Template template = new Template(Assembly.GetExecutingAssembly(), "todaymonthpanel");
+
+            Calendar.DisplayMiniCalendar(e.core, template, e.core.session.LoggedInMember, e.core.tz.Now.Year, e.core.tz.Now.Month);
+
+            e.core.AddSidePanel(template);
+        }
+
+        void ShowToday(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "todayupcommingevents");
+
+            long startTime = e.core.tz.GetUnixTimeStamp(new DateTime(e.core.tz.Now.Year, e.core.tz.Now.Month, e.core.tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 7; // skip ahead one week into the future
 
-            Calendar cal = new Calendar(db);
-            List<Event> events = cal.GetEvents(core, page.session.LoggedInMember, startTime, endTime);
+            Calendar cal = new Calendar(e.core.db);
+            List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
+
+            template.ParseVariables("U_CALENDAR", HttpUtility.HtmlEncode(ZzUri.AppendSid(string.Format("/{0}/calendar",
+                e.core.session.LoggedInMember.UserName))));
 
             VariableCollection appointmentDaysVariableCollection = null;
-            DateTime lastDay = page.tz.Now;
+            DateTime lastDay = e.core.tz.Now;
 
             if (events.Count > 0)
             {
-                page.template.ParseVariables("HAS_EVENTS", "TRUE");
+                template.ParseVariables("HAS_EVENTS", "TRUE");
             }
 
             foreach(Event calendarEvent in events)
             {
-                DateTime eventDay = calendarEvent.GetStartTime(page.tz);
-                DateTime eventEnd = calendarEvent.GetEndTime(page.tz);
+                DateTime eventDay = calendarEvent.GetStartTime(e.core.tz);
+                DateTime eventEnd = calendarEvent.GetEndTime(e.core.tz);
 
                 if (appointmentDaysVariableCollection == null || lastDay.Day != eventDay.Day)
                 {
-                    appointmentDaysVariableCollection = page.template.CreateChild("appointment_days_list");
+                    appointmentDaysVariableCollection = template.CreateChild("appointment_days_list");
 
                     appointmentDaysVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(eventDay.DayOfWeek.ToString()));
                 }
@@ -187,6 +198,8 @@ namespace BoxSocial.Applications.Calendar
                 appointmentVariableCollection.ParseVariables("LOCATION", HttpUtility.HtmlEncode(calendarEvent.Location));
                 appointmentVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
             }
+
+            e.core.AddMainPanel(template);
         }
     }
 }

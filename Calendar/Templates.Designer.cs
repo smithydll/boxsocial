@@ -82,6 +82,49 @@ namespace Calendar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;today-month&quot; style=&quot;border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
+        ///		{CURRENT_MONTH} {CURRENT_YEAR}
+        ///		&lt;div class=&quot;month-small&quot;&gt;
+        ///			&lt;div class=&quot;week&quot;&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Mo&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Tu&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Wd&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Th&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Fr&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Sa&lt;/div&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;Su&lt;/div&gt;
+        ///			&lt;/div&gt;
+        ///			&lt;!-- BEGIN week --&gt;
+        ///			&lt;div class=&quot;week&quot;&gt;
+        ///				&lt;!-- BEGIN week.day --&gt;
+        ///				&lt;div class=&quot;day&quot;&gt;&lt;a href=&quot;{week.day.UR [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string todaymonthpanel {
+            get {
+                return ResourceManager.GetString("todaymonthpanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;today-calendar&quot; style=&quot;margin-right: 260px; border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
+        ///		&lt;h4&gt;&lt;a href=&quot;/{USERNAME}/calendar&quot;&gt;Calendar&lt;/a&gt;&lt;/h4&gt;
+        ///		&lt;!-- IF HAS_EVENTS --&gt;
+        ///		&lt;ul id=&quot;today-events&quot;&gt;
+        ///			&lt;!-- BEGIN appointment_days_list --&gt;
+        ///			&lt;li&gt;
+        ///				&lt;h5&gt;{appointment_days_list.DAY}&lt;/h5&gt;
+        ///				&lt;dl&gt;
+        ///					&lt;!-- BEGIN appointment_days_list.appointments_list --&gt;
+        ///					&lt;dt&gt;{appointment_days_list.appointments_list.TIME}&lt;/dt&gt;
+        ///					&lt;dd&gt;&lt;a href=&quot;{appointment_days_list.appointments_list.URI}&quot;&gt;{appointme [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string todayupcommingevents {
+            get {
+                return ResourceManager.GetString("todayupcommingevents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///	&lt;h2&gt;{CURRENT_DAY} {CURRENT_MONTH} {CURRENT_YEAR}&lt;/h2&gt;
         ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;

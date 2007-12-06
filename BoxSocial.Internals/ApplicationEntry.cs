@@ -444,11 +444,6 @@ namespace BoxSocial.Internals
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
-            if (core.session.IsLoggedIn)
-            {
-                core.template.ParseVariables("CAN_COMMENT", "TRUE");
-            }
-
             Member Creator = new Member(core.db, page.AnApplication.CreatorId, true);
 
             core.template.ParseVariables("APPLICATION_NAME", HttpUtility.HtmlEncode(page.AnApplication.Title));
@@ -467,7 +462,7 @@ namespace BoxSocial.Internals
                     page.AnApplication.ApplicationId), true)));
             }
 
-            core.InvokeHooks(page);
+            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));
         }
     }
 

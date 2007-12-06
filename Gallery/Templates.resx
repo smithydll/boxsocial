@@ -142,4 +142,7 @@
   <data name="viewphoto" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewphoto.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="viewprofilegallery" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\viewprofilegallery.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
 </root>

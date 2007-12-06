@@ -1,0 +1,74 @@
+<!-- INCLUDE page_header.html -->
+
+<h2>{MEMBERS_TITLE}</h2>
+
+<!-- IF IS_WAITING_APPROVAL -->
+<h3>Pending Memberships</h3>
+<table style="width: 100%">
+<tr>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN approval_list -->
+<!-- IF approval_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{approval_list.U_PROFILE}">{approval_list.USER_DISPLAY_NAME}</a></td>
+	<td><a href="{approval_list.U_APPROVE}">Approve Membership</a></td>
+</tr>
+<!-- END approval_list -->
+</table>
+<!-- ENDIF -->
+
+	<p>{BREADCRUMBS}</p>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+	
+<!-- IF MEMBERS -->
+<ul id="group-members">
+<!-- BEGIN member_list -->
+	<li class="member">
+		<div class="frame">
+			<div class="avatar">
+				<a href="{member_list.U_PROFILE}">
+				<!-- IF member_list.ICON -->
+				<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<span style="width: 100px; height: 100px; display: block;">No picture</span>
+				<!-- ENDIF -->
+				</a>
+			</div>
+			<!-- IF GROUP_OPERATOR -->
+			<ul class="actions">
+				<!-- IF member_list.U_MAKE_OPERATOR -->
+				<li><a href="{member_list.U_MAKE_OPERATOR}">Make Operator</a></li>
+				<!-- ENDIF -->
+				<li><a href="{member_list.U_MAKE_OFFICER}">Make Officer</a></li>
+				<!--li><a href="{member_list.U_BAN}">Ban From Group</a></li-->
+			</ul>
+			<!-- ENDIF -->
+			<ul class="details">
+				<li><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></li>
+				<!-- IF member_list.USER_AGE -->
+				<li>{member_list.USER_AGE}</li>
+				<!-- ENDIF -->
+				<!-- IF member_list.USER_COUNTRY -->
+				<li>{member_list.USER_COUNTRY}</li>
+				<!-- ENDIF -->
+				<li>Joined group {member_list.JOIN_DATE}</li>
+				<li><em>{member_list.USER_CAPTION}</em></li>
+			</ul>
+		</div>
+	</li>
+<!-- END member_list -->
+</ul>
+<!-- ENDIF -->
+	<div class="cheat-clear-left"></div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

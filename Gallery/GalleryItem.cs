@@ -528,7 +528,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, PPage page, string photoPath, string photoName)
         {
-            core.template.SetTemplate("Gallery", "viewphoto");
+            page.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
             if (photoPath != null)
@@ -558,42 +558,42 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
                     page.ProfileOwner.UserName, photoPath, photo.Path);
-                core.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                core.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(photo.ItemTitle));
-                core.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(photo.ParentId)));
+                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
+                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(photo.ItemTitle));
+                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(photo.ParentId)));
 
                 if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
-                    core.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
+                    page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
                 }
                 else
                 {
-                    core.template.ParseVariables("PHOTO_DESCRIPTION", "FALSE");
+                    page.template.ParseVariables("PHOTO_DESCRIPTION", "FALSE");
                 }
 
-                core.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(photo.ItemComments)));
+                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(photo.ItemComments)));
 
-                Display.RatingBlock(photo.ItemRating, core.template, photo.ItemId, "PHOTO");
+                Display.RatingBlock(photo.ItemRating, page.template, photo.ItemId, "PHOTO");
 
-                core.template.ParseVariables("ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                core.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri(photo.ItemId)));
-                core.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
-                core.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
+                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
+                page.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri(photo.ItemId)));
+                page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
+                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
 
                 if (photo.License != null)
                 {
                     if (!string.IsNullOrEmpty(photo.License.Title))
                     {
-                        core.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Title));
+                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Title));
                     }
                     if (!string.IsNullOrEmpty(photo.License.Icon))
                     {
-                        core.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Icon));
+                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Icon));
                     }
                     if (!string.IsNullOrEmpty(photo.License.Link))
                     {
-                        core.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Link));
+                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Link));
                     }
                 }
 
@@ -609,15 +609,15 @@ namespace BoxSocial.Applications.Gallery
 
                 if (photo.ItemAccess.CanComment)
                 {
-                    core.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
+                Display.DisplayComments(core, page.template, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
                     HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
+                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
 
-                core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
+                page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
 
             }
             catch (GalleryItemNotFoundException)
@@ -629,7 +629,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, GPage page, string photoName)
         {
-            core.template.SetTemplate("Gallery", "viewphoto");
+            page.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
 
@@ -656,16 +656,16 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/group/{0}/images/_display/{1}",
                         page.ThisGroup.Slug, galleryItem.Path);
-                core.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                core.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                core.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                core.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                core.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
+                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
+                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
+                page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
+                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
 
-                Display.RatingBlock(galleryItem.ItemRating, core.template, galleryItem.ItemId, "PHOTO");
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
-                core.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
+                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
                 //template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
@@ -680,15 +680,15 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.IsGroupMember)
                 {
-                    core.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page, page.ThisGroup, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments);
+                Display.DisplayComments(core, page.template, page.ThisGroup, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments);
 
                 string pageUri = string.Format("/group/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.ThisGroup.Slug), photoName);
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
+                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
 
-                core.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
 
             }
             catch (GalleryItemNotFoundException)
@@ -700,7 +700,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, NPage page, string photoName)
         {
-            core.template.SetTemplate("Gallery", "viewphoto");
+            page.template.SetTemplate("Gallery", "viewphoto");
 
             char[] trimStartChars = { '.', '/' };
 
@@ -729,16 +729,16 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/network/{0}/images/_display/{1}",
                         page.TheNetwork.NetworkNetwork, galleryItem.Path);
-                core.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                core.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                core.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                core.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                core.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
+                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
+                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
+                page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
+                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
 
-                Display.RatingBlock(galleryItem.ItemRating, core.template, galleryItem.ItemId, "PHOTO");
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
-                core.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
+                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
                 //template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
@@ -753,15 +753,15 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.IsNetworkMember)
                 {
-                    core.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page, page.TheNetwork, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments, true);
+                Display.DisplayComments(core, page.template, page.TheNetwork, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments, true);
 
                 string pageUri = string.Format("/network/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.TheNetwork.NetworkNetwork), photoName);
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
+                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
 
-                core.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                page.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
 
             }
             catch (GalleryItemNotFoundException)

@@ -70,16 +70,19 @@ namespace BoxSocial.Applications.Calendar
             return events;
         }
 
-        public static void DisplayMiniCalendar(Core core, Primitive owner, int year, int month)
+        public static void DisplayMiniCalendar(Core core, Template template, Primitive owner, int year, int month)
         {
             int days = DateTime.DaysInMonth(year, month);
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
 
+            template.ParseVariables("CURRENT_MONTH", Functions.IntToMonth(core.tz.Now.Month));
+            template.ParseVariables("CURRENT_YEAR", core.tz.Now.Year.ToString());
+
             for (int week = 0; week < weeks; week++)
             {
-                VariableCollection weekVariableCollection = core.template.CreateChild("week");
+                VariableCollection weekVariableCollection = template.CreateChild("week");
 
                 weekVariableCollection.ParseVariables("WEEK", HttpUtility.HtmlEncode((week + 1).ToString()));
 
@@ -165,21 +168,21 @@ namespace BoxSocial.Applications.Calendar
             return 0;
         }
 
-        public static void Show(Core core, Primitive owner)
+        public static void Show(Core core, TPage page, Primitive owner)
         {
-            Show(core, owner, core.tz.Now.Year, core.tz.Now.Month);
+            Show(core, page, owner, core.tz.Now.Year, core.tz.Now.Month);
         }
 
-        public static void Show(Core core, Primitive owner, int year, int month)
+        public static void Show(Core core, TPage page, Primitive owner, int year, int month)
         {
-            core.template.SetTemplate("Calendar", "viewcalendarmonth");
+            page.template.SetTemplate("Calendar", "viewcalendarmonth");
 
-            core.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
-            core.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
+            page.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
+            page.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1)))));
@@ -216,7 +219,7 @@ namespace BoxSocial.Applications.Calendar
 
             for (int week = 0; week < weeks; week++)
             {
-                VariableCollection weekVariableCollection = core.template.CreateChild("week");
+                VariableCollection weekVariableCollection = page.template.CreateChild("week");
 
                 weekVariableCollection.ParseVariables("WEEK", HttpUtility.HtmlEncode((week + 1).ToString()));
 
@@ -266,20 +269,20 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
-            core.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
         }
 
-        public static void Show(Core core, Primitive owner, int year, int month, int day)
+        public static void Show(Core core, TPage page, Primitive owner, int year, int month, int day)
         {
-            core.template.SetTemplate("Calendar", "viewcalendarday");
+            page.template.SetTemplate("Calendar", "viewcalendarday");
 
-            core.template.ParseVariables("CURRENT_DAY", HttpUtility.HtmlEncode(day.ToString()));
-            core.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
-            core.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
+            page.template.ParseVariables("CURRENT_DAY", HttpUtility.HtmlEncode(day.ToString()));
+            page.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
+            page.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                core.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", day))));
@@ -293,7 +296,7 @@ namespace BoxSocial.Applications.Calendar
 
             for (int hour = 0; hour < 24; hour++)
             {
-                VariableCollection timeslotVariableCollection = core.template.CreateChild("timeslot");
+                VariableCollection timeslotVariableCollection = page.template.CreateChild("timeslot");
 
                 DateTime hourTime = new DateTime(year, month, day, hour, 0, 0);
 
@@ -307,7 +310,7 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
             calendarPath.Add(new string[] { day.ToString(), day.ToString() });
-            core.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
         }
 
         private static void showDayEvents(Core core, Primitive owner, int year, int month, int day, VariableCollection weekVariableCollection, List<Event> events)

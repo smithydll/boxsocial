@@ -174,7 +174,7 @@ namespace BoxSocial.Applications.Blog
             return AppPrimitives.Member;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs eventArgs)
         {
 
         }

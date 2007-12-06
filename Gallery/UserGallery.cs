@@ -49,11 +49,11 @@ namespace BoxSocial.Applications.Gallery
         {
         }
 
-        public override List<GalleryItem> GetItems(TPage page)
+        public override List<GalleryItem> GetItems(Core core)
         {
             List<GalleryItem> items = new List<GalleryItem>();
 
-            foreach (DataRow dr in GetItemDataRows(page))
+            foreach (DataRow dr in GetItemDataRows(core))
             {
                 items.Add(new UserGalleryItem(db, (Member)owner, dr));
             }
@@ -61,11 +61,11 @@ namespace BoxSocial.Applications.Gallery
             return items;
         }
 
-        public override List<GalleryItem> GetItems(TPage page, int currentPage, int perPage)
+        public override List<GalleryItem> GetItems(Core core, int currentPage, int perPage)
         {
             List<GalleryItem> items = new List<GalleryItem>();
 
-            foreach (DataRow dr in GetItemDataRows(page, currentPage, perPage))
+            foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
             {
                 items.Add(new UserGalleryItem(db, (Member)owner, dr));
             }

@@ -34,12 +34,13 @@ namespace BoxSocial.Internals
     /// Summary description for Bbcode
     /// </summary>
 
-    public enum BbcodeOptions
+    public enum BbcodeOptions : byte
     {
-        DisableImages,
-        DisableFlash,
-        DisableVideo,
-        DisableAudio,
+        None = 0x00,
+        ShowImages = 0x01,
+        ShowFlash = 0x02,
+        ShowVideo = 0x04,
+        ShowAudio = 0x08,
     }
 
     public class Bbcode
@@ -179,7 +180,7 @@ namespace BoxSocial.Internals
 
             StringBuilder debugLog = new StringBuilder();
 
-            List<BbcodeOptions> options = new List<BbcodeOptions>();
+            BbcodeOptions options = BbcodeOptions.ShowImages | BbcodeOptions.ShowFlash | BbcodeOptions.ShowVideo | BbcodeOptions.ShowAudio;
 
             if (viewer != null)
             {
@@ -806,33 +807,33 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        private static bool TagAllowed(string tag, List<BbcodeOptions> options)
+        private static bool TagAllowed(string tag, BbcodeOptions options)
         {
             if (options != null)
             {
                 switch (tag)
                 {
                     case "img":
-                        if (options.Contains(BbcodeOptions.DisableImages))
+                        if ((options & BbcodeOptions.ShowImages) != BbcodeOptions.ShowImages)
                         {
                             return false;
                         }
                         break;
                     case "youtube":
-                        if (options.Contains(BbcodeOptions.DisableVideo))
+                        if ((options & BbcodeOptions.ShowVideo) != BbcodeOptions.ShowVideo)
                         {
                             return false;
                         }
                         break;
                     case "flash":
-                        if (options.Contains(BbcodeOptions.DisableFlash))
+                        if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
                         {
                             return false;
                         }
                         break;
                     case "silverlight":
                         // we'll treat silverlight as flash for now
-                        if (options.Contains(BbcodeOptions.DisableFlash))
+                        if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
                         {
                             return false;
                         }

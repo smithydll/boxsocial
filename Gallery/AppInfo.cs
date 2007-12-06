@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -253,80 +254,79 @@ namespace BoxSocial.Applications.Gallery
             return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs e)
         {
-            if (sender is GPage)
+            if (e.PageType == AppPrimitives.Group)
             {
-                GPage page = (GPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewgroup:
-                        ShowGroupGallery(core.db, page);
-                        break;
-                }
+                ShowGroupGallery(e);
             }
-            if (sender is NPage)
+            if (e.PageType == AppPrimitives.Network)
             {
-                NPage page = (NPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewnetwork:
-                        ShowNetworkGallery(core.db, page);
-                        break;
-                }
+                ShowNetworkGallery(e);
             }
         }
 
-        public void ShowGroupGallery(Mysql db, GPage page)
+        public void ShowGroupGallery(HookEventArgs e)
         {
-            if (!(!page.IsGroupMember && page.ThisGroup.GroupType == "CLOSED"))
+            UserGroup thisGroup = (UserGroup)e.Owner;
+
+            // TODO: cache IsGroupMember in Group
+            if (!(!thisGroup.IsGroupMember(e.core.session.LoggedInMember) && thisGroup.GroupType == "CLOSED"))
             {
+                Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
+
                 // show recent photographs in the gallery
-                GroupGallery gallery = new GroupGallery(db, page.ThisGroup);
+                GroupGallery gallery = new GroupGallery(e.core.db, thisGroup);
 
-                List<GalleryItem> galleryItems = gallery.GetItems(page, 1, 6);
+                List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 
-                page.template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(page.ThisGroup.GalleryItems.ToString()));
+                template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(thisGroup.GalleryItems.ToString()));
 
                 foreach (GalleryItem galleryItem in galleryItems)
                 {
-                    VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
+                    VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
                     galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                    galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, galleryItem.Path)));
+                    galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(thisGroup, galleryItem.Path)));
 
                     string thumbUri = string.Format("/group/{0}/images/_tiny/{1}",
-                        page.ThisGroup.Slug, galleryItem.Path);
+                        thisGroup.Slug, galleryItem.Path);
                     galleryVariableCollection.ParseVariables("THUMBNAIL", HttpUtility.HtmlEncode(thumbUri));
                 }
 
-                page.template.ParseVariables("U_GROUP_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(page.ThisGroup)));
+                template.ParseVariables("U_GROUP_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(thisGroup)));
+
+                e.core.AddMainPanel(template);
             }
         }
 
-        public void ShowNetworkGallery(Mysql db, NPage page)
+        public void ShowNetworkGallery(HookEventArgs e)
         {
-            NetworkGallery gallery = new NetworkGallery(db, page.TheNetwork);
+            Network theNetwork = (Network)e.Owner;
 
-            List<GalleryItem> galleryItems = gallery.GetItems(page, 1, 6);
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 
-            page.template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(page.TheNetwork.GalleryItems.ToString()));
+            NetworkGallery gallery = new NetworkGallery(e.core.db, theNetwork);
+
+            List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
+
+            template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(theNetwork.GalleryItems.ToString()));
 
             foreach (GalleryItem galleryItem in galleryItems)
             {
-                VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
+                VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
                 galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, galleryItem.Path)));
+                galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(theNetwork, galleryItem.Path)));
 
                 string thumbUri = string.Format("/network/{0}/images/_tiny/{1}",
-                    page.TheNetwork.NetworkNetwork, galleryItem.Path);
+                    theNetwork.NetworkNetwork, galleryItem.Path);
                 galleryVariableCollection.ParseVariables("THUMBNAIL", HttpUtility.HtmlEncode(thumbUri));
             }
 
-            page.template.ParseVariables("U_NETWORK_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(page.TheNetwork)));
+            template.ParseVariables("U_NETWORK_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(theNetwork)));
+
+            e.core.AddMainPanel(template);
         }
     }
 }

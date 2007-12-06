@@ -85,7 +85,7 @@ namespace BoxSocial.Networks
                 return;
             }
 
-            template.SetTemplate("account_network_join.html");
+            template.SetTemplate("Networks", "account_network_join");
             template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
 
             if (Request.QueryString["sid"] != session.SessionId)

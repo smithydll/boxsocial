@@ -1,0 +1,54 @@
+<!-- INCLUDE page_header.html -->
+	<h2><a href="{U_NETWORK}">{NETWORK_DISPLAY_NAME}</a></h2>
+	<div id="pane-profile">
+		<div id="pane-profile-overview" class="pane">
+			<h3><a href="{U_NETWORK}">{NETWORK_DISPLAY_NAME}</a></h3>
+			<!-- IF U_JOIN -->
+			<p><span id="join-group" class="post-button"><a href="{U_JOIN}">Join This Group</a></span></p>
+			<!-- ENDIF -->
+			<!-- IF U_LEAVE -->
+			<p><span id="leave-group" class="post-button"><a href="{U_LEAVE}">Leave This Group</a></span></p>
+			<!-- ENDIF -->
+		</div>
+	</div>
+	<div id="profile">
+	<div id="profile-group-info-pane" class="pane">
+	<h3>Network Information</h3>
+	<dl>
+		<!-- IF DESCRIPTION -->
+		<dt>Description:</dt>
+		<dd>{DESCRIPTION}</dd>
+		<!-- ENDIF -->
+	</dl>
+	</div>
+	<div id="profile-friends-pane" class="pane">
+	<h3>Network Memberships ({MEMBERS})</h3>
+	<!-- IF MEMBERS -->
+	<p><a href="{U_MEMBERLIST}">View All</a></p>
+	<ul id="profile-friends">
+	<!-- BEGIN member_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{member_list.U_PROFILE}">
+				<!-- IF member_list.ICON -->
+				<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<span style="width: 100px; height: 100px; display: block;">No picture</span>
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END member_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+	<p>There {L_IS_ARE} <a href="{U_MEMBERLIST}">{MEMBERS} {L_MEMBERS}</a> in this network.</p>
+	<!-- ELSE -->
+	<p>There are no members in this network.</p>
+	<!-- ENDIF -->
+	</div>
+	<!-- BEGIN app_panel -->
+{app_panel.BODY}
+	<!-- END app_panel -->
+	</div>
+<!-- INCLUDE page_footer.html -->

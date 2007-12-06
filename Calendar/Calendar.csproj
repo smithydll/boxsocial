@@ -66,6 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="templates\account_calendar_event_new.html" />
+    <Content Include="templates\todaymonthpanel.html" />
+    <Content Include="templates\todayupcommingevents.html" />
     <Content Include="templates\viewcalendarday.html" />
     <Content Include="templates\viewcalendarevent.html" />
     <Content Include="templates\viewcalendarmonth.html" />

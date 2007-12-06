@@ -25,6 +25,7 @@ using System.Resources;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Caching;
 
 namespace BoxSocial.IO
@@ -152,6 +153,27 @@ namespace BoxSocial.IO
             pageAssembly.Add(value.GetName().Name, value);
         }
 
+        public Template()
+        {
+            this.path = HttpContext.Current.Server.MapPath("./templates/");
+        }
+
+        public Template(Assembly assembly, string templateName)
+        {
+            this.path = HttpContext.Current.Server.MapPath("./templates/");
+
+            AddPageAssembly(assembly);
+
+            this.templateAssembly = assembly.GetName().Name;
+            this.templateName = templateName;
+        }
+
+        public Template(string fileName)
+        {
+            this.path = HttpContext.Current.Server.MapPath("./templates/");
+            templateName = fileName;
+        }
+
         public Template(string path, string fileName)
         {
             this.path = path;
@@ -207,6 +229,11 @@ namespace BoxSocial.IO
             else
             {
                 template = Template.OpenTextFile(Path.Combine(path, templateName));
+                if (template == null)
+                {
+                    template = string.Format("Could not load template {0}",
+                        templateName);
+                }
             }
             StringBuilder output = new StringBuilder();
             string[] lines = template.Replace("\r", "").Split('\n');

@@ -100,7 +100,7 @@ namespace BoxSocial.Networks
             return AppPrimitives.Member | AppPrimitives.Network;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs e)
         {
         }
     }

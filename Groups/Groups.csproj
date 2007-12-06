@@ -66,6 +66,7 @@
     <Content Include="templates\account_group_membership.html" />
     <Content Include="templates\viewgroup.html" />
     <Content Include="templates\viewgroupmemberlist.html" />
+    <Content Include="templates\viewprofilegroups.htm" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates.resx">

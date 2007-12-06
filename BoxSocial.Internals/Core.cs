@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -32,7 +33,7 @@ namespace BoxSocial.Internals
     public sealed class Core
     {
         public Mysql db;
-        public Template template;
+        internal Template template;
         public SessionState session;
         public int PageNo;
         public AppDomain CoreDomain;
@@ -41,9 +42,9 @@ namespace BoxSocial.Internals
         public TimeZone tz;
 
         // TODO: remove
-        public TPage page;
+        internal TPage page;
 
-        public delegate void HookHandler(Core core, object sender);
+        public delegate void HookHandler(HookEventArgs eventArgs);
         public delegate void LoadHandler(Core core, object sender);
         public delegate void PageHandler(Core core, object sender);
         public delegate bool CommentHandler(long itemId, Member viewer);
@@ -140,14 +141,14 @@ namespace BoxSocial.Internals
             
         }
 
-        void Core_Hooks(Core core, object sender)
+        void Core_Hooks(HookEventArgs eventArgs)
         {
             
         }
 
-        public void InvokeHooks(object sender)
+        public void InvokeHooks(HookEventArgs eventArgs)
         {
-            PageHooks(this, sender);
+            PageHooks(eventArgs);
         }
 
         public void InvokeNaked(object sender)
@@ -225,6 +226,35 @@ namespace BoxSocial.Internals
         public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
         {
             commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount));
+        }
+
+        private VariableCollection createMainPanel()
+        {
+            return template.CreateChild("app_panel");
+        }
+
+        private VariableCollection createSidePanel()
+        {
+            return template.CreateChild("app_panel_side");
+        }
+
+        public void AddMainPanel(Template t)
+        {
+            VariableCollection panelVariableCollection = createMainPanel();
+
+            panelVariableCollection.ParseVariables("BODY", t.ToString());
+        }
+
+        public void AddSidePanel(Template t)
+        {
+            VariableCollection panelVariableCollection = createSidePanel();
+
+            panelVariableCollection.ParseVariables("BODY", t.ToString());
+        }
+
+        public void AddPageAssembly(Assembly assembly)
+        {
+            template.AddPageAssembly(assembly);
         }
 
         public void EndResponse()

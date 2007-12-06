@@ -202,40 +202,39 @@ namespace BoxSocial.Internals
             page.EndResponse();
         }
 
-        public static void DisplayComments(TPage page, Member profileOwner, long itemId, string itemType)
+        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType)
         {
-            DisplayComments(page, (Primitive)profileOwner, itemId, itemType, -1, true);
+            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, -1, true);
         }
 
-        public static void DisplayComments(TPage page, Member profileOwner, long itemId, string itemType, long comments)
+        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, long comments)
         {
-            DisplayComments(page, (Primitive)profileOwner, itemId, itemType, comments, true);
+            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, comments, true);
         }
 
-        public static void DisplayComments(TPage page, Member profileOwner, long itemId, string itemType, bool sortAscending)
+        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, bool sortAscending)
         {
-            DisplayComments(page, (Primitive)profileOwner, itemId, itemType, -1, sortAscending);
+            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, -1, sortAscending);
         }
 
-        public static void DisplayComments(TPage page, Member profileOwner, long itemId, string itemType, long commentCount, bool sortAscending)
+        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, long commentCount, bool sortAscending)
         {
-            DisplayComments(page, (Primitive)profileOwner, itemId, itemType, commentCount, sortAscending);
+            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, commentCount, sortAscending);
         }
 
-        public static void DisplayComments(TPage page, Primitive owner, long itemId, string itemType, long commentCount)
+        public static void DisplayComments(Core core, Template template, Primitive owner, long itemId, string itemType, long commentCount)
         {
-            DisplayComments(page, owner, itemId, itemType, commentCount, true);
+            DisplayComments(core, template, owner, itemId, itemType, commentCount, true);
         }
 
-        public static void DisplayComments(TPage page, Primitive owner, long itemId, string itemType, long commentCount, bool sortAscending)
+        public static void DisplayComments(Core core, Template template, Primitive owner, long itemId, string itemType, long commentCount, bool sortAscending)
         {
-            Mysql db = page.db;
-            Template template = page.template;
+            Mysql db = core.db;
 
             int p = Functions.RequestInt("p", 1);
 
             List<Comment> comments = Comment.GetComments(db, itemType, itemId, sortAscending, p, 10);
-            Comment.LoadUserInfoCache(page.Core, comments);
+            Comment.LoadUserInfoCache(core, comments);
 
             if (commentCount >= 0)
             {
@@ -263,11 +262,11 @@ namespace BoxSocial.Internals
             {
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
-                commentsVariableCollection.ParseVariables("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), page.loggedInMember));
+                commentsVariableCollection.ParseVariables("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
 
                 try
                 {
-                    Member commentPoster = page.Core.UserProfiles[comment.UserId];
+                    Member commentPoster = core.UserProfiles[comment.UserId];
 
                     commentsVariableCollection.ParseVariables("ID", comment.CommentId.ToString());
                     commentsVariableCollection.ParseVariables("USERNAME", commentPoster.DisplayName);
@@ -275,10 +274,10 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.ParseVariables("U_QUOTE", HttpUtility.HtmlEncode(ZzUri.BuildCommentQuoteUri(comment.CommentId)));
                     commentsVariableCollection.ParseVariables("U_REPORT", HttpUtility.HtmlEncode(ZzUri.BuildCommentReportUri(comment.CommentId)));
                     commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(ZzUri.BuildCommentDeleteUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("TIME", page.tz.DateTimeToString(comment.GetTime(page.tz)));
+                    commentsVariableCollection.ParseVariables("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
                     commentsVariableCollection.ParseVariables("USER_TILE", HttpUtility.HtmlEncode(commentPoster.UserTile));
 
-                    if (owner.CanModerateComments(page.loggedInMember))
+                    if (owner.CanModerateComments(core.session.LoggedInMember))
                     {
                         commentsVariableCollection.ParseVariables("MODERATE", "TRUE");
                     }

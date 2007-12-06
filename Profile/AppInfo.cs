@@ -100,7 +100,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs eventArgs)
         {
         }
     }

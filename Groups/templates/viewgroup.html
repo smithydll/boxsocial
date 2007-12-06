@@ -64,22 +64,6 @@
 		<!-- ENDIF -->
 	</dl>
 	</div>
-	<div id="profile-gallery-pane" class="pane">
-	<h3>Group Gallery ({PHOTOS})</h3>
-	<!-- IF PHOTOS -->
-	<ul id="photo-list">
-		<!-- BEGIN photo_list -->
-		<li>
-			<dl>
-				<dt><a href="{photo_list.PHOTO_URI}"><img src="{photo_list.THUMBNAIL}" alt="{photo_list.TITLE}" /></a></dt>
-			</dl>
-		</li>
-		<!-- END photo_list -->
-	</ul>
-	<!-- ENDIF -->
-	<div class="cheat-clear-left"></div>
-	<p><a href="{U_GROUP_GALLERY}">View All Photos</a></p>
-	</div>
 	<div id="profile-friends-pane" class="pane">
 	<h3>Group Memberships ({MEMBERS})</h3>
 	<!-- IF MEMBERS -->
@@ -106,10 +90,8 @@
 	<p>There are no members in this group.</p>
 	<!-- ENDIF -->
 	</div>
-	<div id="profile-comments" class="pane">
-	<div class="comment-pane">
-		<!-- INCLUDE pane.comments.html -->
-	</div>
-	</div>
+	<!-- BEGIN app_panel -->
+{app_panel.BODY}
+	<!-- END app_panel -->
 	</div>
 <!-- INCLUDE page_footer.html -->

@@ -211,21 +211,21 @@ namespace BoxSocial.Applications.Pages
 
         public static void ShowLists(Core core, PPage page)
         {
-            core.template.SetTemplate("viewlist.html");
+            page.template.SetTemplate("viewlist.html");
 
-            core.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Lists", page.ProfileOwner.UserNameOwnership)));
-            core.template.ParseVariables("LIST_ABSTRACT", "FALSE");
+            page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Lists", page.ProfileOwner.UserNameOwnership)));
+            page.template.ParseVariables("LIST_ABSTRACT", "FALSE");
 
             List<List> lists = List.GetLists(core, page.ProfileOwner);
 
             if (lists.Count > 0)
             {
-                core.template.ParseVariables("NOT_EMPTY", "TRUE");
+                page.template.ParseVariables("NOT_EMPTY", "TRUE");
             }
 
             foreach (List list in lists)
             {
-                VariableCollection listVariableCollection = core.template.CreateChild("list_list");
+                VariableCollection listVariableCollection = page.template.CreateChild("list_list");
 
                 listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(list.Title));
                 listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(List.BuildListUri(list)));
@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.Pages
 
         public static void Show(Core core, PPage page, string listName)
         {
-            core.template.SetTemplate("viewlist.html");
+            page.template.SetTemplate("viewlist.html");
 
             try
             {
@@ -248,29 +248,29 @@ namespace BoxSocial.Applications.Pages
                     return;
                 }
 
-                core.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(list.title));
-                core.template.ParseVariables("LIST_ID", HttpUtility.HtmlEncode(list.ListId.ToString()));
-                core.template.ParseVariables("LIST_LIST", "TRUE");
+                page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(list.title));
+                page.template.ParseVariables("LIST_ID", HttpUtility.HtmlEncode(list.ListId.ToString()));
+                page.template.ParseVariables("LIST_LIST", "TRUE");
 
                 if (!string.IsNullOrEmpty(list.Abstract))
                 {
-                    core.template.ParseVariables("LIST_ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(list.Abstract)));
+                    page.template.ParseVariables("LIST_ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(list.Abstract)));
                 }
                 else
                 {
-                    core.template.ParseVariables("LIST_ABSTRACT", "FALSE");
+                    page.template.ParseVariables("LIST_ABSTRACT", "FALSE");
                 }
 
                 List<ListItem> listItems = list.GetListItems();
 
                 if (listItems.Count > 0)
                 {
-                    core.template.ParseVariables("NOT_EMPTY", "TRUE");
+                    page.template.ParseVariables("NOT_EMPTY", "TRUE");
                 }
 
                 foreach (ListItem listItem in listItems)
                 {
-                    VariableCollection listVariableCollection = core.template.CreateChild("list_list");
+                    VariableCollection listVariableCollection = page.template.CreateChild("list_list");
 
                     listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(listItem.Text));
                     listVariableCollection.ParseVariables("URI", "FALSE");

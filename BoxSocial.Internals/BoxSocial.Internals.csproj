@@ -54,6 +54,7 @@
     <Compile Include="Email.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="Functions.cs" />
+    <Compile Include="HookEventArgs.cs" />
     <Compile Include="IAppInfo.cs" />
     <Compile Include="License.cs" />
     <Compile Include="PageHandle.cs" />

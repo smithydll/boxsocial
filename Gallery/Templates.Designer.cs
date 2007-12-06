@@ -250,5 +250,22 @@ namespace Gallery {
                 return ResourceManager.GetString("viewphoto", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot;&gt;
+        ///&lt;html&gt;
+        ///	&lt;head&gt;
+        ///		&lt;title&gt;&lt;/title&gt;
+        ///	&lt;/head&gt;
+        ///	&lt;body&gt;
+        ///	
+        ///	&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string viewprofilegallery {
+            get {
+                return ResourceManager.GetString("viewprofilegallery", resourceCulture);
+            }
+        }
     }
 }

@@ -304,20 +304,20 @@ namespace BoxSocial.Applications.Gallery
             return galleriesTable.Rows;
         }
 
-        public abstract List<GalleryItem> GetItems(TPage page);
-        public abstract List<GalleryItem> GetItems(TPage page, int currentPage, int perPage);
+        public abstract List<GalleryItem> GetItems(Core core);
+        public abstract List<GalleryItem> GetItems(Core core, int currentPage, int perPage);
 
-        protected DataRowCollection GetItemDataRows(TPage page)
+        protected DataRowCollection GetItemDataRows(Core core)
         {
-            return GetItemDataRows(page, 1, 16);
+            return GetItemDataRows(core, 1, 16);
         }
 
-        protected DataRowCollection GetItemDataRows(TPage page, int currentPage, int perPage)
+        protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage)
         {
-            db = page.db;
+            db = core.db;
 
-            ushort readAccessLevel = owner.GetAccessLevel(page.loggedInMember);
-            long loggedIdUid = Member.GetMemberId(page.loggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
 
             DataTable photoTable = db.SelectQuery(string.Format(
                 @"SELECT {2}, {8}
@@ -742,7 +742,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, PPage page, string galleryPath)
         {
-            core.template.SetTemplate("Gallery", "viewgallery");
+            page.template.SetTemplate("Gallery", "viewgallery");
 
             int p = 1;
             char[] trimStartChars = { '.', '/' };
@@ -787,11 +787,11 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + gallery.FullPath));
-                    core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(gallery.GalleryId)));
-                    core.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(gallery.GalleryId)));
+                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + gallery.FullPath));
+                    page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(gallery.GalleryId)));
+                    page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(gallery.GalleryId)));
 
-                    core.template.ParseVariables("PAGINATION", Display.GeneratePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0)));
+                    page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0)));
                 }
                 catch (GalleryNotFoundException)
                 {
@@ -802,17 +802,17 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 gallery = new UserGallery(core.db, page.ProfileOwner);
-                core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery"));
-                core.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(0)));
+                page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery"));
+                page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(0)));
             }
 
             List<Gallery> galleries = gallery.GetGalleries(page);
 
-            core.template.ParseVariables("GALLERIES", HttpUtility.HtmlEncode(galleries.Count.ToString()));
+            page.template.ParseVariables("GALLERIES", HttpUtility.HtmlEncode(galleries.Count.ToString()));
 
             foreach (Gallery galleryGallery in galleries)
             {
-                VariableCollection galleryVariableCollection = core.template.CreateChild("gallery_list");
+                VariableCollection galleryVariableCollection = page.template.CreateChild("gallery_list");
 
                 galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryGallery.GalleryTitle));
                 galleryVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(page.ProfileOwner, galleryGallery.FullPath)));
@@ -831,16 +831,16 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            List<GalleryItem> galleryItems = gallery.GetItems(page, p, 12);
+            List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
-            core.template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(galleryItems.Count.ToString()));
+            page.template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(galleryItems.Count.ToString()));
 
             long galleryComments = 0;
             /*for (int i = 0; i < photoTable.Rows.Count; i++)*/
             int i = 0;
             foreach (GalleryItem galleryItem in galleryItems)
             {
-                VariableCollection galleryVariableCollection = core.template.CreateChild("photo_list");
+                VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                 galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
                 galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ProfileOwner, galleryItem.ParentPath, galleryItem.Path)));
@@ -861,17 +861,17 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItems.Count > 0)
             {
-                core.template.ParseVariables("S_RATEBAR", "TRUE");
+                page.template.ParseVariables("S_RATEBAR", "TRUE");
             }
 
-            core.template.ParseVariables("COMMENTS", HttpUtility.HtmlEncode(galleryComments.ToString()));
-            core.template.ParseVariables("L_COMMENTS", HttpUtility.HtmlEncode(string.Format("{0} Comments in gallery", galleryComments)));
-            core.template.ParseVariables("U_COMMENTS", HttpUtility.HtmlEncode(ZzUri.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath)));
+            page.template.ParseVariables("COMMENTS", HttpUtility.HtmlEncode(galleryComments.ToString()));
+            page.template.ParseVariables("L_COMMENTS", HttpUtility.HtmlEncode(string.Format("{0} Comments in gallery", galleryComments)));
+            page.template.ParseVariables("U_COMMENTS", HttpUtility.HtmlEncode(ZzUri.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath)));
         }
 
         public static void Show(Core core, GPage page)
         {
-            core.template.SetTemplate("Gallery", "viewgroupgallery");
+            page.template.SetTemplate("Gallery", "viewgroupgallery");
 
             string mode = HttpContext.Current.Request.QueryString["mode"];
 
@@ -916,7 +916,7 @@ namespace BoxSocial.Applications.Gallery
 
                         GroupGalleryItem.Create(page, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license);
 
-                        core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, slug)));
+                        page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, slug)));
                         Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
@@ -949,7 +949,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else if (mode == "upload")
             {
-                core.template.SetTemplate("Gallery", "groupgalleryupload");
+                page.template.SetTemplate("Gallery", "groupgalleryupload");
 
                 if (!page.IsGroupMember)
                 {
@@ -966,7 +966,7 @@ namespace BoxSocial.Applications.Gallery
                     licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
                 }
 
-                core.template.ParseVariables("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
+                page.template.ParseVariables("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
             }
             else
             {
@@ -998,23 +998,23 @@ namespace BoxSocial.Applications.Gallery
                 if (page.IsGroupMember)
                 {
                     // TODO: builduri
-                    core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode("?mode=upload"));
+                    page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode("?mode=upload"));
                 }
 
                 GroupGallery gallery = new GroupGallery(core.db, page.ThisGroup);
 
-                List<GalleryItem> galleryItems = gallery.GetItems(page, p, 12);
+                List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
                 if (galleryItems.Count > 0)
                 {
-                    core.template.ParseVariables("PHOTOS", "TRUE");
+                    page.template.ParseVariables("PHOTOS", "TRUE");
                 }
 
                 long galleryComments = 0;
                 int i = 0;
                 foreach (GalleryItem galleryItem in galleryItems)
                 {
-                    VariableCollection galleryVariableCollection = core.template.CreateChild("photo_list");
+                    VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                     galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
                     galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, galleryItem.Path)));
@@ -1033,7 +1033,7 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(string.Format("/group/{0}/gallery",
+                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(string.Format("/group/{0}/gallery",
                     page.ThisGroup.Slug), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0)));
 
             }
@@ -1041,7 +1041,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core, NPage page)
         {
-            core.template.SetTemplate("Gallery", "viewgroupgallery");
+            page.template.SetTemplate("Gallery", "viewgroupgallery");
 
             string mode = HttpContext.Current.Request.QueryString["mode"];
 
@@ -1086,7 +1086,7 @@ namespace BoxSocial.Applications.Gallery
 
                         NetworkGalleryItem.Create(page, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license);
 
-                        core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, slug)));
+                        page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, slug)));
                         Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
@@ -1119,7 +1119,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else if (mode == "upload")
             {
-                core.template.SetTemplate("Gallery", "groupgalleryupload");
+                page.template.SetTemplate("Gallery", "groupgalleryupload");
 
                 if (!page.IsNetworkMember)
                 {
@@ -1136,7 +1136,7 @@ namespace BoxSocial.Applications.Gallery
                     licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
                 }
 
-                core.template.ParseVariables("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
+                page.template.ParseVariables("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
             }
             else
             {
@@ -1170,23 +1170,23 @@ namespace BoxSocial.Applications.Gallery
                 if (page.IsNetworkMember)
                 {
                     // TODO: builduri
-                    core.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode("?mode=upload"));
+                    page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode("?mode=upload"));
                 }
 
                 NetworkGallery gallery = new NetworkGallery(core.db, page.TheNetwork);
 
-                List<GalleryItem> galleryItems = gallery.GetItems(page, p, 12);
+                List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
                 if (galleryItems.Count > 0)
                 {
-                    core.template.ParseVariables("PHOTOS", "TRUE");
+                    page.template.ParseVariables("PHOTOS", "TRUE");
                 }
 
                 long galleryComments = 0;
                 int i = 0;
                 foreach (GalleryItem galleryItem in galleryItems)
                 {
-                    VariableCollection galleryVariableCollection = core.template.CreateChild("photo_list");
+                    VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                     galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
                     galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, galleryItem.Path)));
@@ -1206,7 +1206,7 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                core.template.ParseVariables("PAGINATION", Display.GeneratePagination(string.Format("/network/{0}/gallery",
+                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(string.Format("/network/{0}/gallery",
                     page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0)));
 
             }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -100,36 +101,34 @@ namespace BoxSocial.Groups
             return AppPrimitives.Member | AppPrimitives.Group;
         }
 
-        void core_PageHooks(Core core, object sender)
+        void core_PageHooks(HookEventArgs e)
         {
-            if (sender is PPage)
+            if (e.PageType == AppPrimitives.Member)
             {
-                PPage page = (PPage)sender;
-
-                switch (page.Signature)
-                {
-                    case PageSignature.viewprofile:
-                        ShowMemberGroups(page.db, page);
-                        break;
-                }
+                ShowMemberGroups(e);
             }
         }
 
-        public void ShowMemberGroups(Mysql db, PPage page)
+        public void ShowMemberGroups(HookEventArgs e)
         {
-            List<UserGroup> groups = UserGroup.GetUserGroups(db, page.ProfileOwner);
+            Member profileOwner = (Member)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegroups");
+
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.core.db, profileOwner);
             if (groups.Count > 0)
             {
-                page.template.ParseVariables("HAS_GROUPS", "TRUE");
+                template.ParseVariables("HAS_GROUPS", "TRUE");
             }
 
             foreach(UserGroup group in groups)
             {
-                VariableCollection groupVariableCollection = page.template.CreateChild("groups_list");
+                VariableCollection groupVariableCollection = template.CreateChild("groups_list");
 
                 groupVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(group.DisplayName));
                 groupVariableCollection.ParseVariables("U_GROUP", HttpUtility.HtmlEncode(group.Uri));
             }
+
+            e.core.AddSidePanel(template);
         }
     }
 }

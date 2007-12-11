@@ -74,7 +74,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public DateTime GetNetworkMemberJoinDate(Internals.TimeZone tz)
+        public DateTime GetNetworkMemberJoinDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }

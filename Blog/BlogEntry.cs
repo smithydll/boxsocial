@@ -154,12 +154,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public DateTime GetCreatedDate(Internals.TimeZone tz)
+        public DateTime GetCreatedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(createdRaw);
         }
 
-        public DateTime GetModifiedDate(Internals.TimeZone tz)
+        public DateTime GetModifiedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(modifiedRaw);
         }

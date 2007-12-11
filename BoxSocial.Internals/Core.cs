@@ -39,9 +39,8 @@ namespace BoxSocial.Internals
         public AppDomain CoreDomain;
         public string PagePath;
         public GroupCollection PagePathParts;
-        public TimeZone tz;
+        public UnixTime tz;
 
-        // TODO: remove
         internal TPage page;
 
         public delegate void HookHandler(HookEventArgs eventArgs);
@@ -86,29 +85,26 @@ namespace BoxSocial.Internals
         /// <param name="userIds"></param>
         public void LoadUserProfiles(List<long> userIds)
         {
-            string idList = "";
-            bool first = true;
-            foreach (int id in userIds)
+            List<long> idList = new List<long>();
+            foreach (long id in userIds)
             {
                 if (!userProfileCache.ContainsKey(id))
                 {
-                    if (first)
-                    {
-                        idList = id.ToString();
-                        first = false;
-                    }
-                    else
-                    {
-                        idList = string.Format("{0}, {1}",
-                            idList, id);
-                    }
+                    idList.Add(id);
                 }
             }
 
-            if (!string.IsNullOrEmpty(idList))
+            if (idList.Count > 0)
             {
-                DataTable usersTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_profile up ON uk.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id IN ({0})",
-                    idList, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS));
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
+                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+                query.AddCondition("uk.user_id", ConditionEquality.In, idList);
+
+                DataTable usersTable = db.SelectQuery(query);
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {

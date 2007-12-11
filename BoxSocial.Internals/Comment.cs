@@ -97,7 +97,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public DateTime GetTime(BoxSocial.Internals.TimeZone tz)
+        public DateTime GetTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(timeRaw);
         }

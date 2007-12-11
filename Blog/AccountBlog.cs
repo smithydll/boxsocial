@@ -119,10 +119,8 @@ namespace BoxSocial.Applications.Blog
 
                 blogVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(ZzUri.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, (long)blogRow["post_id"])));
 
-                blogVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(string.Format("/account/?module=blog&amp;sub=write&amp;action=edit&amp;id={0}",
-                    (long)blogRow["post_id"])));
-                blogVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(string.Format("/account/?module=blog&amp;sub=write&amp;action=delete&amp;id={0}",
-                    (long)blogRow["post_id"])));
+                blogVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=edit", string.Format("id={0}", (long)blogRow["post_id"]))));
+                blogVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=delete", string.Format("id={0}", (long)blogRow["post_id"]))));
 
                 if (i % 2 == 0)
                 {
@@ -192,7 +190,7 @@ namespace BoxSocial.Applications.Blog
                     db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries - 1 WHERE user_id = {0}",
                         loggedInMember.UserId), false);
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "manage")));
+                    SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
                     Display.ShowMessage(core, "Blog Post Deleted", "The blog post has been deleted from the database.");
                     return;
                 }
@@ -394,12 +392,12 @@ namespace BoxSocial.Applications.Blog
 
             if (status == "DRAFT")
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "drafts")));
+                SetRedirectUri(AccountModule.BuildModuleUri("blog", "drafts"));
                 Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
             }
             else
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "manage")));
+                SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
                 Display.ShowMessage(core, "Blog Post Published", "Your blog post has been published.");
             }
         }

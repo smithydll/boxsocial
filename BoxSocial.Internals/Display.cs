@@ -34,8 +34,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Display
+    public static class Display
     {
+        internal static TPage page;
 
         const string RANK_ACTIVE = "/images/star-on.png";
         const string RANK_RATING = "/images/star-on.png";
@@ -183,7 +184,7 @@ namespace BoxSocial.Internals
             core.EndResponse();
         }
 
-        public static void ShowConfirmBox(TPage page, string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
+        public static void ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
         {
             page.template.SetTemplate("std.confirm.html");
 
@@ -407,7 +408,7 @@ namespace BoxSocial.Internals
         /// <param name="template">The template that represents the current page</param>
         /// <param name="User"></param>
         /// <param name="loggedInMember"></param>
-        public void Header(TPage page)
+        public static void Header(TPage page)
         {
             Template template = page.template;
             SessionState session = page.session;
@@ -419,6 +420,10 @@ namespace BoxSocial.Internals
 
             string bgColour = "";
 
+            if (page.tz == null)
+            {
+                page.tz = new UnixTime(UnixTime.UTC_CODE);
+            }
             double hour = page.tz.Now.Hour + page.tz.Now.Minute / 60.0;
 
             if (hour > 12)
@@ -483,7 +488,6 @@ namespace BoxSocial.Internals
                 }
             }
 
-            //int parentLevel = 0; // TODO:, investigate not used
             int parents = 0;
             int nextParents = 0;
 

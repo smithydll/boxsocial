@@ -73,6 +73,15 @@ namespace BoxSocial.Networks
             return aii;
         }
 
+        public override Dictionary<string, string> PageSlugs
+        {
+            get
+            {
+                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                return slugs;
+            }
+        }
+
         void core_LoadApplication(Core core, object sender)
         {
             core.RegisterApplicationPage(@"^/profile(|/)$", showNetwork);

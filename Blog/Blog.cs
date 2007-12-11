@@ -208,6 +208,7 @@ namespace BoxSocial.Applications.Blog
             bool rss = false;
             long comments = 0;
             int p = 1;
+            string postTitle = null;
 
             Blog myBlog;
             try
@@ -394,10 +395,13 @@ namespace BoxSocial.Applications.Blog
                         page.template.ParseVariables("BLOG_POST_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(comments)));
                         page.template.ParseVariables("BLOGPOST_ID", HttpUtility.HtmlEncode(blogEntries[i].PostId.ToString()));
 
-                        // TODO: something
-                        //myBlog.BlogAccess.SetAccessBits(blogEntries[i].Permissions);
                         myBlog.blogAccess = new Access(core.db, blogEntries[i].Permissions, page.ProfileOwner);
                         myBlog.blogAccess.SetViewer(core.session.LoggedInMember);
+                    }
+
+                    if (post > 0)
+                    {
+                        postTitle = blogEntries[i].Title;
                     }
                 }
 
@@ -414,37 +418,48 @@ namespace BoxSocial.Applications.Blog
                 string pageUri = "";
                 string breadcrumbExtension = (page.ProfileOwner.ProfileHomepage == "/blog") ? "" : "blog/";
 
+                List<string[]> breadCrumbParts = new List<string[]>();
+                breadCrumbParts.Add(new string[] { "blog", "Blog" });
+
                 if (!string.IsNullOrEmpty(category))
                 {
+                    breadCrumbParts.Add(new string[] { "categories/" + category, year.ToString() });
                     pageUri = ZzUri.BuildBlogUri(page.ProfileOwner, category);
-                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, string.Format("blog/{1}",
-                        breadcrumbExtension, "categories/" + category)));
-                }
-                else if (post > 0)
-                {
-                    // TODO: fix this for id/title
-                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, string.Format("blog/{1}/{2}",
-                        breadcrumbExtension, year, month)));
-                    pageUri = ZzUri.BuildBlogPostUri(page.ProfileOwner, year, month, post);
-                }
-                else if (month > 0)
-                {
-                    pageUri = ZzUri.BuildBlogUri(page.ProfileOwner, year, month);
-                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, string.Format("blog/{1}/{2}",
-                        breadcrumbExtension, year, month)));
-                }
-                else if (year > 0)
-                {
-                    pageUri = ZzUri.BuildBlogUri(page.ProfileOwner, year);
-                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, string.Format("blog/{1}",
-                        breadcrumbExtension, year)));
                 }
                 else
                 {
-                    pageUri = ZzUri.BuildBlogUri(page.ProfileOwner);
-                    page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, string.Format("{0}",
-                        breadcrumbExtension)));
+                    if (year > 0)
+                    {
+                        breadCrumbParts.Add(new string[] { year.ToString(), year.ToString() });
+                    }
+                    if (month > 0)
+                    {
+                        breadCrumbParts.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
+                    }
+                    if (post > 0)
+                    {
+                        
+                        breadCrumbParts.Add(new string[] { post.ToString(), postTitle });
+                    }
+
+                    if (post > 0)
+                    {
+                        pageUri = ZzUri.BuildBlogPostUri(page.ProfileOwner, year, month, post);
+                    }
+                    else if (month > 0)
+                    {
+                        pageUri = ZzUri.BuildBlogUri(page.ProfileOwner, year, month);
+                    }
+                    else if (year > 0)
+                    {
+                        pageUri = ZzUri.BuildBlogUri(page.ProfileOwner, year);
+                    }
+                    else
+                    {
+                        pageUri = ZzUri.BuildBlogUri(page.ProfileOwner);
+                    }
                 }
+                page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
 
                 if (post <= 0)
                 {

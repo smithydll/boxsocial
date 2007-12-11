@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Pages
                 status = "DRAFT";
             }
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_modified_ut FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = '{1}' ORDER BY upg.page_order",
+            DataTable pagesTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_modified_ut FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = '{1}' AND upg.page_list_only = 0 ORDER BY upg.page_order",
                 loggedInMember.UserId, status));
 
             for (int i = 0; i < pagesTable.Rows.Count; i++)
@@ -186,6 +186,7 @@ namespace BoxSocial.Applications.Pages
             string pageSlug = (Request.Form["slug"] != null) ? Request.Form["slug"] : "";
             string pageText = (Request.Form["post"] != null) ? Request.Form["post"] : "";
             string pagePath = "";
+            Classifications pageClassification = Classifications.Everyone;
 
             try
             {
@@ -234,7 +235,7 @@ namespace BoxSocial.Applications.Pages
                         db.UpdateQuery(string.Format("DELETE FROM user_pages WHERE user_id = {0} AND page_id = {1};",
                             loggedInMember.UserId, pageId), false);
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
+                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
                         Display.ShowMessage(core, "Page Deleted", "The page has been deleted from the database.");
                         return;
                     }
@@ -242,7 +243,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else if (Request.QueryString["action"] == "edit")
                 {
-                    DataTable pageTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_text, upg.page_license, upg.page_access, upg.page_title, upg.page_slug, upg.page_parent_path, upg.page_parent_id FROM user_pages upg WHERE upg.page_id = {0};",
+                    DataTable pageTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_text, upg.page_license, upg.page_access, upg.page_title, upg.page_slug, upg.page_parent_path, upg.page_parent_id, upg.page_classification FROM user_pages upg WHERE upg.page_id = {0};",
                         pageId));
 
                     if (pageTable.Rows.Count == 1)
@@ -263,6 +264,8 @@ namespace BoxSocial.Applications.Pages
                         {
                             pagePath = string.Format("{0}/{1}/", (string)pageTable.Rows[0]["page_parent_path"], pageSlug);
                         }
+
+                        pageClassification = (Classifications)(byte)pageTable.Rows[0]["page_classification"];
                     }
                 }
             }
@@ -302,6 +305,7 @@ namespace BoxSocial.Applications.Pages
                 disabledItems.Add(pageId.ToString());
             }
             template.ParseVariables("S_PAGE_PARENT", Functions.BuildSelectBox("page-parent", pages, pageParentId.ToString(), disabledItems));
+            template.ParseVariables("S_PAGE_CLASSIFICATION", Classification.BuildClassificationBox(pageClassification));
             template.ParseVariables("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
             template.ParseVariables("S_PAGE_PERMS", Functions.BuildPermissionsBox(pagePermissions, permissions));
 
@@ -502,12 +506,12 @@ namespace BoxSocial.Applications.Pages
 
                 if (status == "DRAFT")
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "drafts")));
+                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "drafts"));
                     Display.ShowMessage(core, "New Draft Saved", "Your draft has been saved.");
                 }
                 else
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
+                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
                     Display.ShowMessage(core, "New Page Published", "Your page has been published");
                 }
 
@@ -540,18 +544,18 @@ namespace BoxSocial.Applications.Pages
                         title);
                 }
 
-                db.UpdateQuery(string.Format("UPDATE user_pages SET {0} {1} page_slug = '{2}', page_modified_ut = UNIX_TIMESTAMP(), page_ip = '{3}', page_text = '{4}', page_license = {5}, page_access = {6}, page_order = {7}, page_status = '{10}' WHERE page_id = {8} AND user_id = {9};",
-                    changeParent, changeTitle, Mysql.Escape(slug), session.IPAddress.ToString(), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, pageId, loggedInMember.UserId, status), false);
+                db.UpdateQuery(string.Format("UPDATE user_pages SET {0} {1} page_slug = '{2}', page_modified_ut = UNIX_TIMESTAMP(), page_ip = '{3}', page_text = '{4}', page_license = {5}, page_access = {6}, page_order = {7}, page_status = '{10}', page_classification = {11} WHERE page_id = {8} AND user_id = {9};",
+                    changeParent, changeTitle, Mysql.Escape(slug), session.IPAddress.ToString(), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, pageId, loggedInMember.UserId, status, (byte)Classification.RequestClassification()), false);
             }
 
             if (status == "DRAFT")
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "drafts")));
+                SetRedirectUri(AccountModule.BuildModuleUri("pages", "drafts"));
                 Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
             }
             else
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "manage")));
+                SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
                 Display.ShowMessage(core, "Page Published", "Your page has been published");
             }
         }
@@ -685,7 +689,7 @@ namespace BoxSocial.Applications.Pages
                         listId = db.UpdateQuery(string.Format("INSERT INTO user_lists (user_id, list_title, list_path, list_type, list_abstract, list_access) VALUES ({0}, '{1}', '{2}', {3}, '{4}', {5});",
                             loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission()));
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
+                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
                         Display.ShowMessage(core, "List Created", "You have created a new list");
                     }
                     else
@@ -711,7 +715,7 @@ namespace BoxSocial.Applications.Pages
                     db.UpdateQuery(string.Format("UPDATE user_lists SET list_title = '{1}', list_access = {2}, list_path = '{3}', list_abstract = '{4}', list_type = {5} WHERE list_id = {0}",
                         listId, Mysql.Escape(title), Functions.GetPermission(), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
+                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
                     Display.ShowMessage(core, "List Saved", "You have saved the list");
                 }
                 else
@@ -821,7 +825,7 @@ namespace BoxSocial.Applications.Pages
                 db.UpdateQuery(string.Format("DELETE FROM user_lists WHERE user_id = {0} AND list_id = {1}",
                     loggedInMember.UserId, listId), false);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "lists")));
+                SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
                 Display.ShowMessage(core, "List Deleted", "You have deleted a list.");
                 return;
             }
@@ -919,7 +923,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"])));
+                    SetRedirectUri(ZzUri.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"]));
                     Display.ShowMessage(core, "List Updated", "You have successfully appended an item to your list.");
                 }
             }
@@ -976,7 +980,7 @@ namespace BoxSocial.Applications.Pages
                 db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items - 1 WHERE user_id = {0} AND list_id = {1}",
                         loggedInMember.UserId, listId), false);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"])));
+                SetRedirectUri(ZzUri.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
                 Display.ShowMessage(core, "List Updated", "You have successfully removed an item from your list.");
             }
             else

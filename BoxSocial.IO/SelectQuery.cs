@@ -96,19 +96,35 @@ namespace BoxSocial.IO
     public sealed class SelectQuery : Query
     {
 
-        public List<string> tables;
-        public List<string> fields;
-        public Dictionary<string, object> condition;
-        public List<TableJoin> joins;
-        public List<TableSort> sorts;
-        public int limitCount = -1;
-        public int limitStart = -1;
+        private List<string> tables;
+        private List<string> fields;
+        private QueryCondition conditions;
+        private List<TableJoin> joins;
+        private List<TableSort> sorts;
+        private int limitCount = -1;
+        private int limitStart = -1;
+
+        public int LimitCount
+        {
+            set
+            {
+                limitCount = value;
+            }
+        }
+
+        public int LimitStart
+        {
+            set
+            {
+                limitStart = value;
+            }
+        }
 
         public SelectQuery(string baseTableName)
         {
             tables = new List<string>();
             fields = new List<string>();
-            condition = new Dictionary<string, object>();
+            conditions = new QueryCondition();
             joins = new List<TableJoin>();
             sorts = new List<TableSort>();
 
@@ -118,6 +134,64 @@ namespace BoxSocial.IO
         public void AddFields(params string[] fields)
         {
             this.fields.AddRange(fields);
+        }
+
+        public void AddJoin(JoinTypes type, string table, string joinField, string tableField)
+        {
+            joins.Add(new TableJoin(type, table, joinField, tableField));
+        }
+
+        public void AddSort(SortOrder order, string field)
+        {
+            sorts.Add(new TableSort(order, field));
+        }
+
+        public QueryCondition AddCondition(string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(relation, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(string field, ConditionEquality equality, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, equality, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field, equality, value);
+            }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, equality, value);
+            }
+            else
+            {
+                return conditions.AddCondition(relation, field, equality, value);
+            }
         }
 
         public override string ToString()
@@ -176,23 +250,10 @@ namespace BoxSocial.IO
                 }
             }
 
-            if (condition.Count > 0)
+            if (conditions.Count > 0)
             {
-                bool first = true;
-                foreach (string field in condition.Keys)
-                {
-                    if (first)
-                    {
-                        query = string.Format("{0} WHERE {1} = {2}",
-                            query, field, Query.ObjectToSql(condition[field]));
-                        first = false;
-                    }
-                    else
-                    {
-                        query = string.Format("{0} AND {1} = {2}",
-                            query, field, Query.ObjectToSql(condition[field]));
-                    }
-                }
+                query = string.Format("{0} WHERE {1}",
+                            query, conditions.ToString());
             }
 
             if (sorts.Count > 0)

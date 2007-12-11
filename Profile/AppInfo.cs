@@ -76,6 +76,17 @@ namespace BoxSocial.Applications.Profile
             return aii;
         }
 
+        public override Dictionary<string, string> PageSlugs
+        {
+            get
+            {
+                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("profile", "Profile");
+                slugs.Add("friends", "Friends");
+                return slugs;
+            }
+        }
+
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;

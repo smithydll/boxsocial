@@ -198,6 +198,7 @@ namespace BoxSocial.Internals
                     else
                     {
                         Display.ShowMessage(core, "Error", "Error starting session");
+                        Response.Cookies.Clear();
                         //Response.Write("fail 0");
                         //Response.Write(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN session_keys sk ON sk.user_id = uk.user_id WHERE uk.user_id = {0} AND ui.user_active = 1 AND sk.key_id = '{2}'",
                         //userId, Member.USER_INFO_FIELDS, SessionState.SessionMd5(sessionData.autoLoginId)));
@@ -262,7 +263,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            // TODO: phpBB2 performs a ban check, we don't have those facilities so let's skip
+            // INFO: phpBB2 performs a ban check, we don't have those facilities so let's skip
 
             //
             // Create or update the session
@@ -424,7 +425,7 @@ namespace BoxSocial.Internals
                     // we will use complete matches on ZinZam
                     if ((string)userSessionRow["session_ip"] == userIp)
                     {
-                        TimeZone tzz = new TimeZone(TimeZone.UTC_CODE); // UTC
+                        UnixTime tzz = new UnixTime(UnixTime.UTC_CODE); // UTC
                         TimeSpan tss = DateTime.UtcNow - tzz.DateTimeFromMysql(userSessionRow["session_time_ut"]);
 
                         //

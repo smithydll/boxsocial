@@ -201,7 +201,6 @@ namespace BoxSocial.Internals
             int startIndex = 0;
             int strLength = input.Length;
             int end = strLength;
-            /*StringBuilder output = new StringBuilder(input);*/
 
             StringBuilder newOutput = new StringBuilder();
             int lastEndIndex = 0;
@@ -209,19 +208,10 @@ namespace BoxSocial.Internals
             List<BbcodeTaglet> taglets = new List<BbcodeTaglet>();
 
             int indexOffset = 0;
-            //for (int i = 0; i < input.Length; i++)
             int i = 0;
             while (i < strLength)
             {
-                //if (i >= input.Length) break;
                 char current = input[i];
-                /*if (current.Equals('[') && tags.Count > 0 && (i + 7) <= input.Length)
-                {
-                    if (input.Substring(i, 3) == "[*]" || input.Substring(i, 7) == "[/list]")
-                    {
-                        debugLog.AppendLine("++ * " + inList + " <br />");
-                    }
-                }*/
                 if (!inQuote && inList > 0)
                 {
                     if (current.Equals('[') && tags.Count > 0 && (i + 7) <= input.Length)
@@ -230,7 +220,6 @@ namespace BoxSocial.Internals
                         {
                             if (((BbcodeTag)tags.Peek()).Tag.Equals("*"))
                             {
-                                //debugLog.AppendLine("*" + " <br />");
                                 endTag = true;
                                 Tag = "*";
                                 parseList = true;
@@ -293,12 +282,12 @@ namespace BoxSocial.Internals
                                     string insertEnd = "";
                                     bool listItem = false;
 
-                                    BbcodeAttributes attrs; //attrs = new BbcodeAttributes(tempTag.Attributes);
+                                    BbcodeAttributes attrs;
 
                                     switch (Tag.ToLower())
                                     {
                                         case "quote":
-                                            attrs = tempTag.GetAttributes(); //new BbcodeAttributes(tempTag.Attributes);
+                                            attrs = tempTag.GetAttributes();
                                             if (attrs.HasAttributes())
                                             {
                                                 if (inList == 0)
@@ -354,7 +343,7 @@ namespace BoxSocial.Internals
                                             break;
                                         case "list":
                                             inList--;
-                                            attrs = tempTag.GetAttributes(); //new BbcodeAttributes(tempTag.Attributes);
+                                            attrs = tempTag.GetAttributes();
                                             if (attrs.GetAttribute("default") != null)
                                             {
                                                 if (Regex.IsMatch(attrs.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
@@ -411,14 +400,14 @@ namespace BoxSocial.Internals
                                             endTagLength = 0;
                                             break;
                                         case "color":
-                                            attrs = tempTag.GetAttributes(); //new BbcodeAttributes(tempTag.Attributes);
-                                            try { System.Drawing.ColorTranslator.FromHtml(attrs.GetAttribute("default")); } //!Regex.IsMatch(attrs.GetAttribute("default"),"^(\\#([a-fA-F0-9]+))|([a-zA-Z]+)$", RegexOptions.Compiled)) abortParse = true;
+                                            attrs = tempTag.GetAttributes();
+                                            try { System.Drawing.ColorTranslator.FromHtml(attrs.GetAttribute("default")); }
                                             catch { abortParse = true; }
                                             insertStart = "<span style=\"color: " + attrs.GetAttribute("default") + "\">";
                                             insertEnd = "</span>";
                                             break;
                                         case "size":
-                                            attrs = tempTag.GetAttributes(); //new BbcodeAttributes(tempTag.Attributes);
+                                            attrs = tempTag.GetAttributes();
                                             try
                                             {
                                                 int fontSize = int.Parse(attrs.GetAttribute("default"));
@@ -450,7 +439,7 @@ namespace BoxSocial.Internals
                                             insertEnd = "</p><p>";
                                             break;
                                         case "url":
-                                            attrs = tempTag.GetAttributes(); //new BbcodeAttributes(tempTag.Attributes);
+                                            attrs = tempTag.GetAttributes();
                                             if (attrs.HasAttributes())
                                             {
                                                 if (Regex.IsMatch(attrs.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
@@ -525,7 +514,6 @@ namespace BoxSocial.Internals
                                             }
                                             break;
                                         case "youtube":
-                                            // TODO: optional youtube BBcode rendering
                                             int ytStartIndex = tempTag.indexStart + startTagLength;
                                             string youTubeUrl = input.Substring(ytStartIndex, i - ytStartIndex - endTagLength + 1);
 
@@ -567,7 +555,6 @@ namespace BoxSocial.Internals
                                             }
                                             break;
                                         case "latex":
-                                            // TODO: LaTeX BBcode
                                             int latexStartIndex = tempTag.indexStart + startTagLength;
                                             string latexExpression = input.Substring(latexStartIndex, i - latexStartIndex - endTagLength + 1);
 
@@ -609,33 +596,9 @@ namespace BoxSocial.Internals
 
                                     if (!abortParse)
                                     {
-                                        /* original method */
-                                        /*output.Remove(tempTag.outputIndexStart, startTagLength);
-                                        output.Remove(indexOffset + i - startTagLength - endTagLength + 1 - endOffset, endTagLength);
-                                        output.Insert(tempTag.outputIndexStart, insertStart);
-                                        output.Insert(indexOffset + i - (startTagLength - startReplaceLength) - endTagLength + 1 - endOffset, insertEnd);*/
-
-                                        /* single level modified method */
-                                        /*if (tempTag.indexStart - lastEndIndex > 0)
-                                        {
-                                            newOutput.Append(input.Substring(lastEndIndex, tempTag.indexStart - lastEndIndex));
-                                        }
-                                        newOutput.Append(insertStart);
-                                        if (startIndex - (tempTag.indexStart + startTagLength) > 0)
-                                        {
-                                            newOutput.Append(input.Substring(tempTag.indexStart + startTagLength, startIndex - (tempTag.indexStart + startTagLength)));
-                                        }
-                                        newOutput.Append(insertEnd);
-                                        lastEndIndex = i + 1;*/
-
                                         /* two pass method */
                                         taglets.Add(new BbcodeTaglet(tempTag.indexStart, startTagLength, insertStart));
-                                        taglets.Add(new BbcodeTaglet(startIndex - endOffset, endTagLength, insertEnd, listItem)); // startIndex - endOffset
-
-                                        //i -= ((startTagLength - startReplaceLength) + (endTagLength - endReplaceLength));
-
-                                        /* original method */
-                                        /*indexOffset -= ((startTagLength - startReplaceLength) + (endTagLength - endReplaceLength));*/
+                                        taglets.Add(new BbcodeTaglet(startIndex - endOffset, endTagLength, insertEnd, listItem));
                                     }
                                 }
                             }
@@ -651,10 +614,6 @@ namespace BoxSocial.Internals
                 {
                     if (inTag)
                     {
-                        /*if (current.Equals('"'))
-                        {
-                            inQuote = !inQuote;
-                        }*/
                         if (current.Equals('&'))
                         {
                             if (input.Substring(i, 6).Equals("&quot;"))
@@ -722,22 +681,13 @@ namespace BoxSocial.Internals
                     if (nextIndex > 0)
                     {
                         i = startIndex = nextIndex;
-                        /*inTag = true;
-                        endTag = false;
-                        inQuote = false;
-                        startAttr = false; // fixed parsing error
-                        Tag = "";
-                        attr = "";*/
                     }
                 }
             }
-            /*input = output.ToString();*/
 
             /* second pass */
             /* unpack the list into the input stream */
             taglets.Sort();
-
-            //newOutput.Append(taglets.Count.ToString() + "<br />");
 
             for (int t = 0; t < taglets.Count; t++)
             {
@@ -757,10 +707,8 @@ namespace BoxSocial.Internals
 
             input = newOutput.ToString();
             double time = ((double)(DateTime.Now.Ticks - start)) / 10000000;
-            /*input += "<br />t:" + time;*/
             input = input.Replace("\r\n", "\n");
             input = input.Replace("\n", "<br />");
-            //input = input.Replace("<br /><br />", "</p>\n<p>");
             input = input.Replace("<p></p>", "");
             input = input.Replace("<p><br /><br />", "<p>");
             input = input.Replace("<p><br />", "<p>");
@@ -780,16 +728,15 @@ namespace BoxSocial.Internals
             string endTag = "[/" + tag + "]";
             int startTagLength = tag.Length + 2;
             int endTagLength = tag.Length + 3;
-            //for (int i = startIndex; i < (input.Length - endTagLength); i++)
             int i = startIndex;
             byte nextIndexOf = 0;
             while (i <= (input.Length - endTagLength) && i >= startIndex)
             {
-                if (nextIndexOf == 1) //input.Substring(i, startTagLength) == startTag)
+                if (nextIndexOf == 1)
                 {
                     notMine++;
                 }
-                if (nextIndexOf == 2) //input.Substring(i, endTagLength) == endTag)
+                if (nextIndexOf == 2)
                 {
                     if (notMine == 0) return true;
                     notMine--;
@@ -809,36 +756,33 @@ namespace BoxSocial.Internals
 
         private static bool TagAllowed(string tag, BbcodeOptions options)
         {
-            if (options != null)
+            switch (tag)
             {
-                switch (tag)
-                {
-                    case "img":
-                        if ((options & BbcodeOptions.ShowImages) != BbcodeOptions.ShowImages)
-                        {
-                            return false;
-                        }
-                        break;
-                    case "youtube":
-                        if ((options & BbcodeOptions.ShowVideo) != BbcodeOptions.ShowVideo)
-                        {
-                            return false;
-                        }
-                        break;
-                    case "flash":
-                        if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
-                        {
-                            return false;
-                        }
-                        break;
-                    case "silverlight":
-                        // we'll treat silverlight as flash for now
-                        if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
-                        {
-                            return false;
-                        }
-                        break;
-                }
+                case "img":
+                    if ((options & BbcodeOptions.ShowImages) != BbcodeOptions.ShowImages)
+                    {
+                        return false;
+                    }
+                    break;
+                case "youtube":
+                    if ((options & BbcodeOptions.ShowVideo) != BbcodeOptions.ShowVideo)
+                    {
+                        return false;
+                    }
+                    break;
+                case "flash":
+                    if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
+                    {
+                        return false;
+                    }
+                    break;
+                case "silverlight":
+                    // we'll treat silverlight as flash for now
+                    if ((options & BbcodeOptions.ShowFlash) != BbcodeOptions.ShowFlash)
+                    {
+                        return false;
+                    }
+                    break;
             }
             return true;
         }
@@ -879,10 +823,6 @@ namespace BoxSocial.Internals
             string val = "";
             for (int i = 0; i < length; i++)
             {
-                /*if (input[i].Equals('"'))
-                {
-                    inQuote = !inQuote;
-                }*/
                 if (input[i].Equals('&'))
                 {
                     if (input.Substring(i, 6).Equals("&quot;"))

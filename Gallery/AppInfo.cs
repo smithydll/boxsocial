@@ -88,6 +88,16 @@ namespace BoxSocial.Applications.Gallery
             return aii;
         }
 
+        public override Dictionary<string, string> PageSlugs
+        {
+            get
+            {
+                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("gallery", "Photo Gallery");
+                return slugs;
+            }
+        }
+
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
@@ -270,7 +280,6 @@ namespace BoxSocial.Applications.Gallery
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
 
-            // TODO: cache IsGroupMember in Group
             if (!(!thisGroup.IsGroupMember(e.core.session.LoggedInMember) && thisGroup.GroupType == "CLOSED"))
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");

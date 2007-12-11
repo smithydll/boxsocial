@@ -39,10 +39,6 @@ namespace BoxSocial.Groups
 
         protected string groupSlug;
         protected UserGroup thisGroup;
-        protected bool isGroupMember;
-        protected bool isGroupOperator;
-        protected bool isGroupMemberPending;
-        protected bool isGroupMemberAbsolute;
 
         public UserGroup ThisGroup
         {
@@ -52,56 +48,16 @@ namespace BoxSocial.Groups
             }
         }
 
-        public bool IsGroupMember
-        {
-            get
-            {
-                return isGroupMember;
-            }
-        }
-
-        public bool IsGroupOperator
-        {
-            get
-            {
-                return isGroupOperator;
-            }
-        }
-
-        public bool IsGroupMemberPending
-        {
-            get
-            {
-                return isGroupMemberPending;
-            }
-        }
-
-        public bool IsGroupMemberAbsolute
-        {
-            get
-            {
-                return isGroupMemberAbsolute;
-            }
-        }
-
         public GPage()
             : base()
         {
             page = 1;
-            isGroupMember = false;
-            isGroupOperator = false;
-            isGroupMemberPending = false;
-            isGroupMemberAbsolute = false;
         }
 
         public GPage(string templateFile)
             : base(templateFile)
         {
             page = 1;
-            isGroupMember = false;
-            isGroupOperator = false;
-            isGroupMemberPending = false;
-            isGroupMemberAbsolute = false;
         }
 
         protected void BeginGroupPage()
@@ -114,7 +70,7 @@ namespace BoxSocial.Groups
             }
             catch (InvalidGroupException)
             {
-                Functions.Generate404(Core);
+                Functions.Generate404(core);
                 return;
             }
 
@@ -124,24 +80,21 @@ namespace BoxSocial.Groups
                 core.PagePath = "/profile";
             }
 
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, thisGroup));
-
-            PageTitle = thisGroup.DisplayName;
-
-            if (loggedInMember != null)
+            if (ThisGroup.IsGroupMemberBanned(core.session.LoggedInMember))
             {
-                isGroupMember = thisGroup.IsGroupMember(loggedInMember);
-                isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
-                isGroupMemberAbsolute = (isGroupMember || isGroupMemberPending);
-                isGroupOperator = thisGroup.IsGroupOperator(loggedInMember);
-            }
-
-            if (!isGroupMember && thisGroup.GroupType == "PRIVATE")
-            {
-                Functions.Generate403(Core);
+                Functions.Generate403(core);
                 return;
             }
 
+            if (!thisGroup.IsGroupMember(core.session.LoggedInMember) && thisGroup.GroupType == "PRIVATE")
+            {
+                Functions.Generate403(core);
+                return;
+            }
+
+            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+
+            PageTitle = thisGroup.DisplayName;
         }
     }
 }

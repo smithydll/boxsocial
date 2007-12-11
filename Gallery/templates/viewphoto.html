@@ -8,7 +8,26 @@
 	<!-- ENDIF -->
 	<div id="view-photo">
 	<dl>
-		<dt style="text-align: center;"><img src="{PHOTO_DISPLAY}" alt="" /></dt>
+		<dt style="text-align: center;">
+			<span style="display: block; margin: auto; height: 0px; width: 640px; overflow:visible; text-align: left;">
+				<!-- BEGIN user_tags -->
+				<span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
+				<!--span id="tag-name-{user_tags.TAG_ID}" style="display: hidden; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span-->
+				<!-- END user_tags -->
+			</span>
+				<img src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="return false;" />
+		</dt>
+		<!-- IF HAS_USER_TAGS -->
+		<dd>Tags: 
+			<ul>
+				<!-- BEGIN user_tags -->
+				<li onmouseover="ShowUserTag({user_tags.TAG_ID});" onmouseout="HideUserTag({user_tags.TAG_ID});">
+					<a href="{user_tags.U_MEMBER}">{user_tags.DISPLAY_NAME}</a>
+				</li>
+				<!-- END user_tags -->
+			</ul>
+		</dd>
+		<!-- ENDIF -->
 		<dd>
 			<div class="ratebar">
 				<p class="ratebar" style="margin: 0;"><a onmouseover="StarOver(1,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(1,{ID},'PHOTO')"><img src="{STAR_ONE}" alt="Rate this item as 1 star" id="rate-1s-1-PHOTO" class="{STAR_ONE_CLASS}" /></a><a onmouseover="StarOver(2,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(2,{ID},'PHOTO')"><img src="{STAR_TWO}" alt="Rate this item as 1 star" id="rate-2s-1-PHOTO" class="{STAR_TWO_CLASS}" /></a><a onmouseover="StarOver(3,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(3,{ID},'PHOTO')"><img src="{STAR_THREE}" alt="Rate this item as 1 star" id="rate-3s-1-PHOTO" class="{STAR_THREE_CLASS}" /></a><a onmouseover="StarOver(4,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(4,{ID},'PHOTO')"><img src="{STAR_FOUR}" alt="Rate this item as 1 star" id="rate-4s-1-PHOTO" class="{STAR_FOUR_CLASS}" /></a><a onmouseover="StarOver(5,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(5,{ID},'PHOTO')"><img src="{STAR_FIVE}" alt="Rate this item as 1 star" id="rate-5s-1-PHOTO" class="{STAR_FIVE_CLASS}" /></a>
@@ -31,13 +50,16 @@
 		<!-- INCLUDE pane.comments.html -->
 	</div>
 	<!-- IF PAGE_LICENSE -->
-	<!-- IF I_PAGE_LICENSE -->
 	<p>
+	<!-- IF I_PAGE_LICENSE -->
 		<a href="{U_PAGE_LICENSE}"><img src="/images/{I_PAGE_LICENSE}" title="{PAGE_LICENSE}" alt="{PAGE_LICENSE}" /></a>
-	</p>
 	<!-- ELSE -->
-	<p><a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a></p>
+		<a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a>
 	<!-- ENDIF -->
+	<!-- IF I_PAGE_CLASSIFICATION -->
+		<img src="/images/{I_PAGE_CLASSIFICATION}" title="{PAGE_CLASSIFICATION}" alt="{PAGE_CLASSIFICATION}" />
+	<!-- ENDIF -->
+	</p>
 	<!-- ENDIF -->
 	</div>
 <!-- INCLUDE page_footer.html -->

@@ -47,6 +47,7 @@
     <Compile Include="ApplicationEntry.cs" />
     <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="Bbcode.cs" />
+    <Compile Include="Classification.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />
     <Compile Include="Core.cs" />

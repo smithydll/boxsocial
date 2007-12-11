@@ -62,6 +62,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract Dictionary<string, string> PageSlugs
+        {
+            get;
+        }
+
         public static string InitialiseApplications(Core core, AppPrimitives primitive)
         {
             string debug = "";
@@ -99,7 +104,7 @@ namespace BoxSocial.Internals
         private static DataTable GetApplicationRows(Core core, Primitive owner)
         {
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = core.LoggedInMemberId;
 
             DataTable userApplicationsTable = core.db.SelectQuery(string.Format(@"SELECT {0}, {1}
                 FROM applications ap, primitive_apps pa
@@ -256,11 +261,19 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
+        public static Application GetApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {
             try
             {
-                string assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+                string assemblyPath;
+                if (ae.IsPrimitive)
+                {
+                    assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+                }
+                else
+                {
+                    assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+                }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
                 Type[] types = assembly.GetTypes();
@@ -272,17 +285,28 @@ namespace BoxSocial.Internals
 
                         if (newApplication != null)
                         {
-                            if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
-                                || primitive == AppPrimitives.Any)
-                            {
-                                newApplication.Initialise(core);
-                            }
+                            return newApplication;
                         }
                     }
                 }
             }
             catch
             {
+            }
+            return null;
+        }
+
+        public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
+        {
+            Application newApplication = GetApplication(core, primitive, ae);
+
+            if (newApplication != null)
+            {
+                if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
+                    || primitive == AppPrimitives.Any)
+                {
+                    newApplication.Initialise(core);
+                }
             }
         }
 

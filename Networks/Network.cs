@@ -64,6 +64,9 @@ namespace BoxSocial.Networks
         private NetworkTypes networkType;
         private uint galleryItems;
         private long bytes;
+        private string displayNameOwnership;
+
+        private Dictionary<Member, bool> networkMemberCache = new Dictionary<Member, bool>();
 
         public int NetworkId
         {
@@ -122,6 +125,27 @@ namespace BoxSocial.Networks
             get
             {
                 return displayName;
+            }
+        }
+
+        public string DisplayNameOwnership
+        {
+            get
+            {
+                if (displayNameOwnership == null)
+                {
+                    displayNameOwnership = (displayName != "") ? displayName : networkNetwork;
+
+                    if (displayNameOwnership.EndsWith("s"))
+                    {
+                        displayNameOwnership = displayNameOwnership + "'";
+                    }
+                    else
+                    {
+                        displayNameOwnership = displayNameOwnership + "'s";
+                    }
+                }
+                return displayNameOwnership;
             }
         }
 
@@ -302,12 +326,25 @@ namespace BoxSocial.Networks
         {
             if (member != null)
             {
-                DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 1",
-                    networkId, member.UserId));
-
-                if (memberTable.Rows.Count > 0)
+                if (networkMemberCache.ContainsKey(member))
                 {
-                    return true;
+                    return networkMemberCache[member];
+                }
+                else
+                {
+                    DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 1",
+                        networkId, member.UserId));
+
+                    if (memberTable.Rows.Count > 0)
+                    {
+                        networkMemberCache.Add(member, true);
+                        return true;
+                    }
+                    else
+                    {
+                        networkMemberCache.Add(member, false);
+                        return false;
+                    }
                 }
             }
 
@@ -330,6 +367,7 @@ namespace BoxSocial.Networks
 
             if (rowsChanged == 1)
             {
+                networkMemberCache.Add(member, true);
                 return true;
             }
             else
@@ -542,7 +580,7 @@ namespace BoxSocial.Networks
 
             if (core.session.IsLoggedIn)
             {
-                if (page.IsNetworkMember)
+                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
                     // TODO: leave network URI
                 }

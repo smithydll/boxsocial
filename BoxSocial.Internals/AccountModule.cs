@@ -23,12 +23,8 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -47,11 +43,13 @@ namespace BoxSocial.Internals
         protected Mysql db;
         protected Member loggedInMember;
         protected Template template;
-        protected TimeZone tz;
+        protected UnixTime tz;
         protected HttpRequest Request;
         protected HttpResponse Response;
         protected HttpServerUtility Server;
         protected SessionState session;
+
+        public Assembly assembly = null;
 
         private AccountModule()
         {
@@ -72,12 +70,26 @@ namespace BoxSocial.Internals
             page = account.core.page;
             db = account.core.db;
             loggedInMember = account.core.session.LoggedInMember;
-            template = account.core.template;
+            //template = account.core.template;
             tz = account.core.tz;
             Request = HttpContext.Current.Request;
             Response = HttpContext.Current.Response;
             session = account.core.session;
             Server = HttpContext.Current.Server;
+        }
+
+        public void CreateTemplate()
+        {
+            template = new Template("1301.html");
+            if (assembly != null)
+            {
+                template.AddPageAssembly(assembly);
+            }
+        }
+
+        public void RenderTemplate()
+        {
+            core.template.ParseVariables("MODULE_CONTENT", template.ToString());
         }
 
         void OnRegisterSubModule(string submodule)
@@ -179,6 +191,11 @@ namespace BoxSocial.Internals
 
             return ZzUri.AppendSid(string.Format("/account/{0}/{1}{2}",
                 module, sub, argumentList), appendSid);
+        }
+
+        public void SetRedirectUri(string uri)
+        {
+            core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(uri));
         }
     }
 }

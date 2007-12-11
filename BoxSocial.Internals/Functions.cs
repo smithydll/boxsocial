@@ -35,7 +35,7 @@ namespace BoxSocial.Internals
     /// <summary>
     /// Summary description for Functions
     /// </summary>
-    public class Functions
+    public static class Functions
     {
         private static NumberFormatInfo numberFormatInfo;
         private static List<string> itemTypes = new List<string>();
@@ -48,9 +48,6 @@ namespace BoxSocial.Internals
             int matches = 0;
 
             List<string> disallowedNames = new List<string>();
-            disallowedNames.Add("blog");
-            disallowedNames.Add("friends");
-            disallowedNames.Add("gallery");
             disallowedNames.Add("lists");
             disallowedNames.Sort();
 
@@ -167,6 +164,19 @@ namespace BoxSocial.Internals
             try
             {
                 outValue = int.Parse(HttpContext.Current.Request.QueryString[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
+        public static long RequestLong(string var, long defaultValue)
+        {
+            long outValue = defaultValue;
+            try
+            {
+                outValue = long.Parse(HttpContext.Current.Request.QueryString[var]);
             }
             catch
             {

@@ -3,7 +3,6 @@
 	<div id="pane-pages" class="pane">
 		<h3>Pages</h3>
 		<ul>
-			<li><a href="{U_PROFILE}">Profile</a></li>
 			{PAGE_LIST}
 		</ul>
 	</div>
@@ -18,13 +17,16 @@
 	<hr />
 	<p><em>Last Modified: {PAGE_LAST_MODIFIED}</em> with <em>{PAGE_VIEWS} page views.</em></p>
 	<!-- IF PAGE_LICENSE -->
-	<!-- IF I_PAGE_LICENSE -->
 	<p>
+	<!-- IF I_PAGE_LICENSE -->
 		<a href="{U_PAGE_LICENSE}"><img src="/images/{I_PAGE_LICENSE}" title="{PAGE_LICENSE}" alt="{PAGE_LICENSE}" /></a>
-	</p>
 	<!-- ELSE -->
-	<p><a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a></p>
+		<a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a>
 	<!-- ENDIF -->
+	<!-- IF I_PAGE_CLASSIFICATION -->
+		<img src="/images/{I_PAGE_CLASSIFICATION}" title="{PAGE_CLASSIFICATION}" alt="{PAGE_CLASSIFICATION}" />
+	<!-- ENDIF -->
+	</p>
 	<!-- ENDIF -->
 </div>
 </div>

@@ -81,6 +81,16 @@ namespace BoxSocial.Applications.Calendar
             return aii;
         }
 
+        public override Dictionary<string, string> PageSlugs
+        {
+            get
+            {
+                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("calendar", "Calendar");
+                return slugs;
+            }
+        }
+
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;

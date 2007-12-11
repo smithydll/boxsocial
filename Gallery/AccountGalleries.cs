@@ -302,7 +302,7 @@ namespace BoxSocial.Applications.Gallery
                 UserGallery gallery = new UserGallery(db, loggedInMember, galleryId);
                 Gallery.Delete(page, gallery);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries")));
+                SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
                 Display.ShowMessage(core, "Gallery Deleted", "You have successfully deleted a gallery.");
             }
             catch
@@ -356,8 +356,8 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (UserGallery.Create(page, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
-                                string.Format("id={0}", parent.GalleryId))));
+                            SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
+                                string.Format("id={0}", parent.GalleryId)));
                             Display.ShowMessage(core, "Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
@@ -402,8 +402,8 @@ namespace BoxSocial.Applications.Gallery
                         {
                             gallery.Update(page, title, slug, description, Functions.GetPermission());
 
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("galleries", "galleries",
-                                string.Format("id={0}", gallery.ParentId))));
+                            SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
+                                string.Format("id={0}", gallery.ParentId)));
                             Display.ShowMessage(core, "Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }
@@ -483,6 +483,7 @@ namespace BoxSocial.Applications.Gallery
                 template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
                 template.ParseVariables("S_GALLERY_ID", HttpUtility.HtmlEncode(galleryId.ToString()));
                 template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+                template.ParseVariables("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
             }
             else
             {
@@ -520,7 +521,7 @@ namespace BoxSocial.Applications.Gallery
 
             template.SetTemplate("Gallery", "account_galleries_photo_edit");
 
-            DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
+            DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
                 loggedInMember.UserId, photoId));
 
             if (photoTable.Rows.Count == 1)
@@ -544,6 +545,7 @@ namespace BoxSocial.Applications.Gallery
                 template.ParseVariables("S_PHOTO_TITLE", HttpUtility.HtmlEncode(title));
                 template.ParseVariables("S_PHOTO_DESCRIPTION", HttpUtility.HtmlEncode(description));
                 template.ParseVariables("S_PHOTO_ID", HttpUtility.HtmlEncode(photoId.ToString()));
+                template.ParseVariables("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox((Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]));
             }
             else
             {
@@ -617,7 +619,7 @@ namespace BoxSocial.Applications.Gallery
                         db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_highlight_id = {0} WHERE user_id = {1} AND gallery_id = {2}",
                             pictureId, loggedInMember.UserId, galleryId));
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(loggedInMember, galleryFullPath)));
+                        SetRedirectUri(Gallery.BuildGalleryUri(loggedInMember, galleryFullPath));
                         Display.ShowMessage(core, "Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
                         return;
                     }
@@ -746,9 +748,9 @@ namespace BoxSocial.Applications.Gallery
                             Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense());
+                        UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug)));
+                        SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug));
                         Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
@@ -786,9 +788,9 @@ namespace BoxSocial.Applications.Gallery
                 try
                 {
                     UserGalleryItem galleryItem = new UserGalleryItem(db, loggedInMember, photoId);
-                    galleryItem.Update(page, title, description, Functions.GetPermission(), Functions.GetLicense());
+                    galleryItem.Update(page, title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path)));
+                    SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path));
                     Display.ShowMessage(core, "Changes to Photo Saved", "You have successfully saved the changes to the photo.");
                     return;
                 }

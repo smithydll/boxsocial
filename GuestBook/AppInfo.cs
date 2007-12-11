@@ -87,6 +87,16 @@ namespace BoxSocial.Applications.GuestBook
             return aii;
         }
 
+        public override Dictionary<string, string> PageSlugs
+        {
+            get
+            {
+                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("profile/comments", "Guest Book");
+                return slugs;
+            }
+        }
+
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
@@ -99,8 +109,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             try
             {
-                Member owner = new Member(core.db, itemId);
-                owner.LoadProfileInfo(); // TODO: reduce query count by one
+                Member owner = new Member(core.db, itemId, true);
 
                 owner.ProfileAccess.SetViewer(member);
 

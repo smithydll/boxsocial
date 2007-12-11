@@ -44,10 +44,14 @@ namespace BoxSocial.Applications.Gallery
  ALTER TABLE `zinzam0_zinzam`.`gallery_items` ADD COLUMN `gallery_id` BIGINT NOT NULL AFTER `gallery_item_date_ut`,
  ADD COLUMN `gallery_item_item_type` ENUM('UNASSOCIATED','PHOTO','BLOGPOST','PODCAST','PODCASTEPISODE','USER','PAGE','LIST','GROUP','NETWORK') NOT NULL DEFAULT 'UNASSOCIATED' AFTER `gallery_id`,
  ADD COLUMN `gallery_item_item_id` BIGINT NOT NULL AFTER `gallery_item_item_type`;
+     * 
+     * TODO: 
+     * ALTER TABLE `zinzam0_zinzam`.`gallery_items` ADD COLUMN `gallery_item_classification` TINYINT UNSIGNED NOT NULL AFTER `gallery_item_item_id`;
+     * ALTER TABLE `zinzam0_zinzam`.`gallery_items` MODIFY COLUMN `gallery_item_classification` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0;
      */
     public abstract class GalleryItem
     {
-        public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract";
+        public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
 
         protected Mysql db;
         protected Primitive owner;
@@ -65,6 +69,7 @@ namespace BoxSocial.Applications.Gallery
         protected string storagePath;
         protected string itemAbstract;
         private ContentLicense license;
+        private Classifications classification;
 
         public long ItemId
         {
@@ -167,6 +172,14 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return license;
+            }
+        }
+
+        public Classifications Classification
+        {
+            get
+            {
+                return classification;
             }
         }
 
@@ -347,6 +360,7 @@ namespace BoxSocial.Applications.Gallery
                 itemAbstract = (string)itemRow["gallery_item_abstract"];
             }
             parentId = (long)itemRow["gallery_id"];
+            classification = (Classifications)(byte)itemRow["gallery_item_classification"];
         }
 
         private void loadLicenseInfo(DataRow itemRow)
@@ -377,7 +391,7 @@ namespace BoxSocial.Applications.Gallery
             return GalleryItem.Create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license);
         }*/
 
-        protected static long create(TPage page, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license)
+        protected static long create(TPage page, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             Mysql db = page.db;
 
@@ -416,9 +430,9 @@ namespace BoxSocial.Applications.Gallery
 
             // we want to use transactions
             long itemId = db.UpdateQuery(string.Format(
-                @"INSERT INTO gallery_items (gallery_item_uri, gallery_item_title, gallery_item_abstract, gallery_item_date_ut, gallery_item_storage_path, gallery_item_parent_path, gallery_item_access, gallery_item_content_type, user_id, gallery_item_bytes, gallery_item_license, gallery_id, gallery_item_item_id, gallery_item_item_type)
-                    VALUES ('{0}', '{1}', '{2}', UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}', {7}, {8}, {9}, {10}, {11}, '{12}')",
-                Mysql.Escape(slug), Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(storageName), Mysql.Escape(parent.FullPath), permissions, Mysql.Escape(contentType), page.loggedInMember.UserId, bytes, license, parent.GalleryId, owner.Id, owner.Type), true);
+                @"INSERT INTO gallery_items (gallery_item_uri, gallery_item_title, gallery_item_abstract, gallery_item_date_ut, gallery_item_storage_path, gallery_item_parent_path, gallery_item_access, gallery_item_content_type, user_id, gallery_item_bytes, gallery_item_license, gallery_id, gallery_item_item_id, gallery_item_item_type, gallery_item_classification)
+                    VALUES ('{0}', '{1}', '{2}', UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}', {7}, {8}, {9}, {10}, {11}, '{12}', {13})",
+                Mysql.Escape(slug), Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(storageName), Mysql.Escape(parent.FullPath), permissions, Mysql.Escape(contentType), page.loggedInMember.UserId, bytes, license, parent.GalleryId, owner.Id, owner.Type, (byte)classification), true);
 
             if (itemId >= 0)
             {
@@ -438,10 +452,10 @@ namespace BoxSocial.Applications.Gallery
             throw new Exception("Transaction failed, panic!");
         }
 
-        public void Update(TPage page, string title, string description, ushort permissions, byte license)
+        public void Update(TPage page, string title, string description, ushort permissions, byte license, Classifications classification)
         {
-            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type = '{7}';",
-                page.loggedInMember.UserId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.Type));
+            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5}, gallery_item_classification = {8} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type = '{7}';",
+                page.loggedInMember.UserId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.Type, (byte)classification));
 
             if (rowsChanged == 0)
             {
@@ -581,6 +595,22 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
                 page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
 
+                switch (photo.Classification)
+                {
+                    case Classifications.Everyone:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        break;
+                    case Classifications.Mature:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        break;
+                    case Classifications.Restricted:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        break;
+                }
+
                 if (photo.License != null)
                 {
                     if (!string.IsNullOrEmpty(photo.License.Title))
@@ -595,6 +625,24 @@ namespace BoxSocial.Applications.Gallery
                     {
                         page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Link));
                     }
+                }
+
+                List<UserTag> tags = UserTag.GetTags(core, photo);
+
+                if (tags.Count > 0)
+                {
+                    page.template.ParseVariables("HAS_USER_TAGS", "TRUE");
+                }
+
+                foreach (UserTag tag in tags)
+                {
+                    VariableCollection tagsVariableCollection = page.template.CreateChild("user_tags");
+
+                    tagsVariableCollection.ParseVariables("TAG_ID", tag.TagId.ToString());
+                    tagsVariableCollection.ParseVariables("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
+                    tagsVariableCollection.ParseVariables("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
+                    tagsVariableCollection.ParseVariables("DISPLAY_NAME", tag.TaggedMember.DisplayName);
+                    tagsVariableCollection.ParseVariables("U_MEMBER", tag.TaggedMember.Uri);
                 }
 
                 int p = 1;
@@ -644,7 +692,7 @@ namespace BoxSocial.Applications.Gallery
                         break;
                     case "CLOSED":
                     case "PRIVATE":
-                        if (!page.IsGroupMember)
+                        if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
                             Functions.Generate403(core);
                             return;
@@ -663,6 +711,38 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
                 page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
 
+                switch (galleryItem.Classification)
+                {
+                    case Classifications.Everyone:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        break;
+                    case Classifications.Mature:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        break;
+                    case Classifications.Restricted:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        break;
+                }
+
+                if (galleryItem.License != null)
+                {
+                    if (!string.IsNullOrEmpty(galleryItem.License.Title))
+                    {
+                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Title));
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Icon))
+                    {
+                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Icon));
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Link))
+                    {
+                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Link));
+                    }
+                }
+
                 Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
                 page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
@@ -678,7 +758,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (page.IsGroupMember)
+                if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
@@ -717,7 +797,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.University:
                     case NetworkTypes.School:
                     case NetworkTypes.Workplace:
-                        if (!page.IsNetworkMember)
+                        if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                         {
                             Functions.Generate403(core);
                             return;
@@ -736,6 +816,38 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
                 page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
 
+                switch (galleryItem.Classification)
+                {
+                    case Classifications.Everyone:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        break;
+                    case Classifications.Mature:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        break;
+                    case Classifications.Restricted:
+                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        break;
+                }
+
+                if (galleryItem.License != null)
+                {
+                    if (!string.IsNullOrEmpty(galleryItem.License.Title))
+                    {
+                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Title));
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Icon))
+                    {
+                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Icon));
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Link))
+                    {
+                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Link));
+                    }
+                }
+
                 Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
                 page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
@@ -751,7 +863,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (page.IsNetworkMember)
+                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }

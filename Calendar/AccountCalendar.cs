@@ -264,7 +264,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
+                SetRedirectUri(Event.BuildEventUri(calendarEvent));
                 Display.ShowMessage(core, "Event Created", "You have successfully created a new event.");
             }
             else
@@ -274,7 +274,7 @@ namespace BoxSocial.Applications.Calendar
 
                 Event calendarEvent = new Event(db, loggedInMember, eventId);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
+                SetRedirectUri(Event.BuildEventUri(calendarEvent));
                 Display.ShowMessage(core, "Event Saved", "You have successfully saved your changes to the event.");
             }
         }

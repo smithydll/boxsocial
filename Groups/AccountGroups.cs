@@ -43,6 +43,7 @@ namespace BoxSocial.Groups
         {
             RegisterSubModule += new RegisterSubModuleHandler(ManageGroups);
             RegisterSubModule += new RegisterSubModuleHandler(ManageGroupMemberships);
+            RegisterSubModule += new RegisterSubModuleHandler(DeleteGroup);
             RegisterSubModule += new RegisterSubModuleHandler(EditGroup);
             RegisterSubModule += new RegisterSubModuleHandler(JoinGroup);
             RegisterSubModule += new RegisterSubModuleHandler(LeaveGroup);
@@ -52,6 +53,7 @@ namespace BoxSocial.Groups
             RegisterSubModule += new RegisterSubModuleHandler(GroupRemoveOfficer);
             RegisterSubModule += new RegisterSubModuleHandler(GroupResignOperator);
             RegisterSubModule += new RegisterSubModuleHandler(GroupApproveMember);
+            RegisterSubModule += new RegisterSubModuleHandler(GroupBanMember);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -106,7 +108,7 @@ namespace BoxSocial.Groups
                 groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
                 groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
                 groupVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(thisGroup.EditUri));
-                groupVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(thisGroup.EditUri)); // TODO: DELETE URI
+                groupVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(thisGroup.DeleteUri));
 
                 switch (thisGroup.GroupType)
                 {
@@ -120,6 +122,71 @@ namespace BoxSocial.Groups
                         groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
                         break;
                 }
+            }
+        }
+
+        private void DeleteGroup(string submodule)
+        {
+            subModules.Add("delete", null);
+            if (submodule != "delete") return;
+
+            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            {
+                DeleteGroupSave();
+                return;
+            }
+
+            long groupId = Functions.RequestLong("id", -1);
+
+            if (groupId >= 0)
+            {
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "groups");
+                hiddenFieldList.Add("sub", "delete");
+                hiddenFieldList.Add("id", groupId.ToString());
+
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+                    "Are you sure you want to delete this group?",
+                    "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
+                    hiddenFieldList);
+            }
+            else
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        public void DeleteGroupSave()
+        {
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long groupId = Functions.RequestLong("id", -1);
+
+            if (Request.Form["1"] != null)
+            {
+                try
+                {
+                    UserGroup group = new UserGroup(db, groupId);
+
+                    SetRedirectUri(BuildModuleUri("groups"));
+                    Display.ShowMessage(core, "Cancelled", "This feature is currently not supported.");
+                    return;
+                }
+                catch (InvalidGroupException)
+                {
+                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    return;
+                }
+            }
+            else if (Request.Form["0"] != null)
+            {
+                Display.ShowMessage(core, "Cancelled", "You cancelled the deletion of the group.");
+                return;
             }
         }
 
@@ -256,20 +323,10 @@ namespace BoxSocial.Groups
                 db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}' WHERE group_id = {0}",
                     thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)), false);
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                SetRedirectUri(thisGroup.Uri);
                 Display.ShowMessage(core, "Group Saved", "You have successfully edited the group.");
                 return;
             }
-        }
-
-        private void DeleteGroup()
-        {
-            // TODO: delete group
-        }
-
-        private void DeleteGroupSave()
-        {
-            // TODO: save delete group
         }
 
         private void ManageGroupMemberships(string submodule)
@@ -277,11 +334,56 @@ namespace BoxSocial.Groups
             subModules.Add("memberships", "Manage Memberships");
             if (submodule != "memberships") return;
 
-            // TODO: show pending memberships
             template.SetTemplate("Groups", "account_group_membership");
+
+            SelectQuery query = new SelectQuery("group_members gm");
+            query.AddFields(UserGroup.GROUP_INFO_FIELDS);
+            query.AddJoin(JoinTypes.Inner, "group_keys gk", "gm.group_id", "gk.group_id");
+            query.AddJoin(JoinTypes.Inner, "group_info gi", "gm.group_id", "gi.group_id");
+            query.AddCondition("gm.user_id", loggedInMember.UserId);
+            query.AddCondition("gm.group_member_approved", 0);
+
+            DataTable pendingGroupsTable = db.SelectQuery(query);
+
+            if (pendingGroupsTable.Rows.Count > 0)
+            {
+                template.ParseVariables("PENDING_MEMBERSHIPS", "TRUE");
+            }
+
+            for (int i = 0; i < pendingGroupsTable.Rows.Count; i++)
+            {
+                VariableCollection groupVariableCollection = template.CreateChild("pending_list");
+
+                UserGroup thisGroup = new UserGroup(db, pendingGroupsTable.Rows[i]);
+
+                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
+                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+
+                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
+                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        break;
+                    case "CLOSED":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        break;
+                    case "PRIVATE":
+                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        break;
+                }
+            }
 
             DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
+
+            if (groupsTable.Rows.Count > 0)
+            {
+                template.ParseVariables("GROUP_MEMBERSHIPS", "TRUE");
+            }
 
             for (int i = 0; i < groupsTable.Rows.Count; i++)
             {
@@ -355,7 +457,7 @@ namespace BoxSocial.Groups
 
                 if (membershipTable.Rows.Count > 0)
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    SetRedirectUri(thisGroup.Uri);
                     Display.ShowMessage(core, "Already a Member", "You are already a member of this group.");
                     return;
                 }
@@ -390,7 +492,7 @@ namespace BoxSocial.Groups
                     db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
                         thisGroup.GroupId, loggedInMember.UserId), false);
 
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    SetRedirectUri(thisGroup.Uri);
                     if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
                     {
                         Display.ShowMessage(core, "Joined Group", "You have joined this group.");
@@ -441,25 +543,15 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(db, groupId);
 
-                /*DataTable membershipTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                    thisGroup.GroupId, loggedInMember.UserId));*/
-                bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
                 bool isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
+                bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
 
-                /*if (!isGroupMember)
-                {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(ZzUri.BuildGroupUri(thisGroup)));
-                    Display.ShowMessage(core, "Already not a Member", "You cannot leave a group you are not a member of.");
-                    return;
-                }
-                else
-                {*/
                 DataTable operatorsTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
                     thisGroup.GroupId, loggedInMember.UserId));
 
                 if (operatorsTable.Rows.Count > 0)
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                    SetRedirectUri(thisGroup.Uri);
                     Display.ShowMessage(core, "Cannot Leave Group", "You cannot leave this group while you are an operator of the group.");
                     return;
                 }
@@ -476,7 +568,7 @@ namespace BoxSocial.Groups
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members - 1, group_officers = group_officers - {1} WHERE group_id = {0}",
                             thisGroup.GroupId, officerRowsChanged), false);
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage(core, "Left Group", "You have left the group.");
                         return;
                     }
@@ -485,20 +577,19 @@ namespace BoxSocial.Groups
                         db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
                             thisGroup.GroupId, loggedInMember.UserId));
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage(core, "Left Group", "You are no longer pending membership of the group.");
                         return;
                     }
                     else
                     {
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage(core, "Not a Member", "You cannot leave a group you are not a member of.");
                         return;
                     }
                 }
-                /*}*/
-            }
-            catch
+             }
+            catch (InvalidGroupException)
             {
                 Display.ShowMessage(core, "Group does not Exist", "The group you are trying to leave does not exist.");
                 return;
@@ -612,7 +703,7 @@ namespace BoxSocial.Groups
                                     emailTemplate.ToString());
                             }
 
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                            SetRedirectUri(thisGroup.Uri);
                             Display.ShowMessage(core, "Invited Friend", "You have invited a friend to the group.");
                         }
                         else
@@ -683,7 +774,7 @@ namespace BoxSocial.Groups
                             db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators + 1 WHERE group_id = {0}",
                                 thisGroup.GroupId), false);
 
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                            SetRedirectUri(thisGroup.Uri);
                             Display.ShowMessage(core, "Operator Appointed to Group", "You have successfully appointed an operator to the group.");
                         }
                         else
@@ -852,7 +943,7 @@ namespace BoxSocial.Groups
                                 db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers + 1 WHERE group_id = {0}",
                                     thisGroup.GroupId), false);
 
-                                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                                SetRedirectUri(thisGroup.Uri);
                                 Display.ShowMessage(core, "Officer Appointed to Group", "You have successfully appointed an officer to the group.");
                             }
                             else
@@ -928,7 +1019,7 @@ namespace BoxSocial.Groups
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers - {1} WHERE group_id = {0}",
                             thisGroup.GroupId, deletedRows), false);
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage(core, "Officer Removed from Group", "You have successfully removed an officer from the group.");
                     }
                     else
@@ -979,8 +1070,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("sub", "resign-operator");
             hiddenFieldList.Add("id", groupId.ToString());
 
-            Display.ShowConfirmBox(page,
-                HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
                 "Are you sure you want to resign as operator from this group?",
                 "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
                 hiddenFieldList);
@@ -1000,6 +1090,12 @@ namespace BoxSocial.Groups
                 return;
             }
 
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
             UserGroup thisGroup = new UserGroup(db, groupId);
 
             if (Request.Form["1"] != null)
@@ -1014,7 +1110,7 @@ namespace BoxSocial.Groups
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators - {1} WHERE group_id = {0}",
                             thisGroup.GroupId, deletedRows), false);
 
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                        SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage(core, "Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
                     }
                     else
@@ -1031,7 +1127,7 @@ namespace BoxSocial.Groups
             }
             else if (Request.Form["0"] != null)
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.Uri));
+                SetRedirectUri(thisGroup.Uri);
                 Display.ShowMessage(core, "Cancelled", "You cancelled resignation from being a group operator.");
             }
         }
@@ -1083,7 +1179,7 @@ namespace BoxSocial.Groups
                                 db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
                                     thisGroup.GroupId), false);
 
-                                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                                SetRedirectUri(thisGroup.MemberlistUri);
                                 Display.ShowMessage(core, "Membership Approved", "You have approved the membership for the user.");
                                 return;
                             }
@@ -1114,6 +1210,108 @@ namespace BoxSocial.Groups
             catch
             {
                 Display.ShowMessage(core, "Error", "An error has occured, group does not exist, go back.");
+                return;
+            }
+        }
+
+        public void GroupBanMember(string submodule)
+        {
+            subModules.Add("ban-member", null);
+            if (submodule != "ban-member") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            {
+                GroupBanMemberSave();
+                return;
+            }
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+            hiddenFieldList.Add("module", "groups");
+            hiddenFieldList.Add("sub", "ban-member");
+            hiddenFieldList.Add("id", string.Format("{0},{1}", groupId, userId));
+
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+                "Are you sure you want to ban this member?",
+                "Banning a member from the group prevents them from seeing, or participating in the group.",
+                hiddenFieldList);
+        }
+
+        public void GroupBanMemberSave()
+        {
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.Form["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+
+            if (Request.Form["1"] != null)
+            {
+                try
+                {
+                    UserGroup group = new UserGroup(db, groupId);
+
+                    if (group.IsGroupOperator(loggedInMember))
+                    {
+                        try
+                        {
+                            GroupMember member = new GroupMember(db, group, userId);
+
+                            member.Ban();
+
+                            Display.ShowMessage(core, "Member Banned", "The member has been banned from the group.");
+                            return;
+                        }
+                        catch (InvalidUserException)
+                        {
+                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Display.ShowMessage(core, "Cannot ban member", "Only group operators can ban members from groups.");
+                        return;
+                    }
+                }
+                catch (InvalidGroupException)
+                {
+                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    return;
+                }
+            }
+            else if (Request.Form["0"] != null)
+            {
+                Display.ShowMessage(core, "Cancelled", "You cancelled the banning of this member.");
                 return;
             }
         }

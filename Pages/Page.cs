@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Pages
 {
     public class Page
     {
-        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut";
+        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification";
 
         private Mysql db;
 
@@ -59,6 +59,7 @@ namespace BoxSocial.Applications.Pages
         private long createdRaw;
         private long modifiedRaw;
         private ContentLicense license;
+        private Classifications classification;
 
         public long PageId
         {
@@ -124,6 +125,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public Classifications Classification
+        {
+            get
+            {
+                return classification;
+            }
+        }
+
         public ulong Views
         {
             get
@@ -155,12 +164,12 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public DateTime GetCreatedDate(Internals.TimeZone tz)
+        public DateTime GetCreatedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(createdRaw);
         }
 
-        public DateTime GetModifiedDate(Internals.TimeZone tz)
+        public DateTime GetModifiedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(modifiedRaw);
         }
@@ -237,6 +246,7 @@ namespace BoxSocial.Applications.Pages
             // TODO: hierarchy
             createdRaw = (long)pageRow["page_date_ut"];
             modifiedRaw = (long)pageRow["page_modified_ut"];
+            classification = (Classifications)(byte)pageRow["page_classification"];
 
             pageAccess = new Access(db, permissions, owner);
         }
@@ -295,6 +305,8 @@ namespace BoxSocial.Applications.Pages
                 return;
             }
 
+            BoxSocial.Internals.Classification.ApplyRestrictions(core, thePage.Classification);
+
             page.template.ParseVariables("PAGE_TITLE", HttpUtility.HtmlEncode(thePage.Title));
             page.template.ParseVariables("PAGE_BODY", Bbcode.Parse(HttpUtility.HtmlEncode(thePage.Body), core.session.LoggedInMember, page.ProfileOwner));
             DateTime pageDateTime = thePage.GetModifiedDate(core.tz);
@@ -323,6 +335,22 @@ namespace BoxSocial.Applications.Pages
                 {
                     page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
                 }
+            }
+
+            switch (thePage.Classification)
+            {
+                case Classifications.Everyone:
+                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                    break;
+                case Classifications.Mature:
+                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                    break;
+                case Classifications.Restricted:
+                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                    break;
             }
 
             page.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));

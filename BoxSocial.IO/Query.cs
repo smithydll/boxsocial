@@ -49,8 +49,76 @@ namespace BoxSocial.IO
             {
                 return ((int)value).ToString();
             }
-
-            return "''";
+            else if (value is List<string>)
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (string item in (List<string>)value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
+            else if (value is List<long>)
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (long item in (List<long>)value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
+            else if (value is List<int>)
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (int item in (List<int>)value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
+            else if (value is SelectQuery)
+            {
+                return string.Format("({0})",
+                    ((SelectQuery)value).ToString());
+            }
+            else
+            {
+                throw new UnknownFieldTypeException();
+            }
         }
+    }
+
+    public class UnknownFieldTypeException : Exception
+    {
     }
 }

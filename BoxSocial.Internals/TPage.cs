@@ -64,14 +64,13 @@ namespace BoxSocial.Internals
         private string pageTitle = "ZinZam &bull; Your point in user space";
 
         public Template template;
-        public Display display;
         public Mysql db;
         public Member loggedInMember;
         public SessionState session;
         protected Random rand;
         Stopwatch timer;
         public int page;
-        public TimeZone tz;
+        public UnixTime tz;
         protected Core core;
         public PageSignature Signature;
 
@@ -194,10 +193,10 @@ namespace BoxSocial.Internals
             core = new Core(db, template);
             core.page = this;
 
-            display = new Display();
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
-            tz = new TimeZone(TimeZone.UTC_CODE);
+            tz = new UnixTime(UnixTime.UTC_CODE);
+            Display.page = this;
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -250,7 +249,7 @@ namespace BoxSocial.Internals
 
         public void EndResponse()
         {
-            display.Header(this);
+            Display.Header(this);
             HttpContext.Current.Response.Write(template.ToString());
             timer.Stop();
             double seconds = (timer.ElapsedTicks) / 10000000.0;

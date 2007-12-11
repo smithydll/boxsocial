@@ -114,7 +114,7 @@ namespace BoxSocial.Networks
 
                 if (theNetwork.IsNetworkMember(loggedInMember))
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(theNetwork.Uri));
+                    SetRedirectUri(theNetwork.Uri);
                     Display.ShowMessage(core, "Already a member", "You are already a member of this network");
                     return;
                 }
@@ -128,7 +128,7 @@ namespace BoxSocial.Networks
                     // just join the network
                     if (theNetwork.Join(core, loggedInMember, "") != null)
                     {
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(theNetwork.Uri));
+                        SetRedirectUri(theNetwork.Uri);
                         Display.ShowMessage(core, "Joined Network", "You have successfully joined the network.");
                         return;
                     }
@@ -184,7 +184,7 @@ namespace BoxSocial.Networks
                 }
                 else
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(theNetwork.Uri));
+                    SetRedirectUri(theNetwork.Uri);
                     Display.ShowMessage(core, "Joined Network", "You have successfully joined the network.");
                     return;
                 }

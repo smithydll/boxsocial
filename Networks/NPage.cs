@@ -38,7 +38,6 @@ namespace BoxSocial.Networks
     {
         protected string networkNetwork;
         protected Network theNetwork;
-        protected bool isNetworkMember;
 
         public Network TheNetwork
         {
@@ -48,26 +47,16 @@ namespace BoxSocial.Networks
             }
         }
 
-        public bool IsNetworkMember
-        {
-            get
-            {
-                return isNetworkMember;
-            }
-        }
-
         public NPage()
             : base()
         {
             page = 1;
-            isNetworkMember = false;
         }
 
         public NPage(string templateFile)
             : base(templateFile)
         {
             page = 1;
-            isNetworkMember = false;
         }
 
         protected void BeginNetworkPage()
@@ -102,7 +91,6 @@ namespace BoxSocial.Networks
                     {
                         if (theNetwork.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
                         {
-                            isNetworkMember = true;
                             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(theNetwork.Uri));
                             Display.ShowMessage(Core, "Joined Network", "You have successfully joined the network.");
                             return;
@@ -117,11 +105,6 @@ namespace BoxSocial.Networks
                 {
                     // ignore
                 }
-            }
-
-            if (loggedInMember != null && isNetworkMember == false)
-            {
-                isNetworkMember = theNetwork.IsNetworkMember(loggedInMember);
             }
         }
     }

@@ -56,6 +56,12 @@ namespace BoxSocial.Groups
         private ulong comments;
         private uint galleryItems;
 
+        private Dictionary<Member, bool> groupMemberCache = new Dictionary<Member,bool>();
+        private Dictionary<Member, bool> groupMemberPendingCache = new Dictionary<Member, bool>();
+        private Dictionary<Member, bool> groupMemberBannedCache = new Dictionary<Member, bool>();
+        private Dictionary<Member, bool> groupMemberAbsoluteCache = new Dictionary<Member, bool>();
+        private Dictionary<Member, bool> groupOperatorCache = new Dictionary<Member, bool>();
+
         public long GroupId
         {
             get
@@ -209,7 +215,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public DateTime DateCreated(Internals.TimeZone tz)
+        public DateTime DateCreated(UnixTime tz)
         {
             return tz.DateTimeFromMysql(timestampCreated);
         }
@@ -304,29 +310,79 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public bool IsGroupMemberAbsolute(Member member)
+        private void preLoadMemberCache(Member member)
         {
-            DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1}",
-                groupId, member.UserId));
+            SelectQuery query = new SelectQuery("group_members");
+            query.AddFields("user_id", "group_member_approved");
+            query.AddCondition("group_id", groupId);
+            query.AddCondition("user_id", member.UserId);
+
+            DataTable memberTable = db.SelectQuery(query);
 
             if (memberTable.Rows.Count > 0)
             {
-                return true;
+                switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["group_member_approved"])
+                {
+                    case GroupMemberApproval.Pending:
+                        groupMemberCache.Add(member, true);
+                        groupMemberPendingCache.Add(member, false);
+                        groupMemberBannedCache.Add(member, false);
+                        groupMemberAbsoluteCache.Add(member, true);
+                        break;
+                    case GroupMemberApproval.Member:
+                        groupMemberCache.Add(member, false);
+                        groupMemberPendingCache.Add(member, true);
+                        groupMemberBannedCache.Add(member, false);
+                        groupMemberAbsoluteCache.Add(member, true);
+                        break;
+                    case GroupMemberApproval.Banned:
+                        groupMemberCache.Add(member, false);
+                        groupMemberPendingCache.Add(member, false);
+                        groupMemberBannedCache.Add(member, true);
+                        groupMemberAbsoluteCache.Add(member, false);
+                        break;
+                }
             }
+            else
+            {
+                groupMemberCache.Add(member, false);
+                groupMemberPendingCache.Add(member, false);
+                groupMemberBannedCache.Add(member, false);
+                groupMemberAbsoluteCache.Add(member, false);
+            }
+        }
 
+        public bool IsGroupMemberAbsolute(Member member)
+        {
+            if (member != null)
+            {
+                if (groupMemberAbsoluteCache.ContainsKey(member))
+                {
+                    return groupMemberAbsoluteCache[member];
+                }
+                else
+                {
+                    preLoadMemberCache(member);
+                    return groupMemberAbsoluteCache[member];
+                }
+            }
             return false;
         }
 
         public bool IsGroupMemberPending(Member member)
         {
-            DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1} AND group_member_approved = 0",
-                groupId, member.UserId));
-
-            if (memberTable.Rows.Count > 0)
+            if (member != null)
             {
-                return true;
+                if (groupMemberPendingCache.ContainsKey(member))
+                {
+                    return groupMemberPendingCache[member];
+                }
+                else
+                {
+                    preLoadMemberCache(member);
+                    return groupMemberPendingCache[member];
+                }
             }
-
             return false;
         }
 
@@ -334,37 +390,68 @@ namespace BoxSocial.Groups
         {
             if (member != null)
             {
-                DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1} AND group_member_approved = 1",
-                    groupId, member.UserId));
-
-                if (memberTable.Rows.Count > 0)
+                if (groupMemberCache.ContainsKey(member))
                 {
-                    return true;
+                    return groupMemberCache[member];
+                }
+                {
+                    preLoadMemberCache(member);
+                    return groupMemberCache[member];
                 }
             }
+            return false;
+        }
 
+        public bool IsGroupMemberBanned(Member member)
+        {
+            if (member != null)
+            {
+                if (groupMemberCache.ContainsKey(member))
+                {
+                    return groupMemberBannedCache[member];
+                }
+                {
+                    preLoadMemberCache(member);
+                    return groupMemberBannedCache[member];
+                }
+            }
             return false;
         }
 
         public bool IsGroupOperator(Member member)
         {
-            DataTable operatorTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
-                groupId, member.UserId));
-
-            if (operatorTable.Rows.Count > 0)
+            if (member != null)
             {
-                return true;
-            }
+                if (groupOperatorCache.ContainsKey(member))
+                {
+                    return groupOperatorCache[member];
+                }
+                else
+                {
+                    DataTable operatorTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
+                        groupId, member.UserId));
 
+                    if (operatorTable.Rows.Count > 0)
+                    {
+                        groupOperatorCache.Add(member, true);
+                        return true;
+                    }
+                    else
+                    {
+                        groupOperatorCache.Add(member, false);
+                        return false;
+                    }
+                }
+            }
             return false;
         }
 
-        public static UserGroup Create(TPage page, string groupTitle, string groupSlug, string groupDescription, short groupCategory, string groupType)
+        public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, short groupCategory, string groupType)
         {
-            Mysql db = page.db;
-            SessionState session = page.session;
+            Mysql db = core.db;
+            SessionState session = core.session;
 
-            if (page.loggedInMember == null)
+            if (core.session.LoggedInMember == null)
             {
                 return null;
             }
@@ -405,10 +492,10 @@ namespace BoxSocial.Groups
             }
 
             db.UpdateQuery(string.Format("INSERT INTO group_members (user_id, group_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, 1, '{2}', UNIX_TIMESTAMP())",
-                page.loggedInMember.UserId, groupId, Mysql.Escape(session.IPAddress.ToString())), true);
+                session.LoggedInMember.UserId, groupId, Mysql.Escape(session.IPAddress.ToString())), true);
 
             db.UpdateQuery(string.Format("INSERT INTO group_operators (user_id, group_id) VALUES ({0}, {1})",
-                page.loggedInMember.UserId, groupId), false);
+                session.LoggedInMember.UserId, groupId), false);
 
             UserGroup newGroup = new UserGroup(db, groupId);
 
@@ -416,7 +503,7 @@ namespace BoxSocial.Groups
             try
             {
                 ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
-                profileAe.Install(newGroup);
+                profileAe.Install(core, newGroup);
             }
             catch
             {
@@ -425,7 +512,7 @@ namespace BoxSocial.Groups
             try
             {
                 ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
-                groupsAe.Install(newGroup);
+                groupsAe.Install(core, newGroup);
             }
             catch
             {
@@ -434,7 +521,7 @@ namespace BoxSocial.Groups
             try
             {
                 ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
-                galleryAe.Install(newGroup);
+                galleryAe.Install(core, newGroup);
             }
             catch
             {
@@ -443,7 +530,7 @@ namespace BoxSocial.Groups
             try
             {
                 ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
-                guestbookAe.Install(newGroup);
+                guestbookAe.Install(core, newGroup);
             }
             catch
             {
@@ -713,8 +800,8 @@ namespace BoxSocial.Groups
             switch (GroupType)
             {
                 case "OPEN":
-                    return 0x0001;
                 case "CLOSED":
+                    return 0x0001;
                 case "PRIVATE":
                     if (IsGroupMember(viewer))
                     {
@@ -830,8 +917,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=edit&id={0}",
-                    GroupId));
+                return AccountModule.BuildModuleUri("groups", "edit", string.Format("id={0}", GroupId));
             }
         }
 
@@ -839,8 +925,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=delete&id={0}",
-                    GroupId));
+                return AccountModule.BuildModuleUri("groups", "delete", string.Format("id={0}", GroupId));
             }
         }
 
@@ -848,8 +933,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=join&id={0}",
-                    GroupId), true);
+                return AccountModule.BuildModuleUri("groups", "join", true, string.Format("id={0}", GroupId));
             }
         }
 
@@ -857,8 +941,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=leave&id={0}",
-                    GroupId), true);
+                return AccountModule.BuildModuleUri("groups", "leave", true, string.Format("id={0}", GroupId));
             }
         }
 
@@ -866,8 +949,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=invite&id={0}",
-                    GroupId), true);
+                return AccountModule.BuildModuleUri("groups", "invite", true, string.Format("id={0}", GroupId));
             }
         }
 
@@ -875,8 +957,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=resign-operator&id={0}",
-                    groupId), true);
+                return AccountModule.BuildModuleUri("groups", "resign-operator", true, string.Format("id={0}", GroupId));
             }
         }
 
@@ -916,32 +997,32 @@ namespace BoxSocial.Groups
             page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode(langIsAre));
             page.template.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(page.ThisGroup.MemberlistUri));
 
-            if (page.IsGroupOperator)
+            if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.ParseVariables("IS_OPERATOR", "TRUE");
             }
 
             if (core.session.IsLoggedIn)
             {
-                if (!page.IsGroupMemberAbsolute)
+                if (!page.ThisGroup.IsGroupMemberAbsolute(core.session.LoggedInMember))
                 {
                     page.template.ParseVariables("U_JOIN", HttpUtility.HtmlEncode(page.ThisGroup.JoinUri));
                 }
                 else
                 {
-                    if (!page.IsGroupOperator)
+                    if (!page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
                     {
-                        if (page.IsGroupMember)
+                        if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
                             page.template.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(page.ThisGroup.LeaveUri));
                         }
-                        else if (page.IsGroupMemberPending)
+                        else if (page.ThisGroup.IsGroupMemberPending(core.session.LoggedInMember))
                         {
                             page.template.ParseVariables("U_CANCEL", HttpUtility.HtmlEncode(page.ThisGroup.LeaveUri));
                         }
                     }
 
-                    if (page.IsGroupMember)
+                    if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                     {
                         page.template.ParseVariables("U_INVITE", HttpUtility.HtmlEncode(page.ThisGroup.InviteUri));
                     }
@@ -1007,7 +1088,7 @@ namespace BoxSocial.Groups
             page.template.ParseVariables("MEMBERS_TITLE", HttpUtility.HtmlEncode("Member list for " + page.ThisGroup.DisplayName));
             page.template.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(((ulong)page.ThisGroup.Members).ToString()));
 
-            if (page.IsGroupOperator)
+            if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.ParseVariables("GROUP_OPERATOR", "TRUE");
 
@@ -1046,9 +1127,8 @@ namespace BoxSocial.Groups
                 memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(member)));
                 if (!member.IsOperator)
                 {
-                    // TODO: group ban control
                     // let's say you can't ban an operator, show ban link if not an operator
-                    /*memberLoopVars.Add("U_BAN", HttpUtility.HtmlEncode(ZzUri.BuildGroupBanUri(thisGroup, member)));*/
+                    memberVariableCollection.ParseVariables("U_BAN", HttpUtility.HtmlEncode(member.BanUri));
                     memberVariableCollection.ParseVariables("U_MAKE_OPERATOR", HttpUtility.HtmlEncode(member.MakeOperatorUri));
                 }
                 memberVariableCollection.ParseVariables("U_MAKE_OFFICER", HttpUtility.HtmlEncode(member.MakeOfficerUri));

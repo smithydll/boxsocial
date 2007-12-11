@@ -41,6 +41,7 @@
     <Compile Include="GalleryItem.cs" />
     <Compile Include="GroupGallery.cs" />
     <Compile Include="GroupGalleryItem.cs" />
+    <Compile Include="UserTag.cs" />
     <Compile Include="NetworkGallery.cs" />
     <Compile Include="NetworkGalleryItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -165,12 +165,12 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public DateTime GetStartTime(Internals.TimeZone tz)
+        public DateTime GetStartTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(startTimeRaw);
         }
 
-        public DateTime GetEndTime(Internals.TimeZone tz)
+        public DateTime GetEndTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(endTimeRaw);
         }

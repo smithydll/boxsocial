@@ -32,13 +32,21 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
+
+    public enum GroupMemberApproval : byte
+    {
+        Pending = 0,
+        Member = 1,
+        Banned = 2,
+    }
+
     public class GroupMember : Member
     {
         public const string USER_GROUP_FIELDS = "gm.user_id, gm.group_id, gm.group_member_approved, gm.group_member_ip, gm.group_member_date_ut";
 
         private long groupId;
         private long memberJoinDateRaw;
-        private bool memberApproved;
+        private GroupMemberApproval memberApproval;
         private bool isOperator;
 
         public bool IsOperator
@@ -49,11 +57,35 @@ namespace BoxSocial.Groups
             }
         }
 
-        public DateTime GetGroupMemberJoinDate(Internals.TimeZone tz)
+        public DateTime GetGroupMemberJoinDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
+        public GroupMember(Mysql db, UserGroup group, long userId)
+        {
+            this.db = db;
+
+            /*SelectQuery query = new SelectQuery("group_members gm");
+            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS, "go.user_id AS user_id_go");
+            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "gm.user_id", "ui.user_id"));
+            query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
+            query.joins.Add(new TableJoin(JoinTypes.Left, "group_operators go", "ui.user_id", "go.user_id"));*/
+
+            DataTable memberTable = db.SelectQuery(string.Format("SELECT {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.user_id = {1};",
+                group.GroupId, userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
+
+            if (memberTable.Rows.Count == 1)
+            {
+                loadMemberInfo(memberTable.Rows[0]);
+                loadUserInfo(memberTable.Rows[0]);
+                loadUserIcon(memberTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
 
         public GroupMember(Mysql db, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon)
         {
@@ -81,7 +113,7 @@ namespace BoxSocial.Groups
             groupId = (long)memberRow["group_id"];
             userId = (int)memberRow["user_id"];
             memberJoinDateRaw = (long)memberRow["group_member_date_ut"];
-            memberApproved = ((byte)memberRow["group_member_approved"] > 0) ? true : false;
+            memberApproval = (GroupMemberApproval)(byte)memberRow["group_member_approved"];
             try
             {
                 if (memberRow["user_id_go"] is DBNull)
@@ -104,25 +136,29 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=make-officer&id={0},{1}",
-                    groupId, UserId), true);
+                return AccountModule.BuildModuleUri("groups", "make-officer", true, string.Format("id={0},{1}", groupId, userId));
             }
         }
 
         public string RemoveOfficerUri(string title)
         {
-
-            return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=remove-officer&id={0},{1},{2}",
-                groupId, UserId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))), true);
-
+            return AccountModule.BuildModuleUri("groups", "remove-officer", true,
+                string.Format("id={0},{1},{2}", groupId, userId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))));
         }
 
         public string MakeOperatorUri
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=make-operator&id={0},{1}",
-                    groupId, UserId), true);
+                return AccountModule.BuildModuleUri("groups", "make-operator", true, string.Format("id={0},{1}", groupId, userId));
+            }
+        }
+
+        public string BanUri
+        {
+            get
+            {
+                return AccountModule.BuildModuleUri("groups", "ban-member", true, string.Format("id={0},{1}", groupId, userId));
             }
         }
 
@@ -130,9 +166,27 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/account/?module=groups&sub=approve&id={0},{1}",
-                    groupId, UserId), true);
+                return AccountModule.BuildModuleUri("groups", "approve", true, string.Format("id={0},{1}", groupId, userId));
             }
+        }
+
+        public void Ban()
+        {
+            UpdateQuery query = new UpdateQuery("group_members");
+            query.AddField("group_member_approved", (byte)GroupMemberApproval.Banned);
+            query.AddCondition("user_id", userId);
+            query.AddCondition("group_id", groupId);
+
+            db.UpdateQuery(query);
+        }
+
+        public void UnBan()
+        {
+            DeleteQuery query = new DeleteQuery("group_members");
+            query.condition.Add("user_id", userId);
+            query.condition.Add("group_id", groupId);
+
+            db.UpdateQuery(query);
         }
     }
 }

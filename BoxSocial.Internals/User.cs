@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
         private bool emailNotifications;
         private ulong bytesUsed;
         private ushort timeZoneCode;
-        private TimeZone timeZone;
+        private UnixTime timeZone;
 
         private bool sessionRelationsSet = false;
         private Relation sessionRelations;
@@ -607,7 +607,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public TimeZone GetTimeZone
+        public UnixTime GetTimeZone
         {
             get
             {
@@ -658,11 +658,11 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
                 query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
-                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
-                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id"));
-                query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
-                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
-                query.condition.Add("uk.user_id", userId);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
+                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+                query.AddCondition("uk.user_id", userId);
 
                 DataTable userTable = db.SelectQuery(query);
 
@@ -681,9 +681,9 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
                 query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
-                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
-                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
-                query.condition.Add("uk.user_id", userId);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+                query.AddCondition("uk.user_id", userId);
 
                 DataTable userTable = db.SelectQuery(query);
 
@@ -715,9 +715,9 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
                 query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
-                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
-                query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
-                query.condition.Add("uk.user_name", userName);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+                query.AddCondition("uk.user_name", userName);
 
                 userTable = db.SelectQuery(query);
             }
@@ -725,8 +725,8 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
                 query.AddFields(Member.USER_INFO_FIELDS);
-                query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id"));
-                query.condition.Add("uk.user_name", userName);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddCondition("uk.user_name", userName);
 
                 userTable = db.SelectQuery(query);
             }
@@ -749,9 +749,9 @@ namespace BoxSocial.Internals
         {
             SelectQuery query = new SelectQuery("user_keys uk");
             query.AddFields(Member.USER_PROFILE_FIELDS);
-            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id"));
-            query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
-            query.condition.Add("uk.user_id", userId);
+            query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
+            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+            query.AddCondition("uk.user_id", userId);
 
             DataTable userTable = db.SelectQuery(query);
 
@@ -775,7 +775,7 @@ namespace BoxSocial.Internals
             userName = (string)userRow["user_name"];
             displayName = (string)userRow["user_name_display"];
             timeZoneCode = (ushort)userRow["user_time_zone"];
-            timeZone = new TimeZone(timeZoneCode);
+            timeZone = new UnixTime(timeZoneCode);
             registrationDate = timeZone.DateTimeFromMysql(userRow["user_reg_date_ut"]);
             lastOnlineTime = timeZone.DateTimeFromMysql(userRow["user_last_visit_ut"]);
             blogSubscriptions = (uint)userRow["user_blog_subscriptions"];
@@ -906,15 +906,15 @@ namespace BoxSocial.Internals
 
             SelectQuery query = new SelectQuery("user_relations uf");
             query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
-            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id"));
-            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id"));
-            query.joins.Add(new TableJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso"));
-            query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
-            query.condition.Add("uf.relation_me", userId);
-            query.condition.Add("uf.relation_type", "FRIEND");
-            query.sorts.Add(new TableSort(SortOrder.Ascending, "(uf.relation_order - 1)"));
-            query.limitStart = (page - 1) * perPage;
-            query.limitCount = perPage;
+            query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
+            query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
+            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+            query.AddCondition("uf.relation_me", userId);
+            query.AddCondition("uf.relation_type", "FRIEND");
+            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
 
             DataTable friendsTable = db.SelectQuery(query);
 
@@ -1016,22 +1016,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        // TODO: move to NetworkMember
-        /*public List<Network> GetNetworks()
-        {
-            List<Network> networks = new List<Network>();
-
-            DataTable networksTable = db.SelectQuery(string.Format("SELECT {1}, nk.network_network FROM network_members mm INNER JOIN network_keys nk ON nm.network_id = nk.network_id INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nm.user_id = {0} ORDER BY nk.network_network ASC;",
-                userId, Network.NETWORK_INFO_FIELDS));
-
-            foreach (DataRow dr in networksTable.Rows)
-            {
-                networks.Add(new Network(db, dr));
-            }
-
-            return networks;
-        }*/
-
         /// <summary>
         /// 
         /// </summary>
@@ -1062,11 +1046,8 @@ namespace BoxSocial.Internals
 
             string activateKey = Member.GenerateActivationSecurityToken();
 
-            /*long userId = db.UpdateQuery(string.Format("INSERT INTO user_keys (user_name) VALUES ('{0}')",
-                Mysql.Escape(userName)), true);*/
-
             InsertQuery query = new InsertQuery("user_keys");
-            query.fieldValues.Add("user_name", userName);
+            query.AddField("user_name", userName);
 
             long userId = db.UpdateQuery(query, true);
 
@@ -1076,18 +1057,18 @@ namespace BoxSocial.Internals
             }
 
             query = new InsertQuery("user_info");
-            query.fieldValues.Add("user_id", userId);
-            query.fieldValues.Add("user_name", userName);
-            query.fieldValues.Add("user_alternate_email", eMail);
-            query.fieldValues.Add("user_password", password);
-            query.fieldValues.Add("user_reg_date_ut", core.tz.GetUnixTimeStamp(core.tz.Now));
-            query.fieldValues.Add("user_activate_code", activateKey);
-            query.fieldValues.Add("user_reg_ip", session.IPAddress.ToString());
-            query.fieldValues.Add("user_home_page", "/profile");
-            query.fieldValues.Add("user_bytes", 0);
-            query.fieldValues.Add("user_last_visit_ut", 0);
-            query.fieldValues.Add("user_show_bbcode", 0x07);
-            query.fieldValues.Add("user_show_custom_styles", true);
+            query.AddField("user_id", userId);
+            query.AddField("user_name", userName);
+            query.AddField("user_alternate_email", eMail);
+            query.AddField("user_password", password);
+            query.AddField("user_reg_date_ut", core.tz.GetUnixTimeStamp(core.tz.Now));
+            query.AddField("user_activate_code", activateKey);
+            query.AddField("user_reg_ip", session.IPAddress.ToString());
+            query.AddField("user_home_page", "/profile");
+            query.AddField("user_bytes", 0);
+            query.AddField("user_last_visit_ut", 0);
+            query.AddField("user_show_bbcode", 0x07);
+            query.AddField("user_show_custom_styles", true);
 
             if (db.UpdateQuery(query, true) < 0)
             {
@@ -1098,16 +1079,10 @@ namespace BoxSocial.Internals
             }
 
             query = new InsertQuery("user_profile");
-            query.fieldValues.Add("user_id", userId);
-            query.fieldValues.Add("profile_access", 0x3331);
+            query.AddField("user_id", userId);
+            query.AddField("profile_access", 0x3331);
 
             db.UpdateQuery(query, false);
-
-            /*db.UpdateQuery(string.Format("INSERT INTO user_info (user_id, user_name, user_alternate_email, user_password, user_reg_date_ut, user_activate_code, user_reg_ip, user_home_page) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', '{6}');",
-                userId, Mysql.Escape(userName), Mysql.Escape(eMail), password, Mysql.Escape(activateKey), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape("/profile")), true);*/
-
-            /*db.UpdateQuery(string.Format("INSERT INTO user_profile (user_id) VALUES ({0});",
-                userId), false);*/
 
             Member newUser = new Member(db, userId);
 
@@ -1115,7 +1090,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
-                profileAe.Install(newUser);
+                profileAe.Install(core, newUser);
             }
             catch
             {
@@ -1124,7 +1099,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
-                galleryAe.Install(newUser);
+                galleryAe.Install(core, newUser);
             }
             catch
             {
@@ -1133,7 +1108,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
-                guestbookAe.Install(newUser);
+                guestbookAe.Install(core, newUser);
             }
             catch
             {
@@ -1142,7 +1117,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
-                groupsAe.Install(newUser);
+                groupsAe.Install(core, newUser);
             }
             catch
             {
@@ -1151,7 +1126,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry networksAe = new ApplicationEntry(db, null, "Networks");
-                networksAe.Install(newUser);
+                networksAe.Install(core, newUser);
             }
             catch
             {
@@ -1160,7 +1135,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry calendarAe = new ApplicationEntry(db, null, "Calendar");
-                calendarAe.Install(newUser);
+                calendarAe.Install(core, newUser);
             }
             catch
             {

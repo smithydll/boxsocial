@@ -30,6 +30,10 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    /*
+     * TODO: ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_list_only` BOOLEAN NOT NULL AFTER `page_classification`;
+     * ALTER TABLE `zinzam0_zinzam`.`user_pages` MODIFY COLUMN `page_list_only` TINYINT(1) UNSIGNED NOT NULL;
+     */
     public class ApplicationEntry : Primitive
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments";
@@ -45,6 +49,7 @@ namespace BoxSocial.Internals
         private string description;
         private string icon;
         private string assemblyName;
+        private string displayNameOwnership;
         private Boolean isPrimitive;
         private AppPrimitives primitives;
         private long dateRaw;
@@ -107,6 +112,35 @@ namespace BoxSocial.Internals
             get
             {
                 return title;
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                return title;
+            }
+        }
+
+        public string DisplayNameOwnership
+        {
+            get
+            {
+                if (displayNameOwnership == null)
+                {
+                    displayNameOwnership = (title != "") ? title : assemblyName;
+
+                    if (displayNameOwnership.EndsWith("s"))
+                    {
+                        displayNameOwnership = displayNameOwnership + "'";
+                    }
+                    else
+                    {
+                        displayNameOwnership = displayNameOwnership + "'s";
+                    }
+                }
+                return displayNameOwnership;
             }
         }
 
@@ -250,6 +284,31 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ApplicationEntry(Mysql db, Primitive owner, long applicationId)
+        {
+            this.db = db;
+            this.owner = owner;
+
+            DataTable assemblyTable = db.SelectQuery(string.Format(@"SELECT {0}
+                FROM applications ap
+                WHERE ap.application_id = {1};",
+                ApplicationEntry.APPLICATION_FIELDS, applicationId));
+
+            if (assemblyTable.Rows.Count == 1)
+            {
+                loadApplicationInfo(assemblyTable.Rows[0]);
+
+                if (this.owner == null)
+                {
+                    applicationAccess = new Access(db, permissions, owner);
+                }
+            }
+            else
+            {
+                throw new InvalidApplicationException();
+            }
+        }
+
         public ApplicationEntry(Mysql db, Primitive installee, DataRow applicationRow)
         {
             loadApplicationInfo(applicationRow);
@@ -372,15 +431,26 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public bool Install(Primitive viewer)
+        public bool Install(Core core, Primitive viewer)
         {
-            return Install(viewer, true);
+            return Install(core, viewer, true);
         }
 
-        public bool Install(Primitive viewer, bool finaliseTransaction)
+        public bool Install(Core core, Primitive viewer, bool finaliseTransaction)
         {
             if (!HasInstalled(viewer))
             {
+                if (viewer is Member)
+                {
+                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                    Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                    foreach (string slug in slugs.Keys)
+                    {
+                        PPage.CreatePage(core, (Member)viewer, slugs[slug], slug, "", "", 0, "PUBLISH", true, 0x1111, 0);
+                    }
+                }
                 if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
                     applicationId, viewer.Id, Mysql.Escape(viewer.Type), 0x1111), !finaliseTransaction) > 0)
                 {
@@ -390,26 +460,79 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public bool Uninstall(Primitive viewer)
+        public bool UpdateInstall(Core core, Primitive viewer)
         {
-            if (isPrimitive)
+            if (!HasInstalled(viewer))
             {
-                // Groups and Networks are primitive applications
-                return false;
+                Install(core, viewer);
             }
-
-            switch (assemblyName.ToLower())
+            else
             {
-                case "profile":
-                case "networks":
-                case "groups":
-                case "gallery":
-                case "calendar":
+                if (viewer is Member)
+                {
+                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                    Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                    foreach (string slug in slugs.Keys)
+                    {
+                        SelectQuery query = new SelectQuery("user_pages");
+                        query.AddFields("page_id");
+                        query.AddCondition("user_id", ((Member)viewer).UserId);
+                        query.AddCondition("page_title", slugs[slug]);
+                        query.AddCondition("page_slug", slug);
+                        query.AddCondition("page_parent_path", "");
+
+                        if (db.SelectQuery(query).Rows.Count == 0)
+                        {
+                            PPage.CreatePage(core, (Member)viewer, slugs[slug], slug, "", "", 0, "PUBLISH", true, 0x1111, 0);
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool Uninstall(Core core, Primitive viewer)
+        {
+            return Uninstall(core, viewer, false);
+        }
+
+        public bool Uninstall(Core core, Primitive viewer, bool force)
+        {
+            if (!force)
+            {
+                if (isPrimitive)
+                {
+                    // Groups and Networks are primitive applications
                     return false;
+                }
+
+                switch (assemblyName.ToLower())
+                {
+                    case "profile":
+                    case "networks":
+                    case "groups":
+                    case "gallery":
+                    case "calendar":
+                        return false;
+                }
             }
 
             if (HasInstalled(viewer))
             {
+                if (viewer is Member)
+                {
+                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                    Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                    foreach (string slug in slugs.Keys)
+                    {
+                        PPage.DeletePage(core, (Member)viewer, slugs[slug], slug, "");
+                    }
+                }
                 if (db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}';",
                     applicationId, viewer.Id, Mysql.Escape(viewer.Type))) > 0)
                 {

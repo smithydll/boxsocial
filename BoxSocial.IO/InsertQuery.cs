@@ -6,14 +6,19 @@ namespace BoxSocial.IO
 {
     public sealed class InsertQuery : Query
     {
-        public string table;
-        public Dictionary<string, object> fieldValues;
+        private string table;
+        private Dictionary<string, object> fieldValues;
 
         public InsertQuery(string tableName)
         {
             fieldValues = new Dictionary<string, object>();
 
             table = tableName;
+        }
+
+        public void AddField(string field, object value)
+        {
+            fieldValues.Add(field, value);
         }
 
         public override string ToString()

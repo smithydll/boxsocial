@@ -197,5 +197,10 @@ namespace BoxSocial.Internals
         {
             core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(uri));
         }
+
+        public void SetError(string errorString)
+        {
+            core.template.ParseVariables("ERROR", errorString);
+        }
     }
 }

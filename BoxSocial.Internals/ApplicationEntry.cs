@@ -31,7 +31,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     /*
-     * TODO: ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_list_only` BOOLEAN NOT NULL AFTER `page_classification`;
+     * DONE: ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_list_only` BOOLEAN NOT NULL AFTER `page_classification`;
      * ALTER TABLE `zinzam0_zinzam`.`user_pages` MODIFY COLUMN `page_list_only` TINYINT(1) UNSIGNED NOT NULL;
      */
     public class ApplicationEntry : Primitive
@@ -448,7 +448,8 @@ namespace BoxSocial.Internals
 
                     foreach (string slug in slugs.Keys)
                     {
-                        PPage.CreatePage(core, (Member)viewer, slugs[slug], slug, "", "", 0, "PUBLISH", true, 0x1111, 0);
+                        string tSlug = slug;
+                        Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, "", "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
@@ -485,7 +486,8 @@ namespace BoxSocial.Internals
 
                         if (db.SelectQuery(query).Rows.Count == 0)
                         {
-                            PPage.CreatePage(core, (Member)viewer, slugs[slug], slug, "", "", 0, "PUBLISH", true, 0x1111, 0);
+                            string tSlug = slug;
+                            Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, "", "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
                     }
                 }

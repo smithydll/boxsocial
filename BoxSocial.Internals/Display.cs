@@ -502,7 +502,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        nextParents = ((string)pagesTable.Rows[i + 1]["page_parent_path"]).Split('/').Length + 1;
+                        nextParents = ((string)pagesTable.Rows[i + 1]["page_parent_path"]).Split('/').Length;
                     }
                 }
                 else
@@ -516,7 +516,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    parents = ((string)pagesTable.Rows[i]["page_parent_path"]).Split('/').Length + 1;
+                    parents = ((string)pagesTable.Rows[i]["page_parent_path"]).Split('/').Length;
                 }
 
                 if (nextParents > parents)
@@ -542,22 +542,22 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    for (int j = parents + 1; j < nextParents; j++)
+                    for (int j = parents; j < nextParents; j++)
                     {
-                        if (j > parents + 1)
+                        if (j > parents)
                         {
                             output.Append("<li class=\"empty\">");
                         }
                         output.Append("<ul>\n");
                     }
 
-                    if (parents + 1 == nextParents)
+                    if (parents == nextParents)
                     {
                         output.Append("\n<ul>\n");
                     }
                 }
 
-                for (int j = nextParents + 1; j < parents; j++)
+                for (int j = nextParents; j < parents; j++)
                 {
                     output.Append("</ul>\n</li>\n");
                 }

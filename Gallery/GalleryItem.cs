@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.Gallery
  ADD COLUMN `gallery_item_item_type` ENUM('UNASSOCIATED','PHOTO','BLOGPOST','PODCAST','PODCASTEPISODE','USER','PAGE','LIST','GROUP','NETWORK') NOT NULL DEFAULT 'UNASSOCIATED' AFTER `gallery_id`,
  ADD COLUMN `gallery_item_item_id` BIGINT NOT NULL AFTER `gallery_item_item_type`;
      * 
-     * TODO: 
+     * DONE: 
      * ALTER TABLE `zinzam0_zinzam`.`gallery_items` ADD COLUMN `gallery_item_classification` TINYINT UNSIGNED NOT NULL AFTER `gallery_item_item_id`;
      * ALTER TABLE `zinzam0_zinzam`.`gallery_items` MODIFY COLUMN `gallery_item_classification` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0;
      */

@@ -317,7 +317,6 @@ namespace BoxSocial.Applications.Pages
 
         private void WritePageSave()
         {
-            long parent = 0;
             string slug = Request.Form["slug"];
             string title = Request.Form["title"];
             string pageBody = Request.Form["post"];
@@ -327,228 +326,66 @@ namespace BoxSocial.Applications.Pages
             long pageId = 0;
             bool parentChanged = false;
             bool titleChanged = false;
-            string status = "PUBLISH";
-
-            if (string.IsNullOrEmpty(slug))
-            {
-                slug = title;
-            }
-
-            // normalise slug if it has been fiddeled with
-            slug = slug.ToLower().Normalize(NormalizationForm.FormD);
-            string normalisedSlug = "";
-
-            for (int i = 0; i < slug.Length; i++)
-            {
-                if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
-                {
-                    normalisedSlug += slug[i];
-                }
-            }
-            slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");
-
-            try
-            {
-                parent = long.Parse(Request.Form["page-parent"]);
-            }
-            catch
-            {
-            }
+            PageStatus status = PageStatus.Publish;
 
             if (Request.Form["publish"] != null)
             {
-                status = "PUBLISH";
+                status = PageStatus.Publish;
             }
 
             if (Request.Form["save"] != null)
             {
-                status = "DRAFT";
+                status = PageStatus.Draft;
             }
 
-            // validate title;
-
-            if (string.IsNullOrEmpty(title))
-            {
-                template.ParseVariables("ERROR", "You must give the page a title.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(slug))
-            {
-                template.ParseVariables("ERROR", "You must specify a page slug.");
-                return;
-            }
-
-            if ((!Functions.CheckPageNameValid(slug)) && parent == 0)
-            {
-                template.ParseVariables("ERROR", "You must give your page a different name.");
-                return;
-            }
-
-            if (string.IsNullOrEmpty(pageBody))
-            {
-                template.ParseVariables("ERROR", "You cannot save empty pages. You must post some content.");
-                return;
-            }
+            pageId = Functions.RequestLong("id", 0);
 
             try
             {
-                // edit page
-                pageId = long.Parse(Request.Form["id"]);
-
-                DataTable pageTable = db.SelectQuery(string.Format("SELECT page_title, page_parent_id, page_order FROM user_pages WHERE page_id = {0} AND user_id = {1};",
-                    pageId, loggedInMember.UserId));
-
-                if (pageTable.Rows.Count == 1)
+                if (pageId > 0)
                 {
-                    if ((long)pageTable.Rows[0]["page_parent_id"] != parent)
+                    try
                     {
-                        parentChanged = true;
-                    }
+                        Page page = new Page(core.db, core.session.LoggedInMember, pageId);
 
-                    if ((string)pageTable.Rows[0]["page_title"] != title)
+                        page.Update(core, core.session.LoggedInMember, title, ref slug, parentPath, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    }
+                    catch (PageNotFoundException)
                     {
-                        titleChanged = true;
                     }
-
-                    order = (ushort)pageTable.Rows[0]["page_order"];
-                    oldOrder = (ushort)pageTable.Rows[0]["page_order"];
+                }
+                else
+                {
+                    Page.Create(core, core.session.LoggedInMember, title, ref slug, parentPath, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                 }
             }
-            catch (Exception)
+            catch (PageTitleNotValidException)
             {
+                SetError("You must give the page a title.");
+                return;
             }
-
-            // now page page id, do more checks
-
-            if (pageId > 0 && pageId == parent)
+            catch (PageSlugNotValidException)
             {
-                template.ParseVariables("ERROR", "You cannot have a page as it's own parent.");
+                SetError("You must specify a page slug.");
+                return;
+            }
+            catch (PageSlugNotUniqueException)
+            {
+                SetError("You must give your page a different name.");
+                return;
+            }
+            catch (PageContentEmptyException)
+            {
+                SetError("You cannot save empty pages. You must post some content.");
+                return;
+            }
+            catch (PageOwnParentException)
+            {
+                SetError("You cannot have a page as it's own parent.");
                 return;
             }
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT page_title FROM user_pages WHERE user_id = {0} AND page_id <> {1} AND page_slug = '{2}' AND page_parent_id = {3}",
-                loggedInMember.UserId, pageId, Mysql.Escape(slug), parent));
-
-            if (pagesTable.Rows.Count > 0)
-            {
-                template.ParseVariables("ERROR", "You must give your page a different name, a page already has that name.");
-                return;
-            }
-
-            if (pageId == 0 || (pageId > 0 && (parentChanged || titleChanged)))
-            {
-                DataTable parentTable = db.SelectQuery(string.Format("SELECT page_id, page_slug, page_parent_path, page_order FROM user_pages WHERE user_id = {0} AND page_id = {1}",
-                    loggedInMember.UserId, parent));
-
-                if (parentTable.Rows.Count == 1)
-                {
-                    if (string.IsNullOrEmpty((string)parentTable.Rows[0]["page_parent_path"]))
-                    {
-                        parentPath = (string)parentTable.Rows[0]["page_slug"];
-                    }
-                    else
-                    {
-                        parentPath = (string)parentTable.Rows[0]["page_parent_path"] + "/" + (string)parentTable.Rows[0]["page_slug"];
-                    }
-                }
-                else
-                {
-                    // we couldn't find a parent so set to zero
-                    parent = 0;
-                }
-
-                DataTable orderTable = db.SelectQuery(string.Format("SELECT page_id, page_order FROM user_pages WHERE page_id <> {3} AND page_title > '{0}' AND page_parent_path = '{1}' AND user_id = {2} ORDER BY page_title ASC LIMIT 1",
-                    Mysql.Escape(title), Mysql.Escape(parentPath), loggedInMember.UserId, pageId));
-
-                if (orderTable.Rows.Count == 1)
-                {
-                    order = (ushort)orderTable.Rows[0]["page_order"];
-
-                    if (order == oldOrder + 1 && pageId > 0)
-                    {
-                        order = oldOrder;
-                    }
-                }
-                else if (parent > 0 && parentTable.Rows.Count == 1)
-                {
-                    order = (ushort)((ushort)parentTable.Rows[0]["page_order"] + 1);
-                }
-                else
-                {
-                    orderTable = db.SelectQuery(string.Format("SELECT MAX(page_order) + 1 as max_order FROM user_pages WHERE user_id = {0} AND page_id <> {1}",
-                        loggedInMember.UserId, pageId));
-
-                    if (orderTable.Rows.Count == 1)
-                    {
-                        if (!(orderTable.Rows[0]["max_order"] is DBNull))
-                        {
-                            order = (ushort)(ulong)orderTable.Rows[0]["max_order"];
-                        }
-                    }
-                }
-            }
-
-            // save new
-            if (pageId == 0)
-            {
-
-                if (order < 0)
-                {
-                    order = 0;
-                }
-
-                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND user_id = {1}",
-                    order, loggedInMember.UserId), true);
-
-                db.UpdateQuery(string.Format("INSERT INTO user_pages (user_id, page_slug, page_parent_path, page_date_ut, page_title, page_modified_ut, page_ip, page_text, page_license, page_access, page_order, page_parent_id, page_status) VALUES ({0}, '{1}', '{2}', UNIX_TIMESTAMP(), '{3}', UNIX_TIMESTAMP(), '{4}', '{5}', {6}, {7}, {8}, {9}, '{10}')",
-                    loggedInMember.UserId, Mysql.Escape(slug), Mysql.Escape(parentPath), Mysql.Escape(title), Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, parent, Mysql.Escape(status)), false);
-
-                if (status == "DRAFT")
-                {
-                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "drafts"));
-                    Display.ShowMessage(core, "New Draft Saved", "Your draft has been saved.");
-                }
-                else
-                {
-                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
-                    Display.ShowMessage(core, "New Page Published", "Your page has been published");
-                }
-
-            }
-
-            if (pageId > 0)
-            {
-
-                if (order != oldOrder)
-                {
-                    db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
-                        oldOrder, loggedInMember.UserId), true);
-
-                    db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND user_id = {1}",
-                        order, loggedInMember.UserId), true);
-                }
-
-                string changeParent = "";
-                string changeTitle = "";
-
-                if (parentChanged)
-                {
-                    changeParent = string.Format("page_parent_path = '{0}', page_parent_id = {1},",
-                        Mysql.Escape(parentPath), parent);
-                }
-
-                if (titleChanged)
-                {
-                    changeTitle = string.Format("page_title = '{0}',",
-                        title);
-                }
-
-                db.UpdateQuery(string.Format("UPDATE user_pages SET {0} {1} page_slug = '{2}', page_modified_ut = UNIX_TIMESTAMP(), page_ip = '{3}', page_text = '{4}', page_license = {5}, page_access = {6}, page_order = {7}, page_status = '{10}', page_classification = {11} WHERE page_id = {8} AND user_id = {9};",
-                    changeParent, changeTitle, Mysql.Escape(slug), session.IPAddress.ToString(), Mysql.Escape(pageBody), Functions.GetLicense(), Functions.GetPermission(), order, pageId, loggedInMember.UserId, status, (byte)Classification.RequestClassification()), false);
-            }
-
-            if (status == "DRAFT")
+            if (status == PageStatus.Draft)
             {
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "drafts"));
                 Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");

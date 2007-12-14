@@ -139,13 +139,5 @@ namespace BoxSocial.Internals
                 template.ParseVariables("SELF", "FALSE");
             }
         }
-
-        public static void DeletePage(Core core, Member owner, string title, string slug, string parentPath)
-        {
-            //DeleteQuery query = new DeleteQuery("user_pages");
-
-            core.db.UpdateQuery(string.Format("DELETE FROM user_pages WHERE user_id = {0} AND page_title = '{1}' AND page_slug = '{2}' AND page_parent_path = '{3}'",
-                owner.UserId, Mysql.Escape(title), Mysql.Escape(slug), Mysql.Escape(parentPath)));
-        }
     }
 }

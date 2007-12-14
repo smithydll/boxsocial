@@ -200,8 +200,8 @@ ENGINE = InnoDB;
         public static bool DeleteTag(Core core, long tagId)
         {
             DeleteQuery query = new DeleteQuery("user_tags");
-            query.condition.Add("tag_id", tagId);
-            query.condition.Add("user_id", core.LoggedInMemberId);
+            query.AddCondition("tag_id", tagId);
+            query.AddCondition("user_id", core.LoggedInMemberId);
 
             if (core.db.UpdateQuery(query) == 1)
             {

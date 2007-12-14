@@ -39,16 +39,6 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
-    /*
-     * DONE: run query on zinzam.com
- ALTER TABLE `zinzam0_zinzam`.`gallery_items` ADD COLUMN `gallery_id` BIGINT NOT NULL AFTER `gallery_item_date_ut`,
- ADD COLUMN `gallery_item_item_type` ENUM('UNASSOCIATED','PHOTO','BLOGPOST','PODCAST','PODCASTEPISODE','USER','PAGE','LIST','GROUP','NETWORK') NOT NULL DEFAULT 'UNASSOCIATED' AFTER `gallery_id`,
- ADD COLUMN `gallery_item_item_id` BIGINT NOT NULL AFTER `gallery_item_item_type`;
-     * 
-     * DONE: 
-     * ALTER TABLE `zinzam0_zinzam`.`gallery_items` ADD COLUMN `gallery_item_classification` TINYINT UNSIGNED NOT NULL AFTER `gallery_item_item_id`;
-     * ALTER TABLE `zinzam0_zinzam`.`gallery_items` MODIFY COLUMN `gallery_item_classification` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0;
-     */
     public abstract class GalleryItem
     {
         public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
@@ -463,6 +453,40 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public void Rotate(Core core, RotateFlipType rotation)
+        {
+            ImageFormat iF = ImageFormat.Jpeg;
+
+            Image image = Image.FromFile(TPage.GetStorageFilePath(StoragePath, StorageFileType.Original));
+            iF = image.RawFormat;
+
+            image.RotateFlip(rotation);
+
+            MemoryStream ms = new MemoryStream();
+
+            image.Save(ms, iF);
+
+            string newFileName = GalleryItem.HashFileUpload(ms);
+
+            if (!File.Exists(TPage.GetStorageFilePath(newFileName, StorageFileType.Original)))
+            {
+                TPage.EnsureStoragePathExists(newFileName, StorageFileType.Original);
+
+                FileStream fs = new FileStream(TPage.GetStorageFilePath(newFileName, StorageFileType.Original), FileMode.CreateNew);
+                ms.WriteTo(fs);
+
+                fs.Close();
+                ms.Close();
+            }
+
+            UpdateQuery uquery = new UpdateQuery("gallery_items");
+            uquery.AddField("gallery_item_storage_path", newFileName);
+            uquery.AddCondition("gallery_item_id", itemId);
+
+            db.UpdateQuery(uquery);
+
+        }
+
         public static string HashFileUpload(Stream fileStream)
         {
             HashAlgorithm hash = new SHA512Managed();
@@ -594,6 +618,8 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri(photo.ItemId)));
                 page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
                 page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
+                page.template.ParseVariables("U_ROTATE_LEFT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoRotateLeftUri(photo.ItemId)));
+                page.template.ParseVariables("U_ROTATE_RIGHT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoRotateRightUri(photo.ItemId)));
 
                 switch (photo.Classification)
                 {

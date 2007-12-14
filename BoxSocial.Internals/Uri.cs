@@ -243,6 +243,16 @@ namespace BoxSocial.Internals
                 photoId), true);
         }
 
+        public static string BuildPhotoRotateLeftUri(long photoId)
+        {
+            return AccountModule.BuildModuleUri("galleries", "rotate-photo", true, string.Format("id={0}", photoId), "rotation=left");
+        }
+
+        public static string BuildPhotoRotateRightUri(long photoId)
+        {
+            return AccountModule.BuildModuleUri("galleries", "rotate-photo", true, string.Format("id={0}", photoId), "rotation=right");
+        }
+
         public static string BuildNewGalleryUri(long galleryId)
         {
             return AppendSid(string.Format("/account/?module=galleries&sub=new&id={0}",

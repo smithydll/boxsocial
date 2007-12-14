@@ -449,7 +449,7 @@ namespace BoxSocial.Internals
                     foreach (string slug in slugs.Keys)
                     {
                         string tSlug = slug;
-                        Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, "", "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
@@ -487,7 +487,7 @@ namespace BoxSocial.Internals
                         if (db.SelectQuery(query).Rows.Count == 0)
                         {
                             string tSlug = slug;
-                            Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, "", "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
                     }
                 }
@@ -532,7 +532,7 @@ namespace BoxSocial.Internals
 
                     foreach (string slug in slugs.Keys)
                     {
-                        PPage.DeletePage(core, (Member)viewer, slugs[slug], slug, "");
+                        Page page = new Page(db, (Member)viewer, slug, "");
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}';",

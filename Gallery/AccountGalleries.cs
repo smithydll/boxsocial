@@ -49,6 +49,7 @@ namespace BoxSocial.Applications.Gallery
             RegisterSubModule += new RegisterSubModuleHandler(MarkPhotoAsDisplayPicture);
             RegisterSubModule += new RegisterSubModuleHandler(MarkPhotoAsGalleryCover);
             RegisterSubModule += new RegisterSubModuleHandler(EditPhoto);
+            RegisterSubModule += new RegisterSubModuleHandler(RotatePhoto);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -488,6 +489,60 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
+        }
+
+        private void RotatePhoto(string submodule)
+        {
+            if (submodule != "rotate-photo") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long photoId = Functions.RequestLong("id", 0);
+
+            if (photoId > 0)
+            {
+                try
+                {
+                    UserGalleryItem photo = new UserGalleryItem(db, loggedInMember, photoId);
+
+                    System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
+
+                    switch (Request.QueryString["rotation"])
+                    {
+                        case "right":
+                        case "90": // right 90
+                            rotation = System.Drawing.RotateFlipType.Rotate90FlipNone;
+                            break;
+                        case "180": // 180
+                            rotation = System.Drawing.RotateFlipType.Rotate180FlipNone;
+                            break;
+                        case "left":
+                        case "270": // left 90
+                            rotation = System.Drawing.RotateFlipType.Rotate270FlipNone;
+                            break;
+                    }
+
+                    photo.Rotate(core, rotation);
+
+                    SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, photo.ParentPath, photo.Path));
+                    Display.ShowMessage(core, "Image rotated", "You have successfully rotated the image.");
+                    return;
+                }
+                catch (GalleryItemNotFoundException)
+                {
+                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    return;
+                }
+            }
+            else
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
                 return;
             }
         }

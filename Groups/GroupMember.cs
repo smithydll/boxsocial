@@ -183,8 +183,8 @@ namespace BoxSocial.Groups
         public void UnBan()
         {
             DeleteQuery query = new DeleteQuery("group_members");
-            query.condition.Add("user_id", userId);
-            query.condition.Add("group_id", groupId);
+            query.AddCondition("user_id", userId);
+            query.AddCondition("group_id", groupId);
 
             db.UpdateQuery(query);
         }

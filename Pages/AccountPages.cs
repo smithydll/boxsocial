@@ -223,23 +223,27 @@ namespace BoxSocial.Applications.Pages
             {
                 if (Request.QueryString["action"] == "delete")
                 {
-                    DataTable pageTable = db.SelectQuery(string.Format("SELECT upg.page_order FROM user_pages upg WHERE upg.page_id = {0} AND upg.user_id = {1};",
-                        pageId, loggedInMember.UserId));
-
-                    if (pageTable.Rows.Count == 1)
+                    try
                     {
+                        Page page = new Page(db, loggedInMember, pageId);
 
-                        db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
-                            (ushort)pageTable.Rows[0]["page_order"], loggedInMember.UserId), true);
-
-                        db.UpdateQuery(string.Format("DELETE FROM user_pages WHERE user_id = {0} AND page_id = {1};",
-                            loggedInMember.UserId, pageId), false);
-
-                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
-                        Display.ShowMessage(core, "Page Deleted", "The page has been deleted from the database.");
+                        if (page.Delete(core, loggedInMember))
+                        {
+                            SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
+                            Display.ShowMessage(core, "Page Deleted", "The page has been deleted from the database.");
+                            return;
+                        }
+                        else
+                        {
+                            Display.ShowMessage(core, "Error", "Could not delete the page.");
+                            return;
+                        }
+                    }
+                    catch (PageNotFoundException)
+                    {
+                        Display.ShowMessage(core, "Error", "Could not delete the page.");
                         return;
                     }
-
                 }
                 else if (Request.QueryString["action"] == "edit")
                 {
@@ -320,7 +324,7 @@ namespace BoxSocial.Applications.Pages
             string slug = Request.Form["slug"];
             string title = Request.Form["title"];
             string pageBody = Request.Form["post"];
-            string parentPath = "";
+            long parent = 0;
             ushort order = 0;
             ushort oldOrder = 0;
             long pageId = 0;
@@ -338,7 +342,8 @@ namespace BoxSocial.Applications.Pages
                 status = PageStatus.Draft;
             }
 
-            pageId = Functions.RequestLong("id", 0);
+            pageId = Functions.FormLong("id", 0);
+            parent = Functions.FormLong("page-parent", 0);
 
             try
             {
@@ -348,7 +353,7 @@ namespace BoxSocial.Applications.Pages
                     {
                         Page page = new Page(core.db, core.session.LoggedInMember, pageId);
 
-                        page.Update(core, core.session.LoggedInMember, title, ref slug, parentPath, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                        page.Update(core, core.session.LoggedInMember, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                     }
                     catch (PageNotFoundException)
                     {
@@ -356,7 +361,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    Page.Create(core, core.session.LoggedInMember, title, ref slug, parentPath, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    Page.Create(core, core.session.LoggedInMember, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                 }
             }
             catch (PageTitleNotValidException)

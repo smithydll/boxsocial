@@ -222,6 +222,31 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Page(Mysql db, Member owner, string pageName, string pageParentPath)
+        {
+            this.db = db;
+            this.owner = owner;
+
+            DataTable pageTable = db.SelectQuery(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
+                owner.UserId, Mysql.Escape(pageName), Mysql.Escape(pageParentPath), Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
+
+            if (pageTable.Rows.Count == 1)
+            {
+                loadPageInfo(pageTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(pageTable.Rows[0]);
+                }
+                catch (NonexistantLicenseException)
+                {
+                }
+            }
+            else
+            {
+                throw new PageNotFoundException();
+            }
+        }
+
         public Page(Mysql db, Member owner, long pageId)
         {
             this.db = db;
@@ -306,12 +331,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static Page Create(Core core, Primitive owner, string title, ref string slug, string parentPath, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+        public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
         {
-            long parent = 0;
+            string parentPath = "";
             long pageId = 0;
             ushort order = 0;
-            ushort oldOrder = 0;
             bool pageListOnly = (status == PageStatus.PageList);
 
             if (!pageListOnly)
@@ -386,11 +410,6 @@ namespace BoxSocial.Internals
             if (orderTable.Rows.Count == 1)
             {
                 order = (ushort)orderTable.Rows[0]["page_order"];
-
-                if (order == oldOrder + 1 && pageId > 0)
-                {
-                    order = oldOrder;
-                }
             }
             else if (parent > 0 && parentPage != null)
             {
@@ -408,11 +427,6 @@ namespace BoxSocial.Internals
                 if (orderTable2.Rows.Count == 1)
                 {
                     order = (ushort)orderTable2.Rows[0]["page_order"];
-
-                    if (order == oldOrder + 1 && pageId > 0)
-                    {
-                        order = oldOrder;
-                    }
                 }
                 else
                 {
@@ -460,6 +474,7 @@ namespace BoxSocial.Internals
             iquery.AddField("page_text", pageBody);
             iquery.AddField("page_license", license);
             iquery.AddField("page_access", permissions);
+            iquery.AddField("page_order", order);
             iquery.AddField("page_parent_id", parent);
             iquery.AddField("page_status", PageStatusToString(status));
             iquery.AddField("page_classification", (byte)classification);
@@ -470,10 +485,10 @@ namespace BoxSocial.Internals
             return new Page(core.db, (Member)owner, pageId);
         }
 
-        public void Update(Core core, Primitive owner, string title, ref string slug, string parentPath, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+        public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
         {
-            long parent = 0;
-            long pageId = 0;
+            string parentPath = "";
+            long pageId = this.pageId;
             ushort order = 0;
             ushort oldOrder = 0;
             bool pageListOnly = (status == PageStatus.PageList);
@@ -657,6 +672,7 @@ namespace BoxSocial.Internals
             {
                 uquery.AddField("page_parent_id", parent);
             }
+            uquery.AddField("page_order", order);
             uquery.AddField("page_status", PageStatusToString(status));
             uquery.AddField("page_list_only", ((pageListOnly) ? 1 : 0));
             uquery.AddField("page_classification", (byte)classification);
@@ -664,6 +680,31 @@ namespace BoxSocial.Internals
             uquery.AddCondition("user_id", owner.Id);
 
             core.db.UpdateQuery(uquery, false);
+        }
+
+        public bool Delete(Core core, Primitive owner)
+        {
+            bool success = false;
+            if (this.owner == owner)
+            {
+                UpdateQuery uquery = new UpdateQuery("user_pages");
+                uquery.AddField("page_order", new QueryField("page_order - 1"));
+                uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
+                uquery.AddCondition("user_id", owner.Id);
+
+                if (db.UpdateQuery(uquery, true) > 0)
+                {
+                    DeleteQuery dquery = new DeleteQuery("user_pages");
+                    dquery.AddCondition("page_id", pageId);
+                    dquery.AddCondition("user_id", owner.Id);
+
+                    db.UpdateQuery(dquery, false);
+
+                    success = true;
+                }
+            }
+
+            return success;
         }
 
         public static void Show(Core core, PPage page, string pageName)

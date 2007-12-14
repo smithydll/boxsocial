@@ -184,6 +184,32 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
+        public static int FormInt(string var, int defaultValue)
+        {
+            int outValue = defaultValue;
+            try
+            {
+                outValue = int.Parse(HttpContext.Current.Request.Form[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
+        public static long FormLong(string var, long defaultValue)
+        {
+            long outValue = defaultValue;
+            try
+            {
+                outValue = long.Parse(HttpContext.Current.Request.Form[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
         public static ushort GetPermission()
         {
             ushort permission = 0;

@@ -324,14 +324,14 @@ namespace BoxSocial.Groups
                 switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["group_member_approved"])
                 {
                     case GroupMemberApproval.Pending:
-                        groupMemberCache.Add(member, true);
-                        groupMemberPendingCache.Add(member, false);
+                        groupMemberCache.Add(member, false);
+                        groupMemberPendingCache.Add(member, true);
                         groupMemberBannedCache.Add(member, false);
                         groupMemberAbsoluteCache.Add(member, true);
                         break;
                     case GroupMemberApproval.Member:
-                        groupMemberCache.Add(member, false);
-                        groupMemberPendingCache.Add(member, true);
+                        groupMemberCache.Add(member, true);
+                        groupMemberPendingCache.Add(member, false);
                         groupMemberBannedCache.Add(member, false);
                         groupMemberAbsoluteCache.Add(member, true);
                         break;
@@ -394,6 +394,7 @@ namespace BoxSocial.Groups
                 {
                     return groupMemberCache[member];
                 }
+                else
                 {
                     preLoadMemberCache(member);
                     return groupMemberCache[member];
@@ -410,6 +411,7 @@ namespace BoxSocial.Groups
                 {
                     return groupMemberBannedCache[member];
                 }
+                else
                 {
                     preLoadMemberCache(member);
                     return groupMemberBannedCache[member];

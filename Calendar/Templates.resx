@@ -121,8 +121,14 @@
   <data name="account_calendar_event_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_calendar_event_new.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="account_calendar_task_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_calendar_task_new.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="todaymonthpanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\todaymonthpanel.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="todaytaskspanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\todaytaskspanel.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="todayupcommingevents" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\todayupcommingevents.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
@@ -135,5 +141,11 @@
   </data>
   <data name="viewcalendarmonth" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewcalendarmonth.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="viewcalendartask" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\viewcalendartask.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="viewcalendartasks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\viewcalendartasks.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

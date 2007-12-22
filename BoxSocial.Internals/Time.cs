@@ -438,6 +438,53 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string ToStringPast(DateTime time)
+        {
+            DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
+            TimeSpan ts = time.Subtract(now);
+            if (Math.Sign(ts.Days) >= 0)
+            {
+                // Present
+                if (ts.TotalDays < 1)
+                {
+                    return "Today";
+                }
+                // Future
+                else if (ts.TotalDays < 2)
+                {
+                    return "Tomorrow";
+                }
+                else if (ts.TotalDays < 7)
+                {
+                    return time.DayOfWeek.ToString();
+                }
+                else if (ts.TotalDays < 14)
+                {
+                    return "Next Week";
+                }
+                else
+                {
+                    return "Newer";
+                }
+            }
+            else
+            {
+                // Past
+                if (ts.TotalDays > -1)
+                {
+                    return "Yesterday";
+                }
+                else if (ts.TotalDays > -14)
+                {
+                    return "Last Week";
+                }
+                else
+                {
+                    return "Older";
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

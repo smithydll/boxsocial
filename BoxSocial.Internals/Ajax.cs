@@ -39,8 +39,15 @@ namespace BoxSocial.Internals
         {
             if (ajax)
             {
+                HttpContext.Current.Response.Clear();
                 HttpContext.Current.Response.Write(ajaxCode);
-                core.EndResponse();
+
+                if (core.db != null)
+                {
+                    core.db.CloseConnection();
+                }
+
+                HttpContext.Current.Response.End();
             }
             else
             {

@@ -812,6 +812,11 @@ namespace BoxSocial.Internals
             page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
             page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
             page.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
+
+            if (page.ProfileOwner.UserId == core.LoggedInMemberId)
+            {
+                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "write", "action=edit", string.Format("id={0}", thePage.PageId))));
+            }
         }
     }
 

@@ -1,0 +1,24 @@
+	<div id="today-calendar" style="margin-right: 260px; border: solid 1px #EEEEEE; margin-bottom: 5px;">
+		<h4><a href="{U_CALENDAR}">Calendar</a></h4>
+		<!-- IF HAS_EVENTS -->
+		<ul id="today-events">
+			<!-- BEGIN appointment_days_list -->
+			<li>
+				<h5>{appointment_days_list.DAY}</h5>
+				<dl>
+					<!-- BEGIN appointment_days_list.appointments_list -->
+					<dt>{appointment_days_list.appointments_list.TIME}</dt>
+					<dd><a href="{appointment_days_list.appointments_list.URI}">{appointment_days_list.appointments_list.SUBJECT}
+					<!-- IF appointment_days_list.appointments_list.LOCATION -->
+					({appointment_days_list.appointments_list.LOCATION})
+					<!-- ENDIF --></a>
+					</dd>
+					<!-- END appointment_days_list.appointments_list -->
+				</dl>
+			</li>
+			<!-- END appointment_days_list -->
+		</ul>
+		<!-- ELSE -->
+		<p>No events in the upcomming week.</p>
+		<!-- ENDIF -->
+	</div>

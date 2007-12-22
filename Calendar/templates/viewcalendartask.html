@@ -1,0 +1,16 @@
+<!-- INCLUDE page_header.html -->
+	<h2>{TOPIC}</h2>
+	<p>{BREADCRUMBS}</p>
+	<!-- IF U_NEW_EVENT -->
+	<div id="new-stuff">
+		<span id="new-task" class="post-button"><a href="{U_NEW_Task}">New Task</a></span>
+		<span id="edit-task" class="post-button"><a href="{U_EDIT_TASK}">Edit Task</a></span>
+	</div>
+	<!-- ENDIF -->
+	<!-- IF DUE_DATE -->
+	<p>Due Date: {DUE_DATE}</p>
+	<!-- ENDIF -->
+	<!-- IF DESCRIPTION -->
+	<p>{DESCRIPTION}</p>
+	<!-- ENDIF -->
+<!-- INCLUDE page_footer.html -->

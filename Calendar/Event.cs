@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    public class Event
+    public class Event : Item
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendies, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
@@ -262,7 +262,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (!calendarEvent.EventAccess.CanRead)
                 {
-                    Functions.Generate404(core);
+                    Functions.Generate403(core);
                     return;
                 }
 
@@ -281,6 +281,22 @@ namespace BoxSocial.Applications.Calendar
             catch
             {
                 Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return eventId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
             }
         }
     }

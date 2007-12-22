@@ -39,7 +39,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
-    public abstract class GalleryItem
+    public abstract class GalleryItem : Item
     {
         public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
 
@@ -1363,6 +1363,22 @@ namespace BoxSocial.Applications.Gallery
         private static bool abortResize()
         {
             return false;
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
         }
     }
 

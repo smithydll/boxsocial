@@ -1,0 +1,30 @@
+	<div id="today-tasks" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
+		<h4><a href="{U_TASKS}">Tasks</a></h4>
+		<!-- IF U_NEW_TASK -->
+		<div id="new-stuff">
+			<span id="new-task" class="post-button"><a href="{U_NEW_TASK}">New Task</a></span>
+		</div>
+		<!-- ENDIF -->
+		<!-- IF HAS_TASKS -->
+		<ul id="today-tasks-list">
+			<!-- BEGIN task_days -->
+			<li><strong>{task_days.DAY}</strong>
+				<!-- BEGIN task_days.task_list -->
+				<dl>
+					<dt>{task_days.task_list.DATE}</dt>
+					<dd>
+						<span class="{task_days.task_list.CLASS}">
+						<a href="{task_days.task_list.URI}">{task_days.task_list.TOPIC}</a>
+						<!-- IF task_days.task_list.COMPLETE -->
+						<!-- ELSE -->
+						<a href="{task_days.task_list.U_MARK_COMPLETE}" onclick="return MarkTaskComplete({task_days.task_list.ID});" title="Mark Task Complete">[O]</a>
+						<!-- ENDIF -->
+						</span>
+					</dd>
+				</dl>
+				<!-- END task_days.task_list -->
+			</li>
+			<!-- END task_days -->
+		</ul>
+		<!-- ENDIF -->
+	</div>

@@ -255,6 +255,11 @@ namespace BoxSocial.Applications.Blog
                 page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
                 page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
                 page.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
+
+                if (page.ProfileOwner.UserId == core.LoggedInMemberId)
+                {
+                    page.template.ParseVariables("U_POST", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "write")));
+                }
             }
 
             List<BlogEntry> blogEntries = myBlog.GetEntries(page, category, post, year, month, p, 10, ref readAccessLevel);

@@ -417,6 +417,7 @@ namespace BoxSocial.Internals
             template.ParseVariables("HEADING", WebConfigurationManager.AppSettings["boxsocial-title"]);
             template.ParseVariables("SITE_TITLE", WebConfigurationManager.AppSettings["boxsocial-title"]);
             template.ParseVariables("YEAR", DateTime.Now.Year.ToString());
+            template.ParseVariables("SID", session.SessionId);
 
             string bgColour = "";
 

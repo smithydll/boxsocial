@@ -1,0 +1,21 @@
+	<div id="today-month" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
+		{CURRENT_MONTH} {CURRENT_YEAR}
+		<div class="month-small">
+			<div class="week">
+				<div class="day">Mo</div>
+				<div class="day">Tu</div>
+				<div class="day">Wd</div>
+				<div class="day">Th</div>
+				<div class="day">Fr</div>
+				<div class="day">Sa</div>
+				<div class="day">Su</div>
+			</div>
+			<!-- BEGIN week -->
+			<div class="week">
+				<!-- BEGIN week.day -->
+				<div class="day"><a href="{week.day.URI}">{week.day.DATE}</a></div>
+				<!-- END week.day -->
+			</div>
+			<!-- END week -->
+		</div>
+	</div>

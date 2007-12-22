@@ -58,6 +58,8 @@
     <Compile Include="Functions.cs" />
     <Compile Include="HookEventArgs.cs" />
     <Compile Include="IAppInfo.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemTag.cs" />
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Page.cs" />

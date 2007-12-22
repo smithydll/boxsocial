@@ -61,9 +61,7 @@ namespace Calendar {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE account_header.html --&gt;
-        ///
-        ///&lt;h3&gt;New Event&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;New Event&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_FORM_ACTION}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
         ///	&lt;fieldset&gt;
@@ -73,11 +71,36 @@ namespace Calendar {
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;subject&quot; name=&quot;subject&quot; value=&quot;{S_SUBJECT}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;location&quot;&gt;Location&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;location&quot; name=&quot;location&quot; value=&quot;{S_LOCATION}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;l [rest of string was truncated]&quot;;.
+        ///			&lt;dt&gt;&lt;label&gt;Start Time&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_calendar_event_new {
             get {
                 return ResourceManager.GetString("account_calendar_event_new", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;New Task&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_FORM_ACTION}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;New Task&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;topic&quot;&gt;Topic&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;topic&quot; name=&quot;topic&quot; value=&quot;{S_TOPIC}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label&gt;Due Date&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				&lt;label&gt;Year: {S_DUE_YEAR}&lt;/label&gt;
+        ///				&lt;label&gt;Month: {S_DUE_MONTH}&lt;/label&gt;
+        ///				&lt;label&gt;Day: {S_DUE_DAY}&lt;/label&gt;
+        ///				&lt;label&gt;Hour: {S_DUE_HOUR}&lt;/label&gt;
+        ///				&lt;label&gt;Minute: [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_calendar_task_new {
+            get {
+                return ResourceManager.GetString("account_calendar_task_new", resourceCulture);
             }
         }
         
@@ -106,8 +129,31 @@ namespace Calendar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;today-tasks&quot; style=&quot;border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
+        ///		&lt;h4&gt;&lt;a href=&quot;{U_TASKS}&quot;&gt;Tasks&lt;/a&gt;&lt;/h4&gt;
+        ///		&lt;!-- IF U_NEW_TASK --&gt;
+        ///		&lt;div id=&quot;new-stuff&quot;&gt;
+        ///			&lt;span id=&quot;new-task&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TASK}&quot;&gt;New Task&lt;/a&gt;&lt;/span&gt;
+        ///		&lt;/div&gt;
+        ///		&lt;!-- ENDIF --&gt;
+        ///		&lt;!-- IF HAS_TASKS --&gt;
+        ///		&lt;ul id=&quot;today-tasks-list&quot;&gt;
+        ///			&lt;!-- BEGIN task_days --&gt;
+        ///			&lt;li&gt;&lt;strong&gt;{task_days.DAY}&lt;/strong&gt;
+        ///				&lt;!-- BEGIN task_days.task_list --&gt;
+        ///				&lt;dl&gt;
+        ///					&lt;dt&gt;{task_days.task_list.DATE}&lt;/dt&gt;
+        ///					&lt;dd [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string todaytaskspanel {
+            get {
+                return ResourceManager.GetString("todaytaskspanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 	&lt;div id=&quot;today-calendar&quot; style=&quot;margin-right: 260px; border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
-        ///		&lt;h4&gt;&lt;a href=&quot;/{USERNAME}/calendar&quot;&gt;Calendar&lt;/a&gt;&lt;/h4&gt;
+        ///		&lt;h4&gt;&lt;a href=&quot;{U_CALENDAR}&quot;&gt;Calendar&lt;/a&gt;&lt;/h4&gt;
         ///		&lt;!-- IF HAS_EVENTS --&gt;
         ///		&lt;ul id=&quot;today-events&quot;&gt;
         ///			&lt;!-- BEGIN appointment_days_list --&gt;
@@ -116,7 +162,7 @@ namespace Calendar {
         ///				&lt;dl&gt;
         ///					&lt;!-- BEGIN appointment_days_list.appointments_list --&gt;
         ///					&lt;dt&gt;{appointment_days_list.appointments_list.TIME}&lt;/dt&gt;
-        ///					&lt;dd&gt;&lt;a href=&quot;{appointment_days_list.appointments_list.URI}&quot;&gt;{appointme [rest of string was truncated]&quot;;.
+        ///					&lt;dd&gt;&lt;a href=&quot;{appointment_days_list.appointments_list.URI}&quot;&gt;{appointment_days_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string todayupcommingevents {
             get {
@@ -195,6 +241,47 @@ namespace Calendar {
         internal static string viewcalendarmonth {
             get {
                 return ResourceManager.GetString("viewcalendarmonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///	&lt;h2&gt;{TOPIC}&lt;/h2&gt;
+        ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///	&lt;!-- IF U_NEW_EVENT --&gt;
+        ///	&lt;div id=&quot;new-stuff&quot;&gt;
+        ///		&lt;span id=&quot;new-task&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_Task}&quot;&gt;New Task&lt;/a&gt;&lt;/span&gt;
+        ///		&lt;span id=&quot;edit-task&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_EDIT_TASK}&quot;&gt;Edit Task&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;/div&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///	&lt;!-- IF DUE_DATE --&gt;
+        ///	&lt;p&gt;Due Date: {DUE_DATE}&lt;/p&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///	&lt;!-- IF DESCRIPTION --&gt;
+        ///	&lt;p&gt;{DESCRIPTION}&lt;/p&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        /// </summary>
+        internal static string viewcalendartask {
+            get {
+                return ResourceManager.GetString("viewcalendartask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot;&gt;
+        ///&lt;html&gt;
+        ///	&lt;head&gt;
+        ///		&lt;title&gt;&lt;/title&gt;
+        ///	&lt;/head&gt;
+        ///	&lt;body&gt;
+        ///	
+        ///	&lt;/body&gt;
+        ///&lt;/html&gt;.
+        /// </summary>
+        internal static string viewcalendartasks {
+            get {
+                return ResourceManager.GetString("viewcalendartasks", resourceCulture);
             }
         }
     }

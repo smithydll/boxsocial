@@ -66,11 +66,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="templates\account_calendar_event_new.html" />
+    <Content Include="templates\account_calendar_task_new.html" />
     <Content Include="templates\todaymonthpanel.html" />
+    <Content Include="templates\todaytaskspanel.html" />
     <Content Include="templates\todayupcommingevents.html" />
     <Content Include="templates\viewcalendarday.html" />
     <Content Include="templates\viewcalendarevent.html" />
     <Content Include="templates\viewcalendarmonth.html" />
+    <Content Include="templates\viewcalendartask.html" />
+    <Content Include="templates\viewcalendartasks.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Templates.resx">

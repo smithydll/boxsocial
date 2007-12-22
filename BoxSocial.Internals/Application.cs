@@ -290,8 +290,9 @@ namespace BoxSocial.Internals
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                HttpContext.Current.Response.Write(ex.ToString());
             }
             return null;
         }

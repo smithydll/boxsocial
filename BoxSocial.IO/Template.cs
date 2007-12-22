@@ -404,6 +404,37 @@ namespace BoxSocial.IO
                     }
                 }
 
+                /*Match rmei = Regex.Match(line, @"\<\!\-\- ELSEIF ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
+
+                if (rmei.Success && inIf > 0)
+                {
+                    if (conditionTrue.Count == inIf)
+                    {
+                        if (!conditionTrue.Peek())
+                        {
+                            if (rm.Success)
+                            {
+                                line = line.Remove(rm.Index, (rmei.Index - rm.Index + rmei.Length));
+                            }
+                            else
+                            {
+                                line = line.Remove(0, rmei.Index + rmei.Length);
+                            }
+                        }
+                        / * change the top most from false to true * /
+                        inElse.Pop();
+                        inElse.Push(true);
+                        if (rootFalse == 0)
+                        {
+                            rootFalse = inIf;
+                        }
+                        else if (rootFalse == inIf)
+                        {
+                            rootFalse = 0;
+                        }
+                    }
+                }*/
+
                 Match rme = Regex.Match(line, @"\<\!\-\- ELSE \-\-\>", RegexOptions.Compiled);
 
                 if (rme.Success && inIf > 0)

@@ -75,6 +75,8 @@ namespace BoxSocial.Applications.Calendar
             aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("calendar", @"^/calendar/tasks(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("calendar");
 
@@ -100,6 +102,8 @@ namespace BoxSocial.Applications.Calendar
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", showCalendarMonth, 3);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", showCalendarDay, 4);
             core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
+            core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
+            core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);
         }
 
         private void showCalendar(Core core, object sender)
@@ -142,6 +146,24 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        private void showTask(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Task.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
+            }
+        }
+
+        private void showTasks(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Task.ShowAll(core, page, page.ProfileOwner);
+            }
+        }
+
         public override AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
@@ -151,7 +173,7 @@ namespace BoxSocial.Applications.Calendar
         {
             if (e.PageType == AppPrimitives.None)
             {
-                if (e.core.PagePath == "/default.aspx")
+                if (e.core.PagePath.ToLower() == "/default.aspx")
                 {
                     ShowMiniCalendar(e);
                     ShowToday(e);
@@ -196,6 +218,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (appointmentDaysVariableCollection == null || lastDay.Day != eventDay.Day)
                 {
+                    lastDay = eventDay;
                     appointmentDaysVariableCollection = template.CreateChild("appointment_days_list");
 
                     appointmentDaysVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(eventDay.DayOfWeek.ToString()));
@@ -210,6 +233,61 @@ namespace BoxSocial.Applications.Calendar
             }
 
             e.core.AddMainPanel(template);
+
+            //
+            // Tasks panel
+            //
+
+            template = new Template(Assembly.GetExecutingAssembly(), "todaytaskspanel");
+            List<Task> tasks = cal.GetTasks(core, e.core.session.LoggedInMember, startTime, endTime, true);
+
+            VariableCollection taskDaysVariableCollection = null;
+            lastDay = e.core.tz.Now;
+
+            if (tasks.Count > 0)
+            {
+                template.ParseVariables("HAS_TASKS", "TRUE");
+            }
+
+            template.ParseVariables("U_TASKS", HttpUtility.HtmlEncode(Task.BuildTasksUri(e.core.session.LoggedInMember)));
+
+            foreach (Task calendarTask in tasks)
+            {
+                DateTime taskDue = calendarTask.GetDueTime(e.core.tz);
+
+                if (taskDaysVariableCollection == null || lastDay.Day != taskDue.Day)
+                {
+                    lastDay = taskDue;
+                    taskDaysVariableCollection = template.CreateChild("task_days");
+
+                    taskDaysVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(taskDue.DayOfWeek.ToString()));
+                }
+
+                VariableCollection taskVariableCollection = taskDaysVariableCollection.CreateChild("task_list");
+
+                taskVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(taskDue.ToShortDateString() + " (" + taskDue.ToShortTimeString() + ")"));
+                taskVariableCollection.ParseVariables("TOPIC", HttpUtility.HtmlEncode(calendarTask.Topic));
+                taskVariableCollection.ParseVariables("ID", HttpUtility.HtmlEncode(calendarTask.Id.ToString()));
+                taskVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Task.BuildTaskUri(calendarTask)));
+                taskVariableCollection.ParseVariables("U_MARK_COMPLETE", HttpUtility.HtmlEncode(Task.BuildTaskMarkCompleteUri(calendarTask)));
+
+                if (calendarTask.Status == TaskStatus.Overdue)
+                {
+                    taskVariableCollection.ParseVariables("OVERDUE", "TRUE");
+                    taskVariableCollection.ParseVariables("CLASS", "overdue-task");
+                }
+                else if (calendarTask.Status == TaskStatus.Completed)
+                {
+                    taskVariableCollection.ParseVariables("COMPLETE", "TRUE");
+                    taskVariableCollection.ParseVariables("CLASS", "complete-task");
+                }
+                else
+                {
+                    taskVariableCollection.ParseVariables("CLASS", "task");
+                }
+            }
+
+            e.core.AddSidePanel(template);
         }
     }
 }

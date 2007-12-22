@@ -44,6 +44,8 @@ namespace BoxSocial.Applications.Calendar
         {
             RegisterSubModule += new RegisterSubModuleHandler(ManageCalendar);
             RegisterSubModule += new RegisterSubModuleHandler(NewEvent);
+            RegisterSubModule += new RegisterSubModuleHandler(NewTask);
+            RegisterSubModule += new RegisterSubModuleHandler(MarkTaskComplete);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -276,6 +278,233 @@ namespace BoxSocial.Applications.Calendar
 
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
                 Display.ShowMessage(core, "Event Saved", "You have successfully saved your changes to the event.");
+            }
+        }
+
+        private void NewTask(string submodule)
+        {
+            subModules.Add("new-task", "New Task");
+            if (submodule != "new-task") return;
+
+            if (Request.Form["save"] != null)
+            {
+                SaveNewTask();
+            }
+
+            bool edit = false;
+            ushort taskAccess = 0;
+
+            if (Request.QueryString["mode"] == "edit")
+            {
+                edit = true;
+            }
+
+            template.SetTemplate("Calendar", "account_calendar_task_new");
+
+            int year = Functions.RequestInt("year", tz.Now.Year);
+            int month = Functions.RequestInt("month", tz.Now.Month);
+            int day = Functions.RequestInt("day", tz.Now.Day);
+
+            DateTime dueDate = new DateTime(year, month, day, 16, 0, 0);
+
+            string topic = "";
+            string description = "";
+
+            Dictionary<string, string> years = new Dictionary<string, string>();
+            for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(110).Year; i++)
+            {
+                years.Add(i.ToString(), i.ToString());
+            }
+
+            Dictionary<string, string> months = new Dictionary<string, string>();
+            for (int i = 1; i < 13; i++)
+            {
+                months.Add(i.ToString(), Functions.IntToMonth(i));
+            }
+
+            Dictionary<string, string> days = new Dictionary<string, string>();
+            for (int i = 1; i < 32; i++)
+            {
+                days.Add(i.ToString(), i.ToString());
+            }
+
+            Dictionary<string, string> hours = new Dictionary<string, string>();
+            for (int i = 0; i < 24; i++)
+            {
+                DateTime hourTime = new DateTime(year, month, day, i, 0, 0);
+                hours.Add(i.ToString(), hourTime.ToString("h tt").ToLower());
+            }
+
+            Dictionary<string, string> minutes = new Dictionary<string, string>();
+            for (int i = 0; i < 60; i++)
+            {
+                minutes.Add(i.ToString(), string.Format("{0:00}", i));
+            }
+
+            if (edit)
+            {
+                int id = Functions.RequestInt("id", -1);
+
+                if (id < 1)
+                {
+                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                }
+
+                try
+                {
+                    Task calendarTask = new Task(db, loggedInMember, id);
+
+                    template.ParseVariables("EDIT", "TRUE");
+                    template.ParseVariables("ID", HttpUtility.HtmlEncode(calendarTask.TaskId.ToString()));
+
+                    dueDate = calendarTask.GetDueTime(core.tz);
+
+                    taskAccess = calendarTask.Permissions;
+
+                    topic = calendarTask.Topic;
+                    description = calendarTask.Description;
+                }
+                catch
+                {
+                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                }
+            }
+
+            template.ParseVariables("S_YEAR", HttpUtility.HtmlEncode(year.ToString()));
+            template.ParseVariables("S_MONTH", HttpUtility.HtmlEncode(month.ToString()));
+            template.ParseVariables("S_DAY", HttpUtility.HtmlEncode(day.ToString()));
+
+            template.ParseVariables("S_DUE_YEAR", Functions.BuildSelectBox("due-year", years, dueDate.Year.ToString()));
+
+            template.ParseVariables("S_DUE_MONTH", Functions.BuildSelectBox("due-month", months, dueDate.Month.ToString()));
+
+            template.ParseVariables("S_DUE_DAY", Functions.BuildSelectBox("due-day", days, dueDate.Day.ToString()));
+
+            template.ParseVariables("S_DUE_HOUR", Functions.BuildSelectBox("due-hour", hours, dueDate.Hour.ToString()));
+
+            template.ParseVariables("S_DUE_MINUTE", Functions.BuildSelectBox("due-minute", minutes, dueDate.Minute.ToString()));
+
+            List<string> permissions = new List<string>();
+            permissions.Add("Can Read");
+
+            template.ParseVariables("S_TASK_PERMS", Functions.BuildPermissionsBox(taskAccess, permissions));
+
+            template.ParseVariables("S_TOPIC", HttpUtility.HtmlEncode(topic));
+            template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
+
+            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+        }
+
+        private void SaveNewTask()
+        {
+            long taskId = 0;
+            string topic = "";
+            string description = "";
+            DateTime dueDate = tz.Now;
+            bool edit = false;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            if (Request.Form["mode"] == "edit")
+            {
+                edit = true;
+            }
+
+            try
+            {
+                topic = Request.Form["topic"];
+                description = Request.Form["description"];
+
+                dueDate = new DateTime(
+                    int.Parse(Request.Form["due-year"]),
+                    int.Parse(Request.Form["due-month"]),
+                    int.Parse(Request.Form["due-day"]),
+                    int.Parse(Request.Form["due-hour"]),
+                    int.Parse(Request.Form["due-minute"]),
+                    0);
+
+                if (edit)
+                {
+                    taskId = long.Parse(Request.Form["id"]);
+                }
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                return;
+            }
+
+
+            if (!edit)
+            {
+                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), TaskStatus.Future, 0, TaskPriority.Normal);
+
+                SetRedirectUri(Task.BuildTaskUri(calendarTask));
+                Display.ShowMessage(core, "Task Created", "You have successfully created a new task.");
+            }
+            else
+            {
+                UpdateQuery query = new UpdateQuery("tasks");
+                query.AddField("task_topic", topic);
+                query.AddField("task_description", description);
+                query.AddField("task_due_date_ut", tz.GetUnixTimeStamp(dueDate));
+                query.AddField("task_access", Functions.GetPermission());
+                query.AddCondition("user_id", loggedInMember.UserId);
+                query.AddCondition("task_id", taskId);
+
+                db.UpdateQuery(query);
+
+                Task calendarTask = new Task(db, loggedInMember, taskId);
+
+                SetRedirectUri(Task.BuildTaskUri(calendarTask));
+                Display.ShowMessage(core, "Task Saved", "You have successfully saved your changes to the task.");
+            }
+        }
+
+        private void MarkTaskComplete(string submodule)
+        {
+            if (submodule != "task-complete") return;
+
+            long taskId = Functions.FormLong("id", 0);
+            bool isAjax = false;
+
+            if (Request["ajax"] == "true")
+            {
+                isAjax = true;
+            }
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            try
+            {
+                Task task = new Task(db, session.LoggedInMember, taskId);
+
+                UpdateQuery query = new UpdateQuery("tasks");
+                query.AddField("task_status", (byte)TaskStatus.Completed);
+                query.AddField("task_percent_complete", 100);
+                query.AddCondition("user_id", core.LoggedInMemberId);
+                query.AddCondition("task_id", taskId);
+
+                if (db.UpdateQuery(query) == 1)
+                {
+                    if (!isAjax)
+                    {
+                        SetRedirectUri(Task.BuildTaskUri(task));
+                    }
+                    Ajax.ShowMessage(isAjax, "success", core, "Task Complete", "The task has been marked as complete.");
+                }
+            }
+            catch (InvalidTaskException)
+            {
+                Ajax.ShowMessage(isAjax, "error", core, "Error", "An error occured while marking the task as complete, go back");
             }
         }
     }

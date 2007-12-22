@@ -56,6 +56,42 @@ namespace BoxSocial.Applications.Calendar
             return events;
         }
 
+        public List<Task> GetTasks(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
+        {
+            return GetTasks(core, owner, startTimeRaw, endTimeRaw, false);
+        }
+
+        public List<Task> GetTasks(Core core, Primitive owner, long startTimeRaw, long endTimeRaw, bool overdueTasks)
+        {
+            List<Task> tasks = new List<Task>();
+
+            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+
+            if (overdueTasks)
+            {
+                DataTable tasksTable = db.SelectQuery(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND ((tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) OR ({7} > tk.task_due_date_ut AND tk.task_percent_complete < 100)) ORDER BY tk.task_due_date_ut ASC;",
+                    Task.TASK_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid, UnixTime.UnixTimeStamp()));
+
+                foreach (DataRow dr in tasksTable.Rows)
+                {
+                    tasks.Add(new Task(db, owner, dr));
+                }
+            }
+            else
+            {
+                DataTable tasksTable = db.SelectQuery(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND (tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) ORDER BY tk.task_due_date_ut ASC;",
+                    Task.TASK_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+
+                foreach (DataRow dr in tasksTable.Rows)
+                {
+                    tasks.Add(new Task(db, owner, dr));
+                }
+            }
+
+            return tasks;
+        }
+
         /// <summary>
         /// Returns any events the user has on their personal calendar, and any events on group and network calendars that they are attending.
         /// </summary>

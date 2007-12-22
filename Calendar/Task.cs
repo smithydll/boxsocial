@@ -282,7 +282,7 @@ ENGINE = InnoDB;
 
             Calendar cal = new Calendar(core.db);
 
-            List<Task> tasks = cal.GetTasks(core, core.session.LoggedInMember, startTime, endTime, true);
+            List<Task> tasks = cal.GetTasks(core, owner, startTime, endTime, true);
 
             VariableCollection taskDaysVariableCollection = null;
             string lastDay = core.tz.ToStringPast(core.tz.Now);

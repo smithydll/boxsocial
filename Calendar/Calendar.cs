@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<Task> tasks = new List<Task>();
 
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = core.LoggedInMemberId;
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             if (overdueTasks)

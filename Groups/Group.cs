@@ -114,7 +114,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
@@ -122,7 +122,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public string DisplayNameOwnership
+        public override string DisplayNameOwnership
         {
             get
             {
@@ -140,6 +140,22 @@ namespace BoxSocial.Groups
                     }
                 }
                 return displayNameOwnership;
+            }
+        }
+
+        public override string TitleNameOwnership
+        {
+            get
+            {
+                return "the group " + DisplayNameOwnership;
+            }
+        }
+
+        public override string TitleName
+        {
+            get
+            {
+                return "the group " + DisplayName;
             }
         }
 

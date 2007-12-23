@@ -79,7 +79,7 @@ namespace BoxSocial.Applications.GuestBook
             Display.DisplayComments(core, page.template, page.ProfileOwner, page.ProfileOwner.UserId, "USER", (long)page.ProfileOwner.ProfileComments, false);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(ZzUri.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
-            page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.UserNameOwnership + " Guest Book"));
+            page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
         }
 
         public static void Show(Core core, GPage page)

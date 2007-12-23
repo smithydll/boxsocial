@@ -305,6 +305,8 @@ namespace BoxSocial.Applications.Calendar
             int month = Functions.RequestInt("month", tz.Now.Month);
             int day = Functions.RequestInt("day", tz.Now.Day);
 
+            byte percentComplete = 0;
+
             DateTime dueDate = new DateTime(year, month, day, 16, 0, 0);
 
             string topic = "";
@@ -341,6 +343,12 @@ namespace BoxSocial.Applications.Calendar
                 minutes.Add(i.ToString(), string.Format("{0:00}", i));
             }
 
+            Dictionary<string, string> percentages = new Dictionary<string, string>();
+            for (int i = 0; i <= 100; i += 25)
+            {
+                percentages.Add(i.ToString(), i.ToString() + "%");
+            }
+
             if (edit)
             {
                 int id = Functions.RequestInt("id", -1);
@@ -363,6 +371,8 @@ namespace BoxSocial.Applications.Calendar
 
                     topic = calendarTask.Topic;
                     description = calendarTask.Description;
+
+                    percentComplete = calendarTask.PercentageComplete;
                 }
                 catch
                 {
@@ -392,6 +402,8 @@ namespace BoxSocial.Applications.Calendar
             template.ParseVariables("S_TOPIC", HttpUtility.HtmlEncode(topic));
             template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
 
+            template.ParseVariables("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
+
             template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
         }
 
@@ -400,6 +412,7 @@ namespace BoxSocial.Applications.Calendar
             long taskId = 0;
             string topic = "";
             string description = "";
+            byte percentComplete = Functions.FormByte("percent-complete", 0);
             DateTime dueDate = tz.Now;
             bool edit = false;
 
@@ -441,18 +454,34 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), TaskStatus.Future, 0, TaskPriority.Normal);
+                TaskStatus status = TaskStatus.Future;
+
+                if (percentComplete == 100)
+                {
+                    status = TaskStatus.Completed;
+                }
+
+                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, TaskPriority.Normal);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage(core, "Task Created", "You have successfully created a new task.");
             }
             else
             {
+                TaskStatus status = TaskStatus.Future;
+
+                if (percentComplete == 100)
+                {
+                    status = TaskStatus.Completed;
+                }
+
                 UpdateQuery query = new UpdateQuery("tasks");
                 query.AddField("task_topic", topic);
                 query.AddField("task_description", description);
                 query.AddField("task_due_date_ut", tz.GetUnixTimeStamp(dueDate));
                 query.AddField("task_access", Functions.GetPermission());
+                query.AddField("task_percent_complete", percentComplete);
+                query.AddField("task_status", (byte)status);
                 query.AddCondition("user_id", loggedInMember.UserId);
                 query.AddCondition("task_id", taskId);
 

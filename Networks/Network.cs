@@ -120,7 +120,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
@@ -128,7 +128,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public string DisplayNameOwnership
+        public override string DisplayNameOwnership
         {
             get
             {
@@ -146,6 +146,22 @@ namespace BoxSocial.Networks
                     }
                 }
                 return displayNameOwnership;
+            }
+        }
+
+        public override string TitleNameOwnership
+        {
+            get
+            {
+                return "the network " + DisplayNameOwnership;
+            }
+        }
+
+        public override string TitleName
+        {
+            get
+            {
+                return "the network " + DisplayName;
             }
         }
 

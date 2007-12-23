@@ -328,8 +328,8 @@ namespace BoxSocial.Applications.Blog
                 doc.channels = new RssChannel[1];
                 doc.channels[0] = new RssChannel();
 
-                doc.channels[0].title = string.Format("RSS Feed for {0} blog", page.ProfileOwner.UserNameOwnership);
-                doc.channels[0].description = string.Format("RSS Feed for {0} blog", page.ProfileOwner.UserNameOwnership);
+                doc.channels[0].title = string.Format("RSS Feed for {0} blog", page.ProfileOwner.DisplayNameOwnership);
+                doc.channels[0].description = string.Format("RSS Feed for {0} blog", page.ProfileOwner.DisplayNameOwnership);
                 if (!string.IsNullOrEmpty(category))
                 {
                     doc.channels[0].link = "http://zinzam.com" + ZzUri.BuildBlogUri(page.ProfileOwner, category);

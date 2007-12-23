@@ -52,6 +52,26 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string TitleName
+        {
+            get;
+        }
+
+        public abstract string TitleNameOwnership
+        {
+            get;
+        }
+
+        public abstract string DisplayName
+        {
+            get;
+        }
+
+        public abstract string DisplayNameOwnership
+        {
+            get;
+        }
+
         public abstract bool CanModerateComments(Member member);
 
         public abstract bool IsCommentOwner(Member member);

@@ -30,51 +30,10 @@ namespace BoxSocial.Internals
 {
     public class Feed
     {
-        private string feedVerb;
-        private Member feedSubject;
-        private Primitive feedObject;
-        private Application application;
 
-        /*
-         * The verb only has to be in the language of the current user
-         * 
-         * user verb primitive                      David joined the Group phpBB
-         * user verb primitive using application    David slapped Lachlan using IRC Actions
-         * user verb primitive application          David posted on Lachlan's Guest Book
-         * user verb application                    David published a Blog Entry
-         * user verb                                David is sleeping
-         *                                          David uploaded a Photo
-         *                                          David is attending Election 07 Box Social
-         *                                          Lachlan posted on your Guest Book
-         */
-
-        public string Verb
+        public static List<Action> GetItems(Mysql db, Member owner)
         {
-            get
-            {
-                return feedVerb;
-            }
-        }
-
-        public Member Subject
-        {
-            get
-            {
-                return feedSubject;
-            }
-        }
-
-        public Primitive Object
-        {
-            get
-            {
-                return feedObject;
-            }
-        }
-
-        public static List<Feed> GetItems(Mysql db, Member owner)
-        {
-            List<Feed> feedItems = new List<Feed>();
+            List<Action> feedItems = new List<Action>();
 
             DataTable feedTable = db.SelectQuery(string.Format(""));
 

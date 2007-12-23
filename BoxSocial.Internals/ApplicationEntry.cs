@@ -115,7 +115,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
@@ -123,7 +123,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string DisplayNameOwnership
+        public override string DisplayNameOwnership
         {
             get
             {
@@ -141,6 +141,22 @@ namespace BoxSocial.Internals
                     }
                 }
                 return displayNameOwnership;
+            }
+        }
+
+        public override string TitleNameOwnership
+        {
+            get
+            {
+                return "the application " + DisplayNameOwnership;
+            }
+        }
+
+        public override string TitleName
+        {
+            get
+            {
+                return "the application " + DisplayName;
             }
         }
 

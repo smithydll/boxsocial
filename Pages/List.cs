@@ -213,7 +213,7 @@ namespace BoxSocial.Applications.Pages
         {
             page.template.SetTemplate("viewlist.html");
 
-            page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Lists", page.ProfileOwner.UserNameOwnership)));
+            page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Lists", page.ProfileOwner.DisplayNameOwnership)));
             page.template.ParseVariables("LIST_ABSTRACT", "FALSE");
 
             List<List> lists = List.GetLists(core, page.ProfileOwner);

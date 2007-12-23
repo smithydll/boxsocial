@@ -118,7 +118,7 @@ namespace BoxSocial.Internals
             }
             template.ParseVariables("USER_NAME", HttpUtility.HtmlEncode(profileOwner.UserName));
             template.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(profileOwner.DisplayName));
-            template.ParseVariables("USER_DISPLAY_NAME_OWNERSHIP", HttpUtility.HtmlEncode(profileOwner.UserNameOwnership));
+            template.ParseVariables("USER_DISPLAY_NAME_OWNERSHIP", HttpUtility.HtmlEncode(profileOwner.DisplayNameOwnership));
 
             if (loggedInMember != null)
             {

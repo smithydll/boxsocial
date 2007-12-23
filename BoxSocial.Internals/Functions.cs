@@ -158,6 +158,19 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static byte RequestByte(string var, byte defaultValue)
+        {
+            byte outValue = defaultValue;
+            try
+            {
+                outValue = byte.Parse(HttpContext.Current.Request.QueryString[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
         public static int RequestInt(string var, int defaultValue)
         {
             int outValue = defaultValue;
@@ -177,6 +190,19 @@ namespace BoxSocial.Internals
             try
             {
                 outValue = long.Parse(HttpContext.Current.Request.QueryString[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
+        public static byte FormByte(string var, byte defaultValue)
+        {
+            byte outValue = defaultValue;
+            try
+            {
+                outValue = byte.Parse(HttpContext.Current.Request.Form[var]);
             }
             catch
             {

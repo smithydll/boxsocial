@@ -39,6 +39,7 @@
     <Compile Include="Access.cs" />
     <Compile Include="Account.cs" />
     <Compile Include="AccountModule.cs" />
+    <Compile Include="Action.cs" />
     <Compile Include="Ajax.cs" />
     <Compile Include="APage.cs">
       <SubType>ASPXCodeBehind</SubType>

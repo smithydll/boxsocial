@@ -148,7 +148,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string UserNameOwnership
+        public override string DisplayNameOwnership
         {
             get
             {
@@ -169,7 +169,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
@@ -178,6 +178,22 @@ namespace BoxSocial.Internals
                     return userName;
                 }
                 return displayName;
+            }
+        }
+
+        public override string TitleNameOwnership
+        {
+            get
+            {
+                return DisplayNameOwnership;
+            }
+        }
+
+        public override string TitleName
+        {
+            get
+            {
+                return DisplayName;
             }
         }
 
@@ -889,6 +905,32 @@ namespace BoxSocial.Internals
             {
                 return "";
             }
+        }
+
+        public List<long> GetFriendIds()
+        {
+            return GetFriendIds(255);
+        }
+
+        public List<long> GetFriendIds(int count)
+        {
+            List<long> friendIds = new List<long>();
+
+            SelectQuery query = new SelectQuery("user_relations uf");
+            query.AddFields("uf.relation_you");
+            query.AddCondition("uf.relation_me", userId);
+            query.AddCondition("uf.relation_type", "FRIEND");
+            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.LimitCount = count;
+
+            DataTable friendsTable = db.SelectQuery(query);
+
+            foreach (DataRow dr in friendsTable.Rows)
+            {
+                friendIds.Add((long)(int)dr["relation_you"]);
+            }
+
+            return friendIds;
         }
 
         /// <summary>

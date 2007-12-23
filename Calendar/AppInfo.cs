@@ -285,6 +285,15 @@ namespace BoxSocial.Applications.Calendar
                 {
                     taskVariableCollection.ParseVariables("CLASS", "task");
                 }
+
+                if (calendarTask.Priority == TaskPriority.High)
+                {
+                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"high-priority\">H</span>]");
+                }
+                else if (calendarTask.Priority == TaskPriority.Low)
+                {
+                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"low-priority\">L</span>]");
+                }
             }
 
             e.core.AddSidePanel(template);

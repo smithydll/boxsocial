@@ -326,6 +326,15 @@ ENGINE = InnoDB;
                 {
                     taskVariableCollection.ParseVariables("CLASS", "task");
                 }
+
+                if (calendarTask.Priority == TaskPriority.High)
+                {
+                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"high-priority\" title=\"High Priority\">H</span>]");
+                }
+                else if (calendarTask.Priority == TaskPriority.Low)
+                {
+                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"low-priority\" title=\"Low Priority\">L</span>]");
+                }
             }
 
             List<string[]> calendarPath = new List<string[]>();

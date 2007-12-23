@@ -306,6 +306,7 @@ namespace BoxSocial.Applications.Calendar
             int day = Functions.RequestInt("day", tz.Now.Day);
 
             byte percentComplete = 0;
+            TaskPriority priority = TaskPriority.Normal;
 
             DateTime dueDate = new DateTime(year, month, day, 16, 0, 0);
 
@@ -349,6 +350,11 @@ namespace BoxSocial.Applications.Calendar
                 percentages.Add(i.ToString(), i.ToString() + "%");
             }
 
+            Dictionary<string, string> priorities = new Dictionary<string, string>();
+            priorities.Add(((byte)TaskPriority.Low).ToString(), "Low");
+            priorities.Add(((byte)TaskPriority.Normal).ToString(), "Normal");
+            priorities.Add(((byte)TaskPriority.High).ToString(), "High");
+
             if (edit)
             {
                 int id = Functions.RequestInt("id", -1);
@@ -373,6 +379,7 @@ namespace BoxSocial.Applications.Calendar
                     description = calendarTask.Description;
 
                     percentComplete = calendarTask.PercentageComplete;
+                    priority = calendarTask.Priority;
                 }
                 catch
                 {
@@ -403,6 +410,7 @@ namespace BoxSocial.Applications.Calendar
             template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
 
             template.ParseVariables("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
+            template.ParseVariables("S_PRIORITY", Functions.BuildSelectBox("priority", priorities, ((byte)priority).ToString()));
 
             template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
         }
@@ -413,6 +421,7 @@ namespace BoxSocial.Applications.Calendar
             string topic = "";
             string description = "";
             byte percentComplete = Functions.FormByte("percent-complete", 0);
+            TaskPriority priority = (TaskPriority)Functions.FormByte("priority", (byte)TaskPriority.Normal);
             DateTime dueDate = tz.Now;
             bool edit = false;
 
@@ -461,7 +470,7 @@ namespace BoxSocial.Applications.Calendar
                     status = TaskStatus.Completed;
                 }
 
-                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, TaskPriority.Normal);
+                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage(core, "Task Created", "You have successfully created a new task.");
@@ -482,6 +491,7 @@ namespace BoxSocial.Applications.Calendar
                 query.AddField("task_access", Functions.GetPermission());
                 query.AddField("task_percent_complete", percentComplete);
                 query.AddField("task_status", (byte)status);
+                query.AddField("task_priority", (byte)priority);
                 query.AddCondition("user_id", loggedInMember.UserId);
                 query.AddCondition("task_id", taskId);
 

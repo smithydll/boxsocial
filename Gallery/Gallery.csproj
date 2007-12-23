@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="AccountGalleries.cs" />
     <Compile Include="AppInfo.cs" />
+    <Compile Include="Exif.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryItem.cs" />
     <Compile Include="GroupGallery.cs" />

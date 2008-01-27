@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-au" dir="ltr">
+<head>
+	<title>{TITLE}</title>
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="icon" href="/favicon.ico" />
+	<link href="/styles/boxsocial.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
+	<!-- IF REDIRECT_URI -->
+	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
+	<!-- ENDIF -->
+	<style type="text/css">
+		<!--
+
+#head {
+	background-color: #{HEAD_COLOUR};
+	color: {HEAD_FORE_COLOUR};
+	background-image: url('/images/corners-middle-{HEAD_COLOUR}-1-1.png');
+}
+
+#head a {
+	color: {HEAD_FORE_COLOUR};
+}
+
+div#rc-top {
+	background-image: url('/images/corners-top-{HEAD_COLOUR}-900-5.png');
+}
+
+div#rc-bottom {
+	background-image: url('/images/corners-bottom-{HEAD_COLOUR}-900-5.png');
+}
+
+--></style>
+	<!--[if lt IE 7]>
+	<style type="text/css">
+#head {
+	background-color: #{HEAD_COLOUR};
+	color: {HEAD_FORE_COLOUR};
+	background-image: url('/images/corners-middle-{HEAD_COLOUR}-1-1.gif');
+}
+
+#head h1 {
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	background: url('/images/zinzam-wl.gif');
+	background-repeat: no-repeat;
+}
+
+div#rc-top {
+	background-image: url('/images/corners-top-{HEAD_COLOUR}-900-5.gif');
+}
+
+div#rc-bottom {
+	background-image: url('/images/corners-bottom-{HEAD_COLOUR}-900-5.gif');
+}
+	</style>
+	<![endif]-->
+	<!-- IF USER_STYLE_SHEET -->
+	<link href="/styles/{USER_STYLE_SHEET}" rel="Stylesheet" media="screen, projection" type="text/css"/>
+	<!-- ENDIF -->
+	<script type="text/javascript">
+	<!--
+		var sid = '{SID}';
+	-->
+	</script>
+	<script type="text/javascript" src="/scripts/ajax.js"></script>
+</head>
+<body>
+	<div id="page">
+		<div id="rc-top"></div>
+		<div id="head">
+			<h1 id="page-title"><a href="{U_HOME}"><span>{HEADING}</span></a></h1>
+			<h2 id="sub-title">A point in user space</h2>
+			<div id="head-nav">
+				<!-- IF LOGGED_IN -->
+				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
+				<a href="{U_ACCOUNT}">My Account</a> |
+				<a href="{U_SIGNOUT}">Sign out</a> |
+				<!-- ELSE -->
+				<a href="{U_REGISTER}">Register</a> |
+				<a href="{U_SIGNIN}">Sign in</a> |
+				<!-- ENDIF -->
+				<a href="{U_HELP}">Help</a>
+			</div>
+			<div id="search">
+				<form action="./" method="get">
+					<fieldset>
+						<input type="text" id="search-text" value="" maxlength="127" />
+						<input type="submit" value="Search" />
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		<div id="rc-bottom"></div>
+		<div id="body">

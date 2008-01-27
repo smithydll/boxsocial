@@ -1,0 +1,15 @@
+<!-- INCLUDE page_header.html -->
+
+<form action="{S_FORM_ACTION}" method="post" id="confirm">
+	<fieldset class="submit-buttons">
+		<h2>{CONFIRM_TITLE}</h2>
+		<p>{CONFIRM_TEXT}</p>
+		<p><input type="submit" name="1" value="Yes" />&nbsp; 
+		<input type="submit" name="0" value="No" /></p>
+		<!-- BEGIN hidden_list -->
+		<input type="hidden" name="{hidden_list.NAME}" value="{hidden_list.VALUE}" />
+		<!-- END hidden_list -->
+	</fieldset>
+</form>
+
+<!-- INCLUDE page_footer.html -->

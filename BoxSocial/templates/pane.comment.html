@@ -1,0 +1,41 @@
+	<!-- BEGIN comment-list -->
+	<li>
+		<!-- IF comment-list.OWNER -->
+		<h4 class="owner">Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
+		<!-- ENDIF -->
+		<!-- IF comment-list.IS_SPAM -->
+		<h4>This Comment has been marked as spam (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">show comment</a>)</h4>
+		<!-- ENDIF -->
+		<!-- IF comment-list.NORMAL -->
+		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
+		<!-- ENDIF -->
+		<!-- IF comment-list.IS_SPAM -->
+		<div id ="comment-{comment-list.ID}" style="display: none;">
+		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
+		<p class="time">Posted: {comment-list.TIME}</p>
+		<!-- ELSE -->
+		<p class="time">Posted: {comment-list.TIME}</p>
+		<div>
+		<!-- ENDIF -->
+		<!-- IF comment-list.USER_TILE -->
+		<div class="comment-disp-pic">
+			<img src="{comment-list.USER_TILE}" alt="{comment-list.USER_DISPLAY_NAME}" />
+		</div>
+		<!-- ENDIF -->
+		<div class="comment-text">
+			<p>{comment-list.COMMENT}</p>
+		</div>
+		<!-- IF LOGGED_IN -->
+		<p class="extra">
+		<!-- IF CAN_COMMENT -->
+		(<a href="{comment-list.U_QUOTE}" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});">Quote</a>)
+		<!-- ENDIF -->
+		<!-- IF comment-list.MODERATE -->
+		(<a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="Delete comment">Delete</a>)
+		<!-- ENDIF -->
+		(<a href="{comment-list.U_REPORT}" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="Report as SPAM">Report</a>)</p>
+		<!-- ENDIF -->
+		<div class="cheat-clear-left"></div>
+		</div>
+	</li>
+	<!-- END comment-list -->

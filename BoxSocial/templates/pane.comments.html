@@ -1,0 +1,27 @@
+<!-- IF IS_PROFILE -->
+<h3>Guest Book ({COMMENTS})</h3>
+<!-- ELSE -->
+<h3>Comments ({COMMENTS})</h3>
+<!-- ENDIF -->
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+	<!-- IF U_VIEW_ALL -->
+	<p><a href="{U_VIEW_ALL}">View All</a></p>
+	<!-- ENDIF -->
+<!-- IF COMMENTS_DESC -->
+<!-- INCLUDE pane.comment.post.html -->
+<!-- ENDIF -->
+<ul id="comment-list">
+	<!-- INCLUDE pane.comment.html -->
+	<!-- IF COMMENTS -->
+	<!-- ELSE -->
+	<li id="no-comments"><p>No comments have been posted.</p></li>
+	<!-- ENDIF -->
+</ul>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+<!-- IF COMMENTS_ASC -->
+<!-- INCLUDE pane.comment.post.html -->
+<!-- ENDIF -->

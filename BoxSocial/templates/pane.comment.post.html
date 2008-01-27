@@ -1,0 +1,16 @@
+<!-- IF CAN_COMMENT -->
+<form action="/comment.aspx" method="post" id="comment-form">
+<fieldset>
+	<legend>Post Comment</legend>
+	<textarea id="comment-text-{ITEM_ID}" name="comment" style="margin: 0px; width: 100%; height: 78px; border: solid 1px #666666;" rows="4" cols="75"></textarea>
+	<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+		<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+	</div>
+	<p style="text-align: right; position:relative; top: -22px;"><input type="submit" value="Submit Comment" onclick="return SubmitComment({ITEM_ID},'{ITEM_TYPE}',0,'{COMMENT_SORT}');" id="comment-submit-{ITEM_ID}" /></p>
+	<input type="hidden" name="item" value="{ITEM_ID}" />
+	<input type="hidden" name="type" value="{ITEM_TYPE}" />
+</fieldset>
+</form>
+<!-- ELSE -->
+<p>You <strong>cannot</strong> post comments.</p>
+<!-- ENDIF -->

@@ -46,6 +46,7 @@ namespace BoxSocial.Applications.Calendar
             RegisterSubModule += new RegisterSubModuleHandler(NewEvent);
             RegisterSubModule += new RegisterSubModuleHandler(NewTask);
             RegisterSubModule += new RegisterSubModuleHandler(MarkTaskComplete);
+            RegisterSubModule += new RegisterSubModuleHandler(EventInvite);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -551,6 +552,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 Ajax.ShowMessage(isAjax, "error", core, "Error", "An error occured while marking the task as complete, go back");
             }
+        }
+
+        private void EventInvite(string submodule)
+        {
+            if (submodule != "invite-event") return;
         }
     }
 }

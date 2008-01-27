@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="networkpage.aspx.cs" Inherits="BoxSocial.networkpage" %>

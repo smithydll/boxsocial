@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="viewfriends.aspx.cs" Inherits="BoxSocial.viewfriends" %>

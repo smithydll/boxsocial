@@ -267,8 +267,8 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.ParseVariables("FROM_EMAIL", user.AlternateEmail);
                     emailTemplate.ParseVariables("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.ParseVariables("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                    emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAccept(this)));
-                    emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventReject(this)));
+                    emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
+                    emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
                     ApplicationEntry ae = AppInfo.GetExecutingApplication(core, user);
                     ae.SendNotification(core, invitee, string.Format("{0} has invited you to {1}.", 
@@ -284,11 +284,9 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.owner.Uri, calendarEvent.EventId));
         }
 
-        public static string BuildEventUri(Event calendarEvent)
+        public static string BuildEventAcceptUri(Event calendarEvent)
         {
-            return Linker.AppendSid(string.Format("{0}/calendar/event/{1}",
-                calendarEvent.owner.Uri, calendarEvent.EventId));
-            return Linker.AppendSid(AccountModule.BuildModuleUri("", ""), true);
+            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("attendance={0}", "accept")), true);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)

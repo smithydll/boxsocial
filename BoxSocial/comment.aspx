@@ -1,0 +1,1 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="comment.aspx.cs" ValidateRequest="false" Inherits="BoxSocial.comment" %>

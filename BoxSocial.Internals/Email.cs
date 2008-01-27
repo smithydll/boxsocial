@@ -39,7 +39,12 @@ namespace BoxSocial.Internals
         public static void SendEmail(Core core, string toAddress, string subject, string message)
         {
             SmtpClient mailClient = new SmtpClient("localhost");
-            mailClient.UseDefaultCredentials = true;
+            Type t = Type.GetType ("Mono.Runtime");
+            if (t == null)
+            {
+                // Not needed for mono
+                mailClient.UseDefaultCredentials = true;
+            }
             //mailClient.c
             //SmtpMail.SmtpServer = SMTP_SERVER;
 

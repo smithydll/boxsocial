@@ -921,6 +921,7 @@ namespace BoxSocial.Internals
             query.AddCondition("uf.relation_me", userId);
             query.AddCondition("uf.relation_type", "FRIEND");
             query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.AddSort(SortOrder.Ascending, "relation_time_ut");
             query.LimitCount = count;
 
             DataTable friendsTable = db.SelectQuery(query);
@@ -1719,7 +1720,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/{0}",
+                return Linker.AppendSid(string.Format("/{0}",
                     UserName));
             }
         }
@@ -1774,10 +1775,10 @@ namespace BoxSocial.Internals
             core.template.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(page.ProfileOwner.Country));
             core.template.ParseVariables("USER_ICON", HttpUtility.HtmlEncode(page.ProfileOwner.UserThumbnail));
 
-            core.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(page.ProfileOwner)));
-            core.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((ZzUri.BuildBlogUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((ZzUri.BuildGalleryUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((ZzUri.BuildFriendsUri(page.ProfileOwner))));
+            core.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(page.ProfileOwner)));
+            core.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((Linker.BuildBlogUri(page.ProfileOwner))));
+            core.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((Linker.BuildGalleryUri(page.ProfileOwner))));
+            core.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((Linker.BuildFriendsUri(page.ProfileOwner))));
 
             core.template.ParseVariables("IS_PROFILE", "TRUE");
 
@@ -1799,8 +1800,8 @@ namespace BoxSocial.Internals
                 core.template.ParseVariables("HAS_PROFILE_INFO", "TRUE");
             }
 
-            core.template.ParseVariables("U_ADD_FRIEND", HttpUtility.HtmlEncode(ZzUri.BuildAddFriendUri(page.ProfileOwner.UserId)));
-            core.template.ParseVariables("U_BLOCK_USER", HttpUtility.HtmlEncode(ZzUri.BuildBlockUserUri(page.ProfileOwner.UserId)));
+            core.template.ParseVariables("U_ADD_FRIEND", HttpUtility.HtmlEncode(Linker.BuildAddFriendUri(page.ProfileOwner.UserId)));
+            core.template.ParseVariables("U_BLOCK_USER", HttpUtility.HtmlEncode(Linker.BuildBlockUserUri(page.ProfileOwner.UserId)));
 
             string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
 
@@ -1813,7 +1814,7 @@ namespace BoxSocial.Internals
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
 
                 friendVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(friend.DisplayName));
-                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(friend)));
+                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(friend)));
                 friendVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(friend.UserIcon));
             }
 
@@ -1829,7 +1830,7 @@ namespace BoxSocial.Internals
                 VariableCollection listVariableCollection = core.template.CreateChild("list_list");
 
                 listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)listTable.Rows[i]["list_title"]));
-                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode("/" + page.ProfileOwner.UserName + "/lists/" + ZzUri.AppendSid((string)listTable.Rows[i]["list_path"])));
+                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode("/" + page.ProfileOwner.UserName + "/lists/" + Linker.AppendSid((string)listTable.Rows[i]["list_path"])));
             }
 
             core.template.ParseVariables("LISTS", listTable.Rows.Count.ToString());

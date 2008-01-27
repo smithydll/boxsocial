@@ -324,7 +324,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            ZzUri.Sid = sessionId;
+            Linker.Sid = sessionId;
 
             xs = new XmlSerializer(typeof(SessionCookie));
             stw = new StringWriter();
@@ -409,7 +409,7 @@ namespace BoxSocial.Internals
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
                     loggedInMember = new Member(db, userSessionRow, false, true);
-                    ZzUri.Sid = sessionId;
+                    Linker.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
                     {
@@ -621,6 +621,11 @@ namespace BoxSocial.Internals
         public static string SessionMd5(string input)
         {
             return FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
+        }
+
+        public static void RedirectAuthenticate()
+        {
+            HttpContext.Current.Response.Redirect(string.Format("/sign-in/?redirect={0}", HttpUtility.UrlEncode(HttpContext.Current.Request.RawUrl)), true);
         }
     }
 

@@ -32,25 +32,25 @@ namespace BoxSocial.Applications.GuestBook
     {
         public static string Uri(Member member)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/profile/comments",
+            return Linker.AppendSid(string.Format("/{0}/profile/comments",
                 member.UserName.ToLower()));
         }
 
         public static string Uri(UserGroup thisGroup)
         {
-            return ZzUri.AppendSid(string.Format("/group/{0}/comments",
+            return Linker.AppendSid(string.Format("/group/{0}/comments",
                 thisGroup.Slug));
         }
 
         public static string Uri(Network theNetwork)
         {
-            return ZzUri.AppendSid(string.Format("/network/{0}/comments",
+            return Linker.AppendSid(string.Format("/network/{0}/comments",
                 theNetwork.NetworkNetwork));
         }
 
         public static string Uri(ApplicationEntry anApplication)
         {
-            return ZzUri.AppendSid(string.Format("/application/{0}/comments",
+            return Linker.AppendSid(string.Format("/application/{0}/comments",
                 anApplication.AssemblyName));
         }
 
@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
             Display.DisplayComments(core, page.template, page.ProfileOwner, page.ProfileOwner.UserId, "USER", (long)page.ProfileOwner.ProfileComments, false);
-            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(ZzUri.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
+            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
         }

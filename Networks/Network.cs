@@ -563,7 +563,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/network/{0}",
+                return Linker.AppendSid(string.Format("/network/{0}",
                     NetworkNetwork));
             }
         }
@@ -572,20 +572,20 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/network/{0}/members",
+                return Linker.AppendSid(string.Format("/network/{0}/members",
                     NetworkNetwork));
             }
         }
 
         public string BuildJoinUri()
         {
-            return ZzUri.AppendSid(string.Format("/account/?module=networks&sub=join&id={0}",
+            return Linker.AppendSid(string.Format("/account/?module=networks&sub=join&id={0}",
                 NetworkId), true);
         }
 
         public string BuildMemberListUri()
         {
-            return ZzUri.AppendSid(string.Format("/network/{0}/members",
+            return Linker.AppendSid(string.Format("/network/{0}/members",
                 NetworkNetwork));
         }
 
@@ -625,7 +625,7 @@ namespace BoxSocial.Networks
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
                 membersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(member)));
+                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
                 membersVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
 
             }
@@ -664,7 +664,7 @@ namespace BoxSocial.Networks
                 memberVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(member.Country));
                 memberVariableCollection.ParseVariables("USER_CAPTION", "");
 
-                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(member)));
+                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
                 memberVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
             }
 

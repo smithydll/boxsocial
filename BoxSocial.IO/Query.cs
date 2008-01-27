@@ -71,7 +71,14 @@ namespace BoxSocial.IO
             }
             else if (value is bool)
             {
-                return ((int)value).ToString();
+                if ((bool)value == true)
+                {
+                    return "1";
+                }
+                else
+                {
+                    return "0";
+                }
             }
             else if (value is List<string>)
             {

@@ -135,13 +135,13 @@ namespace BoxSocial.Internals
 
         public static string BuildModuleUri(string module)
         {
-            return ZzUri.AppendSid(string.Format("/account/{0}",
+            return Linker.AppendSid(string.Format("/account/{0}",
                 module));
         }
 
         public static string BuildModuleUri(string module, string sub)
         {
-            return ZzUri.AppendSid(string.Format("/account/{0}/{1}",
+            return Linker.AppendSid(string.Format("/account/{0}/{1}",
                 module, sub));
         }
 
@@ -162,7 +162,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return ZzUri.AppendSid(string.Format("/account/{0}/{1}{2}",
+            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
                 module, sub, argumentList));
         }
 
@@ -189,7 +189,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return ZzUri.AppendSid(string.Format("/account/{0}/{1}{2}",
+            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
                 module, sub, argumentList), appendSid);
         }
 

@@ -376,7 +376,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/application/{0}",
+                return Linker.AppendSid(string.Format("/application/{0}",
                     assemblyName));
             }
         }
@@ -580,6 +580,98 @@ namespace BoxSocial.Internals
             return output;
         }
 
+        public void SendNotification(Core core, Member receiver, string subject, Template body)
+        {
+            Notification.Create(core, this, receiver, subject, body.ToString());
+
+            if (receiver.EmailNotifications)
+            {
+                Email.SendEmail(core, receiver.AlternateEmail, subject, body.ToString());
+            }
+        }
+
+        public void PublishToFeed(Member owner, string title, string message)
+        {
+            if (title.Length > 63)
+            {
+                title = title.Substring(0, 63);
+            }
+
+            if (message.Length > 511)
+            {
+                message = message.Substring(0, 511);
+            }
+
+            SelectQuery query = new SelectQuery("actions");
+            query.AddFields("COUNT(action_id) as twentyfour");
+            query.AddCondition("action_primitive_id", owner.Id);
+            query.AddCondition("action_primitive_type", owner.Type);
+            query.AddCondition("action_application", applicationId);
+            query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+
+            // maximum five per application per day
+            if ((long)db.SelectQuery(query).Rows[0]["twentyfour"] < 5)
+            {
+                InsertQuery iquery = new InsertQuery("actions");
+                iquery.AddField("action_primitive_id", owner.Id);
+                iquery.AddField("action_primitive_type", owner.Type);
+                iquery.AddField("action_title", title);
+                iquery.AddField("action_body", message);
+                iquery.AddField("action_application", applicationId);
+                iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+
+                db.UpdateQuery(iquery);
+            }
+        }
+
+        public void UpdateFeedAction(Action action, string title, string message)
+        {
+            if (title.Length > 63)
+            {
+                title = title.Substring(0, 63);
+            }
+
+            if (message.Length > 511)
+            {
+                message = message.Substring(0, 511);
+            }
+
+            UpdateQuery uquery = new UpdateQuery("actions");
+            uquery.AddField("action_title", title);
+            uquery.AddField("action_body", message);
+            uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+            uquery.AddCondition("action_application", applicationId);
+            uquery.AddCondition("action_primitive_id", action.OwnerId);
+            uquery.AddCondition("action_primitive_type", "USER");
+            uquery.AddCondition("action_id", action.ActionId);
+
+            db.UpdateQuery(uquery);
+        }
+
+        /// <summary>
+        /// Returns an Action or null
+        /// </summary>
+        /// <param name="owner"></param>
+        /// <returns></returns>
+        public Action GetMostRecentFeedAction(Member owner)
+        {
+            SelectQuery query = new SelectQuery("actions at");
+            query.AddFields(Action.FEED_FIELDS);
+            query.AddSort(SortOrder.Descending, "at.action_time_ut");
+            query.LimitCount = 1;
+
+            DataTable feedTable = db.SelectQuery(query);
+
+            if (feedTable.Rows.Count == 1)
+            {
+                return new Action(db, owner, feedTable.Rows[0]);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static void ShowPage(Core core, APage page)
         {
             core.template.SetTemplate("viewapplication.html");
@@ -594,12 +686,12 @@ namespace BoxSocial.Internals
 
             if (page.AnApplication.HasInstalled(core.session.LoggedInMember))
             {
-                core.template.ParseVariables("U_UNINSTALL", HttpUtility.HtmlEncode(ZzUri.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
+                core.template.ParseVariables("U_UNINSTALL", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
                     page.AnApplication.ApplicationId), true)));
             }
             else
             {
-                core.template.ParseVariables("U_INSTALL", HttpUtility.HtmlEncode(ZzUri.AppendSid(string.Format("/account/dashboard/applications?mode=install&id={0}",
+                core.template.ParseVariables("U_INSTALL", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=install&id={0}",
                     page.AnApplication.ApplicationId), true)));
             }
 

@@ -7,15 +7,27 @@
 	</div>
 	<!-- ENDIF -->
 	<div id="view-photo">
+	<script type="text/javascript">
+	<!--
+		var user_tags = new Array();
+	<!-- BEGIN user_tags -->
+		user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
+	<!-- END user_tags -->
+	-->
+	</script>
 	<dl>
 		<dt style="text-align: center;">
 			<span style="display: block; margin: auto; height: 0px; width: 640px; overflow:visible; text-align: left;">
 				<!-- BEGIN user_tags -->
 				<span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
-				<!--span id="tag-name-{user_tags.TAG_ID}" style="display: hidden; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span-->
+				<span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
 				<!-- END user_tags -->
 			</span>
-				<img src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="return false;" />
+				<img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);"
+					<!-- IF OWNER -->
+					onmousedown="CreateUserTagNearPointer({ID}, event);"
+					<!-- ENDIF -->
+				 />
 		</dt>
 		<!-- IF HAS_USER_TAGS -->
 		<dd>Tags: 
@@ -41,11 +53,11 @@
 	</dl>
 	<!-- IF OWNER -->
 	<div id="x-stuff">
-		<span id="edit-photo" class="post-button"><a href="{U_EDIT}">Edit Photo Details</a></span>
+		<span id="edit-photo" class="post-button"><a href="{U_EDIT}">Edit Details</a></span>
 		<span id="make-display-pic" class="post-button"><a href="{U_MARK_DISPLAY_PIC}">Make my Display Picture</a></span>
 		<span id="make-gallery-cover" class="post-button"><a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a></span>
-		<span id="rotate-left" class="post-button"><a href="{U_ROTATE_LEFT}">Rotate Left</a></span>
-		<span id="rotate-right" class="post-button"><a href="{U_ROTATE_RIGHT}">Rotate Right</a></span>
+		<span id="rotate-left" class="img-button"><a href="{U_ROTATE_LEFT}"><img src="/images/rotate_left.png" alt="Rotate Left" /></a></span>
+		<span id="rotate-right" class="img-button"><a href="{U_ROTATE_RIGHT}"><img src="/images/rotate_right.png" alt="Rotate Right" /></a></span>
 	</div>
 	<!-- ENDIF -->
 	<div class="comment-pane" style="margin: 0 auto; width: 640px;">

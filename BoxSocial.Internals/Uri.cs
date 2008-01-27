@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -32,7 +33,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class ZzUri
+    public class Linker
     {
         public static bool SecureUrls = false;
         public static bool SidUrls = false;
@@ -283,8 +284,21 @@ namespace BoxSocial.Internals
 
         public static string BuildAddFriendUri(long friendId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=friends&mode=add&id={0}",
+            return AppendSid(string.Format("/account/friends/friends?mode=add&id={0}",
                 friendId), true);
+        }
+
+        public static string BuildAddFriendUri(long friendId, bool appendSid)
+        {
+            if (appendSid)
+            {
+                return BuildAddFriendUri(friendId);
+            }
+            else
+            {
+                return string.Format("/account/friends/friends?mode=add&id={0}",
+                    friendId);
+            }
         }
 
         public static string BuildAddFamilyUri(long friendId)
@@ -356,16 +370,40 @@ namespace BoxSocial.Internals
         {
             if (SidUrls || forceSid)
             {
-                if (uri.Contains("?"))
+                if (uri.Contains("?sid=") || uri.Contains("&sid="))
                 {
-                    return string.Format("{0}&sid={1}",
-                        uri, sid);
+                    return Regex.Replace(uri, "sid=([a-z0-9]+)", string.Format("sid={0}", sid));
                 }
                 else
                 {
-                    return string.Format("{0}?sid={1}",
-                        uri, sid);
+                    if (uri.Contains("?"))
+                    {
+                        return string.Format("{0}&sid={1}",
+                            uri, sid);
+                    }
+                    else
+                    {
+                        return string.Format("{0}?sid={1}",
+                            uri, sid);
+                    }
                 }
+            }
+            else
+            {
+                return uri;
+            }
+        }
+
+        public static string StripSid(string uri)
+        {
+            int indexOfSid = uri.IndexOf("?sid");
+            if (indexOfSid < 0)
+            {
+                uri.IndexOf("&sid");
+            }
+            if (indexOfSid >= 0)
+            {
+                return uri.Remove(indexOfSid);
             }
             else
             {

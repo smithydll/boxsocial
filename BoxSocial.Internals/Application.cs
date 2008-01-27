@@ -297,6 +297,16 @@ namespace BoxSocial.Internals
             return null;
         }
 
+        public static ApplicationEntry GetExecutingApplication(Mysql db, Primitive installee)
+        {
+            return new ApplicationEntry(db, installee, Assembly.GetCallingAssembly().GetName().Name);
+        }
+
+        public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
+        {
+            return GetExecutingApplication(core.db, installee);
+        }
+
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {
             Application newApplication = GetApplication(core, primitive, ae);

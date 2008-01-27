@@ -32,6 +32,33 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Access
     {
+        public const ushort ALL_CAN_READ = 0x1111;
+        public const ushort FRIENDS_CAN_READ = 0x1000;
+
+        public static bool AllCanRead(ushort permissions)
+        {
+            if ((permissions & Access.ALL_CAN_READ) == Access.ALL_CAN_READ)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool FriendsCanRead(ushort permissions)
+        {
+            if ((permissions & Access.FRIENDS_CAN_READ) == Access.FRIENDS_CAN_READ)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         private Mysql db;
         private bool canRead = false;
         private bool canComment = false;

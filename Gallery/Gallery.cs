@@ -693,37 +693,37 @@ namespace BoxSocial.Applications.Gallery
 
         public static string BuildPhotoUri(Member member, string galleryPath, string photoPath)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
+            return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
                 member.UserName, galleryPath, photoPath));
         }
 
         public static string BuildPhotoUri(UserGroup thisGroup, string photoPath)
         {
-            return ZzUri.AppendSid(string.Format("/group/{0}/gallery/{1}",
+            return Linker.AppendSid(string.Format("/group/{0}/gallery/{1}",
                 thisGroup.Slug, photoPath));
         }
 
         public static string BuildPhotoUri(Network theNetwork, string photoPath)
         {
-            return ZzUri.AppendSid(string.Format("/network/{0}/gallery/{1}",
+            return Linker.AppendSid(string.Format("/network/{0}/gallery/{1}",
                 theNetwork.NetworkNetwork, photoPath));
         }
 
         public static string BuildGalleryUpload(UserGroup thisGroup)
         {
-            return ZzUri.AppendSid(string.Format("/group/gallery/{0}/?mode=upload",
+            return Linker.AppendSid(string.Format("/group/gallery/{0}/?mode=upload",
                 thisGroup.Slug));
         }
 
         public static string BuildGalleryUpload(Network theNetwork)
         {
-            return ZzUri.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
+            return Linker.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
                 theNetwork.NetworkNetwork));
         }
 
         public static string BuildGalleryUri(Member member)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/gallery",
+            return Linker.AppendSid(string.Format("/{0}/gallery",
                 member.UserName.ToLower()));
         }
 
@@ -735,20 +735,20 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                return ZzUri.AppendSid(string.Format("/{0}/gallery/{1}",
+                return Linker.AppendSid(string.Format("/{0}/gallery/{1}",
                     member.UserName.ToLower(), path));
             }
         }
 
         public static string BuildGalleryUri(UserGroup thisGroup)
         {
-            return ZzUri.AppendSid(string.Format("/group/{0}/gallery",
+            return Linker.AppendSid(string.Format("/group/{0}/gallery",
                 thisGroup.Slug));
         }
 
         public static string BuildGalleryUri(Network theNetwork)
         {
-            return ZzUri.AppendSid(string.Format("/network/{0}/gallery",
+            return Linker.AppendSid(string.Format("/network/{0}/gallery",
                 theNetwork.NetworkNetwork));
         }
 
@@ -805,8 +805,8 @@ namespace BoxSocial.Applications.Gallery
                     page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));*/
 
                     page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + gallery.FullPath));
-                    page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(gallery.GalleryId)));
-                    page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(gallery.GalleryId)));
+                    page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(gallery.GalleryId)));
+                    page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(gallery.GalleryId)));
 
                     page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0)));
                 }
@@ -820,7 +820,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 gallery = new UserGallery(core.db, page.ProfileOwner);
                 page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery"));
-                page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(0)));
+                page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(0)));
             }
 
             List<Gallery> galleries = gallery.GetGalleries(page);
@@ -883,7 +883,7 @@ namespace BoxSocial.Applications.Gallery
 
             page.template.ParseVariables("COMMENTS", HttpUtility.HtmlEncode(galleryComments.ToString()));
             page.template.ParseVariables("L_COMMENTS", HttpUtility.HtmlEncode(string.Format("{0} Comments in gallery", galleryComments)));
-            page.template.ParseVariables("U_COMMENTS", HttpUtility.HtmlEncode(ZzUri.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath)));
+            page.template.ParseVariables("U_COMMENTS", HttpUtility.HtmlEncode(Linker.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath)));
         }
 
         public static void Show(Core core, GPage page)

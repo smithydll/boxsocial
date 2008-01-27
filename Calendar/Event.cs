@@ -230,13 +230,65 @@ namespace BoxSocial.Applications.Calendar
             long eventId = db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, '{2}', '{3}', '{4}', '{5}', {6}, {7}, {8})",
                 creator.UserId, owner.Id, Mysql.Escape(owner.Type),Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
 
-            return new Event(db, owner, eventId);
+            Event myEvent = new Event(db, owner, eventId);
+
+            if (Access.FriendsCanRead(myEvent.Permissions))
+            {
+                ApplicationEntry ae = AppInfo.GetExecutingApplication(db, creator);
+                ae.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
+                    Event.BuildEventUri(myEvent), myEvent.subject));
+            }
+
+            return myEvent;
+        }
+
+        public void Invite(Core core, Member invitee)
+        {
+            core.LoadUserProfile(userId);
+            Member user = core.UserProfiles[userId];
+            // only the person who created the event can invite people to it
+            if (core.LoggedInMemberId == userId)
+            {
+                // we can only invite people friends with us to an event
+                if (invitee.IsFriend(user))
+                {
+                    InsertQuery iQuery = new InsertQuery("event_invites");
+                    iQuery.AddField("item_id", invitee.Id);
+                    iQuery.AddField("item_id", invitee.Type);
+                    iQuery.AddField("inviter_id", userId);
+                    iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
+                    iQuery.AddField("invite_accepted", false);
+
+                    long invitationId = db.UpdateQuery(iQuery);
+
+                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+
+                    emailTemplate.ParseVariables("FROM_NAME", user.DisplayName);
+                    emailTemplate.ParseVariables("FROM_EMAIL", user.AlternateEmail);
+                    emailTemplate.ParseVariables("FROM_NAMES", user.DisplayNameOwnership);
+                    emailTemplate.ParseVariables("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
+                    emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAccept(this)));
+                    emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventReject(this)));
+
+                    ApplicationEntry ae = AppInfo.GetExecutingApplication(core, user);
+                    ae.SendNotification(core, invitee, string.Format("{0} has invited you to {1}.", 
+                        user.DisplayName, subject), emailTemplate);
+                    
+                }
+            }
         }
 
         public static string BuildEventUri(Event calendarEvent)
         {
-            return ZzUri.AppendSid(string.Format("{0}/calendar/event/{1}",
+            return Linker.AppendSid(string.Format("{0}/calendar/event/{1}",
                 calendarEvent.owner.Uri, calendarEvent.EventId));
+        }
+
+        public static string BuildEventUri(Event calendarEvent)
+        {
+            return Linker.AppendSid(string.Format("{0}/calendar/event/{1}",
+                calendarEvent.owner.Uri, calendarEvent.EventId));
+            return Linker.AppendSid(AccountModule.BuildModuleUri("", ""), true);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)

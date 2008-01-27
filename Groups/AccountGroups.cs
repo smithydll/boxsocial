@@ -91,7 +91,7 @@ namespace BoxSocial.Groups
 
             template.SetTemplate("Groups", "account_group_manage");
 
-            template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(ZzUri.AppendSid("/groups/create")));
+            template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create")));
 
             DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
@@ -145,7 +145,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("sub", "delete");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
                     "Are you sure you want to delete this group?",
                     "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
                     hiddenFieldList);
@@ -232,7 +232,7 @@ namespace BoxSocial.Groups
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
             }
 
-            template.ParseVariables("S_EDIT_GROUP", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_EDIT_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
             template.ParseVariables("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
             template.ParseVariables("S_GROUP_ID", HttpUtility.HtmlEncode(thisGroup.GroupId.ToString()));
             template.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
@@ -637,7 +637,7 @@ namespace BoxSocial.Groups
                     break;
             }
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
             template.ParseVariables("S_ID", HttpUtility.HtmlEncode(groupId.ToString()));
         }
 
@@ -685,23 +685,17 @@ namespace BoxSocial.Groups
 
                         if (friendsTable.Rows.Count > 0)
                         {
-                            db.UpdateQuery(string.Format("INSERT INTO group_invites (group_id, user_id, inviter_id, invite_date_ut) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP());",
-                                thisGroup.GroupId, inviteMember.UserId, loggedInMember.UserId));
+                            Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
 
-                            if (inviteMember.EmailNotifications)
-                            {
-                                Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
+                            emailTemplate.ParseVariables("TO_NAME", inviteMember.DisplayName);
+                            emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
+                            emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
+                            emailTemplate.ParseVariables("GROUP_NAME", thisGroup.DisplayName);
+                            emailTemplate.ParseVariables("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
+                            emailTemplate.ParseVariables("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
 
-                                emailTemplate.ParseVariables("TO_NAME", inviteMember.DisplayName);
-                                emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                                emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
-                                emailTemplate.ParseVariables("GROUP_NAME", thisGroup.DisplayName);
-                                emailTemplate.ParseVariables("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
-
-                                Email.SendEmail(core, inviteMember.AlternateEmail, string.Format("{0} invited you to join a group",
-                                    loggedInMember.DisplayName),
-                                    emailTemplate.ToString());
-                            }
+                            ApplicationEntry ae = Application.GetExecutingApplication(core, loggedInMember);
+                            ae.SendNotification(core, inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);
                             Display.ShowMessage(core, "Invited Friend", "You have invited a friend to the group.");
@@ -850,7 +844,7 @@ namespace BoxSocial.Groups
                         {
                             // all ok, don't really need to do much, so let's do it
                             template.ParseVariables("S_ID", HttpUtility.HtmlEncode(string.Format("{0},{1}", groupId, userId)));
-                            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+                            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
                             template.ParseVariables("S_USERNAME", HttpUtility.HtmlEncode(member.UserName));
                         }
                         else
@@ -1070,7 +1064,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("sub", "resign-operator");
             hiddenFieldList.Add("id", groupId.ToString());
 
-            Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
                 "Are you sure you want to resign as operator from this group?",
                 "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
                 hiddenFieldList);
@@ -1251,7 +1245,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("sub", "ban-member");
             hiddenFieldList.Add("id", string.Format("{0},{1}", groupId, userId));
 
-            Display.ShowConfirmBox(HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)),
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
                 "Are you sure you want to ban this member?",
                 "Banning a member from the group prevents them from seeing, or participating in the group.",
                 hiddenFieldList);

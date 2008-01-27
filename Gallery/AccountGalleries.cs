@@ -50,6 +50,8 @@ namespace BoxSocial.Applications.Gallery
             RegisterSubModule += new RegisterSubModuleHandler(MarkPhotoAsGalleryCover);
             RegisterSubModule += new RegisterSubModuleHandler(EditPhoto);
             RegisterSubModule += new RegisterSubModuleHandler(RotatePhoto);
+            RegisterSubModule += new RegisterSubModuleHandler(PhotoDelete);
+            RegisterSubModule += new RegisterSubModuleHandler(PhotoTag);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -112,8 +114,8 @@ namespace BoxSocial.Applications.Gallery
 
                 if (galleryParentTable.Rows.Count > 0)
                 {
-                    template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(parentGalleryId)));
-                    template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(parentGalleryId)));
+                    template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(parentGalleryId)));
+                    template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(parentGalleryId)));
 
                     if (!(galleryParentTable.Rows[0]["gallery_parent_path"] is DBNull))
                     {
@@ -130,7 +132,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(ZzUri.BuildNewGalleryUri(0)));
+                template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(0)));
             }
 
             template.SetTemplate("Gallery", "account_galleries");
@@ -160,8 +162,8 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                galleryVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildGalleryEditUri((long)galleriesTable.Rows[i]["gallery_id"])));
-                galleryVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(ZzUri.BuildGalleryDeleteUri((long)galleriesTable.Rows[i]["gallery_id"])));
+                galleryVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildGalleryEditUri((long)galleriesTable.Rows[i]["gallery_id"])));
+                galleryVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildGalleryDeleteUri((long)galleriesTable.Rows[i]["gallery_id"])));
             }
         }
 
@@ -483,7 +485,7 @@ namespace BoxSocial.Applications.Gallery
                 template.ParseVariables("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
                 template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
                 template.ParseVariables("S_GALLERY_ID", HttpUtility.HtmlEncode(galleryId.ToString()));
-                template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+                template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
                 template.ParseVariables("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
             }
             else
@@ -854,6 +856,44 @@ namespace BoxSocial.Applications.Gallery
                     Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
                     return;
                 }
+            }
+        }
+
+        private void PhotoTag(string submodule)
+        {
+            if (submodule != "tag") return;
+        }
+
+        private void PhotoDelete(string submodule)
+        {
+            if (submodule != "delete") return;
+
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+
+            long photoId = Functions.FormLong("id", 0);
+
+            if (photoId <= 0)
+            {
+                Display.ShowMessage(core, "Cannot Delete Photo", "No photo specified to delete. Please go back and try again.");
+                return;
+            }
+
+            try
+            {
+                UserGalleryItem photo = new UserGalleryItem(db, loggedInMember, photoId);
+                photo.Delete(core);
+
+                SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
+                Display.ShowMessage(core, "Photo Deleted", "You have successfully deleted the photo from the gallery.");
+            }
+            catch
+            {
+                Display.ShowMessage(core, "Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                return;
             }
         }
     }

@@ -204,7 +204,7 @@ namespace BoxSocial.Applications.Calendar
             template.ParseVariables("S_LOCATION", HttpUtility.HtmlEncode(location));
             template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
         }
 
         private void SaveNewEvent()
@@ -412,7 +412,7 @@ namespace BoxSocial.Applications.Calendar
             template.ParseVariables("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
             template.ParseVariables("S_PRIORITY", Functions.BuildSelectBox("priority", priorities, ((byte)priority).ToString()));
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(ZzUri.AppendSid("/account/", true)));
+            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
         }
 
         private void SaveNewTask()
@@ -458,6 +458,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
                 return;
+            }
+
+            if (description == null)
+            {
+                description = "";
             }
 
 
@@ -529,6 +534,7 @@ namespace BoxSocial.Applications.Calendar
                 UpdateQuery query = new UpdateQuery("tasks");
                 query.AddField("task_status", (byte)TaskStatus.Completed);
                 query.AddField("task_percent_complete", 100);
+                query.AddField("task_time_completed_ut", UnixTime.UnixTimeStamp());
                 query.AddCondition("user_id", core.LoggedInMemberId);
                 query.AddCondition("task_id", taskId);
 

@@ -200,7 +200,7 @@ namespace BoxSocial.Applications.Calendar
             Calendar cal = new Calendar(e.core.db);
             List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
 
-            template.ParseVariables("U_CALENDAR", HttpUtility.HtmlEncode(ZzUri.AppendSid(string.Format("/{0}/calendar",
+            template.ParseVariables("U_CALENDAR", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/{0}/calendar",
                 e.core.session.LoggedInMember.UserName))));
 
             VariableCollection appointmentDaysVariableCollection = null;

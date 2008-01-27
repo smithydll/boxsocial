@@ -31,13 +31,67 @@ namespace BoxSocial.Internals
     public class Feed
     {
 
-        public static List<Action> GetItems(Mysql db, Member owner)
+        public static List<Action> GetItems(Core core, Member owner)
         {
             List<Action> feedItems = new List<Action>();
 
-            DataTable feedTable = db.SelectQuery(string.Format(""));
+            SelectQuery query = new SelectQuery("actions at");
+            query.AddFields(Action.FEED_FIELDS);
+            query.AddSort(SortOrder.Descending, "at.action_time_ut");
+            query.LimitCount = 64;
+
+            List<long> friendIds = owner.GetFriendIds(16);
+
+            if (friendIds.Count > 0)
+            {
+                core.LoadUserProfiles(friendIds);
+
+                query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
+                query.AddCondition("action_primitive_type", "USER");
+
+                DataTable feedTable = core.db.SelectQuery(query);
+
+                foreach (DataRow dr in feedTable.Rows)
+                {
+                    feedItems.Add(new Action(core.db, owner, dr));
+                }
+            }
 
             return feedItems;
+        }
+
+        public static void Show(Core core, TPage page, Member owner)
+        {
+            Template template = new Template("viewfeed.html");
+
+            List<Action> feedActions = Feed.GetItems(core, owner);
+
+            if (feedActions.Count > 0)
+            {
+                template.ParseVariables("HAS_FEED_ITEMS", "TRUE");
+                VariableCollection feedDateVariableCollection = null;
+                string lastDay = core.tz.ToStringPast(core.tz.Now);
+
+                foreach (Action feedAction in feedActions)
+                {
+                    DateTime feedItemDay = feedAction.GetTime(core.tz);
+
+                    if (feedDateVariableCollection == null || lastDay != core.tz.ToStringPast(feedItemDay))
+                    {
+                        lastDay = core.tz.ToStringPast(feedItemDay);
+                        feedDateVariableCollection = template.CreateChild("feed_days_list");
+
+                        feedDateVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(lastDay));
+                    }
+
+                    VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
+
+                    feedItemVariableCollection.ParseVariables("TITLE", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Title)));
+                    feedItemVariableCollection.ParseVariables("TEXT", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Body), core.session.LoggedInMember, core.UserProfiles[feedAction.OwnerId]));
+                }
+            }
+
+            core.AddMainPanel(template);
         }
     }
 }

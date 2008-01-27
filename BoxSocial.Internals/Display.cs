@@ -272,9 +272,9 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.ParseVariables("ID", comment.CommentId.ToString());
                     commentsVariableCollection.ParseVariables("USERNAME", commentPoster.DisplayName);
                     commentsVariableCollection.ParseVariables("U_PROFILE", commentPoster.ProfileUri);
-                    commentsVariableCollection.ParseVariables("U_QUOTE", HttpUtility.HtmlEncode(ZzUri.BuildCommentQuoteUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("U_REPORT", HttpUtility.HtmlEncode(ZzUri.BuildCommentReportUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(ZzUri.BuildCommentDeleteUri(comment.CommentId)));
+                    commentsVariableCollection.ParseVariables("U_QUOTE", HttpUtility.HtmlEncode(Linker.BuildCommentQuoteUri(comment.CommentId)));
+                    commentsVariableCollection.ParseVariables("U_REPORT", HttpUtility.HtmlEncode(Linker.BuildCommentReportUri(comment.CommentId)));
+                    commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildCommentDeleteUri(comment.CommentId)));
                     commentsVariableCollection.ParseVariables("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
                     commentsVariableCollection.ParseVariables("USER_TILE", HttpUtility.HtmlEncode(commentPoster.UserTile));
 
@@ -443,18 +443,18 @@ namespace BoxSocial.Internals
             /*
              * URIs
              */
-            template.ParseVariables("U_HOME", HttpUtility.HtmlEncode(ZzUri.BuildHomeUri()));
-            template.ParseVariables("U_ABOUT", HttpUtility.HtmlEncode(ZzUri.BuildAboutUri()));
-            template.ParseVariables("U_SAFETY", HttpUtility.HtmlEncode(ZzUri.BuildSafetyUri()));
-            template.ParseVariables("U_PRIVACY", HttpUtility.HtmlEncode(ZzUri.BuildPrivacyUri()));
-            template.ParseVariables("U_TOS", HttpUtility.HtmlEncode(ZzUri.BuildTermsOfServiceUri()));
-            template.ParseVariables("U_SIGNIN", HttpUtility.HtmlEncode(ZzUri.BuildLoginUri()));
-            template.ParseVariables("U_SIGNOUT", HttpUtility.HtmlEncode(ZzUri.BuildLogoutUri()));
-            template.ParseVariables("U_REGISTER", HttpUtility.HtmlEncode(ZzUri.BuildRegisterUri()));
-            template.ParseVariables("U_HELP", HttpUtility.HtmlEncode(ZzUri.BuildHelpUri()));
-            template.ParseVariables("U_SITEMAP", HttpUtility.HtmlEncode(ZzUri.BuildSitemapUri()));
-            template.ParseVariables("U_COPYRIGHT", HttpUtility.HtmlEncode(ZzUri.BuildCopyrightUri()));
-            template.ParseVariables("U_ACCOUNT", HttpUtility.HtmlEncode(ZzUri.BuildAccountUri()));
+            template.ParseVariables("U_HOME", HttpUtility.HtmlEncode(Linker.BuildHomeUri()));
+            template.ParseVariables("U_ABOUT", HttpUtility.HtmlEncode(Linker.BuildAboutUri()));
+            template.ParseVariables("U_SAFETY", HttpUtility.HtmlEncode(Linker.BuildSafetyUri()));
+            template.ParseVariables("U_PRIVACY", HttpUtility.HtmlEncode(Linker.BuildPrivacyUri()));
+            template.ParseVariables("U_TOS", HttpUtility.HtmlEncode(Linker.BuildTermsOfServiceUri()));
+            template.ParseVariables("U_SIGNIN", HttpUtility.HtmlEncode(Linker.BuildLoginUri()));
+            template.ParseVariables("U_SIGNOUT", HttpUtility.HtmlEncode(Linker.BuildLogoutUri()));
+            template.ParseVariables("U_REGISTER", HttpUtility.HtmlEncode(Linker.BuildRegisterUri()));
+            template.ParseVariables("U_HELP", HttpUtility.HtmlEncode(Linker.BuildHelpUri()));
+            template.ParseVariables("U_SITEMAP", HttpUtility.HtmlEncode(Linker.BuildSitemapUri()));
+            template.ParseVariables("U_COPYRIGHT", HttpUtility.HtmlEncode(Linker.BuildCopyrightUri()));
+            template.ParseVariables("U_ACCOUNT", HttpUtility.HtmlEncode(Linker.BuildAccountUri()));
 
             if (session != null)
             {
@@ -463,7 +463,7 @@ namespace BoxSocial.Internals
                     template.ParseVariables("LOGGED_IN", "TRUE");
                     template.ParseVariables("L_GREETING", HttpUtility.HtmlEncode("G'day"));
                     template.ParseVariables("USERNAME", HttpUtility.HtmlEncode(session.LoggedInMember.UserName));
-                    template.ParseVariables("U_USER_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildHomepageUri(session.LoggedInMember)));
+                    template.ParseVariables("U_USER_PROFILE", HttpUtility.HtmlEncode(Linker.BuildHomepageUri(session.LoggedInMember)));
                 }
             }
         }

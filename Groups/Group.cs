@@ -917,7 +917,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/group/{0}",
+                return Linker.AppendSid(string.Format("/group/{0}",
                     Slug));
             }
         }
@@ -926,7 +926,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return ZzUri.AppendSid(string.Format("/group/{0}/members",
+                return Linker.AppendSid(string.Format("/group/{0}/members",
                     Slug));
             }
         }
@@ -1053,7 +1053,7 @@ namespace BoxSocial.Groups
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
                 membersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(member)));
+                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
                 membersVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
             }
 
@@ -1068,7 +1068,7 @@ namespace BoxSocial.Groups
                 VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
 
                 operatorsVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(userDisplayName));
-                operatorsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(groupOperator)));
+                operatorsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(groupOperator)));
                 if (core.session.LoggedInMember != null)
                 {
                     if (groupOperator.UserId == core.session.LoggedInMember.UserId)
@@ -1089,7 +1089,7 @@ namespace BoxSocial.Groups
                 VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
 
                 officersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(userDisplayName));
-                officersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(groupOfficer)));
+                officersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(groupOfficer)));
                 officersVariableCollection.ParseVariables("OFFICER_TITLE", HttpUtility.HtmlEncode((string)officersTable.Rows[i]["officer_title"]));
                 officersVariableCollection.ParseVariables("U_REMOVE", HttpUtility.HtmlEncode(groupOfficer.RemoveOfficerUri((string)officersTable.Rows[i]["officer_title"])));
             }
@@ -1125,7 +1125,7 @@ namespace BoxSocial.Groups
                     VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
 
                     approvalVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(approvalMember.DisplayName));
-                    approvalVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(approvalMember)));
+                    approvalVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(approvalMember)));
                     approvalVariableCollection.ParseVariables("U_APPROVE", HttpUtility.HtmlEncode(approvalMember.ApproveMemberUri));
                 }
 
@@ -1142,7 +1142,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(member.Country));
                 memberVariableCollection.ParseVariables("USER_CAPTION", "");
 
-                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(member)));
+                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
                 if (!member.IsOperator)
                 {
                     // let's say you can't ban an operator, show ban link if not an operator

@@ -192,6 +192,7 @@ namespace BoxSocial.Internals
             template = new Template(Server.MapPath("./templates/"), "");
             core = new Core(db, template);
             core.page = this;
+            Bbcode.Initialise(core);
 
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;

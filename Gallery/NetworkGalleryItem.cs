@@ -54,7 +54,7 @@ namespace BoxSocial.Applications.Gallery
 
         public override string BuildUri()
         {
-            return ZzUri.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
+            return Linker.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
                 owner.Key, parentPath, path));
         }
     }

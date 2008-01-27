@@ -69,11 +69,15 @@ ENGINE = InnoDB;
      ALTER TABLE `zinzam0_zinzam`.`tasks` ADD COLUMN `task_status` TINYINT UNSIGNED NOT NULL AFTER `task_item_type`,
  ADD COLUMN `task_percent_complete` TINYINT UNSIGNED NOT NULL AFTER `task_status`,
  ADD COLUMN `task_priority` TINYINT UNSIGNED NOT NULL AFTER `task_percent_complete`;
+     * 
+     *
+     ALTER TABLE `zinzam0_zinzam`.`tasks` ADD COLUMN `task_time_completed_ut` BIGINT NOT NULL AFTER `task_priority`;
+
 
      */
     public class Task : Item
     {
-        public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority";
+        public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
         private Mysql db;
 
@@ -88,6 +92,7 @@ ENGINE = InnoDB;
         private Primitive owner;
         private int userId; // creator
         private long dueTimeRaw;
+        private long completedTimeRaw;
         private ushort category;
         private TaskStatus status;
         private byte percentageComplete;
@@ -186,6 +191,11 @@ ENGINE = InnoDB;
             return tz.DateTimeFromMysql(dueTimeRaw);
         }
 
+        public DateTime GetCompletedTime(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(completedTimeRaw);
+        }
+
         public Task(Mysql db, Primitive owner, long taskId)
         {
             this.db = db;
@@ -226,6 +236,7 @@ ENGINE = InnoDB;
             // ownerId
             userId = (int)taskRow["user_id"];
             dueTimeRaw = (long)taskRow["task_due_date_ut"];
+            completedTimeRaw = (long)taskRow["task_time_completed_ut"];
             // category
             status = (TaskStatus)(byte)taskRow["task_status"];
             percentageComplete = (byte)taskRow["task_percent_complete"];
@@ -259,10 +270,20 @@ ENGINE = InnoDB;
             query.AddField("task_status", (byte)status);
             query.AddField("task_percent_complete", percentComplete);
             query.AddField("task_priority", (byte)priority);
+            query.AddField("task_time_completed_ut", 0);
 
             long taskId = db.UpdateQuery(query);
 
-            return new Task(db, owner, taskId);
+            Task myTask = new Task(db, owner, taskId);
+
+            if (Access.FriendsCanRead(myTask.Permissions))
+            {
+                ApplicationEntry ae = new ApplicationEntry(db, creator, "Calendar");
+                ae.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
+                    Task.BuildTaskUri(myTask), myTask.Topic));
+            }
+
+            return myTask;
         }
 
         public static void ShowAll(Core core, TPage page, Primitive owner)
@@ -404,13 +425,13 @@ ENGINE = InnoDB;
 
         public static string BuildTaskUri(Task calendarTask)
         {
-            return ZzUri.AppendSid(string.Format("{0}/calendar/task/{1}",
+            return Linker.AppendSid(string.Format("{0}/calendar/task/{1}",
                 calendarTask.owner.Uri, calendarTask.TaskId));
         }
 
         public static string BuildTasksUri(Primitive owner)
         {
-            return ZzUri.AppendSid(string.Format("{0}/calendar/tasks",
+            return Linker.AppendSid(string.Format("{0}/calendar/tasks",
                 owner.Uri));
         }
 

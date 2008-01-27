@@ -45,8 +45,190 @@ namespace BoxSocial.Internals
 
     public class Bbcode
     {
+        public static Core core = null;
+
+        private delegate void BbcodeHookHandler(BbcodeEventArgs e);
+
+        private static event BbcodeHookHandler BbcodeHooks;
+
         public Bbcode()
         {
+        }
+
+        public static void Initialise(Core core)
+        {
+            Bbcode.core = core;
+
+            Initialise();
+        }
+
+        public static void Initialise()
+        {
+            BbcodeHooks += new BbcodeHookHandler(BbcodeQuote);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeBold);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeItalic);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeUnderline);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeStrikeout);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeCode);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeList);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeListItem);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeColour);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeSize);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeH1);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeH2);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeH3);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeAlign);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeUrl);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeInternalUrl);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeInline);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeThumb);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeImage);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeYouTube);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeLaTeX);
+            // TODO: flash
+            // TODO: silverlight
+            BbcodeHooks += new BbcodeHookHandler(BbcodeUser);
+        }
+
+        private class BbcodeEventArgs
+        {
+            private BbcodeTag tag;
+            private BbcodeAttributes attributes;
+            private BbcodeOptions options;
+            private string prefixText;
+            private string suffixText;
+            private bool inList;
+            private bool handled;
+            private bool abortParse;
+            private bool noContents;
+            private string contents;
+            private Member owner;
+
+            public BbcodeTag Tag
+            {
+                get
+                {
+                    return tag;
+                }
+            }
+
+            public BbcodeAttributes Attributes
+            {
+                get
+                {
+                    return attributes;
+                }
+            }
+
+            public BbcodeOptions Options
+            {
+                get
+                {
+                    return options;
+                }
+            }
+
+            public string PrefixText
+            {
+                get
+                {
+                    return prefixText;
+                }
+                set
+                {
+                    prefixText = value;
+                }
+            }
+
+            public string SuffixText
+            {
+                get
+                {
+                    return suffixText;
+                }
+                set
+                {
+                    suffixText = value;
+                }
+            }
+
+            public bool InList
+            {
+                get
+                {
+                    return inList;
+                }
+            }
+
+            public void SetHandled()
+            {
+                handled = true;
+            }
+
+            public void AbortParse()
+            {
+                abortParse = true;
+            }
+
+            public bool Handled
+            {
+                get
+                {
+                    return handled;
+                }
+            }
+
+            public bool ParseAborted
+            {
+                get
+                {
+                    return abortParse;
+                }
+            }
+
+            public void RemoveContents()
+            {
+                noContents = true;
+            }
+
+            public bool NoContents
+            {
+                get
+                {
+                    return noContents;
+                }
+            }
+
+            public string Contents
+            {
+                get
+                {
+                    return contents;
+                }
+            }
+
+            public Member Owner
+            {
+                get
+                {
+                    return owner;
+                }
+            }
+
+            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Member postOwner, bool inList, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            {
+                this.tag = tag;
+                this.options = options;
+                this.attributes = tag.GetAttributes();
+                this.contents = contents;
+                this.prefixText = prefixText;
+                this.suffixText = suffixText;
+                this.inList = inList;
+                this.handled = handled;
+                this.abortParse = abortParse;
+                this.owner = postOwner;
+                this.noContents = false;
+            }
         }
 
         private class BbcodeTag
@@ -67,6 +249,22 @@ namespace BoxSocial.Internals
             public BbcodeAttributes GetAttributes()
             {
                 return new BbcodeAttributes(Attributes);
+            }
+
+            public int StartLength
+            {
+                get
+                {
+                    return 2 + Tag.Length + Attributes.Length;
+                }
+            }
+
+            public int EndLength
+            {
+                get
+                {
+                    return 3 + Tag.Length;
+                }
             }
         }
 
@@ -284,311 +482,47 @@ namespace BoxSocial.Internals
 
                                     BbcodeAttributes attrs;
 
-                                    switch (Tag.ToLower())
+                                    /*
+                                     * A couple of special cases
+                                     */
+                                    if (Tag == "code")
                                     {
-                                        case "quote":
-                                            attrs = tempTag.GetAttributes();
-                                            if (attrs.HasAttributes())
-                                            {
-                                                if (inList == 0)
-                                                {
-                                                    insertStart = "</p><p><strong>" + Parse(attrs.GetAttribute("default")) + " wrote:</strong></p><blockquote><p>";
-                                                }
-                                                else
-                                                {
-                                                    insertStart = "<p><strong>" + Parse(attrs.GetAttribute("default")) + " wrote:</strong></p><blockquote>";
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (inList == 0)
-                                                {
-                                                    insertStart = "</p><p><strong>quote:</strong></p><blockquote><p>";
-                                                }
-                                                else
-                                                {
-                                                    insertStart = "<p><strong>quote:</strong></p><blockquote>";
-                                                }
-                                            }
-                                            insertEnd = "</p></blockquote><p>";
-                                            break;
-                                        case "b":
-                                            insertStart = "<strong>";
-                                            insertEnd = "</strong>";
-                                            break;
-                                        case "i":
-                                            insertStart = "<em>";
-                                            insertEnd = "</em>";
-                                            break;
-                                        case "u":
-                                            insertStart = "<span style=\"text-decoration: underline;\">";
-                                            insertEnd = "</span>";
-                                            break;
-                                        case "s":
-                                            insertStart = "<span style=\"text-decoration: line-through;\">";
-                                            insertEnd = "</span>";
-                                            break;
-                                        case "code":
-                                            if (inList == 0)
-                                            {
-                                                insertStart = "<strong>Code</strong></p><p><code>";
-                                                insertEnd = "</code></p><p>";
-                                            }
-                                            else
-                                            {
-                                                insertStart = "<strong>Code</strong><br /><code>";
-                                                insertEnd = "</code>";
-                                            }
-                                            inCode = false;
-                                            break;
-                                        case "list":
-                                            inList--;
-                                            attrs = tempTag.GetAttributes();
-                                            if (attrs.GetAttribute("default") != null)
-                                            {
-                                                if (Regex.IsMatch(attrs.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
-                                                {
-                                                    if (inList == 0)
-                                                    {
-                                                        insertStart = "</p><ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(attrs.GetAttribute("default")) + "\">";
-                                                        insertEnd = "</ol><p>";
-                                                    }
-                                                    else
-                                                    {
-                                                        insertStart = "<ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(attrs.GetAttribute("default")) + "\">";
-                                                        insertEnd = "</ol>";
-                                                    }
-                                                }
-                                                else if (Regex.IsMatch(attrs.GetAttribute("default"), "^(circle|square)$", RegexOptions.Compiled))
-                                                {
-                                                    if (inList == 0)
-                                                    {
-                                                        insertStart = "</p><ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(attrs.GetAttribute("default")) + "\">";
-                                                        insertEnd = "</ul><p>";
-                                                    }
-                                                    else
-                                                    {
-                                                        insertStart = "<ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(attrs.GetAttribute("default")) + "\">";
-                                                        insertEnd = "</ul>";
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    abortParse = true;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (inList == 0)
-                                                {
-                                                    insertStart = "</p><ul>";
-                                                    insertEnd = "</ul><p>";
-                                                }
-                                                else
-                                                {
-                                                    insertStart = "<ul>";
-                                                    insertEnd = "</ul>";
-                                                }
-                                            }
-                                            break;
-                                        case "*":
-                                            listItem = true;
-                                            insertStart = "<li>";
-                                            insertEnd = "</li>";
-                                            endOffset = 0;
-                                            //startIndex -= 1;
-                                            endTagLength = 0;
-                                            break;
-                                        case "color":
-                                            attrs = tempTag.GetAttributes();
-                                            try { System.Drawing.ColorTranslator.FromHtml(attrs.GetAttribute("default")); }
-                                            catch { abortParse = true; }
-                                            insertStart = "<span style=\"color: " + attrs.GetAttribute("default") + "\">";
-                                            insertEnd = "</span>";
-                                            break;
-                                        case "size":
-                                            attrs = tempTag.GetAttributes();
-                                            try
-                                            {
-                                                int fontSize = int.Parse(attrs.GetAttribute("default"));
-                                                if (fontSize > 22 || fontSize < 8) abortParse = true;
-                                            }
-                                            catch
-                                            {
-                                                abortParse = true;
-                                            }
-                                            insertStart = "<span style=\"font-size: " + attrs.GetAttribute("default") + "pt\">";
-                                            insertEnd = "</span>";
-                                            break;
-                                        case "h1":
-                                            insertStart = "</p><h2>";
-                                            insertEnd = "</h2><p>";
-                                            break;
-                                        case "h2":
-                                            insertStart = "</p><h3>";
-                                            insertEnd = "</h3><p>";
-                                            break;
-                                        case "h3":
-                                            insertStart = "</p><h4>";
-                                            insertEnd = "</h4><p>";
-                                            break;
-                                        case "align":
-                                            attrs = tempTag.GetAttributes();
-                                            if (!Regex.IsMatch(attrs.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled)) abortParse = true;
-                                            insertStart = "</p><p style=\"text-align: " + attrs.GetAttribute("default") + "\">";
-                                            insertEnd = "</p><p>";
-                                            break;
-                                        case "url":
-                                            attrs = tempTag.GetAttributes();
-                                            if (attrs.HasAttributes())
-                                            {
-                                                if (Regex.IsMatch(attrs.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                                                {
-                                                    insertStart = "<a href=\"" + attrs.GetAttribute("default") + "\">";
-                                                }
-                                                else if (Regex.IsMatch(attrs.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                                                {
-                                                    insertStart = "<a href=\"http://" + attrs.GetAttribute("default") + "\">";
-                                                }
-                                                else
-                                                {
-                                                    abortParse = true;
-                                                }
-                                                insertEnd = "</a>";
-                                            }
-                                            else
-                                            {
-                                                int urlStartIndex = tempTag.indexStart + startTagLength;
-                                                string urlBbcode = input.Substring(urlStartIndex, i - urlStartIndex - endTagLength + 1);
-                                                if (Regex.IsMatch(urlBbcode, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                                                {
-                                                    insertStart = "<a href=\"" + urlBbcode + "\">";
-                                                }
-                                                else if (Regex.IsMatch(urlBbcode, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                                                {
-                                                    insertStart = "<a href=\"http://" + urlBbcode + "\">";
-                                                }
-                                                else
-                                                {
-                                                    abortParse = true;
-                                                }
-                                                insertEnd = "</a>";
-                                            }
-                                            break;
-                                        case "inline":
-                                            if (postOwner == null)
-                                            {
-                                                abortParse = true;
-                                            }
-                                            else
-                                            {
-                                                insertStart = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"/" + HttpUtility.HtmlEncode(postOwner.UserName) + "/images/_display/";
-                                                insertEnd = "\" />";
-                                            }
-                                            break;
-                                        case "thumb":
-                                            if (postOwner == null)
-                                            {
-                                                abortParse = true;
-                                            }
-                                            else
-                                            {
-                                                insertStart = "<img alt=\"Bbcode image\" src=\"/" + HttpUtility.HtmlEncode(postOwner.UserName) + "/images/_thumb/";
-                                                insertEnd = "\" />";
-                                            }
-                                            break;
-                                        case "img":
+                                        inCode = false;
+                                    }
 
-                                            int imgStartIndex = tempTag.indexStart + startTagLength;
-                                            string imgBbcode = input.Substring(imgStartIndex, i - imgStartIndex - endTagLength + 1);
-                                            if (!Regex.IsMatch(imgBbcode, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) abortParse = true;
-                                            if (TagAllowed(Tag, options))
-                                            {
-                                                insertStart = "<img alt=\"Bbcode image\" src=\"";
-                                                insertEnd = "\" />";
-                                            }
-                                            else
-                                            {
-                                                insertStart = "<a href=\"" + imgBbcode + "\"><strong>IMG</strong>: ";
-                                                insertEnd = "</a>";
-                                            }
-                                            break;
-                                        case "youtube":
-                                            int ytStartIndex = tempTag.indexStart + startTagLength;
-                                            string youTubeUrl = input.Substring(ytStartIndex, i - ytStartIndex - endTagLength + 1);
+                                    if (Tag == "list")
+                                    {
+                                        inList--;
+                                    }
 
-                                            startTagLength += youTubeUrl.Length;
+                                    if (Tag == "*")
+                                    {
+                                        listItem = true;
+                                        endOffset = 0;
+                                        endTagLength = 0;
+                                    }
 
-                                            if (youTubeUrl.ToLower().StartsWith("http://"))
-                                            {
-                                                char[] splitChars = { '=', '?', '&' };
-                                                string[] argh = youTubeUrl.Split(splitChars);
-                                                if (argh.Length <= 2)
-                                                {
-                                                    abortParse = true;
-                                                }
-                                                for (int y = 0; y < argh.Length - 1; y++)
-                                                {
-                                                    if (argh[y] == "v")
-                                                    {
-                                                        youTubeUrl = argh[y + 1];
-                                                    }
-                                                    else if (y == argh.Length - 2)
-                                                    {
-                                                        abortParse = true;
-                                                    }
-                                                }
-                                            }
+                                    bool handled = false;
 
-                                            if (TagAllowed(Tag, options))
-                                            {
-                                                youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
+                                    int tempIndex = tempTag.indexStart + tempTag.StartLength;
+                                    string contents = input.Substring(tempIndex, i - tempIndex - tempTag.EndLength + 1);
 
-                                                insertStart = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
-                                                insertEnd = "";
-                                            }
-                                            else
-                                            {
-                                                youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
-                                                insertStart = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
-                                                insertEnd = "</a>";
-                                            }
-                                            break;
-                                        case "latex":
-                                            int latexStartIndex = tempTag.indexStart + startTagLength;
-                                            string latexExpression = input.Substring(latexStartIndex, i - latexStartIndex - endTagLength + 1);
+                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(contents, tempTag, options, postOwner, (inList > 0), ref insertStart, ref insertEnd, ref handled, ref abortParse);
+                                    BbcodeHooks(eventArgs);
 
-                                            startTagLength += latexExpression.Length;
+                                    insertStart = eventArgs.PrefixText;
+                                    insertEnd = eventArgs.SuffixText;
+                                    handled = eventArgs.Handled;
+                                    abortParse = eventArgs.ParseAborted;
 
-                                            latexExpression = HttpUtility.UrlEncode(latexExpression).Replace("+", "%20");
+                                    if (eventArgs.NoContents)
+                                    {
+                                        startTagLength += eventArgs.Contents.Length;
+                                    }
 
-                                            insertStart = "<img src=\"http://agreendaysite.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
-                                            insertEnd = "";
-                                            //abortParse = true;
-                                            break;
-                                        case "flash":
-                                            // TODO: FLASH BBcode
-                                            if (TagAllowed(Tag, options))
-                                            {
-                                            }
-                                            else
-                                            {
-                                            }
-                                            abortParse = true;
-                                            break;
-                                        case "silverlight":
-                                            // TODO: Silverlight BBcode
-                                            if (TagAllowed(Tag, options))
-                                            {
-                                            }
-                                            else
-                                            {
-                                            }
-                                            abortParse = true;
-                                            break;
-                                        default:
-                                            abortParse = true;
-                                            break;
+                                    if (!handled)
+                                    {
+                                        abortParse = true;
                                     }
 
                                     startReplaceLength = insertStart.Length;
@@ -614,12 +548,9 @@ namespace BoxSocial.Internals
                 {
                     if (inTag)
                     {
-                        if (current.Equals('&'))
+                        if (current.Equals('&') && input.Substring(i, 6).Equals("&quot;"))
                         {
-                            if (input.Substring(i, 6).Equals("&quot;"))
-                            {
-                                inQuote = !inQuote;
-                            }
+                            inQuote = !inQuote;
                         }
                         if (i == startIndex + 1 && current.Equals('/'))
                         {
@@ -650,7 +581,7 @@ namespace BoxSocial.Internals
                             {
                                 if ((current >= 'a' && current <= 'z') || (current >= 'A' && current <= 'Z') || (current >= '0' && current <= '9') || current == '*')
                                 {
-                                    Tag += current.ToString();
+                                    Tag += current.ToString().ToLower();
                                 }
                                 else
                                 {
@@ -808,6 +739,494 @@ namespace BoxSocial.Internals
             }*/
             return input;
         }
+
+        private static void BbcodeQuote(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "quote") return;
+
+            e.SetHandled();
+
+            if (e.Attributes.HasAttributes())
+            {
+                if (!e.InList)
+                {
+                    e.PrefixText = "</p><p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote><p>";
+                }
+                else
+                {
+                    e.PrefixText = "<p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote>";
+                }
+            }
+            else
+            {
+                if (!e.InList)
+                {
+                    e.PrefixText = "</p><p><strong>quote:</strong></p><blockquote><p>";
+                }
+                else
+                {
+                    e.PrefixText = "<p><strong>quote:</strong></p><blockquote>";
+                }
+            }
+            e.SuffixText = "</p></blockquote><p>";
+        }
+
+        private static void BbcodeBold(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "b") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "<strong>";
+            e.SuffixText = "</strong>";
+        }
+
+        private static void BbcodeItalic(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "i") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "<em>";
+            e.SuffixText = "</em>";
+        }
+
+        private static void BbcodeUnderline(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "u") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "<span style=\"text-decoration: underline;\">";
+            e.SuffixText = "</span>";
+        }
+
+        private static void BbcodeStrikeout(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "s") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "<span style=\"text-decoration: line-through;\">";
+            e.SuffixText = "</span>";
+        }
+
+        private static void BbcodeCode(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "code") return;
+
+            e.SetHandled();
+
+            if (!e.InList)
+            {
+                e.PrefixText = "<strong>Code</strong></p><p><code>";
+                e.SuffixText = "</code></p><p>";
+            }
+            else
+            {
+                e.PrefixText = "<strong>Code</strong><br /><code>";
+                e.SuffixText = "</code>";
+            }
+        }
+
+        private static void BbcodeList(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "list") return;
+
+            e.SetHandled();
+
+            if (e.Attributes.GetAttribute("default") != null)
+            {
+                if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
+                {
+                    if (!e.InList)
+                    {
+                        e.PrefixText = "</p><ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.SuffixText = "</ol><p>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.SuffixText = "</ol>";
+                    }
+                }
+                else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(circle|square)$", RegexOptions.Compiled))
+                {
+                    if (!e.InList)
+                    {
+                        e.PrefixText = "</p><ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.SuffixText = "</ul><p>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.SuffixText = "</ul>";
+                    }
+                }
+                else
+                {
+                    e.AbortParse();
+                }
+            }
+            else
+            {
+                if (!e.InList)
+                {
+                    e.PrefixText = "</p><ul>";
+                    e.SuffixText = "</ul><p>";
+                }
+                else
+                {
+                    e.PrefixText = "<ul>";
+                    e.SuffixText = "</ul>";
+                }
+            }
+        }
+
+        private static void BbcodeListItem(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "*") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "<li>";
+            e.SuffixText = "</li>";
+        }
+
+        private static void BbcodeColour(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "color") return;
+
+            e.SetHandled();
+
+            try { System.Drawing.ColorTranslator.FromHtml(e.Attributes.GetAttribute("default")); }
+            catch { e.AbortParse(); }
+            e.PrefixText = "<span style=\"color: " + e.Attributes.GetAttribute("default") + "\">";
+            e.SuffixText = "</span>";
+        }
+
+        private static void BbcodeSize(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "size") return;
+
+            e.SetHandled();
+
+            try
+            {
+                int fontSize = int.Parse(e.Attributes.GetAttribute("default"));
+                if (fontSize > 22 || fontSize < 8) e.AbortParse();
+            }
+            catch
+            {
+                e.AbortParse();
+            }
+            e.PrefixText = "<span style=\"font-size: " + e.Attributes.GetAttribute("default") + "pt\">";
+            e.SuffixText = "</span>";
+        }
+
+        private static void BbcodeH1(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "h1") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "</p><h2>";
+            e.SuffixText = "</h2><p>";
+        }
+
+        private static void BbcodeH2(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "h2") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "</p><h3>";
+            e.SuffixText = "</h3><p>";
+        }
+
+        private static void BbcodeH3(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "h3") return;
+
+            e.SetHandled();
+
+            e.PrefixText = "</p><h4>";
+            e.SuffixText = "</h4><p>";
+        }
+
+        private static void BbcodeAlign(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "align") return;
+
+            e.SetHandled();
+
+            if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled)) e.AbortParse();
+            e.PrefixText = "</p><p style=\"text-align: " + e.Attributes.GetAttribute("default") + "\">";
+            e.SuffixText = "</p><p>";
+        }
+
+        private static void BbcodeUrl(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "url") return;
+
+            e.SetHandled();
+
+            if (e.Attributes.HasAttributes())
+            {
+                if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                {
+                    e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
+                }
+                else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                {
+                    e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
+                }
+                else
+                {
+                    e.AbortParse();
+                }
+                e.SuffixText = "</a>";
+            }
+            else
+            {
+                if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                {
+                    e.PrefixText = "<a href=\"" + e.Contents + "\">";
+                }
+                else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                {
+                    e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
+                }
+                else
+                {
+                    e.AbortParse();
+                }
+                e.SuffixText = "</a>";
+            }
+        }
+
+        private static void BbcodeInternalUrl(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "iurl") return;
+
+            e.SetHandled();
+
+            if (e.Attributes.HasAttributes())
+            {
+                if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
+                {
+                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                }
+                else
+                {
+                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                }
+                e.SuffixText = "</a>";
+            }
+            else
+            {
+                e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Contents) + "\">";
+                e.SuffixText = "</a>";
+            }
+        }
+
+        private static void BbcodeInline(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "inline") return;
+
+            e.SetHandled();
+
+            if (e.Owner == null)
+            {
+                e.AbortParse();
+            }
+            else
+            {
+                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"/" + HttpUtility.HtmlEncode(e.Owner.UserName) + "/images/_display/";
+                e.SuffixText = "\" />";
+            }
+        }
+
+        private static void BbcodeThumb(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "thumb") return;
+
+            e.SetHandled();
+
+            if (e.Owner == null)
+            {
+                e.AbortParse();
+            }
+            else
+            {
+                e.PrefixText = "<img alt=\"Bbcode image\" src=\"/" + HttpUtility.HtmlEncode(e.Owner.UserName) + "/images/_icon/";
+                e.SuffixText = "\" />";
+            }
+        }
+
+        private static void BbcodeImage(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "img") return;
+
+            e.SetHandled();
+
+            if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+            if (TagAllowed(e.Tag.Tag, e.Options))
+            {
+                e.PrefixText = "<img alt=\"Bbcode image\" src=\"";
+                e.SuffixText = "\" />";
+            }
+            else
+            {
+                e.PrefixText = "<a href=\"" + e.Contents + "\"><strong>IMG</strong>: ";
+                e.SuffixText = "</a>";
+            }
+        }
+
+        private static void BbcodeYouTube(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "youtube") return;
+
+            e.SetHandled();
+
+            string youTubeUrl = e.Contents;
+            e.RemoveContents();
+
+            if (youTubeUrl.ToLower().StartsWith("http://"))
+            {
+                char[] splitChars = { '=', '?', '&' };
+                string[] argh = youTubeUrl.Split(splitChars);
+                if (argh.Length <= 2)
+                {
+                    e.AbortParse();
+                }
+                for (int y = 0; y < argh.Length - 1; y++)
+                {
+                    if (argh[y] == "v")
+                    {
+                        youTubeUrl = argh[y + 1];
+                    }
+                    else if (y == argh.Length - 2)
+                    {
+                        e.AbortParse();
+                    }
+                }
+            }
+
+            if (TagAllowed(e.Tag.Tag, e.Options))
+            {
+                youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
+
+                e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
+                e.SuffixText = "";
+            }
+            else
+            {
+                youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
+                e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
+                e.SuffixText = "</a>";
+            }
+        }
+
+        private static void BbcodeLaTeX(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "latex") return;
+
+            e.SetHandled();
+
+            string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
+            e.RemoveContents();
+
+            e.PrefixText = "<img src=\"http://agreendaysite.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+            e.SuffixText = "";
+        }
+
+        private static void BbcodeFlash(BbcodeEventArgs e)
+        {
+            // TODO: flash bbcode
+            if (e.Tag.Tag != "flash") return;
+
+            e.SetHandled();
+
+            if (TagAllowed(e.Tag.Tag, e.Options))
+            {
+            }
+            else
+            {
+            }
+        }
+
+        private static void BbcodeSilverlight(BbcodeEventArgs e)
+        {
+            // TODO: silverlight bbcode
+            if (e.Tag.Tag != "silverlight") return;
+
+            e.SetHandled();
+
+            if (TagAllowed(e.Tag.Tag, e.Options))
+            {
+            }
+            else
+            {
+            }
+        }
+
+        private static void BbcodeUser(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "user") return;
+
+            e.SetHandled();
+
+            if (core != null)
+            {
+                string key = e.Contents;
+                e.RemoveContents();
+
+                long id = 0;
+
+                if (key != "you")
+                {
+                    try
+                    {
+                        id = long.Parse(key);
+                    }
+                    catch
+                    {
+                        e.AbortParse();
+                        return;
+                    }
+                }
+                else
+                {
+                    id = core.LoggedInMemberId;
+                }
+
+                if (id > 0)
+                {
+                    core.LoadUserProfile(id);
+                    Member userUser = core.UserProfiles[id];
+
+                    if (e.Attributes.HasAttribute("ownership") &&
+                        e.Attributes.GetAttribute("ownership") == "true")
+                    {
+                        e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
+                            userUser.DisplayNameOwnership, userUser.Uri);
+                        e.SuffixText = "";
+                    }
+                    else
+                    {
+                        e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
+                            userUser.DisplayName, userUser.Uri);
+                        e.SuffixText = "";
+                    }
+                }
+                else
+                {
+                    e.PrefixText = "Anonymous";
+                    e.SuffixText = "";
+                }
+            }
+        }
     }
 
     public class BbcodeAttributes
@@ -823,13 +1242,10 @@ namespace BoxSocial.Internals
             string val = "";
             for (int i = 0; i < length; i++)
             {
-                if (input[i].Equals('&'))
+                if (input[i].Equals('&') && input.Substring(i, 6).Equals("&quot;"))
                 {
-                    if (input.Substring(i, 6).Equals("&quot;"))
-                    {
-                        inQuote = !inQuote;
-                        i += 5;
-                    }
+                    inQuote = !inQuote;
+                    i += 5;
                 }
                 else
                 {
@@ -844,7 +1260,7 @@ namespace BoxSocial.Internals
                             param += input[i].ToString();
                         }
                     }
-                    else
+                    else if (!(!inQuote && input[i].Equals(' ')))
                     {
                         val += input[i].ToString();
                     }
@@ -852,7 +1268,7 @@ namespace BoxSocial.Internals
                 if ((!inQuote && input[i].Equals(' ')) || i + 1 == length)
                 {
                     if (param.Length == 0) param = "default";
-                    Attributes.Add(param, val);
+                    Attributes.Add(param.ToLower(), val);
                     param = "";
                     val = "";
                     inValue = false;
@@ -868,6 +1284,11 @@ namespace BoxSocial.Internals
         public bool HasAttributes()
         {
             return (Attributes.Count > 0);
+        }
+
+        internal bool HasAttribute(string key)
+        {
+            return Attributes.ContainsKey(key);
         }
     }
 }

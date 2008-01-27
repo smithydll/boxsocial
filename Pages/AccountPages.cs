@@ -445,9 +445,9 @@ namespace BoxSocial.Applications.Pages
                 listVariableCollection.ParseVariables("TYPE", HttpUtility.HtmlEncode((string)listsTable.Rows[i]["list_type_title"]));
                 listVariableCollection.ParseVariables("ITEMS", HttpUtility.HtmlEncode(((uint)listsTable.Rows[i]["list_items"]).ToString()));
 
-                listVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(ZzUri.BuildListUri(loggedInMember, (string)listsTable.Rows[i]["list_path"])));
-                listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(ZzUri.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"])));
-                listVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildEditListUri((long)listsTable.Rows[i]["list_id"])));
+                listVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Linker.BuildListUri(loggedInMember, (string)listsTable.Rows[i]["list_path"])));
+                listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"])));
+                listVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"])));
             }
 
             DataTable listTypesTable = db.SelectQuery("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
@@ -765,7 +765,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    SetRedirectUri(ZzUri.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"]));
+                    SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"]));
                     Display.ShowMessage(core, "List Updated", "You have successfully appended an item to your list.");
                 }
             }
@@ -822,7 +822,7 @@ namespace BoxSocial.Applications.Pages
                 db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items - 1 WHERE user_id = {0} AND list_id = {1}",
                         loggedInMember.UserId, listId), false);
 
-                SetRedirectUri(ZzUri.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
+                SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
                 Display.ShowMessage(core, "List Updated", "You have successfully removed an item from your list.");
             }
             else

@@ -54,6 +54,7 @@ namespace BoxSocial.Applications.Gallery
         protected long itemComments;
         protected long itemViews;
         protected float itemRating;
+        protected ushort permissions;
         protected Access itemAccess;
         protected string contentType;
         protected string storagePath;
@@ -114,6 +115,14 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return itemRating;
+            }
+        }
+
+        public ushort Permissions
+        {
+            get
+            {
+                return permissions;
             }
         }
 
@@ -342,7 +351,8 @@ namespace BoxSocial.Applications.Gallery
             itemComments = (long)itemRow["gallery_item_comments"];
             itemViews = (long)itemRow["gallery_item_views"];
             itemRating = (float)itemRow["gallery_item_rating"];
-            itemAccess = new Access(db, (ushort)itemRow["gallery_item_access"], owner);
+            permissions = (ushort)itemRow["gallery_item_access"];
+            itemAccess = new Access(db, permissions, owner);
             contentType = (string)itemRow["gallery_item_content_type"];
             storagePath = (string)itemRow["gallery_item_storage_path"];
             if (!(itemRow["gallery_item_abstract"] is System.DBNull))
@@ -380,6 +390,37 @@ namespace BoxSocial.Applications.Gallery
         {
             return GalleryItem.Create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license);
         }*/
+
+        public void Delete(Core core)
+        {
+            SelectQuery squery = new SelectQuery("gallery_items gi");
+            squery.AddFields("COUNT(*) AS number");
+            squery.AddCondition("gallery_item_storage_path", storagePath);
+
+            DataTable results = db.SelectQuery(squery);
+
+            DeleteQuery dquery = new DeleteQuery("gallery_items");
+            dquery.AddCondition("gallery_item_id", itemId);
+            dquery.AddCondition("user_id", core.LoggedInMemberId);
+
+            if (db.UpdateQuery(dquery) > 0)
+            {
+                if ((long)results.Rows[0]["number"] > 1)
+                {
+                    // do not delete the storage file, still in use
+                }
+                else
+                {
+                    // delete the storage file
+                    File.Delete(TPage.GetStorageFilePath(storagePath));
+                }
+            }
+            else
+            {
+                //TODO: throw new
+                throw new Exception("Unauthorised");
+            }
+        }
 
         protected static long create(TPage page, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
@@ -599,7 +640,7 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
                 page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(photo.ItemTitle));
                 page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(photo.ParentId)));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(photo.ParentId)));
 
                 if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
@@ -615,11 +656,11 @@ namespace BoxSocial.Applications.Gallery
                 Display.RatingBlock(photo.ItemRating, page.template, photo.ItemId, "PHOTO");
 
                 page.template.ParseVariables("ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                page.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(ZzUri.BuildMarkDisplayPictureUri(photo.ItemId)));
-                page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(ZzUri.BuildMarkGalleryCoverUri(photo.ItemId)));
-                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri(photo.ItemId)));
-                page.template.ParseVariables("U_ROTATE_LEFT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoRotateLeftUri(photo.ItemId)));
-                page.template.ParseVariables("U_ROTATE_RIGHT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoRotateRightUri(photo.ItemId)));
+                page.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(Linker.BuildMarkDisplayPictureUri(photo.ItemId)));
+                page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(Linker.BuildMarkGalleryCoverUri(photo.ItemId)));
+                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildPhotoEditUri(photo.ItemId)));
+                page.template.ParseVariables("U_ROTATE_LEFT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateLeftUri(photo.ItemId)));
+                page.template.ParseVariables("U_ROTATE_RIGHT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateRightUri(photo.ItemId)));
 
                 switch (photo.Classification)
                 {
@@ -660,15 +701,19 @@ namespace BoxSocial.Applications.Gallery
                     page.template.ParseVariables("HAS_USER_TAGS", "TRUE");
                 }
 
+                int i = 0;
                 foreach (UserTag tag in tags)
                 {
                     VariableCollection tagsVariableCollection = page.template.CreateChild("user_tags");
 
+                    tagsVariableCollection.ParseVariables("INDEX", i.ToString());
                     tagsVariableCollection.ParseVariables("TAG_ID", tag.TagId.ToString());
                     tagsVariableCollection.ParseVariables("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
                     tagsVariableCollection.ParseVariables("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
                     tagsVariableCollection.ParseVariables("DISPLAY_NAME", tag.TaggedMember.DisplayName);
                     tagsVariableCollection.ParseVariables("U_MEMBER", tag.TaggedMember.Uri);
+
+                    i++;
                 }
 
                 int p = 1;
@@ -735,7 +780,7 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
                 page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
                 page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(galleryItem.ParentId)));
 
                 switch (galleryItem.Classification)
                 {
@@ -840,7 +885,7 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
                 page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
                 page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(ZzUri.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(galleryItem.ParentId)));
 
                 switch (galleryItem.Classification)
                 {

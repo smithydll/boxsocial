@@ -124,7 +124,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (week + 1 == 1)
                 {
-                    int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (month - 1) % 12);
+                    int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (month - 1) % 12 + 1);
                     for (int i = offset - 1; i >= 0; i--)
                     {
                         int day = daysPrev - i;
@@ -177,7 +177,7 @@ namespace BoxSocial.Applications.Calendar
 
         private static string BuildDateUri(Primitive owner, int year, int month, int day)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/calendar/{1}/{2}/{3}",
+            return Linker.AppendSid(string.Format("/{0}/calendar/{1}/{2}/{3}",
                 owner.Key, year, month, day));
         }
 
@@ -228,13 +228,13 @@ namespace BoxSocial.Applications.Calendar
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
-            int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (core.tz.Now.Month - 1) % 12);
+            int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (core.tz.Now.Month - 1) % 12 + 1);
 
             long startTime = 0;
             if (offset > 0)
             {
                 // the whole month including entry days
-                startTime = core.tz.GetUnixTimeStamp(new DateTime(year - (month - 1) / 12, (month - 1) % 12, daysPrev - offset + 1, 0, 0, 0));
+                startTime = core.tz.GetUnixTimeStamp(new DateTime(year - (month - 1) / 12, (month - 1) % 12 + 1, daysPrev - offset + 1, 0, 0, 0));
             }
             else
             {
@@ -261,7 +261,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (week + 1 == 1)
                 {
-                    int daysPrev2 = DateTime.DaysInMonth(year - (month - 1) / 12, (month - 1) % 12);
+                    int daysPrev2 = DateTime.DaysInMonth(year - (month - 1) / 12, (month - 1) % 12 + 1);
                     for (int i = offset - 1; i >= 0; i--)
                     {
                         int day = daysPrev2 - i;

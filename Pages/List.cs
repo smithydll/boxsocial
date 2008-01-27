@@ -199,13 +199,13 @@ namespace BoxSocial.Applications.Pages
 
         public static string BuildListsUri(Member member)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/lists",
+            return Linker.AppendSid(string.Format("/{0}/lists",
                 member.UserName.ToLower()));
         }
 
         public static string BuildListUri(List list)
         {
-            return ZzUri.AppendSid(string.Format("/{0}/lists/{1}",
+            return Linker.AppendSid(string.Format("/{0}/lists/{1}",
                 list.owner.UserName.ToLower(), list.path));
         }
 
@@ -275,7 +275,7 @@ namespace BoxSocial.Applications.Pages
                     listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(listItem.Text));
                     listVariableCollection.ParseVariables("URI", "FALSE");
 
-                    listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(ZzUri.BuildRemoveFromListUri(listItem.ListItemId)));
+                    listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildRemoveFromListUri(listItem.ListItemId)));
                 }
             }
             catch

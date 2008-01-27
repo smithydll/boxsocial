@@ -157,7 +157,7 @@ namespace BoxSocial.Applications.GuestBook
                     emailTemplate.ParseVariables("TO_NAME", userProfile.DisplayName);
                     emailTemplate.ParseVariables("FROM_NAME", core.session.LoggedInMember.DisplayName);
                     emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
-                    emailTemplate.ParseVariables("U_GUESTBOOK", "http://zinzam.com" + ZzUri.BuildGuestBookUri(userProfile));
+                    emailTemplate.ParseVariables("U_GUESTBOOK", "http://zinzam.com" + Linker.BuildGuestBookUri(userProfile));
 
                     Email.SendEmail(core, userProfile.AlternateEmail, string.Format("{0} commented on your guest book",
                         core.session.LoggedInMember.DisplayName),

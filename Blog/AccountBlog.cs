@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)blogRow["post_title"]));
                 blogVariableCollection.ParseVariables("POSTED", HttpUtility.HtmlEncode(tz.DateTimeToString(postedTime)));
 
-                blogVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(ZzUri.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, (long)blogRow["post_id"])));
+                blogVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Linker.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, (long)blogRow["post_id"])));
 
                 blogVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=edit", string.Format("id={0}", (long)blogRow["post_id"]))));
                 blogVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=delete", string.Format("id={0}", (long)blogRow["post_id"]))));
@@ -387,6 +387,23 @@ namespace BoxSocial.Applications.Blog
 
                 db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
                     loggedInMember.UserId), false);
+
+                if (status == "PUBLISH")
+                {
+                    BlogEntry myBlogEntry = new BlogEntry(db, postId);
+
+                    if (Access.FriendsCanRead(myBlogEntry.Permissions))
+                    {
+                        DateTime postDateTime = myBlogEntry.GetCreatedDate(core.tz);
+
+                        string postUrl = HttpUtility.HtmlEncode(string.Format("/{0}/blog/{1}/{2:00}/{3}",
+                            loggedInMember.UserName, postDateTime.Year, postDateTime.Month, myBlogEntry.PostId));
+
+                        ApplicationEntry ae = new ApplicationEntry(db, loggedInMember, "Blog");
+                        ae.PublishToFeed(loggedInMember, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
+                            postUrl, myBlogEntry.Title));
+                    }
+                }
 
             }
 

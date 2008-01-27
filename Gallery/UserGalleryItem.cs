@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -48,13 +49,57 @@ namespace BoxSocial.Applications.Gallery
         public static GalleryItem Create(TPage page, Member owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             long itemId = GalleryItem.create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
-            return new UserGalleryItem(page.db, owner, itemId);
+
+            UserGalleryItem myGalleryItem = new UserGalleryItem(page.db, owner, itemId);
+            if (Access.FriendsCanRead(myGalleryItem.Permissions))
+            {
+                ApplicationEntry ae = new ApplicationEntry(page.db, owner, "Gallery");
+
+                Action action = ae.GetMostRecentFeedAction(owner);
+
+                bool update = false;
+                if (action != null)
+                {
+                    TimeSpan ts = page.tz.Now.Subtract(action.GetTime(page.tz));
+                    if (ts.TotalDays < 2)
+                    {
+                        update = true;
+                    }
+                    else
+                    {
+                        update = false;
+                    }
+                }
+                else
+                {
+                    update = false;
+                }
+
+                if (update)
+                {
+                    if (Regex.Matches(action.Body, Regex.Escape("[/thumb]")).Count < 4)
+                    {
+                        ae.UpdateFeedAction(action, "uploaded new photos", string.Format("{0} [iurl={1}][thumb]{2}/{3}[/thumb][/iurl]",
+                            action.Body, myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
+                    }
+                    else
+                    {
+                        // otherwise we'll just leave as is
+                    }
+                }
+                else
+                {
+                    ae.PublishToFeed(owner, "uploaded a new photo", string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
+                        myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
+                }
+            }
+            return myGalleryItem;
         }
 
         public override string BuildUri()
         {
-            return ZzUri.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
-                owner.Id, parentPath, path));
+            return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
+                ((Member)owner).UserName, parentPath, path));
         }
     }
 }

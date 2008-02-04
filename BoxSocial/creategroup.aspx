@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="creategroup.aspx.cs" Inherits="BoxSocial.creategroup" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.creategroup" %>

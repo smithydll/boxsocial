@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeFile="corners.aspx.cs" Inherits="BoxSocial.corners" compilerOptions="/unsafe" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.corners" compilerOptions="/unsafe" %>

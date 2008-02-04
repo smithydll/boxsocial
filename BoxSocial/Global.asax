@@ -1,1 +1,1 @@
-<%@ Application CodeFile="Global.asax.cs" Inherits="BoxSocial.Global" Language="C#" %>
+<%@ Application Inherits="BoxSocial.FrontEnd.Global" Language="C#" %>

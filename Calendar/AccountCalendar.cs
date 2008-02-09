@@ -426,11 +426,7 @@ namespace BoxSocial.Applications.Calendar
             DateTime dueDate = tz.Now;
             bool edit = false;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             if (Request.Form["mode"] == "edit")
             {
@@ -522,11 +518,7 @@ namespace BoxSocial.Applications.Calendar
                 isAjax = true;
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             try
             {
@@ -557,6 +549,44 @@ namespace BoxSocial.Applications.Calendar
         private void EventInvite(string submodule)
         {
             if (submodule != "invite-event") return;
+
+            AuthoriseRequestSid();
+
+            long eventId = Functions.RequestLong("id", 0);
+
+            if (eventId > 0)
+            {
+                UpdateQuery uQuery = new UpdateQuery("event_invites");
+                switch (Request["mode"])
+                {
+                    case "accept":
+                        uQuery.AddField("invite_accepted", true);
+                        uQuery.AddField("invite_status", EventAttendance.Yes);
+                        break;
+                    case "reject":
+                        uQuery.AddField("invite_accepted", false);
+                        uQuery.AddField("invite_status", EventAttendance.No);
+                        break;
+                    case "maybe":
+                        uQuery.AddField("invite_accepted", false);
+                        uQuery.AddField("invite_status", EventAttendance.Maybe);
+                        break;
+                    default:
+                        Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                        return;
+                }
+
+                uQuery.AddCondition("event_id", eventId);
+                uQuery.AddCondition("item_id", loggedInMember.Id);
+                uQuery.AddCondition("item_type", "USER");
+
+                db.UpdateQuery(uQuery);
+            }
+            else
+            {
+                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                return;
+            }
         }
     }
 }

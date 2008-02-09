@@ -189,11 +189,7 @@ namespace BoxSocial
 
         public void ApplicationInstall()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             int id;
 
@@ -225,11 +221,7 @@ namespace BoxSocial
 
         public void ApplicationUninstall()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             int id;
 
@@ -308,11 +300,7 @@ namespace BoxSocial
 
         private void ApplicationSettingsSave()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             int id;
 

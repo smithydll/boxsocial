@@ -159,11 +159,7 @@ namespace BoxSocial.Groups
 
         public void DeleteGroupSave()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId = Functions.RequestLong("id", -1);
 
@@ -255,11 +251,7 @@ namespace BoxSocial.Groups
 
         private void EditGroupSave()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             short category;
@@ -429,11 +421,7 @@ namespace BoxSocial.Groups
             subModules.Add("join", null);
             if (submodule != "join") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId = 0;
 
@@ -521,11 +509,7 @@ namespace BoxSocial.Groups
             subModules.Add("leave", null);
             if (submodule != "leave") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId = 0;
 
@@ -643,11 +627,7 @@ namespace BoxSocial.Groups
 
         private void InviteGroupSend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             string username;
@@ -730,11 +710,7 @@ namespace BoxSocial.Groups
             subModules.Add("make-operator", null);
             if (submodule != "make-operator") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             long userId;
@@ -809,11 +785,7 @@ namespace BoxSocial.Groups
 
             template.SetTemplate("Groups", "account_group_appoint_officer");
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             long userId;
@@ -874,11 +846,7 @@ namespace BoxSocial.Groups
 
         public void GroupMakeOfficerSave()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId = 0;
             long userId = 0;
@@ -976,11 +944,7 @@ namespace BoxSocial.Groups
             subModules.Add("remove-officer", null);
             if (submodule != "remove-officer") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             long userId;
@@ -1041,11 +1005,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
 
@@ -1084,11 +1044,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             UserGroup thisGroup = new UserGroup(db, groupId);
 
@@ -1131,11 +1087,7 @@ namespace BoxSocial.Groups
             subModules.Add("approve", null);
             if (submodule != "approve") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long groupId;
             long userId;
@@ -1213,11 +1165,7 @@ namespace BoxSocial.Groups
             subModules.Add("ban-member", null);
             if (submodule != "ban-member") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             if (Request.Form["1"] != null || Request.Form["0"] != null)
             {

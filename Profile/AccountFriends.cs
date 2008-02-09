@@ -156,11 +156,7 @@ namespace BoxSocial
 
         private void DemoteFriend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok
             long friendId = 0;
@@ -225,11 +221,7 @@ namespace BoxSocial
 
         private void PromoteFriend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok
             long friendId = 0;
@@ -313,11 +305,7 @@ namespace BoxSocial
 
         private void DeleteFamily()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok, delete from list of friends
             long friendId = 0;
@@ -343,11 +331,7 @@ namespace BoxSocial
 
         private void DeleteFriend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok, delete from list of friends
             long friendId = 0;
@@ -374,11 +358,7 @@ namespace BoxSocial
 
         private void AddFamily()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok, add as a friend
             long friendId = 0;
@@ -546,11 +526,7 @@ namespace BoxSocial
 
         private void InviteFriendSend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             if (Request.Files["contacts"] != null)
             {
@@ -640,11 +616,7 @@ namespace BoxSocial
 
         private void AddFriend()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok, add as a friend
             long friendId = 0;
@@ -755,11 +727,7 @@ namespace BoxSocial
 
         public void UnBlockPerson()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok
             long blockId = 0;
@@ -805,11 +773,7 @@ namespace BoxSocial
 
         public void BlockPerson()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             // all ok
             long blockId = 0;

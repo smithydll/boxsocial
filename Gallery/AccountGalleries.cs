@@ -182,11 +182,7 @@ namespace BoxSocial.Applications.Gallery
                 SaveNewGallery();
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long galleryId = 0;
             bool edit = false;
@@ -274,11 +270,7 @@ namespace BoxSocial.Applications.Gallery
 
         private void GalleryDelete()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long galleryId = 0;
 
@@ -450,11 +442,7 @@ namespace BoxSocial.Applications.Gallery
                 SavePhoto();
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long galleryId = 0;
             try
@@ -499,11 +487,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (submodule != "rotate-photo") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long photoId = Functions.RequestLong("id", 0);
 
@@ -559,11 +543,7 @@ namespace BoxSocial.Applications.Gallery
                 SavePhoto();
             }
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long photoId = 0;
             try
@@ -616,11 +596,7 @@ namespace BoxSocial.Applications.Gallery
             subModules.Add("gallery-cover", null);
             if (submodule != "gallery-cover") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long pictureId = 0;
 
@@ -704,11 +680,7 @@ namespace BoxSocial.Applications.Gallery
             subModules.Add("display-pic", null);
             if (submodule != "display-pic") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long pictureId = 0;
 
@@ -868,11 +840,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (submodule != "delete") return;
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long photoId = Functions.FormLong("id", 0);
 

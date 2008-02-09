@@ -88,11 +88,7 @@ namespace BoxSocial.Networks
             template.SetTemplate("Networks", "account_network_join");
             template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
 
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long networkId;
 
@@ -146,11 +142,7 @@ namespace BoxSocial.Networks
 
         private void JoinNetworkSave()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long networkId;
 

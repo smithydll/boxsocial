@@ -127,6 +127,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void AuthoriseRequestSid()
+        {
+            if (Request.QueryString["sid"] != session.SessionId)
+            {
+                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                return;
+            }
+        }
+
         public int CompareTo(object obj)
         {
             if (!(obj is AccountModule)) return -1;

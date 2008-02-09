@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.Calendar
             if (offset > 0)
             {
                 // the whole month including entry days
-                startTime = core.tz.GetUnixTimeStamp(new DateTime(year - (month - 1) / 12, (month - 1) % 12 + 1, daysPrev - offset + 1, 0, 0, 0));
+                startTime = core.tz.GetUnixTimeStamp(new DateTime(year - (month - 2) / 12, (month - 2) % 12 + 1, daysPrev - offset + 1, 0, 0, 0));
             }
             else
             {
@@ -259,15 +259,18 @@ namespace BoxSocial.Applications.Calendar
 
                 weekVariableCollection.ParseVariables("WEEK", HttpUtility.HtmlEncode((week + 1).ToString()));
 
+                /* lead in week */
                 if (week + 1 == 1)
                 {
-                    int daysPrev2 = DateTime.DaysInMonth(year - (month - 1) / 12, (month - 1) % 12 + 1);
+                    int daysPrev2 = DateTime.DaysInMonth(year - (month - 2) / 12, (month - 2) % 12 + 1);
+                    /* days in month prior */
                     for (int i = offset - 1; i >= 0; i--)
                     {
                         int day = daysPrev2 - i;
 
                         Calendar.showDayEvents(core, owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day, weekVariableCollection, events);
                     }
+                    /* first days in month */
                     for (int i = offset; i < 7; i++)
                     {
                         int day = i - offset + 1;
@@ -275,14 +278,17 @@ namespace BoxSocial.Applications.Calendar
                         Calendar.showDayEvents(core, owner, year, month, day, weekVariableCollection, events);
                     }
                 }
+                /* lead out week */
                 else if (week + 1 == weeks)
                 {
+                    /* last days in month */
                     for (int i = week * 7 - offset; i < days; i++)
                     {
                         int day = i + 1;
 
                         Calendar.showDayEvents(core, owner, year, month, day, weekVariableCollection, events);
                     }
+                    /* days in month upcoming */
                     for (int i = 0; i < weeks * 7 - days - offset; i++)
                     {
                         int day = i + 1;

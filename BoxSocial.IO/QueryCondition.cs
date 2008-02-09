@@ -24,7 +24,7 @@ namespace BoxSocial.IO
 
     public class QueryCondition
     {
-        private Dictionary<QueryCondition, ConditionRelations> conditions;
+        private List<KeyValuePair<QueryCondition, ConditionRelations>> conditions;
         private ConditionEquality equality;
         private ConditionRelations relation;
         private string field;
@@ -32,7 +32,7 @@ namespace BoxSocial.IO
 
         public QueryCondition()
         {
-            conditions = new Dictionary<QueryCondition, ConditionRelations>();
+            conditions = new List<KeyValuePair<QueryCondition, ConditionRelations>>();
         }
 
         public QueryCondition(string field, ConditionEquality equality, object value)
@@ -54,8 +54,8 @@ namespace BoxSocial.IO
         public QueryCondition AddCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)
         {
             QueryCondition condition = new QueryCondition(field, equality, value);
-            
-            conditions.Add(condition, relation);
+
+            conditions.Add(new KeyValuePair<QueryCondition, ConditionRelations>(condition, relation));
 
             return condition;
         }
@@ -79,10 +79,15 @@ namespace BoxSocial.IO
             }
             else
             {
-                foreach (QueryCondition condition in conditions.Keys)
+                /*foreach (QueryCondition condition in conditions.Keys)
                 {
                     query = string.Format("{0} {1} ({2})",
                         query, RelationToString(conditions[condition]), condition.ToString());
+                }*/
+                foreach (KeyValuePair<QueryCondition, ConditionRelations> keypair in conditions)
+                {
+                    query = string.Format("{0} {1} ({2})",
+                        query, RelationToString(keypair.Value), keypair.Key);
                 }
             }
 

@@ -638,11 +638,7 @@ namespace BoxSocial.Applications.Pages
         /// </summary>
         public void ManageListDelete()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long listId = 0;
 
@@ -790,11 +786,7 @@ namespace BoxSocial.Applications.Pages
         /// </summary>
         public void ManageListRemove()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
-            {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
-                return;
-            }
+            AuthoriseRequestSid();
 
             long itemId = 0;
             long listId = 0;

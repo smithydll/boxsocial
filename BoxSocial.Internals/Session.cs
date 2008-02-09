@@ -141,7 +141,14 @@ namespace BoxSocial.Internals
                     xs = new XmlSerializer(typeof(SessionCookie));
                     StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
 
-                    sessionData = (SessionCookie)xs.Deserialize(sr);
+                    try
+                    {
+                        sessionData = (SessionCookie)xs.Deserialize(sr);
+                    }
+                    catch
+                    {
+                        sessionData = new SessionCookie();
+                    }
                 }
                 else
                 {
@@ -364,7 +371,14 @@ namespace BoxSocial.Internals
                     xs = new XmlSerializer(typeof(SessionCookie));
                     StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
 
-                    sessionData = (SessionCookie)xs.Deserialize(sr);
+                    try
+                    {
+                        sessionData = (SessionCookie)xs.Deserialize(sr);
+                    }
+                    catch
+                    {
+                        sessionData = new SessionCookie();
+                    }
                 }
                 else
                 {
@@ -632,12 +646,17 @@ namespace BoxSocial.Internals
     [XmlRoot("zinzam-cookie")]
     public class SessionCookie
     {
-
         [XmlElement("autologinid")]
         public string autoLoginId;
 
         [XmlElement("userid")]
         public long userId;
+
+        public SessionCookie()
+        {
+            autoLoginId = "";
+            userId = 0;
+        }
     }
 
     public enum SessionMethods

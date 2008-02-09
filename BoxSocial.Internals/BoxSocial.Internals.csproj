@@ -70,6 +70,7 @@
     <Compile Include="ApplicationEntry.cs" />
     <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="Bbcode.cs" />
+    <Compile Include="Captcha.cs" />
     <Compile Include="CascadingStyleSheet.cs" />
     <Compile Include="Classification.cs" />
     <Compile Include="Comment.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />
+    <Compile Include="OpenId.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="PageHandle.cs" />
     <Compile Include="PPage.cs">

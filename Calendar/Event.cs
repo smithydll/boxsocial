@@ -29,6 +29,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
+    public enum EventAttendance : byte
+    {
+        Unknown = 0,
+        Yes = 1,
+        Maybe = 2,
+        No = 3,
+    }
+
     public class Event : Item
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendies, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
@@ -258,6 +266,7 @@ namespace BoxSocial.Applications.Calendar
                     iQuery.AddField("inviter_id", userId);
                     iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
                     iQuery.AddField("invite_accepted", false);
+                    iQuery.AddField("invite_status", EventAttendance.Unknown);
 
                     long invitationId = db.UpdateQuery(iQuery);
 
@@ -278,6 +287,12 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public List<long> GetAttendies()
+        {
+
+            throw new NotImplementedException();
+        }
+
         public static string BuildEventUri(Event calendarEvent)
         {
             return Linker.AppendSid(string.Format("{0}/calendar/event/{1}",
@@ -286,7 +301,12 @@ namespace BoxSocial.Applications.Calendar
 
         public static string BuildEventAcceptUri(Event calendarEvent)
         {
-            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("attendance={0}", "accept")), true);
+            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("mode={0}", "accept")), true);
+        }
+
+        public static string BuildEventRejectUri(Event calendarEvent)
+        {
+            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("mode={0}", "reject")), true);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)

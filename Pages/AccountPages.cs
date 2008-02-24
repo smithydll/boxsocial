@@ -686,7 +686,7 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                ajax = bool.Parse(Request.Form["ajax"]);
+                ajax = bool.Parse(Request["ajax"]);
             }
             catch { }
 
@@ -696,16 +696,8 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                if (ajax)
-                {
-                    Response.Write("error");
-                    return;
-                }
-                else
-                {
-                    Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
-                    return;
-                }
+                Ajax.ShowMessage(ajax, "error", core, "List Error", "You submitted invalid information. Go back and try again.");
+                return;
             }
 
             // normalise slug if it has been fiddeled with
@@ -750,7 +742,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (ajax)
                 {
-                    Response.Write(HttpUtility.HtmlEncode(text));
+                    Ajax.SendRawText("posted", core, HttpUtility.HtmlEncode(text));
 
                     if (db != null)
                     {
@@ -767,16 +759,8 @@ namespace BoxSocial.Applications.Pages
             }
             else
             {
-                if (ajax)
-                {
-                    Response.Write("error");
-                    return;
-                }
-                else
-                {
-                    Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
-                    return;
-                }
+                Ajax.ShowMessage(ajax, "error", core, "List Error", "You submitted invalid information. Go back and try again.");
+                return;
             }
 
         }

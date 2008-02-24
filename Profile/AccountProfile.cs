@@ -341,5 +341,18 @@ namespace BoxSocial
 
             Display.ShowMessage(core, "Name Saved", "Your name has been saved in the database.<br /><a href=\"/account/?module=profile&sub=name\">Return</a>");
         }
+
+        public void SaveStatus(string submodule)
+        {
+            if (submodule != "status") return;
+
+            AuthoriseRequestSid();
+
+            string message = Request.Form["message"];
+
+            StatusFeed.SaveMessage(core, message);
+
+            Ajax.ShowMessage(true, "Success", core, null, null);
+        }
     }
 }

@@ -1838,6 +1838,15 @@ namespace BoxSocial.Internals
             /* pages */
             core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
 
+            /* status */
+            StatusMessage statusMessage = StatusFeed.GetLatest(core, page.ProfileOwner);
+
+            if (statusMessage != null)
+            {
+                core.template.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(statusMessage.Message));
+                core.template.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(statusMessage.GetTime(core.tz))));
+            }
+
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));
         }
     }

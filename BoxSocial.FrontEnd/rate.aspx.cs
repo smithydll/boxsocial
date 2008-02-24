@@ -85,7 +85,8 @@ namespace BoxSocial.FrontEnd
 
                 if (ratingsTable.Rows.Count > 0)
                 {
-                    Response.Write("alreadyVoted");
+                    //Response.Write("alreadyVoted");
+                    Ajax.ShowMessage(true, "alreadyVoted", core, "Already Voted", "You have already rated this item, you cannot rate it again");
                     return;
                 }
                 else
@@ -103,7 +104,7 @@ namespace BoxSocial.FrontEnd
                             break;
                     }
 
-                    Response.Write("voteAccepted");
+                    Ajax.SendStatus("voteAccepted", core);
                     return;
                 }
             }

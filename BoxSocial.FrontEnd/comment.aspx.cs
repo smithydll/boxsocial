@@ -67,7 +67,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Response.Write("errorFetchingComment");
+                    Ajax.SendRawText("errorFetchingComment", core, "");
                     return;
                 }
 
@@ -83,7 +83,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    Response.Write("errorFetchingComment");
+                    Ajax.SendRawText("errorFetchingComment", core, "");
                 }
 
                 EndResponse();
@@ -91,15 +91,13 @@ namespace BoxSocial.FrontEnd
 
             if (Request.QueryString["mode"] == "fetch")
             {
-                Response.ContentType = "text/plain";
-
                 try
                 {
                     itemId = long.Parse((string)Request.QueryString["item"]);
                 }
                 catch
                 {
-                    Response.Write("errorFetchingComment");
+                    Ajax.SendRawText("errorFetchingComment", core, "");
                     return;
                 }
 
@@ -108,14 +106,12 @@ namespace BoxSocial.FrontEnd
 
                 if (commentsTable.Rows.Count == 1)
                 {
-                    Response.Write(string.Format("\n\n[quote=\"{0}\"]",
-                        HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["user_name"])));
-                    Response.Write(HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["comment_text"]));
-                    Response.Write("[/quote]");
+                    Ajax.SendRawText("errorFetchingComment", core, (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
+                        HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["user_name"]), HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["comment_text"]))));
                 }
                 else
                 {
-                    Response.Write("errorFetchingComment");
+                    Ajax.SendRawText("errorFetchingComment", core, "");
                 }
 
                 return;
@@ -123,11 +119,6 @@ namespace BoxSocial.FrontEnd
 
             if (Request.QueryString["mode"] == "report")
             {
-                if (Request.Form["ajax"] == "true")
-                {
-                    Response.ContentType = "text/plain";
-                }
-
                 try
                 {
                     itemId = long.Parse((string)Request.QueryString["item"]);
@@ -164,11 +155,6 @@ namespace BoxSocial.FrontEnd
 
             if (Request.QueryString["mode"] == "delete")
             {
-                if (Request.Form["ajax"] == "true")
-                {
-                    Response.ContentType = "text/plain";
-                }
-
                 try
                 {
                     itemId = long.Parse((string)Request.QueryString["item"]);
@@ -261,11 +247,6 @@ namespace BoxSocial.FrontEnd
 
             /* save comment in the database */
 
-            if (Request.Form["ajax"] == "true")
-            {
-                Response.ContentType = "text/plain";
-            }
-
             try
             {
                 if (!Core.CanPostComment(itemType, (long)itemId))
@@ -325,7 +306,8 @@ namespace BoxSocial.FrontEnd
 
                 commentsVariableCollection.ParseVariables("NORMAL", "TRUE");
 
-                Response.Write(ct.ToString());
+                //Response.Write(ct.ToString());
+                Ajax.SendRawText("comment", core, ct.ToString());
 
                 if (db != null)
                 {

@@ -13,6 +13,26 @@ function ge(n)
 	return document.getElementById(n);
 }
 
+function hide(n)
+{
+	ge(n).style.display = 'none';
+}
+
+function show(n)
+{
+	ge(n).style.display = 'block';
+}
+
+function setv(n, v)
+{
+	ge(n).innerHTML = v;
+}
+
+function apc(n, c)
+{
+	ge(n).appendChild(c);
+}
+
 function StarOver(stars, itemId, itemType)
 {
 	var i = 1;
@@ -39,6 +59,19 @@ function SubmitRating(stars, itemId, itemType)
 	return PostToPage(null, "rate.aspx?ajax=true&rating=" + stars + "&item=" + itemId + "&type=" + itemType, null);
 }
 
+function SendStatus()
+{
+	var statusMessage = ge('message').value;
+	return PostToAccount(SentStatus, "profile", "status", -1, new Array(new Array('message', statusMessage)));
+}
+
+function SentStatus(r)
+{
+	hide('status-form');
+	show('status-message');
+	setv('status-message', r[1]);
+}
+
 function DeleteComment(id, iid)
 {
 	return PostToPage(null, "comment/?mode=delete&item=" + id, null);
@@ -58,9 +91,8 @@ function QuoteComment(id, iid)
 
 function QuotedComment(r)
 {
-	var editor = ge("comment-text-" + ciid);
-	editor.innerHTML = r[1];
-	editor.focus();
+	setv("comment-text-" + ciid, r[1]);
+	ge("comment-text-" + ciid).focus();
 }
 
 var csort;
@@ -69,8 +101,7 @@ function SubmitComment(id, type, zero, sort)
 {
 	csort = sort;
 	cid = id;
-	var comment = ge("comment-text-" + id).value;
-	return PostToPage(SubmitedComment, "comment/", new Array(new Array("ajax", "true"), new Array("item", id), Array("type", type), new Array("comment", escape(comment).replace('+','%2B'))));
+	return PostToPage(SubmitedComment, "comment/", new Array(new Array("ajax", "true"), new Array("item", id), Array("type", type), new Array("comment", escape(ge("comment-text-" + id).value).replace('+','%2B'))));
 }
 
 function SubmitedComment(r)
@@ -86,14 +117,14 @@ function SubmitedComment(r)
 		}
 		else
 		{
-			ge("comment-list").appendChild(nli);
+			apc("comment-list", nli);
 		}
 	}
 	else
 	{
-		ge("comment-list").appendChild(nli);
+		apc("comment-list", nli);
 	}
-	ge("comment-form").style.display = "none";
+	hide("comment-form");
 
 	var submitBtn = ge("comment-submit-" + cid);
 	submitBtn.setAttribute("disabled", "disabled");
@@ -102,7 +133,7 @@ function SubmitedComment(r)
 
 	try
 	{
-		ge("no-comments").style.display = "none";
+		hide("no-comments");
 	} catch (e) {};
 }
 
@@ -116,11 +147,11 @@ function SubmitedListItem(r)
 {
 	var nli = document.createElement('li');
 	nli.innerHTML = r[1];
-	ge("list-list").appendChild(nli);
+	apc("list-list", nli);
 
 	try
 	{
-		ge("no-list-items").style.display = "none";
+		hide("no-list-items");
 	} catch (e) {};
 }
 
@@ -340,12 +371,12 @@ function HideUserTag(id)
 
 function ShowUserTagName(id)
 {
-	ge("tag-name-" + id).style.display = "block";
+	show("tag-name-" + id);
 }
 
 function HideUserTagName(id)
 {
-	ge("tag-name-" + id).style.display = "none";
+	hide("tag-name-" + id);
 }
 
 function ShowTagNearPointer(event)

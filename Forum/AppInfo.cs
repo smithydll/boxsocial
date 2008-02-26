@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,17 +19,18 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
-namespace BoxSocial.Applications.Profile
+namespace BoxSocial.Applications.Forum
 {
     public class AppInfo : Application
     {
@@ -37,7 +38,7 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return "Profile";
+                return "Forum";
             }
         }
 
@@ -69,10 +70,12 @@ namespace BoxSocial.Applications.Profile
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Application);
-            aii.AddSlug("profile", @"^/status-feed(|/)$", AppPrimitives.Member | AppPrimitives.Application);
+            aii.AddSlug("forum", @"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
-            aii.AddModule("profile");
+            aii.AddModule("forum");
 
             return aii;
         }
@@ -82,9 +85,7 @@ namespace BoxSocial.Applications.Profile
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("profile", "Profile");
-                slugs.Add("friends", "Friends");
-                slugs.Add("status-feed", "Status Feed");
+                slugs.Add("forum", "Forum");
                 return slugs;
             }
         }
@@ -93,37 +94,25 @@ namespace BoxSocial.Applications.Profile
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/profile(|/)$", showProfile, 1);
-            core.RegisterApplicationPage(@"^/status-feed(|/)$", showStatusFeed, 1);
+            core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
+            core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
+            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
+            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);
         }
 
-        public override AppPrimitives GetAppPrimitiveSupport()
+        private void showForums(Core core, object sender)
         {
-            return AppPrimitives.Member | AppPrimitives.Application;
         }
 
-        private void showProfile(Core core, object sender)
+        private void showTopic(Core core, object sender)
         {
-            if (sender is PPage)
-            {
-                Member.ShowProfile(core, (PPage)sender);
-            }
-            else if (sender is APage)
-            {
-                ApplicationEntry.ShowPage(core, (APage)sender);
-            }
         }
 
-        private void showStatusFeed(Core core, object sender)
+        private void showForum(Core core, object sender)
         {
-            if (sender is PPage)
-            {
-                PPage page = (PPage)sender;
-                StatusFeed.Show(core, page, page.ProfileOwner);
-            }
         }
 
-        void core_PageHooks(HookEventArgs eventArgs)
+        void core_PageHooks(HookEventArgs e)
         {
         }
     }

@@ -85,6 +85,12 @@ namespace BoxSocial.Internals
                 member.UserName.ToLower()));
         }
 
+        public static string BuildStatusUri(Member member)
+        {
+            return AppendSid(string.Format("/{0}/profile/status",
+                member.UserName.ToLower()));
+        }
+
         public static string BuildListsUri(Member member)
         {
             return AppendSid(string.Format("/{0}/lists",

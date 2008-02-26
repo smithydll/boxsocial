@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,31 +19,18 @@
  */
 
 using System;
-using System.Collections;
-using System.Configuration;
+using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using System.Web;
-using System.Web.Security;
-using BoxSocial;
-using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Internals;
+using BoxSocial.Groups;
 
-namespace BoxSocial.FrontEnd
+namespace BoxSocial.Applications.Forum
 {
-    public partial class search : TPage
+    public class TopicPost
     {
-        public search()
-            : base("search.html")
-        {
-        }
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            bool ajax = (Request.QueryString["ajax"] == "true");
-
-
-
-            EndResponse();
-        }
+        public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
     }
 }

@@ -45,7 +45,7 @@ namespace BoxSocial.Internals
 
     public class Member : Primitive
     {
-        public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes";
+        public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes, ui.user_status_messages";
         public const string USER_PROFILE_FIELDS = "up.profile_comments, up.profile_country, c.country_name, up.profile_religion, up.profile_name_title, up.profile_name_suffix, up.profile_name_first, up.profile_name_middle, up.profile_name_last, up.profile_access, up.profile_views, up.profile_date_of_birth+0, up.profile_maritial_status, up.profile_autobiography, up.profile_sexuality, up.profile_gender, up.profile_date_of_birth_ut";
         public const string USER_ICON_FIELDS = "gi.gallery_item_parent_path, gi.gallery_item_uri";
 
@@ -84,6 +84,7 @@ namespace BoxSocial.Internals
         private string alternateEmail;
         private bool emailNotifications;
         private ulong bytesUsed;
+        private long statusMessages;
         private ushort timeZoneCode;
         private UnixTime timeZone;
 
@@ -615,6 +616,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long StatusMessages
+        {
+            get
+            {
+                return statusMessages;
+            }
+        }
+
         public ushort TimeZoneCode
         {
             get
@@ -805,6 +814,7 @@ namespace BoxSocial.Internals
             alternateEmail = (string)userRow["user_alternate_email"];
             emailNotifications = ((byte)userRow["user_email_notifications"] > 0) ? true : false;
             bytesUsed = (ulong)userRow["user_bytes"];
+            statusMessages = (long)userRow["user_status_messages"];
             
         }
 
@@ -1109,6 +1119,7 @@ namespace BoxSocial.Internals
             query.AddField("user_reg_ip", session.IPAddress.ToString());
             query.AddField("user_home_page", "/profile");
             query.AddField("user_bytes", 0);
+            query.AddField("user_status_messages", 0);
             query.AddField("user_last_visit_ut", 0);
             query.AddField("user_show_bbcode", 0x07);
             query.AddField("user_show_custom_styles", true);

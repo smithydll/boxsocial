@@ -48,6 +48,7 @@ namespace BoxSocial
             RegisterSubModule += new RegisterSubModuleHandler(Lifestyle);
             RegisterSubModule += new RegisterSubModuleHandler(Style);
             RegisterSubModule += new RegisterSubModuleHandler(Permissions);
+            RegisterSubModule += new RegisterSubModuleHandler(SaveStatus);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -352,7 +353,7 @@ namespace BoxSocial
 
             StatusFeed.SaveMessage(core, message);
 
-            Ajax.ShowMessage(true, "Success", core, null, null);
+            Ajax.SendRawText("Success", core, message);
         }
     }
 }

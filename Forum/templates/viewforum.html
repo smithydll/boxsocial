@@ -1,0 +1,43 @@
+﻿<!-- INCLUDE page_header.html -->
+	<h2>{FORUM_TITLE}</h2>
+	<p>{BREADCRUMBS}</p>
+	<!-- IF U_NEW_TOPIC -->
+	<div id="new-stuff">
+		<span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">New Topic</a></span>
+	</div>
+	<!-- ENDIF -->
+
+  <!-- IF FORUMS -->
+  <ul>
+    <!-- BEGIN forum_list -->
+    <li>
+      <dl>
+        <dt>
+          <a href="{forum_list.URI}">{forum_list.TITLE}</a>
+        </dt>
+        <dd>{forum_list.POSTS}</dd>
+        <dd>{forum_list.TOPICS}</dd>
+        <dd>{forum_list.LAST_POST}</dd>
+      </dl>
+    </li>
+    <!-- END forum_list -->
+  </ul>
+  <!-- ENDIF -->
+	
+	<!-- IF TOPICS -->
+	<ul>
+    <!-- BEGIN topic_list -->
+    <li>
+      <dl>
+        <dt>
+          <a href="{topic_list.URI}">{topic_list.TITLE}</a>
+        </dt>
+        <dd>{topic_list.VIEWS}</dd>
+        <dd>{topic_list.REPLIES}</dd>
+        <dd>{topic_list.LAST_POST}</dd>
+      </dl>
+    </li>
+    <!-- END topic_list -->
+	</ul>
+	<!-- ENDIF -->
+<!-- INCLUDE page_footer.html -->

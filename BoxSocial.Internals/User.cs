@@ -981,11 +981,64 @@ namespace BoxSocial.Internals
 
         public List<Member> GetFriendsOnline()
         {
+            return GetFriendsOnline(1, 255);
+        }
+
+        public List<Member> GetFriendsOnline(int page, int perPage)
+        {
             List<Member> friends = new List<Member>();
 
+            SelectQuery query = new SelectQuery("user_relations uf");
+            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
+            query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
+            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+            query.AddCondition("uf.relation_me", userId);
+            query.AddCondition("uf.relation_type", "FRIEND");
             // last 15 minutes
-            DataTable friendsTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3} FROM user_relations uf INNER JOIN user_info ui ON uf.relation_you = ui.user_id INNER JOIN user_profile up ON uf.relation_you = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE uf.relation_me = {0} and uf.relation_type = 'FRIEND' AND UNIX_TIMSTAMP() - ui.user_last_visit_ut < 900 ORDER BY (uf.relation_order - 1) LIMIT {4}, {5}",
-                userId, Member.USER_PROFILE_FIELDS, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, 1, 14));
+            query.AddCondition("UNIX_TIMSTAMP() - ui.user_last_visit_ut", ConditionEquality.LessThan, 900);
+            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable friendsTable = db.SelectQuery(query);
+
+            foreach (DataRow dr in friendsTable.Rows)
+            {
+                friends.Add(new Member(db, dr, true, true));
+            }
+
+            return friends;
+        }
+
+        public List<Member> SearchFriendNames(string needle)
+        {
+            return SearchFriendNames(needle, 1, 255);
+        }
+
+        public List<Member> SearchFriendNames(string needle, int page, int perPage)
+        {
+            List<Member> friends = new List<Member>();
+
+            SelectQuery query = new SelectQuery("user_relations uf");
+            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
+            query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
+            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+            query.AddCondition("uf.relation_me", userId);
+            query.AddCondition("uf.relation_type", "FRIEND");
+
+            // here we are grouping the condition to do an OR between these two conditions only
+            QueryCondition qc = query.AddCondition("ui.user_name", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
+            qc.AddCondition(ConditionRelations.Or, "ui.user_name_display", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
+
+            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable friendsTable = db.SelectQuery(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {

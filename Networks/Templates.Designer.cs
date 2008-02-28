@@ -82,6 +82,17 @@ namespace Networks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Network Memberships&lt;/h3&gt;
+        ///&lt;p&gt;Manage the memberships to networks you are a member of.&lt;/p&gt;
+        ///&lt;span id=&quot;join-network&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;/groups&quot;&gt;Join a Network&lt;/a&gt;&lt;/span&gt;.
+        /// </summary>
+        internal static string account_network_membership {
+            get {
+                return ResourceManager.GetString("account_network_membership", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///	&lt;h2&gt;&lt;a href=&quot;{U_NETWORK}&quot;&gt;{NETWORK_DISPLAY_NAME}&lt;/a&gt;&lt;/h2&gt;
         ///	&lt;div id=&quot;pane-profile&quot;&gt;

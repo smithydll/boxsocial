@@ -423,6 +423,12 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static void ThrowError(Core core)
+        {
+            core.template.SetTemplate("1202.html");
+            core.EndResponse();
+        }
+
         public static string GenerateBreadCrumbs(string userName, string path)
         {
             string[] paths = path.Split('/');

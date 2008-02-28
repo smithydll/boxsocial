@@ -42,7 +42,7 @@ namespace BoxSocial.Networks
         public AccountNetworks(Account account)
             : base(account)
         {
-            // TODO: Manage Networks
+            RegisterSubModule += new RegisterSubModuleHandler(ManageNetworkMemberships);
             RegisterSubModule += new RegisterSubModuleHandler(JoinNetwork);
         }
 
@@ -71,6 +71,45 @@ namespace BoxSocial.Networks
             get
             {
                 return 8;
+            }
+        }
+
+        private void ManageNetworkMemberships(string submodule)
+        {
+            subModules.Add("memberships", "Manage Memberships");
+            if (submodule != "memberships" && !string.IsNullOrEmpty(submodule)) return;
+
+            template.SetTemplate("Networks", "account_network_membership");
+
+            List<Network> networks = new List<Network>();
+
+            SelectQuery query = new SelectQuery("network_members nm");
+            query.AddJoin(JoinTypes.Inner, "network_keys nk", "nm.network_id", "nk.network_id");
+            query.AddJoin(JoinTypes.Inner, "network_info ni", "nk.network_id", "ni.network_id");
+            query.AddFields(Network.NETWORK_INFO_FIELDS, "nk.network_network");
+            query.AddCondition("nm.user_id", loggedInMember.Id);
+
+            DataTable networksTable = db.SelectQuery(query);
+
+            foreach (DataRow dr in networksTable.Rows)
+            {
+                networks.Add(new Network(db, dr));
+            }
+
+            if (networks.Count > 0)
+            {
+                template.ParseVariables("NETWORK_MEMBERSHIPS", "TRUE");
+            }
+
+            foreach (Network theNetwork in networks)
+            {
+                VariableCollection networkVariableCollection = template.CreateChild("network_list");
+
+                networkVariableCollection.ParseVariables("NETWORK_DISPLAY_NAME", HttpUtility.HtmlEncode(theNetwork.DisplayName));
+                networkVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(theNetwork.Members.ToString()));
+
+                networkVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(theNetwork.Uri));
+                networkVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(theNetwork.MemberlistUri));
             }
         }
 
@@ -190,6 +229,39 @@ namespace BoxSocial.Networks
             catch
             {
             }*/
+        }
+
+        private void LeaveNetwork(string submodule)
+        {
+            subModules.Add("join", null);
+            if (submodule != "join") return;
+
+            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            {
+                LeaveNetworkSave();
+                return;
+            }
+
+            long networkId = Functions.RequestLong("id", -1);
+
+            if (networkId >= 0)
+            {
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "networks");
+                hiddenFieldList.Add("sub", "leave");
+                hiddenFieldList.Add("id", networkId.ToString());
+
+                Display.ShowConfirmBox(Linker.AppendSid("/account", true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
+            }
+            else
+            {
+                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                return;
+            }
+        }
+
+        private void LeaveNetworkSave()
+        {
         }
     }
 }

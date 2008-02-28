@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Web;
@@ -39,11 +40,53 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            bool ajax = (Request.QueryString["ajax"] == "true");
+            string mode = Request["mode"];
 
-
+            switch (mode)
+            {
+                case "friends":
+                    showFriends();
+                    break;
+                case "friends-online":
+                    break;
+                default:
+                    break;
+            }
 
             EndResponse();
+        }
+
+        private void showFriends()
+        {
+            string needle = Request["name"];
+            List<Member> friends;
+            if (IsAjax)
+            {
+                friends = loggedInMember.SearchFriendNames(needle, 1, 10);
+
+                string[] friendNames = new string[friends.Count];
+                for (int i = 0; i < friends.Count; i++)
+                {
+                    friendNames[i] = friends[i].DisplayName;
+                }
+
+                Ajax.SendArray("friends", core, friendNames);
+            }
+            else
+            {
+                template.SetTemplate("searchfriendsresult.html");
+
+                friends = loggedInMember.SearchFriendNames(needle, page, 20);
+
+                foreach (Member friend in friends)
+                {
+                    VariableCollection friendVariableCollection = template.CreateChild("friend_list");
+
+                    friendVariableCollection.ParseVariables("NAME", friend.DisplayName);
+                    friendVariableCollection.ParseVariables("URI", friend.Uri);
+                    friendVariableCollection.ParseVariables("DISPLAY_PIC", friend.UserIcon);
+                }
+            }
         }
     }
 }

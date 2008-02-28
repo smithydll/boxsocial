@@ -73,6 +73,7 @@ namespace BoxSocial.Internals
         public UnixTime tz;
         protected Core core;
         public PageSignature Signature;
+        private bool isAjax;
 
         public Core Core
         {
@@ -91,6 +92,14 @@ namespace BoxSocial.Internals
             set
             {
                 pageTitle = "ZinZam &bull; " + HttpUtility.HtmlEncode(value);
+            }
+        }
+
+        public bool IsAjax
+        {
+            get
+            {
+                return isAjax;
             }
         }
 
@@ -239,6 +248,8 @@ namespace BoxSocial.Internals
 
             // move it here
             core.tz = tz;
+
+            isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
         }
 
         public TPage(string templateFile)

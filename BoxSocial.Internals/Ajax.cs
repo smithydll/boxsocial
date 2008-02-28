@@ -143,6 +143,39 @@ namespace BoxSocial.Internals
                 Display.ShowMessage(core, title, message);
             }
         }
+
+        /// <summary>
+        /// Send an array of items for the client to process
+        /// </summary>
+        /// <param name="ajaxCore"></param>
+        /// <param name="core"></param>
+        /// <param name="arrayItems"></param>
+        public static void SendArray(string ajaxCode, Core core, string[] arrayItems)
+        {
+            XmlSerializer xs;
+            StringWriter stw;
+
+            AjaxArray am = new AjaxArray();
+            am.ResponseCode = ajaxCode;
+            am.ResponseArray = arrayItems;
+
+            xs = new XmlSerializer(typeof(AjaxArray));
+            stw = new StringWriter();
+
+            xs.Serialize(stw, am);
+
+            HttpContext.Current.Response.ContentType = "text/xml";
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
+            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+
+            if (core.db != null)
+            {
+                core.db.CloseConnection();
+            }
+
+            HttpContext.Current.Response.End();
+        }
     }
 
     [XmlRoot("ajax")]
@@ -182,5 +215,18 @@ namespace BoxSocial.Internals
 
         [XmlElement("message")]
         public string ResponseMessage;
+    }
+
+    [XmlRoot("ajax")]
+    public class AjaxArray
+    {
+        [XmlElement("type")]
+        public string AjaxType = "Array";
+
+        [XmlElement("code")]
+        public string ResponseCode;
+
+        [XmlElement("array")]
+        public string[] ResponseArray;
     }
 }

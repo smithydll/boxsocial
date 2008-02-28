@@ -20,6 +20,7 @@ namespace BoxSocial.IO
         GreaterThanEqual,
         LessThanEqual,
         In,
+        Like,
     }
 
     public class QueryCondition
@@ -126,8 +127,17 @@ namespace BoxSocial.IO
                     return "<>";
                 case ConditionEquality.In:
                     return "IN";
+                case ConditionEquality.Like:
+                    return "LIKE";
             }
             return "";
+        }
+
+        public static string EscapeLikeness(string input)
+        {
+            // TODO: apply escape sequence
+            //return input.Replace("%", 
+            return input;
         }
     }
 }

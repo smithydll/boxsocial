@@ -79,6 +79,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsAjax
+        {
+            get
+            {
+                return page.IsAjax;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>

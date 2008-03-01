@@ -244,7 +244,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (!list.ListAccess.CanRead)
                 {
-                    Functions.Generate403(core);
+                    Functions.Generate403();
                     return;
                 }
 
@@ -280,7 +280,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
             }
         }
     }

@@ -202,6 +202,8 @@ namespace BoxSocial.Internals
             core = new Core(db, template);
             core.page = this;
             Bbcode.Initialise(core);
+            Functions.Core = core;
+            Display.Core = core;
 
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;

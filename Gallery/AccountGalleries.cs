@@ -193,7 +193,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
 
@@ -227,7 +227,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                        Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                     }
                 }
                 else
@@ -261,7 +261,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
             }
 
@@ -280,7 +280,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot Delete Gallery", "No gallery specified to delete. Please go back and try again.");
+                Display.ShowMessage("Cannot Delete Gallery", "No gallery specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -298,11 +298,11 @@ namespace BoxSocial.Applications.Gallery
                 Gallery.Delete(page, gallery);
 
                 SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
-                Display.ShowMessage(core, "Gallery Deleted", "You have successfully deleted a gallery.");
+                Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot Delete Gallery", "An Error occured while trying to delete the gallery.");
+                Display.ShowMessage("Cannot Delete Gallery", "An Error occured while trying to delete the gallery.");
                 return;
             }
         }
@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -353,34 +353,34 @@ namespace BoxSocial.Applications.Gallery
                         {
                             SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
                                 string.Format("id={0}", parent.GalleryId)));
-                            Display.ShowMessage(core, "Gallery Created", "You have successfully created a new gallery.");
+                            Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                            Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                             return;
                         }
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
+                        Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
                         return;
                     }
                 }
                 catch (GallerySlugNotUniqueException)
                 {
-                    Display.ShowMessage(core, "Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
+                    Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
                     return;
                 }
                 catch (GallerySlugNotValidException)
                 {
-                    Display.ShowMessage(core, "Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
+                    Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                     return;
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                     return;
                 }
             }
@@ -399,34 +399,34 @@ namespace BoxSocial.Applications.Gallery
 
                             SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
                                 string.Format("id={0}", gallery.ParentId)));
-                            Display.ShowMessage(core, "Gallery Edit Saved", "You have saved the edits to the gallery.");
+                            Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
+                            Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
                             return;
                         }
                     }
                     catch (GallerySlugNotUniqueException)
                     {
-                        Display.ShowMessage(core, "Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
+                        Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
                         return;
                     }
                     catch (GallerySlugNotValidException)
                     {
-                        Display.ShowMessage(core, "Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
+                        Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                         return;
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                     }
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                     return;
                 }
             }
@@ -451,7 +451,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
 
@@ -478,7 +478,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
         }
@@ -517,18 +517,18 @@ namespace BoxSocial.Applications.Gallery
                     photo.Rotate(core, rotation);
 
                     SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, photo.ParentPath, photo.Path));
-                    Display.ShowMessage(core, "Image rotated", "You have successfully rotated the image.");
+                    Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
                     return;
                 }
                 catch (GalleryItemNotFoundException)
                 {
-                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    Display.ShowMessage("Error", "An error has occured, go back.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
         }
@@ -552,7 +552,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
 
@@ -586,7 +586,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
         }
@@ -606,7 +606,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -653,24 +653,24 @@ namespace BoxSocial.Applications.Gallery
                             pictureId, loggedInMember.UserId, galleryId));
 
                         SetRedirectUri(Gallery.BuildGalleryUri(loggedInMember, galleryFullPath));
-                        Display.ShowMessage(core, "Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
+                        Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
                         return;
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Cannot change gallery cover", "You must use a photo with equal view permissions as the gallery it is the cover of.");
+                        Display.ShowMessage("Cannot change gallery cover", "You must use a photo with equal view permissions as the gallery it is the cover of.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
+                    Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage(core, "Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
+                Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
                 return;
             }
         }
@@ -690,7 +690,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -710,18 +710,18 @@ namespace BoxSocial.Applications.Gallery
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
                         pictureId, loggedInMember.UserId));
 
-                    Display.ShowMessage(core, "Display Picture Changed", "You have successfully changed your display picture.");
+                    Display.ShowMessage("Display Picture Changed", "You have successfully changed your display picture.");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Cannot set as display picture", "You must use a photo with public view permissions as your display picture.");
+                    Display.ShowMessage("Cannot set as display picture", "You must use a photo with public view permissions as your display picture.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage(core, "Cannot change display picture", "You could not change your display picture to the selected image.");
+                Display.ShowMessage("Cannot change display picture", "You could not change your display picture to the selected image.");
                 return;
             }
         }
@@ -742,7 +742,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -755,7 +755,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                     return;
                 }
             }
@@ -780,33 +780,33 @@ namespace BoxSocial.Applications.Gallery
                         UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                         SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug));
-                        Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
+                        Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
                     catch (GalleryItemTooLargeException)
                     {
-                        Display.ShowMessage(core, "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                         return;
                     }
                     catch (GalleryQuotaExceededException)
                     {
-                        Display.ShowMessage(core, "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                         return;
                     }
                     catch (InvalidGalleryItemTypeException)
                     {
-                        Display.ShowMessage(core, "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                         return;
                     }
                     catch (InvalidGalleryFileNameException)
                     {
-                        Display.ShowMessage(core, "Submission failed", "Submission failed, try uploading with a different file name.");
+                        Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                         return;
                     }
                 }
                 catch (GalleryNotFoundException)
                 {
-                    Display.ShowMessage(core, "Submission failed", "Submission failed, Invalid Gallery.");
+                    Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
                 }
             }
@@ -820,12 +820,12 @@ namespace BoxSocial.Applications.Gallery
                     galleryItem.Update(page, title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path));
-                    Display.ShowMessage(core, "Changes to Photo Saved", "You have successfully saved the changes to the photo.");
+                    Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
                     return;
                 }
                 catch (GalleryItemNotFoundException)
                 {
-                    Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                     return;
                 }
             }
@@ -846,7 +846,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (photoId <= 0)
             {
-                Display.ShowMessage(core, "Cannot Delete Photo", "No photo specified to delete. Please go back and try again.");
+                Display.ShowMessage("Cannot Delete Photo", "No photo specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -856,11 +856,11 @@ namespace BoxSocial.Applications.Gallery
                 photo.Delete(core);
 
                 SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
-                Display.ShowMessage(core, "Photo Deleted", "You have successfully deleted the photo from the gallery.");
+                Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
                 return;
             }
         }

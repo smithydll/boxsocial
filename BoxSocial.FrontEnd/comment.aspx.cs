@@ -318,7 +318,7 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
-                Display.ShowMessage(Core, "Comment Posted", "Your comment has been successfully posted.");
+                Display.ShowMessage("Comment Posted", "Your comment has been successfully posted.");
             }
         }
     }

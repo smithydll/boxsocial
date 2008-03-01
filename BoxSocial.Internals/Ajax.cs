@@ -140,7 +140,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                Display.ShowMessage(core, title, message);
+                Display.ShowMessage(title, message);
             }
         }
 

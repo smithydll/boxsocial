@@ -61,7 +61,7 @@ namespace BoxSocial.FrontEnd
                             }
                             else
                             {
-                                Functions.Generate403(core);
+                                Functions.Generate403();
                                 return;
                             }
                         }
@@ -145,14 +145,14 @@ namespace BoxSocial.FrontEnd
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Error", "Error installing application");
+                            Display.ShowMessage("Error", "Error installing application");
                             EndResponse();
                         }
                     }
                 }
             }
 
-            Display.ShowMessage(core, "Application Installed", "The application has been installed.");
+            Display.ShowMessage("Application Installed", "The application has been installed.");
             EndResponse();
             
         }

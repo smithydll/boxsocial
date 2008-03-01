@@ -152,7 +152,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (id < 1)
                 {
-                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
 
                 try
@@ -173,7 +173,7 @@ namespace BoxSocial.Applications.Calendar
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
             }
 
@@ -220,7 +220,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (Request.QueryString["sid"] != session.SessionId)
             {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                 return;
             }
 
@@ -258,7 +258,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -268,7 +268,7 @@ namespace BoxSocial.Applications.Calendar
                 Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
 
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
-                Display.ShowMessage(core, "Event Created", "You have successfully created a new event.");
+                Display.ShowMessage("Event Created", "You have successfully created a new event.");
             }
             else
             {
@@ -278,7 +278,7 @@ namespace BoxSocial.Applications.Calendar
                 Event calendarEvent = new Event(db, loggedInMember, eventId);
 
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
-                Display.ShowMessage(core, "Event Saved", "You have successfully saved your changes to the event.");
+                Display.ShowMessage("Event Saved", "You have successfully saved your changes to the event.");
             }
         }
 
@@ -362,7 +362,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (id < 1)
                 {
-                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
 
                 try
@@ -384,7 +384,7 @@ namespace BoxSocial.Applications.Calendar
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
             }
 
@@ -453,7 +453,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -475,7 +475,7 @@ namespace BoxSocial.Applications.Calendar
                 Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
-                Display.ShowMessage(core, "Task Created", "You have successfully created a new task.");
+                Display.ShowMessage("Task Created", "You have successfully created a new task.");
             }
             else
             {
@@ -502,7 +502,7 @@ namespace BoxSocial.Applications.Calendar
                 Task calendarTask = new Task(db, loggedInMember, taskId);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
-                Display.ShowMessage(core, "Task Saved", "You have successfully saved your changes to the task.");
+                Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");
             }
         }
 
@@ -572,7 +572,7 @@ namespace BoxSocial.Applications.Calendar
                         uQuery.AddField("invite_status", EventAttendance.Maybe);
                         break;
                     default:
-                        Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                 }
 
@@ -584,7 +584,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
         }

@@ -68,18 +68,18 @@ namespace BoxSocial.FrontEnd
 
                     if (rowsChanged > 0)
                     {
-                        Display.ShowMessage(Core, "Opt-out of ZinZam Mailings", "You have successfully opted-out of further ZinZam mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        Display.ShowMessage("Opt-out of ZinZam Mailings", "You have successfully opted-out of further ZinZam mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                         return;
                     }
                     else
                     {
-                        Display.ShowMessage(Core, "Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(Core, "Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                    Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                     return;
                 }
             }
@@ -94,7 +94,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Display.ShowMessage(Core, "Error", "Error activating user.");
+                    Display.ShowMessage("Error", "Error activating user.");
                     return;
                 }
 
@@ -106,12 +106,12 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_active = 1 WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey)));
 
-                    Display.ShowMessage(Core, "Success", "You have successfully activated your account. You may now <a href=\"/sign-in/\">sign in</a>.");
+                    Display.ShowMessage("Success", "You have successfully activated your account. You may now <a href=\"/sign-in/\">sign in</a>.");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage(Core, "Error", "Error activating user.");
+                    Display.ShowMessage("Error", "Error activating user.");
                     return;
                 }
             }
@@ -193,7 +193,7 @@ namespace BoxSocial.FrontEnd
                             Mysql.Escape(session.SessionId)));
 
                         //Response.Redirect("/", true);
-                        Display.ShowMessage(Core, "Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
+                        Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
                         return; /* stop processing the display of this page */
                     }
                 }

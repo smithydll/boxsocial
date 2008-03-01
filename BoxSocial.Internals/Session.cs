@@ -204,7 +204,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Error", "Error starting session");
+                        Display.ShowMessage("Error", "Error starting session");
                         Response.Cookies.Clear();
                         //Response.Write("fail 0");
                         //Response.Write(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN session_keys sk ON sk.user_id = uk.user_id WHERE uk.user_id = {0} AND ui.user_active = 1 AND sk.key_id = '{2}'",
@@ -232,7 +232,7 @@ namespace BoxSocial.Internals
                     else
                     {
                         // TODO: activation
-                        Display.ShowMessage(core, "Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                        Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
                         //Display.ShowMessage(this, "Error", "Error starting session");
                         //Response.Write("fail 1");
                         if (db != null)

@@ -79,7 +79,7 @@ namespace BoxSocial.Internals
                     if (core.session.LoggedInMember.Age < 18)
                     {
                         // TODO: Restricted content notice
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
                     break;
@@ -87,14 +87,14 @@ namespace BoxSocial.Internals
                     if (core.session.LoggedInMember.Age < 13)
                     {
                         // TODO: Restricted content notice
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
                     else if (core.session.LoggedInMember.Age < 15)
                     {
                         // TODO: click-through message for 13/14 year olds
                         // TODO: Restricted content notice
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
                     break;

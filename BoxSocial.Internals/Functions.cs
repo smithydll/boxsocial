@@ -37,11 +37,20 @@ namespace BoxSocial.Internals
     /// </summary>
     public static class Functions
     {
+        private static Core core;
         private static NumberFormatInfo numberFormatInfo;
         private static List<string> itemTypes = new List<string>();
         private static string selected = " selected=\"selected\"";
         private static string disabled = " disabled=\"disabled\"";
         private static string boxChecked = " checked=\"checked\"";
+
+        public static Core Core
+        {
+            set
+            {
+                core = value;
+            }
+        }
 
         public static bool CheckPageNameValid(string userName)
         {
@@ -383,18 +392,18 @@ namespace BoxSocial.Internals
             return itemTypes.Contains(itemType);
         }
 
-        public static void Generate404(Core core)
+        public static void Generate404()
         {
             HttpContext.Current.Response.StatusCode = 404;
             core.template.SetTemplate("404.html");
             core.EndResponse();
         }
 
-        public static void Generate404(Core core, bool customTemplate)
+        public static void Generate404(bool customTemplate)
         {
             if (!customTemplate)
             {
-                Generate404(core);
+                Generate404();
             }
             else
             {
@@ -403,18 +412,18 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void Generate403(Core core)
+        public static void Generate403()
         {
             HttpContext.Current.Response.StatusCode = 403;
             core.template.SetTemplate("403.html");
             core.EndResponse();
         }
 
-        public static void Generate403(Core core, bool customTemplate)
+        public static void Generate403(bool customTemplate)
         {
             if (!customTemplate)
             {
-                Generate403(core);
+                Generate403();
             }
             else
             {
@@ -423,7 +432,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void ThrowError(Core core)
+        public static void ThrowError()
         {
             core.template.SetTemplate("1202.html");
             core.EndResponse();

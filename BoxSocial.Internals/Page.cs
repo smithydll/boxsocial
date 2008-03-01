@@ -722,7 +722,7 @@ namespace BoxSocial.Internals
             }
             catch (PageNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
             }
         }
 
@@ -735,7 +735,7 @@ namespace BoxSocial.Internals
             }
             catch (PageNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
             }
         }
 
@@ -748,11 +748,11 @@ namespace BoxSocial.Internals
             page.ProfileOwner.LoadProfileInfo();
 
             // TODO: generate page list
-            page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
+            page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
 
             if (!thePage.PageAccess.CanRead)
             {
-                Functions.Generate403(core);
+                Functions.Generate403();
                 return;
             }
 

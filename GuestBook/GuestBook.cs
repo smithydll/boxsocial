@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (!page.ProfileOwner.ProfileAccess.CanRead)
             {
-                Functions.Generate403(core);
+                Functions.Generate403();
                 return;
             }
 
@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.GuestBook
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
             }
-            Display.DisplayComments(core, page.template, page.ProfileOwner, page.ProfileOwner.UserId, "USER", (long)page.ProfileOwner.ProfileComments, false);
+            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner.UserId, "USER", (long)page.ProfileOwner.ProfileComments, false);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(core, page.template, page.ThisGroup, page.ThisGroup.GroupId, "GROUP", (long)page.ThisGroup.Comments, false);
+            Display.DisplayComments(page.template, page.ThisGroup, page.ThisGroup.GroupId, "GROUP", (long)page.ThisGroup.Comments, false);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ThisGroup.DisplayNameOwnership + " Guest Book"));
@@ -116,7 +116,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(core, page.template, page.TheNetwork, page.TheNetwork.NetworkId, "NETWORK", (long)page.TheNetwork.Comments, false);
+            Display.DisplayComments(page.template, page.TheNetwork, page.TheNetwork.NetworkId, "NETWORK", (long)page.TheNetwork.Comments, false);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.TheNetwork.DisplayNameOwnership + " Guest Book"));
@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.GuestBook
                 page.template.ParseVariables("CAN_COMMENT", "TRUE");
             }
 
-            Display.DisplayComments(core, page.template, page.AnApplication, page.AnApplication.ApplicationId, "APPLICATION", (long)page.AnApplication.Comments, false);
+            Display.DisplayComments(page.template, page.AnApplication, page.AnApplication.ApplicationId, "APPLICATION", (long)page.AnApplication.Comments, false);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.AnApplication.GenerateBreadCrumbs("comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.AnApplication.DisplayNameOwnership + " Guest Book"));

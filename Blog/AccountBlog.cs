@@ -191,7 +191,7 @@ namespace BoxSocial.Applications.Blog
                         loggedInMember.UserId), false);
 
                     SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
-                    Display.ShowMessage(core, "Blog Post Deleted", "The blog post has been deleted from the database.");
+                    Display.ShowMessage("Blog Post Deleted", "The blog post has been deleted from the database.");
                     return;
                 }
                 else if (Request.QueryString["action"] == "edit")
@@ -410,12 +410,12 @@ namespace BoxSocial.Applications.Blog
             if (status == "DRAFT")
             {
                 SetRedirectUri(AccountModule.BuildModuleUri("blog", "drafts"));
-                Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
+                Display.ShowMessage("Draft Saved", "Your draft has been saved.");
             }
             else
             {
                 SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
-                Display.ShowMessage(core, "Blog Post Published", "Your blog post has been published.");
+                Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
             }
         }
     }

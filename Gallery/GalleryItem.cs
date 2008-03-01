@@ -629,7 +629,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!photo.ItemAccess.CanRead)
                 {
-                    Functions.Generate403(core);
+                    Functions.Generate403();
                     return;
                 }
 
@@ -730,7 +730,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(core, page.template, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
+                Display.DisplayComments(page.template, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
                     HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
@@ -741,7 +741,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
                 return;
             }
         }
@@ -765,7 +765,7 @@ namespace BoxSocial.Applications.Gallery
                     case "PRIVATE":
                         if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403(core);
+                            Functions.Generate403();
                             return;
                         }
                         break;
@@ -833,7 +833,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(core, page.template, page.ThisGroup, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments);
+                Display.DisplayComments(page.template, page.ThisGroup, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments);
 
                 string pageUri = string.Format("/group/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.ThisGroup.Slug), photoName);
@@ -844,7 +844,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
                 return;
             }
         }
@@ -870,7 +870,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.Workplace:
                         if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403(core);
+                            Functions.Generate403();
                             return;
                         }
                         break;
@@ -938,7 +938,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(core, page.template, page.TheNetwork, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments, true);
+                Display.DisplayComments(page.template, page.TheNetwork, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments, true);
 
                 string pageUri = string.Format("/network/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.TheNetwork.NetworkNetwork), photoName);
@@ -949,7 +949,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
                 return;
             }
         }
@@ -1016,7 +1016,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!galleryItem.ItemAccess.CanRead)
                     {
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
                 }
@@ -1032,7 +1032,7 @@ namespace BoxSocial.Applications.Gallery
                         case "PRIVATE":
                             if (!((UserGroup)owner).IsGroupMember(core.session.LoggedInMember))
                             {
-                                Functions.Generate403(core);
+                                Functions.Generate403();
                                 return;
                             }
                             break;
@@ -1052,7 +1052,7 @@ namespace BoxSocial.Applications.Gallery
                         case NetworkTypes.Workplace:
                             if (!((Network)owner).IsNetworkMember(core.session.LoggedInMember))
                             {
-                                Functions.Generate403(core);
+                                Functions.Generate403();
                                 return;
                             }
                             break;
@@ -1060,7 +1060,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    Functions.Generate404(core);
+                    Functions.Generate404();
                     return;
                 }
 
@@ -1188,7 +1188,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Functions.Generate404(core);
+                Functions.Generate404();
                 return;
             }
 

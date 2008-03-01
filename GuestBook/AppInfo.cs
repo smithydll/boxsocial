@@ -332,7 +332,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(core, template, profileOwner, profileOwner.Id, "USER", (long)profileOwner.ProfileComments, false);
+            Display.DisplayComments(template, profileOwner, profileOwner.Id, "USER", (long)profileOwner.ProfileComments, false);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
 
             e.core.AddMainPanel(template);
@@ -351,7 +351,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(e.core, template, thisGroup, thisGroup.GroupId, "GROUP", (long)thisGroup.Comments, false);
+            Display.DisplayComments(template, thisGroup, thisGroup.GroupId, "GROUP", (long)thisGroup.Comments, false);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(thisGroup)));
 
             e.core.AddMainPanel(template);
@@ -370,7 +370,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(e.core, template, theNetwork, theNetwork.NetworkId, "NETWORK", (long)theNetwork.Comments, false);
+            Display.DisplayComments(template, theNetwork, theNetwork.NetworkId, "NETWORK", (long)theNetwork.Comments, false);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(theNetwork)));
 
             e.core.AddMainPanel(template);
@@ -386,7 +386,7 @@ namespace BoxSocial.Applications.GuestBook
                 template.ParseVariables("CAN_COMMENT", "TRUE");
             }
 
-            Display.DisplayComments(e.core, template, anApplication, anApplication.ApplicationId, "APPLICATION", (long)anApplication.Comments, false);
+            Display.DisplayComments(template, anApplication, anApplication.ApplicationId, "APPLICATION", (long)anApplication.Comments, false);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(anApplication)));
 
             e.core.AddMainPanel(template);

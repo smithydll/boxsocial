@@ -199,7 +199,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Error!");
+                Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape("USER"), id, 0x1111));*/
 
             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
-            Display.ShowMessage(core, "Application Installed", "The application has been installed to your profile.");
+            Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
         }
 
         public void ApplicationUninstall()
@@ -231,7 +231,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Error!");
+                Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -248,7 +248,7 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape("USER"), id));*/
 
             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
-            Display.ShowMessage(core, "Application Uninstalled", "The application has been uninstalled from your profile.");
+            Display.ShowMessage("Application Uninstalled", "The application has been uninstalled from your profile.");
         }
 
         public void ApplicationSettings()
@@ -268,7 +268,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Error!");
+                Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -294,7 +294,7 @@ namespace BoxSocial
             }
             else
             {
-                Display.ShowMessage(core, "Error", "Error!");
+                Display.ShowMessage("Error", "Error!");
             }
         }
 
@@ -310,7 +310,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Error!");
+                Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -318,7 +318,7 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape("USER"), id, Functions.GetPermission()));
 
             template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
-            Display.ShowMessage(core, "Settings updated", "The settings for this application have been successfully updated.");
+            Display.ShowMessage("Settings updated", "The settings for this application have been successfully updated.");
         }
 
         public void Preferences(string submodule)
@@ -465,7 +465,7 @@ namespace BoxSocial
                 loggedInMember.UserId, (byte)showBbcode, showCustomStyles, emailNotifications, Mysql.Escape(homepage), timeZoneCode));
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=&sub=preferences");
-            Display.ShowMessage(core, "Preferences Saved", "Your preferences have been saved in the database.<br /><a href=\"/account/?module=&sub=preferences\">Return</a>");
+            Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.<br /><a href=\"/account/?module=&sub=preferences\">Return</a>");
         }
     }
 }

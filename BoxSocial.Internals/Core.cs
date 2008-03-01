@@ -176,7 +176,7 @@ namespace BoxSocial.Internals
                     return;
                 }
             }
-            Functions.Generate404(this);
+            Functions.Generate404();
         }
 
         public bool CanPostComment(string itemType, long itemId)

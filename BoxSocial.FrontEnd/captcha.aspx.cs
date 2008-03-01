@@ -40,7 +40,7 @@ namespace BoxSocial.FrontEnd
         {
             if (Request.QueryString["sid"] != session.SessionId)
             {
-                Display.ShowMessage(Core, "Unauthorised", "You are unauthorised to do this action.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                Display.ShowMessage(Core, "Unauthorised", "You are unauthorised to do this action.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace BoxSocial.FrontEnd
 
             if (confirmTable.Rows.Count != 1)
             {
-                Display.ShowMessage(Core, "Unauthorised", "You are unauthorised to do this action.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                 return;
             }
 

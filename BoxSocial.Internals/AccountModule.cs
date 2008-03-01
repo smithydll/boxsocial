@@ -131,7 +131,7 @@ namespace BoxSocial.Internals
         {
             if (Request.QueryString["sid"] != session.SessionId)
             {
-                Display.ShowMessage(core, "Unauthorised", "You are unauthorised to do this action.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                 return;
             }
         }

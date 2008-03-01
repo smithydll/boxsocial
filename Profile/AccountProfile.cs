@@ -131,7 +131,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_religion = {1}, profile_sexuality = '{2}', profile_maritial_status = '{3}' WHERE user_id = {0};",
                 loggedInMember.UserId, int.Parse(Request.Form["religion"]), Mysql.Escape(Request.Form["sexuality"]), Mysql.Escape(Request.Form["maritial-status"])));
 
-            Display.ShowMessage(core, "Lifestyle Saved", "Your lifestyle has been saved in the database.<br /><a href=\"/account/?module=profile&sub=lifestyle\">Return</a>");
+            Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.<br /><a href=\"/account/?module=profile&sub=lifestyle\">Return</a>");
         }
 
         public void Info(string submodule)
@@ -207,7 +207,7 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape(dob), Mysql.Escape(Request.Form["gender"]), Mysql.Escape(Request.Form["country"]), Mysql.Escape(Request.Form["auto-biography"])));
 
             SetRedirectUri(AccountModule.BuildModuleUri("profile", "info"));
-            Display.ShowMessage(core, "Information Saved", "Your information has been saved in the database.<br /><a href=\"/account/?module=profile&sub=info\">Return</a>");
+            Display.ShowMessage("Information Saved", "Your information has been saved in the database.<br /><a href=\"/account/?module=profile&sub=info\">Return</a>");
         }
 
         public void Style(string submodule)
@@ -241,7 +241,7 @@ namespace BoxSocial
             }
 
             SetRedirectUri(AccountModule.BuildModuleUri("profile", "style"));
-            Display.ShowMessage(core, "Style Saved", "Your profile style has been saved in the database.<br /><a href=\"/account/?module=profile&sub=style\">Return</a>");
+            Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.<br /><a href=\"/account/?module=profile&sub=style\">Return</a>");
         }
 
         public void Permissions(string submodule)
@@ -273,7 +273,7 @@ namespace BoxSocial
                 loggedInMember.UserId, permission));
 
             SetRedirectUri(AccountModule.BuildModuleUri("profile", "permissions"));
-            Display.ShowMessage(core, "Permissions Saved", "Your profile permissions have been saved in the database.<br /><a href=\"/account/?module=profile&sub=permissions\">Return</a>");
+            Display.ShowMessage("Permissions Saved", "Your profile permissions have been saved in the database.<br /><a href=\"/account/?module=profile&sub=permissions\">Return</a>");
         }
 
         private void MyName(string submodule)
@@ -340,7 +340,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_name_first = '{1}', profile_name_last = '{2}', profile_name_middle = '{3}', profile_name_suffix = '{4}', profile_name_title = '{5}' WHERE user_id = {0};",
                 loggedInMember.UserId, Mysql.Escape(Request.Form["firstname"]), Mysql.Escape(Request.Form["lastname"]), Mysql.Escape(Request.Form["middlename"]), Mysql.Escape(Request.Form["suffix"]), Mysql.Escape(Request.Form["title"])));
 
-            Display.ShowMessage(core, "Name Saved", "Your name has been saved in the database.<br /><a href=\"/account/?module=profile&sub=name\">Return</a>");
+            Display.ShowMessage("Name Saved", "Your name has been saved in the database.<br /><a href=\"/account/?module=profile&sub=name\">Return</a>");
         }
 
         public void SaveStatus(string submodule)

@@ -251,7 +251,7 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
+                page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
                 page.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode((Linker.BuildProfileUri(page.ProfileOwner))));
                 page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((Linker.BuildBlogUri(page.ProfileOwner))));
                 page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((Linker.BuildGalleryUri(page.ProfileOwner))));
@@ -417,7 +417,7 @@ namespace BoxSocial.Applications.Blog
                     {
                         page.template.ParseVariables("CAN_COMMENT", "TRUE");
                     }
-                    Display.DisplayComments(core, page.template, page.ProfileOwner, post, "BLOGPOST", comments);
+                    Display.DisplayComments(page.template, page.ProfileOwner, post, "BLOGPOST", comments);
                     page.template.ParseVariables("SINGLE", "TRUE");
                 }
 

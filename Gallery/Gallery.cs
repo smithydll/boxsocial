@@ -795,7 +795,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!gallery.GalleryAccess.CanRead)
                     {
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
 
@@ -812,7 +812,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 catch (GalleryNotFoundException)
                 {
-                    Functions.Generate404(core);
+                    Functions.Generate404();
                     return;
                 }
             }
@@ -908,13 +908,13 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                     }
 
                     if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                     {
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
 
@@ -934,33 +934,33 @@ namespace BoxSocial.Applications.Gallery
                         GroupGalleryItem.Create(page, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
                         page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, slug)));
-                        Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
+                        Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
                     catch (GalleryItemTooLargeException)
                     {
-                        Display.ShowMessage(core, "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                         return;
                     }
                     catch (GalleryQuotaExceededException)
                     {
-                        Display.ShowMessage(core, "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                         return;
                     }
                     catch (InvalidGalleryItemTypeException)
                     {
-                        Display.ShowMessage(core, "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                         return;
                     }
                     catch (InvalidGalleryFileNameException)
                     {
-                        Display.ShowMessage(core, "Submission failed", "Submission failed, try uploading with a different file name.");
+                        Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                         return;
                     }
                 }
                 catch (GalleryNotFoundException)
                 {
-                    Display.ShowMessage(core, "Submission failed", "Submission failed, Invalid Gallery.");
+                    Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
                 }
             }
@@ -970,7 +970,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                 {
-                    Functions.Generate403(core);
+                    Functions.Generate403();
                     return;
                 }
 
@@ -1006,7 +1006,7 @@ namespace BoxSocial.Applications.Gallery
                     case "PRIVATE":
                         if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403(core);
+                            Functions.Generate403();
                             return;
                         }
                         break;
@@ -1077,13 +1077,13 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                     }
 
                     if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                     {
-                        Functions.Generate403(core);
+                        Functions.Generate403();
                         return;
                     }
 
@@ -1103,33 +1103,33 @@ namespace BoxSocial.Applications.Gallery
                         NetworkGalleryItem.Create(page, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
                         page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, slug)));
-                        Display.ShowMessage(core, "Photo Uploaded", "You have successfully uploaded a photo.");
+                        Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
                     catch (GalleryItemTooLargeException)
                     {
-                        Display.ShowMessage(core, "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                         return;
                     }
                     catch (GalleryQuotaExceededException)
                     {
-                        Display.ShowMessage(core, "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                         return;
                     }
                     catch (InvalidGalleryItemTypeException)
                     {
-                        Display.ShowMessage(core, "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                         return;
                     }
                     catch (InvalidGalleryFileNameException)
                     {
-                        Display.ShowMessage(core, "Submission failed", "Submission failed, try uploading with a different file name.");
+                        Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                         return;
                     }
                 }
                 catch (GalleryNotFoundException)
                 {
-                    Display.ShowMessage(core, "Submission failed", "Submission failed, Invalid Gallery.");
+                    Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
                 }
             }
@@ -1139,7 +1139,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    Functions.Generate403(core);
+                    Functions.Generate403();
                     return;
                 }
 
@@ -1177,7 +1177,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.Workplace:
                         if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403(core);
+                            Functions.Generate403();
                             return;
                         }
                         break;

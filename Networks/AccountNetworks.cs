@@ -137,7 +137,7 @@ namespace BoxSocial.Networks
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -150,7 +150,7 @@ namespace BoxSocial.Networks
                 if (theNetwork.IsNetworkMember(loggedInMember))
                 {
                     SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage(core, "Already a member", "You are already a member of this network");
+                    Display.ShowMessage("Already a member", "You are already a member of this network");
                     return;
                 }
 
@@ -164,7 +164,7 @@ namespace BoxSocial.Networks
                     if (theNetwork.Join(core, loggedInMember, "") != null)
                     {
                         SetRedirectUri(theNetwork.Uri);
-                        Display.ShowMessage(core, "Joined Network", "You have successfully joined the network.");
+                        Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                         return;
                     }
                     else
@@ -174,7 +174,7 @@ namespace BoxSocial.Networks
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "The network you are trying to join does not exist, go back.");
+                Display.ShowMessage("Error", "The network you are trying to join does not exist, go back.");
                 return;
             }
         }
@@ -191,7 +191,7 @@ namespace BoxSocial.Networks
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -203,26 +203,26 @@ namespace BoxSocial.Networks
 
             if (!Member.CheckEmailUnique(db, networkEmail))
             {
-                Display.ShowMessage(core, "Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
+                Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
                 return;
             }
             else if (theNetwork.Join(core, loggedInMember, networkEmail) != null)
             {
                 if (theNetwork.RequireConfirmation)
                 {
-                    Display.ShowMessage(core, "Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
+                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
                     return;
                 }
                 else
                 {
                     SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage(core, "Joined Network", "You have successfully joined the network.");
+                    Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage(core, "Error", "Could not join network.");
+                Display.ShowMessage("Error", "Could not join network.");
                 return;
             }
             /*}
@@ -236,10 +236,15 @@ namespace BoxSocial.Networks
             subModules.Add("join", null);
             if (submodule != "join") return;
 
-            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            switch (Display.GetConfirmBoxResult())
             {
-                LeaveNetworkSave();
-                return;
+                case ConfirmBoxResult.None:
+                    break;
+                case ConfirmBoxResult.Yes:
+                    LeaveNetworkSave();
+                    return;
+                case ConfirmBoxResult.No:
+                    return;
             }
 
             long networkId = Functions.RequestLong("id", -1);
@@ -255,7 +260,7 @@ namespace BoxSocial.Networks
             }
             else
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
         }

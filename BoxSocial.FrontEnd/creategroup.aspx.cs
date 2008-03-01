@@ -68,7 +68,7 @@ namespace BoxSocial.FrontEnd
             if (session.IsLoggedIn == false)
             {
                 template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/sign-in/?redirect=/groups/create"));
-                Display.ShowMessage(Core, "Not Logged In", "You must be logged in to create a group.");
+                Display.ShowMessage("Not Logged In", "You must be logged in to create a group.");
                 return;
             }
 
@@ -211,7 +211,7 @@ namespace BoxSocial.FrontEnd
 
                         //Response.Redirect("/", true);
                         template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(newGroup.Uri));
-                        Display.ShowMessage(Core, "Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
+                        Display.ShowMessage("Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
                         return; /* stop processing the display of this page */
                     }
                 }

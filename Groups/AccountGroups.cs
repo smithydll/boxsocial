@@ -130,7 +130,7 @@ namespace BoxSocial.Groups
             subModules.Add("delete", null);
             if (submodule != "delete") return;
 
-            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
             {
                 DeleteGroupSave();
                 return;
@@ -152,7 +152,7 @@ namespace BoxSocial.Groups
             }
             else
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
         }
@@ -170,18 +170,18 @@ namespace BoxSocial.Groups
                     UserGroup group = new UserGroup(db, groupId);
 
                     SetRedirectUri(BuildModuleUri("groups"));
-                    Display.ShowMessage(core, "Cancelled", "This feature is currently not supported.");
+                    Display.ShowMessage("Cancelled", "This feature is currently not supported.");
                     return;
                 }
                 catch (InvalidGroupException)
                 {
-                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    Display.ShowMessage("Error", "An error has occured, go back.");
                     return;
                 }
             }
             else if (Request.Form["0"] != null)
             {
-                Display.ShowMessage(core, "Cancelled", "You cancelled the deletion of the group.");
+                Display.ShowMessage("Cancelled", "You cancelled the deletion of the group.");
                 return;
             }
         }
@@ -207,7 +207,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -215,7 +215,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupOperator(loggedInMember))
             {
-                Display.ShowMessage(core, "Cannot Edit Group", "You must be an operator of the group to edit it.");
+                Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
             }
 
@@ -269,7 +269,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -285,7 +285,7 @@ namespace BoxSocial.Groups
                     type = "PRIVATE";
                     break;
                 default:
-                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    Display.ShowMessage("Error", "An error has occured, go back.");
                     return;
             }
 
@@ -293,7 +293,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupOperator(loggedInMember))
             {
-                Display.ShowMessage(core, "Cannot Edit Group", "You must be an operator of the group to edit it.");
+                Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
             }
             else
@@ -316,7 +316,7 @@ namespace BoxSocial.Groups
                     thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)), false);
 
                 SetRedirectUri(thisGroup.Uri);
-                Display.ShowMessage(core, "Group Saved", "You have successfully edited the group.");
+                Display.ShowMessage("Group Saved", "You have successfully edited the group.");
                 return;
             }
         }
@@ -431,7 +431,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Unable to complete action, missing data. Go back and try again.");
+                Display.ShowMessage("Error", "Unable to complete action, missing data. Go back and try again.");
                 return;
             }
 
@@ -446,7 +446,7 @@ namespace BoxSocial.Groups
                 if (membershipTable.Rows.Count > 0)
                 {
                     SetRedirectUri(thisGroup.Uri);
-                    Display.ShowMessage(core, "Already a Member", "You are already a member of this group.");
+                    Display.ShowMessage("Already a Member", "You are already a member of this group.");
                     return;
                 }
 
@@ -483,23 +483,23 @@ namespace BoxSocial.Groups
                     SetRedirectUri(thisGroup.Uri);
                     if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
                     {
-                        Display.ShowMessage(core, "Joined Group", "You have joined this group.");
+                        Display.ShowMessage("Joined Group", "You have joined this group.");
                     }
                     else if (thisGroup.GroupType == "CLOSED")
                     {
-                        Display.ShowMessage(core, "Joined Group", "You applied to join this group. A group operator must approve your membership before you will be admitted into the group.");
+                        Display.ShowMessage("Joined Group", "You applied to join this group. A group operator must approve your membership before you will be admitted into the group.");
                     }
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Cannot join group", "This group is private, you must be invited to be able to join it.");
+                    Display.ShowMessage("Cannot join group", "This group is private, you must be invited to be able to join it.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Group does not Exist", "The group you are trying to join does not exist.");
+                Display.ShowMessage("Group does not Exist", "The group you are trying to join does not exist.");
                 return;
             }
         }
@@ -519,7 +519,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "Unable to complete action, missing data. Go back and try again.");
+                Display.ShowMessage("Error", "Unable to complete action, missing data. Go back and try again.");
                 return;
             }
 
@@ -536,7 +536,7 @@ namespace BoxSocial.Groups
                 if (operatorsTable.Rows.Count > 0)
                 {
                     SetRedirectUri(thisGroup.Uri);
-                    Display.ShowMessage(core, "Cannot Leave Group", "You cannot leave this group while you are an operator of the group.");
+                    Display.ShowMessage("Cannot Leave Group", "You cannot leave this group while you are an operator of the group.");
                     return;
                 }
                 else
@@ -553,7 +553,7 @@ namespace BoxSocial.Groups
                             thisGroup.GroupId, officerRowsChanged), false);
 
                         SetRedirectUri(thisGroup.Uri);
-                        Display.ShowMessage(core, "Left Group", "You have left the group.");
+                        Display.ShowMessage("Left Group", "You have left the group.");
                         return;
                     }
                     else if (isGroupMemberPending)
@@ -562,20 +562,20 @@ namespace BoxSocial.Groups
                             thisGroup.GroupId, loggedInMember.UserId));
 
                         SetRedirectUri(thisGroup.Uri);
-                        Display.ShowMessage(core, "Left Group", "You are no longer pending membership of the group.");
+                        Display.ShowMessage("Left Group", "You are no longer pending membership of the group.");
                         return;
                     }
                     else
                     {
                         SetRedirectUri(thisGroup.Uri);
-                        Display.ShowMessage(core, "Not a Member", "You cannot leave a group you are not a member of.");
+                        Display.ShowMessage("Not a Member", "You cannot leave a group you are not a member of.");
                         return;
                     }
                 }
              }
             catch (InvalidGroupException)
             {
-                Display.ShowMessage(core, "Group does not Exist", "The group you are trying to leave does not exist.");
+                Display.ShowMessage("Group does not Exist", "The group you are trying to leave does not exist.");
                 return;
             }
         }
@@ -601,7 +601,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -609,7 +609,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupMember(loggedInMember))
             {
-                Display.ShowMessage(core, "Error", "You must be a member of a group to invite someone to it.");
+                Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                 return;
             }
 
@@ -639,7 +639,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -653,7 +653,7 @@ namespace BoxSocial.Groups
 
                     if (!thisGroup.IsGroupMember(loggedInMember))
                     {
-                        Display.ShowMessage(core, "Error", "You must be a member of a group to invite someone to it.");
+                        Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                         return;
                     }
 
@@ -678,29 +678,29 @@ namespace BoxSocial.Groups
                             ae.SendNotification(core, inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);
-                            Display.ShowMessage(core, "Invited Friend", "You have invited a friend to the group.");
+                            Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Cannot Invite User", "You can only invite people who are friends with you to join a group.");
+                            Display.ShowMessage("Cannot Invite User", "You can only invite people who are friends with you to join a group.");
                             return;
                         }
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Already in Group", "The person you are trying to invite is already a member of the group. An invitation has not been sent.");
+                        Display.ShowMessage("Already in Group", "The person you are trying to invite is already a member of the group. An invitation has not been sent.");
                         return;
                     }
                 }
                 catch
                 {
-                    Display.ShowMessage(core, "Username does not exist", "The username you have entered does not exist, go back.");
+                    Display.ShowMessage("Username does not exist", "The username you have entered does not exist, go back.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
         }
@@ -723,7 +723,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -745,29 +745,29 @@ namespace BoxSocial.Groups
                                 thisGroup.GroupId), false);
 
                             SetRedirectUri(thisGroup.Uri);
-                            Display.ShowMessage(core, "Operator Appointed to Group", "You have successfully appointed an operator to the group.");
+                            Display.ShowMessage("Operator Appointed to Group", "You have successfully appointed an operator to the group.");
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Already an Officer", "This member is already an officer.");
+                            Display.ShowMessage("Already an Officer", "This member is already an officer.");
                             return;
                         }
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        Functions.ThrowError();
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an operator.");
+                    Display.ShowMessage("Unauthorised", "You must be the group operator to appoint an operator.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
         }
@@ -798,7 +798,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -821,25 +821,25 @@ namespace BoxSocial.Groups
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            Functions.ThrowError();
                             return;
                         }
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        Functions.ThrowError();
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an operator.");
+                    Display.ShowMessage("Unauthorised", "You must be the group operator to appoint an operator.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
         }
@@ -861,25 +861,25 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
             if (string.IsNullOrEmpty(title))
             {
-                Display.ShowMessage(core, "Officer Title Empty", "The officer title must not be empty, go back and enter an officer title.");
+                Display.ShowMessage("Officer Title Empty", "The officer title must not be empty, go back and enter an officer title.");
                 return;
             }
             else
             {
                 if (title.Length < 4)
                 {
-                    Display.ShowMessage(core, "Officer Title Too Short", "The officer title must be at least four characters, go back and enter an officer title.");
+                    Display.ShowMessage("Officer Title Too Short", "The officer title must be at least four characters, go back and enter an officer title.");
                     return;
                 }
                 else if (title.Length > 24)
                 {
-                    Display.ShowMessage(core, "Officer Title Too Long", "The officer title must be at most twenty four characters, go back and enter an officer title.");
+                    Display.ShowMessage("Officer Title Too Long", "The officer title must be at most twenty four characters, go back and enter an officer title.");
                     return;
                 }
             }
@@ -906,35 +906,35 @@ namespace BoxSocial.Groups
                                     thisGroup.GroupId), false);
 
                                 SetRedirectUri(thisGroup.Uri);
-                                Display.ShowMessage(core, "Officer Appointed to Group", "You have successfully appointed an officer to the group.");
+                                Display.ShowMessage("Officer Appointed to Group", "You have successfully appointed an officer to the group.");
                             }
                             else
                             {
-                                Display.ShowMessage(core, "Already Officer", "This member is already appointed as this officer.");
+                                Display.ShowMessage("Already Officer", "This member is already appointed as this officer.");
                                 return;
                             }
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            Functions.ThrowError();
                             return;
                         }
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                        Functions.ThrowError();
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Unauthorised", "You must be the group operator to appoint an officer.");
+                    Display.ShowMessage("Unauthorised", "You must be the group operator to appoint an officer.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back. 0x01");
+                Functions.ThrowError();
                 return;
             }
         }
@@ -959,7 +959,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -978,18 +978,18 @@ namespace BoxSocial.Groups
                             thisGroup.GroupId, deletedRows), false);
 
                         SetRedirectUri(thisGroup.Uri);
-                        Display.ShowMessage(core, "Officer Removed from Group", "You have successfully removed an officer from the group.");
+                        Display.ShowMessage("Officer Removed from Group", "You have successfully removed an officer from the group.");
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Error", "Could not delete officer, they may have already been delted.");
+                        Display.ShowMessage("Error", "Could not delete officer, they may have already been delted.");
                         return;
                     }
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
         }
@@ -999,7 +999,7 @@ namespace BoxSocial.Groups
             subModules.Add("resign-operator", null);
             if (submodule != "resign-operator") return;
 
-            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
             {
                 GroupResignOperatorSave();
                 return;
@@ -1015,7 +1015,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -1040,7 +1040,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -1061,24 +1061,24 @@ namespace BoxSocial.Groups
                             thisGroup.GroupId, deletedRows), false);
 
                         SetRedirectUri(thisGroup.Uri);
-                        Display.ShowMessage(core, "Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
+                        Display.ShowMessage("Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Cannot resign as operator", "Groups must have at least one operator, you cannot resign from this group at this moment.");
+                        Display.ShowMessage("Cannot resign as operator", "Groups must have at least one operator, you cannot resign from this group at this moment.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Error", "An error has occured. You are not an operator of this group, go back.");
+                    Display.ShowMessage("Error", "An error has occured. You are not an operator of this group, go back.");
                     return;
                 }
             }
             else if (Request.Form["0"] != null)
             {
                 SetRedirectUri(thisGroup.Uri);
-                Display.ShowMessage(core, "Cancelled", "You cancelled resignation from being a group operator.");
+                Display.ShowMessage("Cancelled", "You cancelled resignation from being a group operator.");
             }
         }
 
@@ -1100,7 +1100,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -1126,36 +1126,36 @@ namespace BoxSocial.Groups
                                     thisGroup.GroupId), false);
 
                                 SetRedirectUri(thisGroup.MemberlistUri);
-                                Display.ShowMessage(core, "Membership Approved", "You have approved the membership for the user.");
+                                Display.ShowMessage("Membership Approved", "You have approved the membership for the user.");
                                 return;
                             }
                             else
                             {
-                                Display.ShowMessage(core, "Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                                Display.ShowMessage("Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
                                 return;
                             }
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                            Display.ShowMessage("Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
                             return;
                         }
                     }
                     catch
                     {
-                        Display.ShowMessage(core, "Error", "An error has occured, group member does not exist, go back.");
+                        Display.ShowMessage("Error", "An error has occured, group member does not exist, go back.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Not Group Operator", "You must be an operator of the group to approve new memberships.");
+                    Display.ShowMessage("Not Group Operator", "You must be an operator of the group to approve new memberships.");
                     return;
                 }
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, group does not exist, go back.");
+                Display.ShowMessage("Error", "An error has occured, group does not exist, go back.");
                 return;
             }
         }
@@ -1167,7 +1167,7 @@ namespace BoxSocial.Groups
 
             AuthoriseRequestSid();
 
-            if (Request.Form["1"] != null || Request.Form["0"] != null)
+            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
             {
                 GroupBanMemberSave();
                 return;
@@ -1184,7 +1184,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -1212,7 +1212,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
 
@@ -1230,30 +1230,30 @@ namespace BoxSocial.Groups
 
                             member.Ban();
 
-                            Display.ShowMessage(core, "Member Banned", "The member has been banned from the group.");
+                            Display.ShowMessage("Member Banned", "The member has been banned from the group.");
                             return;
                         }
                         catch (InvalidUserException)
                         {
-                            Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                            Functions.ThrowError();
                             return;
                         }
                     }
                     else
                     {
-                        Display.ShowMessage(core, "Cannot ban member", "Only group operators can ban members from groups.");
+                        Display.ShowMessage("Cannot ban member", "Only group operators can ban members from groups.");
                         return;
                     }
                 }
                 catch (InvalidGroupException)
                 {
-                    Display.ShowMessage(core, "Error", "An error has occured, go back.");
+                    Functions.ThrowError();
                     return;
                 }
             }
             else if (Request.Form["0"] != null)
             {
-                Display.ShowMessage(core, "Cancelled", "You cancelled the banning of this member.");
+                Display.ShowMessage("Cancelled", "You cancelled the banning of this member.");
                 return;
             }
         }

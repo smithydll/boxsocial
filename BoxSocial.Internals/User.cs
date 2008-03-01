@@ -1812,7 +1812,7 @@ namespace BoxSocial.Internals
 
             if (!page.ProfileOwner.ProfileAccess.CanRead)
             {
-                Functions.Generate403(core);
+                Functions.Generate403();
                 return;
             }
 
@@ -1900,7 +1900,7 @@ namespace BoxSocial.Internals
             core.template.ParseVariables("LISTS", listTable.Rows.Count.ToString());
 
             /* pages */
-            core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(core.db, page.ProfileOwner, core.session.LoggedInMember, true));
+            core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
 
             /* status */
             StatusMessage statusMessage = StatusFeed.GetLatest(core, page.ProfileOwner);

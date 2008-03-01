@@ -34,6 +34,13 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum ConfirmBoxResult
+    {
+        None,
+        Yes,
+        No,
+    }
+
     public static class Display
     {
         internal static TPage page;
@@ -41,6 +48,16 @@ namespace BoxSocial.Internals
         const string RANK_ACTIVE = "/images/star-on.png";
         const string RANK_RATING = "/images/star-on.png";
         const string RANK_SHADOW = "/images/star-off.png";
+
+        private static Core core;
+
+        public static Core Core
+        {
+            set
+            {
+                core = value;
+            }
+        }
 
         public static string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
@@ -175,7 +192,7 @@ namespace BoxSocial.Internals
             return pagination.ToString();
         }
 
-        public static void ShowMessage(Core core, string title, string message)
+        public static void ShowMessage(string title, string message)
         {
             core.template.SetTemplate("std.message.html");
             core.template.ParseVariables("MESSAGE_TITLE", title);
@@ -184,8 +201,33 @@ namespace BoxSocial.Internals
             core.EndResponse();
         }
 
-        public static void ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
+        public static ConfirmBoxResult GetConfirmBoxResult()
         {
+            if (HttpContext.Current.Request.Form["1"] != null)
+            {
+                return ConfirmBoxResult.Yes;
+            }
+            else if (HttpContext.Current.Request.Form["0"] != null)
+            {
+                return ConfirmBoxResult.No;
+            }
+            else
+            {
+                return ConfirmBoxResult.None;
+            }
+        }
+
+        public static ConfirmBoxResult ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
+        {
+            if (HttpContext.Current.Request.Form["1"] != null)
+            {
+                return ConfirmBoxResult.Yes;
+            }
+            else if (HttpContext.Current.Request.Form["0"] != null)
+            {
+                return ConfirmBoxResult.No;
+            }
+
             page.template.SetTemplate("std.confirm.html");
 
             page.template.ParseVariables("S_FORM_ACTION", formAction);
@@ -201,34 +243,36 @@ namespace BoxSocial.Internals
             }
 
             page.EndResponse();
+
+            return ConfirmBoxResult.None;
         }
 
-        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType)
+        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType)
         {
-            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, -1, true);
+            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, -1, true);
         }
 
-        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, long comments)
+        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, long comments)
         {
-            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, comments, true);
+            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, comments, true);
         }
 
-        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, bool sortAscending)
+        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, bool sortAscending)
         {
-            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, -1, sortAscending);
+            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, -1, sortAscending);
         }
 
-        public static void DisplayComments(Core core, Template template, Member profileOwner, long itemId, string itemType, long commentCount, bool sortAscending)
+        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, long commentCount, bool sortAscending)
         {
-            DisplayComments(core, template, (Primitive)profileOwner, itemId, itemType, commentCount, sortAscending);
+            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, commentCount, sortAscending);
         }
 
-        public static void DisplayComments(Core core, Template template, Primitive owner, long itemId, string itemType, long commentCount)
+        public static void DisplayComments(Template template, Primitive owner, long itemId, string itemType, long commentCount)
         {
-            DisplayComments(core, template, owner, itemId, itemType, commentCount, true);
+            DisplayComments(template, owner, itemId, itemType, commentCount, true);
         }
 
-        public static void DisplayComments(Core core, Template template, Primitive owner, long itemId, string itemType, long commentCount, bool sortAscending)
+        public static void DisplayComments(Template template, Primitive owner, long itemId, string itemType, long commentCount, bool sortAscending)
         {
             Mysql db = core.db;
 
@@ -390,13 +434,13 @@ namespace BoxSocial.Internals
 
         }
 
-        public static Member fillLoggedInMember(Mysql db, System.Security.Principal.IPrincipal User, Member loggedInMember)
+        public static Member fillLoggedInMember(System.Security.Principal.IPrincipal User, Member loggedInMember)
         {
             if (loggedInMember == null)
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    return loggedInMember = new Member(db, User.Identity.Name, false);
+                    return loggedInMember = new Member(core.db, User.Identity.Name, false);
                 }
             }
             return null;
@@ -468,8 +512,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string GeneratePageList(Mysql db, Member owner, Member loggedInMember, bool fragment)
+        public static string GeneratePageList(Member owner, Member loggedInMember, bool fragment)
         {
+            Mysql db = core.db;
+
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = Member.GetMemberId(loggedInMember);
 

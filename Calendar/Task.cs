@@ -387,7 +387,7 @@ ENGINE = InnoDB;
 
                 if (!calendarTask.TaskAccess.CanRead)
                 {
-                    Functions.Generate403(core);
+                    Functions.Generate403();
                     return;
                 }
 
@@ -403,7 +403,7 @@ ENGINE = InnoDB;
             }
             catch
             {
-                Display.ShowMessage(core, "Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
             }
         }
 

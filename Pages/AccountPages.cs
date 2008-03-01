@@ -230,18 +230,18 @@ namespace BoxSocial.Applications.Pages
                         if (page.Delete(core, loggedInMember))
                         {
                             SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
-                            Display.ShowMessage(core, "Page Deleted", "The page has been deleted from the database.");
+                            Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");
                             return;
                         }
                         else
                         {
-                            Display.ShowMessage(core, "Error", "Could not delete the page.");
+                            Display.ShowMessage("Error", "Could not delete the page.");
                             return;
                         }
                     }
                     catch (PageNotFoundException)
                     {
-                        Display.ShowMessage(core, "Error", "Could not delete the page.");
+                        Display.ShowMessage("Error", "Could not delete the page.");
                         return;
                     }
                 }
@@ -393,12 +393,12 @@ namespace BoxSocial.Applications.Pages
             if (status == PageStatus.Draft)
             {
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "drafts"));
-                Display.ShowMessage(core, "Draft Saved", "Your draft has been saved.");
+                Display.ShowMessage("Draft Saved", "Your draft has been saved.");
             }
             else
             {
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "manage"));
-                Display.ShowMessage(core, "Page Published", "Your page has been published");
+                Display.ShowMessage("Page Published", "Your page has been published");
             }
         }
 
@@ -508,7 +508,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                    Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                     return;
                 }
             }
@@ -532,17 +532,17 @@ namespace BoxSocial.Applications.Pages
                             loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission()));
 
                         SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
-                        Display.ShowMessage(core, "List Created", "You have created a new list");
+                        Display.ShowMessage("List Created", "You have created a new list");
                     }
                     else
                     {
-                        Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                        Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage(core, "List Error", "You have already created a list with the same name, go back and give another name.");
+                    Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
                     return;
                 }
             }
@@ -558,11 +558,11 @@ namespace BoxSocial.Applications.Pages
                         listId, Mysql.Escape(title), Functions.GetPermission(), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
 
                     SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
-                    Display.ShowMessage(core, "List Saved", "You have saved the list");
+                    Display.ShowMessage("List Saved", "You have saved the list");
                 }
                 else
                 {
-                    Display.ShowMessage(core, "List Error", "You have already created a list with the same name, go back and give another name.");
+                    Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
                     return;
                 }
             }
@@ -587,7 +587,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
 
@@ -628,7 +628,7 @@ namespace BoxSocial.Applications.Pages
             }
             else
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;
             }
         }
@@ -648,7 +648,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
 
@@ -664,12 +664,12 @@ namespace BoxSocial.Applications.Pages
                     loggedInMember.UserId, listId), false);
 
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
-                Display.ShowMessage(core, "List Deleted", "You have deleted a list.");
+                Display.ShowMessage("List Deleted", "You have deleted a list.");
                 return;
             }
             else
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;
             }
         }
@@ -754,7 +754,7 @@ namespace BoxSocial.Applications.Pages
                 else
                 {
                     SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"]));
-                    Display.ShowMessage(core, "List Updated", "You have successfully appended an item to your list.");
+                    Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
                 }
             }
             else
@@ -781,7 +781,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
 
@@ -799,11 +799,11 @@ namespace BoxSocial.Applications.Pages
                         loggedInMember.UserId, listId), false);
 
                 SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
-                Display.ShowMessage(core, "List Updated", "You have successfully removed an item from your list.");
+                Display.ShowMessage("List Updated", "You have successfully removed an item from your list.");
             }
             else
             {
-                Display.ShowMessage(core, "List Error", "You submitted invalid information. Go back and try again.");
+                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
         }

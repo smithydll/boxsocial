@@ -167,7 +167,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot demote friend", "No friend specified to demote. Please go back and try again.");
+                Display.ShowMessage("Cannot demote friend", "No friend specified to demote. Please go back and try again.");
                 return;
             }
 
@@ -209,12 +209,12 @@ namespace BoxSocial
                 }
 
                 template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=friends&sub=friends"));
-                Display.ShowMessage(core, "Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
+                Display.ShowMessage("Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
                 return;
             }
             else
             {
-                Display.ShowMessage(core, "Error", "Error");
+                Display.ShowMessage("Error", "Error");
                 return;
             }
         }
@@ -232,7 +232,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot promote friend", "No friend specified to promote. Please go back and try again.");
+                Display.ShowMessage("Cannot promote friend", "No friend specified to promote. Please go back and try again.");
                 return;
             }
 
@@ -245,7 +245,7 @@ namespace BoxSocial
 
                 if (relationOrder == 1)
                 {
-                    Display.ShowMessage(core, "Cannot promote friend", "Cannot promote higher than the number one position.");
+                    Display.ShowMessage("Cannot promote friend", "Cannot promote higher than the number one position.");
                     return;
                 }
                 else if (relationOrder > 0)
@@ -293,12 +293,12 @@ namespace BoxSocial
                 }
 
                 template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=friends&sub=friends"));
-                Display.ShowMessage(core, "Friend Promoted", "You have successfully promoted your friend in your social hierarchy.");
+                Display.ShowMessage("Friend Promoted", "You have successfully promoted your friend in your social hierarchy.");
                 return;
             }
             else
             {
-                Display.ShowMessage(core, "Error", "Error");
+                Display.ShowMessage("Error", "Error");
                 return;
             }
         }
@@ -316,7 +316,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot delete family member", "No family member specified to delete. Please go back and try again.");
+                Display.ShowMessage("Cannot delete family member", "No family member specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -326,7 +326,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family - {1} WHERE ui.user_id = {0};",
                 loggedInMember.UserId, deletedRows), false);
 
-            Display.ShowMessage(core, "Deleted family member", "You have deleted a family member.");
+            Display.ShowMessage("Deleted family member", "You have deleted a family member.");
         }
 
         private void DeleteFriend()
@@ -342,7 +342,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot delete friend", "No friend specified to delete. Please go back and try again.");
+                Display.ShowMessage("Cannot delete friend", "No friend specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -353,7 +353,7 @@ namespace BoxSocial
                 loggedInMember.UserId, deletedRows), false);
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
-            Display.ShowMessage(core, "Deleted friend", "You have deleted a friend.");
+            Display.ShowMessage("Deleted friend", "You have deleted a friend.");
         }
 
         private void AddFamily()
@@ -369,14 +369,14 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot add to family", "No user specified to add as family. Please go back and try again.");
+                Display.ShowMessage("Cannot add to family", "No user specified to add as family. Please go back and try again.");
                 return;
             }
 
             // cannot befriend yourself
             if (friendId == loggedInMember.UserId)
             {
-                Display.ShowMessage(core, "Cannot add yourself", "You cannot add yourself as a family member.");
+                Display.ShowMessage("Cannot add yourself", "You cannot add yourself as a family member.");
                 return;
             }
 
@@ -388,12 +388,12 @@ namespace BoxSocial
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FAMILY")
                 {
-                    Display.ShowMessage(core, "Already in family", "You have already added this person to your family.");
+                    Display.ShowMessage("Already in family", "You have already added this person to your family.");
                     return;
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage(core, "Person Blocked", "You have blocked this person, to add them to your family you must first unblock them.");
+                    Display.ShowMessage("Person Blocked", "You have blocked this person, to add them to your family you must first unblock them.");
                     return;
                 }
             }
@@ -417,7 +417,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family + 1 WHERE ui.user_id = {0};",
                 loggedInMember.UserId), false);
 
-            Display.ShowMessage(core, "Added family member", "You have added person to your family.");
+            Display.ShowMessage("Added family member", "You have added person to your family.");
         }
 
         private void InviteFriend(string submodule)
@@ -521,7 +521,7 @@ namespace BoxSocial
             }
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=invite");
-            Display.ShowMessage(core, "Invited Friend", "You have invited all your friends to ZinZam.");
+            Display.ShowMessage("Invited Friend", "You have invited all your friends to ZinZam.");
         }
 
         private void InviteFriendSend()
@@ -553,7 +553,7 @@ namespace BoxSocial
 
             if (string.IsNullOrEmpty(friendEmail))
             {
-                Display.ShowMessage(core, "Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
+                Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
                 return;
             }
 
@@ -566,7 +566,7 @@ namespace BoxSocial
 
                     if (inviteKeysTable.Rows.Count > 0)
                     {
-                        Display.ShowMessage(core, "Cannot Invite Friend", "The person you have invited has opted-out of mailings from ZinZam.");
+                        Display.ShowMessage("Cannot Invite Friend", "The person you have invited has opted-out of mailings from ZinZam.");
                         return;
                     }
                     else
@@ -599,19 +599,19 @@ namespace BoxSocial
                 }
                 else
                 {
-                    Display.ShowMessage(core, "Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
+                    Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
                         Linker.BuildAddFriendUri(Member.lastEmailId)));
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage(core, "Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
+                Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
                 return;
             }
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=invite");
-            Display.ShowMessage(core, "Invited Friend", "You have invited a friend to ZinZam.");
+            Display.ShowMessage("Invited Friend", "You have invited a friend to ZinZam.");
         }
 
         private void AddFriend()
@@ -627,14 +627,14 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot add friend", "No friend specified to add. Please go back and try again.");
+                Display.ShowMessage("Cannot add friend", "No friend specified to add. Please go back and try again.");
                 return;
             }
 
             // cannot befriend yourself
             if (friendId == loggedInMember.UserId)
             {
-                Display.ShowMessage(core, "Cannot add friend", "You cannot add yourself as a friend.");
+                Display.ShowMessage("Cannot add friend", "You cannot add yourself as a friend.");
                 return;
             }
 
@@ -646,12 +646,12 @@ namespace BoxSocial
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FRIEND")
                 {
-                    Display.ShowMessage(core, "Already friend", "You have already added this person as a friend.");
+                    Display.ShowMessage("Already friend", "You have already added this person as a friend.");
                     return;
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage(core, "Person Blocked", "You have blocked this person, to add them as a friend you must first unblock them.");
+                    Display.ShowMessage("Person Blocked", "You have blocked this person, to add them as a friend you must first unblock them.");
                     return;
                 }
             }
@@ -691,7 +691,7 @@ namespace BoxSocial
             }
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
-            Display.ShowMessage(core, "Added friend", "You have added a friend.");
+            Display.ShowMessage("Added friend", "You have added a friend.");
         }
 
         private void ManageBlockList(string submodule)
@@ -738,7 +738,7 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot unblock person", "No person specified to unblock. Please go back and try again.");
+                Display.ShowMessage("Cannot unblock person", "No person specified to unblock. Please go back and try again.");
                 return;
             }
 
@@ -754,7 +754,7 @@ namespace BoxSocial
                 }
                 else if (i == relationsTable.Rows.Count - 1)
                 {
-                    Display.ShowMessage(core, "Cannot unblock person", "This person is not blocked, cannot unlock.");
+                    Display.ShowMessage("Cannot unblock person", "This person is not blocked, cannot unlock.");
                     return;
                 }
             }
@@ -768,7 +768,7 @@ namespace BoxSocial
                 loggedInMember.UserId), false);
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
-            Display.ShowMessage(core, "Unblocked Person", "You have unblocked a person.");
+            Display.ShowMessage("Unblocked Person", "You have unblocked a person.");
         }
 
         public void BlockPerson()
@@ -784,14 +784,14 @@ namespace BoxSocial
             }
             catch
             {
-                Display.ShowMessage(core, "Cannot block person", "No person specified to block. Please go back and try again.");
+                Display.ShowMessage("Cannot block person", "No person specified to block. Please go back and try again.");
                 return;
             }
 
             // cannot befriend yourself
             if (blockId == loggedInMember.UserId)
             {
-                Display.ShowMessage(core, "Cannot block person", "You cannot block yourself.");
+                Display.ShowMessage("Cannot block person", "You cannot block yourself.");
                 return;
             }
 
@@ -803,37 +803,36 @@ namespace BoxSocial
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FRIEND")
                 {
-                    if (Request.Form["1"] == null && Request.Form["0"] == null)
+                    switch (Display.GetConfirmBoxResult())
                     {
-                        Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
-                        hiddenFieldList.Add("module", "friends");
-                        hiddenFieldList.Add("sub", "block");
-                        hiddenFieldList.Add("mode", "block");
-                        hiddenFieldList.Add("id", blockId.ToString());
+                        case ConfirmBoxResult.None:
+                            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                            hiddenFieldList.Add("module", "friends");
+                            hiddenFieldList.Add("sub", "block");
+                            hiddenFieldList.Add("mode", "block");
+                            hiddenFieldList.Add("id", blockId.ToString());
 
-                        Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
-                            "Delete as friend?",
-                            "Do you also want to delete this person from your friends list?",
-                            hiddenFieldList);
-                        return;
-                    }
-                    else if (Request.Form["1"] != null)
-                    {
-                        // remove from friends
-                        long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND';",
-                            loggedInMember.UserId, blockId), true);
+                            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                                "Delete as friend?",
+                                "Do you also want to delete this person from your friends list?",
+                                hiddenFieldList);
+                            return;
+                        case ConfirmBoxResult.Yes:
+                            // remove from friends
+                            long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND';",
+                                loggedInMember.UserId, blockId), true);
 
-                        db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - 1 WHERE ui.user_id = {0};",
-                            loggedInMember.UserId), true);
-                    }
-                    else if (Request.Form["0"] != null)
-                    {
-                        // don't do anything
+                            db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - 1 WHERE ui.user_id = {0};",
+                                loggedInMember.UserId), true);
+                            break;
+                        case ConfirmBoxResult.No:
+                            // don't do anything
+                            break;
                     }
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage(core, "Person Already Blocked", "You have already blocked this person.");
+                    Display.ShowMessage("Person Already Blocked", "You have already blocked this person.");
                     return;
                 }
             }
@@ -847,7 +846,7 @@ namespace BoxSocial
                 loggedInMember.UserId), false);
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=block");
-            Display.ShowMessage(core, "Blocked Person", "You have blocked a person.");
+            Display.ShowMessage("Blocked Person", "You have blocked a person.");
         }
     }
 }

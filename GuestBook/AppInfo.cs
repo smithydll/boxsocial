@@ -324,8 +324,11 @@ namespace BoxSocial.Applications.GuestBook
             Member profileOwner = (Member)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
+            profileOwner.ProfileAccess.SetViewer(e.core.session.LoggedInMember);
+
             if (e.core.session.IsLoggedIn)
             {
+                template.ParseVariables("LOGGED_IN", "TRUE");
                 if (profileOwner.ProfileAccess.CanComment)
                 {
                     template.ParseVariables("CAN_COMMENT", "TRUE");
@@ -334,6 +337,7 @@ namespace BoxSocial.Applications.GuestBook
 
             Display.DisplayComments(template, profileOwner, profileOwner.Id, "USER", (long)profileOwner.ProfileComments, false);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
+            template.ParseVariables("IS_PROFILE", "TRUE");
 
             e.core.AddMainPanel(template);
         }

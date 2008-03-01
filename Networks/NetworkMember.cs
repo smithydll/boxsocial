@@ -83,8 +83,19 @@ namespace BoxSocial.Networks
         {
             this.db = db;
 
-            DataTable memberTable = db.SelectQuery(string.Format("SELECT {2}, {3}, {4}, {5} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.user_id = {0} AND nm.network_id = {1}",
-                memberId, networkId, USER_INFO_FIELDS, USER_PROFILE_FIELDS, USER_ICON_FIELDS, USER_NETWORK_FIELDS));
+            SelectQuery query = new SelectQuery("network_members nm");
+            query.AddFields(NetworkMember.USER_NETWORK_FIELDS, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddJoin(JoinTypes.Inner, "user_info ui", "nm.user_id", "ui.user_id");
+            query.AddJoin(JoinTypes.Inner, "user_profile up", "nm.user_id", "up.user_id");
+            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+            query.AddCondition("nm.user_id", memberId);
+            query.AddCondition("nm.network_id", networkId);
+
+            /*DataTable memberTable = db.SelectQuery(string.Format("SELECT {2}, {3}, {4}, {5} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.user_id = {0} AND nm.network_id = {1}",
+                memberId, networkId, USER_INFO_FIELDS, USER_PROFILE_FIELDS, USER_ICON_FIELDS, USER_NETWORK_FIELDS));*/
+
+            DataTable memberTable = db.SelectQuery(query);
 
             if (memberTable.Rows.Count == 1)
             {
@@ -180,6 +191,19 @@ namespace BoxSocial.Networks
             }
 
             return networks;
+        }
+
+        public static bool CheckNetworkEmailUnique(Mysql db, string eMail)
+        {
+            DataTable networkMemberTable = db.SelectQuery(string.Format("SELECT user_id, member_email FROM network_members WHERE LCASE(member_email) = '{0}';",
+                Mysql.Escape(eMail.ToLower())));
+            if (networkMemberTable.Rows.Count > 0)
+            {
+                lastEmailId = (int)networkMemberTable.Rows[0]["user_id"];
+                return false;
+            }
+
+            return true;
         }
     }
 }

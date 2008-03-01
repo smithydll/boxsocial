@@ -201,10 +201,27 @@ namespace BoxSocial.Networks
 
             string networkEmail = Request.Form["email"];
 
-            if (!Member.CheckEmailUnique(db, networkEmail))
+            if (!theNetwork.IsValidNetworkEmail(networkEmail))
             {
-                Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
+                Display.ShowMessage("Invalid e-mail for network", "You have attempted to register an e-mail that is not associated with the network you are attempting to join. The e-mail address should have the form _user_@" + theNetwork.NetworkNetwork + ". Go back and enter a valid e-mail address for this network.");
                 return;
+            }
+
+            if (!NetworkMember.CheckNetworkEmailUnique(db, networkEmail))
+            {
+                NetworkMember member = new NetworkMember(db, (int)theNetwork.Id, (int)loggedInMember.Id);
+                if (!member.IsMemberActive)
+                {
+                    theNetwork.ResendConfirmationKey(core, member);
+
+                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
+                    return;
+                }
+                else
+                {
+                    Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
+                    return;
+                }
             }
             else if (theNetwork.Join(core, loggedInMember, networkEmail) != null)
             {
@@ -260,13 +277,43 @@ namespace BoxSocial.Networks
             }
             else
             {
-                Display.ShowMessage("Error", "An error has occured, go back.");
+                Functions.ThrowError();
                 return;
             }
         }
 
         private void LeaveNetworkSave()
         {
+
+            long networkId = Functions.RequestLong("id", -1);
+
+            try
+            {
+                Network theNetwork = new Network(db, networkId);
+
+                if (theNetwork.IsNetworkMember(loggedInMember))
+                {
+                    db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1};",
+                        theNetwork.Id, loggedInMember.UserId), true);
+
+                    db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members - 1 WHERE network_id = {0}",
+                        theNetwork.Id), false);
+
+                    SetRedirectUri(theNetwork.Uri);
+                    Display.ShowMessage("Left Network", "You have left the network.");
+                    return;
+                }
+                else
+                {
+                    SetRedirectUri(theNetwork.Uri);
+                    Display.ShowMessage("Not a Member", "You cannot leave a network you are not a member of.");
+                    return;
+                }
+            }
+            catch (InvalidNetworkException)
+            {
+                Functions.ThrowError();
+            }
         }
     }
 }

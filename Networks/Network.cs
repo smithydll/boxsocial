@@ -392,6 +392,27 @@ namespace BoxSocial.Networks
             }
         }
 
+        public void ResendConfirmationKey(Core core, NetworkMember member)
+        {
+            string activateKey = member.MemberActivationCode;
+
+            int isActive = (requireConfirmation) ? 0 : 1;
+
+            string activateUri = string.Format("http://zinzam.com/network/{0}?mode=activate&id={1}&key={2}",
+                networkNetwork, member.UserId, activateKey);
+
+            if (requireConfirmation)
+            {
+                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
+
+                emailTemplate.ParseVariables("TO_NAME", member.DisplayName);
+                emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
+                emailTemplate.ParseVariables("S_EMAIL", member.MemberEmail);
+
+                Email.SendEmail(core, member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+            }
+        }
+
         public NetworkMember Join(Core core, Member member, string networkEmail)
         {
             string activateKey = Member.GenerateActivationSecurityToken();

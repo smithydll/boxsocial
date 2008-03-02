@@ -439,6 +439,14 @@ ENGINE = InnoDB;
         {
             return AccountModule.BuildModuleUri("calendar", "mark-complete", true, string.Format("id={0}", calendarTask.Id));
         }
+
+        public override string Uri
+        {
+            get
+            {
+                return Task.BuildTaskUri(this);
+            }
+        }
     }
 
     public class InvalidTaskException : Exception

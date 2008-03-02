@@ -265,6 +265,7 @@ namespace BoxSocial.FrontEnd
                 commentId = commentObject.CommentId;
 
                 Core.AdjustCommentCount(itemType, (long)itemId, 1);
+                Core.CommentPosted(itemType, (long)itemId, commentObject, loggedInMember);
             }
             catch (NotLoggedInException)
             {

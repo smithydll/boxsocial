@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Blog
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
-            core.RegisterCommentHandle("BLOGPOST", blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount);
+            core.RegisterCommentHandle("BLOGPOST", blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -102,6 +102,10 @@ namespace BoxSocial.Applications.Blog
             core.RegisterApplicationPage(@"^/blog/([0-9]{4})(|/)$", showBlogYear, 3);
             core.RegisterApplicationPage(@"^/blog/([0-9]{4})/([0-9]{1,2})(|/)$", showBlogMonth, 4);
             core.RegisterApplicationPage(@"^/blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)(|/)$", showBlogPost, 5);
+        }
+
+        private void blogCommentPosted(CommentPostedEventArgs e)
+        {
         }
 
         private bool blogCanPostComment(long itemId, Member member)

@@ -38,13 +38,15 @@ namespace BoxSocial.Internals
         private Core.CommentHandler canPostComment;
         private Core.CommentHandler canDeleteComment;
         private Core.CommentCountHandler adjustCommentCount;
+        private Core.CommentPostedHandler commentPosted;
 
-        public CommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
+        public CommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
         {
             this.token = token;
             this.canPostComment = canPostComment;
             this.canDeleteComment = canDeleteComment;
             this.adjustCommentCount = adjustCommentCount;
+            this.commentPosted = commentPosted;
         }
 
         public bool CanPostComment(long itemId, Member viewer)
@@ -60,6 +62,11 @@ namespace BoxSocial.Internals
         public void AdjustCommentCount(long itemId, int adjustment)
         {
             adjustCommentCount(itemId, adjustment);
+        }
+
+        public void CommentPosted(Comment comment, Member poster, string itemType, long itemId)
+        {
+            commentPosted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
         }
 
         public int CompareTo(object obj)

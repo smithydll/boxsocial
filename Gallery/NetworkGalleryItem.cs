@@ -57,5 +57,13 @@ namespace BoxSocial.Applications.Gallery
             return Linker.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
                 owner.Key, parentPath, path));
         }
+
+        public override string Uri
+        {
+            get
+            {
+                return BuildUri();
+            }
+        }
     }
 }

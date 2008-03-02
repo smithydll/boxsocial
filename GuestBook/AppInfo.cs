@@ -65,10 +65,10 @@ namespace BoxSocial.Applications.GuestBook
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
-            core.RegisterCommentHandle("USER", userCanPostComment, userCanDeleteComment, userAdjustCommentCount);
-            core.RegisterCommentHandle("APPLICATION", applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount);
-            core.RegisterCommentHandle("GROUP", groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount);
-            core.RegisterCommentHandle("NETWORK", networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount);
+            core.RegisterCommentHandle("USER", userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted);
+            core.RegisterCommentHandle("APPLICATION", applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
+            core.RegisterCommentHandle("GROUP", groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
+            core.RegisterCommentHandle("NETWORK", networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -140,30 +140,45 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        private void userCommentPosted(CommentPostedEventArgs e)
+        {
+            // Notify of a new comment
+            Member userProfile = new Member(core.db, e.ItemId);
+
+            if (userProfile.EmailNotifications)
+            {
+                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "guestbook_notification.eml");
+
+                emailTemplate.ParseVariables("TO_NAME", userProfile.DisplayName);
+                emailTemplate.ParseVariables("FROM_NAME", core.session.LoggedInMember.DisplayName);
+                emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
+                emailTemplate.ParseVariables("U_GUESTBOOK", "http://zinzam.com" + Linker.BuildGuestBookUri(userProfile));
+                emailTemplate.ParseVariables("COMMENT", "\r\n\r\n" + Bbcode.Strip(e.Comment.Body));
+
+                Email.SendEmail(core, userProfile.AlternateEmail, string.Format("{0} commented on your guest book",
+                        core.session.LoggedInMember.DisplayName),
+                        emailTemplate.ToString());
+            }
+
+            Notification.Create(core, null, userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={2}]{0}[/iurl]\"]{1}[/quote]", e.Poster.DisplayName, e.Comment.Body, e.Comment.BuildUri(new UserGuestBook(core, userProfile))));
+        }
+
+        private void groupCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private void networkCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private void applicationCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
         private void userAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
                 itemId, adjustment), false);
-
-            if (adjustment == 1)
-            {
-                // Notify of a new comment
-
-                Member userProfile = new Member(core.db, (long)itemId);
-                if (userProfile.EmailNotifications)
-                {
-                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "guestbook_notification.eml");
-
-                    emailTemplate.ParseVariables("TO_NAME", userProfile.DisplayName);
-                    emailTemplate.ParseVariables("FROM_NAME", core.session.LoggedInMember.DisplayName);
-                    emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
-                    emailTemplate.ParseVariables("U_GUESTBOOK", "http://zinzam.com" + Linker.BuildGuestBookUri(userProfile));
-
-                    Email.SendEmail(core, userProfile.AlternateEmail, string.Format("{0} commented on your guest book",
-                        core.session.LoggedInMember.DisplayName),
-                        emailTemplate.ToString());
-                }
-            }
         }
 
         private bool groupCanPostComment(long itemId, Member member)

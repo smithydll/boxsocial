@@ -38,5 +38,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        public abstract string Uri
+        {
+            get;
+        }
     }
 }

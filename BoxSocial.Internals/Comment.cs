@@ -341,6 +341,93 @@ namespace BoxSocial.Internals
         {
             return FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
+
+        public long Id
+        {
+            get
+            {
+                return commentId;
+            }
+        }
+
+        public string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public string BuildUri(Item item)
+        {
+            SelectQuery query = new SelectQuery("comments");
+            query.AddFields("COUNT(*) AS total");
+            query.AddCondition("item_id", item.Id);
+            query.AddCondition("item_type", item.Namespace);
+            query.AddCondition("comment_id", ConditionEquality.LessThanEqual, commentId);
+
+            DataRow commentsRow = db.SelectQuery(query).Rows[0];
+
+            return Linker.AppendSid(string.Format("{0}#{1}",
+                    Linker.StripSid(item.Uri), commentId));
+        }
+    }
+
+    public class CommentPostedEventArgs : EventArgs
+    {
+        private Comment comment;
+        private Item item;
+        private string itemType;
+        private long itemId;
+        private Member poster;
+
+        public Comment Comment
+        {
+            get
+            {
+                return comment;
+            }
+        }
+
+        public Item Item
+        {
+            get
+            {
+                return item;
+            }
+        }
+
+        public string ItemType
+        {
+            get
+            {
+                return itemType;
+            }
+        }
+
+        public long ItemId
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        public Member Poster
+        {
+            get
+            {
+                return poster;
+            }
+        }
+
+        public CommentPostedEventArgs(Comment comment, Member poster, string itemType, long itemId)
+        {
+            this.comment = comment;
+            this.poster = poster;
+            this.itemType = itemType;
+            this.itemId = itemId;
+        }
     }
 
     public class InvalidCommentException : Exception

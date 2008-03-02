@@ -1,3 +1,4 @@
+
 /*
  * Box Social™
  * http://boxsocial.net/
@@ -102,6 +103,7 @@ namespace BoxSocial.Internals
             private bool abortParse;
             private bool noContents;
             private string contents;
+            private bool stripTag;
             private Member owner;
 
             public BbcodeTag Tag
@@ -160,6 +162,14 @@ namespace BoxSocial.Internals
                 }
             }
 
+            public bool StripTag
+            {
+                get
+                {
+                    return stripTag;
+                }
+            }
+
             public void SetHandled()
             {
                 handled = true;
@@ -215,7 +225,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Member postOwner, bool inList, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Member postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
                 this.tag = tag;
                 this.options = options;
@@ -224,6 +234,7 @@ namespace BoxSocial.Internals
                 this.prefixText = prefixText;
                 this.suffixText = suffixText;
                 this.inList = inList;
+                this.stripTag = stripTag;
                 this.handled = handled;
                 this.abortParse = abortParse;
                 this.owner = postOwner;
@@ -371,6 +382,11 @@ namespace BoxSocial.Internals
 
         public static string Parse(string input, Member viewer, Member postOwner)
         {
+            return Parse(input, viewer, postOwner, false);
+        }
+
+        private static string Parse(string input, Member viewer, Member postOwner, bool stripTags)
+        {
             if (string.IsNullOrEmpty(input))
             {
                 return "";
@@ -507,7 +523,7 @@ namespace BoxSocial.Internals
                                     int tempIndex = tempTag.indexStart + tempTag.StartLength;
                                     string contents = input.Substring(tempIndex, i - tempIndex - tempTag.EndLength + 1);
 
-                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(contents, tempTag, options, postOwner, (inList > 0), ref insertStart, ref insertEnd, ref handled, ref abortParse);
+                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(contents, tempTag, options, postOwner, (inList > 0), stripTags, ref insertStart, ref insertEnd, ref handled, ref abortParse);
                                     BbcodeHooks(eventArgs);
 
                                     insertStart = eventArgs.PrefixText;
@@ -746,29 +762,44 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (e.Attributes.HasAttributes())
+            if (e.StripTag)
             {
-                if (!e.InList)
+                if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "</p><p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote><p>";
+                    e.PrefixText = "--- Quote: " + Parse(e.Attributes.GetAttribute("default")) + " wrote: ---\n";
                 }
                 else
                 {
-                    e.PrefixText = "<p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote>";
+                    e.PrefixText = "--- Quote: ---\n";
                 }
+                e.SuffixText = "------\n";
             }
             else
             {
-                if (!e.InList)
+                if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "</p><p><strong>quote:</strong></p><blockquote><p>";
+                    if (!e.InList)
+                    {
+                        e.PrefixText = "</p><p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote><p>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<p><strong>" + Parse(e.Attributes.GetAttribute("default")) + " wrote:</strong></p><blockquote>";
+                    }
                 }
                 else
                 {
-                    e.PrefixText = "<p><strong>quote:</strong></p><blockquote>";
+                    if (!e.InList)
+                    {
+                        e.PrefixText = "</p><p><strong>quote:</strong></p><blockquote><p>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<p><strong>quote:</strong></p><blockquote>";
+                    }
                 }
+                e.SuffixText = "</p></blockquote><p>";
             }
-            e.SuffixText = "</p></blockquote><p>";
         }
 
         private static void BbcodeBold(BbcodeEventArgs e)
@@ -777,8 +808,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "<strong>";
-            e.SuffixText = "</strong>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "*";
+                e.SuffixText = "*";
+            }
+            else
+            {
+                e.PrefixText = "<strong>";
+                e.SuffixText = "</strong>";
+            }
         }
 
         private static void BbcodeItalic(BbcodeEventArgs e)
@@ -787,8 +826,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "<em>";
-            e.SuffixText = "</em>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "_";
+                e.SuffixText = "_";
+            }
+            else
+            {
+                e.PrefixText = "<em>";
+                e.SuffixText = "</em>";
+            }
         }
 
         private static void BbcodeUnderline(BbcodeEventArgs e)
@@ -797,8 +844,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "<span style=\"text-decoration: underline;\">";
-            e.SuffixText = "</span>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                e.PrefixText = "<span style=\"text-decoration: underline;\">";
+                e.SuffixText = "</span>";
+            }
         }
 
         private static void BbcodeStrikeout(BbcodeEventArgs e)
@@ -807,8 +862,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "<span style=\"text-decoration: line-through;\">";
-            e.SuffixText = "</span>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "--";
+                e.SuffixText = "--";
+            }
+            else
+            {
+                e.PrefixText = "<span style=\"text-decoration: line-through;\">";
+                e.SuffixText = "</span>";
+            }
         }
 
         private static void BbcodeCode(BbcodeEventArgs e)
@@ -817,15 +880,23 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (!e.InList)
+            if (e.StripTag)
             {
-                e.PrefixText = "<strong>Code</strong></p><p><code>";
-                e.SuffixText = "</code></p><p>";
+                e.PrefixText = "--- Code ---";
+                e.SuffixText = "------";
             }
             else
             {
-                e.PrefixText = "<strong>Code</strong><br /><code>";
-                e.SuffixText = "</code>";
+                if (!e.InList)
+                {
+                    e.PrefixText = "<strong>Code</strong></p><p><code>";
+                    e.SuffixText = "</code></p><p>";
+                }
+                else
+                {
+                    e.PrefixText = "<strong>Code</strong><br /><code>";
+                    e.SuffixText = "</code>";
+                }
             }
         }
 
@@ -835,50 +906,56 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (e.Attributes.GetAttribute("default") != null)
+            if (e.StripTag)
             {
-                if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
+            }
+            else
+            {
+                if (e.Attributes.GetAttribute("default") != null)
                 {
-                    if (!e.InList)
+                    if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
                     {
-                        e.PrefixText = "</p><ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
-                        e.SuffixText = "</ol><p>";
+                        if (!e.InList)
+                        {
+                            e.PrefixText = "</p><ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                            e.SuffixText = "</ol><p>";
+                        }
+                        else
+                        {
+                            e.PrefixText = "<ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                            e.SuffixText = "</ol>";
+                        }
+                    }
+                    else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(circle|square)$", RegexOptions.Compiled))
+                    {
+                        if (!e.InList)
+                        {
+                            e.PrefixText = "</p><ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                            e.SuffixText = "</ul><p>";
+                        }
+                        else
+                        {
+                            e.PrefixText = "<ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                            e.SuffixText = "</ul>";
+                        }
                     }
                     else
                     {
-                        e.PrefixText = "<ol style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
-                        e.SuffixText = "</ol>";
+                        e.AbortParse();
                     }
                 }
-                else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(circle|square)$", RegexOptions.Compiled))
+                else
                 {
                     if (!e.InList)
                     {
-                        e.PrefixText = "</p><ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.PrefixText = "</p><ul>";
                         e.SuffixText = "</ul><p>";
                     }
                     else
                     {
-                        e.PrefixText = "<ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                        e.PrefixText = "<ul>";
                         e.SuffixText = "</ul>";
                     }
-                }
-                else
-                {
-                    e.AbortParse();
-                }
-            }
-            else
-            {
-                if (!e.InList)
-                {
-                    e.PrefixText = "</p><ul>";
-                    e.SuffixText = "</ul><p>";
-                }
-                else
-                {
-                    e.PrefixText = "<ul>";
-                    e.SuffixText = "</ul>";
                 }
             }
         }
@@ -889,8 +966,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "<li>";
-            e.SuffixText = "</li>";
+            if (e.StripTag)
+            {
+                e.PrefixText = " *";
+                e.SuffixText = "";
+            }
+            else
+            {
+                e.PrefixText = "<li>";
+                e.SuffixText = "</li>";
+            }
         }
 
         private static void BbcodeColour(BbcodeEventArgs e)
@@ -899,10 +984,18 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            try { System.Drawing.ColorTranslator.FromHtml(e.Attributes.GetAttribute("default")); }
-            catch { e.AbortParse(); }
-            e.PrefixText = "<span style=\"color: " + e.Attributes.GetAttribute("default") + "\">";
-            e.SuffixText = "</span>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                try { System.Drawing.ColorTranslator.FromHtml(e.Attributes.GetAttribute("default")); }
+                catch { e.AbortParse(); }
+                e.PrefixText = "<span style=\"color: " + e.Attributes.GetAttribute("default") + "\">";
+                e.SuffixText = "</span>";
+            }
         }
 
         private static void BbcodeSize(BbcodeEventArgs e)
@@ -911,17 +1004,25 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            try
+            if (e.StripTag)
             {
-                int fontSize = int.Parse(e.Attributes.GetAttribute("default"));
-                if (fontSize > 22 || fontSize < 8) e.AbortParse();
+                e.PrefixText = "";
+                e.SuffixText = "";
             }
-            catch
+            else
             {
-                e.AbortParse();
+                try
+                {
+                    int fontSize = int.Parse(e.Attributes.GetAttribute("default"));
+                    if (fontSize > 22 || fontSize < 8) e.AbortParse();
+                }
+                catch
+                {
+                    e.AbortParse();
+                }
+                e.PrefixText = "<span style=\"font-size: " + e.Attributes.GetAttribute("default") + "pt\">";
+                e.SuffixText = "</span>";
             }
-            e.PrefixText = "<span style=\"font-size: " + e.Attributes.GetAttribute("default") + "pt\">";
-            e.SuffixText = "</span>";
         }
 
         private static void BbcodeH1(BbcodeEventArgs e)
@@ -930,8 +1031,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "</p><h2>";
-            e.SuffixText = "</h2><p>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                e.PrefixText = "</p><h2>";
+                e.SuffixText = "</h2><p>";
+            }
         }
 
         private static void BbcodeH2(BbcodeEventArgs e)
@@ -940,8 +1049,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "</p><h3>";
-            e.SuffixText = "</h3><p>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                e.PrefixText = "</p><h3>";
+                e.SuffixText = "</h3><p>";
+            }
         }
 
         private static void BbcodeH3(BbcodeEventArgs e)
@@ -950,8 +1067,16 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            e.PrefixText = "</p><h4>";
-            e.SuffixText = "</h4><p>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                e.PrefixText = "</p><h4>";
+                e.SuffixText = "</h4><p>";
+            }
         }
 
         private static void BbcodeAlign(BbcodeEventArgs e)
@@ -960,9 +1085,17 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled)) e.AbortParse();
-            e.PrefixText = "</p><p style=\"text-align: " + e.Attributes.GetAttribute("default") + "\">";
-            e.SuffixText = "</p><p>";
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled)) e.AbortParse();
+                e.PrefixText = "</p><p style=\"text-align: " + e.Attributes.GetAttribute("default") + "\">";
+                e.SuffixText = "</p><p>";
+            }
         }
 
         private static void BbcodeUrl(BbcodeEventArgs e)
@@ -971,37 +1104,53 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (e.Attributes.HasAttributes())
+            if (e.StripTag)
             {
-                if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
-                }
-                else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                {
-                    e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
+                    e.PrefixText = "";
+                    e.SuffixText = " : (" + e.Attributes.GetAttribute("default") + ")";
                 }
                 else
                 {
-                    e.AbortParse();
+                    e.PrefixText = "";
+                    e.SuffixText = "";
                 }
-                e.SuffixText = "</a>";
             }
             else
             {
-                if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "<a href=\"" + e.Contents + "\">";
-                }
-                else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
-                {
-                    e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
+                    if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                    {
+                        e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
+                    }
+                    else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                    {
+                        e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
+                    }
+                    else
+                    {
+                        e.AbortParse();
+                    }
+                    e.SuffixText = "</a>";
                 }
                 else
                 {
-                    e.AbortParse();
+                    if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                    {
+                        e.PrefixText = "<a href=\"" + e.Contents + "\">";
+                    }
+                    else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                    {
+                        e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
+                    }
+                    else
+                    {
+                        e.AbortParse();
+                    }
+                    e.SuffixText = "</a>";
                 }
-                e.SuffixText = "</a>";
             }
         }
 
@@ -1011,22 +1160,31 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (e.Attributes.HasAttributes())
+            if (e.StripTag)
             {
-                if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
-                {
-                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
-                }
-                else
-                {
-                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
-                }
-                e.SuffixText = "</a>";
+                // TODO: strip all SIDs
+                e.PrefixText = "http://zinzam.com";
+                e.SuffixText = "";
             }
             else
             {
-                e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Contents) + "\">";
-                e.SuffixText = "</a>";
+                if (e.Attributes.HasAttributes())
+                {
+                    if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
+                    {
+                        e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                    }
+                    e.SuffixText = "</a>";
+                }
+                else
+                {
+                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Contents) + "\">";
+                    e.SuffixText = "</a>";
+                }
             }
         }
 
@@ -1070,16 +1228,24 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
-            if (TagAllowed(e.Tag.Tag, e.Options))
+            if (e.StripTag)
             {
-                e.PrefixText = "<img alt=\"Bbcode image\" src=\"";
-                e.SuffixText = "\" />";
+                e.PrefixText = "";
+                e.SuffixText = "";
             }
             else
             {
-                e.PrefixText = "<a href=\"" + e.Contents + "\"><strong>IMG</strong>: ";
-                e.SuffixText = "</a>";
+                if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+                if (TagAllowed(e.Tag.Tag, e.Options))
+                {
+                    e.PrefixText = "<img alt=\"Bbcode image\" src=\"";
+                    e.SuffixText = "\" />";
+                }
+                else
+                {
+                    e.PrefixText = "<a href=\"" + e.Contents + "\"><strong>IMG</strong>: ";
+                    e.SuffixText = "</a>";
+                }
             }
         }
 
@@ -1089,42 +1255,50 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            string youTubeUrl = e.Contents;
-            e.RemoveContents();
-
-            if (youTubeUrl.ToLower().StartsWith("http://"))
+            if (e.StripTag)
             {
-                char[] splitChars = { '=', '?', '&' };
-                string[] argh = youTubeUrl.Split(splitChars);
-                if (argh.Length <= 2)
-                {
-                    e.AbortParse();
-                }
-                for (int y = 0; y < argh.Length - 1; y++)
-                {
-                    if (argh[y] == "v")
-                    {
-                        youTubeUrl = argh[y + 1];
-                    }
-                    else if (y == argh.Length - 2)
-                    {
-                        e.AbortParse();
-                    }
-                }
-            }
-
-            if (TagAllowed(e.Tag.Tag, e.Options))
-            {
-                youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
-
-                e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
+                e.PrefixText = "";
                 e.SuffixText = "";
             }
             else
             {
-                youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
-                e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
-                e.SuffixText = "</a>";
+                string youTubeUrl = e.Contents;
+                e.RemoveContents();
+
+                if (youTubeUrl.ToLower().StartsWith("http://"))
+                {
+                    char[] splitChars = { '=', '?', '&' };
+                    string[] argh = youTubeUrl.Split(splitChars);
+                    if (argh.Length <= 2)
+                    {
+                        e.AbortParse();
+                    }
+                    for (int y = 0; y < argh.Length - 1; y++)
+                    {
+                        if (argh[y] == "v")
+                        {
+                            youTubeUrl = argh[y + 1];
+                        }
+                        else if (y == argh.Length - 2)
+                        {
+                            e.AbortParse();
+                        }
+                    }
+                }
+
+                if (TagAllowed(e.Tag.Tag, e.Options))
+                {
+                    youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
+
+                    e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
+                    e.SuffixText = "";
+                }
+                else
+                {
+                    youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
+                    e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
+                    e.SuffixText = "</a>";
+                }
             }
         }
 
@@ -1134,11 +1308,19 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
-            e.RemoveContents();
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
+                e.RemoveContents();
 
-            e.PrefixText = "<img src=\"http://agreendaysite.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
-            e.SuffixText = "";
+                e.PrefixText = "<img src=\"http://agreendaysite.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+                e.SuffixText = "";
+            }
         }
 
         private static void BbcodeFlash(BbcodeEventArgs e)
@@ -1148,11 +1330,19 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (TagAllowed(e.Tag.Tag, e.Options))
+            if (e.StripTag)
             {
+                e.PrefixText = "";
+                e.SuffixText = "";
             }
             else
             {
+                if (TagAllowed(e.Tag.Tag, e.Options))
+                {
+                }
+                else
+                {
+                }
             }
         }
 
@@ -1163,11 +1353,19 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (TagAllowed(e.Tag.Tag, e.Options))
+            if (e.StripTag)
             {
+                e.PrefixText = "";
+                e.SuffixText = "";
             }
             else
             {
+                if (TagAllowed(e.Tag.Tag, e.Options))
+                {
+                }
+                else
+                {
+                }
             }
         }
 
@@ -1177,55 +1375,68 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
-            if (core != null)
+            if (e.StripTag)
             {
-                string key = e.Contents;
-                e.RemoveContents();
-
-                long id = 0;
-
-                if (key != "you")
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                if (core != null)
                 {
-                    try
-                    {
-                        id = long.Parse(key);
-                    }
-                    catch
-                    {
-                        e.AbortParse();
-                        return;
-                    }
-                }
-                else
-                {
-                    id = core.LoggedInMemberId;
-                }
+                    string key = e.Contents;
+                    e.RemoveContents();
 
-                if (id > 0)
-                {
-                    core.LoadUserProfile(id);
-                    Member userUser = core.UserProfiles[id];
+                    long id = 0;
 
-                    if (e.Attributes.HasAttribute("ownership") &&
-                        e.Attributes.GetAttribute("ownership") == "true")
+                    if (key != "you")
                     {
-                        e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
-                            userUser.DisplayNameOwnership, userUser.Uri);
-                        e.SuffixText = "";
+                        try
+                        {
+                            id = long.Parse(key);
+                        }
+                        catch
+                        {
+                            e.AbortParse();
+                            return;
+                        }
                     }
                     else
                     {
-                        e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
-                            userUser.DisplayName, userUser.Uri);
+                        id = core.LoggedInMemberId;
+                    }
+
+                    if (id > 0)
+                    {
+                        core.LoadUserProfile(id);
+                        Member userUser = core.UserProfiles[id];
+
+                        if (e.Attributes.HasAttribute("ownership") &&
+                            e.Attributes.GetAttribute("ownership") == "true")
+                        {
+                            e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
+                                userUser.DisplayNameOwnership, userUser.Uri);
+                            e.SuffixText = "";
+                        }
+                        else
+                        {
+                            e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
+                                userUser.DisplayName, userUser.Uri);
+                            e.SuffixText = "";
+                        }
+                    }
+                    else
+                    {
+                        e.PrefixText = "Anonymous";
                         e.SuffixText = "";
                     }
                 }
-                else
-                {
-                    e.PrefixText = "Anonymous";
-                    e.SuffixText = "";
-                }
             }
+        }
+
+        public static string Strip(string input)
+        {
+            return Parse(input, null, null, true);
         }
     }
 

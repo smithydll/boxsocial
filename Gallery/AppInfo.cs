@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Gallery
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
-            core.RegisterCommentHandle("PHOTO", photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount);
+            core.RegisterCommentHandle("PHOTO", photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -108,6 +108,10 @@ namespace BoxSocial.Applications.Gallery
             core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_\.]+)$", showPhoto, 4);
 
             core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
+        }
+
+        private void photoCommentPosted(CommentPostedEventArgs e)
+        {
         }
 
         private bool photoCanPostComment(long itemId, Member member)

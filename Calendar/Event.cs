@@ -369,5 +369,13 @@ namespace BoxSocial.Applications.Calendar
                 return this.GetType().FullName;
             }
         }
+
+        public override string Uri
+        {
+            get
+            {
+                return Event.BuildEventUri(this);
+            }
+        }
     }
 }

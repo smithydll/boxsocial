@@ -43,11 +43,12 @@ namespace BoxSocial.Internals
 
         internal TPage page;
 
-        public delegate void HookHandler(HookEventArgs eventArgs);
+        public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
         public delegate void PageHandler(Core core, object sender);
         public delegate bool CommentHandler(long itemId, Member viewer);
         public delegate void CommentCountHandler(long itemId, int adjustment);
+        public delegate void CommentPostedHandler(CommentPostedEventArgs e);
 
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
@@ -215,6 +216,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void CommentPosted(string itemType, long itemId, Comment comment, Member poster)
+        {
+            if (commentHandles.ContainsKey(itemType))
+            {
+                commentHandles[itemType].CommentPosted(comment, poster, itemType, itemId);
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         public void RegisterApplicationPage(string expression, Core.PageHandler pageHandle)
         {
             // register with a moderately high priority leaving room for higher priority registration
@@ -227,9 +240,9 @@ namespace BoxSocial.Internals
             pages.Add(new PageHandle(expression, pageHandle, order));
         }
 
-        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
+        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
         {
-            commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount));
+            commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted));
         }
 
         private VariableCollection createMainPanel()

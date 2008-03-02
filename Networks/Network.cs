@@ -698,6 +698,14 @@ namespace BoxSocial.Networks
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0)));
             page.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("members"));
         }
+
+        public override string Namespace
+        {
+            get
+            {
+                return Type;
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

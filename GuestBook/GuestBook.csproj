@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -48,6 +48,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
+    <Compile Include="UserGuestBook.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">

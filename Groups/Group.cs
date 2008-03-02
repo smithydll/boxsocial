@@ -1157,6 +1157,14 @@ namespace BoxSocial.Groups
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0)));
             page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("members"));
         }
+
+        public override string Namespace
+        {
+            get
+            {
+                return Type;
+            }
+        }
     }
 
     public class InvalidGroupException : Exception

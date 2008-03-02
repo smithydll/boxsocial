@@ -24,10 +24,10 @@ using System.Text;
 
 namespace BoxSocial.Internals
 {
-    public abstract class Primitive
+    public abstract class Primitive : Item
     {
 
-        public abstract long Id
+        public override abstract long Id
         {
             get;
         }
@@ -42,12 +42,17 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public override abstract string Namespace
+        {
+            get;
+        }
+
         public abstract AppPrimitives AppPrimitive
         {
             get;
         }
 
-        public abstract string Uri
+        public override abstract string Uri
         {
             get;
         }

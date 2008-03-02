@@ -1913,6 +1913,14 @@ namespace BoxSocial.Internals
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));
         }
+
+        public override string Namespace
+        {
+            get
+            {
+                return Type;
+            }
+        }
     }
 
     public class InvalidUserException : Exception

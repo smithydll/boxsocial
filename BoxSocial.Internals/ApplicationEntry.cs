@@ -697,6 +697,14 @@ namespace BoxSocial.Internals
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));
         }
+
+        public override string Namespace
+        {
+            get
+            {
+                return Type;
+            }
+        }
     }
 
     public class InvalidApplicationException : Exception

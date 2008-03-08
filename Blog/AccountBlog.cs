@@ -36,23 +36,40 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+    /// <summary>
+    /// The account module for blog management
+    /// </summary>
     public class AccountBlog : AccountModule
     {
 
+        /// <summary>
+        /// Initialises a new instance of the AccountBlog class, which is an
+        /// account module for the Blog application.
+        /// </summary>
+        /// <param name="account">The container account being initialised into.</param>
         public AccountBlog(Account account)
             : base(account)
         {
             RegisterSubModule += new RegisterSubModuleHandler(ManageBlog);
             RegisterSubModule += new RegisterSubModuleHandler(WritePost);
             RegisterSubModule += new RegisterSubModuleHandler(ManageDrafts);
+            RegisterSubModule += new RegisterSubModuleHandler(EditPreferences);
             // TODO: Blog Preferences
         }
 
+        /// <summary>
+        /// Callback on registration of the module in the account panel.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="e">An EventArgs that contains the event data.</param>
         protected override void RegisterModule(Core core, EventArgs e)
         {
             
         }
 
+        /// <summary>
+        /// Display name of the module.
+        /// </summary>
         public override string Name
         {
             get {
@@ -60,6 +77,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// The unique key used to identify the module in requests.
+        /// </summary>
         public override string Key
         {
             get {
@@ -67,6 +87,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// The order the module is to appear along the tab display.
+        /// </summary>
         public override int Order
         {
             get
@@ -75,6 +98,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Handles the event of the drafts sub module.
+        /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
         private void ManageDrafts(string submodule)
         {
             subModules.Add("drafts", "Draft Blog Posts");
@@ -83,6 +110,10 @@ namespace BoxSocial.Applications.Blog
             ManageBlog(submodule, true);
         }
 
+        /// <summary>
+        /// Handles the event of the blog post management sub module.
+        /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
         private void ManageBlog(string submodule)
         {
             subModules.Add("manage", "Manage Blog Posts");
@@ -91,6 +122,11 @@ namespace BoxSocial.Applications.Blog
             ManageBlog(submodule, false);
         }
 
+        /// <summary>
+        /// Displays a list of blog posts the logged in member has written.
+        /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
+        /// <param name="drafts">True if managing drafts, false for published posts.</param>
         private void ManageBlog(string submodule, bool drafts)
         {
             template.SetTemplate("Blog", "account_blog_manage");
@@ -130,8 +166,9 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        ///  Blog Post
+        /// Displays the form for writing a blog post.
         /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
         private void WritePost(string submodule)
         {
             subModules.Add("write", "Write New Blog Post");
@@ -250,6 +287,9 @@ namespace BoxSocial.Applications.Blog
             template.ParseVariables("S_ID", HttpUtility.HtmlEncode(postId.ToString()));
         }
 
+        /// <summary>
+        /// Saves a blog post.
+        /// </summary>
         public void WriteBlogSave()
         {
             string title = Request.Form["title"];
@@ -417,6 +457,22 @@ namespace BoxSocial.Applications.Blog
                 SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
                 Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
             }
+        }
+
+        /// <summary>
+        /// Displays a form for changing the preferences of a blog.
+        /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
+        private void EditPreferences(string submodule)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Saves blog preferences
+        /// </summary>
+        private void EditPreferencesSave()
+        {
         }
     }
 }

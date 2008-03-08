@@ -32,6 +32,8 @@ namespace BoxSocial.Internals
 {
     public sealed class Core
     {
+        internal static Mysql DB;
+
         public Mysql db;
         internal Template template;
         public SessionState session;

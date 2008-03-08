@@ -251,7 +251,7 @@ ENGINE = InnoDB;
                     emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
                     emailTemplate.ParseVariables("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
 
-                    Email.SendEmail(core, tag.TaggedMember.AlternateEmail, string.Format("{0} tagged you in a photo",
+                    Email.SendEmail(tag.TaggedMember.AlternateEmail, string.Format("{0} tagged you in a photo",
                         core.session.LoggedInMember.DisplayName),
                         emailTemplate.ToString());
                 }

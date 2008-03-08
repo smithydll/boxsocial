@@ -57,6 +57,13 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            if (session.IsLoggedIn)
+            {
+                // redirect to the homepage if we are already logged in
+                Response.Redirect("/");
+            }
+
             if (Request.QueryString["mode"] == "optout")
             {
                 string emailKey = Request.QueryString["key"];

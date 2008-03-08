@@ -280,8 +280,8 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
                     ApplicationEntry ae = AppInfo.GetExecutingApplication(core, user);
-                    ae.SendNotification(core, invitee, string.Format("{0} has invited you to {1}.", 
-                        user.DisplayName, subject), emailTemplate);
+                    ae.SendNotification(invitee, string.Format("{0} has invited you to {1}.", 
+                        user.DisplayName, subject), "{TODO}", emailTemplate);
                     
                 }
             }

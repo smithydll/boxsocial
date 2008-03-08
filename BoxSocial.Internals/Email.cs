@@ -36,7 +36,17 @@ namespace BoxSocial.Internals
         public static string BOARD_ADDRESS = "zinzam@zinzam.com";
         public static string SMTP_SERVER = "mail.zinzam.com";
 
-        public static void SendEmail(Core core, string toAddress, string subject, string message)
+        private static Core core;
+
+        public static Core Core
+        {
+            set
+            {
+                core = value;
+            }
+        }
+
+        public static void SendEmail(string toAddress, string subject, string message)
         {
             SmtpClient mailClient = new SmtpClient("localhost");
             Type t = Type.GetType ("Mono.Runtime");
@@ -47,7 +57,6 @@ namespace BoxSocial.Internals
             }
             //mailClient.c
             //SmtpMail.SmtpServer = SMTP_SERVER;
-
 
             MailMessage newMessage = new MailMessage(new MailAddress(BOARD_ADDRESS, "ZinZam"), new MailAddress(toAddress));
             newMessage.Subject = subject;

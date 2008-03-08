@@ -60,6 +60,13 @@ namespace GuestBook {
             }
         }
         
+        internal static byte[] user_guestbook_notification {
+            get {
+                object obj = ResourceManager.GetObject("user_guestbook_notification", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///	&lt;h2&gt;{L_GUESTBOOK}&lt;/h2&gt;

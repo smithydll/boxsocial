@@ -110,7 +110,12 @@ namespace BoxSocial.Internals
             UpdateQuery uquery = new UpdateQuery("notifications");
         }
 
-        public static Notification Create(Core core, ApplicationEntry application, Member receiver, string subject, string body)
+        internal static Notification Create(Member receiver, string subject, string body)
+        {
+            return Create(null, receiver, subject, body);
+        }
+
+        public static Notification Create(ApplicationEntry application, Member receiver, string subject, string body)
         {
             int applicationId = 0;
 
@@ -129,9 +134,9 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_read", false);
             iQuery.AddField("notification_application", applicationId);
 
-            long notificationId = core.db.UpdateQuery(iQuery);
+            long notificationId = Core.DB.UpdateQuery(iQuery);
 
-            return new Notification(core.db, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
+            return new Notification(Core.DB, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
         }
 
         public static List<Notification> GetRecentNotifications(Core core)

@@ -580,14 +580,53 @@ namespace BoxSocial.Internals
             return output;
         }
 
-        public void SendNotification(Core core, Member receiver, string subject, Template body)
+        public void SendNotification(Member receiver, string subject, string body, Template emailBody)
         {
-            Notification.Create(core, this, receiver, subject, body.ToString());
-
-            if (receiver.EmailNotifications)
+            if (canNotify(receiver))
             {
-                Email.SendEmail(core, receiver.AlternateEmail, subject, body.ToString());
+                Notification.Create(this, receiver, subject, body);
+
+                if (receiver.EmailNotifications)
+                {
+                    Email.SendEmail(receiver.AlternateEmail, subject, emailBody.ToString());
+                }
             }
+        }
+
+        public void SendNotification(Member receiver, string subject, string body)
+        {
+            if (canNotify(receiver))
+            {
+                Notification.Create(this, receiver, subject, body.ToString());
+
+                if (receiver.EmailNotifications)
+                {
+                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
+
+                    emailTemplate.ParseVariables("TO_NAME", receiver.DisplayName);
+                    emailTemplate.ParseVariables("NOTIFICATION_MESSAGE", Bbcode.Strip(body));
+
+                    Email.SendEmail(receiver.AlternateEmail, subject, emailTemplate.ToString());
+                }
+            }
+        }
+
+        private bool canNotify(Member owner)
+        {
+            SelectQuery query = new SelectQuery("notifications");
+            query.AddFields("COUNT(notification_id) as twentyfour");
+            query.AddCondition("notification_primitive_id", owner.Id);
+            query.AddCondition("notification_primitive_type", owner.Type);
+            query.AddCondition("notification_application", applicationId);
+            query.AddCondition("notification_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+
+            // maximum ten per application per day
+            // TODO: change this
+            if ((long)db.SelectQuery(query).Rows[0]["twentyfour"] < 10)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void PublishToFeed(Member owner, string title, string message)

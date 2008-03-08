@@ -675,7 +675,7 @@ namespace BoxSocial.Groups
                             emailTemplate.ParseVariables("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
 
                             ApplicationEntry ae = Application.GetExecutingApplication(core, loggedInMember);
-                            ae.SendNotification(core, inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), emailTemplate);
+                            ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), "{TODO}" ,emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);
                             Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");

@@ -463,7 +463,7 @@ namespace BoxSocial.Internals
             template.ParseVariables("YEAR", DateTime.Now.Year.ToString());
             template.ParseVariables("SID", session.SessionId);
 
-            string bgColour = "";
+            /*string bgColour = "";
 
             if (page.tz == null)
             {
@@ -482,7 +482,10 @@ namespace BoxSocial.Internals
             bgColour = string.Format("{0:x2}{1:x2}{2:x2}", headColour.R, headColour.G, headColour.B);
 
             template.ParseVariables("HEAD_COLOUR", bgColour);
-            template.ParseVariables("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));
+            template.ParseVariables("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));*/
+
+            template.ParseVariables("HEAD_COLOUR", "FFFFFF");
+            template.ParseVariables("HEAD_FORE_COLOUR", "black");
 
             /*
              * URIs

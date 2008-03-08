@@ -200,10 +200,12 @@ namespace BoxSocial.Internals
                 WebConfigurationManager.AppSettings["mysql-host"]);
             template = new Template(Server.MapPath("./templates/"), "");
             core = new Core(db, template);
+            Core.DB = db;
             core.page = this;
             Bbcode.Initialise(core);
             Functions.Core = core;
             Display.Core = core;
+            Email.Core = core;
 
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;

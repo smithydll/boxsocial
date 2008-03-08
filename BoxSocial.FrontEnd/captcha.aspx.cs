@@ -96,8 +96,8 @@ namespace BoxSocial.FrontEnd
             for (int i = 0; i < confirmString.Length; i++)
             {
                 Matrix transformMatrix = new Matrix(1F, 0F, 0F, 1F, i * 30F + (float)(10 * rand.NextDouble()), 10F + (float)(10 * rand.NextDouble()));
-                transformMatrix.Shear((float)(0.5 * rand.NextDouble()), (float)(0.15 * rand.NextDouble()));
-                transformMatrix.Rotate(10F - (float)(20 * rand.NextDouble()));
+                transformMatrix.Shear((float)(0.15 * rand.NextDouble()), (float)(0.15 * rand.NextDouble()));
+                transformMatrix.Rotate(10F - (float)(5 * rand.NextDouble()));
                 g.Transform = transformMatrix;
                 //g.TransformPoints(CoordinateSpace.World, CoordinateSpace.World, new Point[] { new Point(1, 1), new Point(1, 50), new Point(50,50), new Point(50,1) });
 
@@ -114,15 +114,15 @@ namespace BoxSocial.FrontEnd
                 gp.Transform(transformMatrix);
                 PointF[] pts = gp.PathPoints;
 
-                //g.DrawString("HELLO" + pts.Length, new Font("Times New Roman", 35F), new SolidBrush(Color.Black), new PointF(2F, 2F));
                 TextureBrush tb = new TextureBrush(img, new Rectangle(new Point((int)(500 * rand.NextDouble()), (int)(500 * rand.NextDouble())), new Size(200, 200)));
                 g.FillPolygon(tb, pts);
                 Color pen = captchaImage.GetPixel((int)pts[0].X, (int)pts[0].Y);
                 Color pen2 = captchaImage.GetPixel((int)pts[pts.Length / 4].X, (int)pts[pts.Length / 4].Y);
                 Color pen3 = captchaImage.GetPixel((int)pts[pts.Length / 4 * 2].X, (int)pts[pts.Length / 4 * 2].Y);
                 Color pen4 = captchaImage.GetPixel((int)pts[pts.Length / 4 * 3].X, (int)pts[pts.Length / 4 * 3].Y);
-                Color npen = Color.FromArgb(255 - (int)Math.Pow((double)pen.R * pen2.R * pen3.R * pen4.R, 1 / 4), 255 - (int)Math.Pow((double)pen.G * pen2.G * pen3.G * pen4.G, 1 / 4), 255 - (int)Math.Pow((double)pen.B * pen2.B * pen3.B * pen4.B, 1 / 4));
+                Color npen = Color.FromArgb(255 - (int)Math.Pow((double)pen.R * pen2.R * pen3.R * pen4.R, 1 / 4.0), 255 - (int)Math.Pow((double)pen.G * pen2.G * pen3.G * pen4.G, 1 / 4), 255 - (int)Math.Pow((double)pen.B * pen2.B * pen3.B * pen4.B, 1 / 4.0));
                 Color npen2 = Color.FromArgb(255 - (pen.R + pen2.R + pen3.R + pen4.R) / 4, 255 - (pen.G + pen2.G + pen3.G + pen4.G) / 4, 255 - (pen.B + pen2.B + pen3.B + pen4.B) / 4);
+                //Color npen = Color.FromArgb((int)((255 - npen2.R) * rand.NextDouble() * 0.5), (int)((255 - npen2.G) * rand.NextDouble() * 0.5), (int)((255 - npen2.B) * rand.NextDouble() * 0.5));
                 HatchBrush hb = new HatchBrush((HatchStyle)((int)(50 * rand.NextDouble())), npen2, npen);
 
                 g.DrawPolygon(new Pen(npen2, 0.5F), pts);
@@ -134,16 +134,11 @@ namespace BoxSocial.FrontEnd
                 g.DrawPolygon(new Pen(npen, 0.5F), pts);
                 g.FillPolygon(hb, pts);
 
-                /*g.DrawLine(new Pen(npen, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y + 20 * (float)rand.NextDouble()),
-                    new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y - 20 * (float)rand.NextDouble()));*/
                 g.DrawLine(new Pen(npen, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y - 20 * (float)rand.NextDouble()),
                     new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y + 20 * (float)rand.NextDouble()));
 
                 g.DrawLine(new Pen(npen2, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y + 20 * (float)rand.NextDouble()),
                     new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y - 20 * (float)rand.NextDouble()));
-                /*g.DrawLine(new Pen(npen2, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y - 20 * (float)rand.NextDouble()),
-                    new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y + 20 * (float)rand.NextDouble()));*/
-
 
             }
 

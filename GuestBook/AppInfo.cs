@@ -145,22 +145,14 @@ namespace BoxSocial.Applications.GuestBook
             // Notify of a new comment
             Member userProfile = new Member(core.db, e.ItemId);
 
-            if (userProfile.EmailNotifications)
-            {
-                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "guestbook_notification.eml");
+            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "GuestBook");
 
-                emailTemplate.ParseVariables("TO_NAME", userProfile.DisplayName);
-                emailTemplate.ParseVariables("FROM_NAME", core.session.LoggedInMember.DisplayName);
-                emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
-                emailTemplate.ParseVariables("U_GUESTBOOK", "http://zinzam.com" + Linker.BuildGuestBookUri(userProfile));
-                emailTemplate.ParseVariables("COMMENT", "\r\n\r\n" + Bbcode.Strip(e.Comment.Body));
+            Template notificationTemplate = new Template("GuestBook", "user_guestbook_notification");
+            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
+            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
+            notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
 
-                Email.SendEmail(core, userProfile.AlternateEmail, string.Format("{0} commented on your guest book",
-                        core.session.LoggedInMember.DisplayName),
-                        emailTemplate.ToString());
-            }
-
-            Notification.Create(core, null, userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={2}]{0}[/iurl]\"]{1}[/quote]", e.Poster.DisplayName, e.Comment.Body, e.Comment.BuildUri(new UserGuestBook(core, userProfile))));
+            ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
         }
 
         private void groupCommentPosted(CommentPostedEventArgs e)

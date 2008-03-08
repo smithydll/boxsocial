@@ -114,9 +114,9 @@ namespace BoxSocial.FrontEnd
                 patterns.Add(new string[] { @"^/search(|/)$", @"/search.aspx" });
                 patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
 
-                patterns.Add(new string[] { @"^/account(|/)$", @"/account.aspx" });
-                patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", @"/account.aspx?module=$1" });
                 patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/account.aspx?module=$1&sub=$2" });
+                patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", @"/account.aspx?module=$1" });
+                patterns.Add(new string[] { @"^/account(|/)$", @"/account.aspx" });
 
                 patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
 

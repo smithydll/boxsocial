@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
+using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
@@ -30,6 +31,7 @@ namespace BoxSocial.Applications.GuestBook
 {
     public class GuestBook
     {
+
         public static string Uri(Member member)
         {
             return Linker.AppendSid(string.Format("/{0}/profile/comments",

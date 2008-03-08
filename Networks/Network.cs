@@ -409,7 +409,7 @@ namespace BoxSocial.Networks
                 emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
                 emailTemplate.ParseVariables("S_EMAIL", member.MemberEmail);
 
-                Email.SendEmail(core, member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
         }
 
@@ -455,7 +455,7 @@ namespace BoxSocial.Networks
                 emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
                 emailTemplate.ParseVariables("S_EMAIL", networkEmail);
 
-                Email.SendEmail(core, networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                Email.SendEmail(networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
 
             return newMember;

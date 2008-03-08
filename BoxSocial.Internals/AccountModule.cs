@@ -31,6 +31,11 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+
+    /// <summary>
+    /// Defines the base class for account modules, which are components
+    /// which applications use to plug into the account management system.
+    /// </summary>
     public abstract class AccountModule : MarshalByRefObject, IComparable
     {
         public delegate void RegisterSubModuleHandler(string submodule);
@@ -51,17 +56,28 @@ namespace BoxSocial.Internals
 
         public Assembly assembly = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private AccountModule()
         {
             RegisterSubModule += new RegisterSubModuleHandler(OnRegisterSubModule);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="account"></param>
         public AccountModule(Account account)
             : base()
         {
             Bind(account);
         }
 
+        /// <summary>
+        /// Bind the module to the account panel.
+        /// </summary>
+        /// <param name="account"></param>
         private void Bind(Account account)
         {
             account.RegisterModule += new Account.RegisterModuleHandler(RegisterModule);

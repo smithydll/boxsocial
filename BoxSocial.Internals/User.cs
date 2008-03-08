@@ -1258,7 +1258,7 @@ namespace BoxSocial.Internals
             emailTemplate.ParseVariables("USERNAME", userName);
             emailTemplate.ParseVariables("PASSWORD", passwordClearText);
 
-            Email.SendEmail(core, eMail, "Welcome to ZinZam", emailTemplate.ToString());
+            Email.SendEmail(eMail, "Welcome to ZinZam", emailTemplate.ToString());
 
             return newUser;
         }

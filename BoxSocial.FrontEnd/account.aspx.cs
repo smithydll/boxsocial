@@ -80,11 +80,11 @@ namespace BoxSocial.FrontEnd
                     string assemblyPath;
                     if (ae.IsPrimitive)
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
                     }
                     else
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}applications{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
                     }
                     Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
@@ -117,8 +117,8 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string module = (Request.Form["module"] != null) ? Request.Form["module"] : Request.QueryString["module"];
-            string submodule = (Request.Form["sub"] != null) ? Request.Form["sub"] : Request.QueryString["sub"];
+            string module = (!String.IsNullOrEmpty(Request.Form["module"])) ? Request.Form["module"] : Request.QueryString["module"];
+            string submodule = (!String.IsNullOrEmpty(Request.Form["sub"])) ? Request.Form["sub"] : Request.QueryString["sub"];
 
             module = (module == null) ? "" : module;
             module = (module == "") ? "dashboard" : module;
@@ -126,10 +126,10 @@ namespace BoxSocial.FrontEnd
 
             if (!session.IsLoggedIn)
             {
-                /*Response.Redirect(string.Format("/sign-in/?redirect=%2faccount%2f%3fmodule%3d{0}%26sub%3d{1}",
-                    module, submodule));*/
                 SessionState.RedirectAuthenticate();
             }
+
+            //Response.Write(module + "::" + submodule);
 
             loggedInMember.LoadProfileInfo();
 

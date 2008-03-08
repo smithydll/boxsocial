@@ -466,7 +466,7 @@ namespace BoxSocial
                             emailTemplate.ParseVariables("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
                             emailTemplate.ParseVariables("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
-                            Email.SendEmail(core, friendEmail, string.Format("{0} has invited you to ZinZam.",
+                            Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                                 loggedInMember.DisplayName),
                                 emailTemplate.ToString());
 
@@ -506,7 +506,7 @@ namespace BoxSocial
                                     emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
                                     emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
 
-                                    Email.SendEmail(core, friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
+                                    Email.SendEmail(friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
                                         loggedInMember.DisplayName),
                                         emailTemplate.ToString());
                                 }
@@ -589,7 +589,7 @@ namespace BoxSocial
                         emailTemplate.ParseVariables("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
                         emailTemplate.ParseVariables("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
-                        Email.SendEmail(core, friendEmail, string.Format("{0} has invited you to ZinZam.",
+                        Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                             loggedInMember.DisplayName),
                             emailTemplate.ToString());
 
@@ -663,32 +663,29 @@ namespace BoxSocial
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
                 loggedInMember.UserId, friendId), true);
 
+            //
+            // send e-mail notifications
+            //
+
+            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "Profile");
+
+            Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
+
+            emailTemplate.ParseVariables("TO_NAME", friendProfile.DisplayName);
+            emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
+            emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
+
             if (!isFriend)
             {
-                Notification.Create(core, null, friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", loggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", Linker.BuildAddFriendUri(loggedInMember.Id, false), loggedInMember.Id));
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", loggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", Linker.BuildAddFriendUri(loggedInMember.Id, false), loggedInMember.Id), emailTemplate);
             }
             else
             {
-                Notification.Create(core, null, friendProfile, string.Format("[user]{0}[/user] accepted your friendship.", loggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", loggedInMember.Id));
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] accepted your friendship.", loggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", loggedInMember.Id), emailTemplate);
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
                 loggedInMember.UserId), false);
-
-            // send e-mail notification
-            // only send a notification if they have subscribed to them
-            if (friendProfile.EmailNotifications)
-            {
-                Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
-
-                emailTemplate.ParseVariables("TO_NAME", friendProfile.DisplayName);
-                emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
-
-                Email.SendEmail(core, friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
-                    loggedInMember.DisplayName),
-                    emailTemplate.ToString());
-            }
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Added friend", "You have added a friend.");

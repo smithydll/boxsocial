@@ -1,0 +1,14 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>Status Feed</h2>
+<!-- IF BREADCRUMBS -->
+<p>{BREADCRUMBS}</p>
+<!-- ENDIF -->
+<ul>
+  <!-- BEGIN status_messages -->
+  <li>
+    <a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a>
+    {status_messages.STATUS_MESSAGE} <em>{status_messages.STATUS_UPDATED}</em>
+  </li>
+  <!-- END status_messages -->
+</ul>
+<!-- INCLUDE page_footer.html -->

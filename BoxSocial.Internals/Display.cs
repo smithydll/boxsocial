@@ -484,7 +484,7 @@ namespace BoxSocial.Internals
             template.ParseVariables("HEAD_COLOUR", bgColour);
             template.ParseVariables("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));*/
 
-            template.ParseVariables("HEAD_COLOUR", "FFFFFF");
+            template.ParseVariables("HEAD_COLOUR", "ffffff");
             template.ParseVariables("HEAD_FORE_COLOUR", "black");
 
             /*

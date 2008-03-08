@@ -334,11 +334,14 @@ namespace BoxSocial.Internals
             Linker.Sid = sessionId;
 
             xs = new XmlSerializer(typeof(SessionCookie));
-            stw = new StringWriter();
+            StringBuilder sb = new StringBuilder();
+            stw = new StringWriter(sb);
 
             HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
             xs.Serialize(stw, sessionData);
-            newSessionDataCookie.Value = stw.ToString();
+            stw.Flush();
+            stw.Close();
+            newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
             newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
             newSessionDataCookie.Secure = false; // TODO: secure cookies
             Response.Cookies.Add(newSessionDataCookie);
@@ -474,11 +477,14 @@ namespace BoxSocial.Internals
                             SessionClean(sessionId);
 
                             xs = new XmlSerializer(typeof(SessionCookie));
-                            stw = new StringWriter();
+                            StringBuilder sb = new StringBuilder();
+                            stw = new StringWriter(sb);
 
                             HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
                             xs.Serialize(stw, sessionData);
-                            newSessionDataCookie.Value = stw.ToString();
+                            stw.Flush();
+                            stw.Close();
+                            newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                             newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                             newSessionDataCookie.Secure = false; // TODO: secure cookies
                             Response.Cookies.Add(newSessionDataCookie);

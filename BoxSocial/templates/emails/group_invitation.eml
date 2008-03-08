@@ -1,0 +1,13 @@
+Hello {TO_NAME},
+
+{FROM_NAME} has invited you to join the group {GROUP_NAME}.
+To view the group visit the following link:
+{U_GROUP}
+
+You can accept the invitation by following the link below
+{U_JOIN}
+
+Regards,
+The ZinZam Team
+
+<!-- INCLUDE notification_footer.eml -->

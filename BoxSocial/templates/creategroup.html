@@ -1,0 +1,46 @@
+<!-- INCLUDE page_header.html -->
+<h2>Create a New Group</h2>
+<p>It only takes a minute to start a new group on {SITE_TITLE}.</p>
+<!-- IF ERROR -->
+<p class="error">{ERROR}</p>
+<!-- ENDIF -->
+<form action="/groups/create" method="post" id="form-register">
+<fieldset>
+	<dl id="form-list">
+		<dt class="top"><label for="title">Group Title:</label></dt>
+		<dd class="top"><input type="text" name="title" id="title" size="64" maxlength="64" style="width: 350px; "  onchange="UpdateSlug()" value="{GROUP_TITLE}" /></dd>
+		<dt class="top"><label for="slug">Group name slug:</label></dt>
+		<dd class="top"><input type="text" id="slug" name="slug" maxlength="64" size="48" style="width: 225px; "value="{GROUP_NAME_SLUG}" /> <img src="/images/group-path-bar.png" alt="The name shown in the address bar." /></dd>
+		<dt class="top"><label for="category">Group Category:</label></dt>
+		<dd class="top">{S_CATEGORIES}</dd>
+		<dt class="top"><label for="description">Group Description:</label></dt>
+		<dd class="top">
+			<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 78px; border: solid 1px #666666;" rows="4" cols="75">{GROUP_DESCRIPTION}</textarea>
+			<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+				<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+			</div>
+		</dd>
+		<dt class="top"><label>Group Type:</label></dt>
+		<dd class="top">
+			<dl>
+				<dt><label><input type="radio" name="type" value="open" {S_OPEN_CHECKED}/> Open Group</label></dt>
+				<dd>A group open for anyone to join.</dd>
+				<dt><label><input type="radio" name="type" value="closed" {S_CLOSED_CHECKED}/> Closed Group</label></dt>
+				<dd>A group with closed registration, but still visible to non-members. A group operator must approve new memberships to the group.</dd>
+				<dt><label><input type="radio" name="type" value="private" {S_PRIVATE_CHECKED}/> Private Group</label></dt>
+				<dd>A group with closed registration and not visible to non-members. Private groups are not listed in search listings.</dd>
+			</dl>
+		</dd>
+		
+		<dt class="top"><label>Enter the letters shown to the left in the box below:</label></dt>
+		<dd class="top"><img src="{U_CAPTCHA}" alt="captcha" /></dd>
+		<dd class="top"><input type="text" id="captcha" name="captcha" /></dd>
+		<dt class="top"><label for="agree">I agree to the {SITE_TITLE} <a href="/terms-of-service/">Terms of Service</a>:</label></dt>
+		<dd class="top"><input type="checkbox" value="true" id="agree" name="agree" /></dd>
+		<dt class="top"></dt>
+		<dd class="top"><input type="submit" value="Create Group" name="submit" /></dd>
+	</dl>
+	<input type="hidden" id="verification" value="{SID}" />
+</fieldset>
+</form>
+<!-- INCLUDE page_footer.html -->

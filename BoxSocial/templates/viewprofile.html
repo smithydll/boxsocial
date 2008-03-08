@@ -1,0 +1,163 @@
+<!-- INCLUDE page_header.html -->
+	<div id="overview-profile" class="pane">
+		<div class="img-wb img-fl">
+			<!-- IF USER_ICON -->
+			<img src="{USER_ICON}" alt="{USER_DISPLAY_NAME} Display Picture" />
+			<!-- ELSE -->
+			<div class="no-disp-pic">No Picture</div>
+			<!-- ENDIF -->
+		</div>
+		<div class="info">
+			<h2><a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a></h2>
+			<!-- IF OWNER -->
+			<p id="status-message" onclick="hide('status-message');show('status-form');ge('message').focus();" style="cursor: pointer;">
+			    <!-- IF STATUS_MESSAGE -->
+			    {STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em>
+			    <!-- ELSE -->
+			    Click here to change your status message.
+			    <!-- ENDIF -->
+			</p>
+			<form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
+			    <input type="text" id="message" name="message" value="is " onblur="show('status-message');hide('status-form');" />
+			    <input type="submit" id="status-submit" value="Submit"/>
+			    <input type="hidden" name="module" value="profile" />
+			    <input type="hidden" name="sub" value="status" />
+			</form>
+			<!-- ELSE -->
+			    <!-- IF STATUS_MESSAGE -->
+			    <p id="status-message">{STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em></p>
+			    <!-- ENDIF -->
+			<!-- ENDIF -->
+		</div>
+		<dl>
+		<dt>Joined:</dt>
+		<dd>{USER_JOINED}</dd>
+		</dl>
+		<dl>
+		<dt>Last Seen:</dt>
+		<dd>{USER_LAST_SEEN}</dd>
+		</dl>
+		<dl>
+		<dt>Profile views:</dt>
+		<dd>{USER_PROFILE_VIEWS}</dd>
+		</dl>
+		<dl>
+		<dt>Subscriptions:</dt>
+		<dd>{USER_SUBSCRIPTIONS}</dd>
+		</dl>
+		<div class="cheat-clear"></div>
+	</div>
+	<div id="pane-profile">
+		<div id="pane-pages" class="pane">
+			<h3>Pages</h3>
+			<ul>
+				{PAGE_LIST}
+				<!-- IF LISTS -->
+				<li><a href="/{USER_NAME}/lists/">Lists</a>
+					<ul>
+						<!-- BEGIN list_list -->
+						<li>
+						<!-- IF list_list.URI -->
+						<a href="{list_list.URI}">
+						<!-- ENDIF -->
+						{list_list.TITLE}
+						<!-- IF list_list.URI -->
+						</a>
+						<!-- ENDIF -->
+						</li>
+						<!-- END list_list -->
+					</ul>
+				</li>
+				<!-- ENDIF -->
+			</ul>
+		</div>
+		<div id="pane-profile-contact" class="pane">
+			<h3>Contact {USER_DISPLAY_NAME}</h3>
+			<dl>
+				<!-- IF LOGGED_IN -->
+				<!--dt><a href=""></a></dt>
+				<dd>Send Message</dd>
+				<dt><a href=""></a></dt>
+				<dd>Add to Favourites</dd-->
+				<dt><a href="{U_ADD_FRIEND}" id="u-add-friend"></a></dt>
+				<dd><a href="{U_ADD_FRIEND}">Add to Friends</a></dd>
+				<!--dt><a href=""></a></dt>
+				<dd>Leave a Message</dd-->
+				<dt><a href="{U_BLOCK_USER}" id="u-block-user"></a></dt>
+				<dd><a href="{U_BLOCK_USER}">Block User</a></dd>
+				<!-- ELSE -->
+				<!--dt><a href="mailto:{USER_NAME}@zinzam.com"></a></dt>
+				<dd>{USER_NAME}@zinzam.com</dd-->
+				<dt><a href="/register"></a></dt>
+				<dd>Register to Contact</dd>
+				<!-- ENDIF -->
+			</dl>
+		</div>
+		<!-- IF HAS_PROFILE_INFO -->
+		<div id="pane-profile-info" class="pane">
+			<h3>About {USER_DISPLAY_NAME}</h3>
+			<dl>
+			<!-- IF USER_AGE -->
+			<dt>Age:</dt>
+			<dd>{USER_AGE}</dd>
+			<!-- ENDIF -->
+			<!-- IF USER_GENDER -->
+			<dt>Gender:</dt>
+			<dd>{USER_GENDER}</dd>
+			<!-- ENDIF -->
+			<!-- IF USER_COUNTRY -->
+			<dt>Country:</dt>
+			<dd>{USER_COUNTRY}</dd>
+			<!-- ENDIF -->
+			<!-- IF USER_MARITIAL_STATUS -->
+			<dt>Maritial Status:</dt>
+			<dd>{USER_MARITIAL_STATUS}</dd>
+			<!-- ENDIF -->
+			<!-- IF USER_SEXUALITY -->
+			<dt>Sexuality:</dt>
+			<dd>{USER_SEXUALITY}</dd>
+			<!-- ENDIF -->
+			</dl>
+		</div>
+		<!-- ENDIF -->
+		<!-- BEGIN app_panel_side -->
+{app_panel_side.BODY}
+		<!-- END app_panel_side -->
+	</div>
+	<div id="profile">
+	<!-- IF USER_AUTOBIOGRAPHY -->
+	<div id="profile-autobiography" class="pane normal-writing">
+	<h3>Auto Biography</h3>
+	<p>{USER_AUTOBIOGRAPHY}</p>
+	</div>
+	<!-- ENDIF -->
+	<div id="profile-friends-pane" class="pane">
+	<h3>{USER_DISPLAY_NAME_OWNERSHIP} Friends ({FRIENDS})</h3>
+	<!-- IF FRIENDS -->
+	<ul id="profile-friends">
+	<!-- BEGIN friend_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{friend_list.U_PROFILE}">
+				<!-- IF friend_list.ICON -->
+				<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{friend_list.U_PROFILE}">{friend_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END friend_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+	<p>{USER_DISPLAY_NAME} has {FRIENDS} {L_FRIENDS}.</p>
+	<!-- ELSE -->
+	<p>No Friends</p>
+	<!-- ENDIF -->
+	</div>
+	<!-- BEGIN app_panel -->
+{app_panel.BODY}
+	<!-- END app_panel -->
+	</div>
+<!-- INCLUDE page_footer.html -->

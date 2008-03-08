@@ -1,0 +1,10 @@
+﻿Hello {TO_NAME},
+
+You have received the following notification:
+
+{NOTIFICATION_MESSAGE}
+
+Regards,
+The ZinZam Team
+
+<!-- INCLUDE notification_footer.eml -->

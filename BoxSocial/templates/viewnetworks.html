@@ -1,0 +1,25 @@
+<!-- INCLUDE page_header.html -->
+<h2>Networks</h2>
+
+<div id="tabs">
+<ul>
+	<li><a href="/networks"><span>Networks</span></a></li>
+	<li><a href="/networks/regions"><span>Regions</span></a></li>
+	<li><a href="/networks/universities"><span>Universities</span></a></li>
+	<li><a href="/networks/highschools"><span>Highschools</span></a></li>
+	<li><a href="/networks/workplaces"><span>Workplaces</span></a></li>
+</ul>
+</div>
+
+<!-- IF NETWORKS -->
+<ul id="network-list">
+	<!-- BEGIN networks_list -->
+	<li><a href="{networks_list.U_NETWORK}">{networks_list.TITLE}</a></li>
+	<!-- END networks_list -->
+</ul>
+<!-- ELSE -->
+<p>There are no networks in this category, select a category above to find networks that you can join.</p>
+<!-- ENDIF -->
+<p>Network not listed? <a href="/zinzam/profile/comments">Suggest a Network</a>.</p>
+
+<!-- INCLUDE page_footer.html -->

@@ -30,8 +30,16 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+
+    /// <summary>
+    /// Application constructor class for the Blog application
+    /// </summary>
     public class AppInfo : Application
     {
+
+        /// <summary>
+        /// Application title
+        /// </summary>
         public override string Title
         {
             get
@@ -40,6 +48,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// A description of the application
+        /// </summary>
         public override string Description
         {
             get
@@ -48,6 +59,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating if the application implements a comment
+        /// handler.
+        /// </summary>
         public override bool UsesComments
         {
             get
@@ -56,6 +71,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initialises the application
+        /// </summary>
+        /// <param name="core">Core token</param>
         public override void Initialise(Core core)
         {
             this.core = core;
@@ -66,6 +85,10 @@ namespace BoxSocial.Applications.Blog
             core.RegisterCommentHandle("BLOGPOST", blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
         }
 
+        /// <summary>
+        /// Builds installation info for the application.
+        /// </summary>
+        /// <returns>Installation information for the application</returns>
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
@@ -83,6 +106,9 @@ namespace BoxSocial.Applications.Blog
             return aii;
         }
 
+        /// <summary>
+        /// Builds a list of page slugs stubs the application handles.
+        /// </summary>
         public override Dictionary<string, string> PageSlugs
         {
             get
@@ -93,6 +119,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Handles the application load event.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that caused the application to load</param>
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
@@ -104,10 +135,31 @@ namespace BoxSocial.Applications.Blog
             core.RegisterApplicationPage(@"^/blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)(|/)$", showBlogPost, 5);
         }
 
+        /// <summary>
+        /// Callback on a comment being posted to the blog.
+        /// </summary>
+        /// <param name="e">An EventArgs that contains the event data</param>
         private void blogCommentPosted(CommentPostedEventArgs e)
         {
+            // Notify of a new comment
+            Member userProfile = new Member(core.db, e.ItemId);
+
+            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "Blog");
+
+            Template notificationTemplate = new Template("Blog", "user_blog_notification");
+            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
+            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
+            notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
+
+            ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
         }
 
+        /// <summary>
+        /// Determines if a user can post a comment to a blog post.
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool blogCanPostComment(long itemId, Member member)
         {
             BlogEntry blogEntry = new BlogEntry(core.db, itemId);
@@ -123,6 +175,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Determines if a user can delete a comment from a blog post
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool blogCanDeleteComment(long itemId, Member member)
         {
             BlogEntry blogEntry = new BlogEntry(core.db, itemId);
@@ -137,12 +195,22 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Adjusts the comment count for the blog post
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void blogAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
                 itemId, adjustment), false);
         }
 
+        /// <summary>
+        /// Shows the blog
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showBlog(Core core, object sender)
         {
             if (sender is PPage)
@@ -151,6 +219,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Shows blog posts in a category
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showBlogCategory(Core core, object sender)
         {
             if (sender is PPage)
@@ -159,6 +232,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Shows blog posts made in a year
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showBlogYear(Core core, object sender)
         {
             if (sender is PPage)
@@ -167,6 +245,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Show the blog posts made in a month
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showBlogMonth(Core core, object sender)
         {
             if (sender is PPage)
@@ -175,6 +258,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Show a blog post
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showBlogPost(Core core, object sender)
         {
             if (sender is PPage)
@@ -183,11 +271,19 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Provides a list of primitives the application supports.
+        /// </summary>
+        /// <returns>List of primitives given support of</returns>
         public override AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.Member;
         }
 
+        /// <summary>
+        /// Hook interface for any application hooks provided by a page.
+        /// </summary>
+        /// <param name="eventArgs">An EventArgs that contains the event data</param>
         void core_PageHooks(HookEventArgs eventArgs)
         {
 

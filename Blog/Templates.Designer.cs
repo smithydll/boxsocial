@@ -111,6 +111,13 @@ namespace Blog {
             }
         }
         
+        internal static byte[] user_blog_notification {
+            get {
+                object obj = ResourceManager.GetObject("user_blog_notification", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;div id=&quot;pane-profile&quot;&gt;

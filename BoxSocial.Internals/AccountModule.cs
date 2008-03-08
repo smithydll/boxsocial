@@ -41,6 +41,9 @@ namespace BoxSocial.Internals
         public delegate void RegisterSubModuleHandler(string submodule);
         public event RegisterSubModuleHandler RegisterSubModule;
 
+        /// <summary>
+        /// A list of submodules registered in the current module
+        /// </summary>
         protected Dictionary<string, string> subModules = new Dictionary<string, string>();
 
         protected Core core;
@@ -54,10 +57,14 @@ namespace BoxSocial.Internals
         protected HttpServerUtility Server;
         protected SessionState session;
 
+        /// <summary>
+        /// The assembly associated with the account module
+        /// </summary>
         public Assembly assembly = null;
 
         /// <summary>
-        /// 
+        /// Initialises an account module, registering the sub module
+        /// registration handler.
         /// </summary>
         private AccountModule()
         {
@@ -65,8 +72,10 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// 
+        /// Initialises an account module.
         /// </summary>
+        /// <remarks>Binds the module to the account panel, and registers
+        /// the sub module registration handler.</remarks>
         /// <param name="account"></param>
         public AccountModule(Account account)
             : base()
@@ -94,6 +103,10 @@ namespace BoxSocial.Internals
             Server = HttpContext.Current.Server;
         }
 
+        /// <summary>
+        /// Creates an isolated template class for the module to render
+        /// inside.
+        /// </summary>
         public void CreateTemplate()
         {
             template = new Template("1301.html");
@@ -103,38 +116,68 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Renders the template to the account panel.
+        /// </summary>
         public void RenderTemplate()
         {
             core.template.ParseVariables("MODULE_CONTENT", template.ToString());
         }
 
-        void OnRegisterSubModule(string submodule)
+        /// <summary>
+        /// Callback on registration of a sub module in the account module.
+        /// </summary>
+        /// <param name="submodule">The sub module having been registered.</param>
+        private void OnRegisterSubModule(string submodule)
         {
             
         }
 
+        /// <summary>
+        /// Callback on registration of the module in the account panel.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="e">An EventArgs that contains the event data.</param>
         protected abstract void RegisterModule(Core core, EventArgs e);
 
+        /// <summary>
+        /// Registers the sub modules in the account module with the account
+        /// panel.
+        /// </summary>
+        /// <param name="submodule">The sub module having been called.</param>
         public void RegisterSubModules(string submodule)
         {
             this.RegisterSubModule(submodule);
         }
 
+        /// <summary>
+        /// Display name of the module.
+        /// </summary>
         public abstract string Name
         {
             get;
         }
 
+        /// <summary>
+        /// The unique key used to identify the module in requests.
+        /// </summary>
         public abstract string Key
         {
             get;
         }
 
+        /// <summary>
+        /// The order the module is to appear along the tab display.
+        /// </summary>
         public abstract int Order
         {
             get;
         }
 
+        /// <summary>
+        /// Returns a list of sub modules registered with the account
+        /// module.
+        /// </summary>
         public Dictionary<string, string> SubModules
         {
             get
@@ -143,7 +186,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void AuthoriseRequestSid()
+        /// <summary>
+        /// Authorises a request ensuring the SID is present in the URL to
+        /// prevent undesired operation of the account panel for users.
+        /// </summary>
+        protected void AuthoriseRequestSid()
         {
             if (Request.QueryString["sid"] != session.SessionId)
             {
@@ -152,24 +199,52 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Implements CompareTo
+        /// </summary>
+        /// <remarks>
+        /// Comparison based on Order. Can be used to sort a list of
+        /// modules in the desired display order.
+        /// </remarks>
+        /// <param name="obj">Object to compare with</param>
+        /// <returns>Comparisson value</returns>
         public int CompareTo(object obj)
         {
             if (!(obj is AccountModule)) return -1;
             return Order.CompareTo(((AccountModule)obj).Order);
         }
 
+        /// <summary>
+        /// Builds a URI to the module key given.
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <returns>URI built</returns>
         public static string BuildModuleUri(string module)
         {
             return Linker.AppendSid(string.Format("/account/{0}",
                 module));
         }
 
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given.
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <returns>URI built</returns>
         public static string BuildModuleUri(string module, string sub)
         {
             return Linker.AppendSid(string.Format("/account/{0}/{1}",
                 module, sub));
         }
 
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
+        /// appending additional query string arguments given.
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="arguments">Additional query string arguments</param>
+        /// <returns>URI built</returns>
         public static string BuildModuleUri(string module, string sub, Dictionary<string, string> arguments)
         {
             string argumentList = "";
@@ -191,11 +266,28 @@ namespace BoxSocial.Internals
                 module, sub, argumentList));
         }
 
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
+        /// appending additional query string arguments given.
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="arguments">Additional query string arguments</param>
+        /// <returns>URI built</returns>
         public static string BuildModuleUri(string module, string sub, params string[] arguments)
         {
             return BuildModuleUri(module, sub, false, arguments);
         }
 
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
+        /// appending additional query string arguments given.
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="appendSid">True if force appending SID, otherwise false</param>
+        /// <param name="arguments">Additional query string arguments</param>
+        /// <returns>URI built</returns>
         public static string BuildModuleUri(string module, string sub, bool appendSid, params string[] arguments)
         {
             string argumentList = "";
@@ -218,11 +310,22 @@ namespace BoxSocial.Internals
                 module, sub, argumentList), appendSid);
         }
 
+        /// <summary>
+        /// Sets the redirect URI.
+        /// </summary>
+        /// <remarks>
+        /// Useful for redirecting from a message box after posting a form.
+        /// </remarks>
+        /// <param name="uri">URI to redirect to</param>
         public void SetRedirectUri(string uri)
         {
             core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(uri));
         }
 
+        /// <summary>
+        /// Sets an error in posting.
+        /// </summary>
+        /// <param name="errorString">String of error to be posted</param>
         public void SetError(string errorString)
         {
             core.template.ParseVariables("ERROR", errorString);

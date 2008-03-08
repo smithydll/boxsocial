@@ -1,0 +1,30 @@
+<!-- INCLUDE page_header.html -->
+	<h2><a href="{U_APPLICATION}">{APPLICATION_NAME}</a></h2>
+	<div id="pane-profile">
+		<div id="pane-profile-overview" class="pane">
+			<h3><a href="{U_APPLICATION}">{APPLICATION_NAME}</a></h3>
+			<!-- IF U_INSTALL -->
+			<p><span id="install" class="post-button"><a href="{U_INSTALL}">Install This Application</a></span></p>
+			<!-- ENDIF -->
+			<!-- IF U_UNINSTALL -->
+			<p><span id="uninstall" class="post-button"><a href="{U_UNINSTALL}">Uninstall This Application</a></span></p>
+			<!-- ENDIF -->
+		</div>
+	</div>
+	<div id="profile">
+	<div id="profile-group-info-pane" class="pane">
+	<h3>Application Information</h3>
+	<dl>
+		<dt>Creator:</dt>
+		<dd>{CREATOR_DISPLAY_NAME}</dd>
+		<!-- IF DESCRIPTION -->
+		<dt>Description:</dt>
+		<dd>{DESCRIPTION}</dd>
+		<!-- ENDIF -->
+	</dl>
+	</div>
+	<!-- BEGIN app_panel -->
+{app_panel.BODY}
+	<!-- END app_panel -->
+	</div>
+<!-- INCLUDE page_footer.html -->

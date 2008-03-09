@@ -1425,6 +1425,27 @@ namespace BoxSocial.Applications.Gallery
                 return this.GetType().FullName;
             }
         }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override long Comments
+        {
+            get
+            {
+                return itemComments;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return itemRating;
+            }
+        }
     }
 
     public class GalleryItemNotFoundException : Exception

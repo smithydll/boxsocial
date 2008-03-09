@@ -92,6 +92,15 @@ namespace Blog {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_blog_preferences {
+            get {
+                return ResourceManager.GetString("account_blog_preferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Write Blog Post&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;

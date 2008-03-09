@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -142,16 +143,17 @@ namespace BoxSocial.Applications.Blog
         private void blogCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            Member userProfile = new Member(core.db, e.ItemId);
+            BlogEntry blogEntry = new BlogEntry(core.db, e.ItemId);
+            Member owner = (Member)blogEntry.Owner;
 
-            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "Blog");
+            ApplicationEntry ae = new ApplicationEntry(core.db, owner, "Blog");
 
-            Template notificationTemplate = new Template("Blog", "user_blog_notification");
-            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
+            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_blog_notification");
+            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(blogEntry));
             notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
             notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
 
-            ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
+            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
         }
 
         /// <summary>
@@ -215,7 +217,7 @@ namespace BoxSocial.Applications.Blog
         {
             if (sender is PPage)
             {
-                Blog.Show(core, (PPage)sender, "", -1, -1, -1);
+                Blog.Show(core, (PPage)sender);
             }
         }
 
@@ -228,7 +230,7 @@ namespace BoxSocial.Applications.Blog
         {
             if (sender is PPage)
             {
-                Blog.Show(core, (PPage)sender, core.PagePathParts[1].Value, -1, -1, -1);
+                Blog.Show(core, (PPage)sender, core.PagePathParts[1].Value);
             }
         }
 
@@ -241,7 +243,7 @@ namespace BoxSocial.Applications.Blog
         {
             if (sender is PPage)
             {
-                Blog.Show(core, (PPage)sender, "", -1, int.Parse(core.PagePathParts[1].Value), -1);
+                Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value));
             }
         }
 
@@ -254,7 +256,7 @@ namespace BoxSocial.Applications.Blog
         {
             if (sender is PPage)
             {
-                Blog.Show(core, (PPage)sender, "", -1, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
+                Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 
@@ -267,7 +269,7 @@ namespace BoxSocial.Applications.Blog
         {
             if (sender is PPage)
             {
-                Blog.Show(core, (PPage)sender, "", int.Parse(core.PagePathParts[3].Value), int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
+                Blog.Show(core, (PPage)sender, long.Parse(core.PagePathParts[3].Value), int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 

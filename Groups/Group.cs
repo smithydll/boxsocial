@@ -215,11 +215,11 @@ namespace BoxSocial.Groups
             }
         }
 
-        public ulong Comments
+        public override long Comments
         {
             get
             {
-                return comments;
+                return (long)comments;
             }
         }
 
@@ -1163,6 +1163,14 @@ namespace BoxSocial.Groups
             get
             {
                 return Type;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
             }
         }
     }

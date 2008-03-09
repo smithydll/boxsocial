@@ -34,8 +34,18 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
-    public class BlogEntry
+
+    /// <summary>
+    /// Represents a blog entry
+    /// </summary>
+    public class BlogEntry : Item
     {
+        /// <summary>
+        /// A list of database fields associated with a blog entry.
+        /// </summary>
+        /// <remarks>
+        /// A blog entry uses the table prefix be.
+        /// </remarks>
         public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
 
         private Mysql db;
@@ -58,6 +68,9 @@ namespace BoxSocial.Applications.Blog
         private long createdRaw;
         private long modifiedRaw;
 
+        /// <summary>
+        /// Gets the blog entry id.
+        /// </summary>
         public long PostId
         {
             get
@@ -66,6 +79,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the id of the 
+        /// </summary>
         public long OwnerId
         {
             get
@@ -74,6 +90,20 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the owner of the blog post
+        /// </summary>
+        public Primitive Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
+
+        /// <summary>
+        /// Gets the title of the blog post
+        /// </summary>
         public string Title
         {
             get
@@ -82,6 +112,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the body of the blog post
+        /// </summary>
+        /// <remarks>
+        /// BBcode encoded field
+        /// </remarks>
         public string Body
         {
             get
@@ -90,6 +126,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the number of views for the blog entry.
+        /// </summary>
         public uint Views
         {
             get
@@ -98,6 +137,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the number of trackbacks for the blog entry.
+        /// </summary>
         public uint Trackbacks
         {
             get
@@ -106,14 +148,20 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public uint Comments
+        /// <summary>
+        /// Gets the number of comments for the blog entry.
+        /// </summary>
+        public override long Comments
         {
             get
             {
-                return comments;
+                return (long)comments;
             }
         }
 
+        /// <summary>
+        /// Gets the permission mask for the blog entry.
+        /// </summary>
         public ushort Permissions
         {
             get
@@ -122,6 +170,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the access information (permissions) for the blog entry.
+        /// </summary>
         public Access BlogEntryAccess
         {
             get
@@ -130,6 +181,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the status of the blog post.
+        /// </summary>
+        /// <remarks>
+        /// Valid values are PUBLISH and DRAFT
+        /// </remarks>
         public string Status
         {
             get
@@ -138,6 +195,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the license for the blog post.
+        /// </summary>
         public byte License
         {
             get
@@ -146,6 +206,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the GUID for the blog post.
+        /// </summary>
         public string Guid
         {
             get
@@ -154,16 +217,31 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the date the blog post was made.
+        /// </summary>
+        /// <param name="tz">Timezone</param>
+        /// <returns>DateTime object</returns>
         public DateTime GetCreatedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(createdRaw);
         }
 
+        /// <summary>
+        /// Gets the date the blog post was last modified.
+        /// </summary>
+        /// <param name="tz">Timezone</param>
+        /// <returns>DateTime object</returns>
         public DateTime GetModifiedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(modifiedRaw);
         }
 
+        /// <summary>
+        /// Initialises a new instance of the BlogEntry class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="postId">Post Id to retrieve</param>
         public BlogEntry(Mysql db, long postId)
         {
             this.db = db;
@@ -174,6 +252,8 @@ namespace BoxSocial.Applications.Blog
             if (postEntryDataTable.Rows.Count == 1)
             {
                 loadBlogEntryInfo(postEntryDataTable.Rows[0]);
+
+                this.owner = new Member(db, ownerId, true);
             }
             else
             {
@@ -181,6 +261,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initialses a new instance of the BlogEntry class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Owner whose blog post has been retrieved</param>
+        /// <param name="postEntryRow">Raw data row of blog entry</param>
         public BlogEntry(Mysql db, Primitive owner, DataRow postEntryRow)
         {
             this.db = db;
@@ -189,6 +275,10 @@ namespace BoxSocial.Applications.Blog
             loadBlogEntryInfo(postEntryRow);
         }
 
+        /// <summary>
+        /// Loads the database information into the BlogEntry class object.
+        /// </summary>
+        /// <param name="postEntryRow">Raw database information about the blog entry</param>
         private void loadBlogEntryInfo(DataRow postEntryRow)
         {
             postId = (long)postEntryRow["post_id"];
@@ -212,6 +302,48 @@ namespace BoxSocial.Applications.Blog
                 owner = new Member(db, OwnerId);
             }
             blogEntryAccess = new Access(db, access, owner);
+        }
+
+        /// <summary>
+        /// Gets the blog post id.
+        /// </summary>
+        public override long Id
+        {
+            get
+            {
+                return postId;
+            }
+        }
+
+        /// <summary>
+        /// Gets the BlogPost class namespace.
+        /// </summary>
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the URI for the blog post.
+        /// </summary>
+        public override string Uri
+        {
+            get
+            {
+                UnixTime tz = new UnixTime(((Member)owner).TimeZoneCode);
+                return Linker.BuildBlogPostUri((Member)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
+            }
         }
     }
 }

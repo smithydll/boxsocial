@@ -130,5 +130,21 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+
+        public override long Comments
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 }

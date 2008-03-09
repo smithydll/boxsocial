@@ -36,9 +36,20 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+
+    /// <summary>
+    /// Represents a user blog.
+    /// </summary>
     public class Blog
     {
-        public const string BLOG_FIELDS = "ub.blog_title, ub.blog_entries, ub.blog_comments, ub.blog_visits, ub.blog_access";
+
+        /// <summary>
+        /// A list of database fields associated with a blog.
+        /// </summary>
+        /// <remarks>
+        /// A blog uses the table prefix ub.
+        /// </remarks>
+        public const string BLOG_FIELDS = "ub.user_id, ub.blog_title, ub.blog_entries, ub.blog_comments, ub.blog_visits, ub.blog_access";
 
         private Mysql db;
 
@@ -51,6 +62,9 @@ namespace BoxSocial.Applications.Blog
         private ushort permissions;
         private Access blogAccess;
 
+        /// <summary>
+        /// Gets the id of the owner of the blog.
+        /// </summary>
         public int UserId
         {
             get
@@ -59,6 +73,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the title given to the blog.
+        /// </summary>
         public string Title
         {
             get
@@ -67,6 +84,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets a count of the entries posted to the blog.
+        /// </summary>
         public long Entries
         {
             get
@@ -75,6 +95,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets a count of comments posted to entries in the blog.
+        /// </summary>
         public long Comments
         {
             get
@@ -83,6 +106,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets a count of visits made to the blog.
+        /// </summary>
         public long Visits
         {
             get
@@ -91,6 +117,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the permission mask for the blog.
+        /// </summary>
         public ushort Permissions
         {
             get
@@ -99,6 +128,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the access information (permissions) for the blog.
+        /// </summary>
         public Access BlogAccess
         {
             get
@@ -107,6 +139,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Blog class.
+        /// </summary>
+        /// <param name="db">Database object</param>
+        /// <param name="owner">Owner whose blog to retrieve</param>
         public Blog(Mysql db, Member owner)
         {
             this.db = db;
@@ -125,8 +162,13 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Loads the database information into the Blog class object.
+        /// </summary>
+        /// <param name="blogRow">Raw database information about the blog</param>
         private void loadUserBlog(DataRow blogRow)
         {
+            userId = (int)blogRow["user_id"];
             title = (string)blogRow["blog_title"];
             entries = (long)blogRow["blog_entries"];
             comments = (long)blogRow["blog_comments"];
@@ -135,11 +177,99 @@ namespace BoxSocial.Applications.Blog
             blogAccess = new Access(db, permissions, owner);
         }
 
-        /*public static Blog Create()
+        /// <summary>
+        /// Creates a new blog for the logged in user.
+        /// </summary>
+        /// <param name="core"></param>
+        /// <returns></returns>
+        public static Blog Create(Core core)
         {
-        }*/
+            SelectQuery query = new SelectQuery("user_blog ub");
+            query.AddFields("ub.user_id");
+            query.AddCondition("ub.user_id", core.LoggedInMemberId);
 
-        public List<BlogEntry> GetEntries(PPage page, string category, int post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+            if (core.db.SelectQuery(query).Rows.Count == 0)
+            {
+                core.db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
+                        core.LoggedInMemberId));
+
+                return new Blog(core.db, core.session.LoggedInMember);
+            }
+            else
+            {
+                throw new CannotCreateBlogException();
+            }
+        }
+
+        /// <summary>
+        /// Gets a blog entry.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="post">Post id to get</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A blog entry as a list</returns>
+        public List<BlogEntry> GetEntry(PPage page, int post, ref ushort readAccessLevel)
+        {
+            return GetEntries(page, null, post, -1, -1, 1, 1, ref readAccessLevel);
+        }
+
+        /// <summary>
+        /// Gets a list of blog entries in a category.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="category">Category to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A list of blog entries</returns>
+        public List<BlogEntry> GetEntry(PPage page, string category, int currentPage, int perPage, ref ushort readAccessLevel)
+        {
+            return GetEntries(page, category, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
+        }
+
+        /// <summary>
+        /// Gets a list of blog entries made in a year.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="year">Year to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A list of blog entries</returns>
+        public List<BlogEntry> GetEntry(PPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
+        {
+            return GetEntries(page, null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
+        }
+
+        /// <summary>
+        /// Gets a list of blog entries made in a year.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="year">Year to select</param>
+        /// /// <param name="month">Month to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A list of blog entries</returns>
+        public List<BlogEntry> GetEntry(PPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        {
+            return GetEntries(page, null, -1, year, month, currentPage, perPage, ref readAccessLevel);
+        }
+
+        /// <summary>
+        /// Gets a list of entries in the blog fullfilling a given criteria.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="category">Category to select</param>
+        /// <param name="post">Post id to select</param>
+        /// <param name="year">Year to select</param>
+        /// <param name="month">Month to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A list of blog entries</returns>
+        /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
+        private List<BlogEntry> GetEntries(PPage page, string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
             List<BlogEntry> entries = new List<BlogEntry>();
 
@@ -201,7 +331,72 @@ namespace BoxSocial.Applications.Blog
             return entries;
         }
 
-        public static void Show(Core core, PPage page, string category, int post, int year, int month)
+        /// <summary>
+        /// Show the blog
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        public static void Show(Core core, PPage page)
+        {
+            Show(core, page, null, -1, -1, -1);
+        }
+
+        /// <summary>
+        /// Show the blog category
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="category">Category to show</param>
+        public static void Show(Core core, PPage page, string category)
+        {
+            Show(core, page, category, -1, -1, -1);
+        }
+
+        /// <summary>
+        /// Show the blog entries for a year
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="year">Year to show</param>
+        public static void Show(Core core, PPage page, int year)
+        {
+            Show(core, page, null, -1, year, -1);
+        }
+
+        /// <summary>
+        /// Show the blog entries for a month in a year
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="year">Year to show</param>
+        /// <param name="month">Month to show</param>
+        public static void Show(Core core, PPage page, int year, int month)
+        {
+            Show(core, page, null, -1, year, month);
+        }
+
+        /// <summary>
+        /// Show the blog entry
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="post">Post to show</param>
+        public static void Show(Core core, PPage page, long post, int year, int month)
+        {
+            Show(core, page, null, post, year, month);
+        }
+
+        /// <summary>
+        /// Show the blog
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="category">Category to show</param>
+        /// <param name="post">Post to show</param>
+        /// <param name="year">Year to show</param>
+        /// <param name="month">Month to show</param>
+        /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
+        private static void Show(Core core, PPage page, string category, long post, int year, int month)
         {
             page.template.SetTemplate("Blog", "viewblog");
 
@@ -479,7 +674,17 @@ namespace BoxSocial.Applications.Blog
         }
     }
 
+    /// <summary>
+    /// An exception class thrown when user does not already have a blog.
+    /// </summary>
     public class InvalidBlogException : Exception
+    {
+    }
+
+    /// <summary>
+    /// An exception class thrown when user already has a blog.
+    /// </summary>
+    public class CannotCreateBlogException : Exception
     {
     }
 }

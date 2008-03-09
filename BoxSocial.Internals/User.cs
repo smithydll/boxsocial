@@ -1921,6 +1921,22 @@ namespace BoxSocial.Internals
                 return Type;
             }
         }
+
+        public override long Comments
+        {
+            get
+            {
+                return (long)profileComments;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 
     public class InvalidUserException : Exception

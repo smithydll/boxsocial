@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,37 +19,24 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using System.Web;
+using BoxSocial.Internals;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public abstract class Item
+    public interface ICommentableItem
     {
-        private Mysql db;
-
-        public abstract long Id
+        long Comments
         {
             get;
         }
 
-        public abstract string Namespace
-        {
-            get;
-        }
-
-        public abstract string Uri
-        {
-            get;
-        }
-
-        public abstract long Comments
-        {
-            get;
-        }
-
-        public abstract float Rating
+        SortOrder CommentSortOrder
         {
             get;
         }

@@ -44,12 +44,18 @@ namespace BoxSocial.Applications.GuestBook
 
         public override long Id
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return owner.Id;
+            }
         }
 
         public override string Namespace
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return this.GetType().FullName;
+            }
         }
 
         public override string Uri
@@ -57,6 +63,22 @@ namespace BoxSocial.Applications.GuestBook
             get
             {
                 return GuestBook.Uri(owner);
+            }
+        }
+
+        public override long Comments
+        {
+            get
+            {
+                return owner.Comments;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
             }
         }
     }

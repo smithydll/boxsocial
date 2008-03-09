@@ -218,12 +218,27 @@ namespace BoxSocial.IO
                 try
                 {
                     ResourceManager rm = new ResourceManager(templateAssembly + ".Templates", pageAssembly[templateAssembly]);
-                    template = (string)rm.GetObject(templateName);
-                }
-                catch
-                {
-                    template = string.Format("Could not load template {1} from assembly {0}",
+
+                    object templateObject = rm.GetObject(templateName);
+
+                    if (templateObject is string)
+                    {
+                        template = (string)templateObject;
+                    }
+                    else if (templateObject is byte[])
+                    {
+                        template = System.Text.UTF8Encoding.UTF8.GetString((byte[])templateObject);
+                    }
+                    else
+                    {
+                        template = string.Format("Unknown template type {1} in assembly {0}",
                         templateAssembly, templateName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    template = string.Format("Could not load template {1} from assembly {0}.<hr />Additionally the following exception was thrown.<br />{2}",
+                        templateAssembly, templateName, ex.ToString().Replace("\n", "\n<br />"));
                 }
             }
             else

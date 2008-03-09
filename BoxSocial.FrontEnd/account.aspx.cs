@@ -187,9 +187,22 @@ namespace BoxSocial.FrontEnd
                 if (module == accountModule.Key)
                 {
                     accountModule.CreateTemplate();
-                    accountModule.RegisterSubModules(submodule);
-                    modules = accountModule.SubModules;
-                    accountModule.RenderTemplate();
+                    // catch all errors, don't want a single application to crash the account panel
+                    try
+                    {
+                        accountModule.RegisterSubModules(submodule);
+                        modules = accountModule.SubModules;
+                        accountModule.RenderTemplate();
+                    }
+                    catch (System.Threading.ThreadAbortException)
+                    {
+                        // ignore this informational exception
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO: e-mail application author of the error details
+                        Response.Write("<hr />" + ex.ToString() + "<hr />");
+                    }
                 }
             }
 

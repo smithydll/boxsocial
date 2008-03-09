@@ -309,8 +309,7 @@ namespace BoxSocial.Applications.Blog
             }
             catch (InvalidBlogException)
             {
-                db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
-                    loggedInMember.UserId));
+                Blog.Create(core);
             }
 
             bool postEditTimestamp = false;
@@ -465,7 +464,33 @@ namespace BoxSocial.Applications.Blog
         /// <param name="submodule">The sub module having been called.</param>
         private void EditPreferences(string submodule)
         {
-            throw new NotImplementedException();
+            subModules.Add("preferences", "Blog Preferences");
+            if (submodule != "preferences") return;
+
+            if (Request.Form["save"] != null)
+            {
+                EditPreferencesSave();
+                return;
+            }
+
+            template.SetTemplate("Blog", "account_blog_preferences");
+
+            Blog myBlog;
+            try
+            {
+                myBlog = new Blog(db, session.LoggedInMember);
+            }
+            catch (InvalidBlogException)
+            {
+                myBlog = Blog.Create(core);
+            }
+
+            List<string> permissions = new List<string>();
+            permissions.Add("Can Read");
+            permissions.Add("Can Comment");
+
+            template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode(myBlog.Title));
+            template.ParseVariables("S_BLOG_PERMS", Functions.BuildPermissionsBox(myBlog.Permissions, permissions));
         }
 
         /// <summary>
@@ -473,6 +498,19 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         private void EditPreferencesSave()
         {
+            AuthoriseRequestSid();
+
+            string title = Request.Form["title"];
+
+            UpdateQuery uQuery = new UpdateQuery("user_blog");
+            uQuery.AddCondition("user_id", core.LoggedInMemberId);
+            uQuery.AddField("blog_title", title);
+            uQuery.AddField("blog_access", Functions.GetPermission());
+
+            db.UpdateQuery(uQuery);
+
+            SetRedirectUri(BuildModuleUri("blog"));
+            Display.ShowMessage("Blog Preferences Updated", "Your blog preferences have been successfully updated.");
         }
     }
 }

@@ -192,7 +192,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public long Comments
+        public override long Comments
         {
             get
             {
@@ -597,7 +597,7 @@ namespace BoxSocial.Internals
         {
             if (canNotify(receiver))
             {
-                Notification.Create(this, receiver, subject, body.ToString());
+                Notification.Create(this, receiver, subject, body);
 
                 if (receiver.EmailNotifications)
                 {
@@ -742,6 +742,14 @@ namespace BoxSocial.Internals
             get
             {
                 return Type;
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
             }
         }
     }

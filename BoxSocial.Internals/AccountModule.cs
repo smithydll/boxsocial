@@ -110,6 +110,7 @@ namespace BoxSocial.Internals
         public void CreateTemplate()
         {
             template = new Template("1301.html");
+            template.ParseVariables("U_ACCOUNT", Linker.AppendSid("/account", true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);

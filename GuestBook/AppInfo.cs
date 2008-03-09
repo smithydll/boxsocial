@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.GuestBook
 
             ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "GuestBook");
 
-            Template notificationTemplate = new Template("GuestBook", "user_guestbook_notification");
+            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
             notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
             notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);

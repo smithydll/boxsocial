@@ -130,7 +130,7 @@ ENGINE = InnoDB;
             }
         }
 
-        public long Comments
+        public override long Comments
         {
             get
             {
@@ -445,6 +445,14 @@ ENGINE = InnoDB;
             get
             {
                 return Task.BuildTaskUri(this);
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
             }
         }
     }

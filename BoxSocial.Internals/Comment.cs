@@ -362,11 +362,15 @@ namespace BoxSocial.Internals
         {
             SelectQuery query = new SelectQuery("comments");
             query.AddFields("COUNT(*) AS total");
-            query.AddCondition("item_id", item.Id);
-            query.AddCondition("item_type", item.Namespace);
+            query.AddCondition("comment_item_id", item.Id);
+            query.AddCondition("comment_item_type", item.Namespace);
             query.AddCondition("comment_id", ConditionEquality.LessThanEqual, commentId);
+            query.AddSort(SortOrder.Ascending, "comment_time_ut");
 
             DataRow commentsRow = db.SelectQuery(query).Rows[0];
+
+            long before = (long)commentsRow["total"];
+            long after = item.Comments - before - 1;
 
             return Linker.AppendSid(string.Format("{0}#{1}",
                     Linker.StripSid(item.Uri), commentId));

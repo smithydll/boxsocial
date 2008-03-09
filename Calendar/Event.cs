@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public long Comments
+        public override long Comments
         {
             get
             {
@@ -375,6 +375,14 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return Event.BuildEventUri(this);
+            }
+        }
+
+        public override float Rating
+        {
+            get
+            {
+                return 0;
             }
         }
     }

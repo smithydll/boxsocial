@@ -40,5 +40,20 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        long Id
+        {
+            get;
+        }
+
+        string Namespace
+        {
+            get;
+        }
+
+        string Uri
+        {
+            get;
+        }
     }
 }

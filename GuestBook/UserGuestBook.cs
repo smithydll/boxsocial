@@ -29,7 +29,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.GuestBook
 {
-    public class UserGuestBook : Item
+    public class UserGuestBook : Item, ICommentableItem
     {
         private Mysql db;
 
@@ -81,5 +81,18 @@ namespace BoxSocial.Applications.GuestBook
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return owner.CommentSortOrder;
+            }
+        }
+
+        #endregion
     }
 }

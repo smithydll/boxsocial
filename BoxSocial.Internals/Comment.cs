@@ -358,7 +358,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string BuildUri(Item item)
+        public string BuildUri(ICommentableItem item)
         {
             SelectQuery query = new SelectQuery("comments");
             query.AddFields("COUNT(*) AS total");

@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a blog entry
     /// </summary>
-    public class BlogEntry : Item
+    public class BlogEntry : Item, ICommentableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -343,6 +343,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return 0;
+            }
+        }
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
             }
         }
     }

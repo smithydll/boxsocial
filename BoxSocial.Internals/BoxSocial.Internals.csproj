@@ -97,6 +97,7 @@
     <Compile Include="Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Prose.cs" />
+    <Compile Include="Rating.cs" />
     <Compile Include="RelationInfo.cs" />
     <Compile Include="RssDocument.cs" />
     <Compile Include="Search.cs" />

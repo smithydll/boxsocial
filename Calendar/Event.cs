@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Calendar
         No = 3,
     }
 
-    public class Event : Item
+    public class Event : Item, ICommentableItem
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendies, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -385,5 +385,18 @@ namespace BoxSocial.Applications.Calendar
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        #endregion
     }
 }

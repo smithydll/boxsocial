@@ -75,7 +75,7 @@ ENGINE = InnoDB;
 
 
      */
-    public class Task : Item
+    public class Task : Item, ICommentableItem
     {
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
@@ -130,7 +130,7 @@ ENGINE = InnoDB;
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -455,6 +455,19 @@ ENGINE = InnoDB;
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidTaskException : Exception

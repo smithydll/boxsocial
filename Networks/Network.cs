@@ -49,7 +49,7 @@ namespace BoxSocial.Networks
     /// DONE: run query on zinzam.com db
     /// ALTER TABLE `zinzam0_zinzam`.`comments` MODIFY COLUMN `comment_item_type` ENUM('UNASSOCIATED','PHOTO','BLOGPOST','PODCAST','PODCASTEPISODE','USER','PAGE','LIST','GROUP','NETWORK') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'UNASSOCIATED';
     /// </summary>
-    public class Network : Primitive
+    public class Network : Primitive, ICommentableItem
     {
         public const string NETWORK_INFO_FIELDS = "ni.network_id, ni.network_name_display, ni.network_abstract, ni.network_members, ni.network_comments, ni.network_require_confirmation, ni.network_type, ni.network_gallery_items, ni.network_bytes";
 
@@ -181,7 +181,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -714,6 +714,19 @@ namespace BoxSocial.Networks
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Descending;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidNetworkException : Exception

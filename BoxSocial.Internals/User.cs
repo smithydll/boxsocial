@@ -1922,7 +1922,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {

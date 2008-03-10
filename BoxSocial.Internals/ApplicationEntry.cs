@@ -34,7 +34,7 @@ namespace BoxSocial.Internals
      * DONE: ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_list_only` BOOLEAN NOT NULL AFTER `page_classification`;
      * ALTER TABLE `zinzam0_zinzam`.`user_pages` MODIFY COLUMN `page_list_only` TINYINT(1) UNSIGNED NOT NULL;
      */
-    public class ApplicationEntry : Primitive
+    public class ApplicationEntry : Primitive, ICommentableItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments";
         public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type";
@@ -192,7 +192,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -752,6 +752,19 @@ namespace BoxSocial.Internals
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Descending;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidApplicationException : Exception

@@ -39,7 +39,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
-    public abstract class GalleryItem : Item
+    public abstract class GalleryItem : Item, ICommentableItem
     {
         public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
 
@@ -1431,7 +1431,7 @@ namespace BoxSocial.Applications.Gallery
             get { throw new NotImplementedException(); }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -1446,6 +1446,19 @@ namespace BoxSocial.Applications.Gallery
                 return itemRating;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        #endregion
     }
 
     public class GalleryItemNotFoundException : Exception

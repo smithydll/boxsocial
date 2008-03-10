@@ -151,7 +151,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of comments for the blog entry.
         /// </summary>
-        public override long Comments
+        public long Comments
         {
             get
             {

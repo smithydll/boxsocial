@@ -36,7 +36,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
-    public class UserGroup : Primitive
+    public class UserGroup : Primitive, ICommentableItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
 
@@ -215,7 +215,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {
@@ -1173,6 +1173,19 @@ namespace BoxSocial.Groups
                 return 0;
             }
         }
+
+        #region ICommentableItem Members
+
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Descending;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidGroupException : Exception

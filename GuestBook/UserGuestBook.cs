@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        public override long Comments
+        public long Comments
         {
             get
             {

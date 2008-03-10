@@ -44,11 +44,6 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract long Comments
-        {
-            get;
-        }
-
         public abstract float Rating
         {
             get;

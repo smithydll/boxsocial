@@ -131,14 +131,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override long Comments
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
         public override float Rating
         {
             get

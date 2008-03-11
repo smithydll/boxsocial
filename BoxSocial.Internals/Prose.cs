@@ -23,7 +23,10 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
+using System.Resources;
+using System.Threading;
 using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
@@ -33,8 +36,67 @@ namespace BoxSocial.Internals
 {
     /// <summary>
     /// Handles string manipulation and translations.
+    /// 
+    /// An application shall have separate language files from the assembly
+    /// which can be translated, uploaded, and updated without updating the
+    /// application assembly itself. This facilitates community translation
+    /// of the application in an efficient manner.
+    /// 
+    /// The structure shall be
+    /// /language/applicationKey/applicationKey.ISO_languageCode.resources
     /// </summary>
     public class Prose
     {
+
+        private static string language;
+        private static Dictionary<string, ResourceManager> languageResources;
+
+        public static string Language
+        {
+            set
+            {
+                language = value;
+                Thread.CurrentThread.CurrentCulture = new CultureInfo(language);
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(language);
+            }
+        }
+
+        internal static void Initialise()
+        {
+            languageResources = new Dictionary<string, ResourceManager>();
+
+            AddApplication("Internals");
+        }
+
+        internal static void AddApplication(string key)
+        {
+            ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, "./language/" + key + "/", null);
+
+            languageResources.Add(key, rm);
+        }
+
+        public static string GetString(string key)
+        {
+            try
+            {
+                return languageResources["Internals"].GetString(key);
+            }
+            catch
+            {
+                return "<MISSING LANGUAGE KEY>";
+            }
+        }
+
+        public static string GetString(string applicationKey, string languageKey)
+        {
+            try
+            {
+                return languageResources[applicationKey].GetString(languageKey);
+            }
+            catch
+            {
+                return "<MISSING LANGUAGE KEY>";
+            }
+        }
     }
 }

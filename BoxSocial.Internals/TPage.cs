@@ -276,6 +276,8 @@ namespace BoxSocial.Internals
                 db.CloseConnection();
             }
 
+            Prose.Close();
+
             HttpContext.Current.Response.End();
         }
 
@@ -286,6 +288,8 @@ namespace BoxSocial.Internals
             {
                 db.CloseConnection();
             }
+
+            Prose.Close();
         }
     }
 }

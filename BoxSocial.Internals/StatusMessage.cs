@@ -104,6 +104,12 @@ namespace BoxSocial.Internals
 
             long statusId = db.UpdateQuery(iQuery);
 
+            UpdateQuery uQuery = new UpdateQuery("user_info");
+            uQuery.AddField("user_status_messages", "user_status_messages + 1");
+            uQuery.AddCondition("user_id", creator.Id);
+
+            db.UpdateQuery(uQuery);
+
             return new StatusMessage(db, creator, statusId, message);
         }
 

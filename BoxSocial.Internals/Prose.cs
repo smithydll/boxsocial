@@ -61,8 +61,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal static void Initialise()
+        internal static void Initialise(string language)
         {
+            Language = language;
+
             languageResources = new Dictionary<string, ResourceManager>();
 
             AddApplication("Internals");
@@ -70,9 +72,16 @@ namespace BoxSocial.Internals
 
         internal static void AddApplication(string key)
         {
-            ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, "./language/" + key + "/", null);
+            try
+            {
+                ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, "./language/" + key + "/", null);
 
-            languageResources.Add(key, rm);
+                languageResources.Add(key, rm);
+            }
+            catch
+            {
+                // TODO: throw error loading language
+            }
         }
 
         public static string GetString(string key)
@@ -96,6 +105,18 @@ namespace BoxSocial.Internals
             catch
             {
                 return "<MISSING LANGUAGE KEY>";
+            }
+        }
+
+        public static void Close()
+        {
+            if (languageResources != null)
+            {
+                foreach (string key in languageResources.Keys)
+                {
+                    ResourceManager rm = languageResources[key];
+                    rm.ReleaseAllResources();
+                }
             }
         }
     }

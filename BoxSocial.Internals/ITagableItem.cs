@@ -29,12 +29,11 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public interface IRateableItem
+    public interface ITagableItem
     {
-        float Rating
-        {
-            get;
-        }
+        List<ItemTag> GetTags();
+
+        ItemTag Add(string tag);
 
         long Id
         {

@@ -48,5 +48,12 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        protected List<ItemTag> getTags()
+        {
+            List<ItemTag> tags = new List<ItemTag>();
+
+            return tags;
+        }
     }
 }

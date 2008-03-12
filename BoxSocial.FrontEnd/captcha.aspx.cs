@@ -105,14 +105,49 @@ namespace BoxSocial.FrontEnd
                 //int j = (int)(rand.NextDouble() * chars.Length);
                 if (rand.NextDouble() > 0.5)
                 {
-                    gp.AddString(confirmString[i].ToString(), new FontFamily("Times New Roman"), (int)FontStyle.Bold, 30F + (float)(20 * rand.NextDouble()), new PointF(2F, 2F), StringFormat.GenericTypographic);
+                    gp.AddString(confirmString[i].ToString(), new FontFamily("Times New Roman"), (int)FontStyle.Bold, 35F + (float)(20 * rand.NextDouble()), new PointF(2F, 2F), StringFormat.GenericTypographic);
                 }
                 else
                 {
-                    gp.AddString(confirmString[i].ToString(), new FontFamily("Arial"), (int)FontStyle.Bold, 30F + (float)(20 * rand.NextDouble()), new PointF(2F, 2F), StringFormat.GenericTypographic);
+                    gp.AddString(confirmString[i].ToString(), new FontFamily("Arial"), (int)FontStyle.Bold, 35F + (float)(20 * rand.NextDouble()), new PointF(2F, 2F), StringFormat.GenericTypographic);
                 }
                 gp.Transform(transformMatrix);
                 PointF[] pts = gp.PathPoints;
+
+                Color[] colours = new Color[pts.Length];
+                for (int j = 0; j < pts.Length; j++)
+                {
+                    colours[j] = captchaImage.GetPixel((int)pts[j].X, (int)pts[j].Y);
+                }
+
+                int[] mean = new int[3];
+                int[] geomean = new int[3];
+                for (int j = 0; j < colours.Length; j++)
+                {
+                    mean[0] += colours[j].R;
+                    mean[1] += colours[j].G;
+                    mean[2] += colours[j].B;
+
+                    geomean[0] += (int)Math.Pow(colours[j].R, 2);
+                    geomean[1] += (int)Math.Pow(colours[j].G, 2);
+                    geomean[2] += (int)Math.Pow(colours[j].B, 2);
+                }
+
+                Color meanColour = Color.FromArgb(mean[0] / colours.Length,
+                    mean[1] / colours.Length,
+                    mean[2] / colours.Length);
+
+                Color geomeanColour = Color.FromArgb((int)Math.Pow(geomean[0] / colours.Length, 0.5),
+                    (int)Math.Pow(geomean[1] / colours.Length, 0.5),
+                    (int)Math.Pow(geomean[2] / colours.Length, 0.5));
+
+                Color inverseMean = Color.FromArgb(255 - meanColour.R,
+                    255 - meanColour.G,
+                    255 - meanColour.B);
+
+                Color inverseGeomean = Color.FromArgb(255 - geomeanColour.R,
+                    255 - geomeanColour.G,
+                    255 - geomeanColour.B);
 
                 TextureBrush tb = new TextureBrush(img, new Rectangle(new Point((int)(500 * rand.NextDouble()), (int)(500 * rand.NextDouble())), new Size(200, 200)));
                 g.FillPolygon(tb, pts);
@@ -123,28 +158,29 @@ namespace BoxSocial.FrontEnd
                 Color npen = Color.FromArgb(255 - (int)Math.Pow((double)pen.R * pen2.R * pen3.R * pen4.R, 1 / 4.0), 255 - (int)Math.Pow((double)pen.G * pen2.G * pen3.G * pen4.G, 1 / 4), 255 - (int)Math.Pow((double)pen.B * pen2.B * pen3.B * pen4.B, 1 / 4.0));
                 Color npen2 = Color.FromArgb(255 - (pen.R + pen2.R + pen3.R + pen4.R) / 4, 255 - (pen.G + pen2.G + pen3.G + pen4.G) / 4, 255 - (pen.B + pen2.B + pen3.B + pen4.B) / 4);
                 //Color npen = Color.FromArgb((int)((255 - npen2.R) * rand.NextDouble() * 0.5), (int)((255 - npen2.G) * rand.NextDouble() * 0.5), (int)((255 - npen2.B) * rand.NextDouble() * 0.5));
-                HatchBrush hb = new HatchBrush((HatchStyle)((int)(50 * rand.NextDouble())), npen2, npen);
+
+                HatchBrush hb = new HatchBrush((HatchStyle)((int)(50 * rand.NextDouble())), inverseMean, meanColour);
 
                 g.DrawPolygon(new Pen(npen2, 0.5F), pts);
                 g.FillPolygon(hb, pts);
 
-                g.TranslateTransform(3, 3);
-                hb = new HatchBrush((HatchStyle)((int)(50 * rand.NextDouble())), npen, npen2);
+                g.TranslateTransform(2, 2);
+                hb = new HatchBrush((HatchStyle)((int)(50 * rand.NextDouble())), geomeanColour, inverseGeomean);
 
-                g.DrawPolygon(new Pen(npen, 0.5F), pts);
+                g.DrawPolygon(new Pen(npen, 1.5F), pts);
                 g.FillPolygon(hb, pts);
 
-                g.DrawLine(new Pen(npen, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y - 20 * (float)rand.NextDouble()),
+                g.DrawLine(new Pen(npen, 0.5F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y - 20 * (float)rand.NextDouble()),
                     new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y + 20 * (float)rand.NextDouble()));
 
-                g.DrawLine(new Pen(npen2, 1F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y + 20 * (float)rand.NextDouble()),
+                g.DrawLine(new Pen(npen2, 0.5F), new PointF(pts[pts.Length / 3].X + 20 * (float)rand.NextDouble(), pts[pts.Length / 3].Y + 20 * (float)rand.NextDouble()),
                     new PointF(pts[pts.Length / 3 * 2].X - 20 * (float)rand.NextDouble(), pts[pts.Length / 3 * 2].Y - 20 * (float)rand.NextDouble()));
 
             }
 
 
             ImageCodecInfo encoderInfo = GetEncoderInfo("image/jpeg");
-            EncoderParameter encoderParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 75L);
+            EncoderParameter encoderParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 90L);
             EncoderParameters encoderParams = new EncoderParameters(1);
             encoderParams.Param[0] = encoderParam;
             captchaImage.Save(Response.OutputStream, encoderInfo, encoderParams);

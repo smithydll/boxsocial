@@ -1185,6 +1185,14 @@ namespace BoxSocial.Groups
             }
         }
 
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
         #endregion
     }
 

@@ -93,6 +93,14 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
         #endregion
     }
 }

@@ -247,52 +247,37 @@ namespace BoxSocial.Internals
             return ConfirmBoxResult.None;
         }
 
-        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType)
+        public static void DisplayComments(Template template, Member profileOwner, ICommentableItem item)
         {
-            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, -1, true);
+            DisplayComments(template, (Primitive)profileOwner, item);
         }
 
-        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, long comments)
-        {
-            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, comments, true);
-        }
-
-        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, bool sortAscending)
-        {
-            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, -1, sortAscending);
-        }
-
-        public static void DisplayComments(Template template, Member profileOwner, long itemId, string itemType, long commentCount, bool sortAscending)
-        {
-            DisplayComments(template, (Primitive)profileOwner, itemId, itemType, commentCount, sortAscending);
-        }
-
-        public static void DisplayComments(Template template, Primitive owner, long itemId, string itemType, long commentCount)
-        {
-            DisplayComments(template, owner, itemId, itemType, commentCount, true);
-        }
-
-        public static void DisplayComments(Template template, Primitive owner, long itemId, string itemType, long commentCount, bool sortAscending)
+        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item)
         {
             Mysql db = core.db;
 
             int p = Functions.RequestInt("p", 1);
 
-            List<Comment> comments = Comment.GetComments(db, itemType, itemId, sortAscending, p, 10);
+            if (p < 1)
+            {
+                p = (int)(item.Comments - ~p * item.CommentsPerPage - 1) / item.CommentsPerPage;
+            }
+
+            List<Comment> comments = Comment.GetComments(db, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage);
             Comment.LoadUserInfoCache(core, comments);
 
-            if (commentCount >= 0)
+            if (item.Comments >= 0)
             {
-                template.ParseVariables("COMMENTS", commentCount.ToString());
+                template.ParseVariables("COMMENTS", item.Comments.ToString());
             }
             else
             {
                 template.ParseVariables("COMMENTS", comments.Count.ToString());
             }
-            template.ParseVariables("ITEM_ID", itemId.ToString());
-            template.ParseVariables("ITEM_TYPE", itemType);
+            template.ParseVariables("ITEM_ID", item.Id.ToString());
+            template.ParseVariables("ITEM_TYPE", item.Namespace);
 
-            if (sortAscending)
+            if (item.CommentSortOrder == SortOrder.Ascending)
             {
                 template.ParseVariables("COMMENTS_ASC", "TRUE");
                 template.ParseVariables("COMMENT_SORT", "asc");

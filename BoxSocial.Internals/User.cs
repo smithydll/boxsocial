@@ -1945,6 +1945,14 @@ namespace BoxSocial.Internals
                 return SortOrder.Descending;
             }
         }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
     }
 
     public class InvalidUserException : Exception

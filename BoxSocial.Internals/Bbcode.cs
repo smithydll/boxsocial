@@ -766,13 +766,13 @@ namespace BoxSocial.Internals
             {
                 if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "--- Quote: " + Parse(e.Attributes.GetAttribute("default")) + " wrote: ---\n";
+                    e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default")) + " wrote: ---\n";
                 }
                 else
                 {
-                    e.PrefixText = "--- Quote: ---\n";
+                    e.PrefixText = "\n--- Quote: ---\n";
                 }
-                e.SuffixText = "------\n";
+                e.SuffixText = "\n---------------------\n";
             }
             else
             {
@@ -1377,8 +1377,51 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                string key = e.Contents;
+                e.RemoveContents();
+
+                long id = 0;
+
+
+                if (key != "you")
+                {
+                    try
+                    {
+                        id = long.Parse(key);
+                    }
+                    catch
+                    {
+                        e.AbortParse();
+                        return;
+                    }
+                }
+                else
+                {
+                    id = core.LoggedInMemberId;
+                }
+
+                if (id > 0)
+                {
+                    core.LoadUserProfile(id);
+                    Member userUser = core.UserProfiles[id];
+
+                    if (e.Attributes.HasAttribute("ownership") &&
+                        e.Attributes.GetAttribute("ownership") == "true")
+                    {
+                        e.PrefixText = userUser.DisplayNameOwnership;
+                        e.SuffixText = "";
+                    }
+                    else
+                    {
+                        e.PrefixText = userUser.DisplayName;
+                        e.SuffixText = "";
+                    }
+                }
+                else
+                {
+                    e.PrefixText = "Anonymous";
+                    e.SuffixText = "";
+                }
             }
             else
             {

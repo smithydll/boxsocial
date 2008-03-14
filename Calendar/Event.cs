@@ -397,6 +397,14 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
         #endregion
     }
 }

@@ -726,6 +726,14 @@ namespace BoxSocial.Networks
             }
         }
 
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
         #endregion
     }
 

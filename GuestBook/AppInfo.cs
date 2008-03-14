@@ -149,7 +149,7 @@ namespace BoxSocial.Applications.GuestBook
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
-            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
+            notificationTemplate.ParseVariables("POSTER_ID", e.Poster.Id.ToString());
             notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
 
             ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
@@ -342,7 +342,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, profileOwner, profileOwner.Id, "USER", (long)profileOwner.ProfileComments, false);
+            Display.DisplayComments(template, profileOwner, profileOwner);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
             template.ParseVariables("IS_PROFILE", "TRUE");
 
@@ -362,7 +362,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, thisGroup, thisGroup.GroupId, "GROUP", (long)thisGroup.Comments, false);
+            Display.DisplayComments(template, thisGroup, thisGroup);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(thisGroup)));
 
             e.core.AddMainPanel(template);
@@ -381,7 +381,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, theNetwork, theNetwork.NetworkId, "NETWORK", (long)theNetwork.Comments, false);
+            Display.DisplayComments(template, theNetwork, theNetwork);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(theNetwork)));
 
             e.core.AddMainPanel(template);
@@ -397,7 +397,7 @@ namespace BoxSocial.Applications.GuestBook
                 template.ParseVariables("CAN_COMMENT", "TRUE");
             }
 
-            Display.DisplayComments(template, anApplication, anApplication.ApplicationId, "APPLICATION", (long)anApplication.Comments, false);
+            Display.DisplayComments(template, anApplication, anApplication);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(anApplication)));
 
             e.core.AddMainPanel(template);

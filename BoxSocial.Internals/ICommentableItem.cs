@@ -55,5 +55,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        byte CommentsPerPage
+        {
+            get;
+        }
     }
 }

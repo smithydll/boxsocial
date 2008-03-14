@@ -604,9 +604,9 @@ namespace BoxSocial.Internals
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
 
                     emailTemplate.ParseVariables("TO_NAME", receiver.DisplayName);
-                    emailTemplate.ParseVariables("NOTIFICATION_MESSAGE", Bbcode.Strip(body));
+                    emailTemplate.ParseVariables("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
 
-                    Email.SendEmail(receiver.AlternateEmail, subject, emailTemplate.ToString());
+                    Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
                 }
             }
         }
@@ -761,6 +761,14 @@ namespace BoxSocial.Internals
             get
             {
                 return SortOrder.Descending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
 

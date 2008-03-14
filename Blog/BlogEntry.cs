@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return this.GetType().FullName;
+                return "BLOGPOST";
             }
         }
 
@@ -351,6 +351,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
     }

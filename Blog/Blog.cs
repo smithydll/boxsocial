@@ -612,7 +612,7 @@ namespace BoxSocial.Applications.Blog
                     {
                         page.template.ParseVariables("CAN_COMMENT", "TRUE");
                     }
-                    Display.DisplayComments(page.template, page.ProfileOwner, post, "BLOGPOST", comments);
+                    Display.DisplayComments(page.template, page.ProfileOwner, new BlogEntry(core.db, post));
                     page.template.ParseVariables("SINGLE", "TRUE");
                 }
 

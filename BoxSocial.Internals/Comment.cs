@@ -177,11 +177,11 @@ namespace BoxSocial.Internals
             return new Comment(core.db, commentId);
         }
 
-        public static List<Comment> GetComments(Mysql db, string itemType, long itemId, bool sortAscending, int currentPage, int perPage)
+        public static List<Comment> GetComments(Mysql db, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage)
         {
             List<Comment> comments = new List<Comment>();
 
-            string sort = (sortAscending) ? "ASC" : "DESC";
+            string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
 
             DataTable commentsTable = db.SelectQuery(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
                 itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));
@@ -372,8 +372,26 @@ namespace BoxSocial.Internals
             long before = (long)commentsRow["total"];
             long after = item.Comments - before - 1;
 
-            return Linker.AppendSid(string.Format("{0}#{1}",
+            long page = 1;
+            if (item.CommentSortOrder == SortOrder.Ascending)
+            {
+                page = before / item.CommentsPerPage + 1;
+            }
+            else
+            {
+                page = ~(before / item.CommentsPerPage + 1);
+            }
+
+            if (page == 1)
+            {
+                return Linker.AppendSid(string.Format("{0}?#c{1}",
                     Linker.StripSid(item.Uri), commentId));
+            }
+            else
+            {
+                return Linker.AppendSid(string.Format("{0}?p={2}&#c{1}",
+                    Linker.StripSid(item.Uri), commentId, page));
+            }
         }
     }
 

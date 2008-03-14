@@ -730,7 +730,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page.template, page.ProfileOwner, photo.ItemId, "PHOTO", photo.ItemComments);
+                Display.DisplayComments(page.template, page.ProfileOwner, photo);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
                     HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
@@ -833,7 +833,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page.template, page.ThisGroup, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments);
+                Display.DisplayComments(page.template, page.ThisGroup, galleryItem);
 
                 string pageUri = string.Format("/group/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.ThisGroup.Slug), photoName);
@@ -938,7 +938,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page.template, page.TheNetwork, galleryItem.ItemId, "PHOTO", galleryItem.ItemComments, true);
+                Display.DisplayComments(page.template, page.TheNetwork, galleryItem);
 
                 string pageUri = string.Format("/network/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.TheNetwork.NetworkNetwork), photoName);
@@ -1422,7 +1422,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return this.GetType().FullName;
+                return "PHOTO";
             }
         }
 
@@ -1455,6 +1455,14 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
 

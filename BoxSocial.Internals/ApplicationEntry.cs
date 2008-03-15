@@ -697,6 +697,7 @@ namespace BoxSocial.Internals
             SelectQuery query = new SelectQuery("actions at");
             query.AddFields(Action.FEED_FIELDS);
             query.AddSort(SortOrder.Descending, "at.action_time_ut");
+            query.AddCondition("at.action_application", Id);
             query.LimitCount = 1;
 
             DataTable feedTable = db.SelectQuery(query);

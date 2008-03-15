@@ -51,9 +51,20 @@ namespace BoxSocial.FrontEnd
 
         private void ShowStatusUpdates()
         {
-            List<StatusMessage> statusMessages = StatusFeed.GetFriendItems(core, loggedInMember, 3);
-
             Template template = new Template("statusmessagespanel.html");
+
+            /* My status */
+            StatusMessage myStatusMessage = StatusFeed.GetLatest(core, loggedInMember);
+
+            if (myStatusMessage != null)
+            {
+                template.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(loggedInMember.DisplayName));
+                template.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(myStatusMessage.Message));
+                template.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(myStatusMessage.GetTime(core.tz))));
+            }
+
+            /* Friends status */
+            List<StatusMessage> statusMessages = StatusFeed.GetFriendItems(core, loggedInMember, 3);
 
             foreach (StatusMessage statusMessage in statusMessages)
             {

@@ -766,7 +766,7 @@ namespace BoxSocial.Internals
             {
                 if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default")) + " wrote: ---\n";
+                    e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default"), null, e.Owner, e.StripTag) + " wrote: ---\n";
                 }
                 else
                 {

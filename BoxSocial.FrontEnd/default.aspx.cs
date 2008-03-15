@@ -44,7 +44,28 @@ namespace BoxSocial.FrontEnd
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(db, session.LoggedInMember, "Calendar"));
 
                 template.ParseVariables("DATE_STRING", tz.Now.ToLongDateString());
+
+                ShowStatusUpdates();
             }
+        }
+
+        private void ShowStatusUpdates()
+        {
+            List<StatusMessage> statusMessages = StatusFeed.GetFriendItems(core, loggedInMember, 3);
+
+            Template template = new Template("statusmessagespanel.html");
+
+            foreach (StatusMessage statusMessage in statusMessages)
+            {
+                VariableCollection statusMessagesVariableCollection = template.CreateChild("status_messages");
+
+                statusMessagesVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(statusMessage.Owner.DisplayName));
+                statusMessagesVariableCollection.ParseVariables("USER_NAME", HttpUtility.HtmlEncode(statusMessage.Owner.Key));
+                statusMessagesVariableCollection.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(statusMessage.Message));
+                statusMessagesVariableCollection.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(statusMessage.GetTime(core.tz))));
+            }
+
+            core.AddSidePanel(template);
         }
 
         protected void Page_Load(object sender, EventArgs e)

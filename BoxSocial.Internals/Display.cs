@@ -257,10 +257,30 @@ namespace BoxSocial.Internals
             Mysql db = core.db;
 
             int p = Functions.RequestInt("p", 1);
+            long c = Functions.RequestLong("c", 0);
 
-            if (p < 1)
+            if (c > 0)
             {
-                p = (int)(item.Comments - ~p * item.CommentsPerPage - 1) / item.CommentsPerPage;
+                SelectQuery query = new SelectQuery("comments");
+                query.AddFields("COUNT(*) AS total");
+                query.AddCondition("comment_item_id", item.Id);
+                query.AddCondition("comment_item_type", item.Namespace);
+                query.AddCondition("comment_id", ConditionEquality.LessThanEqual, c);
+                query.AddSort(SortOrder.Ascending, "comment_time_ut");
+
+                DataRow commentsRow = db.SelectQuery(query).Rows[0];
+
+                long before = (long)commentsRow["total"];
+                long after = item.Comments - before - 1;
+
+                if (item.CommentSortOrder == SortOrder.Ascending)
+                {
+                    p = (int)(before / item.CommentsPerPage + 1);
+                }
+                else
+                {
+                    p = (int)(after / item.CommentsPerPage + 1);
+                }
             }
 
             List<Comment> comments = Comment.GetComments(db, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage);

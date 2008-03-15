@@ -123,8 +123,19 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        void core_PageHooks(HookEventArgs eventArgs)
+        void core_PageHooks(HookEventArgs e)
         {
+            if (e.PageType == AppPrimitives.None)
+            {
+                if (e.core.PagePath.ToLower() == "/default.aspx")
+                {
+                    //ShowStatusUpdates(e);
+                }
+            }
         }
+
+        /*void ShowStatusUpdates(HookEventArgs e)
+        {
+        }*/
     }
 }

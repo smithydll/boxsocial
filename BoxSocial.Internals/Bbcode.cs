@@ -1162,9 +1162,16 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                // TODO: strip all SIDs
-                e.PrefixText = "http://zinzam.com";
-                e.SuffixText = "";
+                if (e.Attributes.HasAttributes())
+                {
+                    e.PrefixText = "";
+                    e.SuffixText = string.Format("(http://zinzam.com{0})", Linker.StripSid(e.Attributes.GetAttribute("default")));
+                }
+                else
+                {
+                    e.PrefixText = "(http://zinzam.com";
+                    e.SuffixText = ")";
+                }
             }
             else
             {

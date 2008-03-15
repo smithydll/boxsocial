@@ -64,6 +64,46 @@ namespace BoxSocial.Internals
             return feedItems;
         }
 
+        public static List<StatusMessage> GetFriendItems(Core core, Member owner)
+        {
+            return GetFriendItems(core, owner, 50, 1);
+        }
+
+        public static List<StatusMessage> GetFriendItems(Core core, Member owner, int limit)
+        {
+            return GetFriendItems(core, owner, limit, 1);
+        }
+
+        public static List<StatusMessage> GetFriendItems(Core core, Member owner, int limit, int page)
+        {
+            List<long> friendIds = owner.GetFriendIds();
+            List<StatusMessage> feedItems = new List<StatusMessage>();
+
+            SelectQuery query = new SelectQuery("user_status_messages usm");
+            query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
+            query.AddSort(SortOrder.Descending, "usm.status_time_ut");
+            query.AddCondition("user_id", ConditionEquality.In, friendIds);
+            query.LimitCount = limit;
+            query.LimitStart = (page - 1) * limit;
+
+            // if limit is less than 10, we will only get one for each member
+            if (limit < 10)
+            {
+                //query.AddGrouping("user_id");
+                // WHERE current
+            }
+
+            DataTable feedTable = core.db.SelectQuery(query);
+
+            core.LoadUserProfiles(friendIds);
+            foreach (DataRow dr in feedTable.Rows)
+            {
+                feedItems.Add(new StatusMessage(core.db, core.UserProfiles[(long)dr["user_id"]], dr));
+            }
+
+            return feedItems;
+        }
+
         public static StatusMessage GetLatest(Core core, Member owner)
         {
             SelectQuery query = new SelectQuery("user_status_messages usm");

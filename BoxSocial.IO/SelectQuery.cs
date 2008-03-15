@@ -98,11 +98,13 @@ namespace BoxSocial.IO
 
         private List<string> tables;
         private List<string> fields;
+        private List<string> groupings;
         private QueryCondition conditions;
         private List<TableJoin> joins;
         private List<TableSort> sorts;
         private int limitCount = -1;
         private int limitStart = -1;
+        private bool isDistinct = false;
 
         public int LimitCount
         {
@@ -120,13 +122,23 @@ namespace BoxSocial.IO
             }
         }
 
+        public bool Distinct
+        {
+            set
+            {
+                isDistinct = value;
+            }
+        }
+
         public SelectQuery(string baseTableName)
         {
             tables = new List<string>();
             fields = new List<string>();
+            groupings = new List<string>();
             conditions = new QueryCondition();
             joins = new List<TableJoin>();
             sorts = new List<TableSort>();
+            isDistinct = false;
 
             tables.Add(baseTableName);
         }
@@ -144,6 +156,11 @@ namespace BoxSocial.IO
         public void AddSort(SortOrder order, string field)
         {
             sorts.Add(new TableSort(order, field));
+        }
+
+        public void AddGrouping(params string[] fields)
+        {
+            this.groupings.AddRange(fields);
         }
 
         public QueryCondition AddCondition(string field, object value)
@@ -197,6 +214,11 @@ namespace BoxSocial.IO
         public override string ToString()
         {
             string query = "SELECT";
+
+            if (isDistinct)
+            {
+                query += " DISTINCT";
+            }
 
             if (fields.Count > 0)
             {
@@ -271,6 +293,25 @@ namespace BoxSocial.IO
                     {
                         query = string.Format("{0}, {1}",
                             query, sort.ToString());
+                    }
+                }
+            }
+
+            if (groupings.Count > 0)
+            {
+                bool first = true;
+                foreach (string field in groupings)
+                {
+                    if (first)
+                    {
+                        query = string.Format("{0} GROUP BY {1}",
+                            query, field);
+                        first = false;
+                    }
+                    else
+                    {
+                        query = string.Format("{0}, {1}",
+                            query, field);
                     }
                 }
             }

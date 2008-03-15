@@ -49,6 +49,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Member Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
+
         public string Message
         {
             get

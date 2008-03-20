@@ -27,6 +27,7 @@ using System.Net;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
+using BoxSocial.IO;
 
 namespace BoxSocial.Services.Installer
 {
@@ -96,7 +97,15 @@ namespace BoxSocial.Services.Installer
                         
                         if (DateTime.Now.Subtract(lastUpdatedBase).Days > 1)
                         {
-                            BackupDatabase();
+                            try
+                            {
+                                BackupDatabase();
+                            }
+                            catch
+                            {
+                                // If we fail we want to continue and retry the next day
+                                // TODO: Report failure
+                            }
                             UpdateBase();
                         }
 
@@ -120,6 +129,22 @@ namespace BoxSocial.Services.Installer
 
         private static void UpdateAll()
         {
+            Mysql db = new Mysql(dbUsername, dbDatabase, dbDatabase, "localhost");
+
+            // Select all
+            SelectQuery query = new SelectQuery("applications ap");
+            query.AddFields("ap.application_assembly_name", "ap.application_primitive");
+
+            DataTable applicationInfoTable = db.SelectQuery(query);
+            db.CloseConnection();
+
+            foreach (DataRow applicationRow in applicationInfoTable.Rows)
+            {
+                string assemblyName = (string)applicationRow["application_assembly_name"];
+                bool isPrimitive = ((byte)applicationRow["application_primitive"] > 0) ? true : false;
+
+                DownloadAndCompile(assemblyName, isPrimitive);
+            }
         }
 
         private static void DownloadAndCompileAll()
@@ -179,10 +204,17 @@ namespace BoxSocial.Services.Installer
             // Step 0. Prepage the download area
             if (Directory.Exists(repoPath))
             {
-                //Directory.Delete(repoPath, true);
+                Directory.Delete(repoPath, true);
             }
 
             // Step 1. Download source code
+
+            //DownloadUsingSvnLib(repositoryName, repoPath);
+            DownloadFromSvn(string.Format(@"http://svn.boxsocial.net/{0}/", repositoryName), repoPath);
+        }
+
+        private static void DownloadUsingSvnLib(string repositoryName, string repoPath)
+        {
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             proc.StartInfo.FileName = svnPath;
             proc.StartInfo.Arguments = string.Format(@"export http://svn.boxsocial.net/{0}/ {1}",
@@ -193,19 +225,91 @@ namespace BoxSocial.Services.Installer
             Console.WriteLine(proc.StandardOutput.ReadToEnd());
             proc.WaitForExit(300000);
             proc.Close();
-
-            DownloadFromSvn(string.Format(@"http://svn.boxsocial.net/{0}/", repositoryName), repoPath);
         }
 
         /// <summary>
-        /// Step 1.a) Traverse the sourcecode
+        /// Step 1.a,b,c) Traverse the sourcecode
         /// </summary>
         /// <param name="modulePath"></param>
         /// <param name="localPath"></param>
         private static void DownloadFromSvn(string modulePath, string localPath)
         {
+            Console.WriteLine("Downloading ... {0}", modulePath);
             WebClient wc = new WebClient();
-            string content = wc.DownloadString(modulePath);
+
+            if (!Directory.Exists(localPath))
+            {
+                Directory.CreateDirectory(localPath);
+            }
+
+            try
+            {
+                // a) download
+                string content = wc.DownloadString(modulePath);
+
+                // b) parse
+
+                // pre-pend an xml declaration so we can parse it using the
+                // built in XML parser so we don't have to write out own
+                content = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" + content;
+                content = content.Replace("<html>", "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en-au\" dir=\"ltr\">");
+                content = content.Replace("<hr noshade>", "");
+
+                StringReader sr = new StringReader(content);
+
+                DataSet ds = new DataSet();
+                ds.ReadXml(sr);
+
+                DataTable anchorsTable = ds.Tables["a"];
+
+                // c) Traverse
+                foreach (DataRow dr in anchorsTable.Rows)
+                {
+                    string link = (string)dr["href"];
+                    if (link == "../")
+                    {
+                        // Link to parent, Ignore
+                    }
+                    else if (link.IndexOf("/") == link.Length - 1)
+                    {
+                        // Directory
+
+                        DownloadFromSvn(modulePath + link, Path.Combine(localPath, link.TrimEnd(new char[] { '/' })));
+                    }
+                    else if (link.IndexOf("/") < 0)
+                    {
+                        // File
+
+                        DownloadFileFromSvn(modulePath + link, Path.Combine(localPath, link));
+                    }
+                    else
+                    {
+                        // External link, Ignore
+                    }
+                }
+            }
+            catch (WebException)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Step 1.d) Download the source code
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="localPath"></param>
+        private static void DownloadFileFromSvn(string filePath, string localPath)
+        {
+            Console.WriteLine("Downloading ... {0}", filePath);
+            WebClient wc = new WebClient();
+
+            try
+            {
+                wc.DownloadFile(filePath, localPath);
+            }
+            catch (WebException)
+            {
+            }
         }
 
         /// <summary>
@@ -230,7 +334,11 @@ namespace BoxSocial.Services.Installer
 
             foreach (DataRow dr in compileTable.Rows)
             {
-                files += " \"" + Path.Combine(repoPath, (string)dr["Include"]) + "\"";
+                string file = (string)dr["Include"];
+                if (file.ToLower().EndsWith(".cs"))
+                {
+                    files += " \"" + Path.Combine(repoPath, file) + "\"";
+                }
             }
 
             if (projectReferenceTable != null)
@@ -272,10 +380,25 @@ namespace BoxSocial.Services.Installer
             Console.WriteLine(proc.StandardOutput.ReadToEnd());
             proc.WaitForExit(120000);
             proc.Close();
+
+            
+        }
+
+        private static void CompileLanguages(string repositoryName)
+        {
+            // Step 4. Compile Language Files
+            /*foreach (DataRow dr in compileTable.Rows)
+            {
+                string file = (string)dr["Include"];
+                if (file.ToLower().EndsWith(".resx") && file.ToLower().StartsWith("Languages"))
+                {
+                    //files += " \"" + Path.Combine(repoPath, file) + "\"";
+                }
+            }*/
         }
 
         /// <summary>
-        /// Step 4.
+        /// Step 5.
         /// </summary>
         /// <param name="repositoryName"></param>
         private static void InstallBaseApplication(string repositoryName)

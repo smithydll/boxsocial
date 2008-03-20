@@ -250,6 +250,36 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public ApplicationEntry(Core core)
+        {
+            this.db = core.db;
+            this.owner = core.session.LoggedInMember;
+
+            Assembly asm = Assembly.GetCallingAssembly();
+
+            string assemblyName = asm.GetName().Name;
+
+            SelectQuery query = new SelectQuery("applications ap");
+            query.AddFields(APPLICATION_FIELDS);
+            query.AddCondition("ap.application_assembly_name", assemblyName);
+
+            DataTable assemblyTable = db.SelectQuery(query);
+
+            if (assemblyTable.Rows.Count == 1)
+            {
+                loadApplicationInfo(assemblyTable.Rows[0]);
+
+                if (this.owner == null)
+                {
+                    applicationAccess = new Access(db, permissions, owner);
+                }
+            }
+            else
+            {
+                throw new InvalidApplicationException();
+            }
+        }
+
         public ApplicationEntry(Mysql db, ApplicationCommentType act)
         {
             this.db = db;

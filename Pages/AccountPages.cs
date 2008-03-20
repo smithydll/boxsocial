@@ -715,10 +715,10 @@ namespace BoxSocial.Applications.Pages
             slug = Regex.Replace(normalisedSlug, @"([^\w\+\&\*\(\)\=\:\?\-\#\@\!\$]+)", "-");
 
             // check that the list exists for the given user
-            DataTable listTable = db.SelectQuery(string.Format("SELECT list_id, list_path FROM user_lists WHERE user_id = {0} AND list_id = {1};",
-                loggedInMember.UserId, listId));
-            if (listTable.Rows.Count == 1)
+            try
             {
+                List list = new List(db, loggedInMember, listId);
+
                 DataTable listItemTextTable = db.SelectQuery(string.Format("SELECT list_item_text_id FROM list_items_text WHERE list_item_text_normalised = '{0}';",
                     Mysql.Escape(slug)));
 
@@ -740,6 +740,10 @@ namespace BoxSocial.Applications.Pages
                 db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items + 1 WHERE user_id = {0} AND list_id = {1}",
                     loggedInMember.UserId, listId), false);
 
+                ApplicationEntry ae = new ApplicationEntry(core);
+                // TODO: different list types
+                ae.PublishToFeed(loggedInMember, string.Format("added {0} to list {1}", text, list.Title), "");
+
                 if (ajax)
                 {
                     Ajax.SendRawText("posted", core, HttpUtility.HtmlEncode(text));
@@ -753,11 +757,12 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listTable.Rows[0]["list_path"]));
+                    SetRedirectUri(Linker.BuildListUri(loggedInMember, list.Path));
                     Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
                 }
+
             }
-            else
+            catch (InvalidListException)
             {
                 Ajax.ShowMessage(ajax, "error", core, "List Error", "You submitted invalid information. Go back and try again.");
                 return;

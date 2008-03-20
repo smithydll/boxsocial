@@ -115,13 +115,39 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public List(Mysql db, Member owner, long listId)
+        {
+            this.db = db;
+            this.owner = owner;
+
+            SelectQuery query = new SelectQuery("user_lists ul");
+            query.AddFields(LIST_FIELDS);
+            query.AddCondition("ul.user_id", owner.Id);
+            query.AddCondition("ul.list_id", listId);
+
+            DataTable listTable = db.SelectQuery(query);
+
+            if (listTable.Rows.Count == 1)
+            {
+                loadListInfo(listTable.Rows[0]);
+            }
+            else
+            {
+                throw new Exception("Could not load list exception");
+            }
+        }
+
         public List(Mysql db, Member owner, string listName)
         {
             this.db = db;
             this.owner = owner;
 
-            DataTable listTable = db.SelectQuery(string.Format("SELECT {0} FROM user_lists ul WHERE ul.user_id = {1} AND ul.list_path = '{2}';",
-                List.LIST_FIELDS, owner.UserId, Mysql.Escape(listName)));
+            SelectQuery query = new SelectQuery("user_lists ul");
+            query.AddFields(LIST_FIELDS);
+            query.AddCondition("ul.user_id", owner.Id);
+            query.AddCondition("ul.list_path", listName);
+
+            DataTable listTable = db.SelectQuery(query);
 
             if (listTable.Rows.Count == 1)
             {
@@ -283,5 +309,9 @@ namespace BoxSocial.Applications.Pages
                 Functions.Generate404();
             }
         }
+    }
+
+    public class InvalidListException : Exception
+    {
     }
 }

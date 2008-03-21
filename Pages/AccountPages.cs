@@ -741,8 +741,9 @@ namespace BoxSocial.Applications.Pages
                     loggedInMember.UserId, listId), false);
 
                 ApplicationEntry ae = new ApplicationEntry(core);
+                
                 // TODO: different list types
-                ae.PublishToFeed(loggedInMember, string.Format("added {0} to list {1}", text, list.Title), "");
+                AppInfo.Entry.PublishToFeed(loggedInMember, string.Format("added {0} to list {1}", text, list.Title));
 
                 if (ajax)
                 {

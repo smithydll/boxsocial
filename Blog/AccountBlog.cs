@@ -438,8 +438,7 @@ namespace BoxSocial.Applications.Blog
                         string postUrl = HttpUtility.HtmlEncode(string.Format("/{0}/blog/{1}/{2:00}/{3}",
                             loggedInMember.UserName, postDateTime.Year, postDateTime.Month, myBlogEntry.PostId));
 
-                        ApplicationEntry ae = new ApplicationEntry(db, loggedInMember, "Blog");
-                        ae.PublishToFeed(loggedInMember, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
+                        AppInfo.Entry.PublishToFeed(loggedInMember, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
                             postUrl, myBlogEntry.Title));
                     }
                 }

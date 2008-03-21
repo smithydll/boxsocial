@@ -228,6 +228,10 @@ namespace BoxSocial.IO
                     else if (templateObject is byte[])
                     {
                         template = System.Text.UTF8Encoding.UTF8.GetString((byte[])templateObject);
+                        if (template.StartsWith("\0xEF\0xBB\0xBF"))
+                        {
+                            template = template.Remove(0, 3);
+                        }
                     }
                     else
                     {

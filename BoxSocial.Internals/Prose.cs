@@ -84,6 +84,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// From Internals
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public static string GetString(string key)
         {
             try
@@ -96,6 +101,17 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// From Internals
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public static string GetString(string key, params object[] param)
+        {
+            return string.Format(GetString(key), param);
+        }
+
         public static string GetString(string applicationKey, string languageKey)
         {
             try
@@ -106,6 +122,11 @@ namespace BoxSocial.Internals
             {
                 return "<MISSING LANGUAGE KEY>";
             }
+        }
+
+        public static string GetString(string applicationKey, string languageKey, params object[] param)
+        {
+            return string.Format(GetString(applicationKey, languageKey), param);
         }
 
         public static void Close()

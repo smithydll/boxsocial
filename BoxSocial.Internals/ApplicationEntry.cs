@@ -659,6 +659,11 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public void PublishToFeed(Member owner, string title)
+        {
+            PublishToFeed(owner, title, "");
+        }
+
         public void PublishToFeed(Member owner, string title, string message)
         {
             if (title.Length > 63)

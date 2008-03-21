@@ -73,6 +73,9 @@
     <Content Include="templates\viewprofileguestbook.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="languages\GuestBook.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -81,9 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="templates\user_guestbook_notification.eml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="languages\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

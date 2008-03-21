@@ -242,8 +242,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (Access.FriendsCanRead(myEvent.Permissions))
             {
-                ApplicationEntry ae = AppInfo.GetExecutingApplication(db, creator);
-                ae.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
+                AppInfo.Entry.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
                     Event.BuildEventUri(myEvent), myEvent.subject));
             }
 
@@ -279,8 +278,7 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
                     emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
-                    ApplicationEntry ae = AppInfo.GetExecutingApplication(core, user);
-                    ae.SendNotification(invitee, string.Format("{0} has invited you to {1}.", 
+                    AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.", 
                         user.DisplayName, subject), "{TODO}", emailTemplate);
                     
                 }

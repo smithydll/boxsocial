@@ -278,8 +278,7 @@ ENGINE = InnoDB;
 
             if (Access.FriendsCanRead(myTask.Permissions))
             {
-                ApplicationEntry ae = new ApplicationEntry(db, creator, "Calendar");
-                ae.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
+                AppInfo.Entry.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
                     Task.BuildTaskUri(myTask), myTask.Topic));
             }
 

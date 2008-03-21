@@ -64,13 +64,29 @@ namespace BoxSocial.Internals
         private Dictionary<long, Member> userProfileCache = new Dictionary<long, Member>();
 
         /// <summary>
-        /// 
+        /// A cache of application entries.
+        /// </summary>
+        private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>();
+
+        /// <summary>
+        /// Returns a list of user profiles cached in memory.
         /// </summary>
         public Dictionary<long, Member> UserProfiles
         {
             get
             {
                 return userProfileCache;
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of application entries cached in memory.
+        /// </summary>
+        public Dictionary<string, ApplicationEntry> ApplicationEntries
+        {
+            get
+            {
+                return applicationEntryCache;
             }
         }
 
@@ -125,6 +141,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
         public void LoadUserProfile(long userId)
         {
             if (!userProfileCache.ContainsKey(userId))
@@ -132,6 +152,14 @@ namespace BoxSocial.Internals
                 Member newUser = new Member(db, userId, true);
                 userProfileCache.Add(newUser.Id, newUser);
             }
+        }
+
+        /// <summary>
+        /// Loads the application entry for the calling application
+        /// </summary>
+        internal void LoadApplicationEntry(string assemblyName)
+        {
+            applicationEntryCache.Add(assemblyName, new ApplicationEntry(db, session.LoggedInMember, assemblyName));
         }
 
         public Core(Mysql db, Template template)

@@ -102,6 +102,7 @@ namespace BoxSocial.Applications.GuestBook
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("comments"));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ThisGroup.DisplayNameOwnership + " Guest Book"));
+            //Prose.GetString("GuestBook");
         }
 
         public static void Show(Core core, NPage page)

@@ -37,7 +37,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public static class Functions
     {
-        private static Core core;
+        internal static Core core;
         private static NumberFormatInfo numberFormatInfo;
         private static List<string> itemTypes = new List<string>();
         private static string selected = " selected=\"selected\"";

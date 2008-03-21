@@ -53,9 +53,7 @@ namespace BoxSocial.Applications.Gallery
             UserGalleryItem myGalleryItem = new UserGalleryItem(page.db, owner, itemId);
             if (Access.FriendsCanRead(myGalleryItem.Permissions))
             {
-                ApplicationEntry ae = new ApplicationEntry(page.db, owner, "Gallery");
-
-                Action action = ae.GetMostRecentFeedAction(owner);
+                Action action = AppInfo.Entry.GetMostRecentFeedAction(owner);
 
                 bool update = false;
                 if (action != null)
@@ -79,7 +77,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (Regex.Matches(action.Body, Regex.Escape("[/thumb]")).Count < 4)
                     {
-                        ae.UpdateFeedAction(action, "uploaded new photos", string.Format("{0} [iurl={1}][thumb]{2}/{3}[/thumb][/iurl]",
+                        AppInfo.Entry.UpdateFeedAction(action, "uploaded new photos", string.Format("{0} [iurl={1}][thumb]{2}/{3}[/thumb][/iurl]",
                             action.Body, myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
                     }
                     else
@@ -89,7 +87,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    ae.PublishToFeed(owner, "uploaded a new photo", string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
+                    AppInfo.Entry.PublishToFeed(owner, "uploaded a new photo", string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
                         myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
                 }
             }

@@ -35,6 +35,27 @@ namespace BoxSocial.Internals
     public abstract class Application : MarshalByRefObject, IAppInfo
     {
         protected Core core;
+        private static ApplicationEntry entry;
+
+        public static ApplicationEntry Entry
+        {
+            get
+            {
+                if (entry == null)
+                {
+                    string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
+
+                    if (!Functions.core.ApplicationEntries.ContainsKey(assemblyName))
+                    {
+                        Functions.core.LoadApplicationEntry(assemblyName);
+                    }
+
+                    entry = Functions.core.ApplicationEntries[assemblyName];
+                }
+
+                return entry;
+            }
+        }
 
         public virtual void Initialise(Core core)
         {

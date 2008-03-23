@@ -30,7 +30,7 @@ namespace BoxSocial.Internals
 {
     public class Notification
     {
-        public static string NOTIFICATION_FIELDS = "nt.notification_id, nt.notification_application, nt.notification_primitive_id, nt.notification_primitive_type, nt.notification_title, nt.notification_body, nt.notification_time_ut, nt.notification_read";
+        public static string NOTIFICATION_FIELDS = "nt.notification_id, nt.notification_application, nt.notification_primitive_id, nt.notification_primitive_type, nt.notification_title, nt.notification_body, nt.notification_time_ut, nt.notification_read, nt.notification_seen";
 
         private Mysql db;
 
@@ -42,6 +42,7 @@ namespace BoxSocial.Internals
         private long primitiveId;
         private long timeRaw;
         private bool read;
+        private bool seen;
 
         public long NotificationId
         {
@@ -87,6 +88,7 @@ namespace BoxSocial.Internals
             this.primitiveId = owner.Id;
             this.timeRaw = timeRaw;
             this.read = false;
+            this.seen = false;
         }
 
         public DateTime GetTime(UnixTime tz)
@@ -103,6 +105,7 @@ namespace BoxSocial.Internals
             primitiveId = (long)notificationRow["notification_primitive_id"];
             timeRaw = (long)notificationRow["notification_time_ut"];
             read = ((byte)notificationRow["notification_read"] > 0) ? true : false;
+            seen = ((byte)notificationRow["notification_seen"] > 0) ? true : false;
         }
 
         public void SetRead()
@@ -159,6 +162,23 @@ namespace BoxSocial.Internals
             }
 
             return notificationItems;
+        }
+
+        public static long GetUnseenNotificationCount(Core core)
+        {
+            List<Notification> notificationItems = new List<Notification>();
+
+            SelectQuery query = new SelectQuery("notifications nt");
+            query.AddFields("COUNT(*) as total");
+            query.AddCondition("nt.notification_read", false);
+            query.AddCondition("nt.notification_seen", false);
+            query.AddCondition("nt.notification_primitive_id", core.LoggedInMemberId);
+            query.AddCondition("nt.notification_primitive_type", "USER");
+            query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
+
+            DataTable notificationsTable = core.db.SelectQuery(query);
+
+            return (long)notificationsTable.Rows[0]["total"];
         }
     }
 }

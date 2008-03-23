@@ -1,0 +1,34 @@
+<h3>Invite a Friend to {SITE_TITLE}</h3>
+<p>Invite a friend to join {SITE_TITLE}, just enter their e-mail address below:</p>
+<form action="{S_INVITE_FRIEND}" method="post">
+<fieldset>
+		<legend>Invite a Friend to {SITE_TITLE}</legend>
+		<dl>
+			<dt><label for="name">Name:</label></dt>
+			<dd><input type="text" id="name" name="name" /></dd>
+			<dt><label for="email">E-mail:</label></dt>
+			<dd><input type="text" id="email" name="email" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="send" value="Send Invite" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="friends" />
+		<input type="hidden" name="sub" value="invite" />
+</fieldset>
+</form>
+
+<h3>Import Contact List</h3>
+<p>Import your entire contact list to {SITE_TITLE}. Matching e-mails will be made your friend, and invitations will be sent to users not already using the service.</p>
+<p>{SITE_TITLE} supports any kind of text file that contains e-mail addresses. Supported Types are Windows Live Messenger contact files (.ctt), and CSV files (though anything plain text containing an e-mail address will work).</p>
+<form action="{S_INVITE_FRIEND}" method="post" enctype="multipart/form-data">
+<fieldset>
+		<legend>Import Contact List</legend>
+		<dl>
+			<dt><label for="name">File:</label></dt>
+			<dd><input type="file" id="contacts" name="contacts" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="send" value="Import" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="friends" />
+		<input type="hidden" name="sub" value="invite" />
+</fieldset>
+</form>

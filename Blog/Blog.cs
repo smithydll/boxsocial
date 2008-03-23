@@ -332,6 +332,28 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Gets a list of entries in the blog roll for the blog
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public List<BlogRollEntry> GetBlogRoll(PPage page)
+        {
+            List<BlogRollEntry> blogRollEntries = new List<BlogRollEntry>();
+            SelectQuery query = new SelectQuery("blog_roll_entries bre");
+            //query.AddFields();
+            query.AddCondition("bre.user_id", userId);
+
+            DataTable blogRollTable = page.db.SelectQuery(query);
+
+            foreach (DataRow dr in blogRollTable.Rows)
+            {
+                //blogRollEntries.Add(new BlogRollEntry(page.db, dr));
+            }
+
+            return blogRollEntries;
+        }
+
+        /// <summary>
         /// Show the blog
         /// </summary>
         /// <param name="core">Core token</param>

@@ -97,7 +97,7 @@ namespace BoxSocial
                 DemoteFriend();
             }
 
-            template.SetTemplate("account_friends_manage.html");
+            template.SetTemplate("Profile", "account_friends_manage");
 
             DataTable friendsTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FRIEND' AND ur.relation_me = {0} ORDER BY (relation_order - 1) ASC",
                 loggedInMember.UserId));
@@ -105,6 +105,8 @@ namespace BoxSocial
             for (int i = 0; i < friendsTable.Rows.Count; i++)
             {
                 VariableCollection friendsVariableCollection = template.CreateChild("friend_list");
+
+                //Member friend = new Member(db, friendsTable.Rows[i], false, false);
 
                 byte order = (byte)friendsTable.Rows[i]["relation_order"];
 
@@ -115,6 +117,7 @@ namespace BoxSocial
                     friendsVariableCollection.ParseVariables("ORDER", order.ToString());
                 }
 
+                friendsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/{0}", (string)friendsTable.Rows[i]["user_name"]))));
                 friendsVariableCollection.ParseVariables("U_BLOCK", HttpUtility.HtmlEncode(Linker.BuildBlockUserUri((long)(int)friendsTable.Rows[i]["user_id"])));
                 friendsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildDeleteFriendUri((long)(int)friendsTable.Rows[i]["user_id"])));
                 friendsVariableCollection.ParseVariables("U_PROMOTE", HttpUtility.HtmlEncode(Linker.BuildPromoteFriendUri((long)(int)friendsTable.Rows[i]["user_id"])));
@@ -430,7 +433,7 @@ namespace BoxSocial
                 InviteFriendSend();
             }
 
-            template.SetTemplate("account_friend_invite.html");
+            template.SetTemplate("Profile", "account_friend_invite");
 
             template.ParseVariables("S_INVITE_FRIEND", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
         }
@@ -705,7 +708,7 @@ namespace BoxSocial
                 UnBlockPerson();
             }
 
-            template.SetTemplate("account_blocklist_manage.html");
+            template.SetTemplate("Profile", "account_blocklist_manage");
 
             DataTable blockTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'BLOCKED' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
                 loggedInMember.UserId));

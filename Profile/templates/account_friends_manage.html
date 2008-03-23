@@ -1,0 +1,42 @@
+<h3>Manage Friends</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th>Order</th>
+	<th></th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN friend_list -->
+<!-- IF friend_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{friend_list.U_PROFILE}">{friend_list.NAME}</a></td>
+	<td>{friend_list.ORDER}</td>
+	<td><a href="{friend_list.U_PROMOTE}">U</a></td>
+	<td><a href="{friend_list.U_DEMOTE}">D</a></td>
+	<td><a href="{friend_list.U_DELETE}">Remove</a></td>
+	<td><a href="{friend_list.U_BLOCK}">Block</a></td>
+</tr>
+<!-- END friend_list -->
+</table>
+
+<h4>Find Friend</h4>
+<p>Search for a friend by name or e-mail:</p>
+<form action="{S_SEARCH_FRIEND}" method="get">
+<fieldset>
+		<legend>Search for a Friend</legend>
+		<dl>
+			<dt><label for="q">Name or e-mail</label></dt>
+			<dd><input type="text" id="q" name="q" style="width: 100%;" /></dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="search" value="Search" />
+			</dd>
+		</dl>
+</fieldset>
+</form>

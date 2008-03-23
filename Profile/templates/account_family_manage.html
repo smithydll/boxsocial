@@ -1,0 +1,20 @@
+<h3>Manage Family</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN family_list -->
+<!-- IF family_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{family_list.NAME}</td>
+	<td><a href="{family_list.U_DELETE}">Remove</a></td>
+	<td><a href="{family_list.U_BLOCK}">Block</a></td>
+</tr>
+<!-- END family_list -->
+</table>

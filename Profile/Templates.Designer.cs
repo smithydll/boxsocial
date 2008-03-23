@@ -61,6 +61,84 @@ namespace Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Family&lt;/h3&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Name&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN family_list --&gt;
+        ///&lt;!-- IF family_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{family_list.NAME}&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{family_list.U_DELETE}&quot;&gt;Remove&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{family_list.U_BLOCK}&quot;&gt;Block&lt;/a&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- END family_list --&gt;
+        ///&lt;/table&gt;.
+        /// </summary>
+        internal static string account_family_manage {
+            get {
+                return ResourceManager.GetString("account_family_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Invite a Friend to {SITE_TITLE}&lt;/h3&gt;
+        ///&lt;p&gt;Invite a friend to join {SITE_TITLE}, just enter their e-mail address below:&lt;/p&gt;
+        ///&lt;form action=&quot;{S_INVITE_FRIEND}&quot; method=&quot;post&quot;&gt;
+        ///&lt;fieldset&gt;
+        ///		&lt;legend&gt;Invite a Friend to {SITE_TITLE}&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;name&quot;&gt;Name:&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;name&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;email&quot;&gt;E-mail:&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;email&quot; name=&quot;email&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;send&quot; v [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_friend_invite {
+            get {
+                return ResourceManager.GetString("account_friend_invite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Friends&lt;/h3&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Name&lt;/th&gt;
+        ///	&lt;th&gt;Order&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN friend_list --&gt;
+        ///&lt;!-- IF friend_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{friend_list.U_PROFILE}&quot;&gt;{friend_list.NAME}&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;{friend_list.ORDER}&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{friend_list.U_PROMOTE}&quot;&gt;U&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{friend_list.U_DEMOTE}&quot;&gt;D&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{friend_list.U_D [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_friends_manage {
+            get {
+                return ResourceManager.GetString("account_friends_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;h2&gt;Status Feed&lt;/h2&gt;
         ///&lt;!-- IF BREADCRUMBS --&gt;

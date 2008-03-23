@@ -45,6 +45,7 @@ namespace BoxSocial.FrontEnd
 
                 template.ParseVariables("DATE_STRING", tz.Now.ToLongDateString());
 
+                ShowUnseenNotifications();
                 ShowStatusUpdates();
             }
         }
@@ -77,6 +78,19 @@ namespace BoxSocial.FrontEnd
             }
 
             core.AddSidePanel(template);
+        }
+
+        private void ShowUnseenNotifications()
+        {
+            Template template = new Template("notificationspanel.html");
+
+            long notifications = Notification.GetUnseenNotificationCount(core);
+
+            // If there are unseen notifications, show them
+            if (notifications > 0)
+            {
+                core.AddSidePanel(template);
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)

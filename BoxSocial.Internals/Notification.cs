@@ -26,6 +26,11 @@ using System.Text;
 using System.Web;
 using BoxSocial.IO;
 
+/*
+ * TODO:
+ * ALTER TABLE `zinzam0_zinzam`.`notifications` ADD COLUMN `notification_seen` TINYINT(1) UNSIGNED NOT NULL AFTER `notification_read`;
+ */
+
 namespace BoxSocial.Internals
 {
     public class Notification
@@ -135,6 +140,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_body", body);
             iQuery.AddField("notification_time_ut", UnixTime.UnixTimeStamp());
             iQuery.AddField("notification_read", false);
+            iQuery.AddField("notification_seen", false);
             iQuery.AddField("notification_application", applicationId);
 
             long notificationId = Core.DB.UpdateQuery(iQuery);

@@ -232,6 +232,10 @@ namespace BoxSocial.IO
                         {
                             template = template.Remove(0, 3);
                         }
+                        if (template.StartsWith("\xBF"))
+                        {
+                            template = template.Remove(0, 1);
+                        }
                     }
                     else
                     {

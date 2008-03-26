@@ -127,6 +127,7 @@ namespace BoxSocial
             }*/
 
             List<Notification> notifications = Notification.GetRecentNotifications(core);
+            List<long> ids = new List<long>();
 
             if (notifications.Count > 0)
             {
@@ -141,7 +142,15 @@ namespace BoxSocial
                 notificationVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(tz.DateTimeToString(notification.GetTime(tz))));
                 notificationVariableCollection.ParseVariables("ACTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Title)));
                 notificationVariableCollection.ParseVariables("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Body), core.session.LoggedInMember, core.UserProfiles[core.LoggedInMemberId]));
+
+                ids.Add(notification.NotificationId);
             }
+
+            UpdateQuery uQuery = new UpdateQuery("notifications");
+            uQuery.AddField("notification_seen", true);
+            uQuery.AddCondition("notification_id", ConditionEquality.In, ids);
+
+            db.UpdateQuery(uQuery);
         }
 
         public void Applications(string submodule)

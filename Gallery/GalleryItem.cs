@@ -1065,11 +1065,13 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 /* we assume exists */
+
+                FileInfo fi = new FileInfo(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Original));
+
                 HttpContext.Current.Response.Clear();
                 HttpContext.Current.Response.ContentType = galleryItem.ContentType;
-                HttpContext.Current.Response.Cache.SetExpires(DateTime.Now.AddMinutes(20.0));
-                HttpContext.Current.Response.Cache.SetSlidingExpiration(true);
-                HttpContext.Current.Response.Cache.SetCacheability(HttpCacheability.Public);
+                HttpContext.Current.Response.Cache.SetLastModified(fi.LastWriteTimeUtc);
+                HttpContext.Current.Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
 
                 if (thumbnailRequest)
                 {

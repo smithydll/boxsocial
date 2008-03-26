@@ -157,8 +157,9 @@ namespace BoxSocial.Internals
             query.AddCondition("nt.notification_read", false);
             query.AddCondition("nt.notification_primitive_id", core.LoggedInMemberId);
             query.AddCondition("nt.notification_primitive_type", "USER");
+            query.AddCondition("nt.notification_time_ut", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp(DateTime.UtcNow.AddDays(-7)));
             query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
-            query.LimitCount = 64;
+            query.LimitCount = 128;
 
             DataTable notificationsTable = core.db.SelectQuery(query);
 

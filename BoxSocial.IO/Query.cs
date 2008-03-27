@@ -147,6 +147,11 @@ namespace BoxSocial.IO
                 return string.Format("({0})",
                     ((QueryField)value).ToString());
             }
+            else if (value is QueryOperation)
+            {
+                return string.Format("({0})",
+                    ((QueryOperation)value).ToString());
+            }
             else
             {
                 throw new UnknownFieldTypeException(value);

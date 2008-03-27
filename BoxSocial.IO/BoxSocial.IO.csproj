@@ -52,6 +52,7 @@
     <Compile Include="Query.cs" />
     <Compile Include="QueryCondition.cs" />
     <Compile Include="QueryField.cs" />
+    <Compile Include="QueryOperation.cs" />
     <Compile Include="SelectQuery.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="UpdateQuery.cs" />

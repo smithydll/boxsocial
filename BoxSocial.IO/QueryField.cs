@@ -35,7 +35,7 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            return field;
+            return string.Format("`{0}`", field);
         }
     }
 }

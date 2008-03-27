@@ -143,6 +143,11 @@ namespace BoxSocial
                 notificationVariableCollection.ParseVariables("ACTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Title)));
                 notificationVariableCollection.ParseVariables("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Body), core.session.LoggedInMember, core.UserProfiles[core.LoggedInMemberId]));
 
+                if (notification.IsSeen)
+                {
+                    notificationVariableCollection.ParseVariables("SEEN", "TRUE");
+                }
+
                 ids.Add(notification.NotificationId);
             }
 

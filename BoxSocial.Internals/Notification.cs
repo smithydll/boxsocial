@@ -73,6 +73,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsRead
+        {
+            get
+            {
+                return read;
+            }
+        }
+
+        public bool IsSeen
+        {
+            get
+            {
+                return seen;
+            }
+        }
+
         public Notification(Mysql db, Primitive owner, DataRow notificationRow)
         {
             this.db = db;

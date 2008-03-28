@@ -56,6 +56,7 @@ namespace BoxSocial.FrontEnd
             catch
             {
                 Response.Write("invalidVote");
+                //Ajax.SendStatus("invalidVote", core);
                 return;
             }
 
@@ -93,8 +94,15 @@ namespace BoxSocial.FrontEnd
                 {
                     /* Register a vote */
                     /* start transaction */
-                    db.UpdateQuery(string.Format("INSERT INTO ratings (rate_item_id, rate_item_type, user_id, rate_time_ut, rate_rating, rate_ip) VALUES ({0}, '{1}', {2}, UNIX_TIMESTAMP(), {3}, '{4}');",
-                        itemId, Mysql.Escape(itemType), loggedInMember.UserId, rating, session.IPAddress.ToString()), true);
+                    InsertQuery iQuery = new InsertQuery("ratings");
+                    iQuery.AddField("rate_item_id", itemId);
+                    iQuery.AddField("rate_item_type", itemType);
+                    iQuery.AddField("user_id", loggedInMember.UserId);
+                    iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
+                    iQuery.AddField("rate_rating", rating);
+                    iQuery.AddField("rate_ip", session.IPAddress.ToString());
+
+                    db.UpdateQuery(iQuery, true);
 
                     switch (itemType)
                     {

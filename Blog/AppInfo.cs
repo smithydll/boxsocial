@@ -151,7 +151,7 @@ namespace BoxSocial.Applications.Blog
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_blog_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(blogEntry));
             notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
-            notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
+            notificationTemplate.ParseVariables("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
 
             ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
         }

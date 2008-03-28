@@ -35,7 +35,8 @@ namespace BoxSocial.Internals
 {
     public class Notification
     {
-        public static string NOTIFICATION_FIELDS = "nt.notification_id, nt.notification_application, nt.notification_primitive_id, nt.notification_primitive_type, nt.notification_title, nt.notification_body, nt.notification_time_ut, nt.notification_read, nt.notification_seen";
+        public const string NOTIFICATION_FIELDS = "nt.notification_id, nt.notification_application, nt.notification_primitive_id, nt.notification_primitive_type, nt.notification_title, nt.notification_body, nt.notification_time_ut, nt.notification_read, nt.notification_seen";
+        public const int NOTIFICATION_MAX_BODY = 511;
 
         private Mysql db;
 

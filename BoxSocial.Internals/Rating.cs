@@ -90,5 +90,52 @@ namespace BoxSocial.Internals
             // be able to construct itself from raw data.
             //
         }
+
+        private static void Vote(Core core, string itemType, long itemId, int rating)
+        {
+
+            if (rating < 1 || rating > 5)
+            {
+                throw new InvalidRatingException();
+            }
+
+            SelectQuery query = new SelectQuery("ratings r");
+            query.AddFields("user_id");
+            query.AddCondition("rate_item_id", itemId);
+            query.AddCondition("rate_time_type", itemType);
+            QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);
+            QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.session.IPAddress.ToString());
+            qc2.AddCondition("rate_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24 * 7);
+
+            /*DataTable ratingsTable = db.SelectQuery(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
+                itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));*/
+
+            DataTable ratingsTable = core.db.SelectQuery(query);
+
+            if (ratingsTable.Rows.Count > 0)
+            {
+                throw new AlreadyRatedException();
+            }
+
+            InsertQuery iQuery = new InsertQuery("ratings");
+            iQuery.AddField("rate_item_id", itemId);
+            iQuery.AddField("rate_item_type", itemType);
+            iQuery.AddField("user_id", core.LoggedInMemberId);
+            iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("rate_rating", rating);
+            iQuery.AddField("rate_ip", core.session.IPAddress.ToString());
+
+            core.db.UpdateQuery(iQuery, true);
+
+            return;
+        }
+    }
+
+    public class AlreadyRatedException : Exception
+    {
+    }
+
+    public class InvalidRatingException : Exception
+    {
     }
 }

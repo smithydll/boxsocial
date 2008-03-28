@@ -59,7 +59,7 @@ namespace BoxSocial.Internals
      */
     public class Action
     {
-        public static string FEED_FIELDS = "at.action_id, at.action_application, at.action_primitive_id, at.action_primitive_type, at.action_title, at.action_body, at.action_time_ut";
+        public const string FEED_FIELDS = "at.action_id, at.action_application, at.action_primitive_id, at.action_primitive_type, at.action_title, at.action_body, at.action_time_ut";
 
         private Mysql db;
 

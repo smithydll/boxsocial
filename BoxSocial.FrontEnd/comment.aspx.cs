@@ -319,6 +319,11 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
+                string redirect = Request["redirect"];
+                if (!string.IsNullOrEmpty(redirect))
+                {
+                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(redirect));
+                }
                 Display.ShowMessage("Comment Posted", "Your comment has been successfully posted.");
             }
         }

@@ -480,5 +480,28 @@ namespace BoxSocial.Internals
             return LargeIntegerToString((long)num);
         }
 
+        public static string TrimStringToWord(string input, int max)
+        {
+            char[] spacers = { ' ', '.', '-', '!', '?', ')', ',', '#' };
+
+            if (input.Length < max)
+            {
+                return input;
+            }
+
+            int posn = input.LastIndexOfAny(spacers,0, max);
+
+            if (posn >= 0)
+            {
+                input = input.Substring(0, posn);
+            }
+            else
+            {
+                input = input.Substring(0, max - 1);
+            }
+
+            return input;
+        }
+
     }
 }

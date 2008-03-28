@@ -52,6 +52,42 @@ namespace BoxSocial.IO
             this.value = value;
         }
 
+        public QueryCondition AddCondition(string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return AddCondition(ConditionRelations.And, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return AddCondition(relation, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(string field, ConditionEquality equality, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return AddCondition(ConditionRelations.First, field, equality, value);
+            }
+            else
+            {
+                return AddCondition(ConditionRelations.And, field, equality, value);
+            }
+        }
+
         public QueryCondition AddCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)
         {
             QueryCondition condition = new QueryCondition(field, equality, value);

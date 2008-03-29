@@ -37,12 +37,22 @@ namespace BoxSocial.Internals
 {
     public class Ajax
     {
+        private static Core core;
+
+        public static Core Core
+        {
+            set
+            {
+                core = value;
+            }
+        }
+
 
         /// <summary>
         /// Send a status code only the client has to work out what to do with.
         /// </summary>
         /// <param name="ajaxCode"></param>
-        public static void SendStatus(string ajaxCode, Core core)
+        public static void SendStatus(string ajaxCode)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -74,7 +84,7 @@ namespace BoxSocial.Internals
         /// <param name="ajaxCode"></param>
         /// <param name="core"></param>
         /// <param name="message"></param>
-        public static void SendRawText(string ajaxCode, Core core, string message)
+        public static void SendRawText(string ajaxCode, string message)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -109,7 +119,7 @@ namespace BoxSocial.Internals
         /// <param name="core"></param>
         /// <param name="title"></param>
         /// <param name="message"></param>
-        public static void ShowMessage(bool ajax, string ajaxCode, Core core, string title, string message)
+        public static void ShowMessage(bool ajax, string ajaxCode, string title, string message)
         {
             if (ajax)
             {
@@ -150,7 +160,7 @@ namespace BoxSocial.Internals
         /// <param name="ajaxCore"></param>
         /// <param name="core"></param>
         /// <param name="arrayItems"></param>
-        public static void SendArray(string ajaxCode, Core core, string[] arrayItems)
+        public static void SendArray(string ajaxCode, string[] arrayItems)
         {
             XmlSerializer xs;
             StringWriter stw;

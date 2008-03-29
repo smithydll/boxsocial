@@ -58,6 +58,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public override bool UsesRatings
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;
@@ -66,6 +74,7 @@ namespace BoxSocial.Applications.Gallery
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
             core.RegisterCommentHandle("PHOTO", photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            core.RegisterRatingHandle("PHOTO", photoRated);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -108,6 +117,14 @@ namespace BoxSocial.Applications.Gallery
             core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_\.]+)$", showPhoto, 4);
 
             core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
+        }
+
+        private void photoRated(ItemRatedEventArgs e)
+        {
+            /*UpdateQuery uQuery = new UpdateQuery("gallery_items");
+            uQuery.se*/
+            core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
+                e.Rating, e.ItemId), true);
         }
 
         private void photoCommentPosted(CommentPostedEventArgs e)

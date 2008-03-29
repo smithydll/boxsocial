@@ -91,18 +91,32 @@ namespace BoxSocial.Internals
             //
         }
 
-        private static void Vote(Core core, string itemType, long itemId, int rating)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="itemType"></param>
+        /// <param name="itemId"></param>
+        /// <param name="rating"></param>
+        /// <remarks>ItemRated should implement a transaction.</remarks>
+        public static void Vote(Core core, string itemType, long itemId, int rating)
         {
+
+            if (itemId < 1)
+            {
+                throw new InvalidItemException();
+            }
 
             if (rating < 1 || rating > 5)
             {
                 throw new InvalidRatingException();
             }
 
+            /* after 7 days release the IP for dynamics ip fairness */
             SelectQuery query = new SelectQuery("ratings r");
             query.AddFields("user_id");
             query.AddCondition("rate_item_id", itemId);
-            query.AddCondition("rate_time_type", itemType);
+            query.AddCondition("rate_item_type", itemType);
             QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);
             QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.session.IPAddress.ToString());
             qc2.AddCondition("rate_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24 * 7);
@@ -125,9 +139,67 @@ namespace BoxSocial.Internals
             iQuery.AddField("rate_rating", rating);
             iQuery.AddField("rate_ip", core.session.IPAddress.ToString());
 
-            core.db.UpdateQuery(iQuery, true);
+            // commit the transaction
+            core.db.UpdateQuery(iQuery, false);
 
             return;
+        }
+    }
+
+    public class ItemRatedEventArgs : EventArgs
+    {
+        private int rating;
+        private Item item;
+        private string itemType;
+        private long itemId;
+        private Member rater;
+
+        public int Rating
+        {
+            get
+            {
+                return rating;
+            }
+        }
+
+        public Item Item
+        {
+            get
+            {
+                return item;
+            }
+        }
+
+        public string ItemType
+        {
+            get
+            {
+                return itemType;
+            }
+        }
+
+        public long ItemId
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        public Member Rater
+        {
+            get
+            {
+                return rater;
+            }
+        }
+
+        public ItemRatedEventArgs(int rating, Member rater, string itemType, long itemId)
+        {
+            this.rating = rating;
+            this.rater = rater;
+            this.itemType = itemType;
+            this.itemId = itemId;
         }
     }
 

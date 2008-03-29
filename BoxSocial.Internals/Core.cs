@@ -51,12 +51,14 @@ namespace BoxSocial.Internals
         public delegate bool CommentHandler(long itemId, Member viewer);
         public delegate void CommentCountHandler(long itemId, int adjustment);
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
+        public delegate void RatingHandler(ItemRatedEventArgs e);
 
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
 
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<string, CommentHandle> commentHandles = new Dictionary<string, CommentHandle>();
+        private Dictionary<string, RatingHandler> ratingHandles = new Dictionary<string, RatingHandler>();
 
         /// <summary>
         /// A cache of user profiles including icons.
@@ -258,6 +260,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void ItemRated(string itemType, long itemId, int rating, Member rater)
+        {
+            if (ratingHandles.ContainsKey(itemType))
+            {
+                ratingHandles[itemType](new ItemRatedEventArgs(rating, rater, itemType, itemId));
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         public void RegisterApplicationPage(string expression, Core.PageHandler pageHandle)
         {
             // register with a moderately high priority leaving room for higher priority registration
@@ -273,6 +287,11 @@ namespace BoxSocial.Internals
         public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
         {
             commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted));
+        }
+
+        public void RegisterRatingHandle(string token, Core.RatingHandler itemRated)
+        {
+            ratingHandles.Add(token, itemRated);
         }
 
         private VariableCollection createMainPanel()

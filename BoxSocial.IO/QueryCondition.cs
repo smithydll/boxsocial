@@ -36,7 +36,7 @@ namespace BoxSocial.IO
             conditions = new List<KeyValuePair<QueryCondition, ConditionRelations>>();
         }
 
-        public QueryCondition(string field, ConditionEquality equality, object value)
+        public QueryCondition(string field, ConditionEquality equality, object value) : this()
         {
             this.relation = ConditionRelations.First;
             this.field = field;
@@ -44,7 +44,7 @@ namespace BoxSocial.IO
             this.value = value;
         }
 
-        public QueryCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)
+        public QueryCondition(ConditionRelations relation, string field, ConditionEquality equality, object value) : this()
         {
             this.relation = relation;
             this.field = field;

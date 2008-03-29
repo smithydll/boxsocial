@@ -29,6 +29,11 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+
+    /*
+     * ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_rating` TINYINT(1) UNSIGNED NOT NULL AFTER `application_comment`;
+     * /
+
     /*
      * An object that describes an application
      */
@@ -79,6 +84,11 @@ namespace BoxSocial.Internals
         }
 
         public abstract bool UsesComments
+        {
+            get;
+        }
+
+        public abstract bool UsesRatings
         {
             get;
         }

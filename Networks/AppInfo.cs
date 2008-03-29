@@ -55,6 +55,14 @@ namespace BoxSocial.Networks
             }
         }
 
+        public override bool UsesRatings
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);

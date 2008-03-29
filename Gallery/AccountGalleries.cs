@@ -840,6 +840,37 @@ namespace BoxSocial.Applications.Gallery
         {
             if (submodule != "delete") return;
 
+            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
+            {
+                DeletePhotoSave();
+                return;
+            }
+            else
+            {
+                AuthoriseRequestSid();
+
+                long photoId = Functions.RequestLong("id", 0);
+
+                if (photoId <= 0)
+                {
+                    Display.ShowMessage("Cannot Delete Photo", "No photo specified to delete. Please go back and try again.");
+                    return;
+                }
+
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "galleries");
+                hiddenFieldList.Add("sub", "delete");
+                hiddenFieldList.Add("id", photoId.ToString());
+
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                        "Confirm photo deletion.",
+                        "Are you sure you want to delete this photo?",
+                        hiddenFieldList);
+            }
+        }
+
+        private void DeletePhotoSave()
+        {
             AuthoriseRequestSid();
 
             long photoId = Functions.FormLong("id", 0);

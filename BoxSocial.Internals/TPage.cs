@@ -206,6 +206,7 @@ namespace BoxSocial.Internals
             Functions.Core = core;
             Display.Core = core;
             Email.Core = core;
+            Ajax.Core = core;
 
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
@@ -279,6 +280,7 @@ namespace BoxSocial.Internals
             Prose.Close();
 
             HttpContext.Current.Response.End();
+            //System.Threading.Thread.CurrentThread.Abort();
         }
 
         ~TPage()

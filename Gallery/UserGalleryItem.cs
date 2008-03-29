@@ -100,6 +100,11 @@ namespace BoxSocial.Applications.Gallery
                 ((Member)owner).UserName, parentPath, path));
         }
 
+        public string BuildDeleteUri()
+        {
+            return AccountModule.BuildModuleUri("galleries", "delete", true, string.Format("id={0}", Id));
+        }
+
         public override string Uri
         {
             get

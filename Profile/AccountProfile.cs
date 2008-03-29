@@ -353,7 +353,7 @@ namespace BoxSocial
 
             StatusFeed.SaveMessage(core, message);
 
-            Ajax.SendRawText("Success", core, message);
+            Ajax.SendRawText("Success", message);
         }
     }
 }

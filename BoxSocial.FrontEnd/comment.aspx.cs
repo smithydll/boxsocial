@@ -67,7 +67,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Ajax.SendRawText("errorFetchingComment", core, "");
+                    Ajax.SendRawText("errorFetchingComment", "");
                     return;
                 }
 
@@ -83,7 +83,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    Ajax.SendRawText("errorFetchingComment", core, "");
+                    Ajax.SendRawText("errorFetchingComment", "");
                 }
 
                 EndResponse();
@@ -97,7 +97,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Ajax.SendRawText("errorFetchingComment", core, "");
+                    Ajax.SendRawText("errorFetchingComment", "");
                     return;
                 }
 
@@ -106,12 +106,12 @@ namespace BoxSocial.FrontEnd
 
                 if (commentsTable.Rows.Count == 1)
                 {
-                    Ajax.SendRawText("errorFetchingComment", core, (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
+                    Ajax.SendRawText("errorFetchingComment", (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
                         HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["user_name"]), HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["comment_text"]))));
                 }
                 else
                 {
-                    Ajax.SendRawText("errorFetchingComment", core, "");
+                    Ajax.SendRawText("errorFetchingComment", "");
                 }
 
                 return;
@@ -125,7 +125,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Ajax.ShowMessage(isAjax, "errorReportingComment", Core, "Error", "The comment you have reported is invalid.");
+                    Ajax.ShowMessage(isAjax, "errorReportingComment", "Error", "The comment you have reported is invalid.");
                     return;
                 }
 
@@ -147,10 +147,10 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        Ajax.ShowMessage(isAjax, "alreadyReported", Core, "Already Reported", "You have already reported this comment as SPAM.");
+                        Ajax.ShowMessage(isAjax, "alreadyReported", "Already Reported", "You have already reported this comment as SPAM.");
                     }
                 }
-                Ajax.ShowMessage(isAjax, "commentReported", Core, "Reported Comment", "You have successfully reported a comment.");
+                Ajax.ShowMessage(isAjax, "commentReported", "Reported Comment", "You have successfully reported a comment.");
             }
 
             if (Request.QueryString["mode"] == "delete")
@@ -161,7 +161,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Ajax.ShowMessage(isAjax, "errorDeletingComment", Core, "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                    Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                     return;
                 }
 
@@ -181,7 +181,7 @@ namespace BoxSocial.FrontEnd
                     }
                     catch (InvalidApplicationException)
                     {
-                        Ajax.ShowMessage(isAjax, "invalidComment", Core, "Invalid Comment", "The comment you have attempted to post is invalid.");
+                        Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
                         return;
                     }
 
@@ -189,12 +189,12 @@ namespace BoxSocial.FrontEnd
                     {
                         if (!core.CanDeleteComment(commentItemType, commentItemId))
                         {
-                            Ajax.ShowMessage(isAjax, "permissionDenied", Core, "Permission Denied", "You do not have the permissions to delete this comment.");
+                            Ajax.ShowMessage(isAjax, "permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                         }
                     }
                     catch (InvalidItemException)
                     {
-                        Ajax.ShowMessage(isAjax, "errorDeletingComment", Core, "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                        Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                     }
 
                     // delete the comment
@@ -215,10 +215,10 @@ namespace BoxSocial.FrontEnd
                 }
                 catch (InvalidCommentException)
                 {
-                    Ajax.ShowMessage(isAjax, "errorDeletingComment", Core, "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                    Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                 }
 
-                Ajax.ShowMessage(isAjax, "commentDeleted", Core, "Comment Deleted", "You have successfully deleted the comment.");
+                Ajax.ShowMessage(isAjax, "commentDeleted", "Comment Deleted", "You have successfully deleted the comment.");
             }
 
             try
@@ -229,7 +229,7 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", Core, "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidApplicationException)
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", Core, "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
                 return;
             }
 
@@ -251,12 +251,12 @@ namespace BoxSocial.FrontEnd
             {
                 if (!Core.CanPostComment(itemType, (long)itemId))
                 {
-                    Ajax.ShowMessage(isAjax, "notLoggedIn", Core, "Permission Denied", "You do not have the permissions to post a comment to this item.");
+                    Ajax.ShowMessage(isAjax, "notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
                 }
             }
             catch (InvalidItemException)
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", Core, "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
             }
 
             try
@@ -269,23 +269,23 @@ namespace BoxSocial.FrontEnd
             }
             catch (NotLoggedInException)
             {
-                Ajax.ShowMessage(isAjax, "notLoggedIn", Core, "Not Logged In", "You must be logged in to post a comment.");
+                Ajax.ShowMessage(isAjax, "notLoggedIn", "Not Logged In", "You must be logged in to post a comment.");
             }
             catch (CommentFloodException)
             {
-                Ajax.ShowMessage(isAjax, "rejectedByFloodControl", Core, "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
+                Ajax.ShowMessage(isAjax, "rejectedByFloodControl", "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
             }
             catch (CommentTooLongException)
             {
-                Ajax.ShowMessage(isAjax, "commentTooLong", Core, "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
+                Ajax.ShowMessage(isAjax, "commentTooLong", "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
             }
             catch (CommentTooShortException)
             {
-                Ajax.ShowMessage(isAjax, "commentTooShort", Core, "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
+                Ajax.ShowMessage(isAjax, "commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
             }
             catch
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", Core, "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
             }
 
             if (Request.Form["ajax"] == "true")
@@ -308,7 +308,7 @@ namespace BoxSocial.FrontEnd
                 commentsVariableCollection.ParseVariables("NORMAL", "TRUE");
 
                 //Response.Write(ct.ToString());
-                Ajax.SendRawText("comment", core, ct.ToString());
+                Ajax.SendRawText("comment", ct.ToString());
 
                 if (db != null)
                 {

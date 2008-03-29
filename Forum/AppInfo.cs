@@ -58,6 +58,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public override bool UsesRatings
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;

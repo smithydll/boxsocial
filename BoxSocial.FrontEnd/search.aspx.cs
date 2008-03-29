@@ -70,7 +70,7 @@ namespace BoxSocial.FrontEnd
                     friendNames[i] = friends[i].DisplayName;
                 }
 
-                Ajax.SendArray("friends", core, friendNames);
+                Ajax.SendArray("friends", friendNames);
             }
             else
             {

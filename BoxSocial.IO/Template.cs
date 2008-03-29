@@ -66,7 +66,18 @@ namespace BoxSocial.IO
 
         public void ParseVariables(string key, string value)
         {
-            variables.Add(key, value);
+            try
+            {
+                variables.Add(key, value);
+            }
+            catch
+            {
+                /*HttpContext.Current.Response.Write("<hr /><dl><dd>");
+                HttpContext.Current.Response.Write(key);
+                HttpContext.Current.Response.Write("</dd><dt>");
+                HttpContext.Current.Response.Write(value);
+                HttpContext.Current.Response.Write("<hr />");*/
+            }
         }
 
         public void ParseVariables(Dictionary<string, string> vars)

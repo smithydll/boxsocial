@@ -73,6 +73,18 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Gets a value indicating if the application implements a ratings
+        /// handler.
+        /// </summary>
+        public override bool UsesRatings
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Initialises the application
         /// </summary>
         /// <param name="core">Core token</param>

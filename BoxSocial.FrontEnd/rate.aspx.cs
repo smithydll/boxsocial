@@ -41,81 +41,89 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            int rating;
-            ulong itemId;
-            string itemType;
+            bool isAjax = false;
 
-            Response.ContentType = "text/plain";
+            if (Request["ajax"] == "true")
+            {
+                isAjax = true;
+            }
+
+            int rating = Functions.RequestInt("rating", 0);
+            long itemId = Functions.RequestLong("item", 0);
+            string itemType = (string)Request.QueryString["type"];
 
             try
             {
-                rating = int.Parse((string)Request.QueryString["rating"]);
-                itemId = ulong.Parse((string)Request.QueryString["item"]);
-                itemType = (string)Request.QueryString["type"];
+                ApplicationEntry ae = new ApplicationEntry(db, new ApplicationCommentType(itemType));
+
+                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
             }
-            catch
+            catch (InvalidApplicationException)
             {
-                Response.Write("invalidVote");
-                //Ajax.SendStatus("invalidVote", core);
+                Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
                 return;
             }
 
-            if (!Functions.IsValidItemType(itemType))
+            try
             {
-                Response.Write("invalidVote");
-                return;
+                Core.ItemRated(itemType, (long)itemId, rating, loggedInMember);
+
+                Rating.Vote(core, itemType, itemId, rating);
+
+                Ajax.SendStatus("voteAccepted");
+            }
+            catch (InvalidItemException)
+            {
+                Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+            }
+            catch (InvalidRatingException)
+            {
+                Ajax.ShowMessage(isAjax, "invalidRating", "Invalid Rating", "The rating you have attempted to give for this item is invalid.");
+            }
+            catch (AlreadyRatedException)
+            {
+                Ajax.ShowMessage(isAjax, "alreadyVoted", "Already Voted", "You have already rated this item, you cannot rate it again");
             }
 
-            if (rating < 1 || rating > 5)
-            {
-                Response.Write("doNotCheat");
-                return;
-            }
+            //else
+            //{
+            //    /* TODO permissions */
+            //    /* after 7 days release the IP for dynamics ip fairness */
+            //    DataTable ratingsTable = db.SelectQuery(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
+            //        itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));
 
-            if (loggedInMember == null)
-            {
-                Response.Write("notLoggedIn");
-                return;
-            }
-            else
-            {
-                /* TODO permissions */
-                /* after 7 days release the IP for dynamics ip fairness */
-                DataTable ratingsTable = db.SelectQuery(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
-                    itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));
+            //    if (ratingsTable.Rows.Count > 0)
+            //    {
+            //        //Response.Write("alreadyVoted");
+            //        Ajax.ShowMessage(true, "alreadyVoted", "Already Voted", "You have already rated this item, you cannot rate it again");
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        /* Register a vote */
+            //        /* start transaction */
+            //        InsertQuery iQuery = new InsertQuery("ratings");
+            //        iQuery.AddField("rate_item_id", itemId);
+            //        iQuery.AddField("rate_item_type", itemType);
+            //        iQuery.AddField("user_id", loggedInMember.UserId);
+            //        iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
+            //        iQuery.AddField("rate_rating", rating);
+            //        iQuery.AddField("rate_ip", session.IPAddress.ToString());
 
-                if (ratingsTable.Rows.Count > 0)
-                {
-                    //Response.Write("alreadyVoted");
-                    Ajax.ShowMessage(true, "alreadyVoted", core, "Already Voted", "You have already rated this item, you cannot rate it again");
-                    return;
-                }
-                else
-                {
-                    /* Register a vote */
-                    /* start transaction */
-                    InsertQuery iQuery = new InsertQuery("ratings");
-                    iQuery.AddField("rate_item_id", itemId);
-                    iQuery.AddField("rate_item_type", itemType);
-                    iQuery.AddField("user_id", loggedInMember.UserId);
-                    iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
-                    iQuery.AddField("rate_rating", rating);
-                    iQuery.AddField("rate_ip", session.IPAddress.ToString());
+            //        db.UpdateQuery(iQuery, true);
 
-                    db.UpdateQuery(iQuery, true);
+            //        switch (itemType)
+            //        {
+            //            case "PHOTO":
+            //                db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
+            //                    rating, itemId), false);
+            //                break;
+            //        }
 
-                    switch (itemType)
-                    {
-                        case "PHOTO":
-                            db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
-                                rating, itemId), false);
-                            break;
-                    }
-
-                    Ajax.SendStatus("voteAccepted", core);
-                    return;
-                }
-            }
+            //        Ajax.SendStatus("voteAccepted");
+            //        return;
+            //    }
+            //}
         }
     }
 }

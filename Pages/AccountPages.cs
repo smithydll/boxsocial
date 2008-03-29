@@ -696,7 +696,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch
             {
-                Ajax.ShowMessage(ajax, "error", core, "List Error", "You submitted invalid information. Go back and try again.");
+                Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
 
@@ -747,7 +747,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (ajax)
                 {
-                    Ajax.SendRawText("posted", core, HttpUtility.HtmlEncode(text));
+                    Ajax.SendRawText("posted", HttpUtility.HtmlEncode(text));
 
                     if (db != null)
                     {
@@ -765,7 +765,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch (InvalidListException)
             {
-                Ajax.ShowMessage(ajax, "error", core, "List Error", "You submitted invalid information. Go back and try again.");
+                Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
 

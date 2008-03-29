@@ -56,8 +56,8 @@ namespace BoxSocial.FrontEnd
 
                             if (updateApplication.CreatorId == session.LoggedInMember.UserId)
                             {
-                                db.UpdateQuery(string.Format(@"UPDATE applications SET application_title = '{1}', application_description = '{2}', application_primitive = {3}, application_primitives = {4}, application_comment = {5} WHERE application_assembly_name = '{0}'",
-                                    Mysql.Escape(assemblyName), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments), true);
+                                db.UpdateQuery(string.Format(@"UPDATE applications SET application_title = '{1}', application_description = '{2}', application_primitive = {3}, application_primitives = {4}, application_comment = {5}, application_rating = {6} WHERE application_assembly_name = '{0}'",
+                                    Mysql.Escape(assemblyName), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings), true);
                             }
                             else
                             {
@@ -67,8 +67,8 @@ namespace BoxSocial.FrontEnd
                         }
                         else
                         {
-                            applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7});",
-                                Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments), true);
+                            applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
+                                Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings), true);
 
                             try
                             {

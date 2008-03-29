@@ -403,8 +403,29 @@ namespace BoxSocial.Applications.Gallery
             dquery.AddCondition("gallery_item_id", itemId);
             dquery.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (db.UpdateQuery(dquery) > 0)
+            if (db.UpdateQuery(dquery, true) > 0)
             {
+                // TODO, determine if the gallery icon and act appropriately
+                /*if (parentId > 0)
+                {
+
+                }*/
+
+                FileInfo fi = new FileInfo(TPage.GetStorageFilePath(storagePath));
+
+                if (owner is Member)
+                {
+                    UserGallery parent = new UserGallery(db, (Member)owner, parentId);
+                    UserGallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
+                }
+
+                UpdateQuery uQuery = new UpdateQuery("user_info");
+                uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Subtraction, 1));
+                uQuery.AddField("user_bytes", new QueryOperation("user_bytes", QueryOperations.Subtraction, fi.Length));
+                uQuery.AddCondition("user_id", userId);
+
+                db.UpdateQuery(uQuery, false);
+
                 if ((long)results.Rows[0]["number"] > 1)
                 {
                     // do not delete the storage file, still in use
@@ -623,7 +644,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GalleryItem photo = new UserGalleryItem(core.db, page.ProfileOwner, photoPath + "/" + photoName);
+                UserGalleryItem photo = new UserGalleryItem(core.db, page.ProfileOwner, photoPath + "/" + photoName);
 
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
@@ -661,6 +682,7 @@ namespace BoxSocial.Applications.Gallery
                 page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildPhotoEditUri(photo.ItemId)));
                 page.template.ParseVariables("U_ROTATE_LEFT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateLeftUri(photo.ItemId)));
                 page.template.ParseVariables("U_ROTATE_RIGHT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateRightUri(photo.ItemId)));
+                page.template.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(photo.BuildDeleteUri()));
 
                 switch (photo.Classification)
                 {

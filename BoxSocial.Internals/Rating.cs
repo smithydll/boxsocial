@@ -149,7 +149,6 @@ namespace BoxSocial.Internals
     public class ItemRatedEventArgs : EventArgs
     {
         private int rating;
-        private Item item;
         private string itemType;
         private long itemId;
         private Member rater;
@@ -159,14 +158,6 @@ namespace BoxSocial.Internals
             get
             {
                 return rating;
-            }
-        }
-
-        public Item Item
-        {
-            get
-            {
-                return item;
             }
         }
 

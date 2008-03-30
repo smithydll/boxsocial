@@ -1930,14 +1930,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
         public SortOrder CommentSortOrder
         {
             get

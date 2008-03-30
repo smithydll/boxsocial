@@ -74,6 +74,7 @@ namespace BoxSocial.Internals
         protected Core core;
         public PageSignature Signature;
         private bool isAjax;
+        private bool pageEnded;
 
         public Core Core
         {
@@ -188,6 +189,8 @@ namespace BoxSocial.Internals
 
         public TPage()
         {
+            pageEnded = false;
+
             timer = new Stopwatch();
             timer.Start();
             rand = new Random();
@@ -266,21 +269,26 @@ namespace BoxSocial.Internals
 
         public void EndResponse()
         {
-            Display.Header(this);
-            HttpContext.Current.Response.Write(template.ToString());
-            timer.Stop();
-            double seconds = (timer.ElapsedTicks) / 10000000.0;
-            //Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
-
-            if (db != null)
+            if (!pageEnded)
             {
-                db.CloseConnection();
+                pageEnded = true;
+
+                Display.Header(this);
+                HttpContext.Current.Response.Write(template.ToString());
+                timer.Stop();
+                double seconds = (timer.ElapsedTicks) / 10000000.0;
+                //Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
+
+                if (db != null)
+                {
+                    db.CloseConnection();
+                }
+
+                Prose.Close();
+
+                HttpContext.Current.Response.End();
+                //System.Threading.Thread.CurrentThread.Abort();
             }
-
-            Prose.Close();
-
-            HttpContext.Current.Response.End();
-            //System.Threading.Thread.CurrentThread.Abort();
         }
 
         ~TPage()

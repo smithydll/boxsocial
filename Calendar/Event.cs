@@ -376,14 +376,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
         #region ICommentableItem Members
 
 

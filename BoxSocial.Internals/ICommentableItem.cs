@@ -31,31 +31,50 @@ namespace BoxSocial.Internals
 {
     public interface ICommentableItem
     {
+
+        /// <summary>
+        /// Gets the number of comments.
+        /// </summary>
         long Comments
         {
             get;
         }
 
+        /// <summary>
+        /// Gets the sort order for the comments.
+        /// </summary>
         SortOrder CommentSortOrder
         {
             get;
         }
 
+        /// <summary>
+        /// Gets the id of the commentable item.
+        /// </summary>
         long Id
         {
             get;
         }
 
+        /// <summary>
+        /// Gets the class namespace of the commentable item.
+        /// </summary>
         string Namespace
         {
             get;
         }
 
+        /// <summary>
+        /// Gets the URI for the commentable item.
+        /// </summary>
         string Uri
         {
             get;
         }
 
+        /// <summary>
+        /// Gets the number of comments to be displayed per page.
+        /// </summary>
         byte CommentsPerPage
         {
             get;

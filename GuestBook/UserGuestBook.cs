@@ -74,14 +74,6 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
         #region ICommentableItem Members
 
 

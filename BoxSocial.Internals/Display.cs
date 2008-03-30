@@ -198,6 +198,8 @@ namespace BoxSocial.Internals
             core.template.ParseVariables("MESSAGE_TITLE", title);
             core.template.ParseVariables("MESSAGE_BODY", message);
 
+            /* Something wrong here, .net likes to end the page TWICE! */
+            /* Fixed by adding a flag to EndResponse to only execute once. */
             core.EndResponse();
         }
 

@@ -69,7 +69,7 @@ namespace BoxSocial.Applications.Blog
         private long modifiedRaw;
 
         /// <summary>
-        /// Gets the blog entry id.
+        /// Gets the blog entry id
         /// </summary>
         public long PostId
         {
@@ -327,7 +327,7 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Gets the URI for the blog post.
+        /// Gets the URI of the blog post.
         /// </summary>
         public override string Uri
         {
@@ -338,14 +338,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
+        /// <summary>
+        /// Gets the sort order for the comments.
+        /// </summary>
         public SortOrder CommentSortOrder
         {
             get
@@ -354,6 +349,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the number of comments to be displayed per page.
+        /// </summary>
         public byte CommentsPerPage
         {
             get

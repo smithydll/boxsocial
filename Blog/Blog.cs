@@ -403,6 +403,8 @@ namespace BoxSocial.Applications.Blog
         /// <param name="core">Core token</param>
         /// <param name="page">Page calling</param>
         /// <param name="post">Post to show</param>
+        /// <param name="year">Year to show</param>
+        /// <param name="month">Month to show</param>
         public static void Show(Core core, PPage page, long post, int year, int month)
         {
             Show(core, page, null, post, year, month);

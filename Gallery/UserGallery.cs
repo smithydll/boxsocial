@@ -27,6 +27,10 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /*
+     * TODO:
+     * ALTER TABLE `zinzam0_zinzam`.`user_galleries` ADD COLUMN `gallery_bytes` BIGINT NOT NULL AFTER `gallery_parent_id`;
+     */
     public class UserGallery : Gallery
     {
         public UserGallery(Mysql db, Member owner)
@@ -95,13 +99,25 @@ namespace BoxSocial.Applications.Gallery
         {
             if (parent.Items > 0)
             {
-                db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_items = gallery_items + 1 WHERE gallery_id = {0} AND user_id = {1}",
-                    parent.GalleryId, owner.Id), true);
+                UpdateQuery uQuery = new UpdateQuery("user_galleries");
+                uQuery.AddField("gallery_items", new QueryOperation("gallery_items", QueryOperations.Addition, items));
+                uQuery.AddField("gallery_bytes", new QueryOperation("gallery_bytes", QueryOperations.Addition, bytes));
+                uQuery.AddCondition("gallery_id", parent.GalleryId);
+                uQuery.AddCondition("user_id", owner.Id);
+
+                db.UpdateQuery(uQuery, true);
             }
             else
             {
-                db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_items = gallery_items + 1, gallery_highlight_id = {2} WHERE gallery_id = {0} AND user_id = {1}",
-                    parent.GalleryId, owner.Id, itemId), true);
+
+                UpdateQuery uQuery = new UpdateQuery("user_galleries");
+                uQuery.AddField("gallery_items", new QueryOperation("gallery_items", QueryOperations.Addition, items));
+                uQuery.AddField("gallery_bytes", new QueryOperation("gallery_bytes", QueryOperations.Addition, bytes));
+                uQuery.AddField("gallery_highlight_id", itemId);
+                uQuery.AddCondition("gallery_id", parent.GalleryId);
+                uQuery.AddCondition("user_id", owner.Id);
+
+                db.UpdateQuery(uQuery, true);
             }
         }
     }

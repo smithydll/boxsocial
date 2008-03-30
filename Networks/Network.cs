@@ -510,7 +510,6 @@ namespace BoxSocial.Networks
                         // TODO: !!!!
                         return 0x0001;
                     }
-                    break;
             }
 
             return 0x0000;
@@ -704,14 +703,6 @@ namespace BoxSocial.Networks
             get
             {
                 return Type;
-            }
-        }
-
-        public override float Rating
-        {
-            get
-            {
-                return 0;
             }
         }
 

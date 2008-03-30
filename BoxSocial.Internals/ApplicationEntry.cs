@@ -781,14 +781,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
-
         #region ICommentableItem Members
 
 

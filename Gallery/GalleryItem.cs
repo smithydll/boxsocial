@@ -1463,14 +1463,6 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public override float Rating
-        {
-            get
-            {
-                return itemRating;
-            }
-        }
-
         #region ICommentableItem Members
 
 

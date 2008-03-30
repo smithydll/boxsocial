@@ -368,7 +368,6 @@ namespace BoxSocial.Internals
     public class CommentPostedEventArgs : EventArgs
     {
         private Comment comment;
-        private Item item;
         private string itemType;
         private long itemId;
         private Member poster;
@@ -378,14 +377,6 @@ namespace BoxSocial.Internals
             get
             {
                 return comment;
-            }
-        }
-
-        public Item Item
-        {
-            get
-            {
-                return item;
             }
         }
 

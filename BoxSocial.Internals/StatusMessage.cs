@@ -144,13 +144,5 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
-
-        public override float Rating
-        {
-            get
-            {
-                return 0;
-            }
-        }
     }
 }

@@ -36,25 +36,94 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// Represents a gallery
+    /// </summary>
     public abstract class Gallery
     {
-        public const string GALLERY_INFO_FIELDS = "ug.gallery_id, ug.gallery_parent_id, ug.gallery_access, ug.gallery_title, ug.gallery_parent_path, ug.gallery_path, ug.gallery_items, ug.gallery_abstract, ug.gallery_visits, ug.gallery_description";
+        /// <summary>
+        /// A list of database fields associated with a user gallery.
+        /// </summary>
+        public const string GALLERY_INFO_FIELDS = "ug.gallery_id, ug.gallery_parent_id, ug.gallery_access, ug.gallery_title, ug.gallery_parent_path, ug.gallery_path, ug.gallery_items, ug.gallery_abstract, ug.gallery_visits, ug.gallery_description, ug.gallery_bytes";
+
+        /// <summary>
+        /// A list of database fields associated with a user gallery icon.
+        /// </summary>
         public const string GALLERY_ICON_FIELDS = "gi.gallery_item_uri";
 
+        /// <summary>
+        /// Database object
+        /// </summary>
         protected Mysql db;
+
+        /// <summary>
+        /// Owner of the gallery
+        /// </summary>
         protected Primitive owner;
+
+        /// <summary>
+        /// Id of the gallery
+        /// </summary>
         protected long galleryId;
+        
+        /// <summary>
+        /// Id of the parent gallery
+        /// </summary>
         protected long parentId;
+
+        /// <summary>
+        /// Access object for the gallery
+        /// </summary>
         protected Access galleryAccess;
+
+        /// <summary>
+        /// Gallery title
+        /// </summary>
         protected string galleryTitle;
+
+        /// <summary>
+        /// Gallery parent path
+        /// </summary>
         protected string parentPath;
+
+        /// <summary>
+        /// Gallery path (slug)
+        /// </summary>
         protected string path;
+
+        /// <summary>
+        /// Number of visits made to the gallery
+        /// </summary>
         protected long visits;
+
+        /// <summary>
+        /// Number of photos in the gallery
+        /// </summary>
         protected long items;
+
+        /// <summary>
+        /// Number of bytes the the photos in the gallery consume
+        /// </summary>
+        protected long bytes;
+
+        /// <summary>
+        /// Gallery abstract
+        /// </summary>
         protected string galleryAbstract;
+
+        /// <summary>
+        /// Gallery Description
+        /// </summary>
         protected string galleryDescription;
+
+        /// <summary>
+        /// URI of the highlighted photo
+        /// </summary>
         protected string highlightUri;
 
+        /// <summary>
+        /// Gets the gallery Id
+        /// </summary>
         public long GalleryId
         {
             get
@@ -63,6 +132,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery parent Id
+        /// </summary>
         public long ParentId
         {
             get
@@ -71,6 +143,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the access object for the gallery
+        /// </summary>
         public Access GalleryAccess
         {
             get
@@ -79,6 +154,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery title
+        /// </summary>
         public string GalleryTitle
         {
             get
@@ -87,6 +165,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+
+        /// <summary>
+        /// Gets the gallery parent path
+        /// </summary>
         public string ParentPath
         {
             get
@@ -95,6 +177,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery path (slug)
+        /// </summary>
         public string Path
         {
             get
@@ -103,6 +188,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery full path
+        /// </summary>
         public string FullPath
         {
             get
@@ -118,6 +206,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the number of visits made to the gallery
+        /// </summary>
         public long Visits
         {
             get
@@ -126,6 +217,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the number of items in the gallery
+        /// </summary>
         public long Items
         {
             get
@@ -134,6 +228,20 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the number of bytes consumed by the items in the gallery
+        /// </summary>
+        public long Bytes
+        {
+            get
+            {
+                return bytes;
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery abstract
+        /// </summary>
         public string GalleryAbstract
         {
             get
@@ -142,6 +250,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery description
+        /// </summary>
         public string GalleryDescription
         {
             get
@@ -150,6 +261,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery highlighted item URI
+        /// </summary>
         public string HighlightUri
         {
             get
@@ -158,6 +272,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery highlighted item thumbnail URI
+        /// </summary>
         public string ThumbUri
         {
             get
@@ -181,6 +298,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
         public Gallery(Mysql db, Member owner)
         {
             this.db = db;
@@ -191,6 +313,11 @@ namespace BoxSocial.Applications.Gallery
             parentPath = "";
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
         protected Gallery(Mysql db, Primitive owner)
         {
             this.db = db;
@@ -201,6 +328,12 @@ namespace BoxSocial.Applications.Gallery
             parentPath = "";
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="galleryId">Gallery Id</param>
         protected Gallery(Mysql db, Primitive owner, long galleryId)
         {
             this.db = db;
@@ -228,6 +361,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="path">Gallery path</param>
         protected Gallery(Mysql db, Primitive owner, string path)
         {
             this.db = db;
@@ -246,6 +385,13 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="galleryRow">Raw data row of gallery</param>
+        /// <param name="hasIcon">True if contains raw data for icon</param>
         protected Gallery(Mysql db, Primitive owner, DataRow galleryRow, bool hasIcon)
         {
             this.db = db;
@@ -259,6 +405,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Loads the database information into the Gallery class object.
+        /// </summary>
+        /// <param name="galleryRow">Raw data row of blog entry</param>
         protected void loadGalleryInfo(DataRow galleryRow)
         {
             galleryId = (long)galleryRow["gallery_id"];
@@ -274,11 +424,16 @@ namespace BoxSocial.Applications.Gallery
                 galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
             }
             items = (long)(int)galleryRow["gallery_items"];
+            bytes = (long)galleryRow["gallery_bytes"];
             visits = (long)galleryRow["gallery_visits"];
             path = (string)galleryRow["gallery_path"];
             parentPath = (string)galleryRow["gallery_parent_path"];
         }
 
+        /// <summary>
+        /// Loads the icon information into the Gallery class object.
+        /// </summary>
+        /// <param name="galleryRow">Raw data row of blog entry</param>
         protected void loadGalleryIcon(DataRow galleryRow)
         {
             if (!(galleryRow["gallery_item_uri"] is DBNull))

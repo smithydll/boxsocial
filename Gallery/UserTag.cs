@@ -49,6 +49,10 @@ ENGINE = InnoDB;
 
 
      */
+
+    /// <summary>
+    /// Represents a tag on a photo of a user in the photo.
+    /// </summary>
     public sealed class UserTag
     {
         private static string TAG_INFO_FIELDS = "ut.tag_id, ut.tag_user_id, ut.gallery_item_id, ut.tag_x, ut.tag_y, ut.user_id, ut.tag_approved";
@@ -64,6 +68,9 @@ ENGINE = InnoDB;
         private Point tagLocation;
         private bool tagApproved;
 
+        /// <summary>
+        /// Gets the user tag entry id
+        /// </summary>
         public long TagId
         {
             get
@@ -72,6 +79,9 @@ ENGINE = InnoDB;
             }
         }
 
+        /// <summary>
+        /// Gets the user tagged
+        /// </summary>
         public Member TaggedMember
         {
             get
@@ -80,6 +90,9 @@ ENGINE = InnoDB;
             }
         }
 
+        /// <summary>
+        /// Gets the photo tagged
+        /// </summary>
         public GalleryItem TaggedGalleryItem
         {
             get
@@ -99,6 +112,12 @@ ENGINE = InnoDB;
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the UserTag class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="galleryItem">The gallery item tagged</param>
+        /// <param name="tagId">Tag Id to retrieve</param>
         public UserTag(Core core, GalleryItem galleryItem, long tagId)
         {
             this.core = core;
@@ -122,6 +141,12 @@ ENGINE = InnoDB;
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the UserTag class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="galleryItem">Gallery item</param>
+        /// <param name="tagRow">Raw data row of user tag</param>
         private UserTag(Core core, GalleryItem galleryItem, DataRow tagRow)
         {
             this.core = core;
@@ -130,6 +155,10 @@ ENGINE = InnoDB;
             loadTagInfo(tagRow);
         }
 
+        /// <summary>
+        /// Loads the database information into the UserTag class object.
+        /// </summary>
+        /// <param name="tagRow">Raw data row of user tag</param>
         private void loadTagInfo(DataRow tagRow)
         {
             tagId = (long)tagRow["tag_id"];
@@ -140,6 +169,12 @@ ENGINE = InnoDB;
             tagApproved = ((byte)tagRow["tag_approved"] > 0) ? true : false;
         }
 
+        /// <summary>
+        /// Retrieves a list of user tags for a given photo.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="galleryItem">Gallery item to retrieve user tags of</param>
+        /// <returns>A list of user tags</returns>
         public static List<UserTag> GetTags(Core core, GalleryItem galleryItem)
         {
             List<UserTag> tags = new List<UserTag>();
@@ -167,10 +202,10 @@ ENGINE = InnoDB;
         }
 
         /// <summary>
-        /// 
+        /// Approves a user tag for public display.
         /// </summary>
-        /// <param name="core"></param>
-        /// <param name="tagId"></param>
+        /// <param name="core">Core token</param>
+        /// <param name="tag">User tag to approve</param>
         /// <returns>True on success</returns>
         public static bool ApproveTag(Core core, UserTag tag)
         {
@@ -192,10 +227,10 @@ ENGINE = InnoDB;
         }
 
         /// <summary>
-        /// 
+        /// Deletes a user tag.
         /// </summary>
-        /// <param name="core"></param>
-        /// <param name="tagId"></param>
+        /// <param name="core">Core token</param>
+        /// <param name="tagId">Tag Id to delete</param>
         /// <returns>True on success</returns>
         public static bool DeleteTag(Core core, long tagId)
         {
@@ -213,6 +248,15 @@ ENGINE = InnoDB;
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="galleryItem"></param>
+        /// <param name="owner"></param>
+        /// <param name="member"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
         public static UserTag Create(Core core, GalleryItem galleryItem, Member owner, Member member, Point location)
         {
             InsertQuery query = new InsertQuery("user_tags");
@@ -238,6 +282,11 @@ ENGINE = InnoDB;
             return tag;
         }
 
+        /// <summary>
+        /// Notify users affected by a tag of the tag
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="tag">Tag to notify of</param>
         private static void NotifyTag(Core core, UserTag tag)
         {
             if (tag.tagApproved)
@@ -259,6 +308,9 @@ ENGINE = InnoDB;
         }
     }
 
+    /// <summary>
+    /// The exception that is thrown when a requested user tag does not exist.
+    /// </summary>
     public class InvalidUserTagException : Exception
     {
     }

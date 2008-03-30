@@ -840,12 +840,12 @@ namespace BoxSocial.Applications.Gallery
         {
             if (submodule != "delete") return;
 
-            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 DeletePhotoSave();
                 return;
             }
-            else
+            else if (Display.GetConfirmBoxResult() == ConfirmBoxResult.None)
             {
                 AuthoriseRequestSid();
 
@@ -884,12 +884,28 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 UserGalleryItem photo = new UserGalleryItem(db, loggedInMember, photoId);
-                photo.Delete(core);
 
-                SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
-                Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
+                try
+                {
+                    photo.Delete(core);
+
+                    SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
+                    Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
+                }
+                // TODO: not photo owner exception
+                /*catch (Invalid)
+                {
+                    Display.ShowMessage("Unauthorised", "You are unauthorised to delete this photo.");
+                    return;
+                }*/
+                catch
+                {
+                    SetRedirectUri(photo.Uri);
+                    Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                    return;
+                }
             }
-            catch
+            catch (InvalidGalleryItemTypeException)
             {
                 Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
                 return;

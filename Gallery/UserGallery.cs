@@ -31,8 +31,17 @@ namespace BoxSocial.Applications.Gallery
      * TODO:
      * ALTER TABLE `zinzam0_zinzam`.`user_galleries` ADD COLUMN `gallery_bytes` BIGINT NOT NULL AFTER `gallery_parent_id`;
      */
+
+    /// <summary>
+    /// Represents a user gallery
+    /// </summary>
     public class UserGallery : Gallery
     {
+        /// <summary>
+        /// Initialises a new instance of the UserGallery class
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
         public UserGallery(Mysql db, Member owner)
             : base(db, (Primitive)owner)
         {
@@ -53,6 +62,11 @@ namespace BoxSocial.Applications.Gallery
         {
         }
 
+        /// <summary>
+        /// Returns a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <returns>A list of photos</returns>
         public override List<GalleryItem> GetItems(Core core)
         {
             List<GalleryItem> items = new List<GalleryItem>();
@@ -65,6 +79,13 @@ namespace BoxSocial.Applications.Gallery
             return items;
         }
 
+        /// <summary>
+        /// Returns a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Photos per page</param>
+        /// <returns>A list of photos</returns>
         public override List<GalleryItem> GetItems(Core core, int currentPage, int perPage)
         {
             List<GalleryItem> items = new List<GalleryItem>();
@@ -77,6 +98,11 @@ namespace BoxSocial.Applications.Gallery
             return items;
         }
 
+        /// <summary>
+        /// Returns a list of sub-galleries
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <returns>A list of sub-galleries</returns>
         public override List<Gallery> GetGalleries(TPage page)
         {
             List<Gallery> items = new List<Gallery>();
@@ -89,12 +115,31 @@ namespace BoxSocial.Applications.Gallery
             return items;
         }
 
+        /// <summary>
+        /// Creates a new gallery for the logged in user.
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="parent">Parent gallery</param>
+        /// <param name="title">Gallery title</param>
+        /// <param name="slug">Gallery slug</param>
+        /// <param name="description">Gallery description</param>
+        /// <param name="permissions">Gallery permission mask</param>
+        /// <returns>An instance of the newly created gallery</returns>
         public static UserGallery Create(TPage page, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
             long galleryId = create(page, parent, title, ref slug, description, permissions);
             return new UserGallery(page.db, page.loggedInMember, galleryId);
         }
 
+        /// <summary>
+        /// Updates gallery information
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="parent">Parent gallery</param>
+        /// <param name="itemId">If greater than 0, the index of new gallery cover photo</param>
+        /// <param name="items">Number of items added to the gallery</param>
+        /// <param name="bytes">Number of bytes added to the gallery</param>
         public static new void UpdateGalleryInfo(Mysql db, Primitive owner, Gallery parent, long itemId, int items, long bytes)
         {
             if (parent.Items > 0)

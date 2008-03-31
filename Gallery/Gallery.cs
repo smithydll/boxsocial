@@ -446,8 +446,18 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns a list of sub-galleries
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <returns>A list of sub-galleries</returns>
         public abstract List<Gallery> GetGalleries(TPage page);
 
+        /// <summary>
+        /// Returns raw data for a list of sub-galleries
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <returns>Raw data for a list of sub-galleries</returns>
         protected DataRowCollection GetGalleryDataRows(TPage page)
         {
             long loggedIdUid = Member.GetMemberId(page.loggedInMember);
@@ -459,14 +469,39 @@ namespace BoxSocial.Applications.Gallery
             return galleriesTable.Rows;
         }
 
+        /// <summary>
+        /// Returns a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <returns>A list of photos</returns>
         public abstract List<GalleryItem> GetItems(Core core);
+
+        /// <summary>
+        /// Returns a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Photos per page</param>
+        /// <returns>A list of photos</returns>
         public abstract List<GalleryItem> GetItems(Core core, int currentPage, int perPage);
 
+        /// <summary>
+        /// Returns raw data for a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <returns>Raw data for a list of gallery photos</returns>
         protected DataRowCollection GetItemDataRows(Core core)
         {
             return GetItemDataRows(core, 1, 16);
         }
 
+        /// <summary>
+        /// Returns raw data for a list of gallery photos
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <returns>Raw data for a list of gallery photos</returns>
         protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage)
         {
             db = core.db;
@@ -485,6 +520,14 @@ namespace BoxSocial.Applications.Gallery
             return photoTable.Rows;
         }
 
+        /// <summary>
+        /// Updates data for the gallery
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="title">New gallery title</param>
+        /// <param name="slug">New gallery slug</param>
+        /// <param name="description">New gallery description</param>
+        /// <param name="permissions">New gallery permission mask</param>
         public void Update(TPage page, string title, string slug, string description, ushort permissions)
         {
             if (GalleryId == 0)
@@ -541,6 +584,11 @@ namespace BoxSocial.Applications.Gallery
                 member.UserId, galleryId, Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug), permissions), false);
         }
 
+        /// <summary>
+        /// Updates the parent path for children galleries and photos
+        /// </summary>
+        /// <param name="oldPath">Old parent path</param>
+        /// <param name="newPath">New parent path</param>
         private void updateParentPathChildren(string oldPath, string newPath)
         {
             if (owner is Member)
@@ -565,15 +613,15 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// 
+        /// Creates a new gallery for the logged in user.
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="parent"></param>
-        /// <param name="title"></param>
-        /// <param name="slug"></param>
-        /// <param name="description"></param>
-        /// <param name="permissions"></param>
-        /// <returns></returns>
+        /// <param name="page">Page calling</param>
+        /// <param name="parent">Parent gallery</param>
+        /// <param name="title">Gallery title</param>
+        /// <param name="slug">Gallery slug</param>
+        /// <param name="description">Gallery description</param>
+        /// <param name="permissions">Gallery permission mask</param>
+        /// <returns>An instance of the newly created gallery</returns>
         protected static long create(TPage page, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
             // ensure we have generated a valid slug
@@ -595,6 +643,11 @@ namespace BoxSocial.Applications.Gallery
             return galleryId;
         }
 
+        /// <summary>
+        /// Deletes a gallery
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="gallery">Gallery to delete</param>
         public static void Delete(TPage page, Gallery gallery)
         {
             long[] stuffDeleted = galleryDeleteChildren(page, gallery);
@@ -606,6 +659,14 @@ namespace BoxSocial.Applications.Gallery
                 page.loggedInMember.UserId, itemsDeleted, bytesDeleted), false);
         }
 
+        /// <summary>
+        /// Delete all children of a gallery
+        /// </summary>
+        /// <param name="page">Page calling</param>
+        /// <param name="gallery">Gallery being deleted</param>
+        /// <returns>An array containing the number of gallery photos deleted
+        /// (index 0), and the number of bytes consumed by said photos
+        /// (index 1).</returns>
         private static long[] galleryDeleteChildren(TPage page, Gallery gallery)
         {
             long itemsDeleted = 0; // index 0
@@ -636,6 +697,11 @@ namespace BoxSocial.Applications.Gallery
             return new long[] { itemsDeleted, bytesDeleted };
         }
 
+        /// <summary>
+        /// Extracts the path to the parent of a gallery given it's full path
+        /// </summary>
+        /// <param name="path">Path to extract parent path from</param>
+        /// <returns>Parent path extracted</returns>
         public static string GetParentPath(string path)
         {
             char[] trimStartChars = { '.', '/' };
@@ -646,6 +712,11 @@ namespace BoxSocial.Applications.Gallery
             return path.Remove(path.Length - paths[paths.Length - 1].Length).TrimEnd('/');
         }
 
+        /// <summary>
+        /// Extracts the slug of a gallery given it's full path
+        /// </summary>
+        /// <param name="path">Path to extract the slug from</param>
+        /// <returns>Slug extracted</returns>
         public static string GetNameFromPath(string path)
         {
             char[] trimStartChars = { '.', '/' };
@@ -656,6 +727,14 @@ namespace BoxSocial.Applications.Gallery
             return paths[paths.Length - 1];
         }
 
+        /// <summary>
+        /// Checks a given gallery slug to ensure uniqueness
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="parentFullPath">Parent path</param>
+        /// <param name="slug">Slug to check for uniqueness</param>
+        /// <returns>True if slug is unique given owner and parent</returns>
         public static bool CheckGallerySlugUnique(Mysql db, Member owner, string parentFullPath, string slug)
         {
             DataTable galleryGalleryTable = db.SelectQuery(string.Format("SELECT gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' AND gallery_path = '{2}';",
@@ -671,6 +750,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Checks a given gallery slug to ensure validity
+        /// </summary>
+        /// <param name="slug">Slug to check for validity</param>
+        /// <returns>True is slug is value</returns>
         public static bool CheckGallerySlugValid(string slug)
         {
             int matches = 0;
@@ -816,6 +900,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Generates a slug for a gallery from it's title
+        /// </summary>
+        /// <param name="title">Title to generate slug for</param>
+        /// <param name="slug">Pre-existing slug (can be null)</param>
+        /// <returns>New slug</returns>
         public static string GetSlugFromTitle(string title, string slug)
         {
             // normalise slug if it has been fiddeled with
@@ -841,47 +931,96 @@ namespace BoxSocial.Applications.Gallery
             return slug;
         }
 
+        /// <summary>
+        /// Updates gallery information
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="parent">Parent gallery</param>
+        /// <param name="itemId">If greater than 0, the index of new gallery cover photo</param>
+        /// <param name="items">Number of items added to the gallery</param>
+        /// <param name="bytes">Number of bytes added to the gallery</param>
         public static void UpdateGalleryInfo(Mysql db, Primitive owner, Gallery parent, long itemId, int items, long bytes)
         {
             throw new Exception("Use on inherited types only");
         }
 
+        /// <summary>
+        /// Generates a URI pointing to a gallery photo from a given photo path
+        /// </summary>
+        /// <param name="member">Photo owner</param>
+        /// <param name="galleryPath">Gallery path</param>
+        /// <param name="photoPath">Photo slug</param>
+        /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(Member member, string galleryPath, string photoPath)
         {
             return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
                 member.UserName, galleryPath, photoPath));
         }
 
+        /// <summary>
+        /// Generates a URI pointing to a gallery photo from a given photo path
+        /// </summary>
+        /// <param name="thisGroup">Photo owner</param>
+        /// <param name="photoPath">Photo slug</param>
+        /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(UserGroup thisGroup, string photoPath)
         {
             return Linker.AppendSid(string.Format("/group/{0}/gallery/{1}",
                 thisGroup.Slug, photoPath));
         }
 
+        /// <summary>
+        /// Generates a URI pointing to a gallery photo from a given photo path
+        /// </summary>
+        /// <param name="theNetwork">Photo owner</param>
+        /// <param name="photoPath">Photo slug</param>
+        /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(Network theNetwork, string photoPath)
         {
             return Linker.AppendSid(string.Format("/network/{0}/gallery/{1}",
                 theNetwork.NetworkNetwork, photoPath));
         }
 
+        /// <summary>
+        /// Generates a URI pointing to the gallery photo upload form
+        /// </summary>
+        /// <param name="thisGroup">Group to upload photo to</param>
+        /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(UserGroup thisGroup)
         {
             return Linker.AppendSid(string.Format("/group/gallery/{0}/?mode=upload",
                 thisGroup.Slug));
         }
 
+        /// <summary>
+        /// Generates a URI pointing to the gallery photo upload form
+        /// </summary>
+        /// <param name="theNetwork">Network to upload photo to</param>
+        /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(Network theNetwork)
         {
             return Linker.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
                 theNetwork.NetworkNetwork));
         }
 
+        /// <summary>
+        /// Generates a URI to a user gallery
+        /// </summary>
+        /// <param name="member">Gallery owner</param>
+        /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(Member member)
         {
             return Linker.AppendSid(string.Format("/{0}/gallery",
                 member.UserName.ToLower()));
         }
 
+        /// <summary>
+        /// Generates a URI to a user sub-gallery
+        /// </summary>
+        /// <param name="member">Gallery owner</param>
+        /// <param name="path">sub-gallery path</param>
+        /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(Member member, string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -895,18 +1034,34 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Generates a URI to a group gallery
+        /// </summary>
+        /// <param name="thisGroup">Gallery owner</param>
+        /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(UserGroup thisGroup)
         {
             return Linker.AppendSid(string.Format("/group/{0}/gallery",
                 thisGroup.Slug));
         }
 
+        /// <summary>
+        /// Generates a URI to a network gallery
+        /// </summary>
+        /// <param name="theNetwork">Gallery owner</param>
+        /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(Network theNetwork)
         {
             return Linker.AppendSid(string.Format("/network/{0}/gallery",
                 theNetwork.NetworkNetwork));
         }
 
+        /// <summary>
+        /// Show the gallery
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
+        /// <param name="galleryPath">Path to gallery</param>
         public static void Show(Core core, PPage page, string galleryPath)
         {
             page.template.SetTemplate("Gallery", "viewgallery");
@@ -1041,6 +1196,11 @@ namespace BoxSocial.Applications.Gallery
             page.template.ParseVariables("U_COMMENTS", HttpUtility.HtmlEncode(Linker.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath)));
         }
 
+        /// <summary>
+        /// Show the gallery
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
         public static void Show(Core core, GPage page)
         {
             page.template.SetTemplate("Gallery", "viewgroupgallery");
@@ -1210,6 +1370,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Show the gallery
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page calling</param>
         public static void Show(Core core, NPage page)
         {
             page.template.SetTemplate("Gallery", "viewgroupgallery");
@@ -1383,30 +1548,51 @@ namespace BoxSocial.Applications.Gallery
         }
     }
 
+    /// <summary>
+    /// The exception that is thrown when the gallery slug given is not unique.
+    /// </summary>
     public class GallerySlugNotUniqueException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when the gallery slug given is not valid.
+    /// </summary>
     public class GallerySlugNotValidException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when permission to modify a gallery has not been granted.
+    /// </summary>
     public class GalleryPermissionException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when a requested gallery does not exist.
+    /// </summary>
     public class GalleryNotFoundException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when an owner object given is not a user.
+    /// </summary>
     public class GalleryNotAMemberObjectException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when the root gallery cannot be updated.
+    /// </summary>
     public class GalleryCannotUpdateRootGalleryException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when a child gallery cannot be updated.
+    /// </summary>
     public class GalleryCannotUpdateChildrenException : Exception
     {
     }

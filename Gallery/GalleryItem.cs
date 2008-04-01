@@ -39,29 +39,113 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// Represents a gallery photo
+    /// </summary>
     public abstract class GalleryItem : Item, ICommentableItem
     {
+        /// <summary>
+        /// A list of database fields associated with a gallery photo.
+        /// </summary>
         public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
 
+        /// <summary>
+        /// Database object
+        /// </summary>
         protected Mysql db;
+
+        /// <summary>
+        /// Owner of the photo
+        /// </summary>
         protected Primitive owner;
+
+        /// <summary>
+        /// Owner of the photo's user Id
+        /// </summary>
         protected long userId;
+
+        /// <summary>
+        /// Gallery photo Id
+        /// </summary>
         protected long itemId;
+
+        /// <summary>
+        /// Gallery photo title
+        /// </summary>
         protected string itemTitle;
+
+        /// <summary>
+        /// Gallery photo parent path
+        /// </summary>
         protected string parentPath;
+
+        /// <summary>
+        /// Gallery photo path (slug)
+        /// </summary>
         protected string path;
+
+        /// <summary>
+        /// Gallery photo (parent) gallery Id
+        /// </summary>
         protected long parentId;
+
+        /// <summary>
+        /// Gallery photo comments
+        /// </summary>
         protected long itemComments;
+
+        /// <summary>
+        /// Gallery photo views
+        /// </summary>
         protected long itemViews;
+
+        /// <summary>
+        /// Gallery photo rating
+        /// </summary>
         protected float itemRating;
+
+        /// <summary>
+        /// Gallery photo permission mask
+        /// </summary>
         protected ushort permissions;
+
+        /// <summary>
+        /// Gallery photo access information
+        /// </summary>
         protected Access itemAccess;
+
+        /// <summary>
+        /// Gallery photo content (MIME) type
+        /// </summary>
         protected string contentType;
+
+        /// <summary>
+        /// Gallery photo storage file name
+        /// </summary>
+        /// <remarks>
+        /// The storage file name for a photo is the hash of the photo file
+        /// without a file extension.
+        /// </remarks>
         protected string storagePath;
+
+        /// <summary>
+        /// Gallery photo abstract (description)
+        /// </summary>
         protected string itemAbstract;
+
+        /// <summary>
+        /// Gallery photo license
+        /// </summary>
         private ContentLicense license;
+
+        /// <summary>
+        /// Gallery photo classification
+        /// </summary>
         private Classifications classification;
 
+        /// <summary>
+        /// Gets the gallery photo Id
+        /// </summary>
         public long ItemId
         {
             get
@@ -70,6 +154,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery photo title
+        /// </summary>
         public string ItemTitle
         {
             get
@@ -78,6 +165,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery photo gallery path
+        /// </summary>
         public string ParentPath
         {
             get
@@ -86,6 +176,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the gallery photo path (slug)
+        /// </summary>
         public string Path
         {
             get
@@ -94,6 +187,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the number of comments
+        /// </summary>
         public long ItemComments
         {
             get
@@ -102,6 +198,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the number of views
+        /// </summary>
         public long ItemViews
         {
             get
@@ -110,6 +209,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the rating
+        /// </summary>
         public float ItemRating
         {
             get

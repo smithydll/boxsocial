@@ -26,6 +26,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// Represents EXIF information for a photo
+    /// </summary>
     public class Exif
     {
     }

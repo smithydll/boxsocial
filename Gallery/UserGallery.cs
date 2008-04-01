@@ -47,16 +47,35 @@ namespace BoxSocial.Applications.Gallery
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the UserGallery class
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="galleryRow">Raw data row of user gallery</param>
+        /// <param name="hasIcon">True if the raw data contains icon data</param>
         public UserGallery(Mysql db, Member owner, DataRow galleryRow, bool hasIcon)
             : base(db, (Primitive)owner, galleryRow, hasIcon)
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the UserGallery class
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="galleryId">Gallery Id</param>
         public UserGallery(Mysql db, Member owner, long galleryId)
             : base(db, (Primitive)owner, galleryId)
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the UserGallery class
+        /// </summary>
+        /// <param name="db">Database</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="path">Gallery path</param>
         public UserGallery(Mysql db, Member owner, string path)
             : base(db, (Primitive)owner, path)
         {

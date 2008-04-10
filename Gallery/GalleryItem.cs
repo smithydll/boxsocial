@@ -220,6 +220,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the permission mask for the gallery photo
+        /// </summary>
         public ushort Permissions
         {
             get
@@ -228,6 +231,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the access information (permissions) for the gallery photo
+        /// </summary>
         public Access ItemAccess
         {
             get
@@ -236,6 +242,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the content type (MIME type) of the gallery photo
+        /// </summary>
         public string ContentType
         {
             get
@@ -244,6 +253,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the path where the photo is stored
+        /// </summary>
         public string StoragePath
         {
             get
@@ -252,6 +264,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string ItemAbstract
         {
             get

@@ -66,6 +66,15 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public override System.IO.Stream Icon
+        {
+            get
+            {
+                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
+                return null;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;

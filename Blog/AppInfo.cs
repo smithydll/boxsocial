@@ -84,6 +84,15 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public override System.IO.Stream Icon
+        {
+            get
+            {
+                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
+                return null;
+            }
+        }
+
         /// <summary>
         /// Initialises the application
         /// </summary>

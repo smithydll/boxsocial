@@ -64,6 +64,15 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public override System.IO.Stream Icon
+        {
+            get
+            {
+                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
+                return null;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);

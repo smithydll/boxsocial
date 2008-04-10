@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -94,6 +95,11 @@ namespace BoxSocial.Internals
         }
 
         public abstract Dictionary<string, string> PageSlugs
+        {
+            get;
+        }
+
+        public abstract Stream Icon
         {
             get;
         }

@@ -65,11 +65,11 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public override System.IO.Stream Icon
+        public override System.Drawing.Image Icon
         {
             get
             {
-                return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
+                return Properties.Resources.profile;
             }
         }
 

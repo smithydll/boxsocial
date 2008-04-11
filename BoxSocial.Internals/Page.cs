@@ -40,6 +40,12 @@ namespace BoxSocial.Internals
         Draft,
     }
 
+    /*
+     * TODO:
+     * ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_application` BIGINT NOT NULL AFTER `page_list_only`,
+ ADD COLUMN `page_icon` VARCHAR(63) NOT NULL AFTER `page_application`;
+
+     */
     public class Page
     {
         public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification";
@@ -333,6 +339,11 @@ namespace BoxSocial.Internals
 
         public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
         {
+            return Create(core, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+        }
+
+        internal static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+        {
             string parentPath = "";
             long pageId = 0;
             ushort order = 0;
@@ -479,6 +490,14 @@ namespace BoxSocial.Internals
             iquery.AddField("page_status", PageStatusToString(status));
             iquery.AddField("page_classification", (byte)classification);
             iquery.AddField("page_list_only", ((pageListOnly) ? 1 : 0));
+            if (application != null)
+            {
+                if (application.HasIcon)
+                {
+                    iquery.AddField("page_icon", string.Format(@"/images/{0}/icon.png", application.Key));
+                }
+                iquery.AddField("page_application", application.Id);
+            }
 
             pageId = core.db.UpdateQuery(iquery, false);
 

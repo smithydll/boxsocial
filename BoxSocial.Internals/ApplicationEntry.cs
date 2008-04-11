@@ -58,6 +58,16 @@ namespace BoxSocial.Internals
         private long comments;
         private List<string> slugExs;
         private List<string> modules;
+        private bool usesComments;
+        private bool usesRatings;
+
+        private bool titleChanged;
+        private bool descriptionChanged;
+        private bool iconChanged;
+        private bool isPrimitiveChanged;
+        private bool primitivesChanged;
+        private bool usesCommentsChanged;
+        private bool usesRatingsChanged;
 
         public int ApplicationId
         {
@@ -113,6 +123,11 @@ namespace BoxSocial.Internals
             {
                 return title;
             }
+            set
+            {
+                title = value;
+                titleChanged = true;
+            }
         }
 
         public override string DisplayName
@@ -166,6 +181,11 @@ namespace BoxSocial.Internals
             {
                 return description;
             }
+            set
+            {
+                description = value;
+                descriptionChanged = true;
+            }
         }
 
         public string AssemblyName
@@ -181,6 +201,11 @@ namespace BoxSocial.Internals
             get
             {
                 return isPrimitive;
+            }
+            set
+            {
+                isPrimitive = value;
+                isPrimitiveChanged = true;
             }
         }
 
@@ -213,6 +238,73 @@ namespace BoxSocial.Internals
             get
             {
                 return modules;
+            }
+        }
+
+        public string Icon
+        {
+            get
+            {
+                return icon;
+            }
+            set
+            {
+                icon = value;
+                iconChanged = true;
+            }
+        }
+
+        public bool HasIcon
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(icon))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
+        public AppPrimitives SupportedPrimitives
+        {
+            get
+            {
+                return primitives;
+            }
+            set
+            {
+                primitives = value;
+                primitivesChanged = true;
+            }
+        }
+
+        public bool UsesComments
+        {
+            get
+            {
+                return usesComments;
+            }
+            set
+            {
+                usesComments = value;
+                usesCommentsChanged = true;
+            }
+        }
+
+        public bool UsesRatings
+        {
+            get
+            {
+                return usesRatings;
+            }
+            set
+            {
+                usesRatings = value;
+                usesRatingsChanged = true;
             }
         }
 
@@ -394,12 +486,61 @@ namespace BoxSocial.Internals
             primitives = (AppPrimitives)applicationRow["application_primitives"];
             dateRaw = (long)applicationRow["application_date_ut"];
             comments = (long)applicationRow["application_comments"];
+            usesComments = ((byte)applicationRow["application_comment"] > 0) ? true : false;
+            usesRatings = ((byte)applicationRow["application_rating"] > 0) ? true : false;
         }
 
         private void loadApplicationUserInfo(DataRow applicationRow)
         {
             itemId = (long)applicationRow["item_id"];
             permissions = (ushort)applicationRow["app_access"];
+        }
+
+        public void Create()
+        {
+        }
+
+        public ApplicationEntry Update()
+        {
+            return Update(true);
+        }
+
+        public ApplicationEntry Update(bool commit)
+        {
+            UpdateQuery query = new UpdateQuery("applications");
+            if (titleChanged)
+            {
+                query.AddField("application_title", title);
+            }
+            if (descriptionChanged)
+            {
+                query.AddField("application_description", description);
+            }
+            if (isPrimitiveChanged)
+            {
+                query.AddField("application_primitive", isPrimitive);
+            }
+            if (primitivesChanged)
+            {
+                query.AddField("application_primitives", (byte)primitives);
+            }
+            if (usesCommentsChanged)
+            {
+                query.AddField("application_comment", usesComments);
+            }
+            if (usesRatingsChanged)
+            {
+                query.AddField("application_rating", usesRatings);
+            }
+            if (iconChanged)
+            {
+                query.AddField("application_icon", icon);
+            }
+            query.AddCondition("application_id", Id);
+
+            db.UpdateQuery(query, commit);
+
+            return this;
         }
 
         public override string Uri
@@ -534,6 +675,9 @@ namespace BoxSocial.Internals
                         {
                             string tSlug = slug;
                             Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        }
+                        else
+                        {
                         }
                     }
                 }

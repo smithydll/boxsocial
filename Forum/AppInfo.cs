@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public override System.IO.Stream Icon
+        public override System.Drawing.Image Icon
         {
             get
             {

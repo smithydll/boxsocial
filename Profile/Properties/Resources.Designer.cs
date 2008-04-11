@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Profile.Properties {
+namespace BoxSocial.Applications.Profile.Properties {
     using System;
     
     

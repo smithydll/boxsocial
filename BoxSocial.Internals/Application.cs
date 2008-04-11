@@ -99,7 +99,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract Stream Icon
+        public abstract System.Drawing.Image Icon
         {
             get;
         }

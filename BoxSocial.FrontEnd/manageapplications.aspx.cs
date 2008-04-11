@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -56,8 +57,27 @@ namespace BoxSocial.FrontEnd
 
                             if (updateApplication.CreatorId == session.LoggedInMember.UserId)
                             {
-                                db.UpdateQuery(string.Format(@"UPDATE applications SET application_title = '{1}', application_description = '{2}', application_primitive = {3}, application_primitives = {4}, application_comment = {5}, application_rating = {6} WHERE application_assembly_name = '{0}'",
-                                    Mysql.Escape(assemblyName), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings), true);
+                                if (newApplication.Icon != null)
+                                {
+                                    if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key))))
+                                    {
+                                        Directory.CreateDirectory(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key)));
+                                    }
+
+                                    newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateApplication.Key)), System.Drawing.Imaging.ImageFormat.Png);
+                                }
+
+                                UpdateQuery query = new UpdateQuery("applications");
+                                query.AddField("application_title", newApplication.Title);
+                                query.AddField("application_description", newApplication.Description);
+                                query.AddField("application_primitive", isPrimitive);
+                                query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
+                                query.AddField("application_comment", newApplication.UsesComments);
+                                query.AddField("application_rating", newApplication.UsesRatings);
+                                query.AddField("application_icon", string.Format(@"\images\{0}\icon.png", updateApplication.Key));
+                                query.AddCondition("application_assembly_name", assemblyName);
+
+                                db.UpdateQuery(query, true);
                             }
                             else
                             {

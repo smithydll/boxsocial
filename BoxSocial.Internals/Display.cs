@@ -529,7 +529,7 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = Member.GetMemberId(loggedInMember);
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = 'PUBLISH' AND (page_access & {1:0} = {1:0} OR user_id = {2}) ORDER BY upg.page_order",
+            DataTable pagesTable = db.SelectQuery(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_icon FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = 'PUBLISH' AND (page_access & {1:0} = {1:0} OR user_id = {2}) ORDER BY upg.page_order",
                 owner.UserId, readAccessLevel, loggedIdUid));
             StringBuilder output = new StringBuilder();
 
@@ -581,7 +581,14 @@ namespace BoxSocial.Internals
                     hasChildren = true;
                 }
 
-                output.Append("<li>");
+                if ((string)pagesTable.Rows[i]["page_icon"] != "")
+                {
+                    output.Append("<li style=\"list-style-image: url('" + (string)pagesTable.Rows[i]["page_icon"] + "');\"> ");
+                }
+                else
+                {
+                    output.Append("<li>");
+                }
                 output.Append("<a href=\"");
                 output.Append("/" + owner.UserName);
                 if ((string)pagesTable.Rows[i]["page_parent_path"] != "")

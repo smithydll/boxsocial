@@ -170,27 +170,6 @@ a img {
 	border: none;
 }
 
-#new-points ul.details {
-	width: 160px;
-	margin: 0px;
-	padding: 0px;
-	margin-left: 115px;
-}
-
-#new-points ul.details li {
-	list-style-type: none;
-	margin: 0px;
-	padding: 0px;
-	font-size: 130%;
-	width: 100%;
-}
-
-p#more-points {
-	padding-top: 0;
-	margin-top: 0;
-	clear: both;
-}
-
 #space-filler {
 	margin-right: 400px;
 }
@@ -283,8 +262,12 @@ p#more-points {
 }
 
 #pane-pages ul {
-	margin-left: 20px;
+	margin-left: 26px;
 	padding-left: 0;
+}
+
+#pane-pages ul ul {
+    margin-left: 20px;
 }
 
 #pane-pages ul li {

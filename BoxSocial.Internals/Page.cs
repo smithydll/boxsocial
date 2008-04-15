@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
      */
     public class Page
     {
-        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification";
+        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_application, pa.page_icon";
 
         private Mysql db;
 
@@ -67,11 +67,25 @@ namespace BoxSocial.Internals
         private string parentPath;
         private ushort order;
         private long parentId;
+        private long applicationId;
+        private string icon;
         // TODO: hierarchy
         private long createdRaw;
         private long modifiedRaw;
         private ContentLicense license;
         private Classifications classification;
+
+        private bool slugChanged;
+        private bool titleChanged;
+        private bool bodyChanged;
+        private bool permissionsChanged;
+        private bool licenseChanged;
+        private bool viewsChanged;
+        private bool statusChanged;
+        private bool parentChanged;
+        private bool orderChanged;
+        private bool applicationChanged;
+        private bool iconChanged;
 
         public long PageId
         {
@@ -102,6 +116,19 @@ namespace BoxSocial.Internals
             get
             {
                 return body;
+            }
+        }
+
+        public string Icon
+        {
+            get
+            {
+                return icon;
+            }
+            set
+            {
+                icon = value;
+                iconChanged = true;
             }
         }
 
@@ -502,6 +529,28 @@ namespace BoxSocial.Internals
             pageId = core.db.UpdateQuery(iquery, false);
 
             return new Page(core.db, (Member)owner, pageId);
+        }
+
+        private void Update()
+        {
+            UpdateQuery uQuery = new UpdateQuery("user_pages");
+            uQuery.AddCondition("user_id", ownerId);
+            uQuery.AddCondition("page_id", pageId);
+
+            if (titleChanged)
+            {
+                // validate title;
+                if (string.IsNullOrEmpty(title))
+                {
+                    throw new PageTitleNotValidException();
+                }
+
+                uQuery.AddField("page_title", title);
+            }
+            if (iconChanged)
+            {
+                uQuery.AddField("page_icon", icon);
+            }
         }
 
         public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)

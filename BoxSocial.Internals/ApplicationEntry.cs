@@ -678,6 +678,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
+                            Page myPage = new Page(db, (Member)viewer, slugs[slug]);
                         }
                     }
                 }

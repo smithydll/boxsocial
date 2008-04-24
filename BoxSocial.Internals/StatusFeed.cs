@@ -79,26 +79,29 @@ namespace BoxSocial.Internals
             List<long> friendIds = owner.GetFriendIds();
             List<StatusMessage> feedItems = new List<StatusMessage>();
 
-            SelectQuery query = new SelectQuery("user_status_messages usm");
-            query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
-            query.AddSort(SortOrder.Descending, "usm.status_time_ut");
-            query.AddCondition("user_id", ConditionEquality.In, friendIds);
-            query.LimitCount = limit;
-            query.LimitStart = (page - 1) * limit;
-
-            // if limit is less than 10, we will only get one for each member
-            if (limit < 10)
+            if (friendIds.Count > 0)
             {
-                //query.AddGrouping("user_id");
-                // WHERE current
-            }
+                SelectQuery query = new SelectQuery("user_status_messages usm");
+                query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
+                query.AddSort(SortOrder.Descending, "usm.status_time_ut");
+                query.AddCondition("user_id", ConditionEquality.In, friendIds);
+                query.LimitCount = limit;
+                query.LimitStart = (page - 1) * limit;
 
-            DataTable feedTable = core.db.SelectQuery(query);
+                // if limit is less than 10, we will only get one for each member
+                if (limit < 10)
+                {
+                    //query.AddGrouping("user_id");
+                    // WHERE current
+                }
 
-            core.LoadUserProfiles(friendIds);
-            foreach (DataRow dr in feedTable.Rows)
-            {
-                feedItems.Add(new StatusMessage(core.db, core.UserProfiles[(long)dr["user_id"]], dr));
+                DataTable feedTable = core.db.SelectQuery(query);
+
+                core.LoadUserProfiles(friendIds);
+                foreach (DataRow dr in feedTable.Rows)
+                {
+                    feedItems.Add(new StatusMessage(core.db, core.UserProfiles[(long)dr["user_id"]], dr));
+                }
             }
 
             return feedItems;

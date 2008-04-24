@@ -22,22 +22,27 @@ namespace BoxSocial.FrontEnd
             {
                 List<Member> members = new List<Member>();
 
-                SelectQuery query = new SelectQuery("applications ap");
+                SelectQuery query = new SelectQuery("primitive_apps pa");
                 query.AddFields(ApplicationEntry.APPLICATION_FIELDS);
                 query.AddFields(ApplicationEntry.USER_APPLICATION_FIELDS);
                 query.AddFields(Member.USER_INFO_FIELDS);
-                query.AddJoin(JoinTypes.Inner, "user_info ui", "ap.item_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Inner, "applications ap", "ap.application_id", "pa.application_id");
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "pa.item_id", "ui.user_id");
+                query.AddCondition("pa.item_type", "USER");
 
                 DataTable userInfoTable = db.SelectQuery(query);
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
+                    dr["user_id"] = dr["item_id"];
                     Member member = new Member(core.db, dr, false);
                     members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core.db, member, dr);
 
                     ae.UpdateInstall(core, member);
+
+                    //HttpContext.Current.Response.Write(dr["user_id"].ToString() + ", ");
                 }
 
                 Display.ShowMessage("Application Updated", "The application has been updated for all users.");
@@ -103,7 +108,7 @@ namespace BoxSocial.FrontEnd
                                     query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
                                     query.AddField("application_comment", newApplication.UsesComments);
                                     query.AddField("application_rating", newApplication.UsesRatings);
-                                    query.AddField("application_icon", string.Format(@"\images\{0}\icon.png", updateApplication.Key));
+                                    query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
                                     query.AddCondition("application_assembly_name", assemblyName);
 
                                     db.UpdateQuery(query, true);

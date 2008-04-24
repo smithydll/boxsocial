@@ -502,10 +502,10 @@ namespace BoxSocial.Internals
 
         public ApplicationEntry Update()
         {
-            return Update(true);
+            return Update(false);
         }
 
-        public ApplicationEntry Update(bool commit)
+        public ApplicationEntry Update(bool transaction)
         {
             UpdateQuery query = new UpdateQuery("applications");
             if (titleChanged)
@@ -538,7 +538,7 @@ namespace BoxSocial.Internals
             }
             query.AddCondition("application_id", Id);
 
-            db.UpdateQuery(query, commit);
+            db.UpdateQuery(query, transaction);
 
             return this;
         }
@@ -650,6 +650,8 @@ namespace BoxSocial.Internals
 
         public bool UpdateInstall(Core core, Primitive viewer)
         {
+            this.db = core.db;
+
             if (!HasInstalled(viewer))
             {
                 Install(core, viewer);
@@ -678,7 +680,25 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            Page myPage = new Page(db, (Member)viewer, slugs[slug]);
+                            try
+                            {
+                                Page myPage = new Page(db, (Member)viewer, slug, "");
+
+                                if (myPage.ListOnly)
+                                {
+                                    if (!string.IsNullOrEmpty(Icon))
+                                    {
+                                        myPage.Icon = Icon;
+                                    }
+
+                                    myPage.Update();
+                                }
+                            }
+                            catch (PageNotFoundException)
+                            {
+                                string tSlug = slug;
+                                Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            }
                         }
                     }
                 }

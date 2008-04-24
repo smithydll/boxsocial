@@ -41,14 +41,14 @@ namespace BoxSocial.Internals
     }
 
     /*
-     * TODO:
+     * DONE:
      * ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_application` BIGINT NOT NULL AFTER `page_list_only`,
  ADD COLUMN `page_icon` VARCHAR(63) NOT NULL AFTER `page_application`;
 
      */
     public class Page
     {
-        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_application, pa.page_icon";
+        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
 
         private Mysql db;
 
@@ -67,6 +67,7 @@ namespace BoxSocial.Internals
         private string parentPath;
         private ushort order;
         private long parentId;
+        private bool listOnly;
         private long applicationId;
         private string icon;
         // TODO: hierarchy
@@ -84,6 +85,7 @@ namespace BoxSocial.Internals
         private bool statusChanged;
         private bool parentChanged;
         private bool orderChanged;
+        private bool listOnlyChanged;
         private bool applicationChanged;
         private bool iconChanged;
 
@@ -101,6 +103,11 @@ namespace BoxSocial.Internals
             {
                 return slug;
             }
+            set
+            {
+                slug = value;
+                slugChanged = true;
+            }
         }
 
         public string Title
@@ -109,6 +116,17 @@ namespace BoxSocial.Internals
             {
                 return title;
             }
+            set
+            {
+                if (value != title)
+                {
+                    Navigation.GenerateSlug(value, ref slug);
+                    slugChanged = true;
+                }
+
+                title = value;
+                titleChanged = true;
+            }
         }
 
         public string Body
@@ -116,6 +134,11 @@ namespace BoxSocial.Internals
             get
             {
                 return body;
+            }
+            set
+            {
+                body = value;
+                bodyChanged = true;
             }
         }
 
@@ -138,6 +161,11 @@ namespace BoxSocial.Internals
             {
                 return permissions;
             }
+            set
+            {
+                permissions = value;
+                permissionsChanged = true;
+            }
         }
 
         public Access PageAccess
@@ -153,6 +181,11 @@ namespace BoxSocial.Internals
             get
             {
                 return licenseId;
+            }
+            set
+            {
+                licenseId = value;
+                licenseChanged = true;
             }
         }
 
@@ -178,6 +211,11 @@ namespace BoxSocial.Internals
             {
                 return views;
             }
+            set
+            {
+                views = value;
+                viewsChanged = true;
+            }
         }
 
         public string Status
@@ -185,6 +223,11 @@ namespace BoxSocial.Internals
             get
             {
                 return status;
+            }
+            set
+            {
+                status = value;
+                statusChanged = true;
             }
         }
 
@@ -194,6 +237,11 @@ namespace BoxSocial.Internals
             {
                 return parentId;
             }
+            set
+            {
+                parentId = value;
+                parentChanged = true;
+            }
         }
 
         public ushort Order
@@ -201,6 +249,11 @@ namespace BoxSocial.Internals
             get
             {
                 return order;
+            }
+            set
+            {
+                order = value;
+                orderChanged = true;
             }
         }
 
@@ -216,6 +269,19 @@ namespace BoxSocial.Internals
                 {
                     return slug;
                 }
+            }
+        }
+
+        public bool ListOnly
+        {
+            get
+            {
+                return listOnly;
+            }
+            set
+            {
+                listOnly = value;
+                listOnlyChanged = true;
             }
         }
 
@@ -327,6 +393,7 @@ namespace BoxSocial.Internals
             createdRaw = (long)pageRow["page_date_ut"];
             modifiedRaw = (long)pageRow["page_modified_ut"];
             classification = (Classifications)(byte)pageRow["page_classification"];
+            listOnly = ((byte)pageRow["page_list_only"] > 0) ? true : false;
 
             pageAccess = new Access(db, permissions, owner);
         }
@@ -495,7 +562,7 @@ namespace BoxSocial.Internals
             }
 
             UpdateQuery uquery = new UpdateQuery("user_pages");
-            uquery.AddField("page_order", new QueryField("page_order + 1"));
+            uquery.AddField("page_order", new QueryOperation("page_order", QueryOperations.Addition, 1));
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("user_id", owner.Id);
 
@@ -525,14 +592,22 @@ namespace BoxSocial.Internals
                 }
                 iquery.AddField("page_application", application.Id);
             }
+            else
+            {
+                iquery.AddField("page_icon", "");
+                iquery.AddField("page_application", 0);
+            }
 
             pageId = core.db.UpdateQuery(iquery, false);
 
             return new Page(core.db, (Member)owner, pageId);
         }
 
-        private void Update()
+        internal void Update()
         {
+            ushort order = 0;
+            ushort oldOrder = 0;
+
             UpdateQuery uQuery = new UpdateQuery("user_pages");
             uQuery.AddCondition("user_id", ownerId);
             uQuery.AddCondition("page_id", pageId);
@@ -547,10 +622,179 @@ namespace BoxSocial.Internals
 
                 uQuery.AddField("page_title", title);
             }
+            if (slugChanged)
+            {
+                // check the page slug for existance
+
+                SelectQuery squery = new SelectQuery("user_pages");
+                squery.AddFields("page_title");
+                squery.AddCondition("user_id", owner.Id);
+                squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
+                squery.AddCondition("page_slug", slug);
+                squery.AddCondition("page_parent_id", parentId);
+
+                DataTable pagesTable = db.SelectQuery(squery);
+
+                if (pagesTable.Rows.Count > 0)
+                {
+                    throw new PageSlugNotUniqueException();
+                }
+
+                uQuery.AddField("page_slug", slug);
+            }
+            if (bodyChanged)
+            {
+                uQuery.AddField("page_text", body);
+            }
             if (iconChanged)
             {
                 uQuery.AddField("page_icon", icon);
             }
+            if (listOnlyChanged)
+            {
+                uQuery.AddField("page_list_only", listOnly);
+            }
+            if (permissionsChanged)
+            {
+                uQuery.AddField("page_access", permissions);
+            }
+            if (licenseChanged)
+            {
+                uQuery.AddField("page_license", licenseId);
+            }
+            if (viewsChanged)
+            {
+                uQuery.AddField("page_views", views);
+            }
+            if (statusChanged)
+            {
+                uQuery.AddField("page_status", status);
+            }
+            if (orderChanged)
+            {
+                uQuery.AddField("page_order", order);
+            }
+            if (applicationChanged)
+            {
+                uQuery.AddField("page_application", applicationId);
+            }
+            if (parentChanged)
+            {
+                if (this.PageId == parentId)
+                {
+                    throw new PageOwnParentException();
+                }
+
+                uQuery.AddField("page_parent_id", parentId);
+            }
+
+            if (!uQuery.HasFields)
+            {
+                return;
+            }
+
+            if ((parentChanged || titleChanged))
+            {
+                Page parentPage = null;
+                try
+                {
+                    parentPage = new Page(db, (Member)owner, parentId);
+
+                    parentPath = parentPage.FullPath;
+                    parentId = parentPage.PageId;
+                }
+                catch (PageNotFoundException)
+                {
+                    // we couldn't find a parent so set to zero
+                    parentPath = "";
+                    parentId = 0;
+                }
+
+                SelectQuery squery = new SelectQuery("user_pages");
+                squery.AddFields("page_id", "page_order");
+                squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
+                squery.AddCondition("page_title", ConditionEquality.GreaterThan, title);
+                squery.AddCondition("page_parent_id", parentId);
+                squery.AddCondition("user_id", owner.Id);
+                squery.AddSort(SortOrder.Ascending, "page_title");
+                squery.LimitCount = 1;
+
+                DataTable orderTable = db.SelectQuery(squery);
+
+                if (orderTable.Rows.Count == 1)
+                {
+                    order = (ushort)orderTable.Rows[0]["page_order"];
+
+                    if (order == oldOrder + 1 && pageId > 0)
+                    {
+                        order = oldOrder;
+                    }
+                }
+                else if (parentId > 0 && parentPage != null)
+                {
+                    squery = new SelectQuery("user_pages");
+                    squery.AddFields("page_id", "page_order");
+                    squery.AddCondition("page_id", ConditionEquality.NotEqual, parentPage.PageId);
+                    squery.AddCondition("page_title", ConditionEquality.GreaterThan, parentPage.Title);
+                    squery.AddCondition("page_parent_id", parentPage.ParentId);
+                    squery.AddCondition("user_id", owner.Id);
+                    squery.AddSort(SortOrder.Ascending, "page_title");
+                    squery.LimitCount = 1;
+
+                    DataTable orderTable2 = db.SelectQuery(squery);
+
+                    if (orderTable2.Rows.Count == 1)
+                    {
+                        order = (ushort)orderTable2.Rows[0]["page_order"];
+
+                        if (order == oldOrder + 1 && pageId > 0)
+                        {
+                            order = oldOrder;
+                        }
+                    }
+                    else
+                    {
+                        order = (ushort)(parentPage.Order + 1);
+                    }
+                }
+                else
+                {
+                    squery = new SelectQuery("user_pages");
+                    squery.AddFields("MAX(page_order) + 1 AS max_order");
+                    squery.AddCondition("user_id", owner.Id);
+                    squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
+
+                    orderTable = db.SelectQuery(squery);
+
+                    if (orderTable.Rows.Count == 1)
+                    {
+                        if (!(orderTable.Rows[0]["max_order"] is DBNull))
+                        {
+                            order = (ushort)(ulong)orderTable.Rows[0]["max_order"];
+                        }
+                    }
+                }
+            }
+
+            if (orderChanged) // order != oldOrder
+            {
+                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
+                        oldOrder, owner.Id), true);
+
+                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND user_id = {1}",
+                    order, owner.Id), true);
+            }
+
+            UpdateQuery uQuerys = new UpdateQuery("user_pages");
+            uQuerys.AddField("page_order", new QueryOperation("page_order", QueryOperations.Addition, 1));
+            uQuerys.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
+            uQuerys.AddCondition("user_id", owner.Id);
+
+            //Display.ShowMessage("Query", uQuerys.ToString());
+
+            db.UpdateQuery(uQuerys, true);
+
+            db.UpdateQuery(uQuery, false);
         }
 
         public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)

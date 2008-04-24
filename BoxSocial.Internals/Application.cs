@@ -31,7 +31,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
 
-    /*
+    /* DONE:
      * ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_rating` TINYINT(1) UNSIGNED NOT NULL AFTER `application_comment`;
      * /
 

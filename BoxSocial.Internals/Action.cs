@@ -53,7 +53,7 @@ namespace BoxSocial.Internals
      ALTER TABLE `zinzam0_zinzam`.`actions` ADD COLUMN `action_time_ut` BIGINT NOT NULL AFTER `action_body`;
 
      * 
-     * TODO:
+     * DONE
      ALTER TABLE `zinzam0_zinzam`.`actions` MODIFY COLUMN `action_body` VARCHAR(511) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
 
      */

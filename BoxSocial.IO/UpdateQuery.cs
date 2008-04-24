@@ -18,6 +18,14 @@ namespace BoxSocial.IO
             table = tableName;
         }
 
+        public bool HasFields
+        {
+            get
+            {
+                return (fieldValues.Count > 0);
+            }
+        }
+
         public void AddField(string field, object value)
         {
             fieldValues.Add(field, value);

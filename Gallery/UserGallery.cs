@@ -28,7 +28,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Gallery
 {
     /*
-     * TODO:
+     * DONE:
      * ALTER TABLE `zinzam0_zinzam`.`user_galleries` ADD COLUMN `gallery_bytes` BIGINT NOT NULL AFTER `gallery_parent_id`;
      */
 

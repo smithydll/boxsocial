@@ -30,7 +30,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Gallery
 {
     /*
-     * TODO: 
+     * DONE: 
      * CREATE TABLE `zinzam0_zinzam`.`user_tags` (
   `tag_id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT NOT NULL,

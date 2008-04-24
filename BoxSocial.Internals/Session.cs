@@ -187,7 +187,7 @@ namespace BoxSocial.Internals
             if (userId != 0)
             {
                 //if (isset($sessiondata['autologinid']) && (string) $sessiondata['autologinid'] != '' && $user_id)
-                if (sessionData.autoLoginId != null && sessionData.autoLoginId != "" && userId > 0)
+                if (!string.IsNullOrEmpty(sessionData.autoLoginId) && userId > 0)
                 {
                     DataTable userSessionTable = db.SelectQuery(string.Format(
                         @"SELECT {1}
@@ -206,9 +206,6 @@ namespace BoxSocial.Internals
                     {
                         Display.ShowMessage("Error", "Error starting session");
                         Response.Cookies.Clear();
-                        //Response.Write("fail 0");
-                        //Response.Write(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN session_keys sk ON sk.user_id = uk.user_id WHERE uk.user_id = {0} AND ui.user_active = 1 AND sk.key_id = '{2}'",
-                        //userId, Member.USER_INFO_FIELDS, SessionState.SessionMd5(sessionData.autoLoginId)));
                         if (db != null)
                         {
                             db.CloseConnection();

@@ -70,8 +70,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
-                return null;
+                return Properties.Resources.gallery;
             }
         }
 

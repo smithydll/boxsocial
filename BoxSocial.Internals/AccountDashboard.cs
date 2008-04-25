@@ -151,11 +151,14 @@ namespace BoxSocial
                 ids.Add(notification.NotificationId);
             }
 
-            UpdateQuery uQuery = new UpdateQuery("notifications");
-            uQuery.AddField("notification_seen", true);
-            uQuery.AddCondition("notification_id", ConditionEquality.In, ids);
+            if (ids.Count > 0)
+            {
+                UpdateQuery uQuery = new UpdateQuery("notifications");
+                uQuery.AddField("notification_seen", true);
+                uQuery.AddCondition("notification_id", ConditionEquality.In, ids);
 
-            db.UpdateQuery(uQuery);
+                db.UpdateQuery(uQuery);
+            }
         }
 
         public void Applications(string submodule)

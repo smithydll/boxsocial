@@ -139,6 +139,26 @@ namespace Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Style&lt;/h3&gt;
+        ///&lt;p&gt;Create a custom style. To see your style change to your profile, you must first turn on &apos;Show Custom Styles&apos; in your account preferences.&lt;/p&gt;
+        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Style&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;css-style&quot;&gt;Advanced CSS&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				&lt;textarea id=&quot;css-style&quot; name=&quot;css-style&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{STYLE}&lt;/textarea&gt;
+        ///			&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;in [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_style {
+            get {
+                return ResourceManager.GetString("account_style", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;h2&gt;Status Feed&lt;/h2&gt;
         ///&lt;!-- IF BREADCRUMBS --&gt;

@@ -20,6 +20,12 @@ namespace BoxSocial.FrontEnd
 
             if (mode == "update")
             {
+                if (core.LoggedInMemberId > 2 || core.LoggedInMemberId == 0)
+                {
+                    Functions.Generate403();
+                    return;
+                }
+
                 List<Member> members = new List<Member>();
 
                 SelectQuery query = new SelectQuery("primitive_apps pa");
@@ -89,7 +95,7 @@ namespace BoxSocial.FrontEnd
                                 ApplicationEntry updateApplication = new ApplicationEntry(core.db, applicationTable.Rows[0]);
                                 applicationId = updateApplication.ApplicationId;
 
-                                if (updateApplication.CreatorId == session.LoggedInMember.UserId)
+                                if (updateApplication.CreatorId == core.LoggedInMemberId)
                                 {
                                     if (newApplication.Icon != null)
                                     {

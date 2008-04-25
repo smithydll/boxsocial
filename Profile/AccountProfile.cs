@@ -221,7 +221,7 @@ namespace BoxSocial
                 return;
             }
 
-            template.SetTemplate("account_style.html");
+            template.SetTemplate("Profile", "account_style");
 
             template.ParseVariables("STYLE", HttpUtility.HtmlEncode(loggedInMember.GetUserStyle()));
         }

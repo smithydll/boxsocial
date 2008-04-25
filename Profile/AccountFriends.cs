@@ -139,7 +139,7 @@ namespace BoxSocial
                 DeleteFamily();
             }
 
-            template.SetTemplate("account_family_manage.html");
+            template.SetTemplate("Profile", "account_family_manage");
 
             DataTable familyTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FAMILY' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
                 loggedInMember.UserId));

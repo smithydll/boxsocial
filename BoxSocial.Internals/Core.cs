@@ -64,6 +64,7 @@ namespace BoxSocial.Internals
         /// A cache of user profiles including icons.
         /// </summary>
         private Dictionary<long, Member> userProfileCache = new Dictionary<long, Member>();
+        private Dictionary<string, long> userNameCache = new Dictionary<string, long>();
 
         /// <summary>
         /// A cache of application entries.
@@ -139,6 +140,7 @@ namespace BoxSocial.Internals
                 {
                     Member newUser = new Member(db, userRow, true, true);
                     userProfileCache.Add(newUser.Id, newUser);
+                    userNameCache.Add(newUser.UserName, newUser.Id);
                 }
             }
         }
@@ -153,7 +155,24 @@ namespace BoxSocial.Internals
             {
                 Member newUser = new Member(db, userId, true);
                 userProfileCache.Add(newUser.Id, newUser);
+                userNameCache.Add(newUser.UserName, newUser.Id);
             }
+        }
+
+        public long LoadUserProfile(string username)
+        {
+            if (userNameCache.ContainsKey(username))
+            {
+                return userNameCache[username];
+            }
+
+            Member newUser = new Member(db, username, true);
+            if (!userProfileCache.ContainsKey(newUser.Id))
+            {
+                userProfileCache.Add(newUser.Id, newUser);
+            }
+
+            return newUser.Id;
         }
 
         /// <summary>

@@ -84,6 +84,42 @@ namespace BoxSocial.Applications.GuestBook
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
         }
 
+        // TODO: use user
+        public static void Show(Core core, PPage page, string user)
+        {
+            page.template.SetTemplate("GuestBook", "viewguestbook");
+
+            page.ProfileOwner.LoadProfileInfo();
+            int p = Functions.RequestInt("p", 1);
+
+            page.ProfileOwner.ProfileAccess.SetViewer(core.session.LoggedInMember);
+
+            if (!page.ProfileOwner.ProfileAccess.CanRead)
+            {
+                Functions.Generate403();
+                return;
+            }
+
+            if (core.session.IsLoggedIn)
+            {
+                if (page.ProfileOwner.ProfileAccess.CanComment)
+                {
+                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            long userId = core.LoadUserProfile(user);
+
+            List<Member> commenters = new List<Member>();
+            commenters.Add(page.ProfileOwner);
+            commenters.Add(core.UserProfiles[userId]);
+
+            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters);
+            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
+            page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
+            page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
+        }
+
         public static void Show(Core core, GPage page)
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");

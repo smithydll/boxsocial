@@ -256,6 +256,11 @@ namespace BoxSocial.Internals
 
         public static void DisplayComments(Template template, Primitive owner, ICommentableItem item)
         {
+            DisplayComments(template, owner, item, null);
+        }
+
+        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<Member> commenters)
+        {
             Mysql db = core.db;
 
             int p = Functions.RequestInt("p", 1);
@@ -268,6 +273,22 @@ namespace BoxSocial.Internals
                 query.AddCondition("comment_item_id", item.Id);
                 query.AddCondition("comment_item_type", item.Namespace);
                 query.AddCondition("comment_id", ConditionEquality.LessThanEqual, c);
+
+                if (commenters != null)
+                {
+                    if (commenters.Count > 0)
+                    {
+                        List<long> commentersIds = new List<long>();
+
+                        foreach (Member commenter in commenters)
+                        {
+                            commentersIds.Add(commenter.Id);
+                        }
+
+                        query.AddCondition("user_id", ConditionEquality.In, commentersIds);
+                    }
+                }
+
                 query.AddSort(SortOrder.Ascending, "comment_time_ut");
 
                 DataRow commentsRow = db.SelectQuery(query).Rows[0];

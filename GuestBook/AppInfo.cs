@@ -94,6 +94,7 @@ namespace BoxSocial.Applications.GuestBook
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
             aii.AddSlug("profile", @"^/profile/comments(|/)$", AppPrimitives.Member);
+            aii.AddSlug("profile", @"^/profile/comments/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
             aii.AddSlug("comments", @"^/comments(|/)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
 
             aii.AddCommentType("USER");
@@ -120,6 +121,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.RegisterApplicationPage(@"^/profile/comments(|/)$", showProfileGuestBook, 1);
             core.RegisterApplicationPage(@"^/comments(|/)$", showGuestBook, 2);
+            core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
         }
 
         private bool userCanPostComment(long itemId, Member member)
@@ -299,6 +301,14 @@ namespace BoxSocial.Applications.GuestBook
             if (sender is PPage)
             {
                 GuestBook.Show(core, (PPage)sender);
+            }
+        }
+
+        private void showProfileGuestBookConversation(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                GuestBook.Show(core, (PPage)sender, core.PagePathParts[0].Value);
             }
         }
 

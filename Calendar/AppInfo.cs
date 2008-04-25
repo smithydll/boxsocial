@@ -70,8 +70,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
-                return null;
+                return Properties.Resources.calendar;
             }
         }
 

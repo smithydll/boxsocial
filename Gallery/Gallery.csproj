@@ -50,6 +50,11 @@
     <Compile Include="GalleryItem.cs" />
     <Compile Include="GroupGallery.cs" />
     <Compile Include="GroupGalleryItem.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UserTag.cs" />
     <Compile Include="NetworkGallery.cs" />
     <Compile Include="NetworkGalleryItem.cs" />
@@ -81,6 +86,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\gallery.png" />
     <Content Include="templates\account_galleries.html" />
     <Content Include="templates\account_galleries_add.html" />
     <Content Include="templates\account_galleries_photo_edit.html" />
@@ -92,6 +98,11 @@
     <Content Include="templates\viewprofilegallery.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

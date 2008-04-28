@@ -7,7 +7,7 @@
     <ProjectGuid>{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuestBook</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.GuestBook</RootNamespace>
     <AssemblyName>GuestBook</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

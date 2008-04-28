@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Blog {
+namespace BoxSocial.Applications.Blog {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Blog {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Blog.Templates", typeof(Templates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Applications.Blog.Templates", typeof(Templates).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -92,7 +92,27 @@ namespace Blog {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Blog Preferences&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{U_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Blog Preferences&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label for=&quot;title&quot;&gt;Blog Title&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        &lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;
+        ///      &lt;/dd&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label&gt;Blog Permissions&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        {S_BLOG_PERMS}
+        ///      &lt;/dd&gt;
+        ///      &lt;dd&gt;
+        ///        &lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;
+        ///       [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_blog_preferences {
             get {
@@ -103,7 +123,7 @@ namespace Blog {
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Write Blog Post&lt;/h3&gt;
         ///
-        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///&lt;form action=&quot;{U_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Write Blog Post&lt;/legend&gt;
         ///		&lt;dl&gt;
@@ -112,7 +132,7 @@ namespace Blog {
         ///			&lt;dt&gt;&lt;label for=&quot;post&quot;&gt;Page Text&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;
         ///				&lt;textarea id=&quot;post&quot; name=&quot;post&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{S_BLOG_TEXT}&lt;/textarea&gt;
-        ///				&lt;div style=&quot;background [rest of string was truncated]&quot;;.
+        ///				&lt;div style=&quot;backgrou [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_post {
             get {

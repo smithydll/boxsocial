@@ -71,6 +71,52 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void Parse(string input)
+        {
+            int strLength = input.Length;
+            int lineIndex = 0;
+            bool inQuote = false;
+            bool inSingleQuote = false;
+            bool inDoubleQuote = false;
+            char current = '\0';
+            char previous = '\0';
+
+            int i = 0;
+            while (i < strLength)
+            {
+                previous = current;
+                current = input[i];
+                lineIndex++;
+                if (current == '\n')
+                {
+                    lineIndex = -1;
+                    continue;
+                }
+
+                if (!inQuote && current == '\'')
+                {
+                    inQuote = inSingleQuote = true;
+                }
+
+                if (!inQuote && current == '"')
+                {
+                    inQuote = inDoubleQuote = true;
+                }
+
+                if (inSingleQuote && current == '\'')
+                {
+                    inQuote = inSingleQuote = false;
+                }
+
+                if (inDoubleQuote && current == '"')
+                {
+                    inQuote = inDoubleQuote = false;
+                }
+
+                i++;
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder style = new StringBuilder();
@@ -100,6 +146,135 @@ namespace BoxSocial.Internals
         public void AddStyle(string key)
         {
             styles.Add(key, new StyleStyle(key));
+        }
+
+        public bool HasKey(string key)
+        {
+            if (styles.ContainsKey(key))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public StyleStyle this[string key]
+        {
+            get
+            {
+                return styles[key];
+            }
+        }
+
+        public void Parse(string input)
+        {
+            bool inStyle = false;
+            int strLength = input.Length;
+            int lineIndex = 0;
+            bool inComment = false;
+            bool inQuote = false;
+            bool inSingleQuote = false;
+            bool inDoubleQuote = false;
+            char current = '\0';
+            char previous = '\0';
+            string rule = "";
+            string style = "";
+
+            int i = 0;
+            while (i < strLength)
+            {
+                previous = current;
+                current = input[i];
+                lineIndex++;
+                if (current == '\n')
+                {
+                    lineIndex = -1;
+                    continue;
+                }
+
+                if (current == '*' && previous == '/')
+                {
+                    inComment = true;
+                    continue;
+                }
+
+                if (current == '/' && previous == '*')
+                {
+                    inComment = false;
+                    continue;
+                }
+
+                if (!inQuote && current == '\'')
+                {
+                    inQuote = inSingleQuote = true;
+                }
+
+                if (!inQuote && current == '"')
+                {
+                    inQuote = inDoubleQuote = true;
+                }
+
+                if (inSingleQuote && current == '\'')
+                {
+                    inQuote = inSingleQuote = false;
+                }
+
+                if (inDoubleQuote && current == '"')
+                {
+                    inQuote = inDoubleQuote = false;
+                }
+
+                if (!inComment)
+                {
+                    if (!inStyle)
+                    {
+                        if (current == '{')
+                        {
+                            inStyle = true;
+                            rule.Trim(new char[] { ' ', '\t' });
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(rule))
+                        {
+                            if (current != '\t' && current != ' ')
+                            {
+                                rule = current.ToString();
+                            }
+                        }
+                        else
+                        {
+                            rule += current;
+                        }
+                    }
+                    else
+                    {
+                        if (!inQuote)
+                        {
+                            if (current == '}')
+                            {
+                                inStyle = false;
+
+                                StyleStyle tempStyle = new StyleStyle(rule);
+                                tempStyle.Parse(style);
+                                styles.Add(rule, tempStyle);
+
+                                style = "";
+                                rule = "";
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            style += current;
+                        }
+                    }
+                }
+
+                i++;
+            }
         }
     }
 }

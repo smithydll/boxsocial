@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Profile {
+namespace BoxSocial.Applications.Profile {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Profile {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Profile.Templates", typeof(Templates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Applications.Profile.Templates", typeof(Templates).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -145,12 +145,13 @@ namespace Profile {
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Style&lt;/legend&gt;
         ///		&lt;dl&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;css-style&quot;&gt;Advanced CSS&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;
-        ///				&lt;textarea id=&quot;css-style&quot; name=&quot;css-style&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{STYLE}&lt;/textarea&gt;
-        ///			&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;in [rest of string was truncated]&quot;;.
+        ///      &lt;dt&gt;
+        ///        &lt;label onclick=&quot;hide(&apos;advanced-style&apos;);show(&apos;simple-style&apos;);&quot;&gt;Simple Style&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd id=&quot;simple-style&quot;&gt;
+        ///        
+        ///      &lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;css-style&quot; onclick=&quot;show(&apos;advanced-style&apos;);hide(&apos;simple-style&apos;);&quot;&gt;Advance [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_style {
             get {

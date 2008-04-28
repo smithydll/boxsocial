@@ -7,7 +7,7 @@
     <ProjectGuid>{1985F418-4B69-4296-AB99-F6B8DDC580EC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pages</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Pages</RootNamespace>
     <AssemblyName>Pages</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

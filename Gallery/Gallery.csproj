@@ -7,7 +7,7 @@
     <ProjectGuid>{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gallery</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Gallery</RootNamespace>
     <AssemblyName>Gallery</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

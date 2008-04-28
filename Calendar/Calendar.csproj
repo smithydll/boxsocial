@@ -7,7 +7,7 @@
     <ProjectGuid>{28571091-8A91-49BB-B69E-E33FA70B7ACE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Calendar</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Calendar</RootNamespace>
     <AssemblyName>Calendar</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

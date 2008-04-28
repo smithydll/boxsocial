@@ -7,7 +7,7 @@
     <ProjectGuid>{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Blog</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Blog</RootNamespace>
     <AssemblyName>Blog</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

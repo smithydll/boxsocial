@@ -204,8 +204,21 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
+                        core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/"));
                         Display.ShowMessage("Error", "Error starting session");
-                        Response.Cookies.Clear();
+                        
+                        HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");
+                        sessionDataCookie.Value = "";
+                        sessionDataCookie.Expires = DateTime.MinValue;
+                        sessionDataCookie.Secure = false; // TODO: secure cookies
+                        Response.Cookies.Add(sessionDataCookie);
+
+                        HttpCookie sessionSidCookie = new HttpCookie(cookieName + "_sid");
+                        sessionSidCookie.Value = "";
+                        sessionSidCookie.Expires = DateTime.MinValue;
+                        sessionSidCookie.Secure = false; // TODO: secure cookies
+                        Response.Cookies.Add(sessionSidCookie);
+
                         if (db != null)
                         {
                             db.CloseConnection();

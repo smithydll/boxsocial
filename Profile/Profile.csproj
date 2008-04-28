@@ -7,7 +7,7 @@
     <ProjectGuid>{BC7327B8-F476-409B-BEFD-5E1C1D417A79}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Profile</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Profile</RootNamespace>
     <AssemblyName>Profile</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

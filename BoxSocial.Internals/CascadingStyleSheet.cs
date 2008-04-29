@@ -43,7 +43,7 @@ namespace BoxSocial.Internals
 
         public override string ToString()
         {
-            return string.Format("{0} : {1}",
+            return string.Format("{0}: {1}",
                 key, value);
         }
     }
@@ -71,8 +71,29 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool HasProperty(string property)
+        {
+            if (properties.ContainsKey(property))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public StyleProperty this[string property]
+        {
+            get
+            {
+                return properties[property];
+            }
+        }
+
         public void Parse(string input)
         {
+            bool inValue = false;
             int strLength = input.Length;
             int lineIndex = 0;
             bool inQuote = false;
@@ -80,9 +101,12 @@ namespace BoxSocial.Internals
             bool inDoubleQuote = false;
             char current = '\0';
             char previous = '\0';
+            string key = "";
+            string value = "";
 
-            int i = 0;
-            while (i < strLength)
+            //int i = 0;
+            //while (i < strLength)
+            for (int i = 0; i < input.Length; i++)
             {
                 previous = current;
                 current = input[i];
@@ -113,7 +137,53 @@ namespace BoxSocial.Internals
                     inQuote = inDoubleQuote = false;
                 }
 
-                i++;
+                if (!inValue)
+                {
+                    if (!inQuote)
+                    {
+                        if (current == ':')
+                        {
+                            inValue = true;
+                            key = key.Trim(new char[] { ' ', '\t', '\r', '\n' });
+                            continue;
+                        }
+                        else
+                        {
+                            key += current;
+                        }
+                    }
+                    else
+                    {
+                        key += current;
+                    }
+                }
+                else
+                {
+                    if (!inQuote)
+                    {
+                        if (current == ';' || i == strLength - 1)
+                        {
+                            inValue = false;
+
+                            properties.Add(key, new StyleProperty(key, value.Trim(new char[] { ' ', '\t', '\r', '\n' })));
+
+                            key = "";
+                            value = "";
+
+                            continue;
+                        }
+                        else
+                        {
+                            value += current;
+                        }
+                    }
+                    else
+                    {
+                        value += current;
+                    }
+                }
+
+                //i++;
             }
         }
 
@@ -126,9 +196,9 @@ namespace BoxSocial.Internals
             foreach (string propertyKey in properties.Keys)
             {
                 style.Append("\t");
-                style.AppendLine(properties[propertyKey].ToString());
+                style.AppendLine(properties[propertyKey].ToString() + ";");
             }
-            style.AppendLine("}");
+            style.Append("}");
 
             return style.ToString();
         }
@@ -182,8 +252,9 @@ namespace BoxSocial.Internals
             string rule = "";
             string style = "";
 
-            int i = 0;
-            while (i < strLength)
+            //int i = 0;
+            //while (i < strLength)
+            for (int i = 0; i < input.Length; i++)
             {
                 previous = current;
                 current = input[i];
@@ -233,7 +304,7 @@ namespace BoxSocial.Internals
                         if (current == '{')
                         {
                             inStyle = true;
-                            rule.Trim(new char[] { ' ', '\t' });
+                            rule = rule.Trim(new char[] { ' ', '\t', '\r', '\n' });
                             continue;
                         }
 
@@ -265,6 +336,10 @@ namespace BoxSocial.Internals
                                 rule = "";
                                 continue;
                             }
+                            else
+                            {
+                                style += current;
+                            }
                         }
                         else
                         {
@@ -273,8 +348,21 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                i++;
+                //i++;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string key in styles.Keys)
+            {
+                sb.AppendLine(styles[key].ToString());
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
     }
 }

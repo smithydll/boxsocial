@@ -223,6 +223,24 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_style");
 
+            CascadingStyleSheet css = new CascadingStyleSheet();
+            css.Parse(loggedInMember.GetUserStyle());
+
+            if (css.HasKey("body"))
+            {
+                if (css["body"].HasProperty("background-color"))
+                {
+                    template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["body"]["background-color"].Value));
+                }
+            }
+            else if (css.HasKey("html"))
+            {
+                if (css["html"].HasProperty("background-color"))
+                {
+                    template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["html"]["background-color"].Value));
+                }
+            }
+
             template.ParseVariables("STYLE", HttpUtility.HtmlEncode(loggedInMember.GetUserStyle()));
         }
 

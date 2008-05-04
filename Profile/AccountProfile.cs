@@ -221,53 +221,147 @@ namespace BoxSocial
                 return;
             }
 
+            string mode = Request["mode"];
+
             template.SetTemplate("Profile", "account_style");
 
             CascadingStyleSheet css = new CascadingStyleSheet();
             css.Parse(loggedInMember.GetUserStyle());
 
-            if (css.HasKey("body"))
+            StyleGenerator editor = css.Generator;
+
+            if (!string.IsNullOrEmpty(mode))
             {
-                if (css["body"].HasProperty("background-color"))
+                switch (mode.ToLower())
                 {
-                    template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["body"]["background-color"].Value));
-                }
-                if (css["body"].HasProperty("color"))
-                {
-                    template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["body"]["color"].Value));
-                }
-                if (css["body"].HasProperty("background-image"))
-                {
-                    template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["body"]["background-image"].Value));
-                }
-            }
-            else if (css.HasKey("html"))
-            {
-                if (css["html"].HasProperty("background-color"))
-                {
-                    template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["html"]["background-color"].Value));
-                }
-                if (css["html"].HasProperty("color"))
-                {
-                    template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["html"]["color"].Value));
+                    case "theme":
+                        editor = StyleGenerator.Theme;
+                        break;
+                    case "standard":
+                        editor = StyleGenerator.Standard;
+                        break;
+                    case "advanced":
+                        editor = StyleGenerator.Advanced;
+                        break;
                 }
             }
 
-            template.ParseVariables("STYLE", HttpUtility.HtmlEncode(loggedInMember.GetUserStyle()));
+            if (editor == StyleGenerator.Theme)
+            {
+                template.ParseVariables("THEME_EDITOR", "TRUE");
+            }
+
+            if (editor == StyleGenerator.Standard)
+            {
+                template.ParseVariables("STANDARD_EDITOR", "TRUE");
+
+                if (css.HasKey("body"))
+                {
+                    if (css["body"].HasProperty("background-color"))
+                    {
+                        template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["body"]["background-color"].Value));
+                    }
+                    if (css["body"].HasProperty("color"))
+                    {
+                        template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["body"]["color"].Value));
+                    }
+                    if (css["body"].HasProperty("background-image"))
+                    {
+                        template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["body"]["background-image"].Value));
+                    }
+                }
+                else if (css.HasKey("html"))
+                {
+                    if (css["html"].HasProperty("background-color"))
+                    {
+                        template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["html"]["background-color"].Value));
+                    }
+                    if (css["html"].HasProperty("color"))
+                    {
+                        template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["html"]["color"].Value));
+                    }
+                }
+
+                if (css.HasKey("a"))
+                {
+                    if (css["a"].HasProperty("color"))
+                    {
+                        template.ParseVariables("LINK_COLOUR", HttpUtility.HtmlEncode(css["a"]["color"].Value));
+                    }
+                }
+
+                if (css.HasKey("#pane-profile div.pane"))
+                {
+                    if (css["#pane-profile div.pane"].HasProperty("border-color"))
+                    {
+                        template.ParseVariables("BOX_BORDER_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["border-color"].Value));
+                    }
+                }
+
+                List<SelectBoxItem> repeatBoxItems = new List<SelectBoxItem>();
+                repeatBoxItems.Add(new SelectBoxItem("none", "None", "/rank_on.gif"));
+                repeatBoxItems.Add(new SelectBoxItem("horizontal", "Horizontal", "/favicon.ico"));
+                repeatBoxItems.Add(new SelectBoxItem("vertical", "Vertical", ""));
+                repeatBoxItems.Add(new SelectBoxItem("tile", "Tile", ""));
+
+                template.ParseVariables("S_BACKGROUND_REPEAT", Functions.BuildRadioArray("background-repeat", 2, repeatBoxItems, "none"));
+
+                List<SelectBoxItem> positionBoxItems = new List<SelectBoxItem>();
+                positionBoxItems.Add(new SelectBoxItem("top-left", "Top Left", ""));
+                positionBoxItems.Add(new SelectBoxItem("top-centre", "Top Centre", ""));
+                positionBoxItems.Add(new SelectBoxItem("top-right", "Top Right", ""));
+                positionBoxItems.Add(new SelectBoxItem("middle-left", "Middle Left", ""));
+                positionBoxItems.Add(new SelectBoxItem("middle-centre", "Middle Centre", ""));
+                positionBoxItems.Add(new SelectBoxItem("middle-right", "Middle Right", ""));
+                positionBoxItems.Add(new SelectBoxItem("bottom-left", "Bottom Left", ""));
+                positionBoxItems.Add(new SelectBoxItem("bottom-centre", "Bottom Centre", ""));
+                positionBoxItems.Add(new SelectBoxItem("bottom-right", "Bottom Right", ""));
+
+                template.ParseVariables("S_BACKGROUND_POSITION", Functions.BuildRadioArray("background-position", 3, positionBoxItems, "middle-centre"));
+            }
+
+            if (editor == StyleGenerator.Advanced)
+            {
+                template.ParseVariables("ADVANCED_EDITOR", "TRUE");
+
+                template.ParseVariables("STYLE", HttpUtility.HtmlEncode(css.ToString())); //  + "\n----\n" + loggedInMember.GetUserStyle())
+            }
         }
 
         public void StyleSave()
         {
+            string mode = Request["mode"];
+
+            CascadingStyleSheet css = new CascadingStyleSheet();
+
+            switch (mode.ToLower())
+            {
+                case "theme":
+                    css.Generator = StyleGenerator.Theme;
+                    break;
+                case "standard":
+                    css.Generator = StyleGenerator.Standard;
+                    css.AddStyle("body");
+                    css["body"].SetProperty("background-color", Request.Form["background-colour"]);
+                    css["body"].SetProperty("background-image", Request.Form["background-image"]);
+                    css["body"].SetProperty("color", Request.Form["fore-colour"]);
+                    break;
+                case "advanced":
+                    css.Generator = StyleGenerator.Advanced;
+                    css.Parse(Request.Form["css-style"]);
+                    break;
+            }
+
             if (db.SelectQuery(string.Format("SELECT user_id FROM user_style WHERE user_id = {0}",
                 loggedInMember.UserId)).Rows.Count == 0)
             {
                 db.UpdateQuery(string.Format("INSERT INTO user_style (user_id, style_css) VALUES ({0}, '{1}');",
-                    loggedInMember.UserId, Mysql.Escape(Request.Form["css-style"])));
+                    loggedInMember.UserId, Mysql.Escape(css.ToString())));
             }
             else
             {
                 db.UpdateQuery(string.Format("UPDATE user_style SET style_css = '{1}' WHERE user_id = {0};",
-                    loggedInMember.UserId, Mysql.Escape(Request.Form["css-style"])));
+                    loggedInMember.UserId, Mysql.Escape(css.ToString())));
             }
 
             SetRedirectUri(AccountModule.BuildModuleUri("profile", "style"));

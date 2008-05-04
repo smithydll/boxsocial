@@ -20,6 +20,7 @@
 
 using System;
 using System.Data;
+using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -302,6 +303,129 @@ namespace BoxSocial.Internals
             return permissionsBox.ToString();
         }
 
+        public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        {
+            return BuildRadioArray(name, columns, items, selected, new List<string>());
+        }
+
+        public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            StringBuilder selectBox = new StringBuilder();
+            selectBox.AppendLine("<div style=\"height: 20px;\">");
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                SelectBoxItem item = items[i];
+
+                if (i % columns == 0)
+                {
+                    selectBox.AppendLine("</div>");
+                    selectBox.AppendLine("<div style=\"height: 20px;\">");
+                }
+
+                string icon = "";
+
+                if (!string.IsNullOrEmpty(item.Icon))
+                {
+                    icon = string.Format("<img src=\"{0}\" alt=\"{1}\" />",
+                        item.Icon, item.Text);
+                }
+                else
+                {
+                    icon = "<span style=\"display: block; width: 16px; height: 16px; float: left;\"></span>";
+                }
+
+                selectBox.AppendLine("<div style=\"float: left; width: 150px\">");
+
+                if (item.Key == selectedItem && disabledItems.Contains(item.Key))
+                {
+                    selectBox.AppendLine(string.Format("<label>{5}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{5}\"{2}{3} />{4}</label>",
+                        name, name + "-" + item.Key, selected, disabled, item.Text, icon, item.Key));
+                }
+                if (item.Key == selectedItem)
+                {
+                    selectBox.AppendLine(string.Format("<label>{4}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{5}\"{2} />{3}</label>",
+                        name, name + "-" + item.Key, selected, item.Text, icon, item.Key));
+                }
+                else if (disabledItems.Contains(item.Key))
+                {
+                    selectBox.AppendLine(string.Format("<label>{4}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{5}\"{2} />{3}</label>",
+                        name, name + "-" + item.Key, disabled, item.Text, icon, item.Key));
+                }
+                else
+                {
+                    selectBox.AppendLine(string.Format("<label>{3}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{4}\"/>{2}</label>",
+                        name, name + "-" + item.Key, item.Text, icon, item.Key));
+                }
+
+                selectBox.AppendLine("</div>");
+            }
+
+            selectBox.AppendLine("</div>");
+
+            return selectBox.ToString();
+        }
+
+        public static string BuildSelectBox(string name, List<SelectBoxItem> items, string selectedItem)
+        {
+            return BuildSelectBox(name, items, selectedItem, new List<string>());
+        }
+
+        public static string BuildSelectBox(string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            StringBuilder selectBox = new StringBuilder();
+            selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\">",
+                name));
+
+            bool hasIcon = false;
+            string defaultIcon = "";
+            string iconImageName = name + "-icon";
+
+            foreach (SelectBoxItem item in items)
+            {
+                /*StylePropertyList style = new StylePropertyList();
+                if (!string.IsNullOrEmpty(item.Icon))
+                {
+                    style.SetProperty("background-image", string.Format("url('{0}')",
+                        item.Icon));
+                    style.SetProperty("backgound-repeat", "no-repeat");
+                    style.SetProperty("backgound-position", "left top");
+                    style.SetProperty("padding-left", "18px");
+                }*/
+
+                if (item.Key == selectedItem && disabledItems.Contains(item.Key))
+                {
+                    selectBox.AppendLine(string.Format("<option value=\"{0}\"{1}{2}>{3}</option>",
+                        item.Key, selected, disabled, item.Text));
+                }
+                else if (item.Key == selectedItem)
+                {
+                    selectBox.AppendLine(string.Format("<option value=\"{0}\"{1}>{2}</option>",
+                        item.Key, selected, item.Text));
+                }
+                else if (disabledItems.Contains(item.Key))
+                {
+                    selectBox.AppendLine(string.Format("<option value=\"{0}\"{1}>{2}</option>",
+                        item.Key, disabled, item.Text));
+                }
+                else
+                {
+                    selectBox.AppendLine(string.Format("<option value=\"{0}\"><img src=\"{2}\" />{1}</option>",
+                        item.Key, item.Text, item.Icon));
+                }
+            }
+
+            selectBox.AppendLine("</select>");
+
+            if (hasIcon)
+            {
+                selectBox.AppendLine(string.Format("<img src=\"{1}\" id=\"{0}\" />",
+                    iconImageName, defaultIcon));
+            }
+
+            return selectBox.ToString();
+        }
+
         public static string BuildSelectBox(string name, Dictionary<string, string> items, string selectedItem)
         {
             return BuildSelectBox(name, items, selectedItem, new List<string>());
@@ -503,5 +627,43 @@ namespace BoxSocial.Internals
             return input;
         }
 
+    }
+
+    public class SelectBoxItem
+    {
+        private string key;
+        private string text;
+        private string icon;
+
+        public string Key
+        {
+            get
+            {
+                return key;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+        }
+
+        public string Icon
+        {
+            get
+            {
+                return icon;
+            }
+        }
+
+        public SelectBoxItem(string key, string text, string icon)
+        {
+            this.key = key;
+            this.text = text;
+            this.icon = icon;
+        }
     }
 }

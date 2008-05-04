@@ -70,10 +70,30 @@ namespace BoxSocial.Internals
         }
     }
 
+    public sealed class StylePropertyList : StyleStyle
+    {
+        public StylePropertyList()
+            : base("")
+        {
+        }
+
+        public override string ToString()
+        {
+            StringBuilder style = new StringBuilder();
+
+            foreach (string propertyKey in properties.Keys)
+            {
+                style.Append(properties[propertyKey].ToString() + ";");
+            }
+
+            return style.ToString();
+        }
+    }
+
     public class StyleStyle
     {
         private string key;
-        private Dictionary<string, StyleProperty> properties;
+        protected Dictionary<string, StyleProperty> properties;
 
         public StyleStyle(string key)
         {
@@ -123,15 +143,19 @@ namespace BoxSocial.Internals
             bool inDoubleQuote = false;
             char current = '\0';
             char previous = '\0';
+            char next = '\0';
             string key = "";
             string value = "";
 
             //int i = 0;
             //while (i < strLength)
-            for (int i = 0; i < input.Length; i++)
+            input.PadRight(1);
+            for (int i = 0; i < input.Length - 1; i++)
             {
                 previous = current;
                 current = input[i];
+                next = input[i + 1];
+
                 lineIndex++;
                 if (current == '\n')
                 {
@@ -234,6 +258,7 @@ namespace BoxSocial.Internals
         public CascadingStyleSheet()
         {
             styles = new Dictionary<string, StyleStyle>();
+            generator = StyleGenerator.Advanced;
         }
 
         public StyleGenerator Generator
@@ -285,16 +310,19 @@ namespace BoxSocial.Internals
             bool inDoubleQuote = false;
             char current = '\0';
             char previous = '\0';
+            char next = '\0';
             string rule = "";
             string style = "";
             string line = "";
 
             //int i = 0;
             //while (i < strLength)
-            for (int i = 0; i < input.Length; i++)
+            input.PadRight(1);
+            for (int i = 0; i < input.Length - 1; i++)
             {
                 previous = current;
                 current = input[i];
+                next = input[i + 1];
 
                 lineIndex++;
                 if (current == '\n')
@@ -325,7 +353,7 @@ namespace BoxSocial.Internals
                     line += current;
                 }
 
-                if (current == '*' && previous == '/')
+                if (current == '/' && next == '*')
                 {
                     inComment = true;
                     continue;

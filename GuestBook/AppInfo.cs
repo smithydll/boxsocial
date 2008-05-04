@@ -308,7 +308,8 @@ namespace BoxSocial.Applications.GuestBook
         {
             if (sender is PPage)
             {
-                GuestBook.Show(core, (PPage)sender, core.PagePathParts[0].Value);
+                string[] paths = core.PagePathParts[1].Value.Split(new char[] {'/'});
+                GuestBook.Show(core, (PPage)sender, paths[paths.Length - 1]);
             }
         }
 

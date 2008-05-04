@@ -1,10 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum StyleGenerator
+    {
+        Theme,
+        Standard,
+        Advanced,
+    }
+
     public struct StyleProperty
     {
         private string key;
@@ -22,7 +30,21 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return value;
+                if (value.StartsWith("url"))
+                {
+                    try
+                    {
+                        return Regex.Match(value, "url(\\W*)\\((['\"\\W]*)([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)(['\"\\W]*)\\)").Groups[3].Value;
+                    }
+                    catch
+                    {
+                        return "";
+                    }
+                }
+                else
+                {
+                    return value;
+                }
             }
             set
             {
@@ -207,10 +229,23 @@ namespace BoxSocial.Internals
     public class CascadingStyleSheet
     {
         private Dictionary<string, StyleStyle> styles;
+        private StyleGenerator generator;
 
         public CascadingStyleSheet()
         {
             styles = new Dictionary<string, StyleStyle>();
+        }
+
+        public StyleGenerator Generator
+        {
+            get
+            {
+                return generator;
+            }
+            set
+            {
+                generator = value;
+            }
         }
 
         public void AddStyle(string key)
@@ -243,6 +278,7 @@ namespace BoxSocial.Internals
             bool inStyle = false;
             int strLength = input.Length;
             int lineIndex = 0;
+            int lineNo = 0;
             bool inComment = false;
             bool inQuote = false;
             bool inSingleQuote = false;
@@ -251,6 +287,7 @@ namespace BoxSocial.Internals
             char previous = '\0';
             string rule = "";
             string style = "";
+            string line = "";
 
             //int i = 0;
             //while (i < strLength)
@@ -258,11 +295,34 @@ namespace BoxSocial.Internals
             {
                 previous = current;
                 current = input[i];
+
                 lineIndex++;
                 if (current == '\n')
                 {
+                    if (lineNo == 0)
+                    {
+                        switch (line)
+                        {
+                            case "/*Theme*/":
+                                generator = StyleGenerator.Theme;
+                                break;
+                            case "/*Standard*/":
+                                generator = StyleGenerator.Standard;
+                                break;
+                            default:
+                                generator = StyleGenerator.Advanced;
+                                break;
+                        }
+                    }
+
                     lineIndex = -1;
+                    lineNo++;
+                    line = "";
                     continue;
+                }
+                else if (current != '\r')
+                {
+                    line += current;
                 }
 
                 if (current == '*' && previous == '/')
@@ -355,6 +415,16 @@ namespace BoxSocial.Internals
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
+
+            switch (generator)
+            {
+                case StyleGenerator.Theme:
+                    sb.AppendLine("/*Theme*/");
+                    break;
+                case StyleGenerator.Standard:
+                    sb.AppendLine("/*Standard*/");
+                    break;
+            }
 
             foreach (string key in styles.Keys)
             {

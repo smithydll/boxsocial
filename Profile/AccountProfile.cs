@@ -232,12 +232,24 @@ namespace BoxSocial
                 {
                     template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["body"]["background-color"].Value));
                 }
+                if (css["body"].HasProperty("color"))
+                {
+                    template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["body"]["color"].Value));
+                }
+                if (css["body"].HasProperty("background-image"))
+                {
+                    template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["body"]["background-image"].Value));
+                }
             }
             else if (css.HasKey("html"))
             {
                 if (css["html"].HasProperty("background-color"))
                 {
                     template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["html"]["background-color"].Value));
+                }
+                if (css["html"].HasProperty("color"))
+                {
+                    template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["html"]["color"].Value));
                 }
             }
 

@@ -254,6 +254,7 @@ namespace BoxSocial.Internals
     {
         private Dictionary<string, StyleStyle> styles;
         private StyleGenerator generator;
+        private int hue;
 
         public CascadingStyleSheet()
         {
@@ -270,6 +271,18 @@ namespace BoxSocial.Internals
             set
             {
                 generator = value;
+            }
+        }
+
+        public int Hue
+        {
+            get
+            {
+                return hue;
+            }
+            set
+            {
+                hue = value;
             }
         }
 
@@ -340,6 +353,25 @@ namespace BoxSocial.Internals
                             default:
                                 generator = StyleGenerator.Advanced;
                                 break;
+                        }
+                    }
+
+                    if (lineNo == 1)
+                    {
+                        try
+                        {
+                            if (line.StartsWith("/*") && line.EndsWith("*/"))
+                            {
+                                hue = int.Parse(line.Substring(2, line.Length - 4));
+                            }
+                            else
+                            {
+                                hue = -1;
+                            }
+                        }
+                        catch
+                        {
+                            hue = -1;
                         }
                     }
 
@@ -448,6 +480,11 @@ namespace BoxSocial.Internals
             {
                 case StyleGenerator.Theme:
                     sb.AppendLine("/*Theme*/");
+                    if (hue >= -1 && hue <= 360)
+                    {
+                        sb.AppendLine(string.Format("/*{0}*/",
+                            hue));
+                    }
                     break;
                 case StyleGenerator.Standard:
                     sb.AppendLine("/*Standard*/");

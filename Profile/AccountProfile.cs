@@ -230,6 +230,11 @@ namespace BoxSocial
 
             StyleGenerator editor = css.Generator;
 
+            if (string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
+            {
+                editor = StyleGenerator.Theme;
+            }
+
             if (!string.IsNullOrEmpty(mode))
             {
                 switch (mode.ToLower())
@@ -246,9 +251,42 @@ namespace BoxSocial
                 }
             }
 
+            string backgroundRepeat = "no-repeat";
+            string backgroundPosition = "left top";
+            bool backgroundAttachment = false; // False == scroll, true == fixed
+
             if (editor == StyleGenerator.Theme)
             {
                 template.ParseVariables("THEME_EDITOR", "TRUE");
+
+                if (css.Hue == -1)
+                {
+                    template.ParseVariables("DEFAULT_SELECTED", " checked=\"checked\"");
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    VariableCollection themeVariableCollection = template.CreateChild("theme");
+                    double baseHue = (50.0 + i * (360 / 8.0)) % 360.0;
+
+                    System.Drawing.Color one = Display.HlsToRgb(baseHue, 0.5F, 0.5F); // background colour
+                    System.Drawing.Color two = Display.HlsToRgb(baseHue, 0.6F, 0.2F); // link colour
+                    System.Drawing.Color three = Display.HlsToRgb(baseHue, 0.4F, 0.85F); // box title colour
+                    System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F - 180F, 0.7F, 0.2F); // box border
+                    System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F - 180F, 0.4F, 0.85F); // box background colour
+
+                    themeVariableCollection.ParseVariables("C_ONE", string.Format("{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B));
+                    themeVariableCollection.ParseVariables("C_TWO", string.Format("{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B));
+                    themeVariableCollection.ParseVariables("C_THREE", string.Format("{0:x2}{1:x2}{2:x2}", three.R, three.G, three.B));
+                    themeVariableCollection.ParseVariables("C_FOUR", string.Format("{0:x2}{1:x2}{2:x2}", four.R, four.G, four.B));
+                    themeVariableCollection.ParseVariables("C_FIVE", string.Format("{0:x2}{1:x2}{2:x2}", five.R, five.G, five.B));
+                    themeVariableCollection.ParseVariables("HUE", ((int)baseHue).ToString());
+
+                    if ((int)baseHue == css.Hue)
+                    {
+                        themeVariableCollection.ParseVariables("SELECTED", " checked=\"checked\"");
+                    }
+                }
             }
 
             if (editor == StyleGenerator.Standard)
@@ -269,6 +307,25 @@ namespace BoxSocial
                     {
                         template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["body"]["background-image"].Value));
                     }
+                    if (css["body"].HasProperty("background-repeat"))
+                    {
+                        backgroundRepeat = css["body"]["background-repeat"].Value;
+                    }
+                    if (css["body"].HasProperty("background-position"))
+                    {
+                        backgroundPosition = css["body"]["background-position"].Value;
+                    }
+                    if (css["body"].HasProperty("background-attachment"))
+                    {
+                        if (css["body"]["background-attachment"].Value == "fixed")
+                        {
+                            backgroundAttachment = true;
+                        }
+                        else
+                        {
+                            backgroundAttachment = false;
+                        }
+                    }
                 }
                 else if (css.HasKey("html"))
                 {
@@ -279,6 +336,29 @@ namespace BoxSocial
                     if (css["html"].HasProperty("color"))
                     {
                         template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["html"]["color"].Value));
+                    }
+                    if (css["html"].HasProperty("background-image"))
+                    {
+                        template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["html"]["background-image"].Value));
+                    }
+                    if (css["html"].HasProperty("background-repeat"))
+                    {
+                        backgroundRepeat = css["html"]["background-repeat"].Value;
+                    }
+                    if (css["html"].HasProperty("background-position"))
+                    {
+                        backgroundPosition = css["html"]["background-position"].Value;
+                    }
+                    if (css["html"].HasProperty("background-attachment"))
+                    {
+                        if (css["html"]["background-attachment"].Value == "fixed")
+                        {
+                            backgroundAttachment = true;
+                        }
+                        else
+                        {
+                            backgroundAttachment = false;
+                        }
                     }
                 }
 
@@ -296,34 +376,63 @@ namespace BoxSocial
                     {
                         template.ParseVariables("BOX_BORDER_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["border-color"].Value));
                     }
+
+                    if (css["#pane-profile div.pane"].HasProperty("background-color"))
+                    {
+                        template.ParseVariables("BOX_BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["background-color"].Value));
+                    }
+
+                    if (css["#pane-profile div.pane"].HasProperty("color"))
+                    {
+                        template.ParseVariables("BOX_FORE_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["color"].Value));
+                    }
+                }
+
+                if (css.HasKey("#pane-profile div.pane h3"))
+                {
+                    if (css["#pane-profile div.pane h3"].HasProperty("background-color"))
+                    {
+                        template.ParseVariables("BOX_H_BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane h3"]["background-color"].Value));
+                    }
+
+                    if (css["#pane-profile div.pane h3"].HasProperty("color"))
+                    {
+                        template.ParseVariables("BOX_H_FORE_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane h3"]["color"].Value));
+                    }
                 }
 
                 List<SelectBoxItem> repeatBoxItems = new List<SelectBoxItem>();
-                repeatBoxItems.Add(new SelectBoxItem("none", "None", "/rank_on.gif"));
-                repeatBoxItems.Add(new SelectBoxItem("horizontal", "Horizontal", "/favicon.ico"));
-                repeatBoxItems.Add(new SelectBoxItem("vertical", "Vertical", ""));
-                repeatBoxItems.Add(new SelectBoxItem("tile", "Tile", ""));
+                repeatBoxItems.Add(new SelectBoxItem("no-repeat", "None", "/images/bg-no-rpt.png"));
+                repeatBoxItems.Add(new SelectBoxItem("repeat-x", "Horizontal", "/images/bg-rpt-x.png"));
+                repeatBoxItems.Add(new SelectBoxItem("repeat-y", "Vertical", "/images/bg-rpt-y.png"));
+                repeatBoxItems.Add(new SelectBoxItem("repeat", "Tile", "/images/bg-rpt.png"));
 
-                template.ParseVariables("S_BACKGROUND_REPEAT", Functions.BuildRadioArray("background-repeat", 2, repeatBoxItems, "none"));
+                template.ParseVariables("S_BACKGROUND_REPEAT", Functions.BuildRadioArray("background-repeat", 2, repeatBoxItems, backgroundRepeat));
 
                 List<SelectBoxItem> positionBoxItems = new List<SelectBoxItem>();
-                positionBoxItems.Add(new SelectBoxItem("top-left", "Top Left", ""));
-                positionBoxItems.Add(new SelectBoxItem("top-centre", "Top Centre", ""));
-                positionBoxItems.Add(new SelectBoxItem("top-right", "Top Right", ""));
-                positionBoxItems.Add(new SelectBoxItem("middle-left", "Middle Left", ""));
-                positionBoxItems.Add(new SelectBoxItem("middle-centre", "Middle Centre", ""));
-                positionBoxItems.Add(new SelectBoxItem("middle-right", "Middle Right", ""));
-                positionBoxItems.Add(new SelectBoxItem("bottom-left", "Bottom Left", ""));
-                positionBoxItems.Add(new SelectBoxItem("bottom-centre", "Bottom Centre", ""));
-                positionBoxItems.Add(new SelectBoxItem("bottom-right", "Bottom Right", ""));
+                positionBoxItems.Add(new SelectBoxItem("left top", "Top Left", "/images/bg-t-l.png"));
+                positionBoxItems.Add(new SelectBoxItem("center top", "Top Centre", "/images/bg-t-c.png"));
+                positionBoxItems.Add(new SelectBoxItem("right top", "Top Right", "/images/bg-t-r.png"));
+                positionBoxItems.Add(new SelectBoxItem("left center", "Middle Left", "/images/bg-m-l.png"));
+                positionBoxItems.Add(new SelectBoxItem("center center", "Middle Centre", "/images/bg-m-c.png"));
+                positionBoxItems.Add(new SelectBoxItem("right center", "Middle Right", "/images/bg-m-r.png"));
+                positionBoxItems.Add(new SelectBoxItem("left bottom", "Bottom Left", "/images/bg-b-l.png"));
+                positionBoxItems.Add(new SelectBoxItem("center bottom", "Bottom Centre", "/images/bg-b-c.png"));
+                positionBoxItems.Add(new SelectBoxItem("right bottom", "Bottom Right", "/images/bg-b-r.png"));
 
-                template.ParseVariables("S_BACKGROUND_POSITION", Functions.BuildRadioArray("background-position", 3, positionBoxItems, "middle-centre"));
+                template.ParseVariables("S_BACKGROUND_POSITION", Functions.BuildRadioArray("background-position", 3, positionBoxItems, backgroundPosition));
+
+                if (backgroundAttachment)
+                {
+                    template.ParseVariables("BACKGROUND_IMAGE_FIXED", "checked=\"checked\"");
+                }
             }
 
             if (editor == StyleGenerator.Advanced)
             {
                 template.ParseVariables("ADVANCED_EDITOR", "TRUE");
 
+                css.Generator = StyleGenerator.Advanced;
                 template.ParseVariables("STYLE", HttpUtility.HtmlEncode(css.ToString())); //  + "\n----\n" + loggedInMember.GetUserStyle())
             }
         }
@@ -338,13 +447,141 @@ namespace BoxSocial
             {
                 case "theme":
                     css.Generator = StyleGenerator.Theme;
+
+                    int baseHue = Functions.FormInt("theme", -1);
+
+                    if (baseHue == -1)
+                    {
+                        css.Generator = StyleGenerator.Theme;
+                        css.Hue = -1;
+                    }
+                    else
+                    {
+                        css.Generator = StyleGenerator.Theme;
+                        css.Hue = baseHue;
+
+                        System.Drawing.Color one = Display.HlsToRgb(baseHue, 0.5F, 0.5F); // background colour
+                        System.Drawing.Color two = Display.HlsToRgb(baseHue, 0.6F, 0.2F); // link colour
+                        System.Drawing.Color three = Display.HlsToRgb(baseHue, 0.4F, 0.85F); // box title colour
+                        System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F - 180F, 0.7F, 0.2F); // box border
+                        System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F - 180F, 0.4F, 0.85F); // box background colour
+
+                        string backgroundColour = string.Format("#{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B);
+                        string linkColour = string.Format("#{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B);
+                        string boxTitleColour = string.Format("#{0:x2}{1:x2}{2:x2}", three.R, three.G, three.B);
+                        string boxBorderColour = string.Format("#{0:x2}{1:x2}{2:x2}", four.R, four.G, four.B);
+                        string boxBackgroundColour = string.Format("#{0:x2}{1:x2}{2:x2}", five.R, five.G, five.B);
+
+                        css.AddStyle("body");
+                        css["body"].SetProperty("background-color", backgroundColour);
+                        css["body"].SetProperty("color", "#000000");
+
+                        css.AddStyle("a");
+                        css["a"].SetProperty("color", linkColour);
+
+                        css.AddStyle("#pane-profile div.pane");
+                        css["#pane-profile div.pane"].SetProperty("background-color", boxBackgroundColour);
+                        css["#pane-profile div.pane"].SetProperty("border-color", boxBorderColour);
+                        css["#pane-profile div.pane"].SetProperty("color", "#000000");
+
+                        css.AddStyle("#profile div.pane");
+                        css["#profile div.pane"].SetProperty("background-color", boxBackgroundColour);
+                        css["#profile div.pane"].SetProperty("border-color", boxBorderColour);
+                        css["#profile div.pane"].SetProperty("color", "#000000");
+
+                        css.AddStyle("#overview-profile");
+                        css["#overview-profile"].SetProperty("background-color", boxBackgroundColour);
+                        css["#overview-profile"].SetProperty("border-color", boxBorderColour);
+                        css["#overview-profile"].SetProperty("color", "#000000");
+
+                        css.AddStyle("#pane-profile div.pane h3");
+                        css["#pane-profile div.pane h3"].SetProperty("background-color", boxBorderColour);
+                        css["#pane-profile div.pane h3"].SetProperty("border-color", boxBorderColour);
+                        css["#pane-profile div.pane h3"].SetProperty("color", boxTitleColour);
+
+                        css.AddStyle("#pane-profile div.pane h3 a");
+                        css["#pane-profile div.pane h3 a"].SetProperty("color", boxTitleColour);
+
+                        css.AddStyle("#profile div.pane h3");
+                        css["#profile div.pane h3"].SetProperty("background-color", boxBorderColour);
+                        css["#profile div.pane h3"].SetProperty("border-color", boxBorderColour);
+                        css["#profile div.pane h3"].SetProperty("color", boxTitleColour);
+
+                        css.AddStyle("#profile div.pane h3 a");
+                        css["#profile div.pane h3 a"].SetProperty("color", boxTitleColour);
+
+                        css.AddStyle("#overview-profile div.info");
+                        css["#overview-profile div.info"].SetProperty("background-color", boxBorderColour);
+                        css["#overview-profile div.info"].SetProperty("border-color", boxBorderColour);
+                        css["#overview-profile div.info"].SetProperty("color", boxTitleColour);
+
+                        css.AddStyle("#overview-profile div.info a");
+                        css["#overview-profile div.info a"].SetProperty("color", boxTitleColour);
+                    }
+
                     break;
                 case "standard":
                     css.Generator = StyleGenerator.Standard;
                     css.AddStyle("body");
                     css["body"].SetProperty("background-color", Request.Form["background-colour"]);
-                    css["body"].SetProperty("background-image", Request.Form["background-image"]);
                     css["body"].SetProperty("color", Request.Form["fore-colour"]);
+                    if (!string.IsNullOrEmpty(Request.Form["background-image"]))
+                    {
+                        css["body"].SetProperty("background-image", "url('" + Request.Form["background-image"] + "')");
+                        css["body"].SetProperty("background-repeat", Request.Form["background-repeat"]);
+                        css["body"].SetProperty("background-position", Request.Form["background-position"]);
+                        if (Request.Form["background-image-fixed"] == "true")
+                        {
+                            css["body"].SetProperty("background-attachment", "fixed");
+                        }
+                        else
+                        {
+                            css["body"].SetProperty("background-attachment", "scroll");
+                        }
+                    }
+
+                    css.AddStyle("a");
+                    css["a"].SetProperty("color", Request.Form["link-colour"]);
+
+                    css.AddStyle("#pane-profile div.pane");
+                    css["#pane-profile div.pane"].SetProperty("background-color", Request.Form["box-background-colour"]);
+                    css["#pane-profile div.pane"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#pane-profile div.pane"].SetProperty("color", Request.Form["box-fore-colour"]);
+
+                    css.AddStyle("#profile div.pane");
+                    css["#profile div.pane"].SetProperty("background-color", Request.Form["box-background-colour"]);
+                    css["#profile div.pane"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#profile div.pane"].SetProperty("color", Request.Form["box-fore-colour"]);
+
+                    css.AddStyle("#overview-profile");
+                    css["#overview-profile"].SetProperty("background-color", Request.Form["box-background-colour"]);
+                    css["#overview-profile"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#overview-profile"].SetProperty("color", Request.Form["box-fore-colour"]);
+
+                    css.AddStyle("#pane-profile div.pane h3");
+                    css["#pane-profile div.pane h3"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
+                    css["#pane-profile div.pane h3"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#pane-profile div.pane h3"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
+                    css.AddStyle("#pane-profile div.pane h3 a");
+                    css["#pane-profile div.pane h3 a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
+                    css.AddStyle("#profile div.pane h3");
+                    css["#profile div.pane h3"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
+                    css["#profile div.pane h3"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#profile div.pane h3"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
+                    css.AddStyle("#profile div.pane h3 a");
+                    css["#profile div.pane h3 a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
+                    css.AddStyle("#overview-profile div.info");
+                    css["#overview-profile div.info"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
+                    css["#overview-profile div.info"].SetProperty("border-color", Request.Form["box-border-colour"]);
+                    css["#overview-profile div.info"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
+                    css.AddStyle("#overview-profile div.info a");
+                    css["#overview-profile div.info a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+
                     break;
                 case "advanced":
                     css.Generator = StyleGenerator.Advanced;

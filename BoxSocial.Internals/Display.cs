@@ -657,91 +657,71 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// http://www.vbaccelerator.com/home/VB/Code/vbMedia/Colour_Models/Hue__Luminance_and_Saturation/article.asp
-        /// Automatically converted to c#
-        /// <para>This seems to have bugs deeply rooted in it</para>
+        /// Algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV
         /// </summary>
         /// <param name="h"></param>
         /// <param name="s"></param>
         /// <param name="l"></param>
         /// <returns></returns>
-        public static Color HlsToRgb(float h, float s, float l)
+        public static Color HlsToRgb(double h, double s, double l)
         {
-            if (h < 360.0)
+            h = (h) % 360.0;
+
+            double q = 0;
+            if (l < 1.0 / 2)
             {
-                h += 360F;
-            }
-            if (h > 360.0)
-            {
-                h -= 360F;
-            }
-            h = h / 60F; // convert an angle to a number between 0 and 6
-            float rR;
-            float rG;
-            float rB;
-            float Min;
-            float Max;
-            if (s == 0)
-            {
-                rR = l;
-                rG = l;
-                rB = l;
+                q = l * (1 + s);
             }
             else
             {
-                if (l <= 0.5)
-                {
-                    Min = l * (1 - s);
-                }
-                else
-                {
-                    Min = l - s * (1 - l);
-                }
-                Max = 2 * l - Min;
-                if ((h < 1))
-                {
-                    rR = Max;
-                    if ((h < 0))
-                    {
-                        rG = Min;
-                        rB = rG - h * (Max - Min);
-                    }
-                    else
-                    {
-                        rB = Min;
-                        rG = h * (Max - Min) + rB;
-                    }
-                }
-                else if ((h < 3))
-                {
-                    rG = Max;
-                    if ((h < 2))
-                    {
-                        rB = Min;
-                        rR = rB - (h - 2) * (Max - Min);
-                    }
-                    else
-                    {
-                        rR = Min;
-                        rB = (h - 2) * (Max - Min) + rR;
-                    }
-                }
-                else
-                {
-                    rB = Max;
-                    if ((h < 4))
-                    {
-                        rR = Min;
-                        rG = rR - (h - 4) * (Max - Min);
-                    }
-                    else
-                    {
-                        rG = Min;
-                        rR = (h - 4) * (Max - Min) + rG;
-                    }
-                }
+                q = l + s - (l * s);
             }
-            return Color.FromArgb((int)(rR * 255) % 256, (int)(rG * 255), (int)(rB * 255));
+            double p = 2.0 * l - q;
+            double hk = h / 360.0;
+            double tR = hk + 1.0 / 3;
+            double tG = hk;
+            double tB = hk - 1.0 / 3;
+
+            //tR = tR % 1.0;
+            //tG = tG % 1.0;
+            //tB = tB % 1.0;
+
+            double[] C = { tR, tG, tB };
+
+            for (int i = 0; i < C.Length; i++)
+            {
+                double tC  = C[i];
+
+                if (tC < 0.0)
+                {
+                    tC = tC + 1.0;
+                }
+                else if (tC > 1.0)
+                {
+                    tC = tC - 1.0;
+                }
+
+                double c;
+                if (tC < 1.0 / 6)
+                {
+                    c = p + ((q - p) * 6 * tC);
+                }
+                else if (1.0 / 6 <= tC && tC < 1.0 / 2)
+                {
+                    c = q;
+                }
+                else if (1.0 / 2 <= tC && tC < 2.0 / 3)
+                {
+                    c = p + ((q - p) * 6 * (2.0 / 3 - tC));
+                }
+                else
+                {
+                    c = p;
+                }
+                C[i] = c;
+            }
+            
+            return Color.FromArgb((int)(C[0] * 255) % 256, (int)(C[1] * 255) % 256, (int)(C[2] * 255) % 256);
         }
 
         public static string SqlEscape(string input)

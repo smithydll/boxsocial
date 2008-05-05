@@ -1,0 +1,18 @@
+<h3>Manage Block List</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th></th>
+</tr>
+<!-- BEGIN block_list -->
+<!-- IF block_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{block_list.NAME}</td>
+	<td><a href="{block_list.U_UNBLOCK}">Unblock</a></td>
+</tr>
+<!-- END block_list -->
+</table>

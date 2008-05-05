@@ -1,0 +1,73 @@
+<h3>Style</h3>
+<p>Create a custom style. To see your style change to your profile, you must first turn on 'Show Custom Styles' in your account preferences.</p>
+<form action="/account/" method="post">
+	<fieldset>
+		<legend>Style</legend>
+    <!-- IF THEME_EDITOR -->
+      <h4>Theme <small><a href="?mode=standard">Simple</a></small> <small><a href="?mode=advanced">Advanced</a></small></h4>
+    <div><label><input type="radio" id="theme-default" name="theme" value="default"{DEFAULT_SELECTED} />Default</label></div>
+    <div style="height: 104px;">
+    <!-- BEGIN theme -->
+    <div style="float: left; width: 140px; height: 48px;">
+      <div style="background-color: #{theme.C_ONE}; width: 48px; height: 32px;"></div>
+      <div style="float: left; background-color: #{theme.C_TWO}; width: 12px; height: 12px;"></div>
+      <div style="float: left; background-color: #{theme.C_THREE}; width: 12px; height: 12px;"></div>
+      <div style="float: left; background-color: #{theme.C_FOUR}; width: 12px; height: 12px;"></div>
+      <div style="float: left; background-color: #{theme.C_FIVE}; width: 12px; height: 12px;"></div>
+      <div><label><input type="radio" id="theme-{theme.HUE}" name="theme" value="{theme.HUE}"{theme.SELECTED} />{theme.HUE}</label></div>
+    </div>
+    <!-- END theme -->
+    </div>
+      <input type="hidden" name="mode" value="theme" />
+    <!-- ENDIF -->
+    <!-- IF STANDARD_EDITOR -->
+      <h4><small><a href="?mode=theme">Theme</a></small> Simple Style <small><a href="?mode=advanced">Advanced</a></small></h4>
+      <div id="simple-style">
+        <h5>Page Style</h5>
+        <dl style="margin-left: 80px;">
+          <dt>Background Colour:</dt>
+          <dd><input type="text" id="background-colour" name="background-colour" value="{BACKGROUND_COLOUR}" /></dd>
+          <dt>Background Image:</dt>
+          <dd><input type="text" id="background-image" name="background-image" value="{BACKGROUND_IMAGE}" />
+            <label><input type="checkbox" id="background-image-fixed" name="background-image-fixed" value="true"{BACKGROUND_IMAGE_FIXED} />Fixed scroll</label></dd>
+          <dt>Repeat Background:</dt>
+          <dd>
+            {S_BACKGROUND_REPEAT}
+          </dd>
+          <dt>Attach Background:</dt>
+          <dd>
+            {S_BACKGROUND_POSITION}
+          </dd>
+          <dt>Text Colour:</dt>
+          <dd><input type="text" id="fore-colour" name="fore-colour" value="{FORE_COLOUR}" /></dd>
+          <dt>Link Colour:</dt>
+          <dd><input type="text" id="link-colour" name="link-colour" value="{LINK_COLOUR}" /></dd>
+        </dl>
+        <h5>Box Style</h5>
+        <dl style="margin-left: 80px;">
+          <dt>Background Colour:</dt>
+          <dd><input type="text" id="box-background-colour" name="box-background-colour" value="{BOX_BACKGROUND_COLOUR}" /></dd>
+          <dt>Border Colour:</dt>
+          <dd><input type="text" id="box-border-colour" name="box-border-colour" value="{BOX_BORDER_COLOUR}" /></dd>
+          <dt>Text Colour:</dt>
+          <dd><input type="text" id="box-fore-colour" name="box-fore-colour" value="{BOX_FORE_COLOUR}" /></dd>
+          <dt>Title Colour:</dt>
+          <dd><input type="text" id="box-h3-fore-colour" name="box-h3-fore-colour" value="{BOX_H_FORE_COLOUR}" /></dd>
+          <dt>Title Background Colour:</dt>
+          <dd><input type="text" id="box-h3-background-colour" name="box-h3-background-colour" value="{BOX_H_BACKGROUND_COLOUR}" /></dd>
+        </dl>
+      </div>
+    <input type="hidden" name="mode" value="standard" />
+    <!-- ENDIF -->
+    <!-- IF ADVANCED_EDITOR -->
+      <h4><small><a href="?mode=theme">Theme</a></small> <small><a href="?mode=standard">Simple</a></small> <label for="css-style">Advanced CSS</label></h4>
+			<div id="advanced-style">
+				<textarea id="css-style" name="css-style" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{STYLE}</textarea>
+			</div>
+    <input type="hidden" name="mode" value="advanced" />
+    <!-- ENDIF -->
+			<p><input type="submit" name="save" value="Save" /></p>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="style" />
+	</fieldset>
+</form>

@@ -305,7 +305,7 @@ namespace BoxSocial.Internals
 
         public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {
-            return BuildRadioArray(name, columns, items, selected, new List<string>());
+            return BuildRadioArray(name, columns, items, selectedItem, new List<string>());
         }
 
         public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
@@ -340,12 +340,12 @@ namespace BoxSocial.Internals
                 if (item.Key == selectedItem && disabledItems.Contains(item.Key))
                 {
                     selectBox.AppendLine(string.Format("<label>{5}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{5}\"{2}{3} />{4}</label>",
-                        name, name + "-" + item.Key, selected, disabled, item.Text, icon, item.Key));
+                        name, name + "-" + item.Key, boxChecked, disabled, item.Text, icon, item.Key));
                 }
                 if (item.Key == selectedItem)
                 {
                     selectBox.AppendLine(string.Format("<label>{4}<input type=\"radio\" name=\"{0}\" id=\"{1}\" value=\"{5}\"{2} />{3}</label>",
-                        name, name + "-" + item.Key, selected, item.Text, icon, item.Key));
+                        name, name + "-" + item.Key, boxChecked, item.Text, icon, item.Key));
                 }
                 else if (disabledItems.Contains(item.Key))
                 {

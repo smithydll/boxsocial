@@ -229,13 +229,16 @@ namespace BoxSocial.IO
                 try
                 {
                     ResourceManager rm;
-                    try
+
+                    switch (templateAssembly)
                     {
-                        rm = new ResourceManager("BoxSocial.Applications." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
-                    }
-                    catch
-                    {
-                        rm = new ResourceManager(templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                        case "Groups":
+                        case "Networks":
+                            rm = new ResourceManager(templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                            break;
+                        default:
+                            rm = new ResourceManager("BoxSocial.Applications." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                            break;
                     }
 
                     object templateObject = rm.GetObject(templateName);

@@ -61,6 +61,32 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Block List&lt;/h3&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Name&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN block_list --&gt;
+        ///&lt;!-- IF block_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{block_list.NAME}&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{block_list.U_UNBLOCK}&quot;&gt;Unblock&lt;/a&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- END block_list --&gt;
+        ///&lt;/table&gt;.
+        /// </summary>
+        internal static string account_blocklist_manage {
+            get {
+                return ResourceManager.GetString("account_blocklist_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Family&lt;/h3&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
@@ -144,14 +170,15 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Style&lt;/legend&gt;
-        ///		&lt;dl&gt;
-        ///      &lt;dt&gt;
-        ///        &lt;label onclick=&quot;hide(&apos;advanced-style&apos;);show(&apos;simple-style&apos;);&quot;&gt;Simple Style&lt;/label&gt;
-        ///      &lt;/dt&gt;
-        ///      &lt;dd id=&quot;simple-style&quot;&gt;
-        ///        
-        ///      &lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;css-style&quot; onclick=&quot;show(&apos;advanced-style&apos;);hide(&apos;simple-style&apos;);&quot;&gt;Advance [rest of string was truncated]&quot;;.
+        ///    &lt;!-- IF THEME_EDITOR --&gt;
+        ///      &lt;h4&gt;Theme&lt;/h4&gt;
+        ///    &lt;input type=&quot;hidden&quot; name=&quot;mode&quot; value=&quot;theme&quot; /&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///    &lt;!-- IF STANDARD_EDITOR --&gt;
+        ///      &lt;h4&gt;Simple Style&lt;/h4&gt;
+        ///      &lt;div id=&quot;simple-style&quot;&gt;
+        ///        &lt;h5&gt;Page Style&lt;/h5&gt;
+        ///        &lt;dl style=&quot;ma [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_style {
             get {

@@ -682,10 +682,6 @@ namespace BoxSocial.Internals
             double tG = hk;
             double tB = hk - 1.0 / 3;
 
-            //tR = tR % 1.0;
-            //tG = tG % 1.0;
-            //tB = tB % 1.0;
-
             double[] C = { tR, tG, tB };
 
             for (int i = 0; i < C.Length; i++)

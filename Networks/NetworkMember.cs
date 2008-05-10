@@ -92,10 +92,10 @@ namespace BoxSocial.Networks
             query.AddCondition("nm.user_id", memberId);
             query.AddCondition("nm.network_id", networkId);
 
-            /*DataTable memberTable = db.SelectQuery(string.Format("SELECT {2}, {3}, {4}, {5} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.user_id = {0} AND nm.network_id = {1}",
+            /*DataTable memberTable = db.Query(string.Format("SELECT {2}, {3}, {4}, {5} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.user_id = {0} AND nm.network_id = {1}",
                 memberId, networkId, USER_INFO_FIELDS, USER_PROFILE_FIELDS, USER_ICON_FIELDS, USER_NETWORK_FIELDS));*/
 
-            DataTable memberTable = db.SelectQuery(query);
+            DataTable memberTable = db.Query(query);
 
             if (memberTable.Rows.Count == 1)
             {
@@ -148,7 +148,7 @@ namespace BoxSocial.Networks
 
         public NetworkMember(Mysql db, Network theNetwork, Member member)
         {
-            DataTable memberTable = db.SelectQuery(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
+            DataTable memberTable = db.Query(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
                 member.UserId, theNetwork.NetworkId, USER_NETWORK_FIELDS));
 
             if (memberTable.Rows.Count == 1)
@@ -182,7 +182,7 @@ namespace BoxSocial.Networks
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 
-            DataTable userNetworks = db.SelectQuery(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
+            DataTable userNetworks = db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
                 member.UserId, NetworkMember.USER_NETWORK_FIELDS));
 
             foreach (DataRow memberRow in userNetworks.Rows)
@@ -195,7 +195,7 @@ namespace BoxSocial.Networks
 
         public static bool CheckNetworkEmailUnique(Mysql db, string eMail)
         {
-            DataTable networkMemberTable = db.SelectQuery(string.Format("SELECT user_id, member_email FROM network_members WHERE LCASE(member_email) = '{0}';",
+            DataTable networkMemberTable = db.Query(string.Format("SELECT user_id, member_email FROM network_members WHERE LCASE(member_email) = '{0}';",
                 Mysql.Escape(eMail.ToLower())));
             if (networkMemberTable.Rows.Count > 0)
             {

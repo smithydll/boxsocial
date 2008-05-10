@@ -355,7 +355,7 @@ namespace BoxSocial.Internals
             query.AddFields(APPLICATION_FIELDS);
             query.AddCondition("ap.application_assembly_name", assemblyName);
 
-            DataTable assemblyTable = db.SelectQuery(query);
+            DataTable assemblyTable = db.Query(query);
 
             if (assemblyTable.Rows.Count == 1)
             {
@@ -376,7 +376,7 @@ namespace BoxSocial.Internals
         {
             this.db = db;
 
-            DataTable assemblyTable = db.SelectQuery(string.Format(@"SELECT {0}
+            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
                 INNER JOIN comment_types ct ON ct.application_id = ap.application_id
                 WHERE ct.type_type = '{1}';",
@@ -402,7 +402,7 @@ namespace BoxSocial.Internals
             this.db = db;
             this.owner = owner;
 
-            DataTable assemblyTable = db.SelectQuery(string.Format(@"SELECT {0}
+            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
                 WHERE ap.application_assembly_name = '{1}';",
                 ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
             this.db = db;
             this.owner = owner;
 
-            DataTable assemblyTable = db.SelectQuery(string.Format(@"SELECT {0}
+            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
                 WHERE ap.application_id = {1};",
                 ApplicationEntry.APPLICATION_FIELDS, applicationId));
@@ -606,7 +606,7 @@ namespace BoxSocial.Internals
         {
             if (viewer != null)
             {
-                DataTable viewerTable = db.SelectQuery(string.Format("SELECT item_id, item_type FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}'",
+                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}'",
                     applicationId, viewer.Id, Mysql.Escape(viewer.Type)));
 
                 if (viewerTable.Rows.Count > 0)
@@ -673,7 +673,7 @@ namespace BoxSocial.Internals
                         query.AddCondition("page_slug", slug);
                         query.AddCondition("page_parent_path", "");
 
-                        if (db.SelectQuery(query).Rows.Count == 0)
+                        if (db.Query(query).Rows.Count == 0)
                         {
                             string tSlug = slug;
                             Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
@@ -817,7 +817,7 @@ namespace BoxSocial.Internals
 
             // maximum ten per application per day
             // TODO: change this
-            if ((long)db.SelectQuery(query).Rows[0]["twentyfour"] < 10)
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
             {
                 return true;
             }
@@ -849,7 +849,7 @@ namespace BoxSocial.Internals
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
             // maximum five per application per day
-            if ((long)db.SelectQuery(query).Rows[0]["twentyfour"] < 5)
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 5)
             {
                 InsertQuery iquery = new InsertQuery("actions");
                 iquery.AddField("action_primitive_id", owner.Id);
@@ -859,7 +859,7 @@ namespace BoxSocial.Internals
                 iquery.AddField("action_application", applicationId);
                 iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
 
-                db.UpdateQuery(iquery);
+                db.Query(iquery);
             }
         }
 
@@ -900,7 +900,7 @@ namespace BoxSocial.Internals
             query.AddCondition("at.action_application", Id);
             query.LimitCount = 1;
 
-            DataTable feedTable = db.SelectQuery(query);
+            DataTable feedTable = db.Query(query);
 
             if (feedTable.Rows.Count == 1)
             {

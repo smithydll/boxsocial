@@ -178,7 +178,7 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
             query.LimitCount = 128;
 
-            DataTable notificationsTable = core.db.SelectQuery(query);
+            DataTable notificationsTable = core.db.Query(query);
 
             foreach (DataRow dr in notificationsTable.Rows)
             {
@@ -200,7 +200,7 @@ namespace BoxSocial.Internals
             query.AddCondition("nt.notification_primitive_type", "USER");
             query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
 
-            DataTable notificationsTable = core.db.SelectQuery(query);
+            DataTable notificationsTable = core.db.Query(query);
 
             return (long)notificationsTable.Rows[0]["total"];
         }

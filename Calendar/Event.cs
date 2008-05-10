@@ -37,6 +37,12 @@ namespace BoxSocial.Applications.Calendar
         No = 3,
     }
 
+    /*
+     * TODO: SQL
+     * ALTER TABLE `zinzam0_zinzam`.`event_invites` MODIFY COLUMN `event_id` BIGINT(20) NOT NULL,
+ DROP PRIMARY KEY;
+     */
+
     public class Event : Item, ICommentableItem
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendies, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
@@ -53,7 +59,7 @@ namespace BoxSocial.Applications.Calendar
         private long comments;
         private long ownerId;
         private Primitive owner;
-        private int userId; // creator
+        private long userId; // creator
         private long startTimeRaw;
         private long endTimeRaw;
         private bool allDay;
@@ -125,7 +131,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public int UserId
+        public long UserId
         {
             get
             {
@@ -188,8 +194,8 @@ namespace BoxSocial.Applications.Calendar
             this.db = db;
             this.owner = owner;
 
-            DataTable eventsTable = db.SelectQuery(string.Format("SELECT {0} FROM events ev WHERE ev.user_id = {1} AND ev.event_id = {2};",
-                Event.EVENT_INFO_FIELDS, owner.Id, eventId));
+            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE ev.event_id = {1};",
+                Event.EVENT_INFO_FIELDS, eventId));
 
             if (eventsTable.Rows.Count == 1)
             {
@@ -197,7 +203,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                throw new Exception("Invalid Event Exception");
+                throw new InvalidEventException();
             }
         }
 
@@ -222,7 +228,7 @@ namespace BoxSocial.Applications.Calendar
             permissions = (ushort)eventRow["event_access"];
             comments = (long)eventRow["event_comments"];
             // ownerId
-            userId = (int)eventRow["user_id"];
+            userId = (long)(int)eventRow["user_id"];
             startTimeRaw = (long)eventRow["event_time_start_ut"];
             endTimeRaw = (long)eventRow["event_time_end_ut"];
             // allDay
@@ -231,6 +237,11 @@ namespace BoxSocial.Applications.Calendar
             location = (string)eventRow["event_location"];
 
             eventAccess = new Access(db, permissions, owner);
+
+            if (owner == null)
+            {
+                owner = new Member(db, userId);
+            }
         }
 
         public static Event Create(Mysql db, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
@@ -249,6 +260,34 @@ namespace BoxSocial.Applications.Calendar
             return myEvent;
         }
 
+        public void Delete(Core core)
+        {
+            if (core.LoggedInMemberId == userId)
+            {
+                DeleteQuery dQuery = new DeleteQuery("events");
+                dQuery.AddCondition("user_id", core.LoggedInMemberId);
+                dQuery.AddCondition("event_id", EventId);
+
+                db.Query(dQuery, true);
+
+                dQuery = new DeleteQuery("event_invites");
+                dQuery.AddCondition("event_id", EventId);
+
+                if (db.Query(dQuery, false) < 0)
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                throw new NotLoggedInException();
+            }
+        }
+
         public void Invite(Core core, Member invitee)
         {
             core.LoadUserProfile(userId);
@@ -260,14 +299,15 @@ namespace BoxSocial.Applications.Calendar
                 if (invitee.IsFriend(user))
                 {
                     InsertQuery iQuery = new InsertQuery("event_invites");
+                    iQuery.AddField("event_id", EventId);
                     iQuery.AddField("item_id", invitee.Id);
-                    iQuery.AddField("item_id", invitee.Type);
+                    iQuery.AddField("item_type", invitee.Type);
                     iQuery.AddField("inviter_id", userId);
                     iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
                     iQuery.AddField("invite_accepted", false);
-                    iQuery.AddField("invite_status", EventAttendance.Unknown);
+                    iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
 
-                    long invitationId = db.UpdateQuery(iQuery);
+                    long invitationId = db.Query(iQuery);
 
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
@@ -278,17 +318,87 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
                     emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
-                    AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.", 
-                        user.DisplayName, subject), "{TODO}", emailTemplate);
-                    
+                    AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
+
                 }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+        public List<long> GetInvitees()
+        {
+            List<long> ids = new List<long>();
+
+            SelectQuery query = new SelectQuery("event_invites");
+            query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+            query.AddCondition("event_id", EventId);
+
+            DataTable invitees = db.Query(query);
+
+            foreach (DataRow dr in invitees.Rows)
+            {
+                if ((string)dr["item_type"] == "USER")
+                {
+                    ids.Add((long)dr["item_id"]);
+                }
+            }
+
+            return ids;
+        }
+
+        public bool IsInvitee(Member member)
+        {
+            if (member != null)
+            {
+                SelectQuery query = new SelectQuery("event_invites");
+                query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+                query.AddCondition("event_id", EventId);
+                query.AddCondition("item_id", member.Id);
+                query.AddCondition("item_type", member.Type);
+
+                if (db.Query(query).Rows.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
 
         public List<long> GetAttendies()
         {
+            List<long> ids = new List<long>();
 
-            throw new NotImplementedException();
+            SelectQuery query = new SelectQuery("event_invites");
+            query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+            query.AddCondition("event_id", EventId);
+            query.AddCondition("invite_accepted", (byte)EventAttendance.Yes);
+
+            DataTable invitees = db.Query(query);
+
+            foreach (DataRow dr in invitees.Rows)
+            {
+                if ((string)dr["item_type"] == "USER")
+                {
+                    ids.Add((long)dr["item_id"]);
+                }
+            }
+
+            return ids;
         }
 
         public static string BuildEventUri(Event calendarEvent)
@@ -320,6 +430,8 @@ namespace BoxSocial.Applications.Calendar
                 page.template.ParseVariables("U_EDIT_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
                     "mode=edit",
                     string.Format("id={0}", eventId))));
+                page.template.ParseVariables("U_DELETE_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "delete-event", true,
+                    string.Format("id={0}", eventId))));
             }
 
             try
@@ -328,7 +440,7 @@ namespace BoxSocial.Applications.Calendar
 
                 calendarEvent.EventAccess.SetSessionViewer(core.session);
 
-                if (!calendarEvent.EventAccess.CanRead)
+                if (!calendarEvent.EventAccess.CanRead && !calendarEvent.IsInvitee(core.session.LoggedInMember))
                 {
                     Functions.Generate403();
                     return;
@@ -345,10 +457,16 @@ namespace BoxSocial.Applications.Calendar
                 //calendarPath.Add(new string[] { "events", "Events" });
                 calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
                 page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+
+                if (calendarEvent.EventAccess.CanComment)
+                {
+                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                }
+                Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid event", "The event does not exist.");
             }
         }
 
@@ -396,5 +514,9 @@ namespace BoxSocial.Applications.Calendar
         }
 
         #endregion
+    }
+
+    public class InvalidEventException : Exception
+    {
     }
 }

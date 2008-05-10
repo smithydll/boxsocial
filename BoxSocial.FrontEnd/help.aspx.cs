@@ -47,7 +47,7 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
-                DataTable helpTopicsTable = db.SelectQuery("SELECT topic_title, topic_slug, topic_id FROM help_topics ORDER BY topic_title ASC;");
+                DataTable helpTopicsTable = db.Query("SELECT topic_title, topic_slug, topic_id FROM help_topics ORDER BY topic_title ASC;");
 
                 foreach (DataRow topicRow in helpTopicsTable.Rows)
                 {

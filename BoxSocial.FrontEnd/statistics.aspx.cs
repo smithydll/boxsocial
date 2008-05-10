@@ -37,8 +37,8 @@ namespace BoxSocial.FrontEnd
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            DataTable userData = db.SelectQuery("SELECT COUNT(user_id) as registrations FROM user_keys");
-            DataTable inviteData = db.SelectQuery("SELECT COUNT(email_key) as invites FROM invite_keys");
+            DataTable userData = db.Query("SELECT COUNT(user_id) as registrations FROM user_keys");
+            DataTable inviteData = db.Query("SELECT COUNT(email_key) as invites FROM invite_keys");
 
             Response.Clear();
             Response.ContentType = "text/plain";

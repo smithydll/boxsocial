@@ -89,7 +89,7 @@ namespace BoxSocial.FrontEnd
             //{
             //    /* TODO permissions */
             //    /* after 7 days release the IP for dynamics ip fairness */
-            //    DataTable ratingsTable = db.SelectQuery(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
+            //    DataTable ratingsTable = db.Query(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
             //        itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));
 
             //    if (ratingsTable.Rows.Count > 0)

@@ -49,7 +49,7 @@ namespace BoxSocial.Internals
                 query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
                 query.AddCondition("action_primitive_type", "USER");
 
-                DataTable feedTable = core.db.SelectQuery(query);
+                DataTable feedTable = core.db.Query(query);
 
                 foreach (DataRow dr in feedTable.Rows)
                 {

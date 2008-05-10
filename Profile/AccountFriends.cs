@@ -99,7 +99,7 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_friends_manage");
 
-            DataTable friendsTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FRIEND' AND ur.relation_me = {0} ORDER BY (relation_order - 1) ASC",
+            DataTable friendsTable = db.Query(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FRIEND' AND ur.relation_me = {0} ORDER BY (relation_order - 1) ASC",
                 loggedInMember.UserId));
 
             for (int i = 0; i < friendsTable.Rows.Count; i++)
@@ -141,7 +141,7 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_family_manage");
 
-            DataTable familyTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FAMILY' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
+            DataTable familyTable = db.Query(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FAMILY' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
                 loggedInMember.UserId));
 
             for (int i = 0; i < familyTable.Rows.Count; i++)
@@ -174,7 +174,7 @@ namespace BoxSocial
                 return;
             }
 
-            DataTable friendTable = db.SelectQuery(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
+            DataTable friendTable = db.Query(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
                 loggedInMember.UserId, friendId));
 
             if (friendTable.Rows.Count == 1)
@@ -192,7 +192,7 @@ namespace BoxSocial
                 }
                 else if (relationOrder < 255)
                 {
-                    int maxOrder = (int)(byte)db.SelectQuery(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
+                    int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
                         loggedInMember.UserId)).Rows[0]["max_order"];
 
                     if (relationOrder == maxOrder)
@@ -239,7 +239,7 @@ namespace BoxSocial
                 return;
             }
 
-            DataTable friendTable = db.SelectQuery(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
+            DataTable friendTable = db.Query(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
                 loggedInMember.UserId, friendId));
 
             if (friendTable.Rows.Count == 1)
@@ -267,7 +267,7 @@ namespace BoxSocial
                     // unordered friend
 
                     // select the maximum order
-                    int maxOrder = (int)(byte)db.SelectQuery(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
+                    int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
                         loggedInMember.UserId)).Rows[0]["max_order"];
 
                     // switch places
@@ -384,7 +384,7 @@ namespace BoxSocial
             }
 
             // check existing friend-foe status
-            DataTable relationsTable = db.SelectQuery(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
+            DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
                 loggedInMember.UserId, friendId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
@@ -402,7 +402,7 @@ namespace BoxSocial
             }
 
             bool isFriend = false;
-            if (db.SelectQuery(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FAMILY';",
+            if (db.Query(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FAMILY';",
                 loggedInMember.UserId, friendId)).Rows.Count == 1)
             {
                 isFriend = true;
@@ -447,7 +447,7 @@ namespace BoxSocial
                 {
                     if (Member.CheckEmailUnique(db, friendEmail))
                     {
-                        DataTable inviteKeysTable = db.SelectQuery(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
+                        DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
                             Mysql.Escape(Member.HashPassword(friendEmail))));
 
                         if (inviteKeysTable.Rows.Count > 0)
@@ -482,7 +482,7 @@ namespace BoxSocial
                         // ignore already a member, plough on
                         if (friendEmail.ToLower() != loggedInMember.AlternateEmail.ToLower())
                         {
-                            DataTable friendTable = db.SelectQuery(string.Format("SELECT {1} FROM user_info ui WHERE LCASE(user_alternate_email) = '{1}'",
+                            DataTable friendTable = db.Query(string.Format("SELECT {1} FROM user_info ui WHERE LCASE(user_alternate_email) = '{1}'",
                                 Mysql.Escape(friendEmail.ToLower()), Member.USER_INFO_FIELDS));
 
                             if (friendTable.Rows.Count == 1)
@@ -564,7 +564,7 @@ namespace BoxSocial
             {
                 if (Member.CheckEmailUnique(db, friendEmail))
                 {
-                    DataTable inviteKeysTable = db.SelectQuery(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
+                    DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
                         Mysql.Escape(Member.HashPassword(friendEmail))));
 
                     if (inviteKeysTable.Rows.Count > 0)
@@ -642,7 +642,7 @@ namespace BoxSocial
             }
 
             // check existing friend-foe status
-            DataTable relationsTable = db.SelectQuery(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
+            DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
                 loggedInMember.UserId, friendId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
@@ -710,7 +710,7 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_blocklist_manage");
 
-            DataTable blockTable = db.SelectQuery(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'BLOCKED' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
+            DataTable blockTable = db.Query(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'BLOCKED' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
                 loggedInMember.UserId));
 
             for (int i = 0; i < blockTable.Rows.Count; i++)
@@ -743,7 +743,7 @@ namespace BoxSocial
             }
 
             // check existing friend-foe status
-            DataTable relationsTable = db.SelectQuery(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
+            DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
                 loggedInMember.UserId, blockId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
@@ -796,7 +796,7 @@ namespace BoxSocial
             }
 
             // check existing friend-foe status
-            DataTable relationsTable = db.SelectQuery(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
+            DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
                 loggedInMember.UserId, blockId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)

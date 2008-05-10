@@ -217,7 +217,7 @@ namespace BoxSocial.Networks
         {
             this.db = db;
 
-            DataTable networkTable = db.SelectQuery(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_id = {0}",
+            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_id = {0}",
                 networkId, NETWORK_INFO_FIELDS));
 
             if (networkTable.Rows.Count == 1)
@@ -234,7 +234,7 @@ namespace BoxSocial.Networks
         {
             this.db = db;
 
-            DataTable networkTable = db.SelectQuery(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_network = '{0}'",
+            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_network = '{0}'",
                 Mysql.Escape(network), NETWORK_INFO_FIELDS));
 
             if (networkTable.Rows.Count == 1)
@@ -292,7 +292,7 @@ namespace BoxSocial.Networks
         {
             List<NetworkMember> members = new List<NetworkMember>();
 
-            DataTable membersTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3}, {4} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.network_id = {0} ORDER BY nm.member_join_date_ut ASC LIMIT {5}, {6}",
+            DataTable membersTable = db.Query(string.Format("SELECT {1}, {2}, {3}, {4} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.network_id = {0} ORDER BY nm.member_join_date_ut ASC LIMIT {5}, {6}",
                 networkId, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS, NetworkMember.USER_NETWORK_FIELDS, (page - 1) * perPage, perPage));
 
             foreach (DataRow dr in membersTable.Rows)
@@ -327,7 +327,7 @@ namespace BoxSocial.Networks
                     break;
             }
 
-            DataTable networksTable = db.SelectQuery(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE ni.network_type = '{0}'",
+            DataTable networksTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE ni.network_type = '{0}'",
                 Mysql.Escape(typeString), NETWORK_INFO_FIELDS));
 
             foreach (DataRow dr in networksTable.Rows)
@@ -348,7 +348,7 @@ namespace BoxSocial.Networks
                 }
                 else
                 {
-                    DataTable memberTable = db.SelectQuery(string.Format("SELECT user_id FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 1",
+                    DataTable memberTable = db.Query(string.Format("SELECT user_id FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 1",
                         networkId, member.UserId));
 
                     if (memberTable.Rows.Count > 0)

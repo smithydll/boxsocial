@@ -105,7 +105,7 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                DataTable userTable = db.SelectQuery(string.Format("SELECT user_id FROM user_info WHERE user_id = {0} AND user_activate_code = '{1}';",
+                DataTable userTable = db.Query(string.Format("SELECT user_id FROM user_info WHERE user_id = {0} AND user_activate_code = '{1}';",
                     userId, Mysql.Escape(activateKey)));
 
                 if (userTable.Rows.Count == 1)
@@ -133,7 +133,7 @@ namespace BoxSocial.FrontEnd
                 template.ParseVariables("EMAIL", HttpUtility.HtmlEncode((string)Request.Form["email"]));
                 template.ParseVariables("CONFIRM_EMAIL", HttpUtility.HtmlEncode((string)Request.Form["confirm-email"]));
 
-                DataTable confirmTable = db.SelectQuery(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
+                DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
                     Mysql.Escape(session.SessionId)));
 
                 if (confirmTable.Rows.Count != 1)

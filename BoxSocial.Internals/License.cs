@@ -80,7 +80,7 @@ namespace BoxSocial.Internals
         {
             this.db = db;
 
-            DataTable licenseTable = db.SelectQuery(string.Format("SELECT {0} FROM licenses li WHERE license_id = {1}",
+            DataTable licenseTable = db.Query(string.Format("SELECT {0} FROM licenses li WHERE license_id = {1}",
                 ContentLicense.LICENSE_FIELDS, licenseId));
 
             if (licenseTable.Rows.Count == 1)
@@ -130,7 +130,7 @@ namespace BoxSocial.Internals
             permissions.Add("Can Read");
 
             Dictionary<string, string> licenses = new Dictionary<string, string>();
-            DataTable licensesTable = db.SelectQuery("SELECT li.license_id, li.license_title FROM licenses li");
+            DataTable licensesTable = db.Query("SELECT li.license_id, li.license_title FROM licenses li");
 
             licenses.Add("0", "Default License (All Rights Reserved)");
             foreach (DataRow licenseRow in licensesTable.Rows)

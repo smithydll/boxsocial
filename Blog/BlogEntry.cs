@@ -246,7 +246,7 @@ namespace BoxSocial.Applications.Blog
         {
             this.db = db;
 
-            DataTable postEntryDataTable = db.SelectQuery(string.Format("SELECT {0} FROM blog_postings be WHERE be.post_id = {1}",
+            DataTable postEntryDataTable = db.Query(string.Format("SELECT {0} FROM blog_postings be WHERE be.post_id = {1}",
                 BlogEntry.BLOG_ENTRY_FIELDS, postId));
 
             if (postEntryDataTable.Rows.Count == 1)

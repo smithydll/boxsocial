@@ -34,6 +34,8 @@ namespace BoxSocial.IO
         private MySql.Data.MySqlClient.MySqlCommand sqlCommand;
         private bool inTransaction = false;
 
+        public string QueryList = "";
+
         public Mysql(string username, string database, string host)
         {
             queryCount = 0;
@@ -73,15 +75,11 @@ namespace BoxSocial.IO
             sqlConnection.Open();
         }
 
-        public void iQuery()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public new DataTable SelectQuery(string sqlquery)
+        private DataTable SelectQuery(string sqlquery)
         {
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
+            QueryList += sqlquery + "\n\n";
             DataTable resultTable;
             try
             {
@@ -100,12 +98,12 @@ namespace BoxSocial.IO
             }
         }
 
-        public DataTable SelectQuery(SelectQuery query)
+        private DataTable SelectQuery(SelectQuery query)
         {
             return SelectQuery(query.ToString());
         }
 
-        public new long UpdateQuery(string sqlquery)
+        public override long UpdateQuery(string sqlquery)
         {
             return this.UpdateQuery(sqlquery, false);
         }
@@ -129,6 +127,7 @@ namespace BoxSocial.IO
         {
             int rowsAffected = 0;
             queryCount++;
+            QueryList += sqlquery + "\n\n";
 
             if (sqlCommand == null)
             {
@@ -223,6 +222,46 @@ namespace BoxSocial.IO
         ~Mysql()
         {
             CloseConnection();
+        }
+
+        public override DataTable Query(SelectQuery query)
+        {
+            return SelectQuery(query.ToString());
+        }
+
+        public override long Query(InsertQuery query)
+        {
+            return UpdateQuery(query.ToString());
+        }
+
+        public override long Query(UpdateQuery query)
+        {
+            return UpdateQuery(query.ToString());
+        }
+
+        public override long Query(DeleteQuery query)
+        {
+            return UpdateQuery(query.ToString());
+        }
+
+        public override long Query(InsertQuery query, bool transaction)
+        {
+            return UpdateQuery(query.ToString(), transaction);
+        }
+
+        public override long Query(UpdateQuery query, bool transaction)
+        {
+            return UpdateQuery(query.ToString(), transaction);
+        }
+
+        public override long Query(DeleteQuery query, bool transaction)
+        {
+            return UpdateQuery(query.ToString(), transaction);
+        }
+
+        public override DataTable Query(string query)
+        {
+            return SelectQuery(query);
         }
     }
 }

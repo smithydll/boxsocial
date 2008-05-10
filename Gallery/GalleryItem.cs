@@ -304,7 +304,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {5} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
+            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {5} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
                 owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(Gallery.GetParentPath(path)), Mysql.Escape(Gallery.GetNameFromPath(path)), Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
@@ -374,7 +374,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = {3} AND gi.user_id = {0}",
+            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = {3} AND gi.user_id = {0}",
                 owner.UserId, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(parent.FullPath), Mysql.Escape(path), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
@@ -399,7 +399,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
+            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
                 owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
@@ -439,7 +439,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             // TODO: owner not set, no big worry
 
-            DataTable galleryItemTable = db.SelectQuery(string.Format("SELECT {0}, {2} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {1};",
+            DataTable galleryItemTable = db.Query(string.Format("SELECT {0}, {2} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {1};",
                 GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, ContentLicense.LICENSE_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
@@ -514,7 +514,7 @@ namespace BoxSocial.Applications.Gallery
             squery.AddFields("COUNT(*) AS number");
             squery.AddCondition("gallery_item_storage_path", storagePath);
 
-            DataTable results = db.SelectQuery(squery);
+            DataTable results = db.Query(squery);
 
             DeleteQuery dquery = new DeleteQuery("gallery_items");
             dquery.AddCondition("gallery_item_id", itemId);
@@ -715,7 +715,7 @@ namespace BoxSocial.Applications.Gallery
             // keep going until we find a name that does not already exist in the database
             do
             {
-                DataTable galleryItemTable = page.db.SelectQuery(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type = '{3}';",
+                DataTable galleryItemTable = page.db.Query(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type = '{3}';",
                     Mysql.Escape(slug), gallery.GalleryId, owner.Id, owner.Type));
 
                 if (galleryItemTable.Rows.Count > 0)

@@ -72,7 +72,7 @@ namespace BoxSocial.Groups
             query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
             query.joins.Add(new TableJoin(JoinTypes.Left, "group_operators go", "ui.user_id", "go.user_id"));*/
 
-            DataTable memberTable = db.SelectQuery(string.Format("SELECT {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.user_id = {1};",
+            DataTable memberTable = db.Query(string.Format("SELECT {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.user_id = {1};",
                 group.GroupId, userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
 
             if (memberTable.Rows.Count == 1)

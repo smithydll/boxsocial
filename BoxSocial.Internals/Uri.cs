@@ -376,7 +376,7 @@ namespace BoxSocial.Internals
         {
             if (SidUrls || forceSid)
             {
-                if (uri.Contains("?sid=") || uri.Contains("&sid="))
+                if (uri.Contains("?sid=") || uri.Contains("&sid=") || uri.Contains("&amp;sid="))
                 {
                     return Regex.Replace(uri, "sid=([a-z0-9]+)", string.Format("sid={0}", sid));
                 }

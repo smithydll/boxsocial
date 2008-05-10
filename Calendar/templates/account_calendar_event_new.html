@@ -10,11 +10,9 @@
 			<dd><input type="text" id="location" name="location" value="{S_LOCATION}" style="width: 100%;" /></dd>
       <dt><label for="location">Invitees</label></dt>
 			<dd><input type="text" id="invitees" name="invitees" style="width: 100%;" />
+        <p>You can also enter e-mail addresses to invite people who haven't joined.</p>
         <p>{S_INVITEES}</p>
-        <!-- BEGIN invitees -->
-        <input type="hidden" id="invitee[{invitees.ID}]" name="invitee[{invitees.ID}]" value="{invitees.USERNAME}" />
-        <!-- END invitees -->
-        <input type="hidden" id="invitees-count" name="invitees-count" value="{INVITEES_COUNT}" />
+        <input type="hidden" id="inviteeses" name="inviteeses" value="{INVITEES_ID_LIST}" />
       </dd>
 			<dt><label>Start Time</label></dt>
 			<dd>

@@ -47,6 +47,7 @@ namespace BoxSocial.Applications.Calendar
             RegisterSubModule += new RegisterSubModuleHandler(NewTask);
             RegisterSubModule += new RegisterSubModuleHandler(MarkTaskComplete);
             RegisterSubModule += new RegisterSubModuleHandler(EventInvite);
+            RegisterSubModule += new RegisterSubModuleHandler(DeleteEvent);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -82,6 +83,8 @@ namespace BoxSocial.Applications.Calendar
         {
             subModules.Add("calendar", "Manage Calendar");
             if (submodule != "calendar" && !string.IsNullOrEmpty(submodule)) return;
+
+            template.SetTemplate("Calendar", "account_calendar_manage");
         }
 
         private void NewEvent(string submodule)
@@ -107,6 +110,45 @@ namespace BoxSocial.Applications.Calendar
             int year = Functions.RequestInt("year", tz.Now.Year);
             int month = Functions.RequestInt("month", tz.Now.Month);
             int day = Functions.RequestInt("day", tz.Now.Day);
+
+            string inviteeIdList = Request.Form["inviteeses"];
+            string inviteeUsernameList = Request.Form["invitees"];
+            List<long> inviteeIds = new List<long>();
+
+            if (!(string.IsNullOrEmpty(inviteeIdList)))
+            {
+                string[] inviteesIds = inviteeIdList.Split(new char[] { ' ', '\t', ';', ',' });
+                foreach (string inviteeId in inviteesIds)
+                {
+                    try
+                    {
+                        inviteeIds.Add(long.Parse(inviteeId));
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            if (!(string.IsNullOrEmpty(inviteeUsernameList)))
+            {
+                string[] inviteesUsernames = inviteeUsernameList.Split(new char[] { ' ', '\t', ';', ',' });
+                foreach (string inviteeUsername in inviteesUsernames)
+                {
+                    if (!string.IsNullOrEmpty(inviteeUsername))
+                    {
+                        try
+                        {
+                            /* TODO: increase performance by creating LoadUserProfiles(List<string>); */
+                            long inviteeId = core.LoadUserProfile(inviteeUsername);
+                            inviteeIds.Add(inviteeId);
+                        }
+                        catch (InvalidUserException)
+                        {
+                        }
+                    }
+                }
+            }
 
             DateTime startDate = new DateTime(year, month, day, 8, 0, 0);
             DateTime endDate = new DateTime(year, month, day, 9, 0, 0);
@@ -158,6 +200,7 @@ namespace BoxSocial.Applications.Calendar
                 try
                 {
                     Event calendarEvent = new Event(db, loggedInMember, id);
+                    inviteeIds.AddRange(calendarEvent.GetInvitees());
 
                     template.ParseVariables("EDIT", "TRUE");
                     template.ParseVariables("ID", HttpUtility.HtmlEncode(calendarEvent.EventId.ToString()));
@@ -171,7 +214,7 @@ namespace BoxSocial.Applications.Calendar
                     location = calendarEvent.Location;
                     description = calendarEvent.Description;
                 }
-                catch
+                catch (InvalidEventException)
                 {
                     Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
@@ -206,6 +249,38 @@ namespace BoxSocial.Applications.Calendar
             template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
 
             template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
+
+            StringBuilder outputInvitees = null;
+            StringBuilder outputInviteesIds = null;
+
+            core.LoadUserProfiles(inviteeIds);
+
+            foreach (long inviteeId in inviteeIds)
+            {
+                if (outputInvitees == null)
+                {
+                    outputInvitees = new StringBuilder();
+                    outputInviteesIds = new StringBuilder();
+                }
+                else
+                {
+                    outputInvitees.Append("; ");
+                    outputInviteesIds.Append(",");
+                }
+
+                outputInvitees.Append(core.UserProfiles[inviteeId].DisplayName);
+                outputInviteesIds.Append(inviteeId.ToString());
+            }
+
+            if (outputInvitees != null)
+            {
+                template.ParseVariables("S_INVITEES", HttpUtility.HtmlEncode(outputInvitees.ToString()));
+            }
+
+            if (outputInviteesIds != null)
+            {
+                template.ParseVariables("INVITEES_ID_LIST", HttpUtility.HtmlEncode(outputInviteesIds.ToString()));
+            }
         }
 
         private void SaveNewEvent()
@@ -227,6 +302,41 @@ namespace BoxSocial.Applications.Calendar
             if (Request.Form["mode"] == "edit")
             {
                 edit = true;
+            }
+
+            string inviteeIdList = Request.Form["inviteeses"];
+            string inviteeUsernameList = Request.Form["invitees"];
+            List<long> inviteeIds = new List<long>();
+
+            if (!(string.IsNullOrEmpty(inviteeIdList)))
+            {
+                string[] inviteesIds = inviteeIdList.Split(new char[] { ' ', '\t', ';', ',' });
+                foreach (string inviteeId in inviteesIds)
+                {
+                    try
+                    {
+                        inviteeIds.Add(long.Parse(inviteeId));
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            if (!(string.IsNullOrEmpty(inviteeUsernameList)))
+            {
+                string[] inviteesUsernames = inviteeUsernameList.Split(new char[] { ' ', '\t', ';', ',' });
+                List<string> inviteesUsernamesList = new List<string>();
+
+                foreach (string inviteeUsername in inviteesUsernames)
+                {
+                    if (!string.IsNullOrEmpty(inviteeUsername))
+                    {
+                        inviteesUsernamesList.Add(inviteeUsername);
+                    }
+                }
+
+                inviteeIds.AddRange(core.LoadUserProfiles(inviteesUsernamesList));
             }
 
             try
@@ -267,6 +377,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
 
+                foreach (long inviteeId in inviteeIds)
+                {
+                    calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+                }
+
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
                 Display.ShowMessage("Event Created", "You have successfully created a new event.");
             }
@@ -277,8 +392,76 @@ namespace BoxSocial.Applications.Calendar
 
                 Event calendarEvent = new Event(db, loggedInMember, eventId);
 
+                core.LoadUserProfiles(inviteeIds);
+
+                foreach (long inviteeId in inviteeIds)
+                {
+                    calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+                }
+
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
                 Display.ShowMessage("Event Saved", "You have successfully saved your changes to the event.");
+            }
+        }
+
+        private void DeleteEvent(string submodule)
+        {
+            if (submodule != "delete-event") return;
+
+            AuthoriseRequestSid();
+
+            long eventId = Functions.RequestLong("id", 0);
+
+            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
+            {
+                SaveDeleteEvent();
+            }
+            else
+            {
+                if (eventId > 0)
+                {
+                    Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                    hiddenFieldList.Add("module", "calendar");
+                    hiddenFieldList.Add("sub", "delete-event");
+                    hiddenFieldList.Add("id", eventId.ToString());
+
+                    Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)), "Do you want to delete this event?", "Are you sure you want to delete this event, you cannot undo this delete operation.", hiddenFieldList);
+                }
+                else
+                {
+                    Display.ShowMessage("Invalid", "You have specified an invalid event to delete.");
+                }
+            }
+        }
+
+        private void SaveDeleteEvent()
+        {
+            AuthoriseRequestSid();
+
+            long eventId = Functions.FormLong("id", 0);
+
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            {
+                if (eventId > 0)
+                {
+                    Event calendarEvent = new Event(db, null, eventId);
+
+                    try
+                    {
+                        calendarEvent.Delete(core);
+
+                        SetRedirectUri(BuildModuleUri("calendar"));
+                        Display.ShowMessage("Event Deleted", "You have deleted an event from your calendar.");
+                    }
+                    catch (NotLoggedInException)
+                    {
+                        Display.ShowMessage("Unauthorised", "You are unauthorised to delete this event.");
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage("Invalid", "You have specified an invalid event to delete.");
+                }
             }
         }
 
@@ -556,20 +739,21 @@ namespace BoxSocial.Applications.Calendar
 
             if (eventId > 0)
             {
+                Event calendarEvent = new Event(db, null, eventId);
                 UpdateQuery uQuery = new UpdateQuery("event_invites");
                 switch (Request["mode"])
                 {
                     case "accept":
                         uQuery.AddField("invite_accepted", true);
-                        uQuery.AddField("invite_status", EventAttendance.Yes);
+                        uQuery.AddField("invite_status", (byte)EventAttendance.Yes);
                         break;
                     case "reject":
                         uQuery.AddField("invite_accepted", false);
-                        uQuery.AddField("invite_status", EventAttendance.No);
+                        uQuery.AddField("invite_status", (byte)EventAttendance.No);
                         break;
                     case "maybe":
                         uQuery.AddField("invite_accepted", false);
-                        uQuery.AddField("invite_status", EventAttendance.Maybe);
+                        uQuery.AddField("invite_status", (byte)EventAttendance.Maybe);
                         break;
                     default:
                         Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
@@ -581,6 +765,10 @@ namespace BoxSocial.Applications.Calendar
                 uQuery.AddCondition("item_type", "USER");
 
                 db.UpdateQuery(uQuery);
+
+                SetRedirectUri(calendarEvent.Uri);
+                Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");
+                return;
             }
             else
             {

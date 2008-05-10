@@ -85,10 +85,10 @@ namespace BoxSocial
 
             template.SetTemplate("account_landing.html");
 
-            /*DataTable friendNotificationsTable = db.SelectQuery(string.Format("SELECT notification_time_ut, {0} FROM friend_notifications fn INNER JOIN user_relations ur ON ur.relation_id = fn.relation_id INNER JOIN user_info ui ON ur.relation_me = ui.user_id WHERE ur.relation_you = {1} ORDER BY notification_time_ut DESC",
+            /*DataTable friendNotificationsTable = db.Query(string.Format("SELECT notification_time_ut, {0} FROM friend_notifications fn INNER JOIN user_relations ur ON ur.relation_id = fn.relation_id INNER JOIN user_info ui ON ur.relation_me = ui.user_id WHERE ur.relation_you = {1} ORDER BY notification_time_ut DESC",
                 Member.USER_INFO_FIELDS, loggedInMember.UserId));*/
 
-            /*DataTable groupInvitesTable = db.SelectQuery(string.Format("SELECT gv.invite_date_ut, {0}, {1} FROM group_invites gv INNER JOIN user_info ui ON gv.inviter_id = ui.user_id INNER JOIN group_info gi ON gv.group_id = gi.group_id WHERE gv.user_id = {2} ORDER BY gv.invite_date_ut DESC",
+            /*DataTable groupInvitesTable = db.Query(string.Format("SELECT gv.invite_date_ut, {0}, {1} FROM group_invites gv INNER JOIN user_info ui ON gv.inviter_id = ui.user_id INNER JOIN group_info gi ON gv.group_id = gi.group_id WHERE gv.user_id = {2} ORDER BY gv.invite_date_ut DESC",
                 Member.USER_INFO_FIELDS, UserGroup.GROUP_INFO_FIELDS, loggedInMember.UserId));*/
 
             /*if (friendNotificationsTable.Rows.Count > 0)
@@ -289,7 +289,7 @@ namespace BoxSocial
                 return;
             }
 
-            DataTable applicationTable = db.SelectQuery(string.Format(@"SELECT {3}, {4}
+            DataTable applicationTable = db.Query(string.Format(@"SELECT {3}, {4}
                 FROM primitive_apps pa
                 INNER JOIN applications ap ON ap.application_id = pa.application_id
                 WHERE pa.application_id = {0}
@@ -398,7 +398,7 @@ namespace BoxSocial
                 template.ParseVariables("S_DISPLAY_VIDEOS_NO", radioChecked);
             }
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
+            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
                 loggedInMember.UserId));
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
@@ -452,7 +452,7 @@ namespace BoxSocial
             if (homepage != "/profile" && homepage != "/blog")
             {
                 string[] paths = homepage.Split('/');
-                DataTable pageTable = db.SelectQuery(string.Format("SELECT page_id FROM user_pages WHERE page_slug = '{1}' AND page_parent_path = '{2}' AND user_id = {0};",
+                DataTable pageTable = db.Query(string.Format("SELECT page_id FROM user_pages WHERE page_slug = '{1}' AND page_parent_path = '{2}' AND user_id = {0};",
                     loggedInMember.UserId, Mysql.Escape(homepage.Remove(homepage.Length - paths[paths.GetUpperBound(0)].Length).TrimEnd('/'))));
 
                 if (pageTable.Rows.Count == 0)

@@ -240,7 +240,7 @@ namespace BoxSocial.Groups
         {
             this.db = db;
 
-            DataTable groupTable = db.SelectQuery(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_id = {0}",
+            DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_id = {0}",
                 groupId, GROUP_INFO_FIELDS));
 
             if (groupTable.Rows.Count == 1)
@@ -258,7 +258,7 @@ namespace BoxSocial.Groups
         {
             this.db = db;
 
-            DataTable groupTable = db.SelectQuery(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_name = '{0}'",
+            DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_name = '{0}'",
                 Mysql.Escape(groupSlug), GROUP_INFO_FIELDS));
 
             if (groupTable.Rows.Count == 1)
@@ -302,7 +302,7 @@ namespace BoxSocial.Groups
         {
             List<GroupMember> members = new List<GroupMember>();
 
-            DataTable membersTable = db.SelectQuery(string.Format("SELECT {1}, {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 1 LIMIT {5}, {6};",
+            DataTable membersTable = db.Query(string.Format("SELECT {1}, {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 1 LIMIT {5}, {6};",
                 groupId, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS, (page - 1) * perPage, perPage));
 
             foreach (DataRow dr in membersTable.Rows)
@@ -315,7 +315,7 @@ namespace BoxSocial.Groups
 
         public bool IsGroupInvitee(Member member)
         {
-            DataTable inviteTable = db.SelectQuery(string.Format("SELECT user_id FROM group_invites WHERE group_id = {0} AND user_id = {1}",
+            DataTable inviteTable = db.Query(string.Format("SELECT user_id FROM group_invites WHERE group_id = {0} AND user_id = {1}",
                 groupId, member.UserId));
 
             if (inviteTable.Rows.Count > 0)
@@ -333,7 +333,7 @@ namespace BoxSocial.Groups
             query.AddCondition("group_id", groupId);
             query.AddCondition("user_id", member.UserId);
 
-            DataTable memberTable = db.SelectQuery(query);
+            DataTable memberTable = db.Query(query);
 
             if (memberTable.Rows.Count > 0)
             {
@@ -446,7 +446,7 @@ namespace BoxSocial.Groups
                 }
                 else
                 {
-                    DataTable operatorTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
+                    DataTable operatorTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
                         groupId, member.UserId));
 
                     if (operatorTable.Rows.Count > 0)
@@ -559,7 +559,7 @@ namespace BoxSocial.Groups
 
         public static bool CheckGroupNameUnique(Mysql db, string groupName)
         {
-            if (db.SelectQuery(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
+            if (db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
                 Mysql.Escape(groupName.ToLower()))).Rows.Count > 0)
             {
                 return false;
@@ -983,7 +983,7 @@ namespace BoxSocial.Groups
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1} FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE gm.user_id = {0} ORDER BY group_name_display ASC;",
+            DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE gm.user_id = {0} ORDER BY group_name_display ASC;",
                 member.UserId, UserGroup.GROUP_INFO_FIELDS));
 
             foreach (DataRow dr in groupsTable.Rows)
@@ -1057,7 +1057,7 @@ namespace BoxSocial.Groups
                 membersVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
             }
 
-            DataTable operatorsTable = core.db.SelectQuery(string.Format("SELECT {1} FROM group_operators go INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
+            DataTable operatorsTable = core.db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
                 page.ThisGroup.GroupId, Member.USER_INFO_FIELDS));
 
             for (int i = 0; i < operatorsTable.Rows.Count; i++)
@@ -1078,7 +1078,7 @@ namespace BoxSocial.Groups
                 }
             }
 
-            DataTable officersTable = core.db.SelectQuery(string.Format("SELECT {1}, {2}, officer_title FROM group_officers go INNER JOIN group_members gm ON gm.user_id = go.user_id AND gm.group_id = go.group_id INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
+            DataTable officersTable = core.db.Query(string.Format("SELECT {1}, {2}, officer_title FROM group_officers go INNER JOIN group_members gm ON gm.user_id = go.user_id AND gm.group_id = go.group_id INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
                 page.ThisGroup.GroupId, Member.USER_INFO_FIELDS, GroupMember.USER_GROUP_FIELDS));
 
             for (int i = 0; i < officersTable.Rows.Count; i++)
@@ -1110,7 +1110,7 @@ namespace BoxSocial.Groups
             {
                 page.template.ParseVariables("GROUP_OPERATOR", "TRUE");
 
-                DataTable approvalTable = core.db.SelectQuery(string.Format("SELECT {1}, {2}, {3}, {4} group_member_date_ut, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 0 ORDER BY group_member_date_ut ASC",
+                DataTable approvalTable = core.db.Query(string.Format("SELECT {1}, {2}, {3}, {4} group_member_date_ut, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 0 ORDER BY group_member_date_ut ASC",
                     page.ThisGroup.GroupId, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
 
                 if (approvalTable.Rows.Count > 0)

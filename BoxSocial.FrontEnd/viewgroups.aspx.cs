@@ -48,7 +48,7 @@ namespace BoxSocial.FrontEnd
             if (string.IsNullOrEmpty(Request.QueryString["category"]))
             {
                 template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create")));
-                DataTable categoriesTable = db.SelectQuery("SELECT category_title, category_path, category_groups FROM global_categories");
+                DataTable categoriesTable = db.Query("SELECT category_title, category_path, category_groups FROM global_categories");
 
                 template.ParseVariables("CATEGORIES", HttpUtility.HtmlEncode(categoriesTable.Rows.Count.ToString()));
 
@@ -65,7 +65,7 @@ namespace BoxSocial.FrontEnd
             else
             {
 
-                DataTable categoryTable = db.SelectQuery(string.Format("SELECT category_id, category_title FROM global_categories WHERE category_path = '{0}'",
+                DataTable categoryTable = db.Query(string.Format("SELECT category_id, category_title FROM global_categories WHERE category_path = '{0}'",
                     Mysql.Escape((string)Request.QueryString["category"])));
 
                 if (categoryTable.Rows.Count > 0)
@@ -74,7 +74,7 @@ namespace BoxSocial.FrontEnd
                     template.ParseVariables("U_CREATE_GROUP_C", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString())));
                     template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString())));
 
-                    DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1} FROM group_info gi WHERE gi.group_category = {0} AND gi.group_type <> 'PRIVATE'",
+                    DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_info gi WHERE gi.group_category = {0} AND gi.group_type <> 'PRIVATE'",
                         (short)categoryTable.Rows[0]["category_id"], UserGroup.GROUP_INFO_FIELDS));
 
                     template.ParseVariables("GROUPS", HttpUtility.HtmlEncode(groupsTable.Rows.Count.ToString()));

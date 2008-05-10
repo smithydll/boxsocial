@@ -301,7 +301,7 @@ namespace BoxSocial.Internals
             this.owner = owner;
 
             string[] paths = pageName.Split('/');
-            DataTable pageTable = db.SelectQuery(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
+            DataTable pageTable = db.Query(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
                 owner.UserId, Mysql.Escape(paths[paths.GetUpperBound(0)]), Mysql.Escape(pageName.Remove(pageName.Length - paths[paths.GetUpperBound(0)].Length).TrimEnd('/')), Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
 
             if (pageTable.Rows.Count == 1)
@@ -326,7 +326,7 @@ namespace BoxSocial.Internals
             this.db = db;
             this.owner = owner;
 
-            DataTable pageTable = db.SelectQuery(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
+            DataTable pageTable = db.Query(string.Format("SELECT {4}, {3} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_slug = '{1}' AND pa.page_parent_path = '{2}';",
                 owner.UserId, Mysql.Escape(pageName), Mysql.Escape(pageParentPath), Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
 
             if (pageTable.Rows.Count == 1)
@@ -351,7 +351,7 @@ namespace BoxSocial.Internals
             this.db = db;
             this.owner = owner;
 
-            DataTable pageTable = db.SelectQuery(string.Format("SELECT {3}, {2} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_id = {1};",
+            DataTable pageTable = db.Query(string.Format("SELECT {3}, {2} FROM user_pages pa LEFT JOIN licenses li ON li.license_id = pa.page_license WHERE pa.user_id = {0} AND pa.page_id = {1};",
                 owner.UserId, pageId, Page.PAGE_FIELDS, ContentLicense.LICENSE_FIELDS));
 
             if (pageTable.Rows.Count == 1)
@@ -479,7 +479,7 @@ namespace BoxSocial.Internals
             squery.AddCondition("page_slug", slug);
             squery.AddCondition("page_parent_id", parent);
 
-            DataTable pagesTable = core.db.SelectQuery(squery);
+            DataTable pagesTable = core.db.Query(squery);
 
             if (pagesTable.Rows.Count > 0)
             {
@@ -510,7 +510,7 @@ namespace BoxSocial.Internals
             squery.AddSort(SortOrder.Ascending, "page_title");
             squery.LimitCount = 1;
 
-            DataTable orderTable = core.db.SelectQuery(squery);
+            DataTable orderTable = core.db.Query(squery);
 
             if (orderTable.Rows.Count == 1)
             {
@@ -527,7 +527,7 @@ namespace BoxSocial.Internals
                 squery.AddSort(SortOrder.Ascending, "page_title");
                 squery.LimitCount = 1;
 
-                DataTable orderTable2 = core.db.SelectQuery(squery);
+                DataTable orderTable2 = core.db.Query(squery);
 
                 if (orderTable2.Rows.Count == 1)
                 {
@@ -545,7 +545,7 @@ namespace BoxSocial.Internals
                 squery.AddCondition("user_id", owner.Id);
                 squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
 
-                orderTable = core.db.SelectQuery(squery);
+                orderTable = core.db.Query(squery);
 
                 if (orderTable.Rows.Count == 1)
                 {
@@ -633,7 +633,7 @@ namespace BoxSocial.Internals
                 squery.AddCondition("page_slug", slug);
                 squery.AddCondition("page_parent_id", parentId);
 
-                DataTable pagesTable = db.SelectQuery(squery);
+                DataTable pagesTable = db.Query(squery);
 
                 if (pagesTable.Rows.Count > 0)
                 {
@@ -719,7 +719,7 @@ namespace BoxSocial.Internals
                 squery.AddSort(SortOrder.Ascending, "page_title");
                 squery.LimitCount = 1;
 
-                DataTable orderTable = db.SelectQuery(squery);
+                DataTable orderTable = db.Query(squery);
 
                 if (orderTable.Rows.Count == 1)
                 {
@@ -741,7 +741,7 @@ namespace BoxSocial.Internals
                     squery.AddSort(SortOrder.Ascending, "page_title");
                     squery.LimitCount = 1;
 
-                    DataTable orderTable2 = db.SelectQuery(squery);
+                    DataTable orderTable2 = db.Query(squery);
 
                     if (orderTable2.Rows.Count == 1)
                     {
@@ -764,7 +764,7 @@ namespace BoxSocial.Internals
                     squery.AddCondition("user_id", owner.Id);
                     squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
 
-                    orderTable = db.SelectQuery(squery);
+                    orderTable = db.Query(squery);
 
                     if (orderTable.Rows.Count == 1)
                     {
@@ -858,7 +858,7 @@ namespace BoxSocial.Internals
             squery.AddCondition("page_slug", slug);
             squery.AddCondition("page_parent_id", parent);
 
-            DataTable pagesTable = core.db.SelectQuery(squery);
+            DataTable pagesTable = core.db.Query(squery);
 
             if (pagesTable.Rows.Count > 0)
             {
@@ -891,7 +891,7 @@ namespace BoxSocial.Internals
                 squery.AddSort(SortOrder.Ascending, "page_title");
                 squery.LimitCount = 1;
 
-                DataTable orderTable = core.db.SelectQuery(squery);
+                DataTable orderTable = core.db.Query(squery);
 
                 if (orderTable.Rows.Count == 1)
                 {
@@ -913,7 +913,7 @@ namespace BoxSocial.Internals
                     squery.AddSort(SortOrder.Ascending, "page_title");
                     squery.LimitCount = 1;
 
-                    DataTable orderTable2 = core.db.SelectQuery(squery);
+                    DataTable orderTable2 = core.db.Query(squery);
 
                     if (orderTable2.Rows.Count == 1)
                     {
@@ -936,7 +936,7 @@ namespace BoxSocial.Internals
                     squery.AddCondition("user_id", owner.Id);
                     squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
 
-                    orderTable = core.db.SelectQuery(squery);
+                    orderTable = core.db.Query(squery);
 
                     if (orderTable.Rows.Count == 1)
                     {

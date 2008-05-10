@@ -71,13 +71,20 @@ namespace BoxSocial.Applications.Calendar {
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;subject&quot; name=&quot;subject&quot; value=&quot;{S_SUBJECT}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;location&quot;&gt;Location&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;location&quot; name=&quot;location&quot; value=&quot;{S_LOCATION}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label&gt;Start Time&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;
-        ///	 [rest of string was truncated]&quot;;.
+        ///      &lt;dt&gt;&lt;label for=&quot;location&quot;&gt;Invitees&lt;/label&gt;&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_calendar_event_new {
             get {
                 return ResourceManager.GetString("account_calendar_event_new", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Calendar&lt;/h3&gt;.
+        /// </summary>
+        internal static string account_calendar_manage {
+            get {
+                return ResourceManager.GetString("account_calendar_manage", resourceCulture);
             }
         }
         
@@ -204,15 +211,13 @@ namespace BoxSocial.Applications.Calendar {
         ///	&lt;div id=&quot;new-stuff&quot;&gt;
         ///		&lt;span id=&quot;new-event&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_EVENT}&quot;&gt;New Event&lt;/a&gt;&lt;/span&gt;
         ///		&lt;span id=&quot;edit-event&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_EDIT_EVENT}&quot;&gt;Edit Event&lt;/a&gt;&lt;/span&gt;
+        ///    &lt;span id=&quot;delete-event&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_DELETE_EVENT}&quot;&gt;Delete Event&lt;/a&gt;&lt;/span&gt;
         ///	&lt;/div&gt;
         ///	&lt;!-- ENDIF --&gt;
         ///	&lt;!-- IF LOCATION --&gt;
         ///	&lt;p&gt;Location: {LOCATION}&lt;/p&gt;
         ///	&lt;!-- ENDIF --&gt;
-        ///	&lt;p&gt;Start Time: {START_TIME}&lt;/p&gt;
-        ///	&lt;p&gt;End Time: {END_TIME}&lt;/p&gt;
-        ///	&lt;!-- IF DESCRIPTION --&gt;
-        ///	&lt;p&gt;{DESCRIPTION} [rest of string was truncated]&quot;;.
+        ///	&lt;p&gt;Sta [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewcalendarevent {
             get {

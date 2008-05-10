@@ -201,7 +201,7 @@ ENGINE = InnoDB;
             this.db = db;
             this.owner = owner;
 
-            DataTable tasksTable = db.SelectQuery(string.Format("SELECT {0} FROM tasks tk WHERE tk.user_id = {1} AND tk.task_id = {2};",
+            DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE tk.user_id = {1} AND tk.task_id = {2};",
                 Task.TASK_INFO_FIELDS, owner.Id, taskId));
 
             if (tasksTable.Rows.Count == 1)

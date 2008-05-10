@@ -143,7 +143,7 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = core.LoggedInMemberId;
 
-            DataTable userApplicationsTable = core.db.SelectQuery(string.Format(@"SELECT {0}, {1}
+            DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
                 FROM applications ap, primitive_apps pa
                 WHERE (pa.item_id = {2} AND pa.item_type = '{5}')
                     AND pa.application_id = ap.application_id
@@ -180,7 +180,7 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                DataTable modulesTable = core.db.SelectQuery(string.Format(@"SELECT am.module_module, am.application_id
+                DataTable modulesTable = core.db.Query(string.Format(@"SELECT am.module_module, am.application_id
                     FROM account_modules am
                     WHERE am.application_id IN ({0})
                     ORDER BY application_id;",
@@ -222,7 +222,7 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                DataTable applicationSlugsTable = core.db.SelectQuery(string.Format(@"SELECT {0}
+                DataTable applicationSlugsTable = core.db.Query(string.Format(@"SELECT {0}
                     FROM application_slugs al
                     WHERE application_id IN ({1})
                     AND slug_primitives & {2:0}

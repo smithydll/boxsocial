@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Pages
                 status = "DRAFT";
             }
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_modified_ut FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = '{1}' AND upg.page_list_only = 0 ORDER BY upg.page_order",
+            DataTable pagesTable = db.Query(string.Format("SELECT upg.page_id, upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_modified_ut FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = '{1}' AND upg.page_list_only = 0 ORDER BY upg.page_order",
                 loggedInMember.UserId, status));
 
             for (int i = 0; i < pagesTable.Rows.Count; i++)
@@ -247,7 +247,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else if (Request.QueryString["action"] == "edit")
                 {
-                    DataTable pageTable = db.SelectQuery(string.Format("SELECT upg.page_id, upg.page_text, upg.page_license, upg.page_access, upg.page_title, upg.page_slug, upg.page_parent_path, upg.page_parent_id, upg.page_classification FROM user_pages upg WHERE upg.page_id = {0};",
+                    DataTable pageTable = db.Query(string.Format("SELECT upg.page_id, upg.page_text, upg.page_license, upg.page_access, upg.page_title, upg.page_slug, upg.page_parent_path, upg.page_parent_id, upg.page_classification FROM user_pages upg WHERE upg.page_id = {0};",
                         pageId));
 
                     if (pageTable.Rows.Count == 1)
@@ -274,7 +274,7 @@ namespace BoxSocial.Applications.Pages
                 }
             }
 
-            DataTable pagesTable = db.SelectQuery(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
+            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
                 loggedInMember.UserId));
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
@@ -434,7 +434,7 @@ namespace BoxSocial.Applications.Pages
 
             template.SetTemplate("Pages", "account_lists");
 
-            DataTable listsTable = db.SelectQuery(string.Format("SELECT list_id, list_title, list_items, list_type_title, list_path FROM user_lists INNER JOIN list_types ON list_type_id = list_type WHERE user_id = {0}",
+            DataTable listsTable = db.Query(string.Format("SELECT list_id, list_title, list_items, list_type_title, list_path FROM user_lists INNER JOIN list_types ON list_type_id = list_type WHERE user_id = {0}",
                 loggedInMember.UserId));
 
             for (int i = 0; i < listsTable.Rows.Count; i++)
@@ -450,7 +450,7 @@ namespace BoxSocial.Applications.Pages
                 listVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"])));
             }
 
-            DataTable listTypesTable = db.SelectQuery("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
+            DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
 
             Dictionary<string, string> listTypes = new Dictionary<string, string>();
 
@@ -500,7 +500,7 @@ namespace BoxSocial.Applications.Pages
                 listId = long.Parse(Request.Form["id"]);
                 type = short.Parse(Request.Form["type"]);
 
-                DataTable pageTable = db.SelectQuery(string.Format("SELECT list_id FROM user_lists WHERE list_id = {0} AND user_id = {1};",
+                DataTable pageTable = db.Query(string.Format("SELECT list_id FROM user_lists WHERE list_id = {0} AND user_id = {1};",
                     listId, loggedInMember.UserId));
 
                 if (pageTable.Rows.Count == 1)
@@ -520,11 +520,11 @@ namespace BoxSocial.Applications.Pages
             if (listId == 0)
             {
                 // check that a list with the slug given does not already exist
-                if (db.SelectQuery(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}';",
+                if (db.Query(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}';",
                     loggedInMember.UserId, Mysql.Escape(slug))).Rows.Count == 0)
                 {
                     // verify that the type exists
-                    DataTable listTypeTable = db.SelectQuery(string.Format("SELECT list_type_id FROM list_types WHERE list_type_id = {0};",
+                    DataTable listTypeTable = db.Query(string.Format("SELECT list_type_id FROM list_types WHERE list_type_id = {0};",
                         type));
                     if (listTypeTable.Rows.Count == 1)
                     {
@@ -551,7 +551,7 @@ namespace BoxSocial.Applications.Pages
             if (listId > 0)
             {
                 // check that a list with the slug given does not already exist, ignoring itself
-                if (db.SelectQuery(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}' AND list_id <> {2};",
+                if (db.Query(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}' AND list_id <> {2};",
                     loggedInMember.UserId, Mysql.Escape(slug), listId)).Rows.Count == 0)
                 {
                     db.UpdateQuery(string.Format("UPDATE user_lists SET list_title = '{1}', list_access = {2}, list_path = '{3}', list_abstract = '{4}', list_type = {5} WHERE list_id = {0}",
@@ -593,7 +593,7 @@ namespace BoxSocial.Applications.Pages
 
             template.SetTemplate("Pages", "account_list_edit");
 
-            DataTable listTable = db.SelectQuery(string.Format("SELECT list_id, list_title, list_access, list_path, list_abstract, list_type FROM user_lists WHERE user_id = {0} AND list_id = {1};",
+            DataTable listTable = db.Query(string.Format("SELECT list_id, list_title, list_access, list_path, list_abstract, list_type FROM user_lists WHERE user_id = {0} AND list_id = {1};",
                 loggedInMember.UserId, listId));
 
             if (listTable.Rows.Count == 1)
@@ -604,7 +604,7 @@ namespace BoxSocial.Applications.Pages
                 listAbstract = (string)listTable.Rows[0]["list_abstract"];
                 listType = (short)listTable.Rows[0]["list_type"];
 
-                DataTable listTypesTable = db.SelectQuery("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
+                DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
 
                 Dictionary<string, string> listTypes = new Dictionary<string, string>();
 
@@ -652,7 +652,7 @@ namespace BoxSocial.Applications.Pages
                 return;
             }
 
-            DataTable listTable = db.SelectQuery(string.Format("SELECT list_items FROM user_lists WHERE user_id = {0} AND list_id = {1};",
+            DataTable listTable = db.Query(string.Format("SELECT list_items FROM user_lists WHERE user_id = {0} AND list_id = {1};",
                 loggedInMember.UserId, listId));
 
             if (listTable.Rows.Count == 1)
@@ -719,7 +719,7 @@ namespace BoxSocial.Applications.Pages
             {
                 List list = new List(db, loggedInMember, listId);
 
-                DataTable listItemTextTable = db.SelectQuery(string.Format("SELECT list_item_text_id FROM list_items_text WHERE list_item_text_normalised = '{0}';",
+                DataTable listItemTextTable = db.Query(string.Format("SELECT list_item_text_id FROM list_items_text WHERE list_item_text_normalised = '{0}';",
                     Mysql.Escape(slug)));
 
                 if (listItemTextTable.Rows.Count == 1)
@@ -791,7 +791,7 @@ namespace BoxSocial.Applications.Pages
                 return;
             }
 
-            DataTable listItemTable = db.SelectQuery(string.Format("SELECT li.list_id, ul.list_path FROM list_items li INNER JOIN user_lists ul ON ul.list_id = li.list_id WHERE li.list_item_id = {0};",
+            DataTable listItemTable = db.Query(string.Format("SELECT li.list_id, ul.list_path FROM list_items li INNER JOIN user_lists ul ON ul.list_id = li.list_id WHERE li.list_item_id = {0};",
                 itemId));
 
             if (listItemTable.Rows.Count == 1)

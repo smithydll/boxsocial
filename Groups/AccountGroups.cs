@@ -93,7 +93,7 @@ namespace BoxSocial.Groups
 
             template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create")));
 
-            DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
+            DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
 
             for (int i = 0; i < groupsTable.Rows.Count; i++)
@@ -222,7 +222,7 @@ namespace BoxSocial.Groups
             short category = thisGroup.RawCategory;
 
             Dictionary<string, string> categories = new Dictionary<string, string>();
-            DataTable categoriesTable = db.SelectQuery("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+            DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
@@ -335,7 +335,7 @@ namespace BoxSocial.Groups
             query.AddCondition("gm.user_id", loggedInMember.UserId);
             query.AddCondition("gm.group_member_approved", 0);
 
-            DataTable pendingGroupsTable = db.SelectQuery(query);
+            DataTable pendingGroupsTable = db.Query(query);
 
             if (pendingGroupsTable.Rows.Count > 0)
             {
@@ -369,7 +369,7 @@ namespace BoxSocial.Groups
                 }
             }
 
-            DataTable groupsTable = db.SelectQuery(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
+            DataTable groupsTable = db.Query(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
 
             if (groupsTable.Rows.Count > 0)
@@ -440,7 +440,7 @@ namespace BoxSocial.Groups
                 UserGroup thisGroup = new UserGroup(db, groupId);
                 int activated = 0;
 
-                DataTable membershipTable = db.SelectQuery(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
+                DataTable membershipTable = db.Query(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
                     thisGroup.GroupId, loggedInMember.UserId));
 
                 if (membershipTable.Rows.Count > 0)
@@ -530,7 +530,7 @@ namespace BoxSocial.Groups
                 bool isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
                 bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
 
-                DataTable operatorsTable = db.SelectQuery(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
+                DataTable operatorsTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
                     thisGroup.GroupId, loggedInMember.UserId));
 
                 if (operatorsTable.Rows.Count > 0)
@@ -660,7 +660,7 @@ namespace BoxSocial.Groups
                     if (!thisGroup.IsGroupMember(inviteMember))
                     {
                         // use their relation, otherwise you could just create a billion pending friends and still SPAM them with group invites
-                        DataTable friendsTable = db.SelectQuery(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND';",
+                        DataTable friendsTable = db.Query(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND';",
                             inviteMember.UserId, loggedInMember.UserId));
 
                         if (friendsTable.Rows.Count > 0)

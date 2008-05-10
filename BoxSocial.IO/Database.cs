@@ -55,25 +55,18 @@ namespace BoxSocial.IO
             throw new System.NotImplementedException();
         }
 
-        public void iQuery(string sqlquery)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract DataTable Query(SelectQuery query);
+        public abstract long Query(InsertQuery query);
+        public abstract long Query(UpdateQuery query);
+        public abstract long Query(DeleteQuery query);
 
-        public DataTable Query(string sqlquery)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract long Query(InsertQuery query, bool transaction);
+        public abstract long Query(UpdateQuery query, bool transaction);
+        public abstract long Query(DeleteQuery query, bool transaction);
 
-        public DataTable SelectQuery(string sqlquery)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract DataTable Query(string query);
 
-        public long UpdateQuery(string sqlquery)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract long UpdateQuery(string query);
 
         public int GetQueryCount()
         {

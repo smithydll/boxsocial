@@ -26,7 +26,7 @@ namespace BoxSocial.FrontEnd
             query.AddFields("user_id");
             query.AddCondition("user_name", ConditionEquality.NotEqual, "Anonymous");
 
-            DataTable users = core.db.SelectQuery(query);
+            DataTable users = core.db.Query(query);
 
             foreach (DataRow kr in users.Rows)
             {
@@ -41,7 +41,7 @@ namespace BoxSocial.FrontEnd
                 query.AddCondition("pa.item_type", "USER");
                 query.AddCondition("pa.item_id", userId);
 
-                DataTable applications = core.db.SelectQuery(query);
+                DataTable applications = core.db.Query(query);
 
                 foreach (DataRow dr in applications.Rows)
                 {

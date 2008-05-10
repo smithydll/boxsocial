@@ -71,7 +71,7 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                DataTable commentsTable = db.SelectQuery(string.Format("SELECT ui.user_name, c.comment_text FROM comments c LEFT JOIN user_info ui ON c.user_id = ui.user_id WHERE comment_id = {0}",
+                DataTable commentsTable = db.Query(string.Format("SELECT ui.user_name, c.comment_text FROM comments c LEFT JOIN user_info ui ON c.user_id = ui.user_id WHERE comment_id = {0}",
                     itemId));
 
                 if (commentsTable.Rows.Count == 1)
@@ -101,7 +101,7 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                DataTable commentsTable = db.SelectQuery(string.Format("SELECT ui.user_name, c.comment_text FROM comments c LEFT JOIN user_info ui ON c.user_id = ui.user_id WHERE comment_id = {0}",
+                DataTable commentsTable = db.Query(string.Format("SELECT ui.user_name, c.comment_text FROM comments c LEFT JOIN user_info ui ON c.user_id = ui.user_id WHERE comment_id = {0}",
                     itemId));
 
                 if (commentsTable.Rows.Count == 1)
@@ -133,7 +133,7 @@ namespace BoxSocial.FrontEnd
                 if (session.IsLoggedIn)
                 {
                     // has the user reported the comment before?
-                    DataTable reportsTable = db.SelectQuery(string.Format("SELECT report_id FROM spam_reports WHERE comment_id = {0} AND user_id = {1};",
+                    DataTable reportsTable = db.Query(string.Format("SELECT report_id FROM spam_reports WHERE comment_id = {0} AND user_id = {1};",
                         itemId, loggedInMember.UserId));
 
                     if (reportsTable.Rows.Count == 0)

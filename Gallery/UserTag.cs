@@ -129,7 +129,7 @@ ENGINE = InnoDB;
             query.AddCondition("tag_id", tagId);
             query.AddCondition("gallery_item_id", galleryItem.ItemId);
 
-            DataTable tagDataTable = core.db.SelectQuery(query);
+            DataTable tagDataTable = core.db.Query(query);
 
             if (tagDataTable.Rows.Count > 0)
             {
@@ -183,7 +183,7 @@ ENGINE = InnoDB;
             query.AddFields(TAG_INFO_FIELDS);
             query.AddCondition("gallery_item_id", galleryItem.ItemId);
 
-            DataTable tagDataTable = core.db.SelectQuery(query);
+            DataTable tagDataTable = core.db.Query(query);
 
             List<long> userIds = new List<long>();
             foreach (DataRow dr in tagDataTable.Rows)

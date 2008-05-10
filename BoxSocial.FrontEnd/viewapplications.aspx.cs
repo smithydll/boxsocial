@@ -46,7 +46,7 @@ namespace BoxSocial.FrontEnd
         {
             int p = Functions.RequestInt("p", 1);
 
-            DataTable applicationsTable = db.SelectQuery(string.Format(@"SELECT {0} FROM applications ap ORDER BY application_title ASC LIMIT {1}, 10",
+            DataTable applicationsTable = db.Query(string.Format(@"SELECT {0} FROM applications ap ORDER BY application_title ASC LIMIT {1}, 10",
                 ApplicationEntry.APPLICATION_FIELDS, (p - 1) * 10));
 
             foreach (DataRow dr in applicationsTable.Rows)

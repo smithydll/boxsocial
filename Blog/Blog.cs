@@ -149,7 +149,7 @@ namespace BoxSocial.Applications.Blog
             this.db = db;
             this.owner = owner;
 
-            DataTable blogTable = db.SelectQuery(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_blog ub ON uk.user_id = ub.user_id WHERE uk.user_id = {0}",
+            DataTable blogTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_blog ub ON uk.user_id = ub.user_id WHERE uk.user_id = {0}",
                 owner.UserId, Blog.BLOG_FIELDS));
 
             if (blogTable.Rows.Count == 1)
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Blog
             query.AddFields("ub.user_id");
             query.AddCondition("ub.user_id", core.LoggedInMemberId);
 
-            if (core.db.SelectQuery(query).Rows.Count == 0)
+            if (core.db.Query(query).Rows.Count == 0)
             {
                 core.db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
                         core.LoggedInMemberId));
@@ -320,7 +320,7 @@ namespace BoxSocial.Applications.Blog
                 bpage = 1;
             }
 
-            DataTable blogEntriesTable = db.SelectQuery(string.Format("SELECT {7} FROM blog_postings be {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
+            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings be {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
                 page.ProfileOwner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, BlogEntry.BLOG_ENTRY_FIELDS));
 
             foreach (DataRow dr in blogEntriesTable.Rows)
@@ -343,7 +343,7 @@ namespace BoxSocial.Applications.Blog
             //query.AddFields();
             query.AddCondition("bre.user_id", userId);
 
-            DataTable blogRollTable = page.db.SelectQuery(query);
+            DataTable blogRollTable = page.db.Query(query);
 
             foreach (DataRow dr in blogRollTable.Rows)
             {
@@ -488,7 +488,7 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                DataTable archiveTable = core.db.SelectQuery(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
+                DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
                     page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
                 page.template.ParseVariables("ARCHIVES", HttpUtility.HtmlEncode(archiveTable.Rows.Count.ToString()));
@@ -503,7 +503,7 @@ namespace BoxSocial.Applications.Blog
                     archiveVariableCollection.ParseVariables("URL", HttpUtility.HtmlEncode(Linker.BuildBlogUri(page.ProfileOwner, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"])));
                 }
 
-                DataTable categoriesTable = core.db.SelectQuery(string.Format("SELECT DISTINCT YEAR(post_category) as category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
+                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(post_category) as category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
                     page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
                 page.template.ParseVariables("CATEGORIES", HttpUtility.HtmlEncode(categoriesTable.Rows.Count.ToString()));

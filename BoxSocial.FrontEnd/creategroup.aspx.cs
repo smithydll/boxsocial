@@ -111,7 +111,7 @@ namespace BoxSocial.FrontEnd
             }
 
             Dictionary<string, string> categories = new Dictionary<string, string>();
-            DataTable categoriesTable = db.SelectQuery("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+            DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
@@ -157,7 +157,7 @@ namespace BoxSocial.FrontEnd
                         break;
                 }
 
-                DataTable confirmTable = db.SelectQuery(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 2 AND session_id = '{0}' LIMIT 1",
+                DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 2 AND session_id = '{0}' LIMIT 1",
                     Mysql.Escape(session.SessionId)));
 
                 if (confirmTable.Rows.Count != 1)

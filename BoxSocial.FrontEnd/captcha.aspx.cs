@@ -55,7 +55,7 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
-            DataTable confirmTable = db.SelectQuery(string.Format("SELECT confirm_code FROM confirm WHERE (confirm_type = 1 OR confirm_type = 2) AND confirm_id = {0} AND session_id = '{1}'",
+            DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE (confirm_type = 1 OR confirm_type = 2) AND confirm_id = {0} AND session_id = '{1}'",
                 confirmId, Mysql.Escape(session.SessionId)));
 
             if (confirmTable.Rows.Count != 1)

@@ -138,7 +138,7 @@ namespace BoxSocial.Applications.Blog
                 status = "DRAFT";
             }
 
-            DataTable blogTable = db.SelectQuery(string.Format("SELECT ub.post_comments, ub.post_id, ub.post_title, ub.post_time_ut FROM blog_postings ub WHERE user_id = {0} AND post_status = '{1}' ORDER BY post_time_ut DESC;",
+            DataTable blogTable = db.Query(string.Format("SELECT ub.post_comments, ub.post_id, ub.post_title, ub.post_time_ut FROM blog_postings ub WHERE user_id = {0} AND post_status = '{1}' ORDER BY post_time_ut DESC;",
                 loggedInMember.UserId, status));
 
             for (int i = 0; i < blogTable.Rows.Count; i++)
@@ -233,7 +233,7 @@ namespace BoxSocial.Applications.Blog
                 }
                 else if (Request.QueryString["action"] == "edit")
                 {
-                    DataTable postTable = db.SelectQuery(string.Format("SELECT post_time_ut, post_access, post_category, post_license, post_title, post_text FROM blog_postings WHERE post_id = {0} AND user_id = {1}",
+                    DataTable postTable = db.Query(string.Format("SELECT post_time_ut, post_access, post_category, post_license, post_title, post_text FROM blog_postings WHERE post_id = {0} AND user_id = {1}",
                         postId, loggedInMember.UserId));
 
                     if (postTable.Rows.Count == 1)
@@ -263,7 +263,7 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Comment");
 
             Dictionary<string, string> licenses = new Dictionary<string, string>();
-            DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
+            DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
             licenses.Add("0", "Default ZinZam License");
             foreach (DataRow licenseRow in licensesTable.Rows)
@@ -272,7 +272,7 @@ namespace BoxSocial.Applications.Blog
             }
 
             Dictionary<string, string> categories = new Dictionary<string, string>();
-            DataTable categoriesTable = db.SelectQuery("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+            DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);

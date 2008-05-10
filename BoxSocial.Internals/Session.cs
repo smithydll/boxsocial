@@ -189,7 +189,7 @@ namespace BoxSocial.Internals
                 //if (isset($sessiondata['autologinid']) && (string) $sessiondata['autologinid'] != '' && $user_id)
                 if (!string.IsNullOrEmpty(sessionData.autoLoginId) && userId > 0)
                 {
-                    DataTable userSessionTable = db.SelectQuery(string.Format(
+                    DataTable userSessionTable = db.Query(string.Format(
                         @"SELECT {1}
                             FROM user_keys uk
                             INNER JOIN user_info ui ON uk.user_id = ui.user_id
@@ -231,7 +231,7 @@ namespace BoxSocial.Internals
                     sessionData.autoLoginId = "";
                     sessionData.userId = userId;
 
-                    DataTable userSessionTable = db.SelectQuery(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0} AND ui.user_active = 1",
+                    DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0} AND ui.user_active = 1",
                         userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
 
                     if (userSessionTable.Rows.Count == 1)
@@ -271,7 +271,7 @@ namespace BoxSocial.Internals
                 sessionData.userId = userId = 0;
                 enableAutologin = isLoggedIn = false;
 
-                DataTable userTable = db.SelectQuery(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
+                DataTable userTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
                     userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
 
                 if (userTable.Rows.Count == 1)
@@ -426,7 +426,7 @@ namespace BoxSocial.Internals
                 // session_id exists so go ahead and attempt to grab all
                 // data in preparation
                 //
-                DataTable userSessionTable = db.SelectQuery(string.Format("SELECT {1}, {2}, us.session_string, us.session_ip, us.session_time_ut FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_sessions us ON us.user_id = uk.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE us.session_string = '{0}';",
+                DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2}, us.session_string, us.session_ip, us.session_time_ut FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_sessions us ON us.user_id = uk.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE us.session_string = '{0}';",
                     sessionId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
 
                 //
@@ -564,7 +564,7 @@ namespace BoxSocial.Internals
             // but just in case it isn't, reset $userdata to the details for a guest
             //
 
-            DataTable userTable = db.SelectQuery(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_id = {0}",
+            DataTable userTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_id = {0}",
                     0, Member.USER_INFO_FIELDS));
 
             if (userTable.Rows.Count == 1)

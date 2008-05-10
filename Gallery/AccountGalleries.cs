@@ -109,7 +109,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (parentGalleryId > 0)
             {
-                DataTable galleryParentTable = db.SelectQuery(string.Format("SELECT gallery_parent_path, gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
+                DataTable galleryParentTable = db.Query(string.Format("SELECT gallery_parent_path, gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
                     loggedInMember.UserId, parentGalleryId));
 
                 if (galleryParentTable.Rows.Count > 0)
@@ -137,7 +137,7 @@ namespace BoxSocial.Applications.Gallery
 
             template.SetTemplate("Gallery", "account_galleries");
 
-            DataTable galleriesTable = db.SelectQuery(string.Format("SELECT gallery_id, gallery_items, gallery_title, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' ORDER BY gallery_title ASC",
+            DataTable galleriesTable = db.Query(string.Format("SELECT gallery_id, gallery_items, gallery_title, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' ORDER BY gallery_title ASC",
                 loggedInMember.UserId, Mysql.Escape(galleryParentPath)));
 
             for (int i = 0; i < galleriesTable.Rows.Count; i++)
@@ -212,7 +212,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (galleryId > 0)
                 {
-                    DataTable galleryTable = db.SelectQuery(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
+                    DataTable galleryTable = db.Query(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
                         galleryId, loggedInMember.UserId));
 
                     if (galleryTable.Rows.Count == 1)
@@ -221,7 +221,7 @@ namespace BoxSocial.Applications.Gallery
                         ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
 
                         Dictionary<string, string> licenses = new Dictionary<string, string>();
-                        DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
+                        DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
                         template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
                     }
@@ -240,7 +240,7 @@ namespace BoxSocial.Applications.Gallery
                 // edit
                 template.ParseVariables("EDIT", "TRUE");
 
-                DataTable galleryTable = db.SelectQuery(string.Format("SELECT gallery_title, gallery_access, gallery_abstract FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
+                DataTable galleryTable = db.Query(string.Format("SELECT gallery_title, gallery_access, gallery_abstract FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
                         galleryId, loggedInMember.UserId));
 
                 if (galleryTable.Rows.Count == 1)
@@ -255,7 +255,7 @@ namespace BoxSocial.Applications.Gallery
                     ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
 
                     Dictionary<string, string> licenses = new Dictionary<string, string>();
-                    DataTable licensesTable = db.SelectQuery("SELECT license_id, license_title FROM licenses");
+                    DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
                     template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
                 }
@@ -457,7 +457,7 @@ namespace BoxSocial.Applications.Gallery
 
             template.SetTemplate("Gallery", "account_galleries_upload");
 
-            DataTable galleryTable = db.SelectQuery(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
+            DataTable galleryTable = db.Query(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
                 galleryId, loggedInMember.UserId));
 
 
@@ -558,7 +558,7 @@ namespace BoxSocial.Applications.Gallery
 
             template.SetTemplate("Gallery", "account_galleries_photo_edit");
 
-            DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
+            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
                 loggedInMember.UserId, photoId));
 
             if (photoTable.Rows.Count == 1)
@@ -612,7 +612,7 @@ namespace BoxSocial.Applications.Gallery
 
             // check the image exists
             // check the image is owned by the user trying to set it as their display picture
-            DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_parent_path, gallery_item_access, user_id FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1}",
+            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_parent_path, gallery_item_access, user_id FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1}",
                 loggedInMember.UserId, pictureId));
 
             if (photoTable.Rows.Count == 1)
@@ -634,7 +634,7 @@ namespace BoxSocial.Applications.Gallery
                     galleryParentPath = "";
                 }
 
-                DataTable galleryTable = db.SelectQuery(string.Format("SELECT gallery_id, gallery_access FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
+                DataTable galleryTable = db.Query(string.Format("SELECT gallery_id, gallery_access FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
                     loggedInMember.UserId, Mysql.Escape(galleryPath), Mysql.Escape(galleryParentPath)));
 
                 /*Response.Write(string.Format("SELECT gallery_id, gallery_access FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
@@ -696,7 +696,7 @@ namespace BoxSocial.Applications.Gallery
 
             // check the image exists
             // check the image is owned by the user trying to set it as their display picture
-            DataTable photoTable = db.SelectQuery(string.Format("SELECT gallery_item_access, user_id FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1}",
+            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_access, user_id FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1}",
                 loggedInMember.UserId, pictureId));
 
             if (photoTable.Rows.Count == 1)

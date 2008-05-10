@@ -135,7 +135,7 @@ namespace BoxSocial.Services.Installer
             SelectQuery query = new SelectQuery("applications ap");
             query.AddFields("ap.application_assembly_name", "ap.application_primitive");
 
-            DataTable applicationInfoTable = db.SelectQuery(query);
+            DataTable applicationInfoTable = db.Query(query);
             db.CloseConnection();
 
             foreach (DataRow applicationRow in applicationInfoTable.Rows)

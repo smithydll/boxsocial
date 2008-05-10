@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.Gallery
 
         private bool photoCanPostComment(long itemId, Member member)
         {
-            DataTable galleryItemTable = core.db.SelectQuery(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
+            DataTable galleryItemTable = core.db.Query(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
                 itemId, GalleryItem.GALLERY_ITEM_INFO_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)
@@ -180,7 +180,7 @@ namespace BoxSocial.Applications.Gallery
 
         private bool photoCanDeleteComment(long itemId, Member member)
         {
-            DataTable galleryItemTable = core.db.SelectQuery(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
+            DataTable galleryItemTable = core.db.Query(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
                 itemId, GalleryItem.GALLERY_ITEM_INFO_FIELDS));
 
             if (galleryItemTable.Rows.Count == 1)

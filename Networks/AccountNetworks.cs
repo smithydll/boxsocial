@@ -89,7 +89,7 @@ namespace BoxSocial.Networks
             query.AddFields(Network.NETWORK_INFO_FIELDS, "nk.network_network");
             query.AddCondition("nm.user_id", loggedInMember.Id);
 
-            DataTable networksTable = db.SelectQuery(query);
+            DataTable networksTable = db.Query(query);
 
             foreach (DataRow dr in networksTable.Rows)
             {

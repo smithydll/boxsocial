@@ -125,7 +125,7 @@ namespace BoxSocial.Applications.Pages
             query.AddCondition("ul.user_id", owner.Id);
             query.AddCondition("ul.list_id", listId);
 
-            DataTable listTable = db.SelectQuery(query);
+            DataTable listTable = db.Query(query);
 
             if (listTable.Rows.Count == 1)
             {
@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.Pages
             query.AddCondition("ul.user_id", owner.Id);
             query.AddCondition("ul.list_path", listName);
 
-            DataTable listTable = db.SelectQuery(query);
+            DataTable listTable = db.Query(query);
 
             if (listTable.Rows.Count == 1)
             {
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Pages
         {
             List<ListItem> listItems = new List<ListItem>();
 
-            DataTable listItemsTable = db.SelectQuery(string.Format("SElECT {0} FROM list_items li INNER JOIN list_items_text lit ON li.list_item_text_id = lit.list_item_text_id WHERE li.list_id = {1} ORDER BY lit.list_item_text_normalised ASC;",
+            DataTable listItemsTable = db.Query(string.Format("SElECT {0} FROM list_items li INNER JOIN list_items_text lit ON li.list_item_text_id = lit.list_item_text_id WHERE li.list_id = {1} ORDER BY lit.list_item_text_normalised ASC;",
                 ListItem.LIST_ITEM_FIELDS, listId));
 
             foreach (DataRow dr in listItemsTable.Rows)
@@ -212,7 +212,7 @@ namespace BoxSocial.Applications.Pages
             long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
-            DataTable listsTable = core.db.SelectQuery(string.Format("SELECT {0} FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {1} AND (list_access & {3:0} OR ul.user_id = {2})",
+            DataTable listsTable = core.db.Query(string.Format("SELECT {0} FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {1} AND (list_access & {3:0} OR ul.user_id = {2})",
                 List.LIST_FIELDS, owner.UserId, loggedIdUid, readAccessLevel));
 
             foreach (DataRow dr in listsTable.Rows)

@@ -106,7 +106,7 @@ namespace BoxSocial
             Dictionary<string, string> religions = new Dictionary<string, string>();
             religions.Add("0", "No Answer");
 
-            DataTable religionsTable = db.SelectQuery("SELECT * FROM religions ORDER BY religion_title ASC");
+            DataTable religionsTable = db.Query("SELECT * FROM religions ORDER BY religion_title ASC");
 
             foreach (DataRow religionRow in religionsTable.Rows)
             {
@@ -181,7 +181,7 @@ namespace BoxSocial
 
             Dictionary<string, string> countries = new Dictionary<string, string>();
 
-            DataTable countriesTable = db.SelectQuery("SELECT * FROM countries ORDER BY country_name ASC");
+            DataTable countriesTable = db.Query("SELECT * FROM countries ORDER BY country_name ASC");
 
             countries.Add("", "Unspecified");
             foreach (DataRow countryRow in countriesTable.Rows)
@@ -589,7 +589,7 @@ namespace BoxSocial
                     break;
             }
 
-            if (db.SelectQuery(string.Format("SELECT user_id FROM user_style WHERE user_id = {0}",
+            if (db.Query(string.Format("SELECT user_id FROM user_style WHERE user_id = {0}",
                 loggedInMember.UserId)).Rows.Count == 0)
             {
                 db.UpdateQuery(string.Format("INSERT INTO user_style (user_id, style_css) VALUES ({0}, '{1}');",

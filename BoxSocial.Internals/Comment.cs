@@ -106,7 +106,7 @@ namespace BoxSocial.Internals
         {
             this.db = db;
 
-            DataTable commentsTable = db.SelectQuery(string.Format("SELECT {1} FROM comments c WHERE c.comment_id = {0};",
+            DataTable commentsTable = db.Query(string.Format("SELECT {1} FROM comments c WHERE c.comment_id = {0};",
                 commentId, Comment.COMMENT_INFO_FIELDS));
 
             if (commentsTable.Rows.Count == 1)
@@ -147,7 +147,7 @@ namespace BoxSocial.Internals
                 throw new NotLoggedInException();
             }
 
-            if (core.db.SelectQuery(string.Format("SELECT user_id FROM comments WHERE (user_id = {0} OR comment_ip = '{1}') AND (UNIX_TIMESTAMP() - comment_time_ut) < 20",
+            if (core.db.Query(string.Format("SELECT user_id FROM comments WHERE (user_id = {0} OR comment_ip = '{1}') AND (UNIX_TIMESTAMP() - comment_time_ut) < 20",
                     core.LoggedInMemberId, core.session.IPAddress.ToString())).Rows.Count > 0)
             {
                 throw new CommentFloodException();
@@ -183,7 +183,7 @@ namespace BoxSocial.Internals
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
 
-            DataTable commentsTable = db.SelectQuery(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
+            DataTable commentsTable = db.Query(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
                 itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));
 
             foreach (DataRow dr in commentsTable.Rows)
@@ -281,7 +281,7 @@ namespace BoxSocial.Internals
             //
             // select all threads that are related spam
             //
-            DataTable spamCommentsTable = core.db.SelectQuery(string.Format("SELECT comment_ip, comment_hash FROM comments WHERE ((comment_ip = '{0}' AND comment_time_ut + 86400 > UNIX_TIMESTAMP()) OR comment_hash = '{1}') AND comment_spam_score >= 10 GROUP BY comment_ip, comment_hash;",
+            DataTable spamCommentsTable = core.db.Query(string.Format("SELECT comment_ip, comment_hash FROM comments WHERE ((comment_ip = '{0}' AND comment_time_ut + 86400 > UNIX_TIMESTAMP()) OR comment_hash = '{1}') AND comment_spam_score >= 10 GROUP BY comment_ip, comment_hash;",
                 core.session.IPAddress.ToString(), messageMd5Hash));
 
             // known spam IPs

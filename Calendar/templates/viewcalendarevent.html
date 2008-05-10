@@ -5,6 +5,7 @@
 	<div id="new-stuff">
 		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
 		<span id="edit-event" class="post-button"><a href="{U_EDIT_EVENT}">Edit Event</a></span>
+    <span id="delete-event" class="post-button"><a href="{U_DELETE_EVENT}">Delete Event</a></span>
 	</div>
 	<!-- ENDIF -->
 	<!-- IF LOCATION -->
@@ -15,4 +16,10 @@
 	<!-- IF DESCRIPTION -->
 	<p>{DESCRIPTION}</p>
 	<!-- ENDIF -->
+<div id="comments" class="comment-pane">
+  <!-- INCLUDE pane.comments.html -->
+</div>
+<!-- IF PAGINATION -->
+<p>{PAGINATION}</p>
+<!-- ENDIF -->
 <!-- INCLUDE page_footer.html -->

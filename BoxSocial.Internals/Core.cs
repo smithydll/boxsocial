@@ -134,7 +134,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_id", ConditionEquality.In, idList);
 
-                DataTable usersTable = db.SelectQuery(query);
+                DataTable usersTable = db.Query(query);
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
@@ -157,6 +157,42 @@ namespace BoxSocial.Internals
                 userProfileCache.Add(newUser.Id, newUser);
                 userNameCache.Add(newUser.UserName, newUser.Id);
             }
+        }
+
+        public List<long> LoadUserProfiles(List<string> usernames)
+        {
+            List<string> usernameList = new List<string>();
+            List<long> userIds = new List<long>();
+            foreach (string username in usernames)
+            {
+                if (!userNameCache.ContainsKey(username))
+                {
+                    usernameList.Add(username);
+                }
+            }
+
+            if (usernameList.Count > 0)
+            {
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
+                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
+                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
+                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
+                query.AddCondition("uk.user_name", ConditionEquality.In, usernameList);
+
+                DataTable usersTable = db.Query(query);
+
+                foreach (DataRow userRow in usersTable.Rows)
+                {
+                    Member newUser = new Member(db, userRow, true, true);
+                    userProfileCache.Add(newUser.Id, newUser);
+                    userNameCache.Add(newUser.UserName, newUser.Id);
+                    userIds.Add(newUser.Id);
+                }
+            }
+
+            return userIds;
         }
 
         public long LoadUserProfile(string username)
@@ -349,7 +385,7 @@ namespace BoxSocial.Internals
 
         /*public Access GetAccessFromItem(long itemId, string tableName, string columnPrefix)
         {
-            DataTable itemTable = db.SelectQuery(string.Format("SELECT {2}item_id, {2}item_type, {2}access FROM {1} WHERE gi.{2}id = {0};",
+            DataTable itemTable = db.Query(string.Format("SELECT {2}item_id, {2}item_type, {2}access FROM {1} WHERE gi.{2}id = {0};",
                 itemId, tableName, columnPrefix));
 
             if (itemTable.Rows.Count == 1)

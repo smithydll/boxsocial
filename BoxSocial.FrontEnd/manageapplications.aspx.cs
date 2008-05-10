@@ -36,7 +36,7 @@ namespace BoxSocial.FrontEnd
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "pa.item_id", "ui.user_id");
                 query.AddCondition("pa.item_type", "USER");
 
-                DataTable userInfoTable = db.SelectQuery(query);
+                DataTable userInfoTable = db.Query(query);
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
@@ -85,7 +85,7 @@ namespace BoxSocial.FrontEnd
                             long updatedRaw = UnixTime.UnixTimeStamp();
                             long applicationId = 0;
 
-                            DataTable applicationTable = db.SelectQuery(string.Format(@"SELECT {0}
+                            DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
                             FROM applications ap
                             WHERE application_assembly_name = '{1}'",
                                 ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));

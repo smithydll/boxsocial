@@ -54,7 +54,7 @@ namespace BoxSocial.Internals
             query.LimitCount = 50;
             query.LimitStart = (page - 1) * 50;
 
-            DataTable feedTable = core.db.SelectQuery(query);
+            DataTable feedTable = core.db.Query(query);
 
             foreach (DataRow dr in feedTable.Rows)
             {
@@ -95,7 +95,7 @@ namespace BoxSocial.Internals
                     // WHERE current
                 }
 
-                DataTable feedTable = core.db.SelectQuery(query);
+                DataTable feedTable = core.db.Query(query);
 
                 core.LoadUserProfiles(friendIds);
                 foreach (DataRow dr in feedTable.Rows)
@@ -115,7 +115,7 @@ namespace BoxSocial.Internals
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 1;
 
-            DataTable feedTable = core.db.SelectQuery(query);
+            DataTable feedTable = core.db.Query(query);
 
             if (feedTable.Rows.Count == 1)
             {

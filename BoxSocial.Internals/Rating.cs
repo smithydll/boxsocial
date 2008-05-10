@@ -121,10 +121,10 @@ namespace BoxSocial.Internals
             QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.session.IPAddress.ToString());
             qc2.AddCondition("rate_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24 * 7);
 
-            /*DataTable ratingsTable = db.SelectQuery(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
+            /*DataTable ratingsTable = db.Query(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
                 itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));*/
 
-            DataTable ratingsTable = core.db.SelectQuery(query);
+            DataTable ratingsTable = core.db.Query(query);
 
             if (ratingsTable.Rows.Count > 0)
             {

@@ -689,7 +689,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_id", userId);
 
-                DataTable userTable = db.SelectQuery(query);
+                DataTable userTable = db.Query(query);
 
                 if (userTable.Rows.Count == 1)
                 {
@@ -710,7 +710,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_id", userId);
 
-                DataTable userTable = db.SelectQuery(query);
+                DataTable userTable = db.Query(query);
 
                 if (userTable.Rows.Count == 1)
                 {
@@ -744,7 +744,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_name", userName);
 
-                userTable = db.SelectQuery(query);
+                userTable = db.Query(query);
             }
             else
             {
@@ -753,7 +753,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddCondition("uk.user_name", userName);
 
-                userTable = db.SelectQuery(query);
+                userTable = db.Query(query);
             }
 
             if (userTable.Rows.Count == 1)
@@ -778,7 +778,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
             query.AddCondition("uk.user_id", userId);
 
-            DataTable userTable = db.SelectQuery(query);
+            DataTable userTable = db.Query(query);
 
             if (userTable.Rows.Count == 1)
             {
@@ -904,7 +904,7 @@ namespace BoxSocial.Internals
 
         public string GetUserStyle()
         {
-            DataTable userStyleTable = db.SelectQuery(string.Format("SELECT us.* FROM user_keys uk INNER JOIN user_style us ON uk.user_id = us.user_id WHERE uk.user_id = {0}",
+            DataTable userStyleTable = db.Query(string.Format("SELECT us.* FROM user_keys uk INNER JOIN user_style us ON uk.user_id = us.user_id WHERE uk.user_id = {0}",
                 userId));
 
             if (userStyleTable.Rows.Count == 1)
@@ -934,7 +934,7 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Ascending, "relation_time_ut");
             query.LimitCount = count;
 
-            DataTable friendsTable = db.SelectQuery(query);
+            DataTable friendsTable = db.Query(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {
@@ -969,7 +969,7 @@ namespace BoxSocial.Internals
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable friendsTable = db.SelectQuery(query);
+            DataTable friendsTable = db.Query(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {
@@ -1002,7 +1002,7 @@ namespace BoxSocial.Internals
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable friendsTable = db.SelectQuery(query);
+            DataTable friendsTable = db.Query(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {
@@ -1038,7 +1038,7 @@ namespace BoxSocial.Internals
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable friendsTable = db.SelectQuery(query);
+            DataTable friendsTable = db.Query(query);
 
             foreach (DataRow dr in friendsTable.Rows)
             {
@@ -1062,7 +1062,7 @@ namespace BoxSocial.Internals
                 return Relation.Owner;
             }
 
-            DataTable relationMe = db.SelectQuery(string.Format("SELECT relation_type, relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1};",
+            DataTable relationMe = db.Query(string.Format("SELECT relation_type, relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1};",
                     userId, member.userId));
 
             for (int i = 0; i < relationMe.Rows.Count; i++)
@@ -1330,7 +1330,7 @@ namespace BoxSocial.Internals
         public static bool CheckEmailUnique(Mysql db, string eMail)
         {
             // TODO: register all e-mail addresses into a new table, along with privacy controls
-            DataTable userTable = db.SelectQuery(string.Format("SELECT user_id, user_alternate_email FROM user_info WHERE LCASE(user_alternate_email) = '{0}';",
+            DataTable userTable = db.Query(string.Format("SELECT user_id, user_alternate_email FROM user_info WHERE LCASE(user_alternate_email) = '{0}';",
                 Mysql.Escape(eMail.ToLower())));
             if (userTable.Rows.Count > 0)
             {
@@ -1338,7 +1338,7 @@ namespace BoxSocial.Internals
                 return false;
             }
 
-            DataTable networkMemberTable = db.SelectQuery(string.Format("SELECT user_id, member_email FROM network_members WHERE LCASE(member_email) = '{0}';",
+            DataTable networkMemberTable = db.Query(string.Format("SELECT user_id, member_email FROM network_members WHERE LCASE(member_email) = '{0}';",
                 Mysql.Escape(eMail.ToLower())));
             if (networkMemberTable.Rows.Count > 0)
             {
@@ -1590,7 +1590,7 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public static bool CheckUserNameUnique(Mysql db, string userName)
         {
-            if (db.SelectQuery(string.Format("SELECT user_name FROM user_keys WHERE LCASE(user_name) = '{0}';",
+            if (db.Query(string.Format("SELECT user_name FROM user_keys WHERE LCASE(user_name) = '{0}';",
                 Mysql.Escape(userName.ToLower()))).Rows.Count > 0)
             {
                 return false;
@@ -1886,7 +1886,7 @@ namespace BoxSocial.Internals
             long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
 
             /* Show a list of lists */
-            DataTable listTable = core.db.SelectQuery(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",
+            DataTable listTable = core.db.Query(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",
                 page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
             for (int i = 0; i < listTable.Rows.Count; i++)

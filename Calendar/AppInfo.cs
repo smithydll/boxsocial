@@ -54,7 +54,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -80,6 +80,8 @@ namespace BoxSocial.Applications.Calendar
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+
+            core.RegisterCommentHandle("BoxSocial.Applications.Calendar.Event", eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -120,6 +122,78 @@ namespace BoxSocial.Applications.Calendar
             core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
             core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
             core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);
+        }
+
+        /// <summary>
+        /// Callback on a comment being posted to the blog.
+        /// </summary>
+        /// <param name="e">An EventArgs that contains the event data</param>
+        private void eventCommentPosted(CommentPostedEventArgs e)
+        {
+            // Notify of a new comment
+            Event calendarEvent = new Event(core.db, e.ItemId);
+            Member owner = (Member)calendarEvent.Owner;
+
+            ApplicationEntry ae = new ApplicationEntry(core.db, owner, "Calendar");
+
+            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_event_notification");
+            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(calendarEvent));
+            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
+            notificationTemplate.ParseVariables("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
+
+            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
+        }
+
+        /// <summary>
+        /// Determines if a user can post a comment to a blog post.
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can post a comment, false otherwise</returns>
+        private bool eventCanPostComment(long itemId, Member member)
+        {
+            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
+            blogEntry.BlogEntryAccess.SetViewer(member);
+
+            if (blogEntry.BlogEntryAccess.CanComment)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines if a user can delete a comment from a blog post
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can delete a comment, false otherwise</returns>
+        private bool eventCanDeleteComment(long itemId, Member member)
+        {
+            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
+
+            if (blogEntry.OwnerId == member.UserId)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Adjusts the comment count for the blog post
+        /// </summary>
+        /// <param name="itemId">Blog post id</param>
+        /// <param name="adjustment">Amount to adjust the comment count by</param>
+        private void eventAdjustCommentCount(long itemId, int adjustment)
+        {
+            core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
+                itemId, adjustment), false);
         }
 
         private void showCalendar(Core core, object sender)

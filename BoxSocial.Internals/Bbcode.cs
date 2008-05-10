@@ -747,7 +747,7 @@ namespace BoxSocial.Internals
         {
             /*if (Global.SmiliesDataTable == null)
             {
-                Global.SmiliesDataTable = Global.db.SelectQuery("SELECT * FROM smilies;");
+                Global.SmiliesDataTable = Global.db.Query("SELECT * FROM smilies;");
             }
             foreach (DataRow smile in Global.SmiliesDataTable.Rows)
             {

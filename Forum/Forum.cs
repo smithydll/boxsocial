@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            DataTable topicsTable = db.SelectQuery(string.Format(@"SELECT {0}
+            DataTable topicsTable = db.Query(string.Format(@"SELECT {0}
                 FROM forum_topics
                 LEFT JOIN topic_posts tp ON tp.post_id = ft.topic_last_post_id
                 WHERE ft.item_id = {1} AND ft.item_type = '{2}'

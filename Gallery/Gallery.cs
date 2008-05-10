@@ -341,7 +341,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryId > 0)
             {
-                DataTable galleryTable = db.SelectQuery(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_id = {2} AND ug.user_id = {0}",
+                DataTable galleryTable = db.Query(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_id = {2} AND ug.user_id = {0}",
                         owner.Id, Gallery.GALLERY_INFO_FIELDS, galleryId));
 
                 if (galleryTable.Rows.Count == 1)
@@ -372,7 +372,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            DataTable galleryTable = db.SelectQuery(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_parent_path = '{3}' AND ug.gallery_path = '{2}' AND ug.user_id = {0}",
+            DataTable galleryTable = db.Query(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_parent_path = '{3}' AND ug.gallery_path = '{2}' AND ug.user_id = {0}",
                     owner.Id, Gallery.GALLERY_INFO_FIELDS, Mysql.Escape(Gallery.GetNameFromPath(path)), Mysql.Escape(Gallery.GetParentPath(path))));
 
             if (galleryTable.Rows.Count == 1)
@@ -463,7 +463,7 @@ namespace BoxSocial.Applications.Gallery
             long loggedIdUid = Member.GetMemberId(page.loggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(page.loggedInMember);
 
-            DataTable galleriesTable = db.SelectQuery(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
+            DataTable galleriesTable = db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
                 ((Member)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
 
             return galleriesTable.Rows;
@@ -509,7 +509,7 @@ namespace BoxSocial.Applications.Gallery
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
 
-            DataTable photoTable = db.SelectQuery(string.Format(
+            DataTable photoTable = db.Query(string.Format(
                 @"SELECT {2}, {8}
                     FROM gallery_items gi
                     LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license
@@ -593,7 +593,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (owner is Member)
             {
-                DataTable galleriesTable = db.SelectQuery(string.Format("SELECT gallery_id, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}'",
+                DataTable galleriesTable = db.Query(string.Format("SELECT gallery_id, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}'",
                     ((Member)owner).UserId, oldPath));
 
                 for (int i = 0; i < galleriesTable.Rows.Count; i++)
@@ -681,7 +681,7 @@ namespace BoxSocial.Applications.Gallery
                 bytesDeleted += stuffDeleted[1];
             }
 
-            object objectsDeleted = page.db.SelectQuery(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
+            object objectsDeleted = page.db.Query(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
                     page.loggedInMember.UserId, Mysql.Escape(gallery.FullPath))).Rows[0]["bytes_deleted"];
 
             if (!(objectsDeleted is DBNull))
@@ -737,7 +737,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>True if slug is unique given owner and parent</returns>
         public static bool CheckGallerySlugUnique(Mysql db, Member owner, string parentFullPath, string slug)
         {
-            DataTable galleryGalleryTable = db.SelectQuery(string.Format("SELECT gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' AND gallery_path = '{2}';",
+            DataTable galleryGalleryTable = db.Query(string.Format("SELECT gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' AND gallery_path = '{2}';",
                         owner.UserId, Mysql.Escape(parentFullPath), Mysql.Escape(slug)));
 
             if (galleryGalleryTable.Rows.Count > 0)
@@ -1290,7 +1290,7 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 Dictionary<string, string> licenses = new Dictionary<string, string>();
-                DataTable licensesTable = core.db.SelectQuery("SELECT license_id, license_title FROM licenses");
+                DataTable licensesTable = core.db.Query("SELECT license_id, license_title FROM licenses");
 
                 licenses.Add("0", "Default ZinZam License");
                 foreach (DataRow licenseRow in licensesTable.Rows)
@@ -1464,7 +1464,7 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 Dictionary<string, string> licenses = new Dictionary<string, string>();
-                DataTable licensesTable = core.db.SelectQuery("SELECT license_id, license_title FROM licenses");
+                DataTable licensesTable = core.db.Query("SELECT license_id, license_title FROM licenses");
 
                 licenses.Add("0", "Default ZinZam License");
                 foreach (DataRow licenseRow in licensesTable.Rows)

@@ -60,9 +60,9 @@ namespace BoxSocial.IO
         public abstract long Query(UpdateQuery query);
         public abstract long Query(DeleteQuery query);
 
-        public abstract long Query(InsertQuery query, bool transaction);
+        /*public abstract long Query(InsertQuery query, bool transaction);
         public abstract long Query(UpdateQuery query, bool transaction);
-        public abstract long Query(DeleteQuery query, bool transaction);
+        public abstract long Query(DeleteQuery query, bool transaction);*/
 
         public abstract DataTable Query(string query);
 

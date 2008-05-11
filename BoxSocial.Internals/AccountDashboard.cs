@@ -157,7 +157,7 @@ namespace BoxSocial
                 uQuery.AddField("notification_seen", true);
                 uQuery.AddCondition("notification_id", ConditionEquality.In, ids);
 
-                db.UpdateQuery(uQuery);
+                db.Query(uQuery);
             }
         }
 
@@ -222,7 +222,7 @@ namespace BoxSocial
 
             /*try
             {*/
-                ApplicationEntry ae = new ApplicationEntry(db, null, id);
+            ApplicationEntry ae = new ApplicationEntry(core, null, id);
                 ae.Install(core, loggedInMember);
             /*}
             catch

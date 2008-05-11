@@ -140,7 +140,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("rate_ip", core.session.IPAddress.ToString());
 
             // commit the transaction
-            core.db.UpdateQuery(iQuery, false);
+            core.db.Query(iQuery);
 
             return;
         }

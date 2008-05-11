@@ -468,7 +468,7 @@ namespace BoxSocial.Internals
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    return loggedInMember = new Member(core.db, User.Identity.Name, false);
+                    return loggedInMember = new Member(core, User.Identity.Name, false);
                 }
             }
             return null;

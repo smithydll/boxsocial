@@ -277,8 +277,8 @@ namespace BoxSocial.Internals
                 HttpContext.Current.Response.Write(template.ToString());
                 timer.Stop();
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
-                /*Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
-                Response.Write(db.QueryList);*/
+                Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
+                Response.Write(db.QueryList.Replace("\n", "<br />"));
 
                 if (db != null)
                 {

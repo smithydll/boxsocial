@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x01)");
                 return;
             }
 
@@ -358,7 +358,7 @@ namespace BoxSocial.Applications.Gallery
                         }
                         else
                         {
-                            Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                            Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x02)");
                             return;
                         }
                     }
@@ -378,9 +378,9 @@ namespace BoxSocial.Applications.Gallery
                     Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                     return;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x03) " + ex.ToString());
                     return;
                 }
             }
@@ -420,13 +420,13 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch
                     {
-                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x04)");
                         return;
                     }
                 }
                 catch
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x05)");
                     return;
                 }
             }
@@ -606,7 +606,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x06)");
                 return;
             }
 
@@ -690,7 +690,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x07)");
                 return;
             }
 
@@ -742,7 +742,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x08)");
                 return;
             }
 
@@ -755,7 +755,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 catch
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x09)");
                     return;
                 }
             }
@@ -825,7 +825,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 catch (GalleryItemNotFoundException)
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
                     return;
                 }
             }

@@ -597,11 +597,25 @@ namespace BoxSocial.Applications.Gallery
 
             GalleryItem.EnsureGallerySlugUnique(page, parent, owner, ref slug);
 
+            InsertQuery iQuery = new InsertQuery("gallery_items");
+            iQuery.AddField("gallery_item_uri", slug);
+            iQuery.AddField("gallery_item_title", title);
+            iQuery.AddField("gallery_item_abstract", description);
+            iQuery.AddField("gallery_item_date_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("gallery_item_storage_path", storageName);
+            iQuery.AddField("gallery_item_parent_path", parent.FullPath);
+            iQuery.AddField("gallery_item_access", permissions);
+            iQuery.AddField("gallery_item_content_type", contentType);
+            iQuery.AddField("user_id", page.loggedInMember.UserId);
+            iQuery.AddField("gallery_item_bytes", bytes);
+            iQuery.AddField("gallery_item_license", license);
+            iQuery.AddField("gallery_id", parent.GalleryId);
+            iQuery.AddField("gallery_item_item_id", owner.Id);
+            iQuery.AddField("gallery_item_item_type", owner.Type);
+            iQuery.AddField("gallery_item_classification", (byte)classification);
+
             // we want to use transactions
-            long itemId = db.UpdateQuery(string.Format(
-                @"INSERT INTO gallery_items (gallery_item_uri, gallery_item_title, gallery_item_abstract, gallery_item_date_ut, gallery_item_storage_path, gallery_item_parent_path, gallery_item_access, gallery_item_content_type, user_id, gallery_item_bytes, gallery_item_license, gallery_id, gallery_item_item_id, gallery_item_item_type, gallery_item_classification)
-                    VALUES ('{0}', '{1}', '{2}', UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}', {7}, {8}, {9}, {10}, {11}, '{12}', {13})",
-                Mysql.Escape(slug), Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(storageName), Mysql.Escape(parent.FullPath), permissions, Mysql.Escape(contentType), page.loggedInMember.UserId, bytes, license, parent.GalleryId, owner.Id, owner.Type, (byte)classification), true);
+            long itemId = db.UpdateQuery(iQuery, true);
 
             if (itemId >= 0)
             {
@@ -610,9 +624,16 @@ namespace BoxSocial.Applications.Gallery
                 {
                     UserGallery.UpdateGalleryInfo(db, owner, parent, itemId, 1, (long)bytes);
                 }
-                
-                db.UpdateQuery(string.Format("UPDATE user_info SET user_gallery_items = user_gallery_items + 1, user_bytes = user_bytes + {1} WHERE user_id = {0}",
-                    page.loggedInMember.UserId, bytes), false);
+
+                UpdateQuery uQuery = new UpdateQuery("user_info");
+                uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Addition, 1));
+                uQuery.AddField("user_bytes", bytes);
+                uQuery.AddCondition("user_id", page.loggedInMember.UserId);
+
+                if (db.UpdateQuery(uQuery, false) < 0)
+                {
+                    throw new Exception("Transaction failed, panic!");
+                }
 
                 //return new GalleryItem(db, owner, itemId);
                 return itemId;

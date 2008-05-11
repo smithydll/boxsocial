@@ -165,7 +165,7 @@ namespace BoxSocial.Internals
                 string applicationIds = "";
                 foreach (DataRow applicationRow in userApplicationsTable.Rows)
                 {
-                    ApplicationEntry ae = new ApplicationEntry(core.db, applicationRow);
+                    ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
@@ -207,7 +207,7 @@ namespace BoxSocial.Internals
                 string applicationIds = "";
                 foreach (DataRow applicationRow in userApplicationsTable.Rows)
                 {
-                    ApplicationEntry ae = new ApplicationEntry(core.db, applicationRow);
+                    ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
@@ -334,15 +334,15 @@ namespace BoxSocial.Internals
             return null;
         }
 
-        public static ApplicationEntry GetExecutingApplication(Mysql db, Primitive installee)
-        {
-            return new ApplicationEntry(db, installee, Assembly.GetCallingAssembly().GetName().Name);
-        }
-
         public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
         {
-            return GetExecutingApplication(core.db, installee);
+            return new ApplicationEntry(core, installee, Assembly.GetCallingAssembly().GetName().Name);
         }
+
+        /*public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
+        {
+            return GetExecutingApplication(core, installee);
+        }*/
 
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {

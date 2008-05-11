@@ -566,7 +566,8 @@ namespace BoxSocial.Internals
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("user_id", owner.Id);
 
-            core.db.UpdateQuery(uquery, true);
+            core.db.BeginTransaction();
+            core.db.Query(uquery);
 
             InsertQuery iquery = new InsertQuery("user_pages");
             iquery.AddField("user_id", owner.Id);
@@ -598,7 +599,7 @@ namespace BoxSocial.Internals
                 iquery.AddField("page_application", 0);
             }
 
-            pageId = core.db.UpdateQuery(iquery, false);
+            pageId = core.db.Query(iquery);
 
             return new Page(core.db, (Member)owner, pageId);
         }
@@ -778,11 +779,12 @@ namespace BoxSocial.Internals
 
             if (orderChanged) // order != oldOrder
             {
+                db.BeginTransaction();
                 db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
-                        oldOrder, owner.Id), true);
+                        oldOrder, owner.Id));
 
                 db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND user_id = {1}",
-                    order, owner.Id), true);
+                    order, owner.Id));
             }
 
             UpdateQuery uQuerys = new UpdateQuery("user_pages");
@@ -792,9 +794,10 @@ namespace BoxSocial.Internals
 
             //Display.ShowMessage("Query", uQuerys.ToString());
 
-            db.UpdateQuery(uQuerys, true);
+            db.BeginTransaction();
+            db.Query(uQuerys);
 
-            db.UpdateQuery(uQuery, false);
+            db.Query(uQuery);
         }
 
         public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
@@ -950,11 +953,12 @@ namespace BoxSocial.Internals
 
             if (order != oldOrder)
             {
+                db.BeginTransaction();
                 db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
-                        oldOrder, owner.Id), true);
+                        oldOrder, owner.Id));
 
                 db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND user_id = {1}",
-                    order, owner.Id), true);
+                    order, owner.Id));
             }
 
             UpdateQuery uquery = new UpdateQuery("user_pages");
@@ -962,7 +966,8 @@ namespace BoxSocial.Internals
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("user_id", owner.Id);
 
-            core.db.UpdateQuery(uquery, true);
+            core.db.BeginTransaction();
+            core.db.Query(uquery);
 
             uquery = new UpdateQuery("user_pages");
             uquery.AddField("user_id", owner.Id);
@@ -991,7 +996,7 @@ namespace BoxSocial.Internals
             uquery.AddCondition("page_id", this.PageId);
             uquery.AddCondition("user_id", owner.Id);
 
-            core.db.UpdateQuery(uquery, false);
+            core.db.Query(uquery);
         }
 
         public bool Delete(Core core, Primitive owner)
@@ -1004,13 +1009,14 @@ namespace BoxSocial.Internals
                 uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
                 uquery.AddCondition("user_id", owner.Id);
 
-                if (db.UpdateQuery(uquery, true) > 0)
+                db.BeginTransaction();
+                if (db.Query(uquery) > 0)
                 {
                     DeleteQuery dquery = new DeleteQuery("user_pages");
                     dquery.AddCondition("page_id", pageId);
                     dquery.AddCondition("user_id", owner.Id);
 
-                    db.UpdateQuery(dquery, false);
+                    db.Query(dquery);
 
                     success = true;
                 }

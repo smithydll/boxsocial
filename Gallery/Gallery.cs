@@ -637,8 +637,17 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotUniqueException();
             }
 
-            long galleryId = page.db.UpdateQuery(string.Format("INSERT INTO user_galleries (gallery_title, gallery_abstract, gallery_path, gallery_parent_path, gallery_access, user_id, gallery_parent_id) VALUES ('{0}', '{1}', '{2}', '{3}', {4}, {5}, {6})",
-                Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug), Mysql.Escape(parent.FullPath), permissions, page.loggedInMember.UserId, parent.GalleryId));
+            InsertQuery iQuery = new InsertQuery("user_galleries");
+            iQuery.AddField("gallery_title", title);
+            iQuery.AddField("gallery_abstract", description);
+            iQuery.AddField("gallery_path", slug);
+            iQuery.AddField("gallery_parent_path", parent.FullPath);
+            iQuery.AddField("gallery_access", permissions);
+            iQuery.AddField("user_id", page.loggedInMember.UserId);
+            iQuery.AddField("gallery_parent_id", parent.GalleryId);
+            iQuery.AddField("gallery_bytes", 0);
+
+            long galleryId = page.db.Query(iQuery);
 
             return galleryId;
         }

@@ -129,7 +129,7 @@ namespace BoxSocial.Internals
 
         public static StatusMessage SaveMessage(Core core, string message)
         {
-            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "Profile");
+            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
             ae.PublishToFeed(core.session.LoggedInMember, message, "");
 
             return StatusMessage.Create(core.db, core.session.LoggedInMember, message);

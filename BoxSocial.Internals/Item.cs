@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using BoxSocial.IO;
 
@@ -27,7 +28,34 @@ namespace BoxSocial.Internals
 {
     public abstract class Item
     {
-        private Mysql db;
+        protected Mysql db;
+        protected Core core;
+
+        protected Item(Core core)
+        {
+            this.core = core;
+            this.db = core.db;
+        }
+
+        protected DataTable Query(SelectQuery query)
+        {
+            return db.Query(query);
+        }
+
+        protected long Query(InsertQuery query)
+        {
+            return db.Query(query);
+        }
+
+        protected long Query(UpdateQuery query)
+        {
+            return db.Query(query);
+        }
+
+        protected long Query(DeleteQuery query)
+        {
+            return db.Query(query);
+        }
 
         public abstract long Id
         {

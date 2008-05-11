@@ -293,11 +293,12 @@ namespace BoxSocial.Networks
 
                 if (theNetwork.IsNetworkMember(loggedInMember))
                 {
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1};",
-                        theNetwork.Id, loggedInMember.UserId), true);
+                        theNetwork.Id, loggedInMember.UserId));
 
                     db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members - 1 WHERE network_id = {0}",
-                        theNetwork.Id), false);
+                        theNetwork.Id));
 
                     SetRedirectUri(theNetwork.Uri);
                     Display.ShowMessage("Left Network", "You have left the network.");

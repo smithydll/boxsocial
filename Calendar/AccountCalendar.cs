@@ -741,11 +741,17 @@ namespace BoxSocial.Applications.Calendar
             {
                 Event calendarEvent = new Event(db, null, eventId);
                 UpdateQuery uQuery = new UpdateQuery("event_invites");
+                
+                UpdateQuery uEventQuery = new UpdateQuery("events");
+                uEventQuery.AddCondition("event_id", calendarEvent.EventId);
+
                 switch (Request["mode"])
                 {
                     case "accept":
                         uQuery.AddField("invite_accepted", true);
                         uQuery.AddField("invite_status", (byte)EventAttendance.Yes);
+
+                        uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Addition, 1));
                         break;
                     case "reject":
                         uQuery.AddField("invite_accepted", false);
@@ -764,7 +770,8 @@ namespace BoxSocial.Applications.Calendar
                 uQuery.AddCondition("item_id", loggedInMember.Id);
                 uQuery.AddCondition("item_type", "USER");
 
-                db.UpdateQuery(uQuery);
+                db.Query(uQuery, true);
+                db.Query(uEventQuery, false);
 
                 SetRedirectUri(calendarEvent.Uri);
                 Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");

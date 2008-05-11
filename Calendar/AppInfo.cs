@@ -30,6 +30,12 @@ using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
+/*
+ * TODO: SQL
+ * ALTER TABLE `zinzam0_zinzam`.`comment_types` MODIFY COLUMN `type_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
+ * ALTER TABLE `zinzam0_zinzam`.`comments` MODIFY COLUMN `comment_item_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'UNASSOCIATED';
+ */
+
 namespace BoxSocial.Applications.Calendar
 {
     public class AppInfo : Application
@@ -98,6 +104,8 @@ namespace BoxSocial.Applications.Calendar
 
             aii.AddModule("calendar");
 
+            aii.AddCommentType("BoxSocial.Applications.Calendar.Event");
+
             return aii;
         }
 
@@ -125,13 +133,13 @@ namespace BoxSocial.Applications.Calendar
         }
 
         /// <summary>
-        /// Callback on a comment being posted to the blog.
+        /// Callback on a comment being posted to an event.
         /// </summary>
         /// <param name="e">An EventArgs that contains the event data</param>
         private void eventCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            Event calendarEvent = new Event(core.db, e.ItemId);
+            Event calendarEvent = new Event(core.db, null, e.ItemId);
             Member owner = (Member)calendarEvent.Owner;
 
             ApplicationEntry ae = new ApplicationEntry(core.db, owner, "Calendar");
@@ -141,21 +149,21 @@ namespace BoxSocial.Applications.Calendar
             notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
             notificationTemplate.ParseVariables("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
 
-            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
+            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), notificationTemplate.ToString());
         }
 
         /// <summary>
-        /// Determines if a user can post a comment to a blog post.
+        /// Determines if a user can post a comment to an event.
         /// </summary>
-        /// <param name="itemId">Blog post id</param>
+        /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool eventCanPostComment(long itemId, Member member)
         {
-            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
-            blogEntry.BlogEntryAccess.SetViewer(member);
+            Event calendarEvent = new Event(core.db, null, itemId);
+            calendarEvent.EventAccess.SetViewer(member);
 
-            if (blogEntry.BlogEntryAccess.CanComment)
+            if (calendarEvent.EventAccess.CanComment || calendarEvent.IsInvitee(member))
             {
                 return true;
             }
@@ -166,16 +174,16 @@ namespace BoxSocial.Applications.Calendar
         }
 
         /// <summary>
-        /// Determines if a user can delete a comment from a blog post
+        /// Determines if a user can delete a comment from an event
         /// </summary>
-        /// <param name="itemId">Blog post id</param>
+        /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool eventCanDeleteComment(long itemId, Member member)
         {
-            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
+            Event calendarEvent = new Event(core.db, null, itemId);
 
-            if (blogEntry.OwnerId == member.UserId)
+            if (calendarEvent.UserId == member.UserId)
             {
                 return true;
             }
@@ -186,13 +194,13 @@ namespace BoxSocial.Applications.Calendar
         }
 
         /// <summary>
-        /// Adjusts the comment count for the blog post
+        /// Adjusts the comment count for the event
         /// </summary>
-        /// <param name="itemId">Blog post id</param>
+        /// <param name="itemId">Event id</param>
         /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void eventAdjustCommentCount(long itemId, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
+            core.db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
                 itemId, adjustment), false);
         }
 

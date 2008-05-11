@@ -640,18 +640,17 @@ namespace BoxSocial.Internals
             }
         }
 
-        protected Member()
+        protected Member(Core core) : base (core)
         {
         }
 
-        public Member(Mysql db, DataRow userRow, bool containsProfileInfo)
-            : this(db, userRow, containsProfileInfo, false)
+        public Member(Core core, DataRow userRow, bool containsProfileInfo)
+            : this(core, userRow, containsProfileInfo, false)
         {
         }
 
-        public Member(Mysql db, DataRow userRow, bool containsProfileInfo, bool containsIcon)
+        public Member(Core core, DataRow userRow, bool containsProfileInfo, bool containsIcon) : this(core)
         {
-            this.db = db;
             loadUserInfo(userRow);
 
             if (containsProfileInfo)
@@ -669,15 +668,13 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="db"></param>
         /// <param name="userId"></param>
-        public Member(Mysql db, long userId)
-            : this(db, userId, false)
+        public Member(Core core, long userId)
+            : this(core, userId, false)
         {
         }
 
-        public Member(Mysql db, long userId, bool loadProfileInfo)
+        public Member(Core core, long userId, bool loadProfileInfo) : this (core)
         {
-            this.db = db;
-
 
             if (loadProfileInfo)
             {
@@ -724,12 +721,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member(Mysql db, string userName)
-            : this(db, userName, true)
+        public Member(Core core, string userName)
+            : this(core, userName, true)
         {
         }
 
-        public Member(Mysql db, string userName, bool loadIcon)
+        public Member(Core core, string userName, bool loadIcon) : this (core)
         {
             this.db = db;
 
@@ -973,7 +970,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(db, dr, true, true));
+                friends.Add(new Member(core, dr, true, true));
             }
 
             return friends;
@@ -1006,7 +1003,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(db, dr, true, true));
+                friends.Add(new Member(core, dr, true, true));
             }
 
             return friends;
@@ -1042,7 +1039,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(db, dr, true, true));
+                friends.Add(new Member(core, dr, true, true));
             }
 
             return friends;
@@ -1155,7 +1152,8 @@ namespace BoxSocial.Internals
             InsertQuery query = new InsertQuery("user_keys");
             query.AddField("user_name", userName);
 
-            long userId = db.UpdateQuery(query, true);
+            db.BeginTransaction();
+            long userId = db.Query(query);
 
             if (userId < 0)
             {
@@ -1177,7 +1175,8 @@ namespace BoxSocial.Internals
             query.AddField("user_show_bbcode", 0x07);
             query.AddField("user_show_custom_styles", true);
 
-            if (db.UpdateQuery(query, true) < 0)
+            db.BeginTransaction();
+            if (db.Query(query) < 0)
             {
                 HttpContext.Current.Response.Write(query.ToString());
                 HttpContext.Current.Response.End();
@@ -1189,14 +1188,14 @@ namespace BoxSocial.Internals
             query.AddField("user_id", userId);
             query.AddField("profile_access", 0x3331);
 
-            db.UpdateQuery(query, false);
+            db.Query(query);
 
-            Member newUser = new Member(db, userId);
+            Member newUser = new Member(core, userId);
 
             // Install a couple of applications
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                 profileAe.Install(core, newUser);
             }
             catch
@@ -1205,7 +1204,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
                 galleryAe.Install(core, newUser);
             }
             catch
@@ -1214,7 +1213,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
                 guestbookAe.Install(core, newUser);
             }
             catch
@@ -1223,7 +1222,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
+                ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
                 groupsAe.Install(core, newUser);
             }
             catch
@@ -1232,7 +1231,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry networksAe = new ApplicationEntry(db, null, "Networks");
+                ApplicationEntry networksAe = new ApplicationEntry(core, null, "Networks");
                 networksAe.Install(core, newUser);
             }
             catch
@@ -1241,7 +1240,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry calendarAe = new ApplicationEntry(db, null, "Calendar");
+                ApplicationEntry calendarAe = new ApplicationEntry(core, null, "Calendar");
                 calendarAe.Install(core, newUser);
             }
             catch

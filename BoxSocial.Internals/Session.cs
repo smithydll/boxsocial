@@ -199,7 +199,7 @@ namespace BoxSocial.Internals
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new Member(db, userSessionTable.Rows[0], false);
+                        loggedInMember = new Member(core, userSessionTable.Rows[0], false);
                         enableAutologin = isLoggedIn = true;
                     }
                     else
@@ -236,7 +236,7 @@ namespace BoxSocial.Internals
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new Member(db, userSessionTable.Rows[0], false, true);
+                        loggedInMember = new Member(core, userSessionTable.Rows[0], false, true);
                         isLoggedIn = true;
                     }
                     else
@@ -276,7 +276,7 @@ namespace BoxSocial.Internals
 
                 if (userTable.Rows.Count == 1)
                 {
-                    loggedInMember = new Member(db, userTable.Rows[0], false, true);
+                    loggedInMember = new Member(core, userTable.Rows[0], false, true);
                 }
             }
 
@@ -435,7 +435,7 @@ namespace BoxSocial.Internals
                 if (userSessionTable.Rows.Count == 1)
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
-                    loggedInMember = new Member(db, userSessionRow, false, true);
+                    loggedInMember = new Member(core, userSessionRow, false, true);
                     Linker.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
@@ -569,7 +569,7 @@ namespace BoxSocial.Internals
 
             if (userTable.Rows.Count == 1)
             {
-                loggedInMember = new Member(db, userTable.Rows[0], false);
+                loggedInMember = new Member(core, userTable.Rows[0], false);
             }
 
             HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");

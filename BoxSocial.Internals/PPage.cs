@@ -87,7 +87,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                profileOwner = new Member(db, profileUserName);
+                profileOwner = new Member(core, profileUserName);
             }
             catch (InvalidUserException)
             {

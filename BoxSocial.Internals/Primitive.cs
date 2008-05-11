@@ -27,6 +27,10 @@ namespace BoxSocial.Internals
     public abstract class Primitive : Item
     {
 
+        protected Primitive(Core core) : base(core)
+        {
+        }
+
         public override abstract long Id
         {
             get;

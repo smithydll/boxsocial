@@ -342,9 +342,8 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public ApplicationEntry(Core core)
+        public ApplicationEntry(Core core) : base(core)
         {
-            this.db = core.db;
             this.owner = core.session.LoggedInMember;
 
             Assembly asm = Assembly.GetCallingAssembly();
@@ -372,10 +371,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Mysql db, ApplicationCommentType act)
+        public ApplicationEntry(Core core, ApplicationCommentType act) : base(core)
         {
-            this.db = db;
-
             DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
                 INNER JOIN comment_types ct ON ct.application_id = ap.application_id
@@ -388,7 +385,7 @@ namespace BoxSocial.Internals
 
                 if (this.owner == null)
                 {
-                    this.owner = new Member(db, creatorId);
+                    this.owner = new Member(core, creatorId);
                 }
             }
             else
@@ -397,7 +394,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Mysql db, Primitive owner, string assemblyName)
+        public ApplicationEntry(Core core, Primitive owner, string assemblyName) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -422,9 +419,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Mysql db, Primitive owner, long applicationId)
+        public ApplicationEntry(Core core, Primitive owner, long applicationId) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
@@ -447,7 +443,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Mysql db, Primitive installee, DataRow applicationRow)
+        public ApplicationEntry(Core core, Primitive installee, DataRow applicationRow) : base(core)
         {
             loadApplicationInfo(applicationRow);
             loadApplicationUserInfo(applicationRow);
@@ -458,9 +454,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Mysql db, DataRow applicationRow)
+        public ApplicationEntry(Core core, DataRow applicationRow) : base (core)
         {
-            this.db = db;
 
             loadApplicationInfo(applicationRow);
         }
@@ -500,12 +495,12 @@ namespace BoxSocial.Internals
         {
         }
 
-        public ApplicationEntry Update()
+        /*public ApplicationEntry Update()
         {
             return Update(false);
-        }
+        }*/
 
-        public ApplicationEntry Update(bool transaction)
+        public ApplicationEntry Update()
         {
             UpdateQuery query = new UpdateQuery("applications");
             if (titleChanged)
@@ -538,7 +533,7 @@ namespace BoxSocial.Internals
             }
             query.AddCondition("application_id", Id);
 
-            db.UpdateQuery(query, transaction);
+            db.Query(query);
 
             return this;
         }
@@ -618,12 +613,13 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public bool Install(Core core, Primitive viewer)
+        /*public bool Install(Core core, Primitive viewer)
         {
             return Install(core, viewer, true);
-        }
+        }*/
 
-        public bool Install(Core core, Primitive viewer, bool finaliseTransaction)
+        // bool finaliseTransaction
+        public bool Install(Core core, Primitive viewer)
         {
             if (!HasInstalled(viewer))
             {
@@ -640,7 +636,7 @@ namespace BoxSocial.Internals
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                    applicationId, viewer.Id, Mysql.Escape(viewer.Type), 0x1111), !finaliseTransaction) > 0)
+                    applicationId, viewer.Id, Mysql.Escape(viewer.Type), 0x1111)) > 0)
                 {
                     return true;
                 }
@@ -865,26 +861,29 @@ namespace BoxSocial.Internals
 
         public void UpdateFeedAction(Action action, string title, string message)
         {
-            if (title.Length > 63)
+            if (action != null)
             {
-                title = title.Substring(0, 63);
+                if (title.Length > 63)
+                {
+                    title = title.Substring(0, 63);
+                }
+
+                if (message.Length > 511)
+                {
+                    message = message.Substring(0, 511);
+                }
+
+                UpdateQuery uquery = new UpdateQuery("actions");
+                uquery.AddField("action_title", title);
+                uquery.AddField("action_body", message);
+                uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+                uquery.AddCondition("action_application", applicationId);
+                uquery.AddCondition("action_primitive_id", action.OwnerId);
+                uquery.AddCondition("action_primitive_type", "USER");
+                uquery.AddCondition("action_id", action.ActionId);
+
+                db.Query(uquery);
             }
-
-            if (message.Length > 511)
-            {
-                message = message.Substring(0, 511);
-            }
-
-            UpdateQuery uquery = new UpdateQuery("actions");
-            uquery.AddField("action_title", title);
-            uquery.AddField("action_body", message);
-            uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
-            uquery.AddCondition("action_application", applicationId);
-            uquery.AddCondition("action_primitive_id", action.OwnerId);
-            uquery.AddCondition("action_primitive_type", "USER");
-            uquery.AddCondition("action_id", action.ActionId);
-
-            db.UpdateQuery(uquery);
         }
 
         /// <summary>
@@ -898,6 +897,8 @@ namespace BoxSocial.Internals
             query.AddFields(Action.FEED_FIELDS);
             query.AddSort(SortOrder.Descending, "at.action_time_ut");
             query.AddCondition("at.action_application", Id);
+            query.AddCondition("at.action_primitive_id", owner.Id);
+            query.AddCondition("at.action_primitive_type", owner.Type);
             query.LimitCount = 1;
 
             DataTable feedTable = db.Query(query);
@@ -917,7 +918,7 @@ namespace BoxSocial.Internals
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
-            Member Creator = new Member(core.db, page.AnApplication.CreatorId, true);
+            Member Creator = new Member(core, page.AnApplication.CreatorId, true);
 
             core.template.ParseVariables("APPLICATION_NAME", HttpUtility.HtmlEncode(page.AnApplication.Title));
             core.template.ParseVariables("U_APPLICATION", HttpUtility.HtmlEncode(page.AnApplication.Uri));

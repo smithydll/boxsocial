@@ -108,12 +108,12 @@ namespace BoxSocial.IO
             return this.UpdateQuery(sqlquery, false);
         }
 
-        public long UpdateQuery(Query query)
+        private long UpdateQuery(Query query)
         {
             return UpdateQuery(query.ToString());
         }
 
-        public long UpdateQuery(Query query, bool startTransaction)
+        private long UpdateQuery(Query query, bool startTransaction)
         {
             return UpdateQuery(query.ToString(), startTransaction);
         }
@@ -123,7 +123,7 @@ namespace BoxSocial.IO
         /// </summary>
         /// <param name="sqlquery"></param>
         /// <returns></returns>
-        public long UpdateQuery(string sqlquery, bool startTransaction)
+        private long UpdateQuery(string sqlquery, bool startTransaction)
         {
             int rowsAffected = 0;
             queryCount++;
@@ -143,6 +143,7 @@ namespace BoxSocial.IO
             try
             {
                 sqlCommand.CommandText = sqlquery;
+                QueryList += sqlConnection.State.ToString() + "\n\n";
                 rowsAffected = sqlCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -155,20 +156,34 @@ namespace BoxSocial.IO
                     }
                     else
                     {
-                        throw new System.Exception(ex.ToString());
+                        throw new System.Exception(sqlquery + "\n\n" + ex.ToString());
                     }
                 }
-                catch (MySql.Data.MySqlClient.MySqlException me)
+                catch (MySql.Data.MySqlClient.MySqlException)
                 {
                     return TRANSACTION_ROLLBACK_FAIL; // failed rollback
+                }
+                finally
+                {
                 }
                 return TRANSACTION_ROLLBACK; // rollback
             }
 
             if (inTransaction && !startTransaction)
             {
-                sqlTransaction.Commit();
-                inTransaction = false;
+                try
+                {
+                    sqlTransaction.Commit();
+                }
+                catch (MySql.Data.MySqlClient.MySqlException)
+                {
+                }
+                finally
+                {
+                    sqlTransaction.Dispose();
+                    inTransaction = false;
+                    sqlTransaction = null;
+                }
             }
 
             if (sqlquery.StartsWith("INSERT INTO"))
@@ -181,7 +196,7 @@ namespace BoxSocial.IO
             }
         }
 
-        private void BeginTransaction()
+        public void BeginTransaction()
         {
             if (!inTransaction)
             {
@@ -190,17 +205,32 @@ namespace BoxSocial.IO
             }
         }
 
-        private bool ComittTransaction()
+        public bool CommitTransaction()
         {
-            inTransaction = false;
-            try
+            if (inTransaction)
             {
-                sqlTransaction.Commit();
-                return true;
+                inTransaction = false;
+                try
+                {
+                    sqlTransaction.Commit();
+                    return true;
+                }
+                catch
+                {
+                    try
+                    {
+                        RollBackTransaction();
+                    }
+                    catch (MySql.Data.MySqlClient.MySqlException)
+                    {
+                        // rollback failed
+                    }
+                    return false;
+                }
             }
-            catch
+            else
             {
-                return false;
+                return true;
             }
         }
 
@@ -211,6 +241,7 @@ namespace BoxSocial.IO
 
         public void CloseConnection()
         {
+            CommitTransaction();
             sqlConnection.Close();
         }
 
@@ -244,7 +275,7 @@ namespace BoxSocial.IO
             return UpdateQuery(query.ToString());
         }
 
-        public override long Query(InsertQuery query, bool transaction)
+        /*public override long Query(InsertQuery query, bool transaction)
         {
             return UpdateQuery(query.ToString(), transaction);
         }
@@ -257,7 +288,7 @@ namespace BoxSocial.IO
         public override long Query(DeleteQuery query, bool transaction)
         {
             return UpdateQuery(query.ToString(), transaction);
-        }
+        }*/
 
         public override DataTable Query(string query)
         {

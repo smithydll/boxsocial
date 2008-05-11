@@ -136,6 +136,9 @@
   <data name="todayupcommingevents" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\todayupcommingevents.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="user_event_notification" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\user_event_notification.eml;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="viewcalendarday" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewcalendarday.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

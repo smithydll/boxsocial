@@ -181,7 +181,7 @@ namespace BoxSocial.FrontEnd
                     }
                     catch (InvalidApplicationException)
                     {
-                        Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
+                        Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
                         return;
                     }
 
@@ -229,7 +229,7 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x02)");
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidApplicationException)
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x03)");
                 return;
             }
 
@@ -256,7 +256,7 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidItemException)
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
             }
 
             try
@@ -283,9 +283,13 @@ namespace BoxSocial.FrontEnd
             {
                 Ajax.ShowMessage(isAjax, "commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
             }
-            catch
+            catch (InvalidCommentException)
             {
-                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid.");
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x05)");
+            }
+            catch (Exception ex)
+            {
+                Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x06) " + ex.ToString());
             }
 
             if (Request.Form["ajax"] == "true")

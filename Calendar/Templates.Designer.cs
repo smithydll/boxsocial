@@ -177,6 +177,13 @@ namespace BoxSocial.Applications.Calendar {
             }
         }
         
+        internal static byte[] user_event_notification {
+            get {
+                object obj = ResourceManager.GetObject("user_event_notification", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///	&lt;h2&gt;{CURRENT_DAY} {CURRENT_MONTH} {CURRENT_YEAR}&lt;/h2&gt;

@@ -16,10 +16,39 @@
 	<!-- IF DESCRIPTION -->
 	<p>{DESCRIPTION}</p>
 	<!-- ENDIF -->
+<!-- IF INVITEES -->
+<div id="profile-friends-pane" class="pane">
+  <h3>Attendies ({ATTENDEES})</h3>
+  	<!-- IF ATTENDEES -->
+  <!--p><a href="{U_ATTENDEES}">View All</a></p-->
+	<ul id="profile-friends">
+	<!-- BEGIN attendee_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{attendee_list.U_PROFILE}">
+				<!-- IF attendee_list.ICON -->
+				<img src="{attendee_list.ICON}" alt="{attendee_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{attendee_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{attendee_list.U_PROFILE}">{attendee_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END member_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+	<p>
+    There {L_IS_ARE} {ATTENDEES} {L_ATTENDEES}</a> people attending this event.</p>
+	<!-- ELSE -->
+	<p>There are no people attending this event.</p>
+	<!-- ENDIF -->
+</div>
 <div id="comments" class="comment-pane">
   <!-- INCLUDE pane.comments.html -->
 </div>
 <!-- IF PAGINATION -->
 <p>{PAGINATION}</p>
+<!-- ENDIF -->
 <!-- ENDIF -->
 <!-- INCLUDE page_footer.html -->

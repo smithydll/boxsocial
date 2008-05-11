@@ -160,7 +160,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_seen", false);
             iQuery.AddField("notification_application", applicationId);
 
-            long notificationId = Core.DB.UpdateQuery(iQuery);
+            long notificationId = Core.DB.Query(iQuery);
 
             return new Notification(Core.DB, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
         }

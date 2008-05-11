@@ -41,11 +41,12 @@ namespace BoxSocial.Applications.Calendar
      * TODO: SQL
      * ALTER TABLE `zinzam0_zinzam`.`event_invites` MODIFY COLUMN `event_id` BIGINT(20) NOT NULL,
  DROP PRIMARY KEY;
+     * ALTER TABLE `zinzam0_zinzam`.`events` CHANGE COLUMN `event_attendies` `event_attendees` BIGINT(20) NOT NULL DEFAULT 0;
      */
 
     public class Event : Item, ICommentableItem
     {
-        public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendies, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
+        public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
         private Mysql db;
 
@@ -53,7 +54,7 @@ namespace BoxSocial.Applications.Calendar
         private string subject;
         private string description;
         private long views;
-        private long attendies;
+        private long attendees;
         private ushort permissions;
         private Access eventAccess;
         private long comments;
@@ -99,11 +100,11 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public long Attendies
+        public long Attendees
         {
             get
             {
-                return attendies;
+                return attendees;
             }
         }
 
@@ -136,6 +137,14 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return userId;
+            }
+        }
+
+        public Member Owner
+        {
+            get
+            {
+                return (Member)owner;
             }
         }
 
@@ -224,7 +233,7 @@ namespace BoxSocial.Applications.Calendar
                 description = (string)eventRow["event_description"];
             }
             views = (long)eventRow["event_views"];
-            attendies = (long)eventRow["event_attendies"];
+            attendees = (long)eventRow["event_attendees"];
             permissions = (ushort)eventRow["event_access"];
             comments = (long)eventRow["event_comments"];
             // ownerId
@@ -236,12 +245,12 @@ namespace BoxSocial.Applications.Calendar
             // category
             location = (string)eventRow["event_location"];
 
-            eventAccess = new Access(db, permissions, owner);
-
             if (owner == null)
             {
                 owner = new Member(db, userId);
             }
+
+            eventAccess = new Access(db, permissions, owner);
         }
 
         public static Event Create(Mysql db, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
@@ -309,6 +318,12 @@ namespace BoxSocial.Applications.Calendar
 
                     long invitationId = db.Query(iQuery);
 
+                    UpdateQuery uQuery = new UpdateQuery("events");
+                    uQuery.AddField("event_invitees", new QueryOperation("event_invitees", QueryOperations.Addition, 1));
+                    uQuery.AddCondition("event_id", EventId);
+
+                    db.Query(uQuery);
+
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
                     emailTemplate.ParseVariables("FROM_NAME", user.DisplayName);
@@ -325,6 +340,63 @@ namespace BoxSocial.Applications.Calendar
                 else
                 {
                     throw new Exception();
+                }
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+        public void Invite(Core core, List<Member> invitees)
+        {
+            core.LoadUserProfile(userId);
+            Member user = core.UserProfiles[userId];
+            // only the person who created the event can invite people to it
+            if (core.LoggedInMemberId == userId)
+            {
+                long friends = 0;
+                foreach (Member invitee in invitees)
+                {
+                    // we can only invite people friends with us to an event
+                    if (invitee.IsFriend(user))
+                    {
+                        friends++;
+
+                        InsertQuery iQuery = new InsertQuery("event_invites");
+                        iQuery.AddField("event_id", EventId);
+                        iQuery.AddField("item_id", invitee.Id);
+                        iQuery.AddField("item_type", invitee.Type);
+                        iQuery.AddField("inviter_id", userId);
+                        iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
+                        iQuery.AddField("invite_accepted", false);
+                        iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
+
+                        long invitationId = db.Query(iQuery);
+
+                        Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+
+                        emailTemplate.ParseVariables("FROM_NAME", user.DisplayName);
+                        emailTemplate.ParseVariables("FROM_EMAIL", user.AlternateEmail);
+                        emailTemplate.ParseVariables("FROM_NAMES", user.DisplayNameOwnership);
+                        emailTemplate.ParseVariables("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
+                        emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
+                        emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
+
+                        AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
+
+                    }
+                    else
+                    {
+                        // ignore
+                    }
+
+                    UpdateQuery uQuery = new UpdateQuery("events");
+                    uQuery.AddField("event_invitees", new QueryOperation("event_invitees", QueryOperations.Addition, friends));
+                    uQuery.AddCondition("event_id", EventId);
+
+                    db.Query(uQuery);
                 }
             }
             else
@@ -379,7 +451,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public List<long> GetAttendies()
+        public List<long> GetAttendees()
         {
             List<long> ids = new List<long>();
 
@@ -463,6 +535,39 @@ namespace BoxSocial.Applications.Calendar
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
                 Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
+
+                List<long> attendees = calendarEvent.GetAttendees();
+                core.LoadUserProfiles(attendees);
+
+                page.template.ParseVariables("ATTENDEES", HttpUtility.HtmlEncode(calendarEvent.Attendees.ToString()));
+                page.template.ParseVariables("INVITEES", HttpUtility.HtmlEncode(calendarEvent.Invitees.ToString()));
+                if (attendees.Count > 1)
+                {
+                    page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode("is"));
+                    page.template.ParseVariables("L_ATTENDEES", HttpUtility.HtmlEncode("attendees"));
+                }
+                else
+                {
+                    page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode("are"));
+                    page.template.ParseVariables("L_ATTENDEES", HttpUtility.HtmlEncode("attendee"));
+                }
+
+                int i = 0;
+                foreach (long attendeeId in attendees)
+                {
+                    i++;
+                    if (i > 4)
+                    {
+                        break;
+                    }
+                    VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
+                    Member attendee = core.UserProfiles[attendeeId];
+
+                    attendeesVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(attendee.Uri));
+                    attendeesVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(attendee.DisplayName));
+                    attendeesVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(attendee.UserTile));
+                    attendeesVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(attendee.UserTile));
+                }
             }
             catch
             {

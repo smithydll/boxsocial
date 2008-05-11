@@ -138,7 +138,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    Member newUser = new Member(db, userRow, true, true);
+                    Member newUser = new Member(this, userRow, true, true);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                 }
@@ -153,7 +153,7 @@ namespace BoxSocial.Internals
         {
             if (!userProfileCache.ContainsKey(userId))
             {
-                Member newUser = new Member(db, userId, true);
+                Member newUser = new Member(this, userId, true);
                 userProfileCache.Add(newUser.Id, newUser);
                 userNameCache.Add(newUser.UserName, newUser.Id);
             }
@@ -185,7 +185,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    Member newUser = new Member(db, userRow, true, true);
+                    Member newUser = new Member(this, userRow, true, true);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                     userIds.Add(newUser.Id);
@@ -202,7 +202,7 @@ namespace BoxSocial.Internals
                 return userNameCache[username];
             }
 
-            Member newUser = new Member(db, username, true);
+            Member newUser = new Member(this, username, true);
             if (!userProfileCache.ContainsKey(newUser.Id))
             {
                 userProfileCache.Add(newUser.Id, newUser);
@@ -216,7 +216,7 @@ namespace BoxSocial.Internals
         /// </summary>
         internal void LoadApplicationEntry(string assemblyName)
         {
-            applicationEntryCache.Add(assemblyName, new ApplicationEntry(db, session.LoggedInMember, assemblyName));
+            applicationEntryCache.Add(assemblyName, new ApplicationEntry(this, session.LoggedInMember, assemblyName));
         }
 
         public Core(Mysql db, Template template)

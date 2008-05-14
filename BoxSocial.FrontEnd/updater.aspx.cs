@@ -45,7 +45,7 @@ namespace BoxSocial.FrontEnd
 
                 foreach (DataRow dr in applications.Rows)
                 {
-                    ApplicationEntry ae = new ApplicationEntry(core.db, dr);
+                    ApplicationEntry ae = new ApplicationEntry(core, dr);
 
                     ae.UpdateInstall(core, core.UserProfiles[userId]);
 
@@ -53,24 +53,24 @@ namespace BoxSocial.FrontEnd
                 }
 
                 // Install a couple of applications
-                    ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                     profileAe.Install(core, core.UserProfiles[userId]);
 
-                
-                    ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
-                    galleryAe.Install(core, core.UserProfiles[userId]);
-                
 
-                    ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
+                    ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
+                    galleryAe.Install(core, core.UserProfiles[userId]);
+
+
+                    ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
                     guestbookAe.Install(core, core.UserProfiles[userId]);
-                
-                    ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
+
+                    ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
                     groupsAe.Install(core, core.UserProfiles[userId]);
-                
-                    ApplicationEntry networksAe = new ApplicationEntry(db, null, "Networks");
+
+                    ApplicationEntry networksAe = new ApplicationEntry(core, null, "Networks");
                     networksAe.Install(core, core.UserProfiles[userId]);
-                
-                    ApplicationEntry calendarAe = new ApplicationEntry(db, null, "Calendar");
+
+                    ApplicationEntry calendarAe = new ApplicationEntry(core, null, "Calendar");
                     calendarAe.Install(core, core.UserProfiles[userId]);
                 
             }

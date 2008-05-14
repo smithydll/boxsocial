@@ -58,7 +58,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in feedTable.Rows)
             {
-                feedItems.Add(new StatusMessage(core.db, owner, dr));
+                feedItems.Add(new StatusMessage(core, owner, dr));
             }
 
             return feedItems;
@@ -100,7 +100,7 @@ namespace BoxSocial.Internals
                 core.LoadUserProfiles(friendIds);
                 foreach (DataRow dr in feedTable.Rows)
                 {
-                    feedItems.Add(new StatusMessage(core.db, core.UserProfiles[(long)dr["user_id"]], dr));
+                    feedItems.Add(new StatusMessage(core, core.UserProfiles[(long)dr["user_id"]], dr));
                 }
             }
 
@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
 
             if (feedTable.Rows.Count == 1)
             {
-                return new StatusMessage(core.db, owner, feedTable.Rows[0]);
+                return new StatusMessage(core, owner, feedTable.Rows[0]);
             }
             else
             {
@@ -132,7 +132,7 @@ namespace BoxSocial.Internals
             ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
             ae.PublishToFeed(core.session.LoggedInMember, message, "");
 
-            return StatusMessage.Create(core.db, core.session.LoggedInMember, message);
+            return StatusMessage.Create(core, core.session.LoggedInMember, message);
         }
 
         /*

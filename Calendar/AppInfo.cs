@@ -139,10 +139,10 @@ namespace BoxSocial.Applications.Calendar
         private void eventCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            Event calendarEvent = new Event(core.db, null, e.ItemId);
+            Event calendarEvent = new Event(core, null, e.ItemId);
             Member owner = (Member)calendarEvent.Owner;
 
-            ApplicationEntry ae = new ApplicationEntry(core.db, owner, "Calendar");
+            ApplicationEntry ae = new ApplicationEntry(core, owner, "Calendar");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_event_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(calendarEvent));
@@ -160,7 +160,7 @@ namespace BoxSocial.Applications.Calendar
         /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool eventCanPostComment(long itemId, Member member)
         {
-            Event calendarEvent = new Event(core.db, null, itemId);
+            Event calendarEvent = new Event(core, null, itemId);
             calendarEvent.EventAccess.SetViewer(member);
 
             if (calendarEvent.EventAccess.CanComment || calendarEvent.IsInvitee(member))
@@ -181,7 +181,7 @@ namespace BoxSocial.Applications.Calendar
         /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool eventCanDeleteComment(long itemId, Member member)
         {
-            Event calendarEvent = new Event(core.db, null, itemId);
+            Event calendarEvent = new Event(core, null, itemId);
 
             if (calendarEvent.UserId == member.UserId)
             {
@@ -201,7 +201,7 @@ namespace BoxSocial.Applications.Calendar
         private void eventAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private void showCalendar(Core core, object sender)

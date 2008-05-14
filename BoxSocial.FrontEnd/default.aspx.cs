@@ -41,7 +41,7 @@ namespace BoxSocial.FrontEnd
                 template.SetTemplate("today.html");
                 this.Signature = PageSignature.today;
 
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(db, session.LoggedInMember, "Calendar"));
+                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(core, session.LoggedInMember, "Calendar"));
 
                 template.ParseVariables("DATE_STRING", tz.Now.ToLongDateString());
 
@@ -127,7 +127,7 @@ namespace BoxSocial.FrontEnd
 
                 for (int i = 0; i < newUsers.Rows.Count; i++)
                 {
-                    Member newMember = new Member(db, newUsers.Rows[i], true, true);
+                    Member newMember = new Member(core, newUsers.Rows[i], true, true);
 
                     VariableCollection newPointsVariableCollection = template.CreateChild("new_points");
 

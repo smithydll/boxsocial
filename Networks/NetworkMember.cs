@@ -79,10 +79,8 @@ namespace BoxSocial.Networks
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
-        public NetworkMember(Mysql db, int networkId, int memberId)
+        public NetworkMember(Core core, int networkId, int memberId) : base(core)
         {
-            this.db = db;
-
             SelectQuery query = new SelectQuery("network_members nm");
             query.AddFields(NetworkMember.USER_NETWORK_FIELDS, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_info ui", "nm.user_id", "ui.user_id");
@@ -110,24 +108,23 @@ namespace BoxSocial.Networks
             }
         }
 
-        public NetworkMember(Mysql db, DataRow memberRow)
-            : this (db, memberRow, false, false, false)
+        public NetworkMember(Core core, DataRow memberRow)
+            : this (core, memberRow, false, false, false)
         {
         }
 
-        public NetworkMember(Mysql db, DataRow memberRow, bool containsUserInfo)
-            : this(db, memberRow, containsUserInfo, false, false)
+        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo)
+            : this(core, memberRow, containsUserInfo, false, false)
         {
         }
 
-        public NetworkMember(Mysql db, DataRow memberRow, bool containsUserInfo, bool containsUserProfile)
-            : this(db, memberRow, containsUserInfo, containsUserProfile, false)
+        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile)
+            : this(core, memberRow, containsUserInfo, containsUserProfile, false)
         {
         }
 
-        public NetworkMember(Mysql db, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon)
+        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon) : base(core)
         {
-            this.db = db;
             loadMemberInfo(memberRow);
 
             if (containsUserInfo)
@@ -146,7 +143,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public NetworkMember(Mysql db, Network theNetwork, Member member)
+        public NetworkMember(Core core, Network theNetwork, Member member) : base(core)
         {
             DataTable memberTable = db.Query(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
                 member.UserId, theNetwork.NetworkId, USER_NETWORK_FIELDS));
@@ -178,16 +175,16 @@ namespace BoxSocial.Networks
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        public static Dictionary<int, NetworkMember> GetUserNetworks(Mysql db, Member member)
+        public static Dictionary<int, NetworkMember> GetUserNetworks(Core core, Member member)
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 
-            DataTable userNetworks = db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
+            DataTable userNetworks = core.db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
                 member.UserId, NetworkMember.USER_NETWORK_FIELDS));
 
             foreach (DataRow memberRow in userNetworks.Rows)
             {
-                networks.Add((int)memberRow["network_id"], new NetworkMember(db, memberRow));
+                networks.Add((int)memberRow["network_id"], new NetworkMember(core, memberRow));
             }
 
             return networks;

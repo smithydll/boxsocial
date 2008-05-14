@@ -214,7 +214,7 @@ ENGINE = InnoDB;
             query.AddCondition("tag_id", tag.TagId);
             query.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (core.db.UpdateQuery(query) == 1)
+            if (core.db.Query(query) == 1)
             {
                 tag.tagApproved = true; // we can update private members
                 NotifyTag(core, tag);
@@ -238,7 +238,7 @@ ENGINE = InnoDB;
             query.AddCondition("tag_id", tagId);
             query.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (core.db.UpdateQuery(query) == 1)
+            if (core.db.Query(query) == 1)
             {
                 return true;
             }
@@ -274,7 +274,7 @@ ENGINE = InnoDB;
                 query.AddField("tag_approved", true);
             }
 
-            long tagId = core.db.UpdateQuery(query);
+            long tagId = core.db.Query(query);
 
             UserTag tag = new UserTag(core, galleryItem, tagId);
             NotifyTag(core, tag);

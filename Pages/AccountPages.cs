@@ -657,11 +657,12 @@ namespace BoxSocial.Applications.Pages
 
             if (listTable.Rows.Count == 1)
             {
+                db.BeginTransaction();
                 db.UpdateQuery(string.Format("DELETE FROM list_items WHERE list_id = {0}",
-                    listId), true);
+                    listId));
 
                 db.UpdateQuery(string.Format("DELETE FROM user_lists WHERE user_id = {0} AND list_id = {1}",
-                    loggedInMember.UserId, listId), false);
+                    loggedInMember.UserId, listId));
 
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
                 Display.ShowMessage("List Deleted", "You have deleted a list.");
@@ -725,20 +726,22 @@ namespace BoxSocial.Applications.Pages
                 if (listItemTextTable.Rows.Count == 1)
                 {
                     // already exists
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("INSERT INTO list_items (list_id, list_item_text_id) VALUES ({0}, {1})",
-                        listId, (long)listItemTextTable.Rows[0]["list_item_text_id"]), true);
+                        listId, (long)listItemTextTable.Rows[0]["list_item_text_id"]));
                 }
                 else // insert new
                 {
+                    db.BeginTransaction();
                     long listItemTextId = db.UpdateQuery(string.Format("INSERT INTO list_items_text (list_item_text, list_item_text_normalised) VALUES ('{0}', '{1}');",
-                        Mysql.Escape(text), Mysql.Escape(slug)), true);
+                        Mysql.Escape(text), Mysql.Escape(slug)));
 
                     db.UpdateQuery(string.Format("INSERT INTO list_items (list_id, list_item_text_id) VALUES ({0}, {1})",
-                        listId, listItemTextId), true);
+                        listId, listItemTextId));
                 }
 
                 db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items + 1 WHERE user_id = {0} AND list_id = {1}",
-                    loggedInMember.UserId, listId), false);
+                    loggedInMember.UserId, listId));
 
                 ApplicationEntry ae = new ApplicationEntry(core);
                 
@@ -798,11 +801,12 @@ namespace BoxSocial.Applications.Pages
             {
                 listId = (long)listItemTable.Rows[0]["list_id"];
 
+                db.BeginTransaction();
                 db.UpdateQuery(string.Format("DELETE FROM list_items WHERE list_item_id = {0} AND list_id = {1}",
-                    itemId, listId), true);
+                    itemId, listId));
 
                 db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items - 1 WHERE user_id = {0} AND list_id = {1}",
-                        loggedInMember.UserId, listId), false);
+                        loggedInMember.UserId, listId));
 
                 SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
                 Display.ShowMessage("List Updated", "You have successfully removed an item from your list.");

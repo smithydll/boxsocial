@@ -213,7 +213,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public Network(Mysql db, long networkId)
+        public Network(Core core, long networkId) : base(core)
         {
             this.db = db;
 
@@ -230,7 +230,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public Network(Mysql db, string network)
+        public Network(Core core, string network) : base(core)
         {
             this.db = db;
 
@@ -247,10 +247,8 @@ namespace BoxSocial.Networks
             }
         }
 
-        public Network(Mysql db, DataRow networkRow)
+        public Network(Core core, DataRow networkRow) : base(core)
         {
-            this.db = db;
-
             loadNetworkInfo(networkRow);
         }
 
@@ -297,13 +295,13 @@ namespace BoxSocial.Networks
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                members.Add(new NetworkMember(db, dr, true, true, true));
+                members.Add(new NetworkMember(core, dr, true, true, true));
             }
 
             return members;
         }
 
-        public static List<Network> GetNetworks(Mysql db, NetworkTypes type)
+        public static List<Network> GetNetworks(Core core, NetworkTypes type)
         {
             List<Network> networks = new List<Network>();
 
@@ -327,12 +325,12 @@ namespace BoxSocial.Networks
                     break;
             }
 
-            DataTable networksTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE ni.network_type = '{0}'",
+            DataTable networksTable = core.db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE ni.network_type = '{0}'",
                 Mysql.Escape(typeString), NETWORK_INFO_FIELDS));
 
             foreach (DataRow dr in networksTable.Rows)
             {
-                networks.Add(new Network(db, dr));
+                networks.Add(new Network(core, dr));
             }
 
             return networks;
@@ -376,10 +374,10 @@ namespace BoxSocial.Networks
         public bool Activate(TPage page, Member member, string activateKey)
         {
             long rowsChanged = db.UpdateQuery(string.Format("UPDATE network_members SET member_active = 1 WHERE network_id = {0} AND user_id = {1} AND member_activate_code = '{2}' AND member_active = 0;",
-                networkId, member.UserId, activateKey), false);
+                networkId, member.UserId, activateKey));
 
             db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members + {1} WHERE network_id = {0}",
-                networkId, rowsChanged), false);
+                networkId, rowsChanged));
 
             if (rowsChanged == 1)
             {
@@ -430,19 +428,20 @@ namespace BoxSocial.Networks
             int isActive = (requireConfirmation) ? 0 : 1;
 
             // delete any existing unactivated e-mails for this user in this network, re-send the invitation
+            db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
-                networkId, member.UserId), true);
+                networkId, member.UserId));
 
             if (!requireConfirmation)
             {
                 db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members + 1 WHERE network_id = {0}",
-                    networkId), true);
+                    networkId));
             }
 
             db.UpdateQuery(string.Format("INSERT INTO network_members (network_id, user_id, member_join_date_ut, member_join_ip, member_email, member_active, member_activate_code) VALUES ({0}, {1}, UNIX_TIMESTAMP(), '{2}', '{3}', {4}, '{5}');",
-                networkId, member.UserId, Mysql.Escape(core.session.IPAddress.ToString()), Mysql.Escape(networkEmail), isActive, Mysql.Escape(activateKey)), false);
+                networkId, member.UserId, Mysql.Escape(core.session.IPAddress.ToString()), Mysql.Escape(networkEmail), isActive, Mysql.Escape(activateKey)));
 
-            NetworkMember newMember = new NetworkMember(db, this, member);
+            NetworkMember newMember = new NetworkMember(core, this, member);
             string activateUri = string.Format("http://zinzam.com/network/{0}?mode=activate&id={1}&key={2}",
                 networkNetwork, member.UserId, activateKey);
 

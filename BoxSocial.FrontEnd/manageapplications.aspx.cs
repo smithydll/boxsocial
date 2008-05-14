@@ -41,10 +41,10 @@ namespace BoxSocial.FrontEnd
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
                     dr["user_id"] = dr["item_id"];
-                    Member member = new Member(core.db, dr, false);
+                    Member member = new Member(core, dr, false);
                     members.Add(member);
 
-                    ApplicationEntry ae = new ApplicationEntry(core.db, member, dr);
+                    ApplicationEntry ae = new ApplicationEntry(core, member, dr);
 
                     ae.UpdateInstall(core, member);
 
@@ -92,7 +92,7 @@ namespace BoxSocial.FrontEnd
 
                             if (applicationTable.Rows.Count == 1)
                             {
-                                ApplicationEntry updateApplication = new ApplicationEntry(core.db, applicationTable.Rows[0]);
+                                ApplicationEntry updateApplication = new ApplicationEntry(core, applicationTable.Rows[0]);
                                 applicationId = updateApplication.ApplicationId;
 
                                 if (updateApplication.CreatorId == core.LoggedInMemberId)
@@ -117,7 +117,8 @@ namespace BoxSocial.FrontEnd
                                     query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
                                     query.AddCondition("application_assembly_name", assemblyName);
 
-                                    db.UpdateQuery(query, true);
+                                    db.BeginTransaction();
+                                    db.Query(query);
                                 }
                                 else
                                 {
@@ -128,13 +129,13 @@ namespace BoxSocial.FrontEnd
                             else
                             {
                                 applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
-                                    Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings), true);
+                                    Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));
 
                                 try
                                 {
-                                    ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
+                                    ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                                     db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        profileAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111), true);
+                                        profileAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
                                 }
                                 catch
                                 {
@@ -142,9 +143,9 @@ namespace BoxSocial.FrontEnd
 
                                 try
                                 {
-                                    ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
+                                    ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
                                     db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        guestbookAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111), true);
+                                        guestbookAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
                                 }
                                 catch
                                 {
@@ -160,10 +161,10 @@ namespace BoxSocial.FrontEnd
                                     foreach (ApplicationSlug slug in aii.ApplicationSlugs)
                                     {
                                         if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
-                                            (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId), true) != 1)
+                                            (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId)) != 1)
                                         {
                                             db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
-                                                Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw), true);
+                                                Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));
                                         }
                                     }
                                 }
@@ -173,10 +174,10 @@ namespace BoxSocial.FrontEnd
                                     foreach (ApplicationModule module in aii.ApplicationModules)
                                     {
                                         if (db.UpdateQuery(string.Format(@"UPDATE account_modules SET module_updated_ut = {0} WHERE module_module = '{1}' AND application_id = {2};",
-                                            updatedRaw, Mysql.Escape(module.Slug), applicationId), true) != 1)
+                                            updatedRaw, Mysql.Escape(module.Slug), applicationId)) != 1)
                                         {
                                             db.UpdateQuery(string.Format(@"INSERT INTO account_modules (module_module, application_id, module_updated_ut) VALUES ('{0}', {1}, {2});",
-                                                Mysql.Escape(module.Slug), applicationId, updatedRaw), true);
+                                                Mysql.Escape(module.Slug), applicationId, updatedRaw));
                                         }
                                     }
                                 }
@@ -186,22 +187,22 @@ namespace BoxSocial.FrontEnd
                                     foreach (ApplicationCommentType ct in aii.ApplicationCommentTypes)
                                     {
                                         if (db.UpdateQuery(string.Format(@"UPDATE comment_types SET type_updated_ut = {0} WHERE type_type = '{1}' AND application_id = {2};",
-                                            updatedRaw, Mysql.Escape(ct.Type), applicationId), true) != 1)
+                                            updatedRaw, Mysql.Escape(ct.Type), applicationId)) != 1)
                                         {
                                             db.UpdateQuery(string.Format(@"INSERT INTO comment_types (type_type, application_id, type_updated_ut) VALUES ('{0}', {1}, {2});",
-                                                Mysql.Escape(ct.Type), applicationId, updatedRaw), true);
+                                                Mysql.Escape(ct.Type), applicationId, updatedRaw));
                                         }
                                     }
                                 }
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
-                                    applicationId, updatedRaw), true);
+                                    applicationId, updatedRaw));
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM account_modules WHERE application_id = {0} AND module_updated_ut <> {1};",
-                                    applicationId, updatedRaw), true);
+                                    applicationId, updatedRaw));
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM comment_types WHERE application_id = {0} AND type_updated_ut <> {1};",
-                                    applicationId, updatedRaw), false);
+                                    applicationId, updatedRaw));
                             }
                             else
                             {

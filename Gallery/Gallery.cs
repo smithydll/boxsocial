@@ -303,9 +303,8 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
-        public Gallery(Mysql db, Member owner)
+        public Gallery(Core core, Member owner)
         {
-            this.db = db;
             this.owner = owner;
 
             galleryId = 0;
@@ -318,9 +317,8 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
-        protected Gallery(Mysql db, Primitive owner)
+        protected Gallery(Core core, Primitive owner)
         {
-            this.db = db;
             this.owner = owner;
 
             galleryId = 0;
@@ -334,9 +332,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryId">Gallery Id</param>
-        protected Gallery(Mysql db, Primitive owner, long galleryId)
+        protected Gallery(Core core, Primitive owner, long galleryId)
         {
-            this.db = db;
             this.owner = owner;
 
             if (galleryId > 0)
@@ -367,9 +364,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="path">Gallery path</param>
-        protected Gallery(Mysql db, Primitive owner, string path)
+        protected Gallery(Core core, Primitive owner, string path)
         {
-            this.db = db;
             this.owner = owner;
 
             DataTable galleryTable = db.Query(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_parent_path = '{3}' AND ug.gallery_path = '{2}' AND ug.user_id = {0}",
@@ -392,9 +388,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of gallery</param>
         /// <param name="hasIcon">True if contains raw data for icon</param>
-        protected Gallery(Mysql db, Primitive owner, DataRow galleryRow, bool hasIcon)
+        protected Gallery(Core core, Primitive owner, DataRow galleryRow, bool hasIcon)
         {
-            this.db = db;
             this.owner = owner;
 
             loadGalleryInfo(galleryRow);
@@ -451,17 +446,17 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <returns>A list of sub-galleries</returns>
-        public abstract List<Gallery> GetGalleries(TPage page);
+        public abstract List<Gallery> GetGalleries(Core core);
 
         /// <summary>
         /// Returns raw data for a list of sub-galleries
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <returns>Raw data for a list of sub-galleries</returns>
-        protected DataRowCollection GetGalleryDataRows(TPage page)
+        protected DataRowCollection GetGalleryDataRows(Core core)
         {
-            long loggedIdUid = Member.GetMemberId(page.loggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(page.loggedInMember);
+            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             DataTable galleriesTable = db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
                 ((Member)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
@@ -581,7 +576,7 @@ namespace BoxSocial.Applications.Gallery
             }
 
             db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_title = '{2}', gallery_abstract = '{3}', gallery_path = '{4}', gallery_access = {5} WHERE user_id = {0} AND gallery_id = {1}",
-                member.UserId, galleryId, Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug), permissions), false);
+                member.UserId, galleryId, Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug), permissions));
         }
 
         /// <summary>
@@ -602,8 +597,9 @@ namespace BoxSocial.Applications.Gallery
                     string newPath2 = newPath + "/" + (string)galleriesTable.Rows[i]["gallery_path"];
                     updateParentPathChildren(oldPath2, newPath2);
 
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_parent_path = '{2}' WHERE user_id = {0} AND gallery_id = {1};",
-                        ((Member)owner).UserId, (long)galleriesTable.Rows[i]["gallery_id"], Mysql.Escape(newPath)), true);
+                        ((Member)owner).UserId, (long)galleriesTable.Rows[i]["gallery_id"], Mysql.Escape(newPath)));
                 }
             }
             else
@@ -622,7 +618,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="description">Gallery description</param>
         /// <param name="permissions">Gallery permission mask</param>
         /// <returns>An instance of the newly created gallery</returns>
-        protected static long create(TPage page, Gallery parent, string title, ref string slug, string description, ushort permissions)
+        protected static long create(Core core, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
             // ensure we have generated a valid slug
             slug = Gallery.GetSlugFromTitle(title, slug);
@@ -632,7 +628,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotValidException();
             }
 
-            if (!Gallery.CheckGallerySlugUnique(page.db, (Member)parent.owner, parent.FullPath, slug))
+            if (!Gallery.CheckGallerySlugUnique(core.db, (Member)parent.owner, parent.FullPath, slug))
             {
                 throw new GallerySlugNotUniqueException();
             }
@@ -643,11 +639,11 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_path", slug);
             iQuery.AddField("gallery_parent_path", parent.FullPath);
             iQuery.AddField("gallery_access", permissions);
-            iQuery.AddField("user_id", page.loggedInMember.UserId);
+            iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
             iQuery.AddField("gallery_bytes", 0);
 
-            long galleryId = page.db.Query(iQuery);
+            long galleryId = core.db.Query(iQuery);
 
             return galleryId;
         }
@@ -657,15 +653,15 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <param name="gallery">Gallery to delete</param>
-        public static void Delete(TPage page, Gallery gallery)
+        public static void Delete(Core core, Gallery gallery)
         {
-            long[] stuffDeleted = galleryDeleteChildren(page, gallery);
+            long[] stuffDeleted = galleryDeleteChildren(core, gallery);
             long itemsDeleted = stuffDeleted[0];
             long bytesDeleted = stuffDeleted[1];
 
             // comitt the transaction
-            page.db.UpdateQuery(string.Format("UPDATE user_info SET user_gallery_items = user_gallery_items - {1}, user_bytes = user_bytes - {2} WHERE user_id = {1}",
-                page.loggedInMember.UserId, itemsDeleted, bytesDeleted), false);
+            core.db.UpdateQuery(string.Format("UPDATE user_info SET user_gallery_items = user_gallery_items - {1}, user_bytes = user_bytes - {2} WHERE user_id = {1}",
+                core.session.LoggedInMember.UserId, itemsDeleted, bytesDeleted));
         }
 
         /// <summary>
@@ -676,33 +672,34 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>An array containing the number of gallery photos deleted
         /// (index 0), and the number of bytes consumed by said photos
         /// (index 1).</returns>
-        private static long[] galleryDeleteChildren(TPage page, Gallery gallery)
+        private static long[] galleryDeleteChildren(Core core, Gallery gallery)
         {
             long itemsDeleted = 0; // index 0
             long bytesDeleted = 0; // index 1
 
-            List<Gallery> galleries = gallery.GetGalleries(page);
+            List<Gallery> galleries = gallery.GetGalleries(core);
 
             foreach (Gallery galleryGallery in galleries)
             {
-                long[] stuffDeleted = galleryDeleteChildren(page, galleryGallery);
+                long[] stuffDeleted = galleryDeleteChildren(core, galleryGallery);
                 itemsDeleted += stuffDeleted[0];
                 bytesDeleted += stuffDeleted[1];
             }
 
-            object objectsDeleted = page.db.Query(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
-                    page.loggedInMember.UserId, Mysql.Escape(gallery.FullPath))).Rows[0]["bytes_deleted"];
+            object objectsDeleted = core.db.Query(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
+                    core.LoggedInMemberId, Mysql.Escape(gallery.FullPath))).Rows[0]["bytes_deleted"];
 
             if (!(objectsDeleted is DBNull))
             {
                 bytesDeleted += (long)(decimal)objectsDeleted;
             }
 
-            itemsDeleted += page.db.UpdateQuery(string.Format("DELETE FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}'",
-                page.loggedInMember.UserId, Mysql.Escape(gallery.FullPath)), true);
+            core.db.BeginTransaction();
+            itemsDeleted += core.db.UpdateQuery(string.Format("DELETE FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}'",
+                core.session.LoggedInMember.UserId, Mysql.Escape(gallery.FullPath)));
 
-            page.db.UpdateQuery(string.Format("DELETE FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
-                page.loggedInMember.UserId, gallery.GalleryId), true);
+            core.db.UpdateQuery(string.Format("DELETE FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
+                core.session.LoggedInMember.UserId, gallery.GalleryId));
             return new long[] { itemsDeleted, bytesDeleted };
         }
 
@@ -1108,7 +1105,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    gallery = new UserGallery(core.db, page.ProfileOwner, galleryPath);
+                    gallery = new UserGallery(core, page.ProfileOwner, galleryPath);
 
                     gallery.GalleryAccess.SetViewer(core.session.LoggedInMember);
 
@@ -1137,12 +1134,12 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                gallery = new UserGallery(core.db, page.ProfileOwner);
+                gallery = new UserGallery(core, page.ProfileOwner);
                 page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery"));
                 page.template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(0)));
             }
 
-            List<Gallery> galleries = gallery.GetGalleries(page);
+            List<Gallery> galleries = gallery.GetGalleries(core);
 
             page.template.ParseVariables("GALLERIES", HttpUtility.HtmlEncode(galleries.Count.ToString()));
 
@@ -1242,7 +1239,7 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    GroupGallery parent = new GroupGallery(core.db, page.ThisGroup);
+                    GroupGallery parent = new GroupGallery(core, page.ThisGroup);
 
                     string slug = HttpContext.Current.Request.Files["photo-file"].FileName;
 
@@ -1255,7 +1252,7 @@ namespace BoxSocial.Applications.Gallery
                             HttpContext.Current.Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        GroupGalleryItem.Create(page, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
+                        GroupGalleryItem.Create(core, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
                         page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.ThisGroup, slug)));
                         Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
@@ -1341,7 +1338,7 @@ namespace BoxSocial.Applications.Gallery
                     page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Gallery.BuildGalleryUpload(page.ThisGroup)));
                 }
 
-                GroupGallery gallery = new GroupGallery(core.db, page.ThisGroup);
+                GroupGallery gallery = new GroupGallery(core, page.ThisGroup);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
@@ -1416,7 +1413,7 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    NetworkGallery parent = new NetworkGallery(core.db, page.TheNetwork);
+                    NetworkGallery parent = new NetworkGallery(core, page.TheNetwork);
 
                     string slug = HttpContext.Current.Request.Files["photo-file"].FileName;
 
@@ -1429,7 +1426,7 @@ namespace BoxSocial.Applications.Gallery
                             HttpContext.Current.Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        NetworkGalleryItem.Create(page, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
+                        NetworkGalleryItem.Create(core, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
                         page.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(page.TheNetwork, slug)));
                         Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
@@ -1517,7 +1514,7 @@ namespace BoxSocial.Applications.Gallery
                     page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Gallery.BuildGalleryUpload(page.TheNetwork)));
                 }
 
-                NetworkGallery gallery = new NetworkGallery(core.db, page.TheNetwork);
+                NetworkGallery gallery = new NetworkGallery(core, page.TheNetwork);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 

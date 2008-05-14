@@ -79,8 +79,6 @@ ENGINE = InnoDB;
     {
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
-        private Mysql db;
-
         private long taskId;
         private string topic;
         private string description;
@@ -196,9 +194,8 @@ ENGINE = InnoDB;
             return tz.DateTimeFromMysql(completedTimeRaw);
         }
 
-        public Task(Mysql db, Primitive owner, long taskId)
+        public Task(Core core, Primitive owner, long taskId) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE tk.user_id = {1} AND tk.task_id = {2};",
@@ -214,9 +211,8 @@ ENGINE = InnoDB;
             }
         }
 
-        public Task(Mysql db, Primitive owner, DataRow taskRow)
+        public Task(Core core, Primitive owner, DataRow taskRow) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             loadTaskInfo(taskRow);
@@ -254,7 +250,7 @@ ENGINE = InnoDB;
             taskAccess = new Access(db, permissions, owner);
         }
 
-        public static Task Create(Mysql db, Member creator, Primitive owner, string topic, string description, long dueTimestamp, ushort permissions, TaskStatus status, byte percentComplete, TaskPriority priority)
+        public static Task Create(Core core, Member creator, Primitive owner, string topic, string description, long dueTimestamp, ushort permissions, TaskStatus status, byte percentComplete, TaskPriority priority)
         {
             InsertQuery query = new InsertQuery("tasks");
             query.AddField("user_id", creator.UserId);
@@ -272,9 +268,9 @@ ENGINE = InnoDB;
             query.AddField("task_priority", (byte)priority);
             query.AddField("task_time_completed_ut", 0);
 
-            long taskId = db.UpdateQuery(query);
+            long taskId = core.db.Query(query);
 
-            Task myTask = new Task(db, owner, taskId);
+            Task myTask = new Task(core, owner, taskId);
 
             if (Access.FriendsCanRead(myTask.Permissions))
             {
@@ -380,7 +376,7 @@ ENGINE = InnoDB;
 
             try
             {
-                Task calendarTask = new Task(core.db, owner, taskId);
+                Task calendarTask = new Task(core, owner, taskId);
 
                 calendarTask.TaskAccess.SetSessionViewer(core.session);
 

@@ -51,7 +51,7 @@ namespace BoxSocial.FrontEnd
 
             foreach (DataRow dr in applicationsTable.Rows)
             {
-                ApplicationEntry ae = new ApplicationEntry(db, dr);
+                ApplicationEntry ae = new ApplicationEntry(core, dr);
 
                 VariableCollection applicationVariableCollection = template.CreateChild("application_list");
 

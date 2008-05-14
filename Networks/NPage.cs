@@ -65,7 +65,7 @@ namespace BoxSocial.Networks
 
             try
             {
-                theNetwork = new Network(db, networkNetwork);
+                theNetwork = new Network(core, networkNetwork);
             }
             catch (InvalidNetworkException)
             {

@@ -140,7 +140,7 @@ namespace BoxSocial.Groups
             Member profileOwner = (Member)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegroups");
 
-            List<UserGroup> groups = UserGroup.GetUserGroups(e.core.db, profileOwner);
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);
             if (groups.Count > 0)
             {
                 template.ParseVariables("HAS_GROUPS", "TRUE");

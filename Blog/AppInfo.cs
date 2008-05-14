@@ -164,10 +164,10 @@ namespace BoxSocial.Applications.Blog
         private void blogCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            BlogEntry blogEntry = new BlogEntry(core.db, e.ItemId);
+            BlogEntry blogEntry = new BlogEntry(core, e.ItemId);
             Member owner = (Member)blogEntry.Owner;
 
-            ApplicationEntry ae = new ApplicationEntry(core.db, owner, "Blog");
+            ApplicationEntry ae = new ApplicationEntry(core, owner, "Blog");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_blog_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(blogEntry));
@@ -185,7 +185,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool blogCanPostComment(long itemId, Member member)
         {
-            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
+            BlogEntry blogEntry = new BlogEntry(core, itemId);
             blogEntry.BlogEntryAccess.SetViewer(member);
 
             if (blogEntry.BlogEntryAccess.CanComment)
@@ -206,7 +206,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool blogCanDeleteComment(long itemId, Member member)
         {
-            BlogEntry blogEntry = new BlogEntry(core.db, itemId);
+            BlogEntry blogEntry = new BlogEntry(core, itemId);
 
             if (blogEntry.OwnerId == member.UserId)
             {
@@ -226,7 +226,7 @@ namespace BoxSocial.Applications.Blog
         private void blogAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         /// <summary>

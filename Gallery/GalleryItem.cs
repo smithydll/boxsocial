@@ -50,11 +50,6 @@ namespace BoxSocial.Applications.Gallery
         public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
 
         /// <summary>
-        /// Database object
-        /// </summary>
-        protected Mysql db;
-
-        /// <summary>
         /// Owner of the photo
         /// </summary>
         protected Primitive owner;
@@ -299,9 +294,8 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        protected GalleryItem(Mysql db, Primitive owner, string path)
+        protected GalleryItem(Core core, Primitive owner, string path) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {5} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
@@ -324,7 +318,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public GalleryItem(Mysql db, Member owner, DataRow itemRow)
+        public GalleryItem(Core core, Member owner, DataRow itemRow) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -339,9 +333,8 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        protected GalleryItem(Mysql db, Primitive owner, DataRow itemRow)
+        protected GalleryItem(Core core, Primitive owner, DataRow itemRow) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             loadItemInfo(itemRow);
@@ -354,9 +347,8 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public GalleryItem(Mysql db, DataRow itemRow)
+        public GalleryItem(Core core, DataRow itemRow) : base(core)
         {
-            this.db = db;
             // TODO: owner not set, no big worry
 
             loadItemInfo(itemRow);
@@ -369,7 +361,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public GalleryItem(Mysql db, Member owner, Gallery parent, string path)
+        public GalleryItem(Core core, Member owner, Gallery parent, string path) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -394,9 +386,8 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        protected GalleryItem(Mysql db, Primitive owner, long itemId)
+        protected GalleryItem(Core core, Primitive owner, long itemId) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
@@ -434,9 +425,8 @@ namespace BoxSocial.Applications.Gallery
         {
         }*/
 
-        public GalleryItem(Mysql db, long itemId)
+        public GalleryItem(Core core, long itemId) : base(core)
         {
-            this.db = db;
             // TODO: owner not set, no big worry
 
             DataTable galleryItemTable = db.Query(string.Format("SELECT {0}, {2} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {1};",
@@ -520,7 +510,8 @@ namespace BoxSocial.Applications.Gallery
             dquery.AddCondition("gallery_item_id", itemId);
             dquery.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (db.UpdateQuery(dquery, true) > 0)
+            db.BeginTransaction();
+            if (db.Query(dquery) > 0)
             {
                 // TODO, determine if the gallery icon and act appropriately
                 /*if (parentId > 0)
@@ -532,7 +523,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (owner is Member)
                 {
-                    UserGallery parent = new UserGallery(db, (Member)owner, parentId);
+                    UserGallery parent = new UserGallery(core, (Member)owner, parentId);
                     UserGallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
                 }
 
@@ -541,7 +532,7 @@ namespace BoxSocial.Applications.Gallery
                 uQuery.AddField("user_bytes", new QueryOperation("user_bytes", QueryOperations.Subtraction, fi.Length));
                 uQuery.AddCondition("user_id", userId);
 
-                db.UpdateQuery(uQuery, false);
+                db.Query(uQuery);
 
                 if ((long)results.Rows[0]["number"] > 1)
                 {
@@ -560,13 +551,13 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        protected static long create(TPage page, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        protected static long create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
-            Mysql db = page.db;
+            Mysql db = core.db;
 
             if (owner is Member)
             {
-                if (owner.Id != page.loggedInMember.UserId)
+                if (owner.Id != core.LoggedInMemberId)
                 {
                     throw new Exception("Error, user IDs don't match");
                 }
@@ -577,7 +568,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GalleryItemTooLargeException();
             }
 
-            if (page.loggedInMember.BytesUsed + bytes > (ulong)150 * 1024 * 1024)
+            if (core.session.LoggedInMember.BytesUsed + bytes > (ulong)150 * 1024 * 1024)
             {
                 throw new GalleryQuotaExceededException();
             }
@@ -595,7 +586,7 @@ namespace BoxSocial.Applications.Gallery
 
             slug = GalleryItem.GetSlugFromFileName(fileName, slug);
 
-            GalleryItem.EnsureGallerySlugUnique(page, parent, owner, ref slug);
+            GalleryItem.EnsureGallerySlugUnique(core, parent, owner, ref slug);
 
             InsertQuery iQuery = new InsertQuery("gallery_items");
             iQuery.AddField("gallery_item_uri", slug);
@@ -606,7 +597,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_parent_path", parent.FullPath);
             iQuery.AddField("gallery_item_access", permissions);
             iQuery.AddField("gallery_item_content_type", contentType);
-            iQuery.AddField("user_id", page.loggedInMember.UserId);
+            iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("gallery_item_bytes", bytes);
             iQuery.AddField("gallery_item_license", license);
             iQuery.AddField("gallery_id", parent.GalleryId);
@@ -615,7 +606,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_classification", (byte)classification);
 
             // we want to use transactions
-            long itemId = db.UpdateQuery(iQuery, true);
+            long itemId = db.Query(iQuery);
 
             if (itemId >= 0)
             {
@@ -628,9 +619,9 @@ namespace BoxSocial.Applications.Gallery
                 UpdateQuery uQuery = new UpdateQuery("user_info");
                 uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Addition, 1));
                 uQuery.AddField("user_bytes", bytes);
-                uQuery.AddCondition("user_id", page.loggedInMember.UserId);
+                uQuery.AddCondition("user_id", core.LoggedInMemberId);
 
-                if (db.UpdateQuery(uQuery, false) < 0)
+                if (db.Query(uQuery) < 0)
                 {
                     throw new Exception("Transaction failed, panic!");
                 }
@@ -683,7 +674,7 @@ namespace BoxSocial.Applications.Gallery
             uquery.AddField("gallery_item_storage_path", newFileName);
             uquery.AddCondition("gallery_item_id", itemId);
 
-            db.UpdateQuery(uquery);
+            db.Query(uquery);
 
         }
 
@@ -726,7 +717,7 @@ namespace BoxSocial.Applications.Gallery
             return saveFileUri;
         }
 
-        public static void EnsureGallerySlugUnique(TPage page, Gallery gallery, Primitive owner, ref string slug)
+        public static void EnsureGallerySlugUnique(Core core, Gallery gallery, Primitive owner, ref string slug)
         {
             int nameCount = 1;
             bool copyFound = false;
@@ -736,7 +727,7 @@ namespace BoxSocial.Applications.Gallery
             // keep going until we find a name that does not already exist in the database
             do
             {
-                DataTable galleryItemTable = page.db.Query(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type = '{3}';",
+                DataTable galleryItemTable = core.db.Query(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type = '{3}';",
                     Mysql.Escape(slug), gallery.GalleryId, owner.Id, owner.Type));
 
                 if (galleryItemTable.Rows.Count > 0)
@@ -782,7 +773,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem photo = new UserGalleryItem(core.db, page.ProfileOwner, photoPath + "/" + photoName);
+                UserGalleryItem photo = new UserGalleryItem(core, page.ProfileOwner, photoPath + "/" + photoName);
 
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
@@ -914,7 +905,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GroupGalleryItem galleryItem = new GroupGalleryItem(core.db, page.ThisGroup, photoName);
+                GroupGalleryItem galleryItem = new GroupGalleryItem(core, page.ThisGroup, photoName);
 
                 switch (page.ThisGroup.GroupType)
                 {
@@ -1017,7 +1008,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                NetworkGalleryItem galleryItem = new NetworkGalleryItem(core.db, page.TheNetwork, photoName);
+                NetworkGalleryItem galleryItem = new NetworkGalleryItem(core, page.TheNetwork, photoName);
 
                 switch (page.TheNetwork.NetworkType)
                 {
@@ -1171,7 +1162,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (owner is Member)
                 {
-                    galleryItem = new UserGalleryItem(core.db, (Member)owner, photoName);
+                    galleryItem = new UserGalleryItem(core, (Member)owner, photoName);
                     galleryItem.ItemAccess.SetViewer(core.session.LoggedInMember);
 
                     if (!galleryItem.ItemAccess.CanRead)
@@ -1182,7 +1173,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else if (owner is UserGroup)
                 {
-                    galleryItem = new GroupGalleryItem(core.db, (UserGroup)owner, photoName);
+                    galleryItem = new GroupGalleryItem(core, (UserGroup)owner, photoName);
                     switch (((UserGroup)owner).GroupType)
                     {
                         case "OPEN":
@@ -1200,7 +1191,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else if (owner is Network)
                 {
-                    galleryItem = new NetworkGalleryItem(core.db, (Network)owner, photoName);
+                    galleryItem = new NetworkGalleryItem(core, (Network)owner, photoName);
                     switch (((Network)owner).NetworkType)
                     {
                         case NetworkTypes.Country:

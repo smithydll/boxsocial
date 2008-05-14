@@ -31,25 +31,25 @@ namespace BoxSocial.Applications.Gallery
     public class NetworkGalleryItem : GalleryItem
     {
 
-        public NetworkGalleryItem(Mysql db, Network owner, long itemId)
-            : base(db, (Primitive)owner, itemId)
+        public NetworkGalleryItem(Core core, Network owner, long itemId)
+            : base(core, (Primitive)owner, itemId)
         {
         }
 
-        public NetworkGalleryItem(Mysql db, Network owner, DataRow itemRow)
-            : base(db, (Primitive)owner, itemRow)
+        public NetworkGalleryItem(Core core, Network owner, DataRow itemRow)
+            : base(core, (Primitive)owner, itemRow)
         {
         }
 
-        public NetworkGalleryItem(Mysql db, Network owner, string path)
-            : base(db, (Primitive)owner, path)
+        public NetworkGalleryItem(Core core, Network owner, string path)
+            : base(core, (Primitive)owner, path)
         {
         }
 
-        public static GalleryItem Create(TPage page, Network owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        public static GalleryItem Create(Core core, Network owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
-            long itemId = GalleryItem.create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
-            return new NetworkGalleryItem(page.db, owner, itemId);
+            long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
+            return new NetworkGalleryItem(core, owner, itemId);
         }
 
         public override string BuildUri()

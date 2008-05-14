@@ -199,7 +199,7 @@ namespace BoxSocial.Applications.Calendar
 
                 try
                 {
-                    Event calendarEvent = new Event(db, loggedInMember, id);
+                    Event calendarEvent = new Event(core, loggedInMember, id);
                     inviteeIds.AddRange(calendarEvent.GetInvitees());
 
                     template.ParseVariables("EDIT", "TRUE");
@@ -375,7 +375,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Event calendarEvent = Event.Create(db, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
+                Event calendarEvent = Event.Create(core, loggedInMember, loggedInMember, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
 
                 foreach (long inviteeId in inviteeIds)
                 {
@@ -390,7 +390,7 @@ namespace BoxSocial.Applications.Calendar
                 db.UpdateQuery(string.Format("UPDATE events SET event_subject = '{2}', event_location = '{3}', event_description = '{4}', event_time_start_ut = {5}, event_time_end_ut = {6}, event_access = {7} WHERE user_id = {0} AND event_id = {1};",
                     loggedInMember.UserId, eventId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission()));
 
-                Event calendarEvent = new Event(db, loggedInMember, eventId);
+                Event calendarEvent = new Event(core, loggedInMember, eventId);
 
                 core.LoadUserProfiles(inviteeIds);
 
@@ -444,7 +444,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 if (eventId > 0)
                 {
-                    Event calendarEvent = new Event(db, null, eventId);
+                    Event calendarEvent = new Event(core, null, eventId);
 
                     try
                     {
@@ -550,7 +550,7 @@ namespace BoxSocial.Applications.Calendar
 
                 try
                 {
-                    Task calendarTask = new Task(db, loggedInMember, id);
+                    Task calendarTask = new Task(core, loggedInMember, id);
 
                     template.ParseVariables("EDIT", "TRUE");
                     template.ParseVariables("ID", HttpUtility.HtmlEncode(calendarTask.TaskId.ToString()));
@@ -655,7 +655,7 @@ namespace BoxSocial.Applications.Calendar
                     status = TaskStatus.Completed;
                 }
 
-                Task calendarTask = Task.Create(db, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
+                Task calendarTask = Task.Create(core, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage("Task Created", "You have successfully created a new task.");
@@ -680,9 +680,9 @@ namespace BoxSocial.Applications.Calendar
                 query.AddCondition("user_id", loggedInMember.UserId);
                 query.AddCondition("task_id", taskId);
 
-                db.UpdateQuery(query);
+                db.Query(query);
 
-                Task calendarTask = new Task(db, loggedInMember, taskId);
+                Task calendarTask = new Task(core, loggedInMember, taskId);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");
@@ -705,7 +705,7 @@ namespace BoxSocial.Applications.Calendar
 
             try
             {
-                Task task = new Task(db, session.LoggedInMember, taskId);
+                Task task = new Task(core, session.LoggedInMember, taskId);
 
                 UpdateQuery query = new UpdateQuery("tasks");
                 query.AddField("task_status", (byte)TaskStatus.Completed);
@@ -714,7 +714,7 @@ namespace BoxSocial.Applications.Calendar
                 query.AddCondition("user_id", core.LoggedInMemberId);
                 query.AddCondition("task_id", taskId);
 
-                if (db.UpdateQuery(query) == 1)
+                if (db.Query(query) == 1)
                 {
                     if (!isAjax)
                     {
@@ -739,7 +739,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (eventId > 0)
             {
-                Event calendarEvent = new Event(db, null, eventId);
+                Event calendarEvent = new Event(core, null, eventId);
                 UpdateQuery uQuery = new UpdateQuery("event_invites");
                 
                 UpdateQuery uEventQuery = new UpdateQuery("events");
@@ -770,8 +770,9 @@ namespace BoxSocial.Applications.Calendar
                 uQuery.AddCondition("item_id", loggedInMember.Id);
                 uQuery.AddCondition("item_type", "USER");
 
-                db.Query(uQuery, true);
-                db.Query(uEventQuery, false);
+                db.BeginTransaction();
+                db.Query(uQuery);
+                db.Query(uEventQuery);
 
                 SetRedirectUri(calendarEvent.Uri);
                 Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");

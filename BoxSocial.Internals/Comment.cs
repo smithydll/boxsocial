@@ -171,8 +171,9 @@ namespace BoxSocial.Internals
                 relations = core.UserProfiles[itemId].GetRelations(core.session.LoggedInMember);
             }
 
+            core.db.BeginTransaction();
             long commentId = core.db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, '{1}', {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
-                    itemId, Mysql.Escape(itemType), core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)), true);
+                    itemId, Mysql.Escape(itemType), core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
 
             return new Comment(core.db, commentId);
         }

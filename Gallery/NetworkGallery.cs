@@ -39,8 +39,8 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="owner">Network owning</param>
-        public NetworkGallery(Mysql db, Network owner)
-            : base(db, owner)
+        public NetworkGallery(Core core, Network owner)
+            : base(core, owner)
         {
         }
 
@@ -51,8 +51,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Network owning</param>
         /// <param name="galleryRow">Raw data row</param>
         /// <param name="hasIcon">Raw data contains icon</param>
-        public NetworkGallery(Mysql db, Network owner, DataRow galleryRow, bool hasIcon)
-            : base(db, (Primitive)owner, galleryRow, hasIcon)
+        public NetworkGallery(Core core, Network owner, DataRow galleryRow, bool hasIcon)
+            : base(core, (Primitive)owner, galleryRow, hasIcon)
         {
         }
 
@@ -62,8 +62,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Network owning</param>
         /// <param name="galleryId">Gallery Id</param>
-        public NetworkGallery(Mysql db, Network owner, long galleryId)
-            : base(db, owner, galleryId)
+        public NetworkGallery(Core core, Network owner, long galleryId)
+            : base(core, owner, galleryId)
         {
         }
 
@@ -78,7 +78,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core))
             {
-                items.Add(new NetworkGalleryItem(db, (Network)owner, dr));
+                items.Add(new NetworkGalleryItem(core, (Network)owner, dr));
             }
 
             return items;
@@ -97,7 +97,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
             {
-                items.Add(new NetworkGalleryItem(db, (Network)owner, dr));
+                items.Add(new NetworkGalleryItem(core, (Network)owner, dr));
             }
 
             return items;
@@ -108,13 +108,13 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <returns>A list of sub-galleries</returns>
-        public override List<Gallery> GetGalleries(TPage page)
+        public override List<Gallery> GetGalleries(Core core)
         {
             List<Gallery> items = new List<Gallery>();
 
-            foreach (DataRow dr in GetGalleryDataRows(page))
+            foreach (DataRow dr in GetGalleryDataRows(core))
             {
-                items.Add(new NetworkGallery(db, (Network)owner, dr, false));
+                items.Add(new NetworkGallery(core, (Network)owner, dr, false));
             }
 
             return items;
@@ -131,8 +131,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="bytes">Number of bytes added to the gallery</param>
         public static new void UpdateGalleryInfo(Mysql db, Primitive owner, Gallery parent, long itemId, int items, long bytes)
         {
+            db.BeginTransaction();
             db.UpdateQuery(string.Format("UPDATE network_info SET network_gallery_items = network_gallery_items + {1}, network_bytes = network_bytes + {2} WHERE network_id = {0}",
-                owner.Id, items, bytes), true);
+                owner.Id, items, bytes));
         }
     }
 }

@@ -54,7 +54,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(db, new ApplicationCommentType(itemType));
+                ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(itemType));
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
             }

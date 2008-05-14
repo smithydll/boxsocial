@@ -31,25 +31,25 @@ namespace BoxSocial.Applications.Gallery
     public class GroupGalleryItem : GalleryItem
     {
 
-        public GroupGalleryItem(Mysql db, UserGroup owner, long itemId)
-            : base(db, (Primitive)owner, itemId)
+        public GroupGalleryItem(Core core, UserGroup owner, long itemId)
+            : base(core, (Primitive)owner, itemId)
         {
         }
 
-        public GroupGalleryItem(Mysql db, UserGroup owner, DataRow itemRow)
-            : base(db, (Primitive)owner, itemRow)
+        public GroupGalleryItem(Core core, UserGroup owner, DataRow itemRow)
+            : base(core, (Primitive)owner, itemRow)
         {
         }
 
-        public GroupGalleryItem(Mysql db, UserGroup owner, string path)
-            : base(db, (Primitive)owner, path)
+        public GroupGalleryItem(Core core, UserGroup owner, string path)
+            : base(core, (Primitive)owner, path)
         {
         }
 
-        public static GalleryItem Create(TPage page, UserGroup owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        public static GalleryItem Create(Core core, UserGroup owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
-            long itemId = GalleryItem.create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
-            return new GroupGalleryItem(page.db, owner, itemId);
+            long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
+            return new GroupGalleryItem(core, owner, itemId);
         }
 
         public override string BuildUri()

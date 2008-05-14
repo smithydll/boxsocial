@@ -203,11 +203,12 @@ namespace BoxSocial
                     else
                     {
                         // switch places
+                        db.BeginTransaction();
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order - 1 WHERE relation_me = {0} AND relation_order = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, relationOrder + 1), true);
+                            loggedInMember.UserId, relationOrder + 1));
 
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order + 1 WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, friendId), false);
+                            loggedInMember.UserId, friendId));
                     }
                 }
 
@@ -256,11 +257,12 @@ namespace BoxSocial
                     // ordered friend
 
                     // switch places
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order + 1 WHERE relation_me = {0} AND relation_order = {1} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId, relationOrder - 1), true);
+                        loggedInMember.UserId, relationOrder - 1));
 
                     db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order - 1 WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId, friendId), false);
+                        loggedInMember.UserId, friendId));
                 }
                 else
                 {
@@ -275,11 +277,12 @@ namespace BoxSocial
                     {
                         if (maxOrder == 255)
                         {
+                            db.BeginTransaction();
                             db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = 0 WHERE relation_me = {0} AND relation_order = 255",
-                                loggedInMember.UserId), true);
+                                loggedInMember.UserId));
 
                             db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = {2} WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, friendId, maxOrder), false);
+                            loggedInMember.UserId, friendId, maxOrder));
                         }
                         else
                         {
@@ -323,11 +326,12 @@ namespace BoxSocial
                 return;
             }
 
+            db.BeginTransaction();
             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FAMILY'",
-                loggedInMember.UserId, friendId), true);
+                loggedInMember.UserId, friendId));
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family - {1} WHERE ui.user_id = {0};",
-                loggedInMember.UserId, deletedRows), false);
+                loggedInMember.UserId, deletedRows));
 
             Display.ShowMessage("Deleted family member", "You have deleted a family member.");
         }
@@ -349,11 +353,12 @@ namespace BoxSocial
                 return;
             }
 
+            db.BeginTransaction();
             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND'",
-                loggedInMember.UserId, friendId), true);
+                loggedInMember.UserId, friendId));
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - {1} WHERE ui.user_id = {0};",
-                loggedInMember.UserId, deletedRows), false);
+                loggedInMember.UserId, deletedRows));
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Deleted friend", "You have deleted a friend.");
@@ -408,17 +413,18 @@ namespace BoxSocial
                 isFriend = true;
             }
 
+            db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FAMILY');",
-                loggedInMember.UserId, friendId), true);
+                loggedInMember.UserId, friendId));
 
             if (!isFriend)
             {
                 db.UpdateQuery(string.Format("INSERT INTO friend_notifications (relation_id, notification_time_ut, notification_read) VALUES ({0}, UNIX_TIMESTAMP(), 0)",
-                    relationId), true);
+                    relationId));
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId), false);
+                loggedInMember.UserId));
 
             Display.ShowMessage("Added family member", "You have added person to your family.");
         }
@@ -487,17 +493,18 @@ namespace BoxSocial
 
                             if (friendTable.Rows.Count == 1)
                             {
-                                Member friendProfile = new Member(db, friendTable.Rows[0], false);
+                                Member friendProfile = new Member(core, friendTable.Rows[0], false);
                                 long friendId = friendProfile.UserId;
 
+                                db.BeginTransaction();
                                 long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
-                                    loggedInMember.UserId, friendId), true);
+                                    loggedInMember.UserId, friendId));
 
                                 db.UpdateQuery(string.Format("INSERT INTO friend_notifications (relation_id, notification_time_ut, notification_read) VALUES ({0}, UNIX_TIMESTAMP(), 0)",
-                                    relationId), true);
+                                    relationId));
 
                                 db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
-                                    loggedInMember.UserId), false);
+                                    loggedInMember.UserId));
 
                                 // send e-mail notification
                                 // only send a notification if they have subscribed to them
@@ -659,18 +666,19 @@ namespace BoxSocial
                 }
             }
 
-            Member friendProfile = new Member(db, friendId);
+            Member friendProfile = new Member(core, friendId);
 
             bool isFriend = friendProfile.IsFriend(session.LoggedInMember);
 
+            db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
-                loggedInMember.UserId, friendId), true);
+                loggedInMember.UserId, friendId));
 
             //
             // send e-mail notifications
             //
 
-            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "Profile");
+            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
 
             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
@@ -688,7 +696,7 @@ namespace BoxSocial
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId), false);
+                loggedInMember.UserId));
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Added friend", "You have added a friend.");
@@ -759,13 +767,14 @@ namespace BoxSocial
                 }
             }
 
+            db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'BLOCKED';",
-                    loggedInMember.UserId, blockId), true);
+                    loggedInMember.UserId, blockId));
 
             // do not notify
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block - 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId), false);
+                loggedInMember.UserId));
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Unblocked Person", "You have unblocked a person.");
@@ -819,11 +828,12 @@ namespace BoxSocial
                             return;
                         case ConfirmBoxResult.Yes:
                             // remove from friends
+                            db.BeginTransaction();
                             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND';",
-                                loggedInMember.UserId, blockId), true);
+                                loggedInMember.UserId, blockId));
 
                             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - 1 WHERE ui.user_id = {0};",
-                                loggedInMember.UserId), true);
+                                loggedInMember.UserId));
                             break;
                         case ConfirmBoxResult.No:
                             // don't do anything
@@ -837,13 +847,14 @@ namespace BoxSocial
                 }
             }
 
+            db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'BLOCKED');",
-                loggedInMember.UserId, blockId), true);
+                loggedInMember.UserId, blockId));
 
             // do not notify
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId), false);
+                loggedInMember.UserId));
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=block");
             Display.ShowMessage("Blocked Person", "You have blocked a person.");

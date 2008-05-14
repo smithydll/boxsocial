@@ -131,8 +131,9 @@ namespace BoxSocial.Applications.Gallery
         {
             /*UpdateQuery uQuery = new UpdateQuery("gallery_items");
             uQuery.se*/
+            core.db.BeginTransaction();
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
-                e.Rating, e.ItemId), true);
+                e.Rating, e.ItemId));
         }
 
         private void photoCommentPosted(CommentPostedEventArgs e)
@@ -150,13 +151,13 @@ namespace BoxSocial.Applications.Gallery
                 switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
                 {
                     case "USER":
-                        owner = new Member(core.db, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                        owner = new Member(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         break;
                     case "GROUP":
-                        owner = new UserGroup(core.db, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                        owner = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         break;
                     case "NETWORK":
-                        owner = new Network(core.db, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                        owner = new Network(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         break;
                 }
 
@@ -197,7 +198,7 @@ namespace BoxSocial.Applications.Gallery
                             return false;
                         }
                     case "GROUP":
-                        UserGroup group = new UserGroup(core.db, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                        UserGroup group = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         if (group.IsGroupOperator(member))
                         {
                             return true;
@@ -221,7 +222,7 @@ namespace BoxSocial.Applications.Gallery
         private void photoAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private void showGallery(Core core, object sender)
@@ -314,7 +315,7 @@ namespace BoxSocial.Applications.Gallery
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 
                 // show recent photographs in the gallery
-                GroupGallery gallery = new GroupGallery(e.core.db, thisGroup);
+                GroupGallery gallery = new GroupGallery(e.core, thisGroup);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 
@@ -344,7 +345,7 @@ namespace BoxSocial.Applications.Gallery
 
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 
-            NetworkGallery gallery = new NetworkGallery(e.core.db, theNetwork);
+            NetworkGallery gallery = new NetworkGallery(e.core, theNetwork);
 
             List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 

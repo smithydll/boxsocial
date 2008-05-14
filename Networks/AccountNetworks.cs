@@ -93,7 +93,7 @@ namespace BoxSocial.Networks
 
             foreach (DataRow dr in networksTable.Rows)
             {
-                networks.Add(new Network(db, dr));
+                networks.Add(new Network(core, dr));
             }
 
             if (networks.Count > 0)
@@ -145,7 +145,7 @@ namespace BoxSocial.Networks
 
             try
             {
-                Network theNetwork = new Network(db, networkId);
+                Network theNetwork = new Network(core, networkId);
 
                 if (theNetwork.IsNetworkMember(loggedInMember))
                 {
@@ -197,7 +197,7 @@ namespace BoxSocial.Networks
 
             /*try
             {*/
-            Network theNetwork = new Network(db, networkId);
+            Network theNetwork = new Network(core, networkId);
 
             string networkEmail = Request.Form["email"];
 
@@ -209,7 +209,7 @@ namespace BoxSocial.Networks
 
             if (!NetworkMember.CheckNetworkEmailUnique(db, networkEmail))
             {
-                NetworkMember member = new NetworkMember(db, (int)theNetwork.Id, (int)loggedInMember.Id);
+                NetworkMember member = new NetworkMember(core, (int)theNetwork.Id, (int)loggedInMember.Id);
                 if (!member.IsMemberActive)
                 {
                     theNetwork.ResendConfirmationKey(core, member);
@@ -289,7 +289,7 @@ namespace BoxSocial.Networks
 
             try
             {
-                Network theNetwork = new Network(db, networkId);
+                Network theNetwork = new Network(core, networkId);
 
                 if (theNetwork.IsNetworkMember(loggedInMember))
                 {

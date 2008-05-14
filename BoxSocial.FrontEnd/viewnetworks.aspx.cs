@@ -51,17 +51,17 @@ namespace BoxSocial.FrontEnd
             switch (type)
             {
                 case "workplaces":
-                    networks = Network.GetNetworks(db, NetworkTypes.Workplace);
+                    networks = Network.GetNetworks(core, NetworkTypes.Workplace);
                     break;
                 case "schools":
-                    networks = Network.GetNetworks(db, NetworkTypes.School);
+                    networks = Network.GetNetworks(core, NetworkTypes.School);
                     break;
                 case "universities":
-                    networks = Network.GetNetworks(db, NetworkTypes.University);
+                    networks = Network.GetNetworks(core, NetworkTypes.University);
                     break;
                 case "regions":
                 default:
-                    networks = Network.GetNetworks(db, NetworkTypes.Country);
+                    networks = Network.GetNetworks(core, NetworkTypes.Country);
                     break;
             }
 

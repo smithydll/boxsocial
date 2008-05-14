@@ -51,6 +51,7 @@ namespace BoxSocial.Applications.Blog
         /// </remarks>
         public const string BLOG_FIELDS = "ub.user_id, ub.blog_title, ub.blog_entries, ub.blog_comments, ub.blog_visits, ub.blog_access";
 
+        private Core core;
         private Mysql db;
 
         private int userId;
@@ -144,9 +145,10 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="db">Database object</param>
         /// <param name="owner">Owner whose blog to retrieve</param>
-        public Blog(Mysql db, Member owner)
+        public Blog(Core core, Member owner)
         {
-            this.db = db;
+            this.core = core;
+            this.db = core.db;
             this.owner = owner;
 
             DataTable blogTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_blog ub ON uk.user_id = ub.user_id WHERE uk.user_id = {0}",
@@ -193,7 +195,7 @@ namespace BoxSocial.Applications.Blog
                 core.db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
                         core.LoggedInMemberId));
 
-                return new Blog(core.db, core.session.LoggedInMember);
+                return new Blog(core, core.session.LoggedInMember);
             }
             else
             {
@@ -325,7 +327,7 @@ namespace BoxSocial.Applications.Blog
 
             foreach (DataRow dr in blogEntriesTable.Rows)
             {
-                entries.Add(new BlogEntry(db, owner, dr));
+                entries.Add(new BlogEntry(core, owner, dr));
             }
 
             return entries;
@@ -432,7 +434,7 @@ namespace BoxSocial.Applications.Blog
             Blog myBlog;
             try
             {
-                myBlog = new Blog(core.db, page.ProfileOwner);
+                myBlog = new Blog(core, page.ProfileOwner);
             }
             catch (InvalidBlogException)
             {
@@ -636,7 +638,7 @@ namespace BoxSocial.Applications.Blog
                     {
                         page.template.ParseVariables("CAN_COMMENT", "TRUE");
                     }
-                    Display.DisplayComments(page.template, page.ProfileOwner, new BlogEntry(core.db, post));
+                    Display.DisplayComments(page.template, page.ProfileOwner, new BlogEntry(core, post));
                     page.template.ParseVariables("SINGLE", "TRUE");
                 }
 

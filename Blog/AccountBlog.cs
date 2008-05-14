@@ -221,11 +221,12 @@ namespace BoxSocial.Applications.Blog
             {
                 if (Request.QueryString["action"] == "delete")
                 {
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("DELETE FROM blog_postings WHERE post_id = {0} AND user_id = {1}",
-                        postId, loggedInMember.UserId), true);
+                        postId, loggedInMember.UserId));
 
                     db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries - 1 WHERE user_id = {0}",
-                        loggedInMember.UserId), false);
+                        loggedInMember.UserId));
 
                     SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
                     Display.ShowMessage("Blog Post Deleted", "The blog post has been deleted from the database.");
@@ -305,7 +306,7 @@ namespace BoxSocial.Applications.Blog
              */
             try
             {
-                Blog myBlog = new Blog(db, loggedInMember);
+                Blog myBlog = new Blog(core, loggedInMember);
             }
             catch (InvalidBlogException)
             {
@@ -396,7 +397,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 db.UpdateQuery(string.Format("UPDATE blog_postings SET post_title = '{0}', post_modified_ut = UNIX_TIMESTAMP(), post_ip = '{1}', post_text = '{2}', post_license = {3}, post_access = {4}, post_status = '{5}', post_category = {8}{9} WHERE user_id = {6} AND post_id = {7}",
-                    Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, loggedInMember.UserId, postId, category, sqlPostTime), false);
+                    Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, loggedInMember.UserId, postId, category, sqlPostTime));
 
                 /* do not count edits as new postings*/
                 /*db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
@@ -415,21 +416,22 @@ namespace BoxSocial.Applications.Blog
                     sqlPostTime = "UNIX_TIMESTAMP()";
                 }
 
+                db.BeginTransaction();
                 postId = db.UpdateQuery(string.Format("INSERT INTO blog_postings (user_id, post_time_ut, post_title, post_modified_ut, post_ip, post_text, post_license, post_access, post_status, post_category) VALUES ({0}, {8}, '{1}', UNIX_TIMESTAMP(), '{2}', '{3}', {4}, {5}, '{6}', {7})",
-                    loggedInMember.UserId, Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, category, sqlPostTime), true);
+                    loggedInMember.UserId, Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, category, sqlPostTime));
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     loggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
 
                 db.UpdateQuery(string.Format("UPDATE blog_postings SET post_guid = '{0}' WHERE post_id = {1} and user_id = {2}",
-                    postGuid, postId, loggedInMember.UserId), true);
+                    postGuid, postId, loggedInMember.UserId));
 
                 db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
-                    loggedInMember.UserId), false);
+                    loggedInMember.UserId));
 
                 if (status == "PUBLISH")
                 {
-                    BlogEntry myBlogEntry = new BlogEntry(db, postId);
+                    BlogEntry myBlogEntry = new BlogEntry(core, postId);
 
                     if (Access.FriendsCanRead(myBlogEntry.Permissions))
                     {
@@ -477,7 +479,7 @@ namespace BoxSocial.Applications.Blog
             Blog myBlog;
             try
             {
-                myBlog = new Blog(db, session.LoggedInMember);
+                myBlog = new Blog(core, session.LoggedInMember);
             }
             catch (InvalidBlogException)
             {
@@ -506,7 +508,7 @@ namespace BoxSocial.Applications.Blog
             uQuery.AddField("blog_title", title);
             uQuery.AddField("blog_access", Functions.GetPermission());
 
-            db.UpdateQuery(uQuery);
+            db.Query(uQuery);
 
             SetRedirectUri(BuildModuleUri("blog"));
             Display.ShowMessage("Blog Preferences Updated", "Your blog preferences have been successfully updated.");

@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                anApplication = new ApplicationEntry(db, null, anAssemblyName);
+                anApplication = new ApplicationEntry(core, null, anAssemblyName);
             }
             catch (InvalidApplicationException)
             {

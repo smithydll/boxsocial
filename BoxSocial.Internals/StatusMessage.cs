@@ -78,7 +78,7 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        public StatusMessage(Mysql db, Member owner, DataRow statusRow)
+        public StatusMessage(Core core, Member owner, DataRow statusRow) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
             loadStatusInfo(statusRow);
         }
 
-        private StatusMessage(Mysql db, Member owner, long statusId, string statusMessage)
+        private StatusMessage(Core core, Member owner, long statusId, string statusMessage) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -103,22 +103,22 @@ namespace BoxSocial.Internals
             timeRaw = (long)statusRow["status_time_ut"];
         }
 
-        public static StatusMessage Create(Mysql db, Member creator, string message)
+        public static StatusMessage Create(Core core, Member creator, string message)
         {
             InsertQuery iQuery = new InsertQuery("user_status_messages");
             iQuery.AddField("user_id", creator.Id);
             iQuery.AddField("status_message", message);
             iQuery.AddField("status_time_ut", UnixTime.UnixTimeStamp());
 
-            long statusId = db.UpdateQuery(iQuery);
+            long statusId = core.db.Query(iQuery);
 
             UpdateQuery uQuery = new UpdateQuery("user_info");
             uQuery.AddField("user_status_messages", new QueryOperation("user_status_messages", QueryOperations.Addition, 1));
             uQuery.AddCondition("user_id", creator.Id);
 
-            db.UpdateQuery(uQuery);
+            core.db.Query(uQuery);
 
-            return new StatusMessage(db, creator, statusId, message);
+            return new StatusMessage(core, creator, statusId, message);
         }
 
         public override long Id

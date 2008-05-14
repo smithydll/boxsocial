@@ -39,7 +39,8 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="owner">Group owning</param>
-        public GroupGallery(Mysql db, UserGroup owner) : base(db, owner)
+        public GroupGallery(Core core, UserGroup owner)
+            : base(core, owner)
         {
         }
 
@@ -50,8 +51,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Group owning</param>
         /// <param name="galleryRow">Raw data row</param>
         /// <param name="hasIcon">Raw data contains icon</param>
-        public GroupGallery(Mysql db, UserGroup owner, DataRow galleryRow, bool hasIcon)
-            : base(db, (Primitive)owner, galleryRow, hasIcon)
+        public GroupGallery(Core core, UserGroup owner, DataRow galleryRow, bool hasIcon)
+            : base(core, (Primitive)owner, galleryRow, hasIcon)
         {
         }
 
@@ -61,8 +62,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Group owning</param>
         /// <param name="galleryId">Gallery Id</param>
-        public GroupGallery(Mysql db, UserGroup owner, long galleryId)
-            : base(db, owner, galleryId)
+        public GroupGallery(Core core, UserGroup owner, long galleryId)
+            : base(core, owner, galleryId)
         {
         }
 
@@ -77,7 +78,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core))
             {
-                items.Add(new GroupGalleryItem(db, (UserGroup)owner, dr));
+                items.Add(new GroupGalleryItem(core, (UserGroup)owner, dr));
             }
 
             return items;
@@ -96,7 +97,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
             {
-                items.Add(new GroupGalleryItem(db, (UserGroup)owner, dr));
+                items.Add(new GroupGalleryItem(core, (UserGroup)owner, dr));
             }
 
             return items;
@@ -107,13 +108,13 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <returns>A list of sub-galleries</returns>
-        public override List<Gallery> GetGalleries(TPage page)
+        public override List<Gallery> GetGalleries(Core core)
         {
             List<Gallery> items = new List<Gallery>();
 
-            foreach (DataRow dr in GetGalleryDataRows(page))
+            foreach (DataRow dr in GetGalleryDataRows(core))
             {
-                items.Add(new GroupGallery(db, (UserGroup)owner, dr, false));
+                items.Add(new GroupGallery(core, (UserGroup)owner, dr, false));
             }
 
             return items;
@@ -130,8 +131,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="bytes">Number of bytes added to the gallery</param>
         public static new void UpdateGalleryInfo(Mysql db, Primitive owner, Gallery parent, long itemId, int items, long bytes)
         {
+            db.BeginTransaction();
             db.UpdateQuery(string.Format("UPDATE group_info SET group_gallery_items = group_gallery_items + {1}, group_bytes = group_bytes + {2} WHERE group_id = {0}",
-                owner.Id, items, bytes), true);
+                owner.Id, items, bytes));
         }
 
     }

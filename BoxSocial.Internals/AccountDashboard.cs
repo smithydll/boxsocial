@@ -254,7 +254,7 @@ namespace BoxSocial
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(db, null, id);
+                ApplicationEntry ae = new ApplicationEntry(core, null, id);
                 ae.Uninstall(core, loggedInMember);
             }
             catch
@@ -299,7 +299,7 @@ namespace BoxSocial
 
             if (applicationTable.Rows.Count == 1)
             {
-                ApplicationEntry ae = new ApplicationEntry(db, loggedInMember, applicationTable.Rows[0]);
+                ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, applicationTable.Rows[0]);
 
                 List<string> applicationPermissions = new List<string>();
                 applicationPermissions.Add("Can Access");

@@ -31,11 +31,9 @@ namespace BoxSocial.Applications.GuestBook
 {
     public class UserGuestBook : Item, ICommentableItem
     {
-        private Mysql db;
-
         private Member owner;
 
-        public UserGuestBook(Core core, Member owner)
+        public UserGuestBook(Core core, Member owner) : base(core)
         {
             this.db = core.db;
 

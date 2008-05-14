@@ -100,7 +100,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("group_list");
 
-                UserGroup thisGroup = new UserGroup(db, groupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
 
                 groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
                 groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
@@ -167,7 +167,7 @@ namespace BoxSocial.Groups
             {
                 try
                 {
-                    UserGroup group = new UserGroup(db, groupId);
+                    UserGroup group = new UserGroup(core, groupId);
 
                     SetRedirectUri(BuildModuleUri("groups"));
                     Display.ShowMessage("Cancelled", "This feature is currently not supported.");
@@ -211,7 +211,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            UserGroup thisGroup = new UserGroup(db, groupId);
+            UserGroup thisGroup = new UserGroup(core, groupId);
 
             if (!thisGroup.IsGroupOperator(loggedInMember))
             {
@@ -289,7 +289,7 @@ namespace BoxSocial.Groups
                     return;
             }
 
-            UserGroup thisGroup = new UserGroup(db, groupId);
+            UserGroup thisGroup = new UserGroup(core, groupId);
 
             if (!thisGroup.IsGroupOperator(loggedInMember))
             {
@@ -302,18 +302,19 @@ namespace BoxSocial.Groups
                 // update the public viewcount is necessary
                 if (type != "PRIVATE" && thisGroup.GroupType == "PRIVATE")
                 {
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("UPDATE global_categories SET category_groups = category_groups + 1 WHERE category_id = {0}",
-                        category), true);
+                        category));
                 }
                 else if (type == "PRIVATE" && thisGroup.GroupType != "PRIVATE")
                 {
                     db.UpdateQuery(string.Format("UPDATE global_categories SET category_groups = category_groups - 1 WHERE category_id = {0}",
-                        category), true);
+                        category));
                 }
 
                 // save the edits to the group
                 db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}' WHERE group_id = {0}",
-                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)), false);
+                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)));
 
                 SetRedirectUri(thisGroup.Uri);
                 Display.ShowMessage("Group Saved", "You have successfully edited the group.");
@@ -346,7 +347,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("pending_list");
 
-                UserGroup thisGroup = new UserGroup(db, pendingGroupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, pendingGroupsTable.Rows[i]);
 
                 groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
                 groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
@@ -381,7 +382,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("group_list");
 
-                UserGroup thisGroup = new UserGroup(db, groupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
 
                 groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
                 groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
@@ -437,7 +438,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
                 int activated = 0;
 
                 DataTable membershipTable = db.Query(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
@@ -467,18 +468,19 @@ namespace BoxSocial.Groups
                 // private groups you must be invited to
                 if (thisGroup.GroupType != "PRIVATE" || (thisGroup.GroupType == "PRIVATE" && isInvited))
                 {
+                    db.BeginTransaction();
                     db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
                         thisGroup.GroupId, loggedInMember.UserId, activated, Mysql.Escape(session.IPAddress.ToString()), true));
 
                     if (activated == 1)
                     {
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
-                            thisGroup.GroupId), true);
+                            thisGroup.GroupId));
                     }
 
                     // just do it anyway, can be invited to any type of group
                     db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
-                        thisGroup.GroupId, loggedInMember.UserId), false);
+                        thisGroup.GroupId, loggedInMember.UserId));
 
                     SetRedirectUri(thisGroup.Uri);
                     if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
@@ -525,7 +527,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 bool isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
                 bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
@@ -543,14 +545,15 @@ namespace BoxSocial.Groups
                 {
                     if (isGroupMember)
                     {
+                        db.BeginTransaction();
                         db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                            thisGroup.GroupId, loggedInMember.UserId), true);
+                            thisGroup.GroupId, loggedInMember.UserId));
 
                         long officerRowsChanged = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1};",
-                            thisGroup.GroupId, loggedInMember.UserId), true);
+                            thisGroup.GroupId, loggedInMember.UserId));
 
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members - 1, group_officers = group_officers - {1} WHERE group_id = {0}",
-                            thisGroup.GroupId, officerRowsChanged), false);
+                            thisGroup.GroupId, officerRowsChanged));
 
                         SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage("Left Group", "You have left the group.");
@@ -605,7 +608,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            UserGroup thisGroup = new UserGroup(db, groupId);
+            UserGroup thisGroup = new UserGroup(core, groupId);
 
             if (!thisGroup.IsGroupMember(loggedInMember))
             {
@@ -645,11 +648,11 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 try
                 {
-                    Member inviteMember = new Member(db, username);
+                    Member inviteMember = new Member(core, username);
 
                     if (!thisGroup.IsGroupMember(loggedInMember))
                     {
@@ -729,20 +732,21 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 if (thisGroup.IsGroupOperator(loggedInMember))
                 {
                     try
                     {
-                        Member member = new Member(db, userId);
+                        Member member = new Member(core, userId);
                         if (!thisGroup.IsGroupOperator(member))
                         {
+                            db.BeginTransaction();
                             db.UpdateQuery(string.Format("INSERT INTO group_operators (group_id, user_id) VALUES ({0}, {1});",
-                                thisGroup.GroupId, userId), true);
+                                thisGroup.GroupId, userId));
 
                             db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators + 1 WHERE group_id = {0}",
-                                thisGroup.GroupId), false);
+                                thisGroup.GroupId));
 
                             SetRedirectUri(thisGroup.Uri);
                             Display.ShowMessage("Operator Appointed to Group", "You have successfully appointed an operator to the group.");
@@ -804,13 +808,13 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 if (thisGroup.IsGroupOperator(loggedInMember))
                 {
                     try
                     {
-                        Member member = new Member(db, userId);
+                        Member member = new Member(core, userId);
 
                         if (thisGroup.IsGroupMember(member))
                         {
@@ -886,24 +890,25 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 if (thisGroup.IsGroupOperator(loggedInMember))
                 {
                     try
                     {
-                        Member member = new Member(db, userId);
+                        Member member = new Member(core, userId);
 
                         if (thisGroup.IsGroupMember(member))
                         {
                             // allow to be an officer to many things
+                            db.BeginTransaction();
                             long status = db.UpdateQuery(string.Format("INSERT INTO group_officers (group_id, user_id, officer_title) VALUES ({0}, {1}, '{2}');",
-                                thisGroup.GroupId, member.UserId, Mysql.Escape(title)), true);
+                                thisGroup.GroupId, member.UserId, Mysql.Escape(title)));
 
                             if (status >= 0)
                             {
                                 db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers + 1 WHERE group_id = {0}",
-                                    thisGroup.GroupId), false);
+                                    thisGroup.GroupId));
 
                                 SetRedirectUri(thisGroup.Uri);
                                 Display.ShowMessage("Officer Appointed to Group", "You have successfully appointed an officer to the group.");
@@ -965,17 +970,18 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 if (thisGroup.IsGroupOperator(loggedInMember))
                 {
+                    db.BeginTransaction();
                     long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1} AND officer_title = '{2}'",
-                        groupId, userId, Mysql.Escape(title)), true);
+                        groupId, userId, Mysql.Escape(title)));
 
                     if (deletedRows >= 0)
                     {
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers - {1} WHERE group_id = {0}",
-                            thisGroup.GroupId, deletedRows), false);
+                            thisGroup.GroupId, deletedRows));
 
                         SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage("Officer Removed from Group", "You have successfully removed an officer from the group.");
@@ -1046,7 +1052,7 @@ namespace BoxSocial.Groups
 
             AuthoriseRequestSid();
 
-            UserGroup thisGroup = new UserGroup(db, groupId);
+            UserGroup thisGroup = new UserGroup(core, groupId);
 
             if (Request.Form["1"] != null)
             {
@@ -1054,11 +1060,12 @@ namespace BoxSocial.Groups
                 {
                     if (thisGroup.Operators > 1)
                     {
+                        db.BeginTransaction();
                         long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_operators WHERE group_id = {0} AND user_id = {1}",
-                            thisGroup.GroupId, loggedInMember.UserId), true);
+                            thisGroup.GroupId, loggedInMember.UserId));
 
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators - {1} WHERE group_id = {0}",
-                            thisGroup.GroupId, deletedRows), false);
+                            thisGroup.GroupId, deletedRows));
 
                         SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage("Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
@@ -1106,24 +1113,25 @@ namespace BoxSocial.Groups
 
             try
             {
-                UserGroup thisGroup = new UserGroup(db, groupId);
+                UserGroup thisGroup = new UserGroup(core, groupId);
 
                 if (thisGroup.IsGroupOperator(loggedInMember))
                 {
                     try
                     {
-                        Member member = new Member(db, userId);
+                        Member member = new Member(core, userId);
 
                         if (thisGroup.IsGroupMemberPending(member))
                         {
                             // we can approve the pending membership
+                            db.BeginTransaction();
                             long rowsChanged = db.UpdateQuery(string.Format("UPDATE group_members SET group_member_approved = 1, group_member_date_ut = UNIX_TIMESTAMP() WHERE group_id = {0} AND user_id = {1} AND group_member_approved = 0;",
-                                thisGroup.GroupId, member.UserId), true);
+                                thisGroup.GroupId, member.UserId));
 
                             if (rowsChanged > 0) // committ the change
                             {
                                 db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
-                                    thisGroup.GroupId), false);
+                                    thisGroup.GroupId));
 
                                 SetRedirectUri(thisGroup.MemberlistUri);
                                 Display.ShowMessage("Membership Approved", "You have approved the membership for the user.");
@@ -1220,13 +1228,13 @@ namespace BoxSocial.Groups
             {
                 try
                 {
-                    UserGroup group = new UserGroup(db, groupId);
+                    UserGroup group = new UserGroup(core, groupId);
 
                     if (group.IsGroupOperator(loggedInMember))
                     {
                         try
                         {
-                            GroupMember member = new GroupMember(db, group, userId);
+                            GroupMember member = new GroupMember(core, group, userId);
 
                             member.Ban();
 

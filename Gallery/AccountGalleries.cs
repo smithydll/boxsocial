@@ -294,8 +294,8 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGallery gallery = new UserGallery(db, loggedInMember, galleryId);
-                Gallery.Delete(page, gallery);
+                UserGallery gallery = new UserGallery(core, loggedInMember, galleryId);
+                Gallery.Delete(core, gallery);
 
                 SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
                 Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");
@@ -340,16 +340,16 @@ namespace BoxSocial.Applications.Gallery
                     UserGallery parent;
                     if (galleryId > 0)
                     {
-                        parent = new UserGallery(db, loggedInMember, galleryId);
+                        parent = new UserGallery(core, loggedInMember, galleryId);
                     }
                     else
                     {
-                        parent = new UserGallery(db, loggedInMember);
+                        parent = new UserGallery(core, loggedInMember);
                     }
 
                     if (parent.FullPath.Length + slug.Length + 1 < 192)
                     {
-                        if (UserGallery.Create(page, parent, title, ref slug, description, Functions.GetPermission()) != null)
+                        if (UserGallery.Create(core, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
                             SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
                                 string.Format("id={0}", parent.GalleryId)));
@@ -389,7 +389,7 @@ namespace BoxSocial.Applications.Gallery
                 // save edit
                 try
                 {
-                    UserGallery gallery = new UserGallery(db, loggedInMember, galleryId);
+                    UserGallery gallery = new UserGallery(core, loggedInMember, galleryId);
 
                     try
                     {
@@ -495,7 +495,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    UserGalleryItem photo = new UserGalleryItem(db, loggedInMember, photoId);
+                    UserGalleryItem photo = new UserGalleryItem(core, loggedInMember, photoId);
 
                     System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
 
@@ -764,7 +764,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    UserGallery parent = new UserGallery(db, loggedInMember, galleryId);
+                    UserGallery parent = new UserGallery(core, loggedInMember, galleryId);
 
                     string slug = Request.Files["photo-file"].FileName;
 
@@ -777,7 +777,7 @@ namespace BoxSocial.Applications.Gallery
                             Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        UserGalleryItem.Create(page, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                        UserGalleryItem.Create(core, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                         SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug));
                         Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
@@ -816,7 +816,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    UserGalleryItem galleryItem = new UserGalleryItem(db, loggedInMember, photoId);
+                    UserGalleryItem galleryItem = new UserGalleryItem(core, loggedInMember, photoId);
                     galleryItem.Update(page, title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path));
@@ -883,7 +883,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem photo = new UserGalleryItem(db, loggedInMember, photoId);
+                UserGalleryItem photo = new UserGalleryItem(core, loggedInMember, photoId);
 
                 try
                 {

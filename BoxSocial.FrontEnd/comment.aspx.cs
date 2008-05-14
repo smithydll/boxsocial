@@ -138,12 +138,13 @@ namespace BoxSocial.FrontEnd
 
                     if (reportsTable.Rows.Count == 0)
                     {
+                        db.BeginTransaction();
                         db.UpdateQuery(string.Format("UPDATE comments SET comment_spam_score = comment_spam_score + 2 WHERE comment_id = {0}",
-                            itemId), true);
+                            itemId));
 
                         // add a log entry that the user reported this comment
                         db.UpdateQuery(string.Format("INSERT INTO spam_reports (comment_id, user_id, report_time_ut) VALUES ({0}, {1}, UNIX_TIMESTAMP());",
-                            itemId, loggedInMember.UserId), false);
+                            itemId, loggedInMember.UserId));
                     }
                     else
                     {
@@ -175,7 +176,7 @@ namespace BoxSocial.FrontEnd
 
                     try
                     {
-                        ApplicationEntry ae = new ApplicationEntry(db, new ApplicationCommentType(commentItemType));
+                        ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(commentItemType));
 
                         BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
                     }
@@ -201,14 +202,15 @@ namespace BoxSocial.FrontEnd
                     if (thisComment.SpamScore >= 10)
                     {
                         // keep for spam system
+                        db.BeginTransaction();
                         db.UpdateQuery(string.Format("UPDATE comments SET comment_deleted = TRUE WHERE comment_id = {0}",
-                            itemId), true);
+                            itemId));
                     }
                     else
                     {
                         // do not need to keep
                         db.UpdateQuery(string.Format("DELETE FROM comments WHERE comment_id = {0}",
-                            itemId), true);
+                            itemId));
                     }
 
                     Core.AdjustCommentCount(commentItemType, (long)commentItemId, -1);
@@ -235,7 +237,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(db, new ApplicationCommentType(itemType));
+                ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(itemType));
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
             }

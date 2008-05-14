@@ -40,7 +40,6 @@ namespace BoxSocial.Groups
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
 
-        private Mysql db;
         private long groupId;
         private string slug;
         private string displayName;
@@ -236,10 +235,8 @@ namespace BoxSocial.Groups
             return tz.DateTimeFromMysql(timestampCreated);
         }
 
-        public UserGroup(Mysql db, long groupId)
+        public UserGroup(Core core, long groupId) : base(core)
         {
-            this.db = db;
-
             DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_id = {0}",
                 groupId, GROUP_INFO_FIELDS));
 
@@ -254,10 +251,8 @@ namespace BoxSocial.Groups
             }
         }
 
-        public UserGroup(Mysql db, string groupSlug)
+        public UserGroup(Core core, string groupSlug) : base(core)
         {
-            this.db = db;
-
             DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_name = '{0}'",
                 Mysql.Escape(groupSlug), GROUP_INFO_FIELDS));
 
@@ -272,10 +267,8 @@ namespace BoxSocial.Groups
             }
         }
 
-        public UserGroup(Mysql db, DataRow groupRow)
+        public UserGroup(Core core, DataRow groupRow) : base(core)
         {
-            this.db = db;
-
             loadGroupInfo(groupRow);
         }
 
@@ -307,7 +300,7 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                members.Add(new GroupMember(db, dr, true, true, true));
+                members.Add(new GroupMember(core, dr, true, true, true));
             }
 
             return members;
@@ -474,7 +467,7 @@ namespace BoxSocial.Groups
                 return null;
             }
 
-            if (!CheckGroupNameUnique(db, groupSlug))
+            if (!CheckGroupNameUnique(core, groupSlug))
             {
                 return null;
             }
@@ -494,33 +487,34 @@ namespace BoxSocial.Groups
                     return null;
             }
 
+            db.BeginTransaction();
             long groupId = db.UpdateQuery(string.Format("INSERT INTO group_keys (group_name) VALUES ('{0}')",
-                Mysql.Escape(groupSlug)), true);
+                Mysql.Escape(groupSlug)));
 
             /*
              * DONE: change zinzam.com DB to make group_id on group_info UNIQUE and not PRIMARY
              */
             db.UpdateQuery(string.Format("INSERT INTO group_info (group_id, group_name, group_name_display, group_type, group_reg_date_ut, group_category, group_reg_ip, group_abstract, group_operators, group_members) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), {4}, '{5}', '{6}', 1, 1);",
-                groupId, Mysql.Escape(groupSlug), Mysql.Escape(groupTitle), Mysql.Escape(groupType), groupCategory, Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(groupDescription)), true);
+                groupId, Mysql.Escape(groupSlug), Mysql.Escape(groupTitle), Mysql.Escape(groupType), groupCategory, Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(groupDescription)));
 
             if (groupType != "PRIVATE")
             {
                 db.UpdateQuery(string.Format("UPDATE global_categories SET category_groups = category_groups + 1 WHERE category_id = {0}",
-                    groupCategory), true);
+                    groupCategory));
             }
 
             db.UpdateQuery(string.Format("INSERT INTO group_members (user_id, group_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, 1, '{2}', UNIX_TIMESTAMP())",
-                session.LoggedInMember.UserId, groupId, Mysql.Escape(session.IPAddress.ToString())), true);
+                session.LoggedInMember.UserId, groupId, Mysql.Escape(session.IPAddress.ToString())));
 
             db.UpdateQuery(string.Format("INSERT INTO group_operators (user_id, group_id) VALUES ({0}, {1})",
-                session.LoggedInMember.UserId, groupId), false);
+                session.LoggedInMember.UserId, groupId));
 
-            UserGroup newGroup = new UserGroup(db, groupId);
+            UserGroup newGroup = new UserGroup(core, groupId);
 
             // Install a couple of applications
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(db, null, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                 profileAe.Install(core, newGroup);
             }
             catch
@@ -529,7 +523,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry groupsAe = new ApplicationEntry(db, null, "Groups");
+                ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
                 groupsAe.Install(core, newGroup);
             }
             catch
@@ -538,7 +532,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(db, null, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
                 galleryAe.Install(core, newGroup);
             }
             catch
@@ -547,7 +541,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(db, null, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
                 guestbookAe.Install(core, newGroup);
             }
             catch
@@ -557,9 +551,9 @@ namespace BoxSocial.Groups
             return newGroup;
         }
 
-        public static bool CheckGroupNameUnique(Mysql db, string groupName)
+        public static bool CheckGroupNameUnique(Core core, string groupName)
         {
-            if (db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
+            if (core.db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
                 Mysql.Escape(groupName.ToLower()))).Rows.Count > 0)
             {
                 return false;
@@ -979,16 +973,16 @@ namespace BoxSocial.Groups
             }
         }
 
-        public static List<UserGroup> GetUserGroups(Mysql db, Member member)
+        public static List<UserGroup> GetUserGroups(Core core, Member member)
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE gm.user_id = {0} ORDER BY group_name_display ASC;",
+            DataTable groupsTable = core.db.Query(string.Format("SELECT {1} FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE gm.user_id = {0} ORDER BY group_name_display ASC;",
                 member.UserId, UserGroup.GROUP_INFO_FIELDS));
 
             foreach (DataRow dr in groupsTable.Rows)
             {
-                groups.Add(new UserGroup(db, dr));
+                groups.Add(new UserGroup(core, dr));
             }
 
             return groups;
@@ -1062,7 +1056,7 @@ namespace BoxSocial.Groups
 
             for (int i = 0; i < operatorsTable.Rows.Count; i++)
             {
-                Member groupOperator = new Member(core.db, operatorsTable.Rows[i], false, false);
+                Member groupOperator = new Member(core, operatorsTable.Rows[i], false, false);
                 string userDisplayName = (groupOperator.DisplayName != "") ? groupOperator.DisplayName : groupOperator.UserName;
 
                 VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
@@ -1083,7 +1077,7 @@ namespace BoxSocial.Groups
 
             for (int i = 0; i < officersTable.Rows.Count; i++)
             {
-                GroupMember groupOfficer = new GroupMember(core.db, officersTable.Rows[i], true, false, false);
+                GroupMember groupOfficer = new GroupMember(core, officersTable.Rows[i], true, false, false);
                 string userDisplayName = (groupOfficer.DisplayName != "") ? groupOfficer.DisplayName : groupOfficer.UserName;
 
                 VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
@@ -1120,7 +1114,7 @@ namespace BoxSocial.Groups
 
                 for (int i = 0; i < approvalTable.Rows.Count; i++)
                 {
-                    GroupMember approvalMember = new GroupMember(core.db, approvalTable.Rows[i], true, true, false);
+                    GroupMember approvalMember = new GroupMember(core, approvalTable.Rows[i], true, true, false);
 
                     VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
 

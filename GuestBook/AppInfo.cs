@@ -128,7 +128,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             try
             {
-                Member owner = new Member(core.db, itemId, true);
+                Member owner = new Member(core, itemId, true);
 
                 owner.ProfileAccess.SetViewer(member);
 
@@ -162,9 +162,9 @@ namespace BoxSocial.Applications.GuestBook
         private void userCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            Member userProfile = new Member(core.db, e.ItemId);
+            Member userProfile = new Member(core, e.ItemId);
 
-            ApplicationEntry ae = new ApplicationEntry(core.db, core.session.LoggedInMember, "GuestBook");
+            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "GuestBook");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
             notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
@@ -189,14 +189,14 @@ namespace BoxSocial.Applications.GuestBook
         private void userAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private bool groupCanPostComment(long itemId, Member member)
         {
             try
             {
-                UserGroup owner = new UserGroup(core.db, itemId);
+                UserGroup owner = new UserGroup(core, itemId);
 
                 if (owner.IsGroupMember(member))
                 {
@@ -217,7 +217,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             try
             {
-                UserGroup owner = new UserGroup(core.db, itemId);
+                UserGroup owner = new UserGroup(core, itemId);
 
                 if (owner.IsGroupOperator(member))
                 {
@@ -237,14 +237,14 @@ namespace BoxSocial.Applications.GuestBook
         private void groupAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE group_info SET group_comments = group_comments + {1} WHERE group_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private bool networkCanPostComment(long itemId, Member member)
         {
             try
             {
-                Network owner = new Network(core.db, itemId);
+                Network owner = new Network(core, itemId);
 
                 if (owner.IsNetworkMember(member))
                 {
@@ -269,7 +269,7 @@ namespace BoxSocial.Applications.GuestBook
         private void networkAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE network_info SET network_comments = network_comments + {1} WHERE network_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private bool applicationCanPostComment(long itemId, Member member)
@@ -293,7 +293,7 @@ namespace BoxSocial.Applications.GuestBook
         private void applicationAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE applications SET application_comments = application_comments + {1} WHERE application_id = {0};",
-                itemId, adjustment), false);
+                itemId, adjustment));
         }
 
         private void showProfileGuestBook(Core core, object sender)

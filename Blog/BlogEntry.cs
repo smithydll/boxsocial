@@ -48,8 +48,6 @@ namespace BoxSocial.Applications.Blog
         /// </remarks>
         public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
 
-        private Mysql db;
-
         private long postId;
         private long ownerId;
         private Primitive owner;
@@ -242,10 +240,8 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="postId">Post Id to retrieve</param>
-        public BlogEntry(Mysql db, long postId)
+        public BlogEntry(Core core, long postId) : base(core)
         {
-            this.db = db;
-
             DataTable postEntryDataTable = db.Query(string.Format("SELECT {0} FROM blog_postings be WHERE be.post_id = {1}",
                 BlogEntry.BLOG_ENTRY_FIELDS, postId));
 
@@ -253,7 +249,7 @@ namespace BoxSocial.Applications.Blog
             {
                 loadBlogEntryInfo(postEntryDataTable.Rows[0]);
 
-                this.owner = new Member(db, ownerId, true);
+                this.owner = new Member(core, ownerId, true);
             }
             else
             {
@@ -267,9 +263,8 @@ namespace BoxSocial.Applications.Blog
         /// <param name="db">Database</param>
         /// <param name="owner">Owner whose blog post has been retrieved</param>
         /// <param name="postEntryRow">Raw data row of blog entry</param>
-        public BlogEntry(Mysql db, Primitive owner, DataRow postEntryRow)
+        public BlogEntry(Core core, Primitive owner, DataRow postEntryRow) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             loadBlogEntryInfo(postEntryRow);
@@ -299,7 +294,7 @@ namespace BoxSocial.Applications.Blog
 
             if (owner == null)
             {
-                owner = new Member(db, OwnerId);
+                owner = new Member(core, OwnerId);
             }
             blogEntryAccess = new Access(db, access, owner);
         }

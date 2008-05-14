@@ -66,7 +66,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                thisGroup = new UserGroup(db, groupSlug);
+                thisGroup = new UserGroup(core, groupSlug);
             }
             catch (InvalidGroupException)
             {

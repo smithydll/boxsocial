@@ -48,8 +48,6 @@ namespace BoxSocial.Applications.Calendar
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
-        private Mysql db;
-
         private long eventId;
         private string subject;
         private string description;
@@ -198,7 +196,7 @@ namespace BoxSocial.Applications.Calendar
             return tz.DateTimeFromMysql(endTimeRaw);
         }
 
-        public Event(Mysql db, Primitive owner, long eventId)
+        public Event(Core core, Primitive owner, long eventId) : base (core)
         {
             this.db = db;
             this.owner = owner;
@@ -216,9 +214,8 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public Event(Mysql db, Primitive owner, DataRow eventRow)
+        public Event(Core core, Primitive owner, DataRow eventRow) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             loadEventInfo(eventRow);
@@ -247,18 +244,18 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner == null)
             {
-                owner = new Member(db, userId);
+                owner = new Member(core, userId);
             }
 
             eventAccess = new Access(db, permissions, owner);
         }
 
-        public static Event Create(Mysql db, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
+        public static Event Create(Core core, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
         {
-            long eventId = db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, '{2}', '{3}', '{4}', '{5}', {6}, {7}, {8})",
+            long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, '{2}', '{3}', '{4}', '{5}', {6}, {7}, {8})",
                 creator.UserId, owner.Id, Mysql.Escape(owner.Type),Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
 
-            Event myEvent = new Event(db, owner, eventId);
+            Event myEvent = new Event(core, owner, eventId);
 
             if (Access.FriendsCanRead(myEvent.Permissions))
             {
@@ -277,12 +274,13 @@ namespace BoxSocial.Applications.Calendar
                 dQuery.AddCondition("user_id", core.LoggedInMemberId);
                 dQuery.AddCondition("event_id", EventId);
 
-                db.Query(dQuery, true);
+                db.BeginTransaction();
+                db.Query(dQuery);
 
                 dQuery = new DeleteQuery("event_invites");
                 dQuery.AddCondition("event_id", EventId);
 
-                if (db.Query(dQuery, false) < 0)
+                if (db.Query(dQuery) < 0)
                 {
                     throw new Exception();
                 }
@@ -508,7 +506,7 @@ namespace BoxSocial.Applications.Calendar
 
             try
             {
-                Event calendarEvent = new Event(core.db, owner, eventId);
+                Event calendarEvent = new Event(core, owner, eventId);
 
                 calendarEvent.EventAccess.SetSessionViewer(core.session);
 

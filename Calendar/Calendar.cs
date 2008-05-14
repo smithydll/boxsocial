@@ -50,7 +50,7 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (DataRow dr in eventsTable.Rows)
             {
-                events.Add(new Event(db, owner, dr));
+                events.Add(new Event(core, owner, dr));
             }
 
             return events;
@@ -75,7 +75,7 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {
-                    tasks.Add(new Task(db, owner, dr));
+                    tasks.Add(new Task(core, owner, dr));
                 }
             }
             else
@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {
-                    tasks.Add(new Task(db, owner, dr));
+                    tasks.Add(new Task(core, owner, dr));
                 }
             }
 

@@ -175,7 +175,7 @@ namespace BoxSocial.FrontEnd
                     template.ParseVariables("ERROR", "Group slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                     prepareNewCaptcha();
                 }
-                else if (!UserGroup.CheckGroupNameUnique(db, slug))
+                else if (!UserGroup.CheckGroupNameUnique(core, slug))
                 {
                     template.ParseVariables("ERROR", "Group slug is already taken, please choose another one.");
                     prepareNewCaptcha();

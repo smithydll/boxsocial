@@ -62,7 +62,7 @@ namespace BoxSocial.Groups
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
-        public GroupMember(Mysql db, UserGroup group, long userId)
+        public GroupMember(Core core, UserGroup group, long userId) : base(core)
         {
             this.db = db;
 
@@ -87,7 +87,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public GroupMember(Mysql db, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon)
+        public GroupMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon) : base(core)
         {
             this.db = db;
             loadMemberInfo(memberRow);
@@ -177,7 +177,7 @@ namespace BoxSocial.Groups
             query.AddCondition("user_id", userId);
             query.AddCondition("group_id", groupId);
 
-            db.UpdateQuery(query);
+            db.Query(query);
         }
 
         public void UnBan()
@@ -186,7 +186,7 @@ namespace BoxSocial.Groups
             query.AddCondition("user_id", userId);
             query.AddCondition("group_id", groupId);
 
-            db.UpdateQuery(query);
+            db.Query(query);
         }
     }
 }

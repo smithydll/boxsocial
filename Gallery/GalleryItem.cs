@@ -618,7 +618,7 @@ namespace BoxSocial.Applications.Gallery
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
                 uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Addition, 1));
-                uQuery.AddField("user_bytes", bytes);
+                uQuery.AddField("user_bytes", new QueryOperation("user_bytes", QueryOperations.Addition, bytes));
                 uQuery.AddCondition("user_id", core.LoggedInMemberId);
 
                 if (db.Query(uQuery) < 0)

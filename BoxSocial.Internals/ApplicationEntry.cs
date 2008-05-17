@@ -40,7 +40,6 @@ namespace BoxSocial.Internals
         public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type";
         public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
-        private Mysql db;
         private Primitive owner;
         private int applicationId;
         private int creatorId;
@@ -396,10 +395,9 @@ namespace BoxSocial.Internals
 
         public ApplicationEntry(Core core, Primitive owner, string assemblyName) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
-            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
+            DataTable assemblyTable = core.db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
                 WHERE ap.application_assembly_name = '{1}';",
                 ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
@@ -805,7 +803,7 @@ namespace BoxSocial.Internals
         private bool canNotify(Member owner)
         {
             SelectQuery query = new SelectQuery("notifications");
-            query.AddFields("COUNT(notification_id) as twentyfour");
+            query.AddField(new QueryFunction("notification_id", QueryFunctions.Count, "twentyfour")); //"COUNT(notification_id) as twentyfour");
             query.AddCondition("notification_primitive_id", owner.Id);
             query.AddCondition("notification_primitive_type", owner.Type);
             query.AddCondition("notification_application", applicationId);
@@ -838,7 +836,7 @@ namespace BoxSocial.Internals
             }
 
             SelectQuery query = new SelectQuery("actions");
-            query.AddFields("COUNT(action_id) as twentyfour");
+            query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour")); //"COUNT(action_id) as twentyfour");
             query.AddCondition("action_primitive_id", owner.Id);
             query.AddCondition("action_primitive_type", owner.Type);
             query.AddCondition("action_application", applicationId);

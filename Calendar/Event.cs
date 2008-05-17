@@ -44,20 +44,32 @@ namespace BoxSocial.Applications.Calendar
      * ALTER TABLE `zinzam0_zinzam`.`events` CHANGE COLUMN `event_attendies` `event_attendees` BIGINT(20) NOT NULL DEFAULT 0;
      */
 
+    [DataTable("events")]
     public class Event : Item, ICommentableItem
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
+        [DataField("event_id")]
         private long eventId;
+        [DataField("event_subject")]
         private string subject;
+        [DataField("event_description")]
         private string description;
+        [DataField("event_views")]
         private long views;
+        [DataField("event_attendees")]
         private long attendees;
+        [DataField("event_access")]
         private ushort permissions;
         private Access eventAccess;
+        [DataField("event_comments")]
         private long comments;
+        [DataField("event_item_id")]
         private long ownerId;
+        [DataField("event_item_type")]
+        private string ownerType;
         private Primitive owner;
+        [DataField("user_id")]
         private long userId; // creator
         private long startTimeRaw;
         private long endTimeRaw;
@@ -80,6 +92,10 @@ namespace BoxSocial.Applications.Calendar
             {
                 return subject;
             }
+            set
+            {
+                SetProperty("subject", value);
+            }
         }
 
         public string Description
@@ -87,6 +103,10 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return description;
+            }
+            set
+            {
+                SetProperty("description", value);
             }
         }
 
@@ -111,6 +131,10 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return permissions;
+            }
+            set
+            {
+                SetProperty("permissions", value);
             }
         }
 
@@ -152,6 +176,10 @@ namespace BoxSocial.Applications.Calendar
             {
                 return allDay;
             }
+            set
+            {
+                SetProperty("allDay", value);
+            }
         }
 
         public long Invitees
@@ -168,6 +196,10 @@ namespace BoxSocial.Applications.Calendar
             {
                 return location;
             }
+            set
+            {
+                SetProperty("location", value);
+            }
         }
 
         public long StartTimeRaw
@@ -176,6 +208,10 @@ namespace BoxSocial.Applications.Calendar
             {
                 return startTimeRaw;
             }
+            set
+            {
+                SetProperty("startTimeRaw", value);
+            }
         }
 
         public long EndTimeRaw
@@ -183,6 +219,10 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return endTimeRaw;
+            }
+            set
+            {
+                SetProperty("endTimeRaw", value);
             }
         }
 
@@ -489,6 +529,9 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)
         {
+            HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetFields(typeof(Event))));
+            HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetTable(typeof(Event))));
+
             page.template.SetTemplate("Calendar", "viewcalendarevent");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
@@ -507,6 +550,9 @@ namespace BoxSocial.Applications.Calendar
             try
             {
                 Event calendarEvent = new Event(core, owner, eventId);
+
+                /*calendarEvent.Subject = "Hi";
+                calendarEvent.Update();*/
 
                 calendarEvent.EventAccess.SetSessionViewer(core.session);
 

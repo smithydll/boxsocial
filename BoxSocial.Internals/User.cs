@@ -30,6 +30,7 @@ using System.Web;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using BoxSocial.IO;
+using System.Xml;
 
 namespace BoxSocial.Internals
 {
@@ -43,6 +44,7 @@ namespace BoxSocial.Internals
         Blocked = 0x08,
     }
 
+    [DataTable("user_info")]
     public class Member : Primitive, ICommentableItem
     {
         public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes, ui.user_status_messages";
@@ -51,12 +53,15 @@ namespace BoxSocial.Internals
 
         public static long lastEmailId;
 
-        protected Mysql db;
+        [DataField("user_id")]
         protected long userId;
+        [DataField("user_name")]
         private string userName;
         private string userNameOwnership;
         private string displayName;
+        [DataField("profile_sexuality")]
         private string sexuality;
+        [DataField("profile_gender")]
         private string gender;
         private string maritialStatus;
         private string autobiography;

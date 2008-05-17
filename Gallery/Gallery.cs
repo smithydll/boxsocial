@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a gallery
     /// </summary>
-    public abstract class Gallery
+    public abstract class Gallery : Item
     {
         /// <summary>
         /// A list of database fields associated with a user gallery.
@@ -50,11 +50,6 @@ namespace BoxSocial.Applications.Gallery
         /// A list of database fields associated with a user gallery icon.
         /// </summary>
         public const string GALLERY_ICON_FIELDS = "gi.gallery_item_uri";
-
-        /// <summary>
-        /// Database object
-        /// </summary>
-        protected Mysql db;
 
         /// <summary>
         /// Owner of the gallery
@@ -301,9 +296,10 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         public Gallery(Core core, Member owner)
+            : base(core)
         {
             this.owner = owner;
 
@@ -315,9 +311,10 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         protected Gallery(Core core, Primitive owner)
+            : base(core)
         {
             this.owner = owner;
 
@@ -329,10 +326,11 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryId">Gallery Id</param>
         protected Gallery(Core core, Primitive owner, long galleryId)
+            : base(core)
         {
             this.owner = owner;
 
@@ -361,10 +359,11 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="path">Gallery path</param>
         protected Gallery(Core core, Primitive owner, string path)
+            : base(core)
         {
             this.owner = owner;
 
@@ -389,6 +388,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryRow">Raw data row of gallery</param>
         /// <param name="hasIcon">True if contains raw data for icon</param>
         protected Gallery(Core core, Primitive owner, DataRow galleryRow, bool hasIcon)
+            : base(core)
         {
             this.owner = owner;
 
@@ -444,21 +444,21 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <returns>A list of sub-galleries</returns>
         public abstract List<Gallery> GetGalleries(Core core);
 
         /// <summary>
         /// Returns raw data for a list of sub-galleries
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <returns>Raw data for a list of sub-galleries</returns>
         protected DataRowCollection GetGalleryDataRows(Core core)
         {
             long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
-            DataTable galleriesTable = db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
+            DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
                 ((Member)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
 
             return galleriesTable.Rows;
@@ -1551,6 +1551,21 @@ namespace BoxSocial.Applications.Gallery
                     page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0)));
 
             }
+        }
+
+        public override long Id
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override string Namespace
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 

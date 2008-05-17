@@ -79,10 +79,12 @@ namespace BoxSocial.IO
         {
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
-            QueryList += sqlquery + "\n\n";
+            QueryList += sqlquery + "\n";
+
             DataTable resultTable;
             try
             {
+                QueryList += sqlConnection.State.ToString() + "\n\n";
                 DataSet resultSet = new DataSet();
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
@@ -103,19 +105,14 @@ namespace BoxSocial.IO
             return SelectQuery(query.ToString());
         }
 
-        public override long UpdateQuery(string sqlquery)
-        {
-            return this.UpdateQuery(sqlquery, false);
-        }
-
         private long UpdateQuery(Query query)
         {
             return UpdateQuery(query.ToString());
         }
 
-        private long UpdateQuery(Query query, bool startTransaction)
+        public string Status()
         {
-            return UpdateQuery(query.ToString(), startTransaction);
+            return sqlConnection.State.ToString() + ((inTransaction) ? " transaction" : "");
         }
 
         /// <summary>
@@ -123,21 +120,16 @@ namespace BoxSocial.IO
         /// </summary>
         /// <param name="sqlquery"></param>
         /// <returns></returns>
-        private long UpdateQuery(string sqlquery, bool startTransaction)
+        public override long UpdateQuery(string sqlquery)
         {
             int rowsAffected = 0;
             queryCount++;
-            QueryList += sqlquery + "\n\n";
+            QueryList += sqlquery + "\n";
 
             if (sqlCommand == null)
             {
+                CommitTransaction();
                 sqlCommand = sqlConnection.CreateCommand();
-            }
-
-            if (!inTransaction && startTransaction)
-            {
-                sqlTransaction = sqlConnection.BeginTransaction();
-                inTransaction = true;
             }
 
             try
@@ -169,23 +161,6 @@ namespace BoxSocial.IO
                 return TRANSACTION_ROLLBACK; // rollback
             }
 
-            if (inTransaction && !startTransaction)
-            {
-                try
-                {
-                    sqlTransaction.Commit();
-                }
-                catch (MySql.Data.MySqlClient.MySqlException)
-                {
-                }
-                finally
-                {
-                    sqlTransaction.Dispose();
-                    inTransaction = false;
-                    sqlTransaction = null;
-                }
-            }
-
             if (sqlquery.StartsWith("INSERT INTO"))
             {
                 return sqlCommand.LastInsertedId;
@@ -200,8 +175,16 @@ namespace BoxSocial.IO
         {
             if (!inTransaction)
             {
-                sqlTransaction = sqlConnection.BeginTransaction();
+                if (sqlCommand == null)
+                {
+                    sqlCommand = sqlConnection.CreateCommand();
+                }
+
+                sqlTransaction = sqlConnection.BeginTransaction(); // Snapshot
+                sqlCommand.Transaction = sqlTransaction;
                 inTransaction = true;
+
+                QueryList += "BEGIN TRANSACTION\n\n";
             }
         }
 
@@ -209,6 +192,7 @@ namespace BoxSocial.IO
         {
             if (inTransaction)
             {
+                QueryList += "COMMIT TRANSACTION\n\n";
                 inTransaction = false;
                 try
                 {
@@ -242,6 +226,14 @@ namespace BoxSocial.IO
         public void CloseConnection()
         {
             CommitTransaction();
+            if (sqlTransaction != null)
+            {
+                sqlTransaction.Dispose();
+            }
+            if (sqlCommand != null)
+            {
+                sqlCommand.Dispose();
+            }
             sqlConnection.Close();
         }
 

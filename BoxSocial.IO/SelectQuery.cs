@@ -148,6 +148,11 @@ namespace BoxSocial.IO
             this.fields.AddRange(fields);
         }
 
+        public void AddField(QueryFunction field)
+        {
+            this.fields.Add(field.ToString());
+        }
+
         public void AddJoin(JoinTypes type, string table, string joinField, string tableField)
         {
             joins.Add(new TableJoin(type, table, joinField, tableField));

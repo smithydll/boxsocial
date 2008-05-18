@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Database.cs" />
     <Compile Include="DataFieldAttribute.cs" />
+    <Compile Include="DataFieldInfo.cs" />
     <Compile Include="DataTableAttribute.cs" />
     <Compile Include="DeleteQuery.cs" />
     <Compile Include="InsertQuery.cs" />

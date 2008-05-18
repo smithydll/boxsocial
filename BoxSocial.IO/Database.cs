@@ -18,8 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Reflection;
 
 namespace BoxSocial.IO
 {
@@ -60,10 +64,6 @@ namespace BoxSocial.IO
         public abstract long Query(UpdateQuery query);
         public abstract long Query(DeleteQuery query);
 
-        /*public abstract long Query(InsertQuery query, bool transaction);
-        public abstract long Query(UpdateQuery query, bool transaction);
-        public abstract long Query(DeleteQuery query, bool transaction);*/
-
         public abstract DataTable Query(string query);
 
         public abstract long UpdateQuery(string query);
@@ -72,5 +72,12 @@ namespace BoxSocial.IO
         {
             return queryCount;
         }
+
+        public abstract Dictionary<string, DataFieldInfo> GetColumns(string tableName);
+
+        public abstract void AddColumn(string tableName, DataFieldInfo field);
+        public abstract void ChangeColumn(string tableName, DataFieldInfo field);
+
+        public abstract void CreateTable(string tableName, List<DataFieldInfo> fields);
     }
 }

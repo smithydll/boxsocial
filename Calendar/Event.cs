@@ -49,11 +49,12 @@ namespace BoxSocial.Applications.Calendar
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
-        [DataField("event_id")]
+        #region Fields
+        [DataField("event_id", DataFieldKeys.Primary)]
         private long eventId;
-        [DataField("event_subject")]
+        [DataField("event_subject", 127)]
         private string subject;
-        [DataField("event_description")]
+        [DataField("event_description", MYSQL_TEXT)]
         private string description;
         [DataField("event_views")]
         private long views;
@@ -61,22 +62,30 @@ namespace BoxSocial.Applications.Calendar
         private long attendees;
         [DataField("event_access")]
         private ushort permissions;
-        private Access eventAccess;
         [DataField("event_comments")]
         private long comments;
         [DataField("event_item_id")]
         private long ownerId;
-        [DataField("event_item_type")]
+        [DataField("event_item_type", 63)]
         private string ownerType;
-        private Primitive owner;
         [DataField("user_id")]
         private long userId; // creator
+        [DataField("event_time_start_ut")]
         private long startTimeRaw;
+        [DataField("event_time_end_ut")]
         private long endTimeRaw;
+        [DataField("event_all_day")]
         private bool allDay;
+        [DataField("event_invitees")]
         private long invitees;
+        [DataField("event_category")]
         private ushort category;
+        [DataField("event_location", 127)]
         private string location;
+        #endregion
+
+        private Access eventAccess;
+        private Primitive owner;
 
         public long EventId
         {
@@ -236,17 +245,19 @@ namespace BoxSocial.Applications.Calendar
             return tz.DateTimeFromMysql(endTimeRaw);
         }
 
-        public Event(Core core, Primitive owner, long eventId) : base (core)
+        public Event(Core core, Primitive owner, long eventId)
+            : base(core)
         {
-            this.db = db;
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
             DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE ev.event_id = {1};",
                 Event.EVENT_INFO_FIELDS, eventId));
 
             if (eventsTable.Rows.Count == 1)
             {
-                loadEventInfo(eventsTable.Rows[0]);
+                /*loadEventInfo(eventsTable.Rows[0]);*/
+                loadItemInfo(eventsTable.Rows[0]);
             }
             else
             {
@@ -254,11 +265,23 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public Event(Core core, Primitive owner, DataRow eventRow) : base(core)
+        private void Event_ItemLoad()
+        {
+            if (owner == null)
+            {
+                owner = new Member(core, userId);
+            }
+
+            eventAccess = new Access(db, permissions, owner);
+        }
+
+        public Event(Core core, Primitive owner, DataRow eventRow)
+            : base(core)
         {
             this.owner = owner;
 
-            loadEventInfo(eventRow);
+            //loadEventInfo(eventRow);
+            loadItemInfo(eventRow);
         }
 
         private void loadEventInfo(DataRow eventRow)
@@ -293,7 +316,7 @@ namespace BoxSocial.Applications.Calendar
         public static Event Create(Core core, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
         {
             long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, '{2}', '{3}', '{4}', '{5}', {6}, {7}, {8})",
-                creator.UserId, owner.Id, Mysql.Escape(owner.Type),Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
+                creator.UserId, owner.Id, Mysql.Escape(owner.Type), Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
 
             Event myEvent = new Event(core, owner, eventId);
 
@@ -529,8 +552,8 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)
         {
-            HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetFields(typeof(Event))));
-            HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetTable(typeof(Event))));
+            /*HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetFields(typeof(Event))));*/
+            /*HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetTable(typeof(Event))));*/
 
             page.template.SetTemplate("Calendar", "viewcalendarevent");
 

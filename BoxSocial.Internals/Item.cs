@@ -31,6 +31,10 @@ namespace BoxSocial.Internals
 {
     public abstract class Item
     {
+        public const long MYSQL_TEXT = 65535L;
+        public const long MYSQL_MEDIUM_TEXT = 16777215L;
+        public const long MYSQL_LONG_TEXT = 4294967295L;
+
         /// <summary>
         /// Database object
         /// </summary>
@@ -43,11 +47,57 @@ namespace BoxSocial.Internals
 
         private List<string> updatedItems;
 
+        public delegate void ItemLoadHandler();
+
+        public event ItemLoadHandler ItemLoad;
+
         protected Item(Core core)
         {
             this.core = core;
             this.db = core.db;
             updatedItems = new List<string>();
+        }
+
+        protected Item(Core core, long primaryKey) : this(core)
+        {
+            // 1. Discover primary key
+            // 2. Build query
+            // 3. Execute query
+            // 4. Fill results
+
+            string tableName = GetTable(this.GetType());
+            List<DataFieldInfo> fields = GetFields(this.GetType());
+            string keyField = "";
+
+            SelectQuery query = new SelectQuery(tableName);
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.IsPrimaryKey)
+                {
+                    keyField = field.Name;
+                }
+
+                query.AddFields(field.Name);
+            }
+
+            if (string.IsNullOrEmpty(keyField))
+            {
+                // Error
+            }
+
+            query.AddCondition(keyField, primaryKey);
+
+            DataTable itemTable = Query(query);
+
+            if (itemTable.Rows.Count == 1)
+            {
+                loadItemInfo(itemTable.Rows[0]);
+            }
+            else
+            {
+                // Error
+            }
         }
 
         protected void UpdateThis()
@@ -117,9 +167,9 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        protected static string[] GetFields(Type type)
+        protected static List<DataFieldInfo> GetFields(Type type)
         {
-            List<string> returnValue = new List<string>();
+            List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
@@ -129,18 +179,18 @@ namespace BoxSocial.Internals
                     {
                         if (((DataFieldAttribute)attr).FieldName != null)
                         {
-                            returnValue.Add(((DataFieldAttribute)attr).FieldName);
+                            returnValue.Add(new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength));
                         }
                         else
                         {
-                            returnValue.Add(fi.Name);
+                            returnValue.Add(new DataFieldInfo(fi.Name, fi.FieldType, 255));
                         }
                     }
                 }
 
             }
 
-            return returnValue.ToArray();
+            return returnValue;
         }
 
         protected static string GetTable(Type type)
@@ -186,6 +236,44 @@ namespace BoxSocial.Internals
             }
 
             return db.Query(uQuery);
+        }
+
+        protected void loadItemInfo(DataRow itemRow)
+        {
+            List<string> columns = new List<string>();
+
+            foreach (DataColumn column in itemRow.Table.Columns)
+            {
+                columns.Add(column.ColumnName);
+            }
+
+            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                {
+                    if (attr.GetType() == typeof(DataFieldAttribute))
+                    {
+                        string columnName;
+                        if (((DataFieldAttribute)attr).FieldName != null)
+                        {
+                            columnName = ((DataFieldAttribute)attr).FieldName;
+                        }
+                        else
+                        {
+                            columnName = fi.Name;
+                        }
+
+                        if (columns.Contains(columnName))
+                        {
+                            if (!(itemRow[columnName] is DBNull))
+                            {
+                                fi.SetValue(this, itemRow[columnName]);
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
 }

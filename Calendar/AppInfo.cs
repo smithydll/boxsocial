@@ -40,6 +40,11 @@ namespace BoxSocial.Applications.Calendar
 {
     public class AppInfo : Application
     {
+        public AppInfo(Core core)
+            : base(core)
+        {
+        }
+
         public override string Title
         {
             get
@@ -127,7 +132,7 @@ namespace BoxSocial.Applications.Calendar
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})(|/)$", showCalendarYear, 2);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", showCalendarMonth, 3);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", showCalendarDay, 4);
-            core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
+            //core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
             core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
             core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);
         }
@@ -235,6 +240,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showEvent(Core core, object sender)
         {
             if (sender is PPage)

@@ -38,6 +38,11 @@ namespace BoxSocial.Applications.Blog
     public class AppInfo : Application
     {
 
+        public AppInfo(Core core)
+            : base(core)
+        {
+        }
+
         /// <summary>
         /// Application title
         /// </summary>

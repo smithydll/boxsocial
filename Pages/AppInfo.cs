@@ -32,6 +32,12 @@ namespace BoxSocial.Applications.Pages
 {
     public class AppInfo : Application
     {
+
+        public AppInfo(Core core)
+            : base(core)
+        {
+        }
+
         public override string Title
         {
             get

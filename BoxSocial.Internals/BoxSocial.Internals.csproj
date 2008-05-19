@@ -103,6 +103,7 @@
     <Compile Include="RssDocument.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Session.cs" />
+    <Compile Include="ShowAttribute.cs" />
     <Compile Include="StatusFeed.cs" />
     <Compile Include="StatusMessage.cs" />
     <Compile Include="Time.cs" />

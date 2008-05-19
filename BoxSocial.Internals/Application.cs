@@ -42,6 +42,69 @@ namespace BoxSocial.Internals
     {
         protected Core core;
 
+        public Application(Core core)
+        {
+            this.core = core;
+
+            RegisterPages();
+        }
+
+        public List<string> GetSlugs()
+        {
+            List<string> slugs = new List<string>();
+            Type type = this.GetType();
+
+            foreach (MemberInfo mi in type.GetMembers(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                {
+                    if (attr.GetType() == typeof(ShowAttribute))
+                    {
+                        slugs.Add(((ShowAttribute)attr).Slug);
+                    }
+                }
+            }
+
+            return slugs;
+        }
+
+        public void RegisterPages()
+        {
+            Type type = this.GetType();
+
+            int i = 0;
+            foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                {
+                    if (attr.GetType() == typeof(ShowAttribute))
+                    {
+                        i++;
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                    }
+                }
+            }
+        }
+
+        public void InstallPages(ApplicationInstallationInfo aii)
+        {
+            Type type = this.GetType();
+
+            int i = 0;
+            foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                {
+                    if (attr.GetType() == typeof(ShowAttribute))
+                    {
+                        i++;
+                        //core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        aii.AddSlug("{STUB}", ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                    }
+                }
+            }
+        }
+
         public static ApplicationEntry Entry
         {
             get
@@ -112,7 +175,7 @@ namespace BoxSocial.Internals
                 {
                     if (type.IsSubclassOf(typeof(Application)))
                     {
-                        Application newApplication = System.Activator.CreateInstance(type, new object[0]) as Application;
+                        Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
 
                         if (newApplication != null)
                         {
@@ -271,7 +334,7 @@ namespace BoxSocial.Internals
                         {
                             if (type.IsSubclassOf(typeof(Application)))
                             {
-                                Application newApplication = System.Activator.CreateInstance(type, new object[0]) as Application;
+                                Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
 
                                 if (newApplication != null)
                                 {

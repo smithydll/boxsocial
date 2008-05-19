@@ -251,15 +251,23 @@ namespace BoxSocial.Applications.Calendar
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
-            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE ev.event_id = {1};",
+            /*DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE ev.event_id = {1};",
                 Event.EVENT_INFO_FIELDS, eventId));
 
             if (eventsTable.Rows.Count == 1)
             {
-                /*loadEventInfo(eventsTable.Rows[0]);*/
+                /*loadEventInfo(eventsTable.Rows[0]);/
                 loadItemInfo(eventsTable.Rows[0]);
             }
             else
+            {
+                throw new InvalidEventException();
+            }*/
+            try
+            {
+                LoadItem(eventId);
+            }
+            catch (InvalidItemException)
             {
                 throw new InvalidEventException();
             }
@@ -267,7 +275,7 @@ namespace BoxSocial.Applications.Calendar
 
         private void Event_ItemLoad()
         {
-            if (owner == null)
+            if (owner == null || ownerId != owner.Id)
             {
                 owner = new Member(core, userId);
             }
@@ -636,9 +644,9 @@ namespace BoxSocial.Applications.Calendar
                     attendeesVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(attendee.UserTile));
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Display.ShowMessage("Invalid event", "The event does not exist.");
+                Display.ShowMessage("Invalid event", "The event does not exist. " + ex.ToString());
             }
         }
 

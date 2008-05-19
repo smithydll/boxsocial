@@ -34,6 +34,12 @@ namespace BoxSocial.Applications.GuestBook
 {
     public class AppInfo : Application
     {
+
+        public AppInfo(Core core)
+            : base(core)
+        {
+        }
+
         public override string Title
         {
             get

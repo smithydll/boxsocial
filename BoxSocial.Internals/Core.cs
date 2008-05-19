@@ -413,8 +413,4 @@ namespace BoxSocial.Internals
             }
         }*/
     }
-
-    public class InvalidItemException : Exception
-    {
-    }
 }

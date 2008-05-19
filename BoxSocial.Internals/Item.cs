@@ -58,7 +58,7 @@ namespace BoxSocial.Internals
             updatedItems = new List<string>();
         }
 
-        protected Item(Core core, long primaryKey) : this(core)
+        protected void LoadItem(long primaryKey)
         {
             // 1. Discover primary key
             // 2. Build query
@@ -84,19 +84,78 @@ namespace BoxSocial.Internals
             if (string.IsNullOrEmpty(keyField))
             {
                 // Error
+                throw new NoPrimaryKeyException();
             }
 
             query.AddCondition(keyField, primaryKey);
+
+            //HttpContext.Current.Response.Write(query.ToString());
 
             DataTable itemTable = Query(query);
 
             if (itemTable.Rows.Count == 1)
             {
                 loadItemInfo(itemTable.Rows[0]);
+
+                if (ItemLoad != null)
+                {
+                    ItemLoad();
+                }
             }
             else
             {
                 // Error
+                throw new InvalidItemException();
+            }
+        }
+
+        protected void LoadItem(string uniqueIndex, object value)
+        {
+            // 1. check index is unique
+            // 2. Build query
+            // 3. Execute query
+            // 4. Fill results
+
+            string tableName = GetTable(this.GetType());
+            List<DataFieldInfo> fields = GetFields(this.GetType());
+            string keyField = "";
+
+            SelectQuery query = new SelectQuery(tableName);
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.Name == uniqueIndex)
+                {
+                    if (field.IsUnique)
+                    {
+                        keyField = field.Name;
+                    }
+                    else
+                    {
+                        throw new FieldNotUniqueIndexException();
+                    }
+                }
+
+                query.AddFields(field.Name);
+            }
+
+            query.AddCondition(keyField, value);
+
+            DataTable itemTable = Query(query);
+
+            if (itemTable.Rows.Count == 1)
+            {
+                loadItemInfo(itemTable.Rows[0]);
+
+                if (ItemLoad != null)
+                {
+                    ItemLoad();
+                }
+            }
+            else
+            {
+                // Error
+                throw new InvalidItemException();
             }
         }
 
@@ -179,7 +238,9 @@ namespace BoxSocial.Internals
                     {
                         if (((DataFieldAttribute)attr).FieldName != null)
                         {
-                            returnValue.Add(new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength));
+                            DataFieldInfo dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+
+                            returnValue.Add(dfi);
                         }
                         else
                         {
@@ -275,5 +336,17 @@ namespace BoxSocial.Internals
 
             }
         }
+    }
+
+    public class InvalidItemException : Exception
+    {
+    }
+
+    public class NoPrimaryKeyException : Exception
+    {
+    }
+
+    public class FieldNotUniqueIndexException : Exception
+    {
     }
 }

@@ -238,7 +238,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Initialises a new instance of the BlogEntry class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core Token</param>
         /// <param name="postId">Post Id to retrieve</param>
         public BlogEntry(Core core, long postId) : base(core)
         {
@@ -260,7 +260,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Initialses a new instance of the BlogEntry class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core Token</param>
         /// <param name="owner">Owner whose blog post has been retrieved</param>
         /// <param name="postEntryRow">Raw data row of blog entry</param>
         public BlogEntry(Core core, Primitive owner, DataRow postEntryRow) : base(core)

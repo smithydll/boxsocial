@@ -31,7 +31,7 @@ using BoxSocial.Groups;
 using BoxSocial.Networks;
 
 /*
- * TODO: SQL
+ * DONE: SQL
  * ALTER TABLE `zinzam0_zinzam`.`comment_types` MODIFY COLUMN `type_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
  * ALTER TABLE `zinzam0_zinzam`.`comments` MODIFY COLUMN `comment_item_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'UNASSOCIATED';
  */
@@ -50,6 +50,14 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return "Calendar";
+            }
+        }
+
+        public override string Stub
+        {
+            get
+            {
+                return "calendar";
             }
         }
 
@@ -133,7 +141,7 @@ namespace BoxSocial.Applications.Calendar
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", showCalendarMonth, 3);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", showCalendarDay, 4);
             //core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
-            core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
+            //core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
             core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);
         }
 
@@ -250,6 +258,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTask(Core core, object sender)
         {
             if (sender is PPage)

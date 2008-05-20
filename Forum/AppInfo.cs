@@ -48,6 +48,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public override string Stub
+        {
+            get
+            {
+                return "forum";
+            }
+        }
+
         public override string Description
         {
             get
@@ -117,20 +125,23 @@ namespace BoxSocial.Applications.Forum
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
+            /*core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
             core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
-            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);
+            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
 
+        [Show(@"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForums(Core core, object sender)
         {
         }
 
+        [Show(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showTopic(Core core, object sender)
         {
         }
 
+        [Show(@"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForum(Core core, object sender)
         {
         }

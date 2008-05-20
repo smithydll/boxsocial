@@ -48,6 +48,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public override string Stub
+        {
+            get
+            {
+                return "gallery";
+            }
+        }
+
         public override string Description
         {
             get

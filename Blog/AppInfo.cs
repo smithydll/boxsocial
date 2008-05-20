@@ -38,6 +38,10 @@ namespace BoxSocial.Applications.Blog
     public class AppInfo : Application
     {
 
+        /// <summary>
+        /// Constructor for Blog Application
+        /// </summary>
+        /// <param name="core"></param>
         public AppInfo(Core core)
             : base(core)
         {
@@ -51,6 +55,17 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return "Blog";
+            }
+        }
+
+        /// <summary>
+        /// Default stub
+        /// </summary>
+        public override string Stub
+        {
+            get
+            {
+                return "blog";
             }
         }
 
@@ -89,6 +104,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the application icon for Blog Application.
+        /// </summary>
         public override System.Drawing.Image Icon
         {
             get

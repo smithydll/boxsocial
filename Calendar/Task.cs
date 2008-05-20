@@ -79,22 +79,36 @@ ENGINE = InnoDB;
     {
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
+        [DataField("task_id")]
         private long taskId;
+        [DataField("task_topic")]
         private string topic;
+        [DataField("task_description")]
         private string description;
+        [DataField("task_views")]
         private long views;
+        [DataField("task_comments")]
         private long comments;
+        [DataField("task_access")]
         private ushort permissions;
-        private Access taskAccess;
+        [DataField("task_item_id")]
         private long ownerId;
-        private Primitive owner;
+        [DataField("task_item_type")]
+        private string ownerType;
+        [DataField("user_id")]
         private int userId; // creator
+        [DataField("task_due_date_ut")]
         private long dueTimeRaw;
+        [DataField("task_time_completed_ut")]
         private long completedTimeRaw;
+        [DataField("task_category")]
         private ushort category;
         private TaskStatus status;
+        [DataField("task_percent_complete")]
         private byte percentageComplete;
         private TaskPriority priority;
+        private Access taskAccess;
+        private Primitive owner;
 
         public long TaskId
         {

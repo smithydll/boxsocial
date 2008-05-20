@@ -46,6 +46,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public override string Stub
+        {
+            get
+            {
+                return "*";
+            }
+        }
+
         public override string Description
         {
             get

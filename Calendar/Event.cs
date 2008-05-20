@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Calendar
     }
 
     /*
-     * TODO: SQL
+     * DONE: SQL
      * ALTER TABLE `zinzam0_zinzam`.`event_invites` MODIFY COLUMN `event_id` BIGINT(20) NOT NULL,
  DROP PRIMARY KEY;
      * ALTER TABLE `zinzam0_zinzam`.`events` CHANGE COLUMN `event_attendies` `event_attendees` BIGINT(20) NOT NULL DEFAULT 0;

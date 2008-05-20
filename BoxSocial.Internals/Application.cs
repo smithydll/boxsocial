@@ -79,8 +79,15 @@ namespace BoxSocial.Internals
                 {
                     if (attr.GetType() == typeof(ShowAttribute))
                     {
-                        i++;
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        if (((ShowAttribute)attr).Order > 0)
+                        {
+                            core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
+                        }
+                        else
+                        {
+                            i++;
+                            core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        }
                     }
                 }
             }
@@ -99,7 +106,14 @@ namespace BoxSocial.Internals
                     {
                         i++;
                         //core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
-                        aii.AddSlug("{STUB}", ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                        if (string.IsNullOrEmpty(((ShowAttribute)attr).Stub))
+                        {
+                            aii.AddSlug(this.Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                        }
+                        else
+                        {
+                            aii.AddSlug(((ShowAttribute)attr).Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                        }
                     }
                 }
             }
@@ -132,21 +146,44 @@ namespace BoxSocial.Internals
             return AppPrimitives.None;
         }
 
+        /// <summary>
+        /// Application title
+        /// </summary>
         public abstract string Title
         {
             get;
         }
 
+        /// <summary>
+        /// Default stub. When no stub is specified, the default one is used.
+        /// Can be overridden by specifying an overriding stub in the
+        /// appropriate Show attribute overload.
+        /// </summary>
+        public abstract string Stub
+        {
+            get;
+        }
+
+        /// <summary>
+        /// A description of the application
+        /// </summary>
+        /// <remarks>Uses BBcode</remarks>
         public abstract string Description
         {
             get;
         }
 
+        /// <summary>
+        /// A flag indicating whether the application uses the comments module
+        /// </summary>
         public abstract bool UsesComments
         {
             get;
         }
 
+        /// <summary>
+        /// A flag indicating whether the application uses the ratings module
+        /// </summary>
         public abstract bool UsesRatings
         {
             get;
@@ -157,6 +194,9 @@ namespace BoxSocial.Internals
             get;
         }
 
+        /// <summary>
+        /// A 16x16 image file for the application icon.
+        /// </summary>
         public abstract System.Drawing.Image Icon
         {
             get;

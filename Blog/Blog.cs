@@ -143,7 +143,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Initialises a new instance of the Blog class.
         /// </summary>
-        /// <param name="db">Database object</param>
+        /// <param name="core">Core Token</param>
         /// <param name="owner">Owner whose blog to retrieve</param>
         public Blog(Core core, Member owner)
         {

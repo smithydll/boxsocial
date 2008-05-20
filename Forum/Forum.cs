@@ -29,14 +29,24 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Forum
 {
-    public class Forum
+    public class Forum : Item
     {
-        protected Mysql db;
+
+        [DataField("forum_id")]
+        private long forumId;
+        [DataField("forum_title")]
+        private string forumTitle;
+        [DataField("forum_topics")]
+        private long forumTopics;
+        [DataField("forum_posts")]
+        private long forumPosts;
+        [DataField("forum_access")]
+        private ushort permissions;
         protected Primitive owner;
 
-        public Forum(Mysql db, UserGroup owner)
+        public Forum(Core core, UserGroup owner)
+            : base(core)
         {
-            this.db = db;
             this.owner = owner;
         }
 
@@ -57,6 +67,30 @@ namespace BoxSocial.Applications.Forum
             }
 
             return topics;
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return forumId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

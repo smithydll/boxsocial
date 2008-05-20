@@ -48,6 +48,14 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public override string Stub
+        {
+            get
+            {
+                return "profile";
+            }
+        }
+
         public override string Description
         {
             get

@@ -498,7 +498,7 @@ namespace BoxSocial.Internals
             return Update(false);
         }*/
 
-        public ApplicationEntry Update()
+        public new ApplicationEntry Update()
         {
             UpdateQuery query = new UpdateQuery("applications");
             if (titleChanged)

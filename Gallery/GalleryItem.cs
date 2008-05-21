@@ -270,6 +270,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery item parent gallery Id
+        /// </summary>
         public long ParentId
         {
             get
@@ -278,6 +281,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery item license
+        /// </summary>
         public ContentLicense License
         {
             get
@@ -286,6 +292,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery item classification
+        /// </summary>
         public Classifications Classification
         {
             get
@@ -294,6 +303,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="path">Gallery item path</param>
         protected GalleryItem(Core core, Primitive owner, string path) : base(core)
         {
             this.owner = owner;
@@ -318,6 +333,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="itemRow">Raw data row of gallery item</param>
         public GalleryItem(Core core, Member owner, DataRow itemRow) : base(core)
         {
             this.db = db;
@@ -333,6 +354,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="itemRow">Raw data row of gallery item</param>
         protected GalleryItem(Core core, Primitive owner, DataRow itemRow) : base(core)
         {
             this.owner = owner;
@@ -347,6 +374,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="itemRow">Raw data row of gallery item</param>
         public GalleryItem(Core core, DataRow itemRow) : base(core)
         {
             // TODO: owner not set, no big worry
@@ -361,6 +393,13 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="parent">Gallery item parent</param>
+        /// <param name="path">Gallery item path</param>
         public GalleryItem(Core core, Member owner, Gallery parent, string path) : base(core)
         {
             this.db = db;
@@ -386,6 +425,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="itemId">Gallery item Id</param>
         protected GalleryItem(Core core, Primitive owner, long itemId) : base(core)
         {
             this.owner = owner;
@@ -425,6 +470,11 @@ namespace BoxSocial.Applications.Gallery
         {
         }*/
 
+        /// <summary>
+        /// Initialises a new instance of the GalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="itemId">Gallery item Id</param>
         public GalleryItem(Core core, long itemId) : base(core)
         {
             // TODO: owner not set, no big worry
@@ -449,6 +499,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Loads the database information into the GalleryItem class object.
+        /// </summary>
+        /// <param name="itemRow"></param>
         protected void loadItemInfo(DataRow itemRow)
         {
             itemId = (long)itemRow["gallery_item_id"];
@@ -470,11 +524,19 @@ namespace BoxSocial.Applications.Gallery
             classification = (Classifications)(byte)itemRow["gallery_item_classification"];
         }
 
+        /// <summary>
+        /// Loads the licensing information into the GalleryItem class object.
+        /// </summary>
+        /// <param name="itemRow"></param>
         private void loadLicenseInfo(DataRow itemRow)
         {
             license = new ContentLicense(db, itemRow);
         }
 
+        /// <summary>
+        /// Increment the number of views
+        /// </summary>
+        /// <param name="viewer">Person viewing the gallery item</param>
         public void Viewed(Member viewer)
         {
             if (viewer != null)
@@ -498,6 +560,10 @@ namespace BoxSocial.Applications.Gallery
             return GalleryItem.Create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license);
         }*/
 
+        /// <summary>
+        /// Delete the gallery item
+        /// </summary>
+        /// <param name="core"></param>
         public void Delete(Core core)
         {
             SelectQuery squery = new SelectQuery("gallery_items gi");
@@ -551,6 +617,24 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Creates a new gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Owner</param>
+        /// <param name="parent">Gallery</param>
+        /// <param name="title">Title</param>
+        /// <param name="slug">Slug</param>
+        /// <param name="fileName">File name</param>
+        /// <param name="storageName">Storage name</param>
+        /// <param name="contentType">Content type</param>
+        /// <param name="bytes">Bytes</param>
+        /// <param name="description">Description</param>
+        /// <param name="permissions">Permissions mask</param>
+        /// <param name="license">License</param>
+        /// <param name="classification">Classification</param>
+        /// <remarks>Slug is a reference</remarks>
+        /// <returns>New gallery item</returns>
         protected static long create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             Mysql db = core.db;
@@ -644,6 +728,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Rotate the gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="rotation">Rotation</param>
         public void Rotate(Core core, RotateFlipType rotation)
         {
             ImageFormat iF = ImageFormat.Jpeg;

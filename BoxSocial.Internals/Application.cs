@@ -416,7 +416,7 @@ namespace BoxSocial.Internals
                 {
                     if (type.IsSubclassOf(typeof(Application)))
                     {
-                        Application newApplication = System.Activator.CreateInstance(type, new object[0]) as Application;
+                        Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
 
                         if (newApplication != null)
                         {

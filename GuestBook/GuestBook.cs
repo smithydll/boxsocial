@@ -78,9 +78,14 @@ namespace BoxSocial.Applications.GuestBook
                     page.template.ParseVariables("CAN_COMMENT", "TRUE");
                 }
             }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "profile", "Profile" });
+            breadCrumbParts.Add(new string[] { "comments", "Comments" });
+
             Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
-            page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
+            page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
         }
 
@@ -114,9 +119,14 @@ namespace BoxSocial.Applications.GuestBook
             commenters.Add(page.ProfileOwner);
             commenters.Add(core.UserProfiles[userId]);
 
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] {"profile", "Profile"});
+            breadCrumbParts.Add(new string[] {"comments", "Comments"});
+            breadCrumbParts.Add(new string[] {core.UserProfiles[userId].Key, core.UserProfiles[userId].DisplayName});
+
             Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters);
-            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
-            page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "profile/comments"));
+            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
+            page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
         }
 

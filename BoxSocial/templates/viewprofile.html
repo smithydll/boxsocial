@@ -17,12 +17,14 @@
 			    Click here to change your status message.
 			    <!-- ENDIF -->
 			</p>
-			<form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
-			    <input type="text" id="message" name="message" value="is " onblur="show('status-message');hide('status-form');" />
-			    <input type="submit" id="status-submit" value="Submit"/>
-			    <input type="hidden" name="module" value="profile" />
-			    <input type="hidden" name="sub" value="status" />
-			</form>
+			<div>
+			    <form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
+			        <p><input type="text" id="message" name="message" value="is " onblur="show('status-message');hide('status-form');" />
+			        <input type="submit" id="status-submit" value="Submit"/>
+			        <input type="hidden" name="module" value="profile" />
+			        <input type="hidden" name="sub" value="status" /></p>
+			    </form>
+			</div>
 			<!-- ELSE -->
 			    <!-- IF STATUS_MESSAGE -->
 			    <p id="status-message">{STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em></p>

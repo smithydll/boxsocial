@@ -26,6 +26,7 @@ using System.Web;
 using BoxSocial.IO;
 using BoxSocial.Internals;
 using BoxSocial.Groups;
+using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
@@ -44,10 +45,26 @@ namespace BoxSocial.Applications.Forum
         private ushort permissions;
         protected Primitive owner;
 
-        public Forum(Core core, UserGroup owner)
+        public Forum(Core core, UserGroup owner, long forumId)
             : base(core)
         {
             this.owner = owner;
+
+            ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
+
+            try
+            {
+                LoadItem(forumId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumException();
+            }
+        }
+
+        void Forum_ItemLoad()
+        {
+            
         }
 
         public List<ForumTopic> GetTopics(TPage page, int currentPage, int perPage)
@@ -89,8 +106,25 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                throw new NotImplementedException();
+                if (owner.GetType() == typeof(UserGroup))
+                {
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/{1}/",
+                        owner.Key, forumId));
+                }
+                else if (owner.GetType() == typeof(Network))
+                {
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/{1}/",
+                        owner.Key, forumId));
+                }
+                else
+                {
+                    return "/";
+                }
             }
         }
+    }
+
+    public class InvalidForumException : Exception
+    {
     }
 }

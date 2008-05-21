@@ -383,7 +383,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="Core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of gallery</param>
         /// <param name="hasIcon">True if contains raw data for icon</param>
@@ -611,7 +611,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Creates a new gallery for the logged in user.
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <param name="parent">Parent gallery</param>
         /// <param name="title">Gallery title</param>
         /// <param name="slug">Gallery slug</param>
@@ -651,7 +651,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Deletes a gallery
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <param name="gallery">Gallery to delete</param>
         public static void Delete(Core core, Gallery gallery)
         {
@@ -667,7 +667,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Delete all children of a gallery
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <param name="gallery">Gallery being deleted</param>
         /// <returns>An array containing the number of gallery photos deleted
         /// (index 0), and the number of bytes consumed by said photos
@@ -1553,16 +1553,28 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery id
+        /// </summary>
         public override long Id
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return galleryId;
+            }
         }
 
+        /// <summary>
+        /// Returns gallery namespace
+        /// </summary>
         public override string Namespace
         {
             get { throw new NotImplementedException(); }
         }
 
+        /// <summary>
+        /// Returns gallery URI
+        /// </summary>
         public override string Uri
         {
             get { throw new NotImplementedException(); }

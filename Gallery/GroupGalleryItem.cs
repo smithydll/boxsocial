@@ -28,36 +28,82 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// Represents a group gallery item
+    /// </summary>
     public class GroupGalleryItem : GalleryItem
     {
 
+        /// <summary>
+        /// Initialises a new instance of the GroupGalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="itemId">Gallery item Id</param>
         public GroupGalleryItem(Core core, UserGroup owner, long itemId)
             : base(core, (Primitive)owner, itemId)
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GroupGalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="itemRow">Raw data row of gallery item</param>
         public GroupGalleryItem(Core core, UserGroup owner, DataRow itemRow)
             : base(core, (Primitive)owner, itemRow)
         {
         }
 
+        /// <summary>
+        /// Initialises a new instance of the GroupGalleryItem class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Gallery item owner</param>
+        /// <param name="path">Gallery item path</param>
         public GroupGalleryItem(Core core, UserGroup owner, string path)
             : base(core, (Primitive)owner, path)
         {
         }
 
+        /// <summary>
+        /// Creates a new group gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Owner</param>
+        /// <param name="parent">Gallery</param>
+        /// <param name="title">Title</param>
+        /// <param name="slug">Slug</param>
+        /// <param name="fileName">File name</param>
+        /// <param name="storageName">Storage name</param>
+        /// <param name="contentType">Content type</param>
+        /// <param name="bytes">Bytes</param>
+        /// <param name="description">Description</param>
+        /// <param name="permissions">Permissions mask</param>
+        /// <param name="license">License</param>
+        /// <param name="classification">Classification</param>
+        /// <remarks>Slug is a reference</remarks>
+        /// <returns>New gallery item</returns>
         public static GalleryItem Create(Core core, UserGroup owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
             return new GroupGalleryItem(core, owner, itemId);
         }
 
+        /// <summary>
+        /// Returns user gallery item URI
+        /// </summary>
+        /// <returns></returns>
         public override string BuildUri()
         {
             return Linker.AppendSid(string.Format("group/{0}/gallery/{1}/{2}",
                 owner.Key, parentPath, path));
         }
 
+        /// <summary>
+        /// Returns user gallery item URI
+        /// </summary>
         public override string Uri
         {
             get

@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the NetworkGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Network owning</param>
         public NetworkGallery(Core core, Network owner)
             : base(core, owner)
@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the NetworkGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Network owning</param>
         /// <param name="galleryRow">Raw data row</param>
         /// <param name="hasIcon">Raw data contains icon</param>
@@ -59,7 +59,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the NetworkGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Network owning</param>
         /// <param name="galleryId">Gallery Id</param>
         public NetworkGallery(Core core, Network owner, long galleryId)
@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <returns>A list of sub-galleries</returns>
         public override List<Gallery> GetGalleries(Core core)
         {

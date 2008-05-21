@@ -178,14 +178,59 @@ namespace BoxSocial.Internals
             return new Comment(core.db, commentId);
         }
 
-        public static List<Comment> GetComments(Mysql db, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage)
+        public static List<Comment> GetComments(Mysql db, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<Member> commenters)
         {
             List<Comment> comments = new List<Comment>();
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
 
-            DataTable commentsTable = db.Query(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
-                itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));
+            /*DataTable commentsTable = db.Query(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
+                itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));*/
+
+            SelectQuery query = new SelectQuery("comments c");
+            query.AddFields(Comment.COMMENT_INFO_FIELDS);
+            query.AddCondition("c.comment_deleted", false);
+            query.AddSort(commentSortOrder, "c.comment_time_ut");
+            query.LimitStart = (currentPage - 1) * perPage;
+            query.LimitCount = perPage;
+
+            if (commenters != null)
+            {
+                if (commenters.Count > 0)
+                {
+                    List<long> commentersIds = new List<long>();
+
+                    foreach (Member commenter in commenters)
+                    {
+                        commentersIds.Add(commenter.Id);
+                    }
+
+                    query.AddCondition("user_id", ConditionEquality.In, commentersIds);
+
+                    if (itemType == "USER")
+                    {
+                        query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
+                        query.AddCondition("c.comment_item_type", itemType);
+                    }
+                    else
+                    {
+                        query.AddCondition("c.comment_item_id", itemId);
+                        query.AddCondition("c.comment_item_type", itemType);
+                    }
+                }
+                else
+                {
+                    query.AddCondition("c.comment_item_id", itemId);
+                    query.AddCondition("c.comment_item_type", itemType);
+                }
+            }
+            else
+            {
+                query.AddCondition("c.comment_item_id", itemId);
+                query.AddCondition("c.comment_item_type", itemType);
+            }
+
+            DataTable commentsTable = db.Query(query);
 
             foreach (DataRow dr in commentsTable.Rows)
             {

@@ -286,7 +286,28 @@ namespace BoxSocial.Internals
                         }
 
                         query.AddCondition("user_id", ConditionEquality.In, commentersIds);
+
+                        if (item.Namespace == "USER")
+                        {
+                            query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
+                            query.AddCondition("c.comment_item_type", item.Namespace);
+                        }
+                        else
+                        {
+                            query.AddCondition("comment_item_id", item.Id);
+                            query.AddCondition("comment_item_type", item.Namespace);
+                        }
                     }
+                    else
+                    {
+                        query.AddCondition("comment_item_id", item.Id);
+                        query.AddCondition("comment_item_type", item.Namespace);
+                    }
+                }
+                else
+                {
+                    query.AddCondition("comment_item_id", item.Id);
+                    query.AddCondition("comment_item_type", item.Namespace);
                 }
 
                 query.AddSort(SortOrder.Ascending, "comment_time_ut");
@@ -306,7 +327,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<Comment> comments = Comment.GetComments(db, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage);
+            List<Comment> comments = Comment.GetComments(db, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
             if (item.Comments >= 0)

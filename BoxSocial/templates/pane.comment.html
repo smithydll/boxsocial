@@ -28,6 +28,14 @@
 		<!-- IF LOGGED_IN -->
 		<p class="extra">
 		<!-- IF CAN_COMMENT -->
+		<!-- IF IS_USER_GUESTBOOK -->
+		<!-- IF U_CONVERSATION -->
+		(<a href="{comment-list.U_CONVERSATION}">View as Conversation</a>)
+		<!-- ENDIF -->
+		<!-- IF U_REPLY -->
+		(<a href="{comment-list.U_REPLY}">Reply</a>)
+		<!-- ENDIF -->
+		<!-- ENDIF -->
 		(<a href="{comment-list.U_QUOTE}" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});">Quote</a>)
 		<!-- ENDIF -->
 		<!-- IF comment-list.MODERATE -->

@@ -315,6 +315,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void CommentDeleted(string itemType, long itemId, Comment comment, Member poster)
+        {
+            if (commentHandles.ContainsKey(itemType))
+            {
+                commentHandles[itemType].CommentDeleted(comment, poster, itemType, itemId);
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         public void ItemRated(string itemType, long itemId, int rating, Member rater)
         {
             if (ratingHandles.ContainsKey(itemType))
@@ -339,9 +351,19 @@ namespace BoxSocial.Internals
             pages.Add(new PageHandle(expression, pageHandle, order));
         }
 
+        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
+        {
+            RegisterCommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, null, null);
+        }
+
         public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
         {
-            commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted));
+            RegisterCommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, null);
+        }
+
+        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
+        {
+            commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
         }
 
         public void RegisterRatingHandle(string token, Core.RatingHandler itemRated)

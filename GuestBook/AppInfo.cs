@@ -30,6 +30,22 @@ using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
+/*
+ * 
+ * TODO: SQL
+CREATE TABLE `zinzam0_zinzam`.`guestbook_comment_counts` (
+  `owner_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
+  `comment_comments` BIGINT NOT NULL
+)
+ENGINE = InnoDB;
+
+ALTER TABLE `zinzam0_zinzam`.`guestbook_comment_counts` ADD UNIQUE INDEX `i_guestbook_count`(`owner_id`, `user_id`);
+ 
+INSERT INTO guestbook_comment_counts (SELECT comment_item_id AS owner_id, user_id, COUNT(*) AS comment_comments FROM comments WHERE comment_item_type = 'USER' GROUP BY comment_item_id, user_id);
+
+ */
+
 namespace BoxSocial.Applications.GuestBook
 {
     public class AppInfo : Application
@@ -96,7 +112,7 @@ namespace BoxSocial.Applications.GuestBook
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
-            core.RegisterCommentHandle("USER", userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted);
+            core.RegisterCommentHandle("USER", userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted, userCommentDeleted);
             core.RegisterCommentHandle("APPLICATION", applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
             core.RegisterCommentHandle("GROUP", groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
             core.RegisterCommentHandle("NETWORK", networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
@@ -178,6 +194,30 @@ namespace BoxSocial.Applications.GuestBook
             // Notify of a new comment
             Member userProfile = new Member(core, e.ItemId);
 
+            SelectQuery query = new SelectQuery("guestbook_comment_counts gcc");
+            query.AddFields("comment_comments");
+            query.AddCondition("owner_id", userProfile.Id);
+            query.AddCondition("user_id", e.Poster.Id);
+
+            if (core.db.Query(query).Rows.Count > 0)
+            {
+                UpdateQuery uquery = new UpdateQuery("guestbook_comment_counts");
+                uquery.AddField("comment_comments", new QueryOperation("comment_comments", QueryOperations.Addition, 1));
+                uquery.AddCondition("owner_id", userProfile.Id);
+                uquery.AddCondition("user_id", e.Poster.Id);
+
+                core.db.Query(uquery);
+            }
+            else
+            {
+                InsertQuery iquery = new InsertQuery("guestbook_comment_counts");
+                iquery.AddField("comment_comments", 1);
+                iquery.AddField("owner_id", userProfile.Id);
+                iquery.AddField("user_id", e.Poster.Id);
+
+                core.db.Query(iquery);
+            }
+
             ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "GuestBook");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
@@ -186,6 +226,18 @@ namespace BoxSocial.Applications.GuestBook
             notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
 
             ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
+        }
+
+        private void userCommentDeleted(CommentPostedEventArgs e)
+        {
+            Member userProfile = new Member(core, e.ItemId);
+
+            UpdateQuery uquery = new UpdateQuery("guestbook_comment_counts");
+            uquery.AddField("comment_comments", new QueryOperation("comment_comments", QueryOperations.Subtraction, 1));
+            uquery.AddCondition("owner_id", userProfile.Id);
+            uquery.AddCondition("user_id", e.Poster.Id);
+
+            core.db.Query(uquery);
         }
 
         private void groupCommentPosted(CommentPostedEventArgs e)
@@ -384,7 +436,9 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, profileOwner, profileOwner);
+            template.ParseVariables("IS_USER_GUESTBOOK", "TRUE");
+
+            Display.DisplayComments(template, profileOwner, profileOwner, GuestBook.UserGuestBookHook);
             template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
             template.ParseVariables("IS_PROFILE", "TRUE");
 

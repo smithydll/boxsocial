@@ -59,6 +59,8 @@ namespace BoxSocial.Internals
             }
         }
 
+        public delegate void DisplayCommentHookHandler(DisplayCommentHookEventArgs e);
+
         public static string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
             return GeneratePagination(baseUri, currentPage, maxPages, false);
@@ -254,12 +256,17 @@ namespace BoxSocial.Internals
             DisplayComments(template, (Primitive)profileOwner, item);
         }
 
-        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item)
+        public static void DisplayComments(Template template, Member profileOwner, ICommentableItem item, DisplayCommentHookHandler hook)
         {
-            DisplayComments(template, owner, item, null);
+            DisplayComments(template, (Primitive)profileOwner, item, null, -1, hook);
         }
 
-        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<Member> commenters)
+        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item)
+        {
+            DisplayComments(template, owner, item, null, -1, null);
+        }
+
+        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<Member> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
             Mysql db = core.db;
 
@@ -276,20 +283,27 @@ namespace BoxSocial.Internals
 
                 if (commenters != null)
                 {
-                    if (commenters.Count > 0)
+                    if (commenters.Count == 2)
                     {
-                        List<long> commentersIds = new List<long>();
+                        /*List<long> commentersIds = new List<long>();
 
                         foreach (Member commenter in commenters)
                         {
                             commentersIds.Add(commenter.Id);
-                        }
-
-                        query.AddCondition("user_id", ConditionEquality.In, commentersIds);
+                        }*/
 
                         if (item.Namespace == "USER")
                         {
+                            /*query.AddCondition("user_id", ConditionEquality.In, commentersIds);
                             query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
+                            query.AddCondition("c.comment_item_type", item.Namespace);*/
+
+                            QueryCondition qc1 = query.AddCondition("c.comment_item_id", commenters[0].Id);
+                            qc1.AddCondition("user_id", commenters[1].Id);
+
+                            QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "c.comment_item_id", commenters[1].Id);
+                            qc2.AddCondition("user_id", commenters[0].Id);
+
                             query.AddCondition("c.comment_item_type", item.Namespace);
                         }
                         else
@@ -327,10 +341,14 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<Comment> comments = Comment.GetComments(db, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
+            List<Comment> comments = Comment.GetComments(core, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
-            if (item.Comments >= 0)
+            if (commentCount >= 0)
+            {
+                template.ParseVariables("COMMENTS", commentCount.ToString());
+            }
+            else if (item.Comments >= 0)
             {
                 template.ParseVariables("COMMENTS", item.Comments.ToString());
             }
@@ -370,6 +388,11 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildCommentDeleteUri(comment.CommentId)));
                     commentsVariableCollection.ParseVariables("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
                     commentsVariableCollection.ParseVariables("USER_TILE", HttpUtility.HtmlEncode(commentPoster.UserTile));
+
+                    if (hook != null)
+                    {
+                        hook(new DisplayCommentHookEventArgs(core, owner, commentPoster, commentsVariableCollection));
+                    }
 
                     if (owner.CanModerateComments(core.session.LoggedInMember))
                     {
@@ -744,6 +767,54 @@ namespace BoxSocial.Internals
         public static string SqlEscape(string input)
         {
             return input.Replace("'", "''");
+        }
+    }
+
+    public class DisplayCommentHookEventArgs : EventArgs
+    {
+        private Core core;
+        private VariableCollection commentVariableCollection;
+        private Primitive owner;
+        private Member poster;
+
+        public DisplayCommentHookEventArgs(Core core, Primitive owner, Member poster, VariableCollection variableCollection)
+        {
+            this.core = core;
+            this.owner = owner;
+            this.poster = poster;
+            this.commentVariableCollection = variableCollection;
+        }
+
+        public Core Core
+        {
+            get
+            {
+                return core;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
+
+        public Member Poster
+        {
+            get
+            {
+                return poster;
+            }
+        }
+
+        public VariableCollection CommentVariableCollection
+        {
+            get
+            {
+                return commentVariableCollection;
+            }
         }
     }
 }

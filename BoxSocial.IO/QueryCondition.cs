@@ -54,7 +54,7 @@ namespace BoxSocial.IO
 
         public QueryCondition AddCondition(string field, object value)
         {
-            if (conditions.Count == 0)
+            if (conditions.Count == 0 && string.IsNullOrEmpty(field))
             {
                 return AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
             }
@@ -66,7 +66,7 @@ namespace BoxSocial.IO
 
         public QueryCondition AddCondition(ConditionRelations relation, string field, object value)
         {
-            if (conditions.Count == 0)
+            if (conditions.Count == 0 && string.IsNullOrEmpty(field))
             {
                 return AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
             }
@@ -78,7 +78,7 @@ namespace BoxSocial.IO
 
         public QueryCondition AddCondition(string field, ConditionEquality equality, object value)
         {
-            if (conditions.Count == 0)
+            if (conditions.Count == 0 && string.IsNullOrEmpty(field))
             {
                 return AddCondition(ConditionRelations.First, field, equality, value);
             }
@@ -114,7 +114,8 @@ namespace BoxSocial.IO
                 query = string.Format("{0} {1} {2} {3} {4}",
                     query, RelationToString(relation), field, EqualityToString(equality), Query.ObjectToSql(value));
             }
-            else
+            //else
+            if (conditions.Count > 0)
             {
                 /*foreach (QueryCondition condition in conditions.Keys)
                 {

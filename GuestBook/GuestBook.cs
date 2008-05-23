@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
@@ -79,11 +80,13 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
+            page.template.ParseVariables("IS_USER_GUESTBOOK", "TRUE");
+
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "profile", "Profile" });
             breadCrumbParts.Add(new string[] { "comments", "Comments" });
 
-            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner);
+            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, UserGuestBookHook);
             page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
@@ -113,6 +116,8 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
+            page.template.ParseVariables("IS_USER_GUESTBOOK", "TRUE");
+
             long userId = core.LoadUserProfile(user);
 
             List<Member> commenters = new List<Member>();
@@ -124,10 +129,47 @@ namespace BoxSocial.Applications.GuestBook
             breadCrumbParts.Add(new string[] {"comments", "Comments"});
             breadCrumbParts.Add(new string[] {core.UserProfiles[userId].Key, core.UserProfiles[userId].DisplayName});
 
-            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters);
-            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
+            // Load the comment count
+            long comments = 0;
+
+            SelectQuery query = new SelectQuery("guestbook_comment_counts");
+            query.AddField(new QueryFunction("comment_comments", QueryFunctions.Sum, "comments"));
+
+            QueryCondition qc1 = query.AddCondition("owner_id", commenters[0].Id);
+            qc1.AddCondition("user_id", commenters[1].Id);
+
+            QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "owner_id", commenters[1].Id);
+            qc2.AddCondition("user_id", commenters[0].Id);
+
+            DataTable commentCountDataTable = core.db.Query(query);
+
+            if (commentCountDataTable.Rows.Count > 0)
+            {
+                if (!(commentCountDataTable.Rows[0]["comments"] is DBNull))
+                {
+                    comments = (long)(Decimal)commentCountDataTable.Rows[0]["comments"];
+                }
+            }
+
+            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters, comments, UserGuestBookHook);
+
+            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0)));
             page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.ParseVariables("L_GUESTBOOK", HttpUtility.HtmlEncode(page.ProfileOwner.DisplayNameOwnership + " Guest Book"));
+        }
+
+        public static void UserGuestBookHook(DisplayCommentHookEventArgs e)
+        {
+            if (e.Owner.GetType() == typeof(Member))
+            {
+                if (e.Owner.Id != e.Poster.Id)
+                {
+                    UserGuestBook guestBook = new UserGuestBook(e.Core, (Member)e.Owner);
+                    UserGuestBook posterGuestBook = new UserGuestBook(e.Core, e.Poster);
+                    e.CommentVariableCollection.ParseVariables("U_CONVERSATION", HttpUtility.HtmlEncode(guestBook.BuildConversationUri(e.Poster)));
+                    e.CommentVariableCollection.ParseVariables("U_REPLY", HttpUtility.HtmlEncode(posterGuestBook.Uri));
+                }
+            }
         }
 
         public static void Show(Core core, GPage page)

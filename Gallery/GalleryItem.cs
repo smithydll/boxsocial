@@ -767,6 +767,11 @@ namespace BoxSocial.Applications.Gallery
 
         }
 
+        /// <summary>
+        /// Hashses the contents of a file
+        /// </summary>
+        /// <param name="fileStream">File stream to hash</param>
+        /// <returns>File hash string</returns>
         public static string HashFileUpload(Stream fileStream)
         {
             HashAlgorithm hash = new SHA512Managed();
@@ -785,6 +790,12 @@ namespace BoxSocial.Applications.Gallery
             return fileHashString;
         }
 
+        /// <summary>
+        /// Generates a slug from the file name
+        /// </summary>
+        /// <param name="filename">File name</param>
+        /// <param name="slug">Existing slug</param>
+        /// <returns>New slug</returns>
         public static string GetSlugFromFileName(string filename, string slug)
         {
             string[] saveFileUriParts = filename.Split(new char[] { '\\', '/' });
@@ -806,6 +817,15 @@ namespace BoxSocial.Applications.Gallery
             return saveFileUri;
         }
 
+        /// <summary>
+        /// Checks the slug for uniqueness, and updates it to maintain
+        /// uniqueness if necessary
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="gallery">Parent gallery</param>
+        /// <param name="owner">Gallery owner</param>
+        /// <param name="slug">Slug</param>
+        /// <remarks>Slug is a reference argument</remarks>
         public static void EnsureGallerySlugUnique(Core core, Gallery gallery, Primitive owner, ref string slug)
         {
             int nameCount = 1;
@@ -842,8 +862,19 @@ namespace BoxSocial.Applications.Gallery
             while (copyFound);
         }
 
+        /// <summary>
+        /// Returns gallery item URI
+        /// </summary>
+        /// <returns></returns>
         public abstract string BuildUri();
 
+        /// <summary>
+        /// Shows a user gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoPath">Photo parent path</param>
+        /// <param name="photoName">Photo slug</param>
         public static void Show(Core core, PPage page, string photoPath, string photoName)
         {
             page.template.SetTemplate("Gallery", "viewphoto");
@@ -986,6 +1017,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Shows a group gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
         public static void Show(Core core, GPage page, string photoName)
         {
             page.template.SetTemplate("Gallery", "viewphoto");
@@ -1089,6 +1126,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Shows a network gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
         public static void Show(Core core, NPage page, string photoName)
         {
             page.template.SetTemplate("Gallery", "viewphoto");
@@ -1194,21 +1237,45 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Shows a user image
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, PPage page, string photoName)
         {
             ShowImage(core, page.ProfileOwner, photoName);
         }
 
+        /// <summary>
+        /// Shows a group image
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, GPage page, string photoName)
         {
             ShowImage(core, page.ThisGroup, photoName);
         }
 
+        /// <summary>
+        /// Shows a network image
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, NPage page, string photoName)
         {
             ShowImage(core, page.TheNetwork, photoName);
         }
 
+        /// <summary>
+        /// Shows an image
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Image owner</param>
+        /// <param name="photoName">Photo slug</param>
         private static void ShowImage(Core core, Primitive owner, string photoName)
         {
             bool thumbnailRequest = false; // large 160px thumbnail
@@ -1647,11 +1714,18 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Abort image resize handler
+        /// </summary>
+        /// <returns></returns>
         private static bool abortResize()
         {
             return false;
         }
 
+        /// <summary>
+        /// Returns gallery item Id
+        /// </summary>
         public override long Id
         {
             get
@@ -1660,6 +1734,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns gallery item namespace
+        /// </summary>
         public override string Namespace
         {
             get
@@ -1668,11 +1745,17 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public override string Uri
+        /// <summary>
+        /// Returns gallery item Uri
+        /// </summary>
+        public abstract override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get;
         }
 
+        /// <summary>
+        /// Returns gallery item comment count
+        /// </summary>
         public long Comments
         {
             get
@@ -1683,7 +1766,9 @@ namespace BoxSocial.Applications.Gallery
 
         #region ICommentableItem Members
 
-
+        /// <summary>
+        /// Returns the gallery item comment sort order
+        /// </summary>
         public SortOrder CommentSortOrder
         {
             get
@@ -1692,6 +1777,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery item comment count per page
+        /// </summary>
         public byte CommentsPerPage
         {
             get
@@ -1703,22 +1791,37 @@ namespace BoxSocial.Applications.Gallery
         #endregion
     }
 
+    /// <summary>
+    /// The exception that is thrown when a gallery item has not been found.
+    /// </summary>
     public class GalleryItemNotFoundException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when a photo is too large to accept.
+    /// </summary>
     public class GalleryItemTooLargeException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when the gallery file size quote has been exceeded.
+    /// </summary>
     public class GalleryQuotaExceededException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when a gallery item is not owned by a user, group, or network.
+    /// </summary>
     public class InvalidGalleryItemTypeException : Exception
     {
     }
 
+    /// <summary>
+    /// The exception that is thrown when a gallery item has an invalid file name.
+    /// </summary>
     public class InvalidGalleryFileNameException : Exception
     {
     }

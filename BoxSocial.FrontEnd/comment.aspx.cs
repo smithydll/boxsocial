@@ -169,7 +169,7 @@ namespace BoxSocial.FrontEnd
                 // select the comment
                 try
                 {
-                    Comment thisComment = new Comment(db, itemId);
+                    Comment thisComment = new Comment(core, itemId);
 
                     long commentItemId = thisComment.ItemId;
                     string commentItemType = thisComment.ItemType;
@@ -213,6 +213,9 @@ namespace BoxSocial.FrontEnd
                             itemId));
                     }
 
+                    core.LoadUserProfile(thisComment.UserId);
+                    Member poster = core.UserProfiles[thisComment.UserId];
+                    Core.CommentDeleted(commentItemType, (long)commentItemId, thisComment, poster);
                     Core.AdjustCommentCount(commentItemType, (long)commentItemId, -1);
                 }
                 catch (InvalidCommentException)

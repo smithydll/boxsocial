@@ -72,6 +72,12 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public string BuildConversationUri(Member user)
+        {
+            return Linker.AppendSid(string.Format("{0}/{1}",
+                    Linker.StripSid(Uri), user.UserName));
+        }
+
         #region ICommentableItem Members
 
 

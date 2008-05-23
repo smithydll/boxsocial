@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -39,14 +40,16 @@ namespace BoxSocial.Internals
         private Core.CommentHandler canDeleteComment;
         private Core.CommentCountHandler adjustCommentCount;
         private Core.CommentPostedHandler commentPosted;
+        private Core.CommentPostedHandler commentDeleted;
 
-        public CommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
+        public CommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
         {
             this.token = token;
             this.canPostComment = canPostComment;
             this.canDeleteComment = canDeleteComment;
             this.adjustCommentCount = adjustCommentCount;
             this.commentPosted = commentPosted;
+            this.commentDeleted = commentDeleted;
         }
 
         public bool CanPostComment(long itemId, Member viewer)
@@ -67,6 +70,14 @@ namespace BoxSocial.Internals
         public void CommentPosted(Comment comment, Member poster, string itemType, long itemId)
         {
             commentPosted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
+        }
+
+        public void CommentDeleted(Comment comment, Member poster, string itemType, long itemId)
+        {
+            if (commentDeleted != null)
+            {
+                commentDeleted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
+            }
         }
 
         public int CompareTo(object obj)

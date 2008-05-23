@@ -39,6 +39,7 @@ namespace BoxSocial.Internals
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 511;
 
+        private Core core;
         private Mysql db;
 
         private long commentId;
@@ -102,9 +103,10 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        public Comment(Mysql db, long commentId)
+        public Comment(Core core, long commentId)
         {
-            this.db = db;
+            this.core = core;
+            this.db = core.db;
 
             DataTable commentsTable = db.Query(string.Format("SELECT {1} FROM comments c WHERE c.comment_id = {0};",
                 commentId, Comment.COMMENT_INFO_FIELDS));
@@ -119,9 +121,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Comment(Mysql db, DataRow commentRow)
+        public Comment(Core core, DataRow commentRow)
         {
-            this.db = db;
+            this.core = core;
+            this.db = core.db;
 
             loadCommentInfo(commentRow);
         }
@@ -175,11 +178,12 @@ namespace BoxSocial.Internals
             long commentId = core.db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, '{1}', {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
                     itemId, Mysql.Escape(itemType), core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
 
-            return new Comment(core.db, commentId);
+            return new Comment(core, commentId);
         }
 
-        public static List<Comment> GetComments(Mysql db, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<Member> commenters)
+        public static List<Comment> GetComments(Core core, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<Member> commenters)
         {
+            Mysql db = core.db;
             List<Comment> comments = new List<Comment>();
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
@@ -196,20 +200,26 @@ namespace BoxSocial.Internals
 
             if (commenters != null)
             {
-                if (commenters.Count > 0)
+                if (commenters.Count == 2)
                 {
-                    List<long> commentersIds = new List<long>();
+                    /*List<long> commentersIds = new List<long>();
 
                     foreach (Member commenter in commenters)
                     {
                         commentersIds.Add(commenter.Id);
-                    }
-
-                    query.AddCondition("user_id", ConditionEquality.In, commentersIds);
+                    }*/
 
                     if (itemType == "USER")
                     {
-                        query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
+                        /*query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
+                        query.AddCondition("user_id", ConditionEquality.In, commentersIds);*/
+
+                        QueryCondition qc1 = query.AddCondition("c.comment_item_id", commenters[0].Id);
+                        qc1.AddCondition("user_id", commenters[1].Id);
+
+                        QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "c.comment_item_id", commenters[1].Id);
+                        qc2.AddCondition("user_id", commenters[0].Id);
+
                         query.AddCondition("c.comment_item_type", itemType);
                     }
                     else
@@ -234,7 +244,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in commentsTable.Rows)
             {
-                comments.Add(new Comment(db, dr));
+                comments.Add(new Comment(core, dr));
             }
 
             return comments;

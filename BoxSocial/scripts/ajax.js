@@ -74,19 +74,19 @@ function SentStatus(r)
 
 function DeleteComment(id, iid)
 {
-	return PostToPage(null, "comment/?mode=delete&item=" + id, null);
+	return PostToPage(null, "comment/?mode=delete&item=" + id, new Array(new Array("ajax", "true")));
 }
 
 function ReportComment(id, iid)
 {
-	return PostToPage(null, "comment/?mode=report&ajax=true&item=" + id, null);
+	return PostToPage(null, "comment/?mode=report&ajax=true&item=" + id, new Array(new Array("ajax", "true")));
 }
 
 var ciid;
 function QuoteComment(id, iid)
 {
 	ciid = iid;
-	return PostToPage(QuotedComment, "comment/?ajax=true&mode=fetch&item=" + id, null);
+	return PostToPage(QuotedComment, "comment/?ajax=true&mode=fetch&item=" + id, new Array(new Array("ajax", "true")));
 }
 
 function QuotedComment(r)

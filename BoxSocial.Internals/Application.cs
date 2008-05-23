@@ -119,6 +119,33 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void InstallTables(Assembly asm)
+        {
+            Type[] types = asm.GetTypes();
+
+            foreach (Type type in types)
+            {
+                if (type.IsSubclassOf(typeof(Item)))
+                {
+                    string table = Item.GetTable(type);
+
+                    if (!string.IsNullOrEmpty(table))
+                    {
+                        List<DataFieldInfo> dataFields = Item.GetFields(type);
+                        if (core.db.TableExists(table))
+                        {
+                            Dictionary<string, DataFieldInfo> columns = core.db.GetColumns(table);
+
+                        }
+                        else
+                        {
+                            core.db.CreateTable(table, dataFields);
+                        }
+                    }
+                }
+            }
+        }
+
         public static ApplicationEntry Entry
         {
             get

@@ -78,7 +78,7 @@ namespace BoxSocial.FrontEnd
                 {
                     if (type.IsSubclassOf(typeof(Application)))
                     {
-                        BoxSocial.Internals.Application newApplication = System.Activator.CreateInstance(type, new object[0]) as Application;
+                        BoxSocial.Internals.Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
 
                         if (newApplication != null)
                         {
@@ -203,6 +203,9 @@ namespace BoxSocial.FrontEnd
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM comment_types WHERE application_id = {0} AND type_updated_ut <> {1};",
                                     applicationId, updatedRaw));
+
+                                newApplication.InstallTables(loadApplication);
+
                             }
                             else
                             {

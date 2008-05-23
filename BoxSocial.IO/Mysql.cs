@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Text;
+using System.Web;
 using MySql.Data;
 
 namespace BoxSocial.IO
@@ -276,6 +277,21 @@ namespace BoxSocial.IO
             return SelectQuery(query);
         }
 
+        public bool TableExists(string tableName)
+        {
+            DataTable tableTable = SelectQuery("SHOW TABLES");
+
+            foreach (DataRow dr in tableTable.Rows)
+            {
+                if ((string)dr[0] == tableName)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override Dictionary<string, DataFieldInfo> GetColumns(string tableName)
         {
             Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>();
@@ -475,6 +491,7 @@ namespace BoxSocial.IO
         {
             StringBuilder sb = new StringBuilder();
             StringBuilder indexes = new StringBuilder();
+            DataFieldInfo primaryKey = null;
 
             sb.Append(string.Format("CREATE TABLE IF NOT EXISTS `{0}` (",
                 tableName));
@@ -504,13 +521,14 @@ namespace BoxSocial.IO
                 {
                     if (field.IsPrimaryKey)
                     {
-                        key = " AUTO_INCREMENT";
+                        primaryKey = field;
+                        key = " NOT NULL AUTO_INCREMENT";
                         indexes.Append(string.Format(", PRIMARY_KEY(`{0}`)",
                             field.Name));
                     }
                     else
                     {
-                        key = " UNIQUE KEY";
+                        key = " NOT NULL UNIQUE KEY";
                         indexes.Append(string.Format(", INDEX(`{0}`)",
                             field.Name));
                     }
@@ -520,9 +538,17 @@ namespace BoxSocial.IO
                     field.Name, type, notNull, key));
             }
 
-            sb.Append(")");
+            if (primaryKey != null)
+            {
+                sb.Append(string.Format(", PRIMARY KEY (`{0}`)",
+                    primaryKey.Name));
+            }
 
-            throw new NotImplementedException();
+            sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+            //HttpContext.Current.Response.Write(sb.ToString());
+
+            UpdateQuery(sb.ToString());
         }
     }
 }

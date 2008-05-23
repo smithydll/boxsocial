@@ -30,20 +30,42 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
+    [DataTable("forum")]
     public class Forum : Item
     {
-
-        [DataField("forum_id")]
+        [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
-        [DataField("forum_title")]
+        [DataField("forum_parent_id")]
+        private long parentId;
+        [DataField("forum_title", 127)]
         private string forumTitle;
+        [DataField("forum_description", 1023)]
+        private string forumDescription;
         [DataField("forum_topics")]
         private long forumTopics;
         [DataField("forum_posts")]
         private long forumPosts;
         [DataField("forum_access")]
         private ushort permissions;
-        protected Primitive owner;
+        [DataField("forum_item_id")]
+        private long owner_id;
+        [DataField("forum_item_type", 63)]
+        private string owner_type;
+
+        private Primitive owner;
+        private Access forumAccess;
+
+        public string Title
+        {
+            get
+            {
+                return forumTitle;
+            }
+            set
+            {
+                SetProperty("forumTitle", value);
+            }
+        }
 
         public Forum(Core core, UserGroup owner, long forumId)
             : base(core)
@@ -62,9 +84,55 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public Forum(Core core, DataRow forumDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
+
+            try
+            {
+                loadItemInfo(forumDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumException();
+            }
+        }
+
         void Forum_ItemLoad()
         {
-            
+            if (owner.Id != owner_id)
+            {
+                if (owner_type == "GROUP")
+                {
+                    owner = new UserGroup(core, owner_id);
+                }
+                else if (owner_type == "NETWORK")
+                {
+                    owner = new Network(core, owner_id);
+                }
+            }
+
+            forumAccess = new Access(core.db, permissions, owner);
+        }
+
+        public List<Forum> GetForums()
+        {
+            List<Forum> forums = new List<Forum>();
+
+            SelectQuery query = new SelectQuery("forum");
+            query.AddCondition("forum_item_id", owner_id);
+            query.AddCondition("forum_item_type", owner_type);
+            query.AddCondition("forum_parent_id", forumId);
+
+            DataTable forumsTable = db.Query(query);
+
+            foreach (DataRow dr in forumsTable.Rows)
+            {
+                forums.Add(new Forum(core, dr));
+            }
+
+            return forums;
         }
 
         public List<ForumTopic> GetTopics(TPage page, int currentPage, int perPage)
@@ -121,6 +189,10 @@ namespace BoxSocial.Applications.Forum
                     return "/";
                 }
             }
+        }
+
+        public static void Show(GPage page, long forumId)
+        {
         }
     }
 

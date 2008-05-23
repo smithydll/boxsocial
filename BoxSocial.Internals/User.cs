@@ -1145,6 +1145,11 @@ namespace BoxSocial.Internals
                 return null;
             }
 
+            if (!CheckUserNameValid(userName))
+            {
+                return null;
+            }
+
             password = VerifyPasswordMatch(password, passwordConfirm);
 
             if (password == "")
@@ -1479,6 +1484,11 @@ namespace BoxSocial.Internals
             }
 
             if (!Regex.IsMatch(userName, @"^([A-Za-z0-9\-_\.\!~\*'&=\$].+)$"))
+            {
+                matches++;
+            }
+
+            if (userName.Contains(" "))
             {
                 matches++;
             }

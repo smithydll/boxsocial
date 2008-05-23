@@ -226,7 +226,7 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        protected static List<DataFieldInfo> GetFields(Type type)
+        internal protected static List<DataFieldInfo> GetFields(Type type)
         {
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
 
@@ -254,8 +254,9 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
-        protected static string GetTable(Type type)
+        internal protected static string GetTable(Type type)
         {
+            bool attributeFound = false;
             foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
             {
                 if (attr != null)
@@ -264,10 +265,18 @@ namespace BoxSocial.Internals
                     {
                         return ((DataTableAttribute)attr).TableName;
                     }
+                    attributeFound = true;
                 }
             }
 
-            return type.Name;
+            if (attributeFound)
+            {
+                return type.Name;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public long Update()

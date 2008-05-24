@@ -277,7 +277,7 @@ namespace BoxSocial.IO
             return SelectQuery(query);
         }
 
-        public bool TableExists(string tableName)
+        public override bool TableExists(string tableName)
         {
             DataTable tableTable = SelectQuery("SHOW TABLES");
 
@@ -297,7 +297,7 @@ namespace BoxSocial.IO
             Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>();
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW COLUMNS FROM `{0}`",
-                tableName));
+                Mysql.Escape(tableName)));
 
             foreach (DataRow dr in fieldTable.Rows)
             {
@@ -465,9 +465,35 @@ namespace BoxSocial.IO
             }
 
             string query = string.Format(@"ALTER TABLE `{0}` ADD COLUMN `{1}` {2}{3};",
-                tableName, field.Name, type, notNull);
+                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull);
 
             UpdateQuery(query);
+        }
+
+        public override void AddColumns(string tableName, List<DataFieldInfo> fields)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(string.Format(@"ALTER TABLE `{0}`",
+                Mysql.Escape(tableName)));
+
+            foreach (DataFieldInfo field in fields)
+            {
+                string type = TypeToMysql(field);
+                string notNull = "";
+
+                if (type == "text" || type == "mediumtext" || type == "longtext")
+                {
+                    notNull = " NOT NULL";
+                }
+
+                sb.Append(string.Format(@" ADD COLUMN `{1}` {2}{3}",
+                    Mysql.Escape(field.Name), type, notNull));
+            }
+
+            sb.Append(";");
+
+            UpdateQuery(sb.ToString());
         }
 
         public override void ChangeColumn(string tableName, DataFieldInfo field)
@@ -481,11 +507,16 @@ namespace BoxSocial.IO
             }
 
             string query = string.Format(@"ALTER TABLE `{0}` MODIFY COLUMN `{1}` {2}{3};",
-                tableName, field.Name, type, notNull);
+                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull);
 
             UpdateQuery(query);
         }
 
+        public override void DeleteColumn(string tableName, string fieldName)
+        {
+            string query = string.Format(@"ALTER TABLE `{0}` DROP COLUMN `{1}`;",
+                Mysql.Escape(tableName), Mysql.Escape(fieldName));
+        }
 
         public override void CreateTable(string tableName, List<DataFieldInfo> fields)
         {
@@ -494,7 +525,7 @@ namespace BoxSocial.IO
             DataFieldInfo primaryKey = null;
 
             sb.Append(string.Format("CREATE TABLE IF NOT EXISTS `{0}` (",
-                tableName));
+                Mysql.Escape(tableName)));
 
             bool first = true;
             foreach (DataFieldInfo field in fields)
@@ -524,29 +555,27 @@ namespace BoxSocial.IO
                         primaryKey = field;
                         key = " NOT NULL AUTO_INCREMENT";
                         indexes.Append(string.Format(", PRIMARY_KEY(`{0}`)",
-                            field.Name));
+                            Mysql.Escape(field.Name)));
                     }
                     else
                     {
                         key = " NOT NULL UNIQUE KEY";
                         indexes.Append(string.Format(", INDEX(`{0}`)",
-                            field.Name));
+                            Mysql.Escape(field.Name)));
                     }
                 }
 
                 sb.Append(string.Format("`{0}` {1}{2}{3}",
-                    field.Name, type, notNull, key));
+                    Mysql.Escape(field.Name), type, notNull, key));
             }
 
             if (primaryKey != null)
             {
                 sb.Append(string.Format(", PRIMARY KEY (`{0}`)",
-                    primaryKey.Name));
+                    Mysql.Escape(primaryKey.Name)));
             }
 
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-
-            //HttpContext.Current.Response.Write(sb.ToString());
 
             UpdateQuery(sb.ToString());
         }

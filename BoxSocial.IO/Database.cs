@@ -73,10 +73,14 @@ namespace BoxSocial.IO
             return queryCount;
         }
 
+        public abstract bool TableExists(string tableName);
+
         public abstract Dictionary<string, DataFieldInfo> GetColumns(string tableName);
 
         public abstract void AddColumn(string tableName, DataFieldInfo field);
+        public abstract void AddColumns(string tableName, List<DataFieldInfo> fields);
         public abstract void ChangeColumn(string tableName, DataFieldInfo field);
+        public abstract void DeleteColumn(string tableName, string fieldName);
 
         public abstract void CreateTable(string tableName, List<DataFieldInfo> fields);
     }

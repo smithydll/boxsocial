@@ -47,6 +47,8 @@ namespace BoxSocial.Applications.Forum
         private long forumPosts;
         [DataField("forum_access")]
         private ushort permissions;
+        [DataField("forum_last_post_id")]
+        private long lastPostId;
         [DataField("forum_item_id")]
         private long owner_id;
         [DataField("forum_item_type", 63)]
@@ -65,6 +67,73 @@ namespace BoxSocial.Applications.Forum
             {
                 SetProperty("forumTitle", value);
             }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return forumDescription;
+            }
+            set
+            {
+                SetProperty("forumDescription", value);
+            }
+        }
+
+        public long Topics
+        {
+            get
+            {
+                return forumTopics;
+            }
+        }
+
+        public long Posts
+        {
+            get
+            {
+                return forumPosts;
+            }
+        }
+
+        public ushort Permissions
+        {
+            get
+            {
+                return permissions;
+            }
+            set
+            {
+                SetProperty("permissions", value);
+            }
+        }
+
+        public long LastPostId
+        {
+            get
+            {
+                return lastPostId;
+            }
+        }
+
+        public Access ForumAccess
+        {
+            get
+            {
+                return forumAccess;
+            }
+        }
+
+        public Forum(Core core, UserGroup owner)
+            : base(core)
+        {
+            forumId = 0;
+        }
+
+        public Forum(Core core, long forumId)
+            : this(core, null, forumId)
+        {
         }
 
         public Forum(Core core, UserGroup owner, long forumId)
@@ -135,20 +204,47 @@ namespace BoxSocial.Applications.Forum
             return forums;
         }
 
-        public List<ForumTopic> GetTopics(TPage page, int currentPage, int perPage)
+        public List<ForumTopic> GetTopics(int currentPage, int perPage)
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            DataTable topicsTable = db.Query(string.Format(@"SELECT {0}
+            SelectQuery query = new SelectQuery("forum_topics");
+            query.AddCondition("forum_id", forumId);
+            query.AddCondition("topic_item_id", owner_id);
+            query.AddCondition("topic_item_type", owner_type);
+            query.AddSort(SortOrder.Descending, "topic_last_post_id");
+
+            DataTable topicsTable = db.Query(query);
+
+            /*DataTable topicsTable = db.Query(string.Format(@"SELECT {0}
                 FROM forum_topics
                 LEFT JOIN topic_posts tp ON tp.post_id = ft.topic_last_post_id
                 WHERE ft.item_id = {1} AND ft.item_type = '{2}'
                 ORDER BY ft.topic_last_post_time DESC",
-                ForumTopic.FORUM_TOPIC_INFO_FIELDS, owner.Id, owner.GetType()));
+                ForumTopic.FORUM_TOPIC_INFO_FIELDS, owner.Id, owner.GetType()));*/
 
             foreach (DataRow dr in topicsTable.Rows)
             {
-                topics.Add(new ForumTopic(db, dr));
+                topics.Add(new ForumTopic(core, dr));
+            }
+
+            return topics;
+        }
+
+        public List<ForumTopic> GetTopicsFlat(int currentPge, int perPage)
+        {
+            List<ForumTopic> topics = new List<ForumTopic>();
+
+            SelectQuery query = new SelectQuery("forum_topics");
+            query.AddCondition("topic_item_id", owner_id);
+            query.AddCondition("topic_item_type", owner_type);
+            query.AddSort(SortOrder.Descending, "topic_last_post_id");
+
+            DataTable topicsTable = db.Query(query);
+
+            foreach (DataRow dr in topicsTable.Rows)
+            {
+                topics.Add(new ForumTopic(core, dr));
             }
 
             return topics;
@@ -191,8 +287,101 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public static void Show(GPage page, long forumId)
+        public static void Show(Core core, GPage page, long forumId)
         {
+            Forum thisForum = null;
+
+            page.template.SetTemplate("Forum", "viewforum");
+
+            try
+            {
+                if (forumId > 0)
+                {
+                    thisForum = new Forum(page.Core, page.ThisGroup, forumId);
+                }
+                else
+                {
+                    thisForum = new Forum(page.Core, page.ThisGroup);
+                }
+            }
+            catch (InvalidForumException)
+            {
+                return;
+            }
+
+            thisForum.ForumAccess.SetSessionViewer(core.session);
+
+            if (!thisForum.ForumAccess.CanRead)
+            {
+                Functions.Generate403();
+                return;
+            }
+
+            List<Forum> forums = thisForum.GetForums();
+
+            page.template.ParseVariables("FORUMS", HttpUtility.HtmlEncode(forums.Count.ToString()));
+
+            // ForumId, TopicPost
+            Dictionary<long, TopicPost> lastPosts;
+            List<long> lastPostIds = new List<long>();
+
+            foreach (Forum forum in forums)
+            {
+                lastPostIds.Add(forum.LastPostId);
+            }
+
+            lastPosts = TopicPost.GetPosts(core, lastPostIds);
+
+            foreach (Forum forum in forums)
+            {
+                VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
+
+                forumVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(forum.Title));
+                forumVariableCollection.ParseVariables("POSTS", HttpUtility.HtmlEncode(forum.Posts.ToString()));
+                forumVariableCollection.ParseVariables("TOPICS", HttpUtility.HtmlEncode(forum.Topics.ToString()));
+
+                if (lastPosts.ContainsKey(forum.Id))
+                {
+                    forumVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode(lastPosts[forum.Id].Title));
+                }
+                else
+                {
+                    forumVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode("No posts"));
+                }
+            }
+
+            List<ForumTopic> topics = thisForum.GetTopics(1, 10);
+
+            page.template.ParseVariables("TOPICS", HttpUtility.HtmlEncode(topics.Count.ToString()));
+
+            // TopicId, TopicPost
+            Dictionary<long, TopicPost> topicLastPosts;
+            List<long> topicLastPostIds = new List<long>();
+
+            foreach (ForumTopic topic in topics)
+            {
+                lastPostIds.Add(topic.LastPostId);
+            }
+
+            topicLastPosts = TopicPost.GetPosts(core, topicLastPostIds);
+
+            foreach (ForumTopic topic in topics)
+            {
+                VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
+
+                topicVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(topic.Title));
+                topicVariableCollection.ParseVariables("VIEWS", HttpUtility.HtmlEncode(topic.Views.ToString()));
+                topicVariableCollection.ParseVariables("REPLIES", HttpUtility.HtmlEncode(topic.Posts.ToString()));
+
+                if (topicLastPosts.ContainsKey(topic.Id))
+                {
+                    topicVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode(topicLastPosts[topic.Id].Title));
+                }
+                else
+                {
+                    topicVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode("No posts"));
+                }
+            }
         }
     }
 

@@ -134,6 +134,10 @@ namespace BoxSocial.Applications.Forum
         [Show(@"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForums(Core core, object sender)
         {
+            if (sender is GPage)
+            {
+                Forum.Show(core, (GPage)sender, 0);
+            }
         }
 
         [Show(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
@@ -144,6 +148,10 @@ namespace BoxSocial.Applications.Forum
         [Show(@"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForum(Core core, object sender)
         {
+            if (sender is GPage)
+            {
+                Forum.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
+            }
         }
 
         void core_PageHooks(HookEventArgs e)

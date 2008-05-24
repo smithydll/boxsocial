@@ -136,6 +136,27 @@ namespace BoxSocial.Internals
                         {
                             Dictionary<string, DataFieldInfo> columns = core.db.GetColumns(table);
 
+                            List<DataFieldInfo> newFields = new List<DataFieldInfo>();
+
+                            foreach (DataFieldInfo field in dataFields)
+                            {
+                                if (!columns.ContainsKey(field.Name))
+                                {
+                                    newFields.Add(field);
+                                }
+                                else
+                                {
+                                    if (columns[field.Name].Type != field.Type || columns[field.Name].Length != field.Length)
+                                    {
+                                        core.db.ChangeColumn(table, field);
+                                    }
+                                }
+                            }
+
+                            if (newFields.Count > 0)
+                            {
+                                core.db.AddColumns(table, newFields);
+                            }
                         }
                         else
                         {

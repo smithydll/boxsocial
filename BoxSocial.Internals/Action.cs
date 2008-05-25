@@ -28,35 +28,6 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    /*
-     * ALTER TABLE `zinzam0_zinzam`.`actions` ADD COLUMN `user_id` INTEGER NOT NULL AFTER `action_id`,
- ADD COLUMN `action_access` SMALLINT UNSIGNED NOT NULL AFTER `user_id`,
- ADD COLUMN `action_verb` VARCHAR(15) NOT NULL AFTER `action_access`,
- ADD COLUMN `action_application` INTEGER NOT NULL AFTER `action_verb`,
- ADD COLUMN `action_using` VARCHAR(15) NOT NULL AFTER `action_application`,
- ADD COLUMN `action_primtive_id` BIGINT NOT NULL AFTER `action_using`,
- ADD COLUMN `action_primitive_type` VARCHAR(15) NOT NULL AFTER `action_primtive_id`;
-      
-     ALTER TABLE `zinzam0_zinzam`.`actions` CHANGE COLUMN `action_primtive_id` `action_primitive_id` BIGINT(20) NOT NULL;
-      
-     ALTER TABLE `zinzam0_zinzam`.`actions` ADD COLUMN `action_title` VARCHAR(63) NOT NULL AFTER `action_primitive_type`,
- ADD COLUMN `action_body` VARCHAR(255) NOT NULL AFTER `action_title`;
-
-     ALTER TABLE `zinzam0_zinzam`.`actions` DROP COLUMN `user_id`;
-     
-     ALTER TABLE `zinzam0_zinzam`.`actions` DROP COLUMN `action_access`;
-
-     ALTER TABLE `zinzam0_zinzam`.`actions` DROP COLUMN `action_verb`;
-
-     ALTER TABLE `zinzam0_zinzam`.`actions` DROP COLUMN `action_using`;
-
-     ALTER TABLE `zinzam0_zinzam`.`actions` ADD COLUMN `action_time_ut` BIGINT NOT NULL AFTER `action_body`;
-
-     * 
-     * DONE
-     ALTER TABLE `zinzam0_zinzam`.`actions` MODIFY COLUMN `action_body` VARCHAR(511) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
-
-     */
     public class Action
     {
         public const string FEED_FIELDS = "at.action_id, at.action_application, at.action_primitive_id, at.action_primitive_type, at.action_title, at.action_body, at.action_time_ut";

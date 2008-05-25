@@ -30,14 +30,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-
-    /* DONE:
-     * ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_rating` TINYINT(1) UNSIGNED NOT NULL AFTER `application_comment`;
-     * /
-
-    /*
-     * An object that describes an application
-     */
+    /// <summary>
+    /// An object that describes an application
+    /// </summary>
     public abstract class Application : MarshalByRefObject, IAppInfo
     {
         protected Core core;
@@ -250,6 +245,22 @@ namespace BoxSocial.Internals
             get;
         }
 
+        /// <summary>
+        /// A stylesheet for the application
+        /// </summary>
+        public abstract string StyleSheet
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Clientside javascript for the application
+        /// </summary>
+        public abstract string JavaScript
+        {
+            get;
+        }
+
         public static string InitialiseApplications(Core core, AppPrimitives primitive)
         {
             string debug = "";
@@ -431,6 +442,20 @@ namespace BoxSocial.Internals
                                     {
                                         newApplication.Initialise(core);
                                         core.template.AddPageAssembly(assembly);
+
+                                        if (ae.HasStyleSheet)
+                                        {
+                                            VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
+
+                                            styleSheetVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/styles/applications/" + ae.Key + @".css"));
+                                        }
+
+                                        if (ae.HasJavascript)
+                                        {
+                                            VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
+
+                                            javaScriptVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/scripts/" + ae.Key + @".js"));
+                                        }
                                     }
                                 }
                             }
@@ -500,6 +525,20 @@ namespace BoxSocial.Internals
                     || primitive == AppPrimitives.Any)
                 {
                     newApplication.Initialise(core);
+
+                    if (ae.HasStyleSheet)
+                    {
+                        VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
+
+                        styleSheetVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/styles/applications/" + ae.Key + @".css"));
+                    }
+
+                    if (ae.HasJavascript)
+                    {
+                        VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
+
+                        javaScriptVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/scripts/" + ae.Key + @".js"));
+                    }
                 }
             }
         }

@@ -26,11 +26,6 @@ using System.Text;
 using System.Web;
 using BoxSocial.IO;
 
-/*
- * DONE:
- * ALTER TABLE `zinzam0_zinzam`.`notifications` ADD COLUMN `notification_seen` TINYINT(1) UNSIGNED NOT NULL AFTER `notification_read`;
- */
-
 namespace BoxSocial.Internals
 {
     public class Notification

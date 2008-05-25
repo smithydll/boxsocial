@@ -37,19 +37,12 @@ namespace BoxSocial.Applications.Calendar
         No = 3,
     }
 
-    /*
-     * DONE: SQL
-     * ALTER TABLE `zinzam0_zinzam`.`event_invites` MODIFY COLUMN `event_id` BIGINT(20) NOT NULL,
- DROP PRIMARY KEY;
-     * ALTER TABLE `zinzam0_zinzam`.`events` CHANGE COLUMN `event_attendies` `event_attendees` BIGINT(20) NOT NULL DEFAULT 0;
-     */
-
     [DataTable("events")]
     public class Event : Item, ICommentableItem
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
-        #region Fields
+        #region Data Fields
         [DataField("event_id", DataFieldKeys.Primary)]
         private long eventId;
         [DataField("event_subject", 127)]
@@ -287,6 +280,7 @@ namespace BoxSocial.Applications.Calendar
             : base(core)
         {
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
             //loadEventInfo(eventRow);
             loadItemInfo(eventRow);

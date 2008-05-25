@@ -51,6 +51,7 @@ namespace BoxSocial.Applications.Forum
         [DataField("post_modified_ut")]
         private long modifiedRaw;
 
+        private bool batchPostLoad;
         private Member poster;
 
         public long PostId
@@ -136,8 +137,15 @@ namespace BoxSocial.Applications.Forum
         }
 
         public TopicPost(Core core, DataRow postRow)
+            : this(core, postRow, false)
+        {
+        }
+
+        private TopicPost(Core core, DataRow postRow, bool batchPostLoad)
             : base(core)
         {
+            this.batchPostLoad = batchPostLoad;
+
             ItemLoad += new ItemLoadHandler(Post_ItemLoad);
 
             try
@@ -152,12 +160,20 @@ namespace BoxSocial.Applications.Forum
 
         void Post_ItemLoad()
         {
-
-            if (poster == null || poster.Id != userId)
+            if (!batchPostLoad)
             {
-                core.LoadUserProfile(userId);
-                poster = core.UserProfiles[userId];
+                if (poster == null || poster.Id != userId)
+                {
+                    core.LoadUserProfile(userId);
+                    poster = core.UserProfiles[userId];
+                }
             }
+        }
+
+        private void BatchLoad()
+        {
+            this.batchPostLoad = false;
+            Post_ItemLoad();
         }
 
         public static Dictionary<long, TopicPost> GetPosts(Core core, List<long> postIds)
@@ -169,10 +185,20 @@ namespace BoxSocial.Applications.Forum
 
             DataTable postsTable = core.db.Query(query);
 
+            List<long> posterIds = new List<long>();
+
             foreach (DataRow dr in postsTable.Rows)
             {
-                TopicPost tp = new TopicPost(core, dr);
+                TopicPost tp = new TopicPost(core, dr, true);
+                posterIds.Add(tp.UserId);
                 posts.Add(tp.ForumId, tp);
+            }
+
+            core.LoadUserProfiles(posterIds);
+
+            foreach (TopicPost post in posts.Values)
+            {
+                post.BatchLoad();
             }
 
             return posts;

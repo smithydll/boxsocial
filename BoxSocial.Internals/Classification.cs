@@ -26,11 +26,6 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    /*
-     * DONE:
-     * ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_classification` TINYINT UNSIGNED NOT NULL AFTER `page_modified_ut`;
-     * ALTER TABLE `zinzam0_zinzam`.`user_pages` MODIFY COLUMN `page_classification` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0;
-     */
     public enum Classifications : byte
     {
         None = 0,

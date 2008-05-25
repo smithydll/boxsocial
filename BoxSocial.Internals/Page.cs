@@ -40,12 +40,6 @@ namespace BoxSocial.Internals
         Draft,
     }
 
-    /*
-     * DONE:
-     * ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_application` BIGINT NOT NULL AFTER `page_list_only`,
- ADD COLUMN `page_icon` VARCHAR(63) NOT NULL AFTER `page_application`;
-
-     */
     public class Page
     {
         public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";

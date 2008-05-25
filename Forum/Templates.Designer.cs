@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Forum {
+namespace BoxSocial.Applications.Forum {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Forum {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Forum.Templates", typeof(Templates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Applications.Forum.Templates", typeof(Templates).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

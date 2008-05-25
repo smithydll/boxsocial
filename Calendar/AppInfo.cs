@@ -30,12 +30,6 @@ using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
-/*
- * DONE: SQL
- * ALTER TABLE `zinzam0_zinzam`.`comment_types` MODIFY COLUMN `type_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
- * ALTER TABLE `zinzam0_zinzam`.`comments` MODIFY COLUMN `comment_item_type` VARCHAR(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'UNASSOCIATED';
- */
-
 namespace BoxSocial.Applications.Calendar
 {
     public class AppInfo : Application
@@ -90,6 +84,22 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return Properties.Resources.calendar;
+            }
+        }
+
+        public override string StyleSheet
+        {
+            get
+            {
+                return Properties.Resources.style;
+            }
+        }
+
+        public override string JavaScript
+        {
+            get
+            {
+                return Properties.Resources.script;
             }
         }
 
@@ -310,7 +320,7 @@ namespace BoxSocial.Applications.Calendar
             long startTime = e.core.tz.GetUnixTimeStamp(new DateTime(e.core.tz.Now.Year, e.core.tz.Now.Month, e.core.tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 7; // skip ahead one week into the future
 
-            Calendar cal = new Calendar(e.core.db);
+            Calendar cal = new Calendar(e.core);
             List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
 
             template.ParseVariables("U_CALENDAR", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/{0}/calendar",

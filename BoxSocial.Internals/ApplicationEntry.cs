@@ -31,12 +31,13 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     /*
-     * DONE: ALTER TABLE `zinzam0_zinzam`.`user_pages` ADD COLUMN `page_list_only` BOOLEAN NOT NULL AFTER `page_classification`;
-     * ALTER TABLE `zinzam0_zinzam`.`user_pages` MODIFY COLUMN `page_list_only` TINYINT(1) UNSIGNED NOT NULL;
+     * TODO: SQL
+ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYINT(1) UNSIGNED NOT NULL AFTER `application_rating`,
+ ADD COLUMN `application_script` TINYINT(1) UNSIGNED NOT NULL AFTER `application_style`;
      */
     public class ApplicationEntry : Primitive, ICommentableItem
     {
-        public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating";
+        public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
         public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type";
         public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
@@ -59,6 +60,8 @@ namespace BoxSocial.Internals
         private List<string> modules;
         private bool usesComments;
         private bool usesRatings;
+        private bool hasStyleSheet;
+        private bool hasJavaScript;
 
         private bool titleChanged;
         private bool descriptionChanged;
@@ -67,6 +70,8 @@ namespace BoxSocial.Internals
         private bool primitivesChanged;
         private bool usesCommentsChanged;
         private bool usesRatingsChanged;
+        private bool hasStyleSheetChanged;
+        private bool hasJavaScriptChanged;
 
         public int ApplicationId
         {
@@ -265,6 +270,32 @@ namespace BoxSocial.Internals
                 {
                     return true;
                 }
+            }
+        }
+
+        public bool HasStyleSheet
+        {
+            get
+            {
+                return hasStyleSheet;
+            }
+            set
+            {
+                hasStyleSheet = value;
+                hasStyleSheetChanged = true;
+            }
+        }
+
+        public bool HasJavascript
+        {
+            get
+            {
+                return hasJavaScript;
+            }
+            set
+            {
+                hasJavaScript = value;
+                hasJavaScriptChanged = true;
             }
         }
 
@@ -481,6 +512,8 @@ namespace BoxSocial.Internals
             comments = (long)applicationRow["application_comments"];
             usesComments = ((byte)applicationRow["application_comment"] > 0) ? true : false;
             usesRatings = ((byte)applicationRow["application_rating"] > 0) ? true : false;
+            hasStyleSheet = ((byte)applicationRow["application_style"] > 0) ? true : false;
+            hasJavaScript = ((byte)applicationRow["application_script"] > 0) ? true : false;
         }
 
         private void loadApplicationUserInfo(DataRow applicationRow)
@@ -528,6 +561,14 @@ namespace BoxSocial.Internals
             if (iconChanged)
             {
                 query.AddField("application_icon", icon);
+            }
+            if (hasStyleSheetChanged)
+            {
+                query.AddField("application_style", hasStyleSheet);
+            }
+            if (hasJavaScriptChanged)
+            {
+                query.AddField("application_script", hasJavaScript);
             }
             query.AddCondition("application_id", Id);
 

@@ -105,6 +105,22 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public override string StyleSheet
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override string JavaScript
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;

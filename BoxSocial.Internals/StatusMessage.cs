@@ -80,7 +80,6 @@ namespace BoxSocial.Internals
 
         public StatusMessage(Core core, Member owner, DataRow statusRow) : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
             loadStatusInfo(statusRow);
@@ -88,7 +87,6 @@ namespace BoxSocial.Internals
 
         private StatusMessage(Core core, Member owner, long statusId, string statusMessage) : base(core)
         {
-            this.db = db;
             this.owner = owner;
             this.ownerId = owner.Id;
             this.statusId = statusId;

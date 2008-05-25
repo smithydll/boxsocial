@@ -332,9 +332,12 @@ namespace BoxSocial.IO
             int indexOpenBracket = type.IndexOf("(");
             int indexCloseBracket = type.IndexOf(")");
 
-            if (indexOpenBracket >= 0 && indexCloseBracket > indexOpenBracket)
+            if (!type.ToLower().Contains("enum("))
             {
-                length = long.Parse(type.Substring(indexOpenBracket + 1, indexCloseBracket - indexOpenBracket - 1));
+                if (indexOpenBracket >= 0 && indexCloseBracket > indexOpenBracket)
+                {
+                    length = long.Parse(type.Substring(indexOpenBracket + 1, indexCloseBracket - indexOpenBracket - 1));
+                }
             }
 
             switch (type.Split(new char[] { '(' })[0])
@@ -487,7 +490,7 @@ namespace BoxSocial.IO
                     notNull = " NOT NULL";
                 }
 
-                sb.Append(string.Format(@" ADD COLUMN `{1}` {2}{3}",
+                sb.Append(string.Format(@" ADD COLUMN `{0}` {1}{2}",
                     Mysql.Escape(field.Name), type, notNull));
             }
 

@@ -50,9 +50,9 @@ namespace BoxSocial.Applications.Forum
         [DataField("forum_last_post_id")]
         private long lastPostId;
         [DataField("forum_item_id")]
-        private long owner_id;
+        private long ownerId;
         [DataField("forum_item_type", 63)]
-        private string owner_type;
+        private string ownerType;
 
         private Primitive owner;
         private Access forumAccess;
@@ -170,15 +170,15 @@ namespace BoxSocial.Applications.Forum
 
         void Forum_ItemLoad()
         {
-            if (owner.Id != owner_id)
+            if (owner.Id != ownerId)
             {
-                if (owner_type == "GROUP")
+                if (ownerType == "GROUP")
                 {
-                    owner = new UserGroup(core, owner_id);
+                    owner = new UserGroup(core, ownerId);
                 }
-                else if (owner_type == "NETWORK")
+                else if (ownerType == "NETWORK")
                 {
-                    owner = new Network(core, owner_id);
+                    owner = new Network(core, ownerId);
                 }
             }
 
@@ -190,8 +190,8 @@ namespace BoxSocial.Applications.Forum
             List<Forum> forums = new List<Forum>();
 
             SelectQuery query = new SelectQuery("forum");
-            query.AddCondition("forum_item_id", owner_id);
-            query.AddCondition("forum_item_type", owner_type);
+            query.AddCondition("forum_item_id", ownerId);
+            query.AddCondition("forum_item_type", ownerType);
             query.AddCondition("forum_parent_id", forumId);
 
             DataTable forumsTable = db.Query(query);
@@ -210,8 +210,8 @@ namespace BoxSocial.Applications.Forum
 
             SelectQuery query = new SelectQuery("forum_topics");
             query.AddCondition("forum_id", forumId);
-            query.AddCondition("topic_item_id", owner_id);
-            query.AddCondition("topic_item_type", owner_type);
+            query.AddCondition("topic_item_id", ownerId);
+            query.AddCondition("topic_item_type", ownerType);
             query.AddSort(SortOrder.Descending, "topic_last_post_id");
 
             DataTable topicsTable = db.Query(query);
@@ -236,8 +236,8 @@ namespace BoxSocial.Applications.Forum
             List<ForumTopic> topics = new List<ForumTopic>();
 
             SelectQuery query = new SelectQuery("forum_topics");
-            query.AddCondition("topic_item_id", owner_id);
-            query.AddCondition("topic_item_type", owner_type);
+            query.AddCondition("topic_item_id", ownerId);
+            query.AddCondition("topic_item_type", ownerType);
             query.AddSort(SortOrder.Descending, "topic_last_post_id");
 
             DataTable topicsTable = db.Query(query);

@@ -97,6 +97,10 @@ namespace BoxSocial.FrontEnd
 
                                 if (updateApplication.CreatorId == core.LoggedInMemberId)
                                 {
+
+                                    //
+                                    // Save Icon
+                                    //
                                     if (newApplication.Icon != null)
                                     {
                                         if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key))))
@@ -107,6 +111,29 @@ namespace BoxSocial.FrontEnd
                                         newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateApplication.Key)), System.Drawing.Imaging.ImageFormat.Png);
                                     }
 
+                                    //
+                                    // Save StyleSheet
+                                    //
+                                    if (!string.IsNullOrEmpty(newApplication.StyleSheet))
+                                    {
+                                        if (!Directory.Exists(Server.MapPath(@".\styles\applications\")))
+                                        {
+                                            Directory.CreateDirectory(Server.MapPath(@".\styles\applications\"));
+                                        }
+
+                                        SaveTextFile(newApplication.StyleSheet, Server.MapPath(string.Format(@".\styles\applications\{0}.css",
+                                            updateApplication.Key)));
+                                    }
+
+                                    //
+                                    // Save JavaScript
+                                    //
+                                    if (!string.IsNullOrEmpty(newApplication.JavaScript))
+                                    {
+                                        SaveTextFile(newApplication.JavaScript, Server.MapPath(string.Format(@".\scripts\{0}.js",
+                                            updateApplication.Key)));
+                                    }
+
                                     UpdateQuery query = new UpdateQuery("applications");
                                     query.AddField("application_title", newApplication.Title);
                                     query.AddField("application_description", newApplication.Description);
@@ -114,6 +141,8 @@ namespace BoxSocial.FrontEnd
                                     query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
                                     query.AddField("application_comment", newApplication.UsesComments);
                                     query.AddField("application_rating", newApplication.UsesRatings);
+                                    query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
+                                    query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
                                     query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
                                     query.AddCondition("application_assembly_name", assemblyName);
 
@@ -221,6 +250,18 @@ namespace BoxSocial.FrontEnd
             }
             EndResponse();
             
+        }
+
+        /// <summary>
+        /// Save a text file
+        /// </summary>
+        /// <param name="fileToSave"></param>
+        /// <param name="fileName"></param>
+        protected static void SaveTextFile(string fileToSave, string fileName)
+        {
+            StreamWriter myStreamWriter = File.CreateText(fileName);
+            myStreamWriter.Write(fileToSave);
+            myStreamWriter.Close();
         }
     }
 }

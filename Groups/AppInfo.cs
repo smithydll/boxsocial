@@ -87,6 +87,22 @@ namespace BoxSocial.Groups
             }
         }
 
+        public override string StyleSheet
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override string JavaScript
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);

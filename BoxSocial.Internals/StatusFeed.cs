@@ -27,13 +27,6 @@ using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-/*
- * DONE:
- * 
- * ALTER TABLE `zinzam0_zinzam`.`user_info` ADD COLUMN `user_status_messages` BIGINT NOT NULL AFTER `user_last_visit_ut`;
- * 
- */
-
 namespace BoxSocial.Internals
 {
     public static class StatusFeed

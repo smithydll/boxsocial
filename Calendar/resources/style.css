@@ -1,0 +1,189 @@
+﻿div.month 
+{
+}
+
+div.month div.week
+{
+	height: 77px;
+}
+
+div.month div.week-head
+{
+	height: 22px;
+}
+
+div.month div.week-head div.day
+{
+	float: left;
+	width: 14%;
+	height: 20px;
+	font-weight: bold;
+	text-align: center;
+	border: solid 1px #F7F7F7;
+}
+
+div.month div.week div.day
+{
+	float: left;
+	width: 14%;
+	height: 75px;
+	text-align: left;
+	border: solid 1px #F7F7F7;
+	background-color: #FFFFFF;
+}
+
+div.month div.week div.day ul
+{
+	list-style: none;
+	padding: 0px;
+	margin: 0 2px;
+}
+
+div.month div.week div.day ul li
+{
+	list-style: none;
+	margin: 1px 0;
+	height: 12px;
+	border: solid 1px #F7F7F7;
+	background-color: #EEEEEE;
+	overflow: hidden;
+	font-size: 10px;
+}
+
+div.month-small 
+{
+}
+
+div.month-small div.week
+{
+	height: 20px;
+}
+
+div.month-small div.week div.day
+{
+	float: left;
+	width: 24px;
+	height: 18px;
+	text-align: center;
+	border: solid 1px #F7F7F7;
+}
+
+ul#today-events {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+}
+
+ul#today-events li {
+	list-style: none;
+	margin: 0;
+}
+
+ul#today-events li dl dt {
+	float: left;
+	width: 120px;
+	color: #666666;
+}
+
+ul#today-events li dl dd {
+	margin-left: 130px;
+}
+
+div#today-calendar {
+	padding: 5px;
+}
+
+div#today-feed {
+	padding: 5px;
+}
+
+div#today-tasks {
+	padding: 5px;
+}
+
+div#today-calendar h4, div#today-feed h4, div#today-tasks h4 {
+	margin-bottom: 5px;
+	margin-top: 4px;
+}
+
+div#today-calendar h5 {
+	margin-bottom: 2px;
+	margin-top: 3px;
+}
+
+ul#today-tasks-list {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+}
+
+ul#today-tasks-list li {
+	list-style: none;
+}
+
+ul#today-tasks-list li dl dt {
+	margin-left: 0px;
+	color: #666666;
+}
+
+ul#today-tasks-list li dl dd {
+	margin-left: 0px;
+}
+
+ul#day-timeslots {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+	background-color: #FFFFFF;
+}
+
+ul#day-timeslots li {
+	list-style: none;
+	height: 24px;
+	border: solid 1px #F7F7F7;
+}
+
+ul#day-timeslots li dl dt {
+	float: left;
+	width: 45px;
+	font-weight: bold;
+	font-size: 110%;
+	color: #CCCCCC;
+}
+
+ul#day-timeslots li dl dd {
+	margin-left: 50px;
+}
+
+ul.day-events {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+}
+
+ul#day-timeslots li ul.day-events li.event {
+	position: relative;
+	background-color: #FFFFFF;
+	padding: 1px;
+	border: solid 1px #E7E7E7;
+	border-left: solid 5px #27DD66;
+}
+
+span.overdue-task a {
+	color: #FF0000;
+	font-weight: bold;
+}
+
+span.complete-task a {
+	text-decoration: line-through;
+}
+
+span.low-priority {
+	font-weight: bold;
+	color: #0000CC;
+}
+
+span.high-priority {
+	font-weight: bold;
+	color: #CC0000;
+}

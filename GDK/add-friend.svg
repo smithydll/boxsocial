@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docbase="C:\SVN\BoxSocial\GDK"
+   sodipodi:docname="add-friend.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\SVN\BoxSocial\BoxSocial\images\add-friend.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 8 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="16 : 8 : 1"
+       inkscape:persp3d-origin="8 : 5.3333333 : 1"
+       id="perspective9" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="40.508173"
+     inkscape:cx="8.026301"
+     inkscape:cy="7.9866701"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="16px"
+     height="16px"
+     inkscape:window-width="1440"
+     inkscape:window-height="850"
+     inkscape:window-x="1272"
+     inkscape:window-y="-8"
+     showgrid="false" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#aaccff;fill-opacity:1;fill-rule:evenodd;stroke:#003380;stroke-width:0.70499997999999997;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 3.9016311,5.7346062 C 3.9016311,5.7346062 1.9265874,7.5116951 1.0801401,9.3288832 C 0.25699222,11.096049 0.33629242,11.870276 0.77234102,12.047857 C 1.2083896,12.225437 1.5931384,11.84068 2.0035371,11.071163 C 2.4139358,10.301647 3.5938322,8.6028472 3.5938322,8.6028472 C 3.5938322,8.6028472 1.9778871,12.525333 2.2087364,13.176461 C 2.4395857,13.827591 3.9016312,13.71706 3.9016312,13.71706 C 3.9016312,13.71706 8.8934956,13.729806 9.3650634,13.709204 C 9.8841914,13.686524 10.750159,13.626441 10.904058,13.004909 C 11.057958,12.383377 9.1342147,8.5140572 9.1342147,8.5140572 C 9.1342147,8.5140572 10.844052,11.23407 11.314458,11.351418 C 11.853106,11.485791 12.520004,11.187723 12.237854,10.418207 C 11.955705,9.6486912 10.152272,7.0277494 8.8520648,5.8037561 C 8.4663925,5.44069 3.9016311,5.7642028 3.9016311,5.7346062 z"
+       id="path2165"
+       sodipodi:nodetypes="cssscscsscsssc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#aaccff;fill-opacity:1;fill-rule:evenodd;stroke:#003380;stroke-width:0.8011083;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path2160"
+       sodipodi:cx="9.8551607"
+       sodipodi:cy="4.1767225"
+       sodipodi:rx="3.7029746"
+       sodipodi:ry="3.5426095"
+       d="M 13.558135,4.1767225 A 3.7029746,3.5426095 0 1 1 6.1521862,4.1767225 A 3.7029746,3.5426095 0 1 1 13.558135,4.1767225 z"
+       transform="matrix(0.8797089,0,0,0.8803529,-2.3056494,-0.1290834)" />
+    <path
+       style="fill:#ffd8aa;fill-opacity:1;fill-rule:evenodd;stroke:#804500;stroke-width:0.70499997999999997;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 11.6025,9.5975 L 13.6025,9.5975 L 13.6025,11.5975 L 15.6025,11.5975 L 15.6025,13.5975 L 13.6025,13.5975 L 13.6025,15.5975 L 11.6025,15.5975 L 11.6025,13.5975 L 9.6025,13.5975 L 9.6025,11.5975 L 11.6025,11.5975 L 11.6025,9.5975 z"
+       id="path2382"
+       sodipodi:nodetypes="ccccccccccccc" />
+  </g>
+</svg>

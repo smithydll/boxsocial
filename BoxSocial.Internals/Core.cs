@@ -61,25 +61,41 @@ namespace BoxSocial.Internals
         private Dictionary<string, RatingHandler> ratingHandles = new Dictionary<string, RatingHandler>();
 
         /// <summary>
-        /// A cache of user profiles including icons.
-        /// </summary>
-        private Dictionary<long, Member> userProfileCache = new Dictionary<long, Member>();
-        private Dictionary<string, long> userNameCache = new Dictionary<string, long>();
-
-        /// <summary>
         /// A cache of application entries.
         /// </summary>
         private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>();
 
+        private UsersCache userProfileCache;
+
         /// <summary>
         /// Returns a list of user profiles cached in memory.
         /// </summary>
-        public Dictionary<long, Member> UserProfiles
+        public UsersCache UserProfiles
         {
             get
             {
                 return userProfileCache;
             }
+        }
+
+        public void LoadUserProfile(long userId)
+        {
+            userProfileCache.LoadUserProfile(userId);
+        }
+
+        public long LoadUserProfile(string username)
+        {
+            return userProfileCache.LoadUserProfile(username);
+        }
+
+        public void LoadUserProfiles(List<long> userIds)
+        {
+            userProfileCache.LoadUserProfiles(userIds);
+        }
+
+        public List<long> LoadUserProfiles(List<string> usernames)
+        {
+            return userProfileCache.LoadUserProfiles(usernames);
         }
 
         /// <summary>
@@ -110,108 +126,6 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userIds"></param>
-        public void LoadUserProfiles(List<long> userIds)
-        {
-            List<long> idList = new List<long>();
-            foreach (long id in userIds)
-            {
-                if (!userProfileCache.ContainsKey(id))
-                {
-                    idList.Add(id);
-                }
-            }
-
-            if (idList.Count > 0)
-            {
-                SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
-                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
-                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
-                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-                query.AddCondition("uk.user_id", ConditionEquality.In, idList);
-
-                DataTable usersTable = db.Query(query);
-
-                foreach (DataRow userRow in usersTable.Rows)
-                {
-                    Member newUser = new Member(this, userRow, true, true);
-                    userProfileCache.Add(newUser.Id, newUser);
-                    userNameCache.Add(newUser.UserName, newUser.Id);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userId"></param>
-        public void LoadUserProfile(long userId)
-        {
-            if (!userProfileCache.ContainsKey(userId))
-            {
-                Member newUser = new Member(this, userId, true);
-                userProfileCache.Add(newUser.Id, newUser);
-                userNameCache.Add(newUser.UserName, newUser.Id);
-            }
-        }
-
-        public List<long> LoadUserProfiles(List<string> usernames)
-        {
-            List<string> usernameList = new List<string>();
-            List<long> userIds = new List<long>();
-            foreach (string username in usernames)
-            {
-                if (!userNameCache.ContainsKey(username))
-                {
-                    usernameList.Add(username);
-                }
-            }
-
-            if (usernameList.Count > 0)
-            {
-                SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
-                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
-                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
-                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-                query.AddCondition("uk.user_name", ConditionEquality.In, usernameList);
-
-                DataTable usersTable = db.Query(query);
-
-                foreach (DataRow userRow in usersTable.Rows)
-                {
-                    Member newUser = new Member(this, userRow, true, true);
-                    userProfileCache.Add(newUser.Id, newUser);
-                    userNameCache.Add(newUser.UserName, newUser.Id);
-                    userIds.Add(newUser.Id);
-                }
-            }
-
-            return userIds;
-        }
-
-        public long LoadUserProfile(string username)
-        {
-            if (userNameCache.ContainsKey(username))
-            {
-                return userNameCache[username];
-            }
-
-            Member newUser = new Member(this, username, true);
-            if (!userProfileCache.ContainsKey(newUser.Id))
-            {
-                userProfileCache.Add(newUser.Id, newUser);
-            }
-
-            return newUser.Id;
-        }
-
-        /// <summary>
         /// Loads the application entry for the calling application
         /// </summary>
         internal void LoadApplicationEntry(string assemblyName)
@@ -226,6 +140,8 @@ namespace BoxSocial.Internals
 
             this.db = db;
             this.template = template;
+
+            userProfileCache = new UsersCache(this);
         }
 
         void Core_LoadApplication(Core core, object sender)

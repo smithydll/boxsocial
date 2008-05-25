@@ -26,6 +26,8 @@ using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
+using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Calendar
 {
@@ -44,41 +46,12 @@ namespace BoxSocial.Applications.Calendar
         High = 2,
     }
 
-    /*
-     * CREATE TABLE `zinzam0_zinzam`.`tasks` (
-  `task_id` BIGINT NOT NULL AUTO_INCREMENT,
-  `task_topic` VARCHAR(127) NOT NULL,
-  `task_description` TEXT DEFAULT NULL,
-  `task_views` BIGINT NOT NULL,
-  `task_comments` BIGINT NOT NULL,
-  `tasl_access` SMALLINT UNSIGNED NOT NULL,
-  `user_id` INTEGER NOT NULL,
-  `task_due_date_ut` BIGINT NOT NULL,
-  `task_category` SMALLINT NOT NULL,
-  `task_item_id` BIGINT NOT NULL,
-  `task_item_type` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`task_id`)
-)
-ENGINE = InnoDB;
-     
-     ALTER TABLE `zinzam0_zinzam`.`tasks` MODIFY COLUMN `task_category` SMALLINT(6) UNSIGNED NOT NULL,
- MODIFY COLUMN `task_item_type` VARCHAR(31) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;
-      
-     ALTER TABLE `zinzam0_zinzam`.`tasks` CHANGE COLUMN `tasl_access` `task_access` SMALLINT(5) UNSIGNED NOT NULL;
-
-     ALTER TABLE `zinzam0_zinzam`.`tasks` ADD COLUMN `task_status` TINYINT UNSIGNED NOT NULL AFTER `task_item_type`,
- ADD COLUMN `task_percent_complete` TINYINT UNSIGNED NOT NULL AFTER `task_status`,
- ADD COLUMN `task_priority` TINYINT UNSIGNED NOT NULL AFTER `task_percent_complete`;
-     * 
-     *
-     ALTER TABLE `zinzam0_zinzam`.`tasks` ADD COLUMN `task_time_completed_ut` BIGINT NOT NULL AFTER `task_priority`;
-
-
-     */
+    [DataTable("tasks")]
     public class Task : Item, ICommentableItem
     {
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
+        #region Data Fields
         [DataField("task_id")]
         private long taskId;
         [DataField("task_topic")]
@@ -103,10 +76,14 @@ ENGINE = InnoDB;
         private long completedTimeRaw;
         [DataField("task_category")]
         private ushort category;
-        private TaskStatus status;
+        [DataField("task_status")]
+        private byte status;
         [DataField("task_percent_complete")]
         private byte percentageComplete;
-        private TaskPriority priority;
+        [DataField("task_priority")]
+        private byte priority;
+        #endregion
+
         private Access taskAccess;
         private Primitive owner;
 
@@ -170,7 +147,7 @@ ENGINE = InnoDB;
         {
             get
             {
-                return status;
+                return (TaskStatus)status;
             }
         }
 
@@ -186,7 +163,7 @@ ENGINE = InnoDB;
         {
             get
             {
-                return priority;
+                return (TaskPriority)priority;
             }
         }
 
@@ -208,28 +185,74 @@ ENGINE = InnoDB;
             return tz.DateTimeFromMysql(completedTimeRaw);
         }
 
-        public Task(Core core, Primitive owner, long taskId) : base(core)
+        public Task(Core core, long taskId)
+            : this(core, null, taskId)
+        {
+        }
+
+        public Task(Core core, Primitive owner, long taskId)
+            : base(core)
         {
             this.owner = owner;
 
-            DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE tk.user_id = {1} AND tk.task_id = {2};",
-                Task.TASK_INFO_FIELDS, owner.Id, taskId));
+            ItemLoad += new ItemLoadHandler(Task_ItemLoad);
 
-            if (tasksTable.Rows.Count == 1)
+            try
             {
-                loadTaskInfo(tasksTable.Rows[0]);
+                LoadItem(taskId);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidTaskException();
             }
         }
 
-        public Task(Core core, Primitive owner, DataRow taskRow) : base(core)
+        public Task(Core core, Primitive owner, DataRow taskRow)
+            : base(core)
         {
             this.owner = owner;
 
-            loadTaskInfo(taskRow);
+            ItemLoad += new ItemLoadHandler(Task_ItemLoad);
+
+            try
+            {
+                loadItemInfo(taskRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTaskException();
+            }
+        }
+
+        void Task_ItemLoad()
+        {
+            if (owner == null || owner.Id != ownerId)
+            {
+                if (ownerType == "USER")
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.UserProfiles[ownerId];
+                }
+                else if (ownerType == "GROUP")
+                {
+                    owner = new UserGroup(core, ownerId);
+                }
+                else if (ownerType == "NETWORK")
+                {
+                    owner = new Network(core, ownerId);
+                }
+            }
+
+            if (percentageComplete == 100 || (TaskStatus)status == TaskStatus.Completed)
+            {
+                status = (byte)TaskStatus.Completed;
+            }
+            else if (UnixTime.UnixTimeStamp() > dueTimeRaw && (TaskStatus)status != TaskStatus.Overdue)
+            {
+                status = (byte)TaskStatus.Overdue;
+            }
+
+            taskAccess = new Access(core.db, permissions, owner);
         }
 
         private void loadTaskInfo(DataRow taskRow)
@@ -248,17 +271,17 @@ ENGINE = InnoDB;
             dueTimeRaw = (long)taskRow["task_due_date_ut"];
             completedTimeRaw = (long)taskRow["task_time_completed_ut"];
             // category
-            status = (TaskStatus)(byte)taskRow["task_status"];
+            status = (byte)taskRow["task_status"];
             percentageComplete = (byte)taskRow["task_percent_complete"];
-            priority = (TaskPriority)(byte)taskRow["task_priority"];
+            priority = (byte)taskRow["task_priority"];
 
-            if (percentageComplete == 100 || status == TaskStatus.Completed)
+            if (percentageComplete == 100 || (TaskStatus)status == TaskStatus.Completed)
             {
-                status = TaskStatus.Completed;
+                status = (byte)TaskStatus.Completed;
             }
-            else if (UnixTime.UnixTimeStamp() > dueTimeRaw && status != TaskStatus.Overdue)
+            else if (UnixTime.UnixTimeStamp() > dueTimeRaw && (TaskStatus)status != TaskStatus.Overdue)
             {
-                status = TaskStatus.Overdue;
+                status = (byte)TaskStatus.Overdue;
             }
 
             taskAccess = new Access(db, permissions, owner);
@@ -310,7 +333,7 @@ ENGINE = InnoDB;
             long startTime = core.tz.GetUnixTimeStamp(new DateTime(core.tz.Now.Year, core.tz.Now.Month, core.tz.Now.Day, 0, 0, 0)) - 60 * 60 * 24 * 7; // show tasks completed over the last week
             long endTime = startTime + 60 * 60 * 24 * 7 * (8 + 1); // skip ahead eight weeks into the future
 
-            Calendar cal = new Calendar(core.db);
+            Calendar cal = new Calendar(core);
 
             List<Task> tasks = cal.GetTasks(core, owner, startTime, endTime, true);
 

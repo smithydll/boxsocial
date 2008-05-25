@@ -31,11 +31,13 @@ namespace BoxSocial.Applications.Calendar
 {
     public class Calendar
     {
-        Mysql db;
+        private Core core;
+        private Mysql db;
 
-        public Calendar(Mysql db)
+        public Calendar(Core core)
         {
-            this.db = db;
+            this.core = core;
+            this.db = core.db;
         }
 
         public List<Event> GetEvents(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
@@ -245,7 +247,7 @@ namespace BoxSocial.Applications.Calendar
             // the whole month including exit days
             long endTime = startTime + 60 * 60 * 24 * weeks * 7;
 
-            Calendar cal = new Calendar(core.db);
+            Calendar cal = new Calendar(core);
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
             /*foreach (Event calEvent in events)
@@ -333,7 +335,7 @@ namespace BoxSocial.Applications.Calendar
             long startTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24;
 
-            Calendar cal = new Calendar(core.db);
+            Calendar cal = new Calendar(core);
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
             for (int hour = 0; hour < 24; hour++)

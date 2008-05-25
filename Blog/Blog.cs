@@ -336,20 +336,19 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets a list of entries in the blog roll for the blog
         /// </summary>
-        /// <param name="page"></param>
         /// <returns></returns>
-        public List<BlogRollEntry> GetBlogRoll(PPage page)
+        public List<BlogRollEntry> GetBlogRoll()
         {
             List<BlogRollEntry> blogRollEntries = new List<BlogRollEntry>();
             SelectQuery query = new SelectQuery("blog_roll_entries bre");
             //query.AddFields();
             query.AddCondition("bre.user_id", userId);
 
-            DataTable blogRollTable = page.db.Query(query);
+            DataTable blogRollTable = db.Query(query);
 
             foreach (DataRow dr in blogRollTable.Rows)
             {
-                //blogRollEntries.Add(new BlogRollEntry(page.db, dr));
+                blogRollEntries.Add(new BlogRollEntry(core, dr));
             }
 
             return blogRollEntries;
@@ -517,6 +516,26 @@ namespace BoxSocial.Applications.Blog
                     categoryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)categoriesTable.Rows[i]["category_title"]));
 
                     categoryVariableCollection.ParseVariables("URL", HttpUtility.HtmlEncode(Linker.BuildBlogUri(page.ProfileOwner, (string)categoriesTable.Rows[i]["category_path"])));
+                }
+
+                List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
+
+                page.template.ParseVariables("BLOG_ROLL_ENTRIES", HttpUtility.HtmlEncode(blogRollEntries.Count.ToString()));
+
+                foreach (BlogRollEntry bre in blogRollEntries)
+                {
+                    VariableCollection breVariableCollection = page.template.CreateChild("blog_roll_list");
+
+                    if (!string.IsNullOrEmpty(bre.Title))
+                    {
+                        breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.Title));
+                    }
+                    else if (bre.User != null)
+                    {
+                        breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.User.DisplayName));
+                    }
+
+                    breVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(bre.Uri));
                 }
             }
 

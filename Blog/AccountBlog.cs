@@ -53,6 +53,7 @@ namespace BoxSocial.Applications.Blog
             RegisterSubModule += new RegisterSubModuleHandler(ManageBlog);
             RegisterSubModule += new RegisterSubModuleHandler(WritePost);
             RegisterSubModule += new RegisterSubModuleHandler(ManageDrafts);
+            RegisterSubModule += new RegisterSubModuleHandler(EditBlogRoll);
             RegisterSubModule += new RegisterSubModuleHandler(EditPreferences);
             // TODO: Blog Preferences
         }
@@ -457,6 +458,54 @@ namespace BoxSocial.Applications.Blog
                 SetRedirectUri(AccountModule.BuildModuleUri("blog", "manage"));
                 Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
             }
+        }
+
+        private void EditBlogRoll(string submodule)
+        {
+            subModules.Add("blogroll", "Edit Blog Roll");
+            if (submodule != "blogroll") return;
+
+            if (Request.Form["save"] != null)
+            {
+                EditBlogRollSave();
+                return;
+            }
+
+            template.SetTemplate("Blog", "account_blog_roll");
+
+            Blog myBlog;
+            try
+            {
+                myBlog = new Blog(core, session.LoggedInMember);
+            }
+            catch (InvalidBlogException)
+            {
+                myBlog = Blog.Create(core);
+            }
+
+            List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
+
+            template.ParseVariables("BLOG_ROLL_ENTRIES", HttpUtility.HtmlEncode(blogRollEntries.Count.ToString()));
+
+            foreach (BlogRollEntry bre in blogRollEntries)
+            {
+                VariableCollection breVariableCollection = template.CreateChild("blog_roll_list");
+
+                if (!string.IsNullOrEmpty(bre.Title))
+                {
+                    breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.Title));
+                }
+                else if (bre.User != null)
+                {
+                    breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.User.DisplayName));
+                }
+
+                breVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(bre.Uri));
+            }
+        }
+
+        private void EditBlogRollSave()
+        {
         }
 
         /// <summary>

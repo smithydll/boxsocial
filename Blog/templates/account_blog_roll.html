@@ -1,0 +1,51 @@
+﻿<h3>Edit Blog Roll</h3>
+
+<table style="width: 100%">
+  <tr>
+    <th>#</th>
+    <th>Title</th>
+    <th>Uri</th>
+  </tr>
+  <!-- BEGIN blog_roll_list -->
+  <!-- IF blog_roll_list.INDEX_EVEN -->
+  <tr class="even">
+    <!-- ELSE -->
+    <tr class="odd">
+      <!-- ENDIF -->
+      <td>{blog_roll_list.NUMBER}</td>
+      <td>{blog_roll_list.TITLE}</td>
+      <td>
+        <a href="{blog_roll_list.URI}">{blog_roll_list.URI}</a>
+      </td>
+    </tr>
+    <!-- END blog_roll_list -->
+  </table>
+
+<h3>Add to Blog Roll</h3>
+<p>You can add a blog to your blog roll that exists outside of ZinZam.</p>
+<form action="{S_BLOG_ROLL_ADD}" method="post" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Add to Blog Roll</legend>
+    <dl>
+      <dt>
+        <label for="title">Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" />
+      </dd>
+      <dt>
+        <label for="uri">Uri</label>
+      </dt>
+      <dd>
+        <input type="text" id="uri" name="uri" value="{S_URI}" style="width: 100%;" />
+      </dd>
+      <dt></dt>
+      <dd>
+        <input type="submit" name="send" value="Import" />
+      </dd>
+    </dl>
+    <input type="hidden" name="module" value="blog" />
+    <input type="hidden" name="sub" value="blogroll" />
+    <input type="hidden" name="mode" value="add" />
+  </fieldset>
+</form>

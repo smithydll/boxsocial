@@ -77,6 +77,7 @@
   <ItemGroup>
     <Content Include="templates\account_blog_manage.html" />
     <Content Include="templates\account_blog_preferences.html" />
+    <Content Include="templates\account_blog_roll.html" />
     <Content Include="templates\account_post.html" />
   </ItemGroup>
   <ItemGroup>

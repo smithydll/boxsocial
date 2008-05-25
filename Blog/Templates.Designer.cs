@@ -121,6 +121,15 @@ namespace BoxSocial.Applications.Blog {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Edit Blog Roll&lt;/h3&gt;.
+        /// </summary>
+        internal static string account_blog_roll {
+            get {
+                return ResourceManager.GetString("account_blog_roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Write Blog Post&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{U_ACCOUNT}&quot; method=&quot;post&quot;&gt;

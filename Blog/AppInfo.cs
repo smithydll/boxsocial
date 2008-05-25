@@ -116,6 +116,22 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public override string StyleSheet
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override string JavaScript
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Initialises the application
         /// </summary>

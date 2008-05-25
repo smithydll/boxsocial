@@ -1,0 +1,26 @@
+﻿<h3>Blog Preferences</h3>
+
+<form action="{U_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Blog Preferences</legend>
+		<dl>
+      <dt>
+        <label for="title">Blog Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" />
+      </dd>
+      <dt>
+        <label>Blog Permissions</label>
+      </dt>
+      <dd>
+        {S_BLOG_PERMS}
+      </dd>
+      <dd>
+        <input type="submit" name="save" value="Save" />
+      </dd>
+    </dl>
+    <input type="hidden" name="module" value="blog" />
+    <input type="hidden" name="sub" value="preferences" />
+  </fieldset>
+</form>

@@ -66,5 +66,23 @@ namespace BoxSocial.Applications.Gallery.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string script {
+            get {
+                return ResourceManager.GetString("script", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string style {
+            get {
+                return ResourceManager.GetString("style", resourceCulture);
+            }
+        }
     }
 }

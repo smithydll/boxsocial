@@ -88,6 +88,22 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public override string StyleSheet
+        {
+            get
+            {
+                return Properties.Resources.style;
+            }
+        }
+
+        public override string JavaScript
+        {
+            get
+            {
+                return Properties.Resources.script;
+            }
+        }
+
         public override void Initialise(Core core)
         {
             this.core = core;

@@ -86,7 +86,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="images\gallery.png" />
+    <Content Include="resources\gallery.png" />
+    <Content Include="resources\script.js" />
+    <Content Include="resources\style.css" />
     <Content Include="templates\account_galleries.html" />
     <Content Include="templates\account_galleries_add.html" />
     <Content Include="templates\account_galleries_photo_edit.html" />

@@ -29,27 +29,6 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
-    /*
-     * DONE: 
-     * CREATE TABLE `zinzam0_zinzam`.`user_tags` (
-  `tag_id` BIGINT NOT NULL AUTO_INCREMENT,
-  `user_id` BIGINT NOT NULL,
-  `gallery_item_id` BIGINT NOT NULL,
-  `tag_x` INTEGER NOT NULL,
-  `tag_y` INTEGER NOT NULL,
-  PRIMARY KEY (`tag_id`)
-)
-ENGINE = InnoDB;
-     * 
-     * ALTER TABLE `zinzam0_zinzam`.`user_tags` ADD COLUMN `user_id` BIGINT NOT NULL AFTER `tag_y`,
- ADD COLUMN `tag_approved` BOOLEAN NOT NULL AFTER `user_id`;
-     * 
-     * ALTER TABLE `zinzam0_zinzam`.`user_tags` MODIFY COLUMN `tag_approved` TINYINT(1) UNSIGNED NOT NULL;
-
-
-
-     */
-
     /// <summary>
     /// Represents a tag on a photo of a user in the photo.
     /// </summary>

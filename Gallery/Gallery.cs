@@ -39,6 +39,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a gallery
     /// </summary>
+    [DataTable("user_galleries")]
     public abstract class Gallery : Item
     {
         /// <summary>
@@ -59,11 +60,19 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Id of the gallery
         /// </summary>
+        [DataField("gallery_id", DataFieldKeys.Primary)]
         protected long galleryId;
+
+        /// <summary>
+        /// User Id (usergallery)
+        /// </summary>
+        [DataField("user_id")]
+        protected long userId;
         
         /// <summary>
         /// Id of the parent gallery
         /// </summary>
+        [DataField("gallery_parent_id")]
         protected long parentId;
 
         /// <summary>
@@ -74,47 +83,67 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery title
         /// </summary>
+        [DataField("gallery_title", 31)]
         protected string galleryTitle;
 
         /// <summary>
         /// Gallery parent path
         /// </summary>
+        [DataField("gallery_parent_path", MYSQL_TEXT)]
         protected string parentPath;
 
         /// <summary>
         /// Gallery path (slug)
         /// </summary>
+        [DataField("gallery_path", 31)]
         protected string path;
 
         /// <summary>
         /// Number of visits made to the gallery
         /// </summary>
+        [DataField("gallery_visits")]
         protected long visits;
 
         /// <summary>
         /// Number of photos in the gallery
         /// </summary>
+        [DataField("gallery_items")]
         protected long items;
 
         /// <summary>
         /// Number of bytes the the photos in the gallery consume
         /// </summary>
+        [DataField("gallery_bytes")]
         protected long bytes;
 
         /// <summary>
         /// Gallery abstract
         /// </summary>
+        [DataField("gallery_abstract", MYSQL_TEXT)]
         protected string galleryAbstract;
 
         /// <summary>
         /// Gallery Description
         /// </summary>
+        [DataField("gallery_description", 255)]
         protected string galleryDescription;
+
+        /// <summary>
+        /// Id of the highlighted photo
+        /// </summary>
+        [DataField("gallery_item_highlight")]
+        protected long highlightId;
 
         /// <summary>
         /// URI of the highlighted photo
         /// </summary>
         protected string highlightUri;
+
+        /// <summary>
+        /// Permissions
+        /// </summary>
+        [DataField("gallery_access")]
+        protected ushort permissions;
 
         /// <summary>
         /// Gets the gallery Id
@@ -418,7 +447,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
             }
-            items = (long)(int)galleryRow["gallery_items"];
+            items = (long)galleryRow["gallery_items"];
             bytes = (long)galleryRow["gallery_bytes"];
             visits = (long)galleryRow["gallery_visits"];
             path = (string)galleryRow["gallery_path"];

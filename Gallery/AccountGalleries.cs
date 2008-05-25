@@ -145,7 +145,7 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = template.CreateChild("gallery_list");
 
                 galleryVariableCollection.ParseVariables("NAME", HttpUtility.HtmlEncode((string)galleriesTable.Rows[i]["gallery_title"]));
-                galleryVariableCollection.ParseVariables("ITEMS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString((int)galleriesTable.Rows[i]["gallery_items"])));
+                galleryVariableCollection.ParseVariables("ITEMS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString((long)galleriesTable.Rows[i]["gallery_items"])));
 
                 galleryVariableCollection.ParseVariables("U_MANAGE", HttpUtility.HtmlEncode(string.Format("/account/?module=galleries&sub=galleries&id={0}",
                     (long)galleriesTable.Rows[i]["gallery_id"])));

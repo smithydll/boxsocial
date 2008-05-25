@@ -1,0 +1,95 @@
+﻿ul#gallery-list {
+	list-style: none;
+	padding: 5px;
+	margin: 0px;
+}
+
+ul#gallery-list li {
+	background-color: #CCCCCC;
+	margin-bottom: 1px;
+}
+
+ul#gallery-list li dt {
+	float: left;
+	width: 180px;
+	padding: 3px;
+	text-align: center;
+}
+
+ul#gallery-list li dd {
+	margin-left: 180px;
+	padding: 3px;
+}
+
+ul#gallery-list li h3 {
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#gallery-list li dt img {
+	padding: 3px;
+	background-color: White;
+	border: solid 1px black;
+	font-size: 0px;
+}
+
+ul#photo-list {
+	list-style: none;
+	padding: 5px;
+	margin: 0px;
+}
+
+ul#photo-list dl {
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#photo-list li {
+	float: left;
+	width: 180px;
+	height: 260px;
+}
+
+#profile-gallery-pane ul#photo-list li {
+	width: 90px;
+	height: 90px;
+}
+
+ul#photo-list li dt {
+	text-align: center;
+}
+
+ul#photo-list li dt img {
+	padding: 3px;
+	background-color: White;
+	border: solid 1px black;
+	font-size: 0px;
+}
+
+ul#photo-list li dd {
+	background-color: #CCCCCC;
+	margin: 1px;
+	padding: 1px;
+	width: 160px;
+	margin-left: 10px;
+}
+
+#view-photo #x-stuff{
+	margin: 1px auto;
+	padding: 1px;
+	width: 640px;
+}
+
+#view-photo dl dt img {
+	padding: 3px;
+	background-color: White;
+	border: solid 1px black;
+	font-size: 0px;
+}
+
+#view-photo dl dd {
+	background-color: #CCCCCC;
+	margin: 1px auto;
+	padding: 1px;
+	width: 640px;
+}

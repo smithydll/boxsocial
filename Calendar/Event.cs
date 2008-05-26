@@ -244,18 +244,6 @@ namespace BoxSocial.Applications.Calendar
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
-            /*DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE ev.event_id = {1};",
-                Event.EVENT_INFO_FIELDS, eventId));
-
-            if (eventsTable.Rows.Count == 1)
-            {
-                /*loadEventInfo(eventsTable.Rows[0]);/
-                loadItemInfo(eventsTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidEventException();
-            }*/
             try
             {
                 LoadItem(eventId);
@@ -266,48 +254,18 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        private void Event_ItemLoad()
-        {
-            if (owner == null || ownerId != owner.Id)
-            {
-                owner = new Member(core, userId);
-            }
-
-            eventAccess = new Access(db, permissions, owner);
-        }
-
         public Event(Core core, Primitive owner, DataRow eventRow)
             : base(core)
         {
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
-            //loadEventInfo(eventRow);
             loadItemInfo(eventRow);
         }
 
-        private void loadEventInfo(DataRow eventRow)
+        private void Event_ItemLoad()
         {
-            eventId = (long)eventRow["event_id"];
-            subject = (string)eventRow["event_subject"];
-            if (!(eventRow["event_description"] is DBNull))
-            {
-                description = (string)eventRow["event_description"];
-            }
-            views = (long)eventRow["event_views"];
-            attendees = (long)eventRow["event_attendees"];
-            permissions = (ushort)eventRow["event_access"];
-            comments = (long)eventRow["event_comments"];
-            // ownerId
-            userId = (long)(int)eventRow["user_id"];
-            startTimeRaw = (long)eventRow["event_time_start_ut"];
-            endTimeRaw = (long)eventRow["event_time_end_ut"];
-            // allDay
-            invitees = (long)eventRow["event_invitees"];
-            // category
-            location = (string)eventRow["event_location"];
-
-            if (owner == null)
+            if (owner == null || ownerId != owner.Id)
             {
                 owner = new Member(core, userId);
             }

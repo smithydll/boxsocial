@@ -1,0 +1,33 @@
+﻿<h3>My Contact Details</h3>
+<p>List your contact details for your friends to access in their address book.</p>
+
+<form action="{S_ADD_EMAIL_CONTACT}" method="post" enctype="multipart/form-data">
+  <fieldset>
+    <legend>My Contact Details</legend>
+    <dl>
+      <dt><label for="xmpp">XMPP (Jabber)</label></dt>
+			<dd><input type="text" id="xmpp" name="xmpp" value="{S_XMPP}" style="width: 100%;" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+    </dl>
+    <input type="hidden" name="module" value="profile" />
+    <input type="hidden" name="sub" value="contact" />
+  </fieldset>
+</form>
+
+<h3>Add e-mail address</h3>
+<p>You can list multiple e-mail addresses as contact addresses.</p>
+<form action="{S_ADD_EMAIL_CONTACT}" method="post" enctype="multipart/form-data">
+<fieldset>
+		<legend>Add e-mail address</legend>
+		<dl>
+			<dt><label for="email">E-mail Address</label></dt>
+			<dd><input type="text" id="email" name="email" value="{S_EMAIL}" style="width: 100%;" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="add" value="Add" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+    <input type="hidden" name="mode" value="add-e-mail" />
+</fieldset>
+</form>

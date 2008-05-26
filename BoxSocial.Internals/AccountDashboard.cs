@@ -47,6 +47,7 @@ namespace BoxSocial
             // TODO: subscription management
             RegisterSubModule += new RegisterSubModuleHandler(Preferences);
             RegisterSubModule += new RegisterSubModuleHandler(Applications);
+            RegisterSubModule += new RegisterSubModuleHandler(Password);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -483,6 +484,24 @@ namespace BoxSocial
 
             template.ParseVariables("REDIRECT_URI", "/account/?module=&sub=preferences");
             Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.<br /><a href=\"/account/?module=&sub=preferences\">Return</a>");
+        }
+
+        public void Password(string submodule)
+        {
+            subModules.Add("password", "Change Password");
+            if (submodule != "password") return;
+
+            if (Request.Form["save"] != null)
+            {
+                PreferencesSave();
+                return;
+            }
+
+            template.SetTemplate("account_password.html");
+        }
+
+        public void PasswordSave()
+        {
         }
     }
 }

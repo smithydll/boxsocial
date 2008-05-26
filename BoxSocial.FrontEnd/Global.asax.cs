@@ -59,6 +59,11 @@ namespace BoxSocial.FrontEnd
 
         }
 
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            Server.Transfer("error-handler.aspx");
+        }
+
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
             HttpContext httpContext = HttpContext.Current;
@@ -142,12 +147,12 @@ namespace BoxSocial.FrontEnd
 
                 //patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?nn=$1&path=$2" });
 
-                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)(|/)$", @"/memberpage.aspx?un=$1&path=" });
+                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)(|/)$", @"/memberpage.aspx?un=$1&path=" });
 
                 //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/profile(|/)$", @"/viewprofile.aspx?un=$1" });
 
-                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/friends(|/)$", @"/viewfriends.aspx?un=$1" });
-                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/friends/([0-9]+)(|/)$", @"/viewfriends.aspx?un=$1&page=$2" });
+                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends(|/)$", @"/viewfriends.aspx?un=$1" });
+                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends/([0-9]+)(|/)$", @"/viewfriends.aspx?un=$1&page=$2" });
 
                 //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?un=$1&path=$2" });
 
@@ -155,7 +160,7 @@ namespace BoxSocial.FrontEnd
                 patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/(.+)(|/)$", @"/applicationpage.aspx?an=$1&path=$2" });
                 patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/(.+)(|/)$", @"/grouppage.aspx?gn=$1&path=$2" });
                 patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/(.+)(|/)$", @"/networkpage.aspx?nn=$1&path=$2" });
-                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/(.+)(|/)$", @"/memberpage.aspx?un=$1&path=$2" });
+                patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/(.+)(|/)$", @"/memberpage.aspx?un=$1&path=$2" });
 
                 foreach (string[] pattern in patterns)
                 {

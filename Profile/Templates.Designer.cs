@@ -87,6 +87,15 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_contact {
+            get {
+                return ResourceManager.GetString("account_contact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Family&lt;/h3&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
@@ -171,14 +180,8 @@ namespace BoxSocial.Applications.Profile {
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Style&lt;/legend&gt;
         ///    &lt;!-- IF THEME_EDITOR --&gt;
-        ///      &lt;h4&gt;Theme&lt;/h4&gt;
-        ///    &lt;input type=&quot;hidden&quot; name=&quot;mode&quot; value=&quot;theme&quot; /&gt;
-        ///    &lt;!-- ENDIF --&gt;
-        ///    &lt;!-- IF STANDARD_EDITOR --&gt;
-        ///      &lt;h4&gt;Simple Style&lt;/h4&gt;
-        ///      &lt;div id=&quot;simple-style&quot;&gt;
-        ///        &lt;h5&gt;Page Style&lt;/h5&gt;
-        ///        &lt;dl style=&quot;ma [rest of string was truncated]&quot;;.
+        ///      &lt;h4&gt;&lt;span&gt;Theme&lt;/span&gt; &lt;small&gt;&lt;a href=&quot;?mode=standard&quot;&gt;Simple&lt;/a&gt;&lt;/small&gt; &lt;small&gt;&lt;a href=&quot;?mode=advanced&quot;&gt;Advanced&lt;/a&gt;&lt;/small&gt;&lt;/h4&gt;
+        ///    &lt;div&gt;&lt;label&gt;&lt;input type=&quot;radio&quot; id=&quot;theme-default&quot; name=&quot;theme&quot; value=&quot;default&quot;{DEFAULT_SELECTED} [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_style {
             get {

@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.search" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.search" ValidateRequest="false" %>

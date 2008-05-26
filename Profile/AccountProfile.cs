@@ -44,6 +44,7 @@ namespace BoxSocial
         {
             RegisterSubModule += new RegisterSubModuleHandler(Info);
             RegisterSubModule += new RegisterSubModuleHandler(MyName);
+            RegisterSubModule += new RegisterSubModuleHandler(Contact);
             // TODO: personality
             RegisterSubModule += new RegisterSubModuleHandler(Lifestyle);
             RegisterSubModule += new RegisterSubModuleHandler(Style);
@@ -702,6 +703,24 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape(Request.Form["firstname"]), Mysql.Escape(Request.Form["lastname"]), Mysql.Escape(Request.Form["middlename"]), Mysql.Escape(Request.Form["suffix"]), Mysql.Escape(Request.Form["title"])));
 
             Display.ShowMessage("Name Saved", "Your name has been saved in the database.<br /><a href=\"/account/?module=profile&sub=name\">Return</a>");
+        }
+
+        private void Contact(string submodule)
+        {
+            subModules.Add("contact", "My Contact Details");
+            if (submodule != "contact") return;
+
+            if (Request.Form["save"] != null)
+            {
+                ContactSave();
+                return;
+            }
+
+            template.SetTemplate("Profile", "account_contact");
+        }
+
+        private void ContactSave()
+        {
         }
 
         public void SaveStatus(string submodule)

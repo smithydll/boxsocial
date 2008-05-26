@@ -23,6 +23,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Security;
 using BoxSocial;
@@ -50,10 +52,81 @@ namespace BoxSocial.FrontEnd
                 case "friends-online":
                     break;
                 default:
+                    showSearchBox();
                     break;
             }
 
+
             EndResponse();
+        }
+
+        private void showSearchBox()
+        {
+            if (Request["q"] != null)
+            {
+                showSearchResults();
+            }
+        }
+
+        private void showSearchResults()
+        {
+            string query = Request["q"];
+            string email;
+            string firstName;
+            string middleName;
+            string lastName;
+            string userName;
+
+            Match match = Regex.Match(query, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                email = match.Value;
+            }
+            else
+            {
+                string[] parts = query.Split(new char[] { ' ', '\t', ',', '.', ';', '+', '_', '$', '=', '&' });
+
+                switch (parts.Length)
+                {
+                    case 1:
+                        firstName = lastName = parts[0];
+                        break;
+                    case 2:
+                        if (query.Contains(","))
+                        {
+                            firstName = parts[1];
+                            lastName = parts[0];
+                        }
+                        else
+                        {
+                            firstName = parts[0];
+                            lastName = parts[1];
+                        }
+                        break;
+                    case 3:
+                        if (query.Contains(","))
+                        {
+                            firstName = parts[1];
+                            middleName = parts[2];
+                            lastName = parts[0];
+                        }
+                        else
+                        {
+                            firstName = parts[0];
+                            middleName = parts[1];
+                            lastName = parts[2];
+                        }
+                        break;
+                }
+
+                parts = query.Split(new char[] { ' ', '\t', ';' });
+
+                if (parts.Length == 1)
+                {
+                    userName = parts[0];
+                }
+            }
         }
 
         private void showFriends()

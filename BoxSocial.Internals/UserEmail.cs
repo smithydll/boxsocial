@@ -32,12 +32,18 @@ namespace BoxSocial.Internals
     [DataTable("user_emails")]
     public sealed class UserEmail : Item
     {
-        [DataField("user_email_id", DataFieldKeys.Primary)]
+        [DataField("email_id", DataFieldKeys.Primary)]
         private long emailId;
-        [DataField("user_email_user_id")]
+        [DataField("email_user_id")]
         private long userId;
-        [DataField("user_email_email", 127)]
+        [DataField("email_email", 127)]
         private string emailEmail;
+        [DataField("email_verified")]
+        private bool emailVerified;
+        [DataField("email_time_ut")]
+        private long emailTimeRaw;
+        [DataField("email_activate_code")]
+        private string emailActivateKey;
 
         public long EmailId
         {

@@ -173,7 +173,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else if (Request.Form["password"] != Request.Form["confirm-password"])
                 {
-                    template.ParseVariables("ERROR", "The passwords you entered do not match, may sure you have entered your desired password correctly.");
+                    template.ParseVariables("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
                     prepareNewCaptcha();
                 }
                 else if (((string)Request.Form["password"]).Length < 6)

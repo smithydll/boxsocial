@@ -37,6 +37,7 @@ using BoxSocial.Applications.Gallery;
 
 namespace BoxSocial.Applications.Gallery
 {
+    [AccountModule("galleries")]
     public class AccountGalleries : AccountModule
     {
         public AccountGalleries(Account account)
@@ -66,13 +67,13 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "galleries";
             }
-        }
+        }*/
 
         public override int Order
         {

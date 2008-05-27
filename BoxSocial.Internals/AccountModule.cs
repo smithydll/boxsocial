@@ -95,7 +95,6 @@ namespace BoxSocial.Internals
             page = account.core.page;
             db = account.core.db;
             loggedInMember = account.core.session.LoggedInMember;
-            //template = account.core.template;
             tz = account.core.tz;
             Request = HttpContext.Current.Request;
             Response = HttpContext.Current.Response;
@@ -162,9 +161,26 @@ namespace BoxSocial.Internals
         /// <summary>
         /// The unique key used to identify the module in requests.
         /// </summary>
-        public abstract string Key
+        public string Key
         {
-            get;
+            get
+            {
+                Type type = this.GetType();
+
+                foreach (Attribute attr in type.GetCustomAttributes(typeof(AccountModuleAttribute), false))
+                {
+                    if (attr != null)
+                    {
+                        if (((AccountModuleAttribute)attr).Name != null)
+                        {
+                            return ((AccountModuleAttribute)attr).Name;
+                        }
+                    }
+                }
+
+                // null key, should not happen!!!
+                return null;
+            }
         }
 
         /// <summary>
@@ -216,6 +232,16 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
+        /// Builds a URI to the current module
+        /// </summary>
+        /// <returns>URI built</returns>
+        protected string BuildUri()
+        {
+            return Linker.AppendSid(string.Format("/account/{0}",
+                Key));
+        }
+
+        /// <summary>
         /// Builds a URI to the module key given.
         /// </summary>
         /// <param name="module">Module key</param>
@@ -224,6 +250,17 @@ namespace BoxSocial.Internals
         {
             return Linker.AppendSid(string.Format("/account/{0}",
                 module));
+        }
+
+        /// <summary>
+        /// Builds a URI to the given sub module of the current module
+        /// </summary>
+        /// <param name="sub"></param>
+        /// <returns>URI built</returns>
+        protected string BuildUri(string sub)
+        {
+            return Linker.AppendSid(string.Format("/account/{0}/{1}",
+                Key, sub));
         }
 
         /// <summary>
@@ -265,6 +302,34 @@ namespace BoxSocial.Internals
 
             return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
                 module, sub, argumentList));
+        }
+
+        /// <summary>
+        /// Builds a URI to the sub module key given of the current module,
+        /// appending additional query string arguments given.
+        /// </summary>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="arguments">Additional query string arguments</param>
+        /// <returns>URI built</returns>
+        public string BuildUri(string sub, Dictionary<string, string> arguments)
+        {
+            string argumentList = "";
+            foreach (string key in arguments.Keys)
+            {
+                if (argumentList == "")
+                {
+                    argumentList = string.Format("?{0}={1}",
+                        key, arguments[key]);
+                }
+                else
+                {
+                    argumentList = string.Format("{0}&{1}={2}",
+                        argumentList, key, arguments[key]);
+                }
+            }
+
+            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
+                Key, sub, argumentList));
         }
 
         /// <summary>
@@ -318,7 +383,7 @@ namespace BoxSocial.Internals
         /// Useful for redirecting from a message box after posting a form.
         /// </remarks>
         /// <param name="uri">URI to redirect to</param>
-        public void SetRedirectUri(string uri)
+        protected void SetRedirectUri(string uri)
         {
             core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(uri));
         }
@@ -327,9 +392,13 @@ namespace BoxSocial.Internals
         /// Sets an error in posting.
         /// </summary>
         /// <param name="errorString">String of error to be posted</param>
-        public void SetError(string errorString)
+        protected void SetError(string errorString)
         {
             core.template.ParseVariables("ERROR", errorString);
+        }
+
+        protected void AssertFormVariable(string var)
+        {
         }
     }
 }

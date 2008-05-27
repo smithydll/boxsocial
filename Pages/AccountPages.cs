@@ -36,6 +36,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
+    [AccountModule("pages")]
     public class AccountPages : AccountModule
     {
         public AccountPages(Account account)
@@ -59,13 +60,13 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "pages";
             }
-        }
+        }*/
 
         public override int Order
         {

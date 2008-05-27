@@ -36,6 +36,7 @@ using BoxSocial.Internals;
 
 namespace BoxSocial
 {
+    [AccountModule("profile")]
     public class AccountProfile : AccountModule
     {
 
@@ -47,6 +48,7 @@ namespace BoxSocial
             RegisterSubModule += new RegisterSubModuleHandler(Contact);
             // TODO: personality
             RegisterSubModule += new RegisterSubModuleHandler(Lifestyle);
+            RegisterSubModule += new RegisterSubModuleHandler(Relationships);
             RegisterSubModule += new RegisterSubModuleHandler(Style);
             RegisterSubModule += new RegisterSubModuleHandler(Permissions);
             RegisterSubModule += new RegisterSubModuleHandler(SaveStatus);
@@ -64,13 +66,13 @@ namespace BoxSocial
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "profile";
             }
-        }
+        }*/
 
         public override int Order
         {
@@ -133,6 +135,24 @@ namespace BoxSocial
                 loggedInMember.UserId, int.Parse(Request.Form["religion"]), Mysql.Escape(Request.Form["sexuality"]), Mysql.Escape(Request.Form["maritial-status"])));
 
             Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.<br /><a href=\"/account/?module=profile&sub=lifestyle\">Return</a>");
+        }
+
+        private void Relationships(string submodule)
+        {
+            subModules.Add("relationships", "Relationships");
+            if (submodule != "relationships") return;
+
+            if (Request.Form["save"] != null)
+            {
+                RelationshipsSave();
+                return;
+            }
+
+            template.SetTemplate("Profile", "account_relationships");
+        }
+
+        private void RelationshipsSave()
+        {
         }
 
         public void Info(string submodule)

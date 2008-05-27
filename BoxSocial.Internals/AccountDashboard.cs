@@ -37,6 +37,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial
 {
+    [AccountModule("dashboard")]
     public class AccountDashboard : AccountModule
     {
 
@@ -63,13 +64,13 @@ namespace BoxSocial
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "dashboard";
             }
-        }
+        }*/
 
         public override int Order
         {
@@ -491,17 +492,68 @@ namespace BoxSocial
             subModules.Add("password", "Change Password");
             if (submodule != "password") return;
 
+            template.SetTemplate("account_password.html");
+
+            template.ParseVariables("S_CHANGE_PASSWORD", Linker.AppendSid("/account", true));
+
+            string password = Request.Form["old-password"];
+
+            if (password != null && Request.Form["save"] != null)
+            {
+                password = Member.HashPassword(password);
+
+                SelectQuery query = new SelectQuery("user_keys uk");
+                query.AddFields("uk.user_name, uk.user_id");
+                query.AddJoin(JoinTypes.Inner, "user_info ui", "ui.user_id", "uk.user_id");
+                query.AddCondition("uk.user_id", core.LoggedInMemberId);
+                query.AddCondition("ui.user_password", password);
+
+                DataTable userTable = db.Query(query);
+                if (userTable.Rows.Count != 1)
+                {
+                    SetError("The old password you entered does not match your old password, make sure you have entered your old password correctly.");
+                    return;
+                }
+                else if (Request.Form["new-password"] != Request.Form["confirm-password"])
+                {
+                    SetError("The passwords you entered do not match, make sure you have entered your desired password correctly.");
+                    return;
+                }
+                else if (((string)Request.Form["new-password"]).Length < 6)
+                {
+                    SetError("The password you entered is too short. Please choose a strong password of 6 characters or more.");
+                    return;
+                }
+            }
+            
             if (Request.Form["save"] != null)
             {
-                PreferencesSave();
+                PasswordSave();
                 return;
             }
-
-            template.SetTemplate("account_password.html");
         }
 
         public void PasswordSave()
         {
+            string password = Member.HashPassword(Request.Form["old-password"]);
+
+            AuthoriseRequestSid();
+
+            UpdateQuery uquery = new UpdateQuery("user_info");
+            uquery.AddField("user_password", Member.HashPassword(Request.Form["new-password"]));
+            uquery.AddCondition("user_id", core.LoggedInMemberId);
+
+            long rowsChanged = db.Query(uquery);
+
+            if (rowsChanged == 1)
+            {
+                Display.ShowMessage("Changed Password", "Have successfully changed your password. Keep your password safe and do not share it with anyone.");
+            }
+            else
+            {
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
         }
     }
 }

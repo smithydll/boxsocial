@@ -39,6 +39,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// The account module for blog management
     /// </summary>
+    [AccountModule("blog")]
     public class AccountBlog : AccountModule
     {
 
@@ -81,12 +82,12 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// The unique key used to identify the module in requests.
         /// </summary>
-        public override string Key
+        /*public override string Key
         {
             get {
                 return "blog";
             }
-        }
+        }*/
 
         /// <summary>
         /// The order the module is to appear along the tab display.

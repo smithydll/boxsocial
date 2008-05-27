@@ -66,8 +66,14 @@ namespace BoxSocial.FrontEnd
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
+
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
+
+            if (!httpContext.Request.RawUrl.Contains("404.aspx"))
+            {
+                return;
+            }
             /*for (int i = 0; i < httpContext.Request.Headers.Count; i++)
             {
                 HttpContext.Current.Response.Write(httpContext.Request.Headers[i] + "<br />");
@@ -170,10 +176,12 @@ namespace BoxSocial.FrontEnd
                         if (currentURI.Contains("?"))
                         {
                             httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                            return;
                         }
                         else
                         {
                             httpContext.RewritePath(currentURI + cUri.Query);
+                            return;
                         }
                     }
                 }

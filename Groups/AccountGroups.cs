@@ -36,6 +36,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
+    [AccountModule("groups")]
     public class AccountGroups : AccountModule
     {
         public AccountGroups(Account account)
@@ -68,13 +69,13 @@ namespace BoxSocial.Groups
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "groups";
             }
-        }
+        }*/
 
         public override int Order
         {

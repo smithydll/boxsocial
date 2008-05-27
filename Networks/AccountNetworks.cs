@@ -37,6 +37,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Networks
 {
+    [AccountModule("networks")]
     public class AccountNetworks : AccountModule
     {
         public AccountNetworks(Account account)
@@ -58,13 +59,13 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "networks";
             }
-        }
+        }*/
 
         public override int Order
         {

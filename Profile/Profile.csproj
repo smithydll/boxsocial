@@ -81,6 +81,7 @@
     <Content Include="templates\account_family_manage.html" />
     <Content Include="templates\account_friends_manage.html" />
     <Content Include="templates\account_friend_invite.html" />
+    <Content Include="templates\account_relationships.html" />
     <Content Include="templates\account_style.html" />
     <Content Include="templates\viewstatusfeed.html" />
   </ItemGroup>

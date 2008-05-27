@@ -184,6 +184,23 @@ namespace BoxSocial.Internals
 
         public abstract ApplicationInstallationInfo Install();
 
+        public ApplicationInstallationInfo GetInstallInfo()
+        {
+            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+
+            Type[] types = this.GetType().Assembly.GetTypes();
+
+            foreach (Type type in types)
+            {
+                if (type.IsSubclassOf(typeof(ApplicationModule)))
+                {
+                    
+                }
+            }
+
+            return aii;
+        }
+
         public virtual AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.None;

@@ -37,6 +37,7 @@ using BoxSocial.Applications.Calendar;
 
 namespace BoxSocial.Applications.Calendar
 {
+    [AccountModule("calendar")]
     public class AccountCalendar : AccountModule
     {
         public AccountCalendar(Account account)
@@ -63,13 +64,13 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "calendar";
             }
-        }
+        }*/
 
         public override int Order
         {

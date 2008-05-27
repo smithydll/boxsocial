@@ -36,6 +36,7 @@ using BoxSocial.Internals;
 
 namespace BoxSocial
 {
+    [AccountModule("friends")]
     public class AccountFriends : AccountModule
     {
         public AccountFriends(Account account)
@@ -59,13 +60,13 @@ namespace BoxSocial
             }
         }
 
-        public override string Key
+        /*public override string Key
         {
             get
             {
                 return "friends";
             }
-        }
+        }*/
 
         public override int Order
         {

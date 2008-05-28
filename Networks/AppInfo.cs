@@ -90,7 +90,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -98,7 +98,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return null;
+                return Properties.Resources.script;
             }
         }
 

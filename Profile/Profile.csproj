@@ -65,6 +65,10 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Gallery\Gallery.csproj">
+      <Project>{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}</Project>
+      <Name>Gallery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
@@ -75,13 +79,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="images\profile.png" />
+    <None Include="resources\profile.png" />
+    <Content Include="resources\script.js" />
+    <Content Include="resources\style.css" />
     <Content Include="templates\account_blocklist_manage.html" />
     <Content Include="templates\account_contact.html" />
+    <Content Include="templates\account_display_picture.html" />
     <Content Include="templates\account_family_manage.html" />
     <Content Include="templates\account_friends_manage.html" />
     <Content Include="templates\account_friend_invite.html" />
-    <Content Include="templates\account_relationships.html" />
+    <Content Include="templates\account_lifestyle.html" />
     <Content Include="templates\account_style.html" />
     <Content Include="templates\viewstatusfeed.html" />
   </ItemGroup>
@@ -93,8 +100,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

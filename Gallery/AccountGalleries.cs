@@ -767,7 +767,17 @@ namespace BoxSocial.Applications.Gallery
                 {
                     UserGallery parent = new UserGallery(core, loggedInMember, galleryId);
 
-                    string slug = Request.Files["photo-file"].FileName;
+                    string slug = "";
+
+                    try
+                    {
+                        slug = Request.Files["photo-file"].FileName;
+                    }
+                    catch
+                    {
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                        return;
+                    }
 
                     try
                     {

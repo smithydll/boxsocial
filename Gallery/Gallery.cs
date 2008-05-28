@@ -448,6 +448,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
             }
             items = (long)galleryRow["gallery_items"];
+            //HttpContext.Current.Response.Write(galleryRow["gallery_items"].GetType().ToString());
             bytes = (long)galleryRow["gallery_bytes"];
             visits = (long)galleryRow["gallery_visits"];
             path = (string)galleryRow["gallery_path"];
@@ -671,6 +672,8 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
             iQuery.AddField("gallery_bytes", 0);
+            iQuery.AddField("gallery_items", 0);
+            iQuery.AddField("gallery_visits", 0);
 
             long galleryId = core.db.Query(iQuery);
 

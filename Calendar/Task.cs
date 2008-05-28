@@ -255,38 +255,6 @@ namespace BoxSocial.Applications.Calendar
             taskAccess = new Access(core.db, permissions, owner);
         }
 
-        private void loadTaskInfo(DataRow taskRow)
-        {
-            taskId = (long)taskRow["task_id"];
-            topic = (string)taskRow["task_topic"];
-            if (!(taskRow["task_description"] is DBNull))
-            {
-                description = (string)taskRow["task_description"];
-            }
-            views = (long)taskRow["task_views"];
-            comments = (long)taskRow["task_comments"];
-            permissions = (ushort)taskRow["task_access"];
-            // ownerId
-            userId = (int)taskRow["user_id"];
-            dueTimeRaw = (long)taskRow["task_due_date_ut"];
-            completedTimeRaw = (long)taskRow["task_time_completed_ut"];
-            // category
-            status = (byte)taskRow["task_status"];
-            percentageComplete = (byte)taskRow["task_percent_complete"];
-            priority = (byte)taskRow["task_priority"];
-
-            if (percentageComplete == 100 || (TaskStatus)status == TaskStatus.Completed)
-            {
-                status = (byte)TaskStatus.Completed;
-            }
-            else if (UnixTime.UnixTimeStamp() > dueTimeRaw && (TaskStatus)status != TaskStatus.Overdue)
-            {
-                status = (byte)TaskStatus.Overdue;
-            }
-
-            taskAccess = new Access(db, permissions, owner);
-        }
-
         public static Task Create(Core core, Member creator, Primitive owner, string topic, string description, long dueTimestamp, ushort permissions, TaskStatus status, byte percentComplete, TaskPriority priority)
         {
             InsertQuery query = new InsertQuery("tasks");

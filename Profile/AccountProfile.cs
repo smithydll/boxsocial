@@ -33,6 +33,7 @@ using System.Web.Security;
 using BoxSocial;
 using BoxSocial.IO;
 using BoxSocial.Internals;
+using BoxSocial.Applications.Gallery; // This is why Gallery is an uninstallable application
 
 namespace BoxSocial
 {
@@ -45,10 +46,10 @@ namespace BoxSocial
         {
             RegisterSubModule += new RegisterSubModuleHandler(Info);
             RegisterSubModule += new RegisterSubModuleHandler(MyName);
+            RegisterSubModule += new RegisterSubModuleHandler(DisplayPicture);
             RegisterSubModule += new RegisterSubModuleHandler(Contact);
             // TODO: personality
             RegisterSubModule += new RegisterSubModuleHandler(Lifestyle);
-            RegisterSubModule += new RegisterSubModuleHandler(Relationships);
             RegisterSubModule += new RegisterSubModuleHandler(Style);
             RegisterSubModule += new RegisterSubModuleHandler(Permissions);
             RegisterSubModule += new RegisterSubModuleHandler(SaveStatus);
@@ -95,7 +96,7 @@ namespace BoxSocial
 
             //loggedInMember.LoadProfileInfo();
 
-            template.SetTemplate("account_lifestyle.html");
+            template.SetTemplate("Profile", "account_lifestyle");
 
             Dictionary<string, string> maritialStatuses = new Dictionary<string, string>();
             maritialStatuses.Add("UNDEF", "No Answer");
@@ -135,24 +136,6 @@ namespace BoxSocial
                 loggedInMember.UserId, int.Parse(Request.Form["religion"]), Mysql.Escape(Request.Form["sexuality"]), Mysql.Escape(Request.Form["maritial-status"])));
 
             Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.<br /><a href=\"/account/?module=profile&sub=lifestyle\">Return</a>");
-        }
-
-        private void Relationships(string submodule)
-        {
-            subModules.Add("relationships", "Relationships");
-            if (submodule != "relationships") return;
-
-            if (Request.Form["save"] != null)
-            {
-                RelationshipsSave();
-                return;
-            }
-
-            template.SetTemplate("Profile", "account_relationships");
-        }
-
-        private void RelationshipsSave()
-        {
         }
 
         public void Info(string submodule)
@@ -723,6 +706,108 @@ namespace BoxSocial
                 loggedInMember.UserId, Mysql.Escape(Request.Form["firstname"]), Mysql.Escape(Request.Form["lastname"]), Mysql.Escape(Request.Form["middlename"]), Mysql.Escape(Request.Form["suffix"]), Mysql.Escape(Request.Form["title"])));
 
             Display.ShowMessage("Name Saved", "Your name has been saved in the database.<br /><a href=\"/account/?module=profile&sub=name\">Return</a>");
+        }
+
+        private void DisplayPicture(string submodule)
+        {
+            subModules.Add("display-picture", "Display Picture");
+            if (submodule != "display-picture") return;
+
+            if (Request.Form["save"] != null)
+            {
+                DisplayPictureSave();
+                return;
+            }
+
+            loggedInMember.LoadProfileInfo();
+
+            template.SetTemplate("Profile", "account_display_picture");
+
+            template.ParseVariables("S_DISPLAY_PICTURE", HttpUtility.HtmlEncode(Linker.AppendSid("/account", true)));
+
+            if (!string.IsNullOrEmpty(loggedInMember.UserThumbnail))
+            {
+                template.ParseVariables("I_DISPLAY_PICTURE", HttpUtility.HtmlEncode(loggedInMember.UserThumbnail));
+            }
+        }
+
+        private void DisplayPictureSave()
+        {
+            AuthoriseRequestSid();
+
+            string meSlug = "display-pictures";
+
+            UserGallery profileGallery;
+            try
+            {
+                profileGallery = new UserGallery(core, loggedInMember, meSlug);
+            }
+            catch (GalleryNotFoundException)
+            {
+                UserGallery root = new UserGallery(core, loggedInMember);
+                profileGallery = UserGallery.Create(core, root, "Display Pictures", ref meSlug, "All my uploaded display pictures", 0);
+            }
+
+            if (profileGallery != null)
+            {
+                string title = "";
+                string description = "";
+                string slug = "";
+
+                try
+                {
+                    slug = Request.Files["photo-file"].FileName;
+                }
+                catch
+                {
+                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                    return;
+                }
+
+                try
+                {
+                    string saveFileName = GalleryItem.HashFileUpload(Request.Files["photo-file"].InputStream);
+                    if (!File.Exists(TPage.GetStorageFilePath(saveFileName)))
+                    {
+                        TPage.EnsureStoragePathExists(saveFileName);
+                        Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
+                    }
+
+                    GalleryItem galleryItem = UserGalleryItem.Create(core, loggedInMember, profileGallery, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, 0x3331, 0, Classifications.Everyone);
+
+                    db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
+                        galleryItem.Id, loggedInMember.UserId));
+
+                    SetRedirectUri(BuildUri("display-picture"));
+                    Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");
+                    return;
+                }
+                catch (GalleryItemTooLargeException)
+                {
+                    Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                    return;
+                }
+                catch (GalleryQuotaExceededException)
+                {
+                    Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                    return;
+                }
+                catch (InvalidGalleryItemTypeException)
+                {
+                    Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                    return;
+                }
+                catch (InvalidGalleryFileNameException)
+                {
+                    Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                    return;
+                }
+            }
+            else
+            {
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                return;
+            }
         }
 
         private void Contact(string submodule)

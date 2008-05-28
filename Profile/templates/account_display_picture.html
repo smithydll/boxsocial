@@ -1,0 +1,18 @@
+﻿<h3>Display Picture</h3>
+
+<form action="{S_DISPLAY_PICTURE}" method="post" enctype="multipart/form-data">
+	<fieldset>
+		<legend>Display Picture</legend>
+    <!-- IF I_DISPLAY_PICTURE -->
+		<p><img src="{I_DISPLAY_PICTURE}" alt="Display Picture" /></p>
+    <!-- ENDIF -->
+		<dl>
+			<dt><label for="photo-file">Select File</label></dt>
+			<dd><input type="file" id="photo-file" name="photo-file" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="display-picture" />
+	</fieldset>
+</form>

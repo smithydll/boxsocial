@@ -87,11 +87,30 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;My Contact Details&lt;/h3&gt;
+        ///&lt;p&gt;List your contact details for your friends to access in their address book.&lt;/p&gt;
+        ///
+        ///&lt;form action=&quot;{S_ADD_EMAIL_CONTACT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        ///  &lt;fieldset&gt;
+        ///    &lt;legend&gt;My Contact Details&lt;/legend&gt;
+        ///    &lt;dl&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;xmpp&quot;&gt;XMPP (Jabber)&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;xmpp&quot; name=&quot;xmpp&quot; value=&quot;{S_XMPP}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;home-phone&quot;&gt;Home Phone&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;home-phon [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_contact {
             get {
                 return ResourceManager.GetString("account_contact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_display_picture {
+            get {
+                return ResourceManager.GetString("account_display_picture", resourceCulture);
             }
         }
         
@@ -170,6 +189,27 @@ namespace BoxSocial.Applications.Profile {
         internal static string account_friends_manage {
             get {
                 return ResourceManager.GetString("account_friends_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Lifestyle&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Lifestyle&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;religion&quot;&gt;Religion&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_RELIGION}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;maritial-status&quot;&gt;Maritial status&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_MARITIAL_STATUS}&lt;span id=&quot;maritial-verb&quot;&gt;&lt;/span&gt;&lt;input type=&quot;text&quot; name=&quot;relationship-with&quot; id=&quot;relationship-with&quot; value=&quot;{S_RELATIONSHIP_WITH}&quot;/&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;sexuality&quot;&gt;Sexuality&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_SEXUALITY}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/d [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_lifestyle {
+            get {
+                return ResourceManager.GetString("account_lifestyle", resourceCulture);
             }
         }
         

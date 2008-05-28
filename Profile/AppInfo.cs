@@ -91,7 +91,7 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -99,7 +99,7 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return null;
+                return Properties.Resources.script;
             }
         }
 

@@ -460,15 +460,29 @@ namespace BoxSocial.IO
         public override void AddColumn(string tableName, DataFieldInfo field)
         {
             string type = TypeToMysql(field);
+            string defaultValue = "";
             string notNull = "";
 
-            if (type == "text" || type =="mediumtext"|| type=="longtext")
+            if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
             {
                 notNull = " NOT NULL";
             }
 
-            string query = string.Format(@"ALTER TABLE `{0}` ADD COLUMN `{1}` {2}{3};",
-                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull);
+            if (type.ToLower().Contains("int("))
+            {
+                if (field.IsPrimaryKey)
+                {
+                    notNull = " NOT NULL";
+                    defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+                }
+                else
+                {
+                    defaultValue = " DEFAULT 0";
+                }
+            }
+
+            string query = string.Format(@"ALTER TABLE `{0}` ADD COLUMN `{1}` {2}{3}{4};",
+                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull, defaultValue);
 
             UpdateQuery(query);
         }
@@ -483,15 +497,29 @@ namespace BoxSocial.IO
             foreach (DataFieldInfo field in fields)
             {
                 string type = TypeToMysql(field);
+                string defaultValue = "";
                 string notNull = "";
 
-                if (type == "text" || type == "mediumtext" || type == "longtext")
+                if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
                 {
                     notNull = " NOT NULL";
                 }
 
-                sb.Append(string.Format(@" ADD COLUMN `{0}` {1}{2}",
-                    Mysql.Escape(field.Name), type, notNull));
+                if (type.ToLower().Contains("int("))
+                {
+                    if (field.IsPrimaryKey)
+                    {
+                        notNull = " NOT NULL";
+                        defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+                    }
+                    else
+                    {
+                        defaultValue = " DEFAULT 0";
+                    }
+                }
+
+                sb.Append(string.Format(@" ADD COLUMN `{0}` {1}{2}{3}",
+                    Mysql.Escape(field.Name), type, notNull, defaultValue));
             }
 
             sb.Append(";");
@@ -502,15 +530,29 @@ namespace BoxSocial.IO
         public override void ChangeColumn(string tableName, DataFieldInfo field)
         {
             string type = TypeToMysql(field);
+            string defaultValue = "";
             string notNull = "";
 
-            if (type == "text" || type == "mediumtext" || type == "longtext")
+            if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
             {
                 notNull = " NOT NULL";
             }
 
-            string query = string.Format(@"ALTER TABLE `{0}` MODIFY COLUMN `{1}` {2}{3};",
-                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull);
+            if (type.ToLower().Contains("int("))
+            {
+                if (field.IsPrimaryKey)
+                {
+                    notNull = " NOT NULL";
+                    defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+                }
+                else
+                {
+                    defaultValue = " DEFAULT 0";
+                }
+            }
+
+            string query = string.Format(@"ALTER TABLE `{0}` MODIFY COLUMN `{1}` {2}{3}{4};",
+                Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull, defaultValue);
 
             UpdateQuery(query);
         }

@@ -1,0 +1,19 @@
+<h3>Lifestyle</h3>
+
+<form action="/account/" method="post">
+	<fieldset>
+		<legend>Lifestyle</legend>
+		<dl>
+			<dt><label for="religion">Religion</label></dt>
+			<dd>{S_RELIGION}</dd>
+			<dt><label for="maritial-status">Maritial status</label></dt>
+			<dd>{S_MARITIAL_STATUS}<span id="maritial-verb"></span><input type="text" name="relationship-with" id="relationship-with" value="{S_RELATIONSHIP_WITH}"/></dd>
+			<dt><label for="sexuality">Sexuality</label></dt>
+			<dd>{S_SEXUALITY}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="lifestyle" />
+	</fieldset>
+</form>

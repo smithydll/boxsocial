@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Networks {
+namespace BoxSocial.Networks {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Networks {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Networks.Templates", typeof(Templates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Networks.Templates", typeof(Templates).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -84,7 +84,22 @@ namespace Networks {
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Network Memberships&lt;/h3&gt;
         ///&lt;p&gt;Manage the memberships to networks you are a member of.&lt;/p&gt;
-        ///&lt;span id=&quot;join-network&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;/groups&quot;&gt;Join a Network&lt;/a&gt;&lt;/span&gt;.
+        ///&lt;span id=&quot;join-network&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;/networks&quot;&gt;Join a Network&lt;/a&gt;&lt;/span&gt;
+        ///&lt;!-- IF NETWORK_MEMBERSHIPS --&gt;
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///  &lt;tr&gt;
+        ///    &lt;th&gt;Title&lt;/th&gt;
+        ///    &lt;th&gt;Type&lt;/th&gt;
+        ///    &lt;th&gt;Members&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///  &lt;/tr&gt;
+        ///  &lt;!-- BEGIN network_list --&gt;
+        ///  &lt;!-- IF network_list.INDEX_EVEN --&gt;
+        ///  &lt;tr class=&quot;even&quot;&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    &lt;tr class=&quot;odd&quot;&gt;
+        ///      &lt;!-- ENDIF - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_network_membership {
             get {
@@ -99,11 +114,11 @@ namespace Networks {
         ///		&lt;div id=&quot;pane-profile-overview&quot; class=&quot;pane&quot;&gt;
         ///			&lt;h3&gt;&lt;a href=&quot;{U_NETWORK}&quot;&gt;{NETWORK_DISPLAY_NAME}&lt;/a&gt;&lt;/h3&gt;
         ///			&lt;!-- IF U_JOIN --&gt;
-        ///			&lt;p&gt;&lt;span id=&quot;join-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_JOIN}&quot;&gt;Join This Group&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+        ///			&lt;p&gt;&lt;span id=&quot;join-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_JOIN}&quot;&gt;Join This Network&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
         ///			&lt;!-- ENDIF --&gt;
         ///			&lt;!-- IF U_LEAVE --&gt;
-        ///			&lt;p&gt;&lt;span id=&quot;leave-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_LEAVE}&quot;&gt;Leave This Group&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
-        ///			&lt;!-- ENDIF [rest of string was truncated]&quot;;.
+        ///			&lt;p&gt;&lt;span id=&quot;leave-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_LEAVE}&quot;&gt;Leave This Network&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+        ///			&lt;!-- E [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewnetwork {
             get {

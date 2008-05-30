@@ -44,8 +44,20 @@ namespace BoxSocial.Internals
         Blocked = 0x08,
     }
 
-    [DataTable("user_info")]
-    public class Member : Primitive, ICommentableItem
+    public enum UserLoadOptions : byte
+    {
+        Key = 0x01,
+        Info = Key | 0x02,
+        Profile = Key | Country | Religion | 0x04,
+        Icon = Key | 0x08,
+        Country = Key | 0x0F,
+        Religion = Key | 0x10,
+        Common = Key | Info | Icon,
+        All = Key | Info | Profile | Icon | Country | Religion,
+    }
+
+    [DataTable("user_keys")]
+    public class User : Primitive, ICommentableItem
     {
         public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes, ui.user_status_messages";
         public const string USER_PROFILE_FIELDS = "up.profile_comments, up.profile_country, c.country_name, up.profile_religion, up.profile_name_title, up.profile_name_suffix, up.profile_name_first, up.profile_name_middle, up.profile_name_last, up.profile_access, up.profile_views, up.profile_date_of_birth+0, up.profile_maritial_status, up.profile_autobiography, up.profile_sexuality, up.profile_gender, up.profile_date_of_birth_ut";
@@ -53,15 +65,13 @@ namespace BoxSocial.Internals
 
         public static long lastEmailId;
 
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
-        [DataField("user_name")]
+        [DataField("user_name", DataFieldKeys.Unique)]
         private string userName;
         private string userNameOwnership;
         private string displayName;
-        [DataField("profile_sexuality")]
         private string sexuality;
-        [DataField("profile_gender")]
         private string gender;
         private string maritialStatus;
         private string autobiography;
@@ -95,6 +105,9 @@ namespace BoxSocial.Internals
 
         private bool sessionRelationsSet = false;
         private Relation sessionRelations;
+
+        private UserInfo userInfo;
+        private UserProfile userProfile;
 
         /// <summary>
         /// user ID (read only)
@@ -158,7 +171,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (userNameOwnership == null)
+                /*if (userNameOwnership == null)
                 {
                     userNameOwnership = (displayName != "") ? displayName : userName;
 
@@ -171,7 +184,8 @@ namespace BoxSocial.Internals
                         userNameOwnership = userNameOwnership + "'s";
                     }
                 }
-                return userNameOwnership;
+                return userNameOwnership;*/
+                return userInfo.DisplayNameOwnership;
             }
         }
 
@@ -179,11 +193,12 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (displayName == "")
+                /*if (displayName == "")
                 {
                     return userName;
                 }
-                return displayName;
+                return displayName;*/
+                return userInfo.DisplayName;
             }
         }
 
@@ -207,7 +222,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (sexuality)
+                /*switch (sexuality)
                 {
                     case "UNSURE":
                         return "Not Sure";
@@ -228,7 +243,8 @@ namespace BoxSocial.Internals
                         return "Transexual";
                     default:
                         return "FALSE";
-                }
+                }*/
+                return userProfile.Sexuality;
             }
         }
 
@@ -236,7 +252,8 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return sexuality;
+                /*return sexuality;*/
+                return userProfile.SexualityRaw;
             }
         }
 
@@ -244,7 +261,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (gender)
+                /*switch (gender)
                 {
                     case "MALE":
                         return "Male";
@@ -252,7 +269,8 @@ namespace BoxSocial.Internals
                         return "Female";
                     default:
                         return "FALSE";
-                }
+                }*/
+                return userProfile.Gender;
             }
         }
 
@@ -260,7 +278,8 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return gender;
+                /*return gender;*/
+                return userProfile.GenderRaw;
             }
         }
 
@@ -268,7 +287,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (maritialStatus)
+                /*switch (maritialStatus)
                 {
                     case "SINGLE":
                         return "Single";
@@ -284,7 +303,8 @@ namespace BoxSocial.Internals
                         return "Widowed";
                     default:
                         return "FALSE";
-                }
+                }*/
+                return userProfile.MaritialStatus;
             }
         }
 
@@ -292,7 +312,8 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return maritialStatus;
+                /*return maritialStatus;*/
+                return userProfile.MaritialStatusRaw;
             }
         }
 
@@ -300,30 +321,20 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return autobiography;
+                /*return autobiography;*/
+                return userProfile.Autobiography;
             }
         }
 
-        public int Age
+        public int GetAge(UnixTime tz)
         {
-            get
-            {
-                if (dateOfBirth.Year == 1000) return 0;
-                if (DateTime.UtcNow.DayOfYear < dateOfBirth.DayOfYear)
-                {
-                    return (int)(DateTime.UtcNow.Year - dateOfBirth.Year - 1);
-                }
-                else
-                {
-                    return (int)(DateTime.UtcNow.Year - dateOfBirth.Year);
-                }
-            }
+            return userProfile.Age;
         }
 
-        public string GetAgeString()
+        public string GetAgeString(UnixTime tz)
         {
             string age;
-            int ageInt = Age;
+            int ageInt = GetAge(tz);
             if (ageInt == 0)
             {
                 age = "FALSE";
@@ -645,16 +656,197 @@ namespace BoxSocial.Internals
             }
         }
 
-        protected Member(Core core) : base (core)
+        /*protected User(Core core) : base (core)
+        {
+        }*/
+
+        public User(Core core, long userId)
+            : this(core, userId, UserLoadOptions.Info | UserLoadOptions.Icon)
         {
         }
 
-        public Member(Core core, DataRow userRow, bool containsProfileInfo)
+        public User(Core core, long userId, UserLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(User_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsProfileData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == UserLoadOptions.Key)
+            {
+                try
+                {
+                    LoadItem(userId);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidUserException();
+                }
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
+                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+                query.AddCondition("user_id", userId);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    containsInfoData = true;
+
+                    query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+                    query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+
+                    if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                    {
+                        containsIconData = true;
+                    }
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    containsProfileData = true;
+
+                    query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                    query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+
+                    if ((loadOptions & UserLoadOptions.Country) == UserLoadOptions.Country)
+                    {
+                        query.AddJoin(JoinTypes.Left, "countries", "country_iso", "profile_country");
+                    }
+
+                    if ((loadOptions & UserLoadOptions.Religion) == UserLoadOptions.Religion)
+                    {
+                        query.AddJoin(JoinTypes.Left, "religions", "religion_id", "profile_religion");
+                    }
+                }
+
+                DataTable memberTable = db.Query(query);
+
+                if (memberTable.Rows.Count > 0)
+                {
+                    if (containsInfoData)
+                    {
+                        userInfo = new UserInfo(core, memberTable.Rows[0]);
+                    }
+
+                    if (containsProfileData)
+                    {
+                        userProfile = new UserProfile(core, memberTable.Rows[0], loadOptions);
+                    }
+
+                    if (containsIconData)
+                    {
+                        loadUserIcon(memberTable.Rows[0]);
+                    }
+                }
+                else
+                {
+                    throw new InvalidUserException();
+                }
+            }
+        }
+
+        public User(Core core, string userName)
+            : this (core, userName, UserLoadOptions.Info | UserLoadOptions.Icon)
+        {
+        }
+
+        public User(Core core, string userName, UserLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(User_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsProfileData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == UserLoadOptions.Key)
+            {
+                try
+                {
+                    LoadItem("user_name", userName);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidUserException();
+                }
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
+                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+                query.AddCondition("user_name", userName);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    containsInfoData = true;
+
+                    query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+                    query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+
+                    if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                    {
+                        containsIconData = true;
+                    }
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    containsProfileData = true;
+
+                    query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                    query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+
+                    if ((loadOptions & UserLoadOptions.Country) == UserLoadOptions.Country)
+                    {
+                        query.AddJoin(JoinTypes.Left, "countries", "country_iso", "profile_country");
+                    }
+
+                    if ((loadOptions & UserLoadOptions.Religion) == UserLoadOptions.Religion)
+                    {
+                        query.AddJoin(JoinTypes.Left, "religions", "religion_id", "profile_religion");
+                    }
+                }
+
+                DataTable memberTable = db.Query(query);
+
+                if (memberTable.Rows.Count > 0)
+                {
+                    if (containsInfoData)
+                    {
+                        userInfo = new UserInfo(core, memberTable.Rows[0]);
+                    }
+
+                    if (containsProfileData)
+                    {
+                        userProfile = new UserProfile(core, memberTable.Rows[0], loadOptions);
+                    }
+
+                    if (containsIconData)
+                    {
+                        loadUserIcon(memberTable.Rows[0]);
+                    }
+                }
+                else
+                {
+                    throw new InvalidUserException();
+                }
+            }
+        }
+
+        void User_ItemLoad()
+        {
+        }
+
+        public User(Core core, DataRow userRow, bool containsProfileInfo)
             : this(core, userRow, containsProfileInfo, false)
         {
         }
 
-        public Member(Core core, DataRow userRow, bool containsProfileInfo, bool containsIcon) : this(core)
+        public User(Core core, DataRow userRow, bool containsProfileInfo, bool containsIcon)
+            : base(core)
         {
             loadUserInfo(userRow);
 
@@ -668,23 +860,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="db"></param>
-        /// <param name="userId"></param>
-        public Member(Core core, long userId)
-            : this(core, userId, false)
-        {
-        }
-
-        public Member(Core core, long userId, bool loadProfileInfo) : this (core)
+        private User(Core core, long userId, bool loadProfileInfo)
+            : base (core)
         {
 
             if (loadProfileInfo)
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
                 query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -707,7 +890,7 @@ namespace BoxSocial.Internals
             else
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS, User.USER_ICON_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_id", userId);
@@ -726,12 +909,13 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member(Core core, string userName)
+        /*private User(Core core, string userName)
             : this(core, userName, true)
         {
-        }
+        }*/
 
-        public Member(Core core, string userName, bool loadIcon) : this (core)
+        private User(Core core, string userName, bool loadIcon)
+            : base(core)
         {
             this.db = db;
 
@@ -741,7 +925,7 @@ namespace BoxSocial.Internals
             if (loadIcon)
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS, User.USER_ICON_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
                 query.AddCondition("uk.user_name", userName);
@@ -751,7 +935,7 @@ namespace BoxSocial.Internals
             else
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddCondition("uk.user_name", userName);
 
@@ -775,7 +959,7 @@ namespace BoxSocial.Internals
         public void LoadProfileInfo()
         {
             SelectQuery query = new SelectQuery("user_keys uk");
-            query.AddFields(Member.USER_PROFILE_FIELDS);
+            query.AddFields(User.USER_PROFILE_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
             query.AddCondition("uk.user_id", userId);
@@ -864,7 +1048,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        protected void loadUserFromUser(Member member)
+        protected void loadUserFromUser(User member)
         {
             this.userId = member.userId;
             this.userName = member.userName;
@@ -950,17 +1134,17 @@ namespace BoxSocial.Internals
         /// return a maximum of the first 255
         /// </summary>
         /// <returns></returns>
-        public List<Member> GetFriends()
+        public List<User> GetFriends()
         {
             return GetFriends(1, 255);
         }
 
-        public List<Member> GetFriends(int page, int perPage)
+        public List<User> GetFriends(int page, int perPage)
         {
-            List<Member> friends = new List<Member>();
+            List<User> friends = new List<User>();
 
             SelectQuery query = new SelectQuery("user_relations uf");
-            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
             query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -975,23 +1159,23 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(core, dr, true, true));
+                friends.Add(new User(core, dr, true, true));
             }
 
             return friends;
         }
 
-        public List<Member> GetFriendsOnline()
+        public List<User> GetFriendsOnline()
         {
             return GetFriendsOnline(1, 255);
         }
 
-        public List<Member> GetFriendsOnline(int page, int perPage)
+        public List<User> GetFriendsOnline(int page, int perPage)
         {
-            List<Member> friends = new List<Member>();
+            List<User> friends = new List<User>();
 
             SelectQuery query = new SelectQuery("user_relations uf");
-            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
             query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -1008,23 +1192,23 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(core, dr, true, true));
+                friends.Add(new User(core, dr, true, true));
             }
 
             return friends;
         }
 
-        public List<Member> SearchFriendNames(string needle)
+        public List<User> SearchFriendNames(string needle)
         {
             return SearchFriendNames(needle, 1, 255);
         }
 
-        public List<Member> SearchFriendNames(string needle, int page, int perPage)
+        public List<User> SearchFriendNames(string needle, int page, int perPage)
         {
-            List<Member> friends = new List<Member>();
+            List<User> friends = new List<User>();
 
             SelectQuery query = new SelectQuery("user_relations uf");
-            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
             query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -1044,13 +1228,13 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new Member(core, dr, true, true));
+                friends.Add(new User(core, dr, true, true));
             }
 
             return friends;
         }
 
-        public Relation GetRelations(Member member)
+        public Relation GetRelations(User member)
         {
             Relation returnValue = Relation.None;
 
@@ -1088,7 +1272,7 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
-        public bool IsFriend(Member member)
+        public bool IsFriend(User member)
         {
             if ((GetRelations(member) & Relation.Friend) == Relation.Friend)
             {
@@ -1100,7 +1284,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsFamily(Member member)
+        public bool IsFamily(User member)
         {
             if ((GetRelations(member) & Relation.Family) == Relation.Family)
             {
@@ -1112,7 +1296,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsBlocked(Member member)
+        public bool IsBlocked(User member)
         {
             if ((GetRelations(member) & Relation.Blocked) == Relation.Blocked)
             {
@@ -1133,7 +1317,7 @@ namespace BoxSocial.Internals
         /// <param name="password"></param>
         /// <param name="passwordConfirm"></param>
         /// <returns>Null if registration failed</returns>
-        public static Member Register(Core core, string userName, string eMail, string password, string passwordConfirm)
+        public static User Register(Core core, string userName, string eMail, string password, string passwordConfirm)
         {
             Mysql db = core.db;
             SessionState session = core.session;
@@ -1157,7 +1341,7 @@ namespace BoxSocial.Internals
                 return null;
             }
 
-            string activateKey = Member.GenerateActivationSecurityToken();
+            string activateKey = User.GenerateActivationSecurityToken();
 
             InsertQuery query = new InsertQuery("user_keys");
             query.AddField("user_name", userName);
@@ -1200,7 +1384,7 @@ namespace BoxSocial.Internals
 
             db.Query(query);
 
-            Member newUser = new Member(core, userId);
+            User newUser = new User(core, userId);
 
             // Install a couple of applications
             try
@@ -1612,7 +1796,7 @@ namespace BoxSocial.Internals
             return true;
         }
 
-        public void ProfileViewed(Member member)
+        public void ProfileViewed(User member)
         {
             // only view the profile if not the owner
             if (member == null || member.userId != userId)
@@ -1622,7 +1806,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void BlogViewed(Member member)
+        public void BlogViewed(User member)
         {
             // only view the profile if not the owner
             if (member == null || member.userId != userId)
@@ -1645,10 +1829,10 @@ namespace BoxSocial.Internals
                 captchaString += chars[j].ToString();
             }
 
-            return Member.HashPassword(captchaString).Substring((int)(rand.NextDouble() * 20), 32);
+            return User.HashPassword(captchaString).Substring((int)(rand.NextDouble() * 20), 32);
         }
 
-        public override bool CanModerateComments(Member member)
+        public override bool CanModerateComments(User member)
         {
             if (member.userId == userId)
             {
@@ -1660,7 +1844,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool IsCommentOwner(Member member)
+        public override bool IsCommentOwner(User member)
         {
             if (member.userId == userId)
             {
@@ -1672,7 +1856,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override ushort GetAccessLevel(Member viewer)
+        public override ushort GetAccessLevel(User viewer)
         {
             Relation viewerRelation;
             if (!sessionRelationsSet)
@@ -1708,7 +1892,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override void GetCan(ushort accessBits, Member viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             Relation viewerRelation;
             if (!sessionRelationsSet)
@@ -1803,7 +1987,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static long GetMemberId(Member member)
+        public static long GetMemberId(User member)
         {
             long loggedIdUid = 0;
             if (member != null)
@@ -1831,7 +2015,7 @@ namespace BoxSocial.Internals
             }
 
             string age;
-            int ageInt = page.ProfileOwner.Age;
+            int ageInt = page.ProfileOwner.GetAge(core.tz);
             if (ageInt == 0)
             {
                 age = "FALSE";
@@ -1886,8 +2070,8 @@ namespace BoxSocial.Internals
             core.template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(page.ProfileOwner.Friends.ToString()));
             core.template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
 
-            List<Member> friends = page.ProfileOwner.GetFriends(1, 8);
-            foreach (Member friend in friends)
+            List<User> friends = page.ProfileOwner.GetFriends(1, 8);
+            foreach (User friend in friends)
             {
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
 
@@ -1897,7 +2081,7 @@ namespace BoxSocial.Internals
             }
 
             ushort readAccessLevel = page.ProfileOwner.GetAccessLevel(core.session.LoggedInMember);
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
             /* Show a list of lists */
             DataTable listTable = core.db.Query(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",

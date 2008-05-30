@@ -309,10 +309,10 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    if (owner is Member)
+                    if (owner is User)
                     {
                         return string.Format("/{0}/images/_thumb/{1}/{2}",
-                            ((Member)owner).UserName, FullPath, highlightUri);
+                            ((User)owner).UserName, FullPath, highlightUri);
                     }
                     else
                     {
@@ -327,7 +327,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
-        public Gallery(Core core, Member owner)
+        public Gallery(Core core, User owner)
             : base(core)
         {
             this.owner = owner;
@@ -443,7 +443,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryAbstract = (string)galleryRow["gallery_abstract"];
             }
             galleryDescription = (string)galleryRow["gallery_description"];
-            if (owner is Member)
+            if (owner is User)
             {
                 galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
             }
@@ -485,11 +485,11 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>Raw data for a list of sub-galleries</returns>
         protected DataRowCollection GetGalleryDataRows(Core core)
         {
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
-                ((Member)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
+                ((User)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
 
             return galleriesTable.Rows;
         }
@@ -532,7 +532,7 @@ namespace BoxSocial.Applications.Gallery
             db = core.db;
 
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
             DataTable photoTable = db.Query(string.Format(
                 @"SELECT {2}, {8}
@@ -560,9 +560,9 @@ namespace BoxSocial.Applications.Gallery
                 throw new GalleryCannotUpdateRootGalleryException();
             }
 
-            if (owner is Member)
+            if (owner is User)
             {
-                if (page.loggedInMember.UserId != ((Member)owner).UserId)
+                if (page.loggedInMember.UserId != ((User)owner).UserId)
                 {
                     throw new GalleryPermissionException();
                 }
@@ -572,7 +572,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GalleryNotAMemberObjectException();
             }
 
-            Member member = (Member)this.owner;
+            User member = (User)this.owner;
 
             // do we have to generate a new slug
             if (slug != path) // || parent.ParentPath != ParentPath) // we can't move galleries between parents at the moment
@@ -616,10 +616,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="newPath">New parent path</param>
         private void updateParentPathChildren(string oldPath, string newPath)
         {
-            if (owner is Member)
+            if (owner is User)
             {
                 DataTable galleriesTable = db.Query(string.Format("SELECT gallery_id, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}'",
-                    ((Member)owner).UserId, oldPath));
+                    ((User)owner).UserId, oldPath));
 
                 for (int i = 0; i < galleriesTable.Rows.Count; i++)
                 {
@@ -629,7 +629,7 @@ namespace BoxSocial.Applications.Gallery
 
                     db.BeginTransaction();
                     db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_parent_path = '{2}' WHERE user_id = {0} AND gallery_id = {1};",
-                        ((Member)owner).UserId, (long)galleriesTable.Rows[i]["gallery_id"], Mysql.Escape(newPath)));
+                        ((User)owner).UserId, (long)galleriesTable.Rows[i]["gallery_id"], Mysql.Escape(newPath)));
                 }
             }
             else
@@ -658,7 +658,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotValidException();
             }
 
-            if (!Gallery.CheckGallerySlugUnique(core.db, (Member)parent.owner, parent.FullPath, slug))
+            if (!Gallery.CheckGallerySlugUnique(core.db, (User)parent.owner, parent.FullPath, slug))
             {
                 throw new GallerySlugNotUniqueException();
             }
@@ -773,7 +773,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="parentFullPath">Parent path</param>
         /// <param name="slug">Slug to check for uniqueness</param>
         /// <returns>True if slug is unique given owner and parent</returns>
-        public static bool CheckGallerySlugUnique(Mysql db, Member owner, string parentFullPath, string slug)
+        public static bool CheckGallerySlugUnique(Mysql db, User owner, string parentFullPath, string slug)
         {
             DataTable galleryGalleryTable = db.Query(string.Format("SELECT gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' AND gallery_path = '{2}';",
                         owner.UserId, Mysql.Escape(parentFullPath), Mysql.Escape(slug)));
@@ -990,7 +990,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryPath">Gallery path</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(Member member, string galleryPath, string photoPath)
+        public static string BuildPhotoUri(User member, string galleryPath, string photoPath)
         {
             return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
                 member.UserName, galleryPath, photoPath));
@@ -1047,7 +1047,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="member">Gallery owner</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Member member)
+        public static string BuildGalleryUri(User member)
         {
             return Linker.AppendSid(string.Format("/{0}/gallery",
                 member.UserName.ToLower()));
@@ -1059,7 +1059,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="member">Gallery owner</param>
         /// <param name="path">sub-gallery path</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Member member, string path)
+        public static string BuildGalleryUri(User member, string path)
         {
             if (string.IsNullOrEmpty(path))
             {

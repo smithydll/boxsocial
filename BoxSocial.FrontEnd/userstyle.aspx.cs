@@ -25,7 +25,6 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 
@@ -36,12 +35,12 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             string profileUserName = Request.QueryString["un"];
-            Member profileOwner;
+            User profileOwner;
 
             try
             {
 
-                profileOwner = new Member(core, profileUserName);
+                profileOwner = new User(core, profileUserName);
             }
             catch
             {

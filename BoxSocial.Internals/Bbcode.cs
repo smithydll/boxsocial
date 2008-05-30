@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Web;
-using System.Web.Security;
 using System.Text.RegularExpressions;
 using System.Text;
 
@@ -104,7 +103,7 @@ namespace BoxSocial.Internals
             private bool noContents;
             private string contents;
             private bool stripTag;
-            private Member owner;
+            private User owner;
 
             public BbcodeTag Tag
             {
@@ -217,7 +216,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public Member Owner
+            public User Owner
             {
                 get
                 {
@@ -225,7 +224,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Member postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
                 this.tag = tag;
                 this.options = options;
@@ -375,17 +374,17 @@ namespace BoxSocial.Internals
             return Parse(input, null);
         }
 
-        public static string Parse(string input, Member viewer)
+        public static string Parse(string input, User viewer)
         {
             return Parse(input, viewer, null);
         }
 
-        public static string Parse(string input, Member viewer, Member postOwner)
+        public static string Parse(string input, User viewer, User postOwner)
         {
             return Parse(input, viewer, postOwner, false);
         }
 
-        private static string Parse(string input, Member viewer, Member postOwner, bool stripTags)
+        private static string Parse(string input, User viewer, User postOwner, bool stripTags)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -1410,7 +1409,7 @@ namespace BoxSocial.Internals
                 if (id > 0)
                 {
                     core.LoadUserProfile(id);
-                    Member userUser = core.UserProfiles[id];
+                    User userUser = core.UserProfiles[id];
 
                     if (e.Attributes.HasAttribute("ownership") &&
                         e.Attributes.GetAttribute("ownership") == "true")
@@ -1459,7 +1458,7 @@ namespace BoxSocial.Internals
                     if (id > 0)
                     {
                         core.LoadUserProfile(id);
-                        Member userUser = core.UserProfiles[id];
+                        User userUser = core.UserProfiles[id];
 
                         if (e.Attributes.HasAttribute("ownership") &&
                             e.Attributes.GetAttribute("ownership") == "true")

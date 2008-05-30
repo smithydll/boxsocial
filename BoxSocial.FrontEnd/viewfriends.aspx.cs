@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -50,8 +49,8 @@ namespace BoxSocial.FrontEnd
             template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(profileOwner.Friends.ToString()));
             template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
 
-            List<Member> friends = profileOwner.GetFriends(page, 18);
-            foreach (Member friend in friends)
+            List<User> friends = profileOwner.GetFriends(page, 18);
+            foreach (User friend in friends)
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 

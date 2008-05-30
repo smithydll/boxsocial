@@ -204,7 +204,7 @@ namespace BoxSocial.Applications.Blog
         {
             // Notify of a new comment
             BlogEntry blogEntry = new BlogEntry(core, e.ItemId);
-            Member owner = (Member)blogEntry.Owner;
+            User owner = (User)blogEntry.Owner;
 
             ApplicationEntry ae = new ApplicationEntry(core, owner, "Blog");
 
@@ -222,7 +222,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="itemId">Blog post id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool blogCanPostComment(long itemId, Member member)
+        private bool blogCanPostComment(long itemId, User member)
         {
             BlogEntry blogEntry = new BlogEntry(core, itemId);
             blogEntry.BlogEntryAccess.SetViewer(member);
@@ -243,7 +243,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="itemId">Blog post id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool blogCanDeleteComment(long itemId, Member member)
+        private bool blogCanDeleteComment(long itemId, User member)
         {
             BlogEntry blogEntry = new BlogEntry(core, itemId);
 

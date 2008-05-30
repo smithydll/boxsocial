@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
         public delegate void PageHandler(Core core, object sender);
-        public delegate bool CommentHandler(long itemId, Member viewer);
+        public delegate bool CommentHandler(long itemId, User viewer);
         public delegate void CommentCountHandler(long itemId, int adjustment);
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
@@ -113,7 +113,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Member.GetMemberId(session.LoggedInMember);
+                return User.GetMemberId(session.LoggedInMember);
             }
         }
 
@@ -219,7 +219,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void CommentPosted(string itemType, long itemId, Comment comment, Member poster)
+        public void CommentPosted(string itemType, long itemId, Comment comment, User poster)
         {
             if (commentHandles.ContainsKey(itemType))
             {
@@ -231,7 +231,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void CommentDeleted(string itemType, long itemId, Comment comment, Member poster)
+        public void CommentDeleted(string itemType, long itemId, Comment comment, User poster)
         {
             if (commentHandles.ContainsKey(itemType))
             {
@@ -243,7 +243,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void ItemRated(string itemType, long itemId, int rating, Member rater)
+        public void ItemRated(string itemType, long itemId, int rating, User rater)
         {
             if (ratingHandles.ContainsKey(itemType))
             {

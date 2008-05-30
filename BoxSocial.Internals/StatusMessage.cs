@@ -36,7 +36,7 @@ namespace BoxSocial.Internals
         private Mysql db;
 
         private long statusId;
-        private Member owner;
+        private User owner;
         private long ownerId;
         private string statusMessage;
         private long timeRaw;
@@ -49,7 +49,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member Owner
+        public User Owner
         {
             get
             {
@@ -78,14 +78,14 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        public StatusMessage(Core core, Member owner, DataRow statusRow) : base(core)
+        public StatusMessage(Core core, User owner, DataRow statusRow) : base(core)
         {
             this.owner = owner;
 
             loadStatusInfo(statusRow);
         }
 
-        private StatusMessage(Core core, Member owner, long statusId, string statusMessage) : base(core)
+        private StatusMessage(Core core, User owner, long statusId, string statusMessage) : base(core)
         {
             this.owner = owner;
             this.ownerId = owner.Id;
@@ -101,7 +101,7 @@ namespace BoxSocial.Internals
             timeRaw = (long)statusRow["status_time_ut"];
         }
 
-        public static StatusMessage Create(Core core, Member creator, string message)
+        public static StatusMessage Create(Core core, User creator, string message)
         {
             InsertQuery iQuery = new InsertQuery("user_status_messages");
             iQuery.AddField("user_id", creator.Id);

@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// A cache of user profiles including icons.
         /// </summary>
-        private Dictionary<long, Member> userProfileCache = new Dictionary<long, Member>();
+        private Dictionary<long, User> userProfileCache = new Dictionary<long, User>();
 
         /// <summary>
         /// A list of usernames cached
@@ -53,7 +53,7 @@ namespace BoxSocial.Internals
         /// </summary>
         private List<long> batchedUserIds = new List<long>();
 
-        public Member this[long key]
+        public User this[long key]
         {
             get
             {
@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
             if (idList.Count > 0)
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
                 query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -96,7 +96,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    Member newUser = new Member(core, userRow, true, true);
+                    User newUser = new User(core, userRow, true, true);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                 }
@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
         {
             if (!userProfileCache.ContainsKey(userId))
             {
-                Member newUser = new Member(core, userId, true);
+                User newUser = new User(core, userId, UserLoadOptions.All);
                 userProfileCache.Add(newUser.Id, newUser);
                 userNameCache.Add(newUser.UserName, newUser.Id);
             }
@@ -140,7 +140,7 @@ namespace BoxSocial.Internals
             if (usernameList.Count > 0)
             {
                 SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+                query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
                 query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
                 query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -151,7 +151,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    Member newUser = new Member(core, userRow, true, true);
+                    User newUser = new User(core, userRow, true, true);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                     userIds.Add(newUser.Id);
@@ -168,7 +168,7 @@ namespace BoxSocial.Internals
                 return userNameCache[username];
             }
 
-            Member newUser = new Member(core, username, true);
+            User newUser = new User(core, username, UserLoadOptions.All);
             if (!userProfileCache.ContainsKey(newUser.Id))
             {
                 userProfileCache.Add(newUser.Id, newUser);

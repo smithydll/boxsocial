@@ -254,6 +254,21 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
+        internal protected static string[] GetFieldsPrefixed(Type type)
+        {
+            string tableName = GetTable(type);
+            List<DataFieldInfo> fields = GetFields(type);
+            string[] returnValue = new string[fields.Count];
+
+            for (int i = 0; i < fields.Count; i++)
+            {
+                returnValue[i] = string.Format("`{0}`.`{1}`",
+                    tableName, fields[i].Name);
+            }
+
+            return returnValue;
+        }
+
         internal protected static string GetTable(Type type)
         {
             bool attributeFound = false;

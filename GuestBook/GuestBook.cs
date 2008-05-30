@@ -33,7 +33,7 @@ namespace BoxSocial.Applications.GuestBook
     public class GuestBook
     {
 
-        public static string Uri(Member member)
+        public static string Uri(User member)
         {
             return Linker.AppendSid(string.Format("/{0}/profile/comments",
                 member.UserName.ToLower()));
@@ -120,7 +120,7 @@ namespace BoxSocial.Applications.GuestBook
 
             long userId = core.LoadUserProfile(user);
 
-            List<Member> commenters = new List<Member>();
+            List<User> commenters = new List<User>();
             commenters.Add(page.ProfileOwner);
             commenters.Add(core.UserProfiles[userId]);
 
@@ -160,11 +160,11 @@ namespace BoxSocial.Applications.GuestBook
 
         public static void UserGuestBookHook(DisplayCommentHookEventArgs e)
         {
-            if (e.Owner.GetType() == typeof(Member))
+            if (e.Owner.GetType() == typeof(User))
             {
                 if (e.Owner.Id != e.Poster.Id)
                 {
-                    UserGuestBook guestBook = new UserGuestBook(e.Core, (Member)e.Owner);
+                    UserGuestBook guestBook = new UserGuestBook(e.Core, (User)e.Owner);
                     UserGuestBook posterGuestBook = new UserGuestBook(e.Core, e.Poster);
                     e.CommentVariableCollection.ParseVariables("U_CONVERSATION", HttpUtility.HtmlEncode(guestBook.BuildConversationUri(e.Poster)));
                     e.CommentVariableCollection.ParseVariables("U_REPLY", HttpUtility.HtmlEncode(posterGuestBook.Uri));

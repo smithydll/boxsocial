@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -123,11 +122,11 @@ namespace BoxSocial.FrontEnd
                 // new_points
 
                 DataTable newUsers = db.Query(string.Format("SELECT {0}, {1}, {2} FROM user_info ui INNER JOIN user_profile up ON ui.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE up.profile_access & 4369 = 4369 AND gi.gallery_item_uri IS NOT NULL ORDER BY user_reg_date_ut DESC LIMIT 3",
-                    Member.USER_PROFILE_FIELDS, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
+                    BoxSocial.Internals.User.USER_PROFILE_FIELDS, BoxSocial.Internals.User.USER_INFO_FIELDS, BoxSocial.Internals.User.USER_ICON_FIELDS));
 
                 for (int i = 0; i < newUsers.Rows.Count; i++)
                 {
-                    Member newMember = new Member(core, newUsers.Rows[i], true, true);
+                    User newMember = new User(core, newUsers.Rows[i], true, true);
 
                     VariableCollection newPointsVariableCollection = template.CreateChild("new_points");
 

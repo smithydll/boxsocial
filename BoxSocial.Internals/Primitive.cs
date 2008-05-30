@@ -81,36 +81,36 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract bool CanModerateComments(Member member);
+        public abstract bool CanModerateComments(User member);
 
-        public abstract bool IsCommentOwner(Member member);
+        public abstract bool IsCommentOwner(User member);
 
-        public abstract ushort GetAccessLevel(Member viewer);
+        public abstract ushort GetAccessLevel(User viewer);
 
-        public abstract void GetCan(ushort accessBits, Member viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange);
+        public abstract void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange);
 
-        public bool GetCanRead(ushort accessBits, Member viewer)
+        public bool GetCanRead(ushort accessBits, User viewer)
         {
             bool canRead, canComment, canCreate, canChange;
             GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
             return canRead;
         }
 
-        public bool GetCanComment(ushort accessBits, Member viewer)
+        public bool GetCanComment(ushort accessBits, User viewer)
         {
             bool canRead, canComment, canCreate, canChange;
             GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
             return canComment;
         }
 
-        public bool GetCanCreate(ushort accessBits, Member viewer)
+        public bool GetCanCreate(ushort accessBits, User viewer)
         {
             bool canRead, canComment, canCreate, canChange;
             GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
             return canCreate;
         }
 
-        public bool GetCanChange(ushort accessBits, Member viewer)
+        public bool GetCanChange(ushort accessBits, User viewer)
         {
             bool canRead, canComment, canCreate, canChange;
             GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);

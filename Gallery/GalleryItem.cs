@@ -339,7 +339,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        public GalleryItem(Core core, Member owner, DataRow itemRow) : base(core)
+        public GalleryItem(Core core, User owner, DataRow itemRow) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -400,7 +400,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Gallery item owner</param>
         /// <param name="parent">Gallery item parent</param>
         /// <param name="path">Gallery item path</param>
-        public GalleryItem(Core core, Member owner, Gallery parent, string path) : base(core)
+        public GalleryItem(Core core, User owner, Gallery parent, string path) : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -537,13 +537,13 @@ namespace BoxSocial.Applications.Gallery
         /// Increment the number of views
         /// </summary>
         /// <param name="viewer">Person viewing the gallery item</param>
-        public void Viewed(Member viewer)
+        public void Viewed(User viewer)
         {
             if (viewer != null)
             {
-                if (owner is Member)
+                if (owner is User)
                 {
-                    if (viewer.UserId == ((Member)owner).UserId)
+                    if (viewer.UserId == ((User)owner).UserId)
                     {
                         return;
                     }
@@ -587,9 +587,9 @@ namespace BoxSocial.Applications.Gallery
 
                 FileInfo fi = new FileInfo(TPage.GetStorageFilePath(storagePath));
 
-                if (owner is Member)
+                if (owner is User)
                 {
-                    UserGallery parent = new UserGallery(core, (Member)owner, parentId);
+                    UserGallery parent = new UserGallery(core, (User)owner, parentId);
                     UserGallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
                 }
 
@@ -639,7 +639,7 @@ namespace BoxSocial.Applications.Gallery
         {
             Mysql db = core.db;
 
-            if (owner is Member)
+            if (owner is User)
             {
                 if (owner.Id != core.LoggedInMemberId)
                 {
@@ -695,7 +695,7 @@ namespace BoxSocial.Applications.Gallery
             if (itemId >= 0)
             {
                 //owner.UpdateGalleryInfo(parent, itemId, 1, (long)bytes);
-                if (owner is Member)
+                if (owner is User)
                 {
                     UserGallery.UpdateGalleryInfo(db, owner, parent, itemId, 1, (long)bytes);
                 }
@@ -1316,9 +1316,9 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem galleryItem;// = new GalleryItem(db, owner, imagePath);
 
-                if (owner is Member)
+                if (owner is User)
                 {
-                    galleryItem = new UserGalleryItem(core, (Member)owner, photoName);
+                    galleryItem = new UserGalleryItem(core, (User)owner, photoName);
                     galleryItem.ItemAccess.SetViewer(core.session.LoggedInMember);
 
                     if (!galleryItem.ItemAccess.CanRead)

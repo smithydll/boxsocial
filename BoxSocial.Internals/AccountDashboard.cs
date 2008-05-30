@@ -29,11 +29,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
-//using BoxSocial.Groups;
 
 namespace BoxSocial
 {
@@ -500,7 +498,7 @@ namespace BoxSocial
 
             if (password != null && Request.Form["save"] != null)
             {
-                password = Member.HashPassword(password);
+                password = User.HashPassword(password);
 
                 SelectQuery query = new SelectQuery("user_keys uk");
                 query.AddFields("uk.user_name, uk.user_id");
@@ -535,12 +533,12 @@ namespace BoxSocial
 
         public void PasswordSave()
         {
-            string password = Member.HashPassword(Request.Form["old-password"]);
+            string password = User.HashPassword(Request.Form["old-password"]);
 
             AuthoriseRequestSid();
 
             UpdateQuery uquery = new UpdateQuery("user_info");
-            uquery.AddField("user_password", Member.HashPassword(Request.Form["new-password"]));
+            uquery.AddField("user_password", User.HashPassword(Request.Form["new-password"]));
             uquery.AddCondition("user_id", core.LoggedInMemberId);
 
             long rowsChanged = db.Query(uquery);

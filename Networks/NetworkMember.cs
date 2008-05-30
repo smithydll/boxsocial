@@ -32,7 +32,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Networks
 {
-    public class NetworkMember : Member
+    public class NetworkMember : User
     {
         public const string USER_NETWORK_FIELDS = "nm.user_id, nm.network_id, nm.member_join_date_ut, nm.member_join_ip, nm.member_email, nm.member_active, nm.member_activate_code";
 
@@ -82,7 +82,7 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, int networkId, int memberId) : base(core)
         {
             SelectQuery query = new SelectQuery("network_members nm");
-            query.AddFields(NetworkMember.USER_NETWORK_FIELDS, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS);
+            query.AddFields(NetworkMember.USER_NETWORK_FIELDS, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
             query.AddJoin(JoinTypes.Inner, "user_info ui", "nm.user_id", "ui.user_id");
             query.AddJoin(JoinTypes.Inner, "user_profile up", "nm.user_id", "up.user_id");
             query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
@@ -143,7 +143,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public NetworkMember(Core core, Network theNetwork, Member member) : base(core)
+        public NetworkMember(Core core, Network theNetwork, User member) : base(core)
         {
             DataTable memberTable = db.Query(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
                 member.UserId, theNetwork.NetworkId, USER_NETWORK_FIELDS));
@@ -175,7 +175,7 @@ namespace BoxSocial.Networks
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        public static Dictionary<int, NetworkMember> GetUserNetworks(Core core, Member member)
+        public static Dictionary<int, NetworkMember> GetUserNetworks(Core core, User member)
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 

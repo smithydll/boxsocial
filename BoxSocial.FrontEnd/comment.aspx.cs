@@ -26,7 +26,6 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -214,7 +213,7 @@ namespace BoxSocial.FrontEnd
                     }
 
                     core.LoadUserProfile(thisComment.UserId);
-                    Member poster = core.UserProfiles[thisComment.UserId];
+                    User poster = core.UserProfiles[thisComment.UserId];
                     Core.CommentDeleted(commentItemType, (long)commentItemId, thisComment, poster);
                     Core.AdjustCommentCount(commentItemType, (long)commentItemId, -1);
                 }

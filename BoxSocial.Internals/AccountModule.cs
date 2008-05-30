@@ -49,7 +49,7 @@ namespace BoxSocial.Internals
         protected Core core;
         protected TPage page;
         protected Mysql db;
-        protected Member loggedInMember;
+        protected User loggedInMember;
         protected Template template;
         protected UnixTime tz;
         protected HttpRequest Request;

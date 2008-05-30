@@ -31,12 +31,12 @@ namespace BoxSocial.Internals
 {
     public static class StatusFeed
     {
-        public static List<StatusMessage> GetItems(Core core, Member owner)
+        public static List<StatusMessage> GetItems(Core core, User owner)
         {
             return GetItems(core, owner, 1);
         }
 
-        public static List<StatusMessage> GetItems(Core core, Member owner, int page)
+        public static List<StatusMessage> GetItems(Core core, User owner, int page)
         {
             List<StatusMessage> feedItems = new List<StatusMessage>();
 
@@ -57,17 +57,17 @@ namespace BoxSocial.Internals
             return feedItems;
         }
 
-        public static List<StatusMessage> GetFriendItems(Core core, Member owner)
+        public static List<StatusMessage> GetFriendItems(Core core, User owner)
         {
             return GetFriendItems(core, owner, 50, 1);
         }
 
-        public static List<StatusMessage> GetFriendItems(Core core, Member owner, int limit)
+        public static List<StatusMessage> GetFriendItems(Core core, User owner, int limit)
         {
             return GetFriendItems(core, owner, limit, 1);
         }
 
-        public static List<StatusMessage> GetFriendItems(Core core, Member owner, int limit, int page)
+        public static List<StatusMessage> GetFriendItems(Core core, User owner, int limit, int page)
         {
             List<long> friendIds = owner.GetFriendIds();
             List<StatusMessage> feedItems = new List<StatusMessage>();
@@ -100,7 +100,7 @@ namespace BoxSocial.Internals
             return feedItems;
         }
 
-        public static StatusMessage GetLatest(Core core, Member owner)
+        public static StatusMessage GetLatest(Core core, User owner)
         {
             SelectQuery query = new SelectQuery("user_status_messages usm");
             query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
@@ -131,7 +131,7 @@ namespace BoxSocial.Internals
         /*
          * TODO: show status feed history
          */
-        public static void Show(Core core, TPage page, Member owner)
+        public static void Show(Core core, TPage page, User owner)
         {
             core.template.SetTemplate("Profile", "viewstatusfeed");
 

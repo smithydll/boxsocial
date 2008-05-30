@@ -25,7 +25,6 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Web;
-using System.Web.Security;
 
 namespace BoxSocial.Internals
 {

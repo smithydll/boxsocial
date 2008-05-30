@@ -27,7 +27,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -181,7 +180,7 @@ namespace BoxSocial.Internals
             return new Comment(core, commentId);
         }
 
-        public static List<Comment> GetComments(Core core, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<Member> commenters)
+        public static List<Comment> GetComments(Core core, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)
         {
             Mysql db = core.db;
             List<Comment> comments = new List<Comment>();
@@ -395,7 +394,7 @@ namespace BoxSocial.Internals
 
         public static string MessageMd5(string input)
         {
-            return FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
+            return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
 
         public long Id
@@ -426,7 +425,7 @@ namespace BoxSocial.Internals
         private Comment comment;
         private string itemType;
         private long itemId;
-        private Member poster;
+        private User poster;
 
         public Comment Comment
         {
@@ -452,7 +451,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member Poster
+        public User Poster
         {
             get
             {
@@ -460,7 +459,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public CommentPostedEventArgs(Comment comment, Member poster, string itemType, long itemId)
+        public CommentPostedEventArgs(Comment comment, User poster, string itemType, long itemId)
         {
             this.comment = comment;
             this.poster = poster;

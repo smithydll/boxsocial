@@ -388,6 +388,8 @@ namespace BoxSocial.IO
                     return new DataFieldInfo(name, typeof(string), 4294967295L);
                 case "enum":
                     return new DataFieldInfo(name, typeof(string), 255L);
+                case "char":
+                    return new DataFieldInfo(name, typeof(char[]), length);
                 default:
                     return new DataFieldInfo(name, typeof(Object), length);
             }
@@ -450,6 +452,11 @@ namespace BoxSocial.IO
                 {
                     return "longtext";
                 }
+            }
+            else if (type.Type == typeof(char[]))
+            {
+                return string.Format("char({0})",
+                        type.Length);
             }
             else
             {

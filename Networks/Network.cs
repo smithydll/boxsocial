@@ -26,7 +26,6 @@ using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -65,7 +64,7 @@ namespace BoxSocial.Networks
         private long bytes;
         private string displayNameOwnership;
 
-        private Dictionary<Member, bool> networkMemberCache = new Dictionary<Member, bool>();
+        private Dictionary<User, bool> networkMemberCache = new Dictionary<User, bool>();
 
         public int NetworkId
         {
@@ -290,7 +289,7 @@ namespace BoxSocial.Networks
             List<NetworkMember> members = new List<NetworkMember>();
 
             DataTable membersTable = db.Query(string.Format("SELECT {1}, {2}, {3}, {4} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.network_id = {0} ORDER BY nm.member_join_date_ut ASC LIMIT {5}, {6}",
-                networkId, Member.USER_INFO_FIELDS, Member.USER_PROFILE_FIELDS, Member.USER_ICON_FIELDS, NetworkMember.USER_NETWORK_FIELDS, (page - 1) * perPage, perPage));
+                networkId, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS, NetworkMember.USER_NETWORK_FIELDS, (page - 1) * perPage, perPage));
 
             foreach (DataRow dr in membersTable.Rows)
             {
@@ -335,7 +334,7 @@ namespace BoxSocial.Networks
             return networks;
         }
 
-        public bool IsNetworkMember(Member member)
+        public bool IsNetworkMember(User member)
         {
             if (member != null)
             {
@@ -370,7 +369,7 @@ namespace BoxSocial.Networks
         /// <param name="page"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        public bool Activate(TPage page, Member member, string activateKey)
+        public bool Activate(TPage page, User member, string activateKey)
         {
             long rowsChanged = db.UpdateQuery(string.Format("UPDATE network_members SET member_active = 1 WHERE network_id = {0} AND user_id = {1} AND member_activate_code = '{2}' AND member_active = 0;",
                 networkId, member.UserId, activateKey));
@@ -410,9 +409,9 @@ namespace BoxSocial.Networks
             }
         }
 
-        public NetworkMember Join(Core core, Member member, string networkEmail)
+        public NetworkMember Join(Core core, User member, string networkEmail)
         {
-            string activateKey = Member.GenerateActivationSecurityToken();
+            string activateKey = User.GenerateActivationSecurityToken();
 
             if (!IsValidNetworkEmail(networkEmail) && requireConfirmation)
             {
@@ -461,7 +460,7 @@ namespace BoxSocial.Networks
 
         public bool IsValidNetworkEmail(string networkEmail)
         {
-            if (Member.CheckEmailValid(networkEmail))
+            if (User.CheckEmailValid(networkEmail))
             {
                 if (networkEmail.ToLower().EndsWith(networkNetwork.ToString()))
                 {
@@ -478,17 +477,17 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override bool CanModerateComments(Member member)
+        public override bool CanModerateComments(User member)
         {
             return false;
         }
 
-        public override bool IsCommentOwner(Member member)
+        public override bool IsCommentOwner(User member)
         {
             return false;
         }
 
-        public override ushort GetAccessLevel(Member member)
+        public override ushort GetAccessLevel(User member)
         {
             switch (NetworkType)
             {
@@ -513,7 +512,7 @@ namespace BoxSocial.Networks
             return 0x0000;
         }
 
-        public override void GetCan(ushort accessBits, Member viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             bool isNetworkMember = IsNetworkMember(viewer);
             switch (NetworkType)

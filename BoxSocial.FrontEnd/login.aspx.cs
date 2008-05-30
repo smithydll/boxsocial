@@ -23,7 +23,6 @@ using System.Collections;
 using System.Configuration;
 using System.Data;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -58,7 +57,7 @@ namespace BoxSocial.FrontEnd
             if (Request.Form["submit"] != null)
             {
                 string userName = Request.Form["username"];
-                string password = Member.HashPassword(Request.Form["password"]);
+                string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
 
                  DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}' AND ui.user_password = '{1}'",
                     userName, password));

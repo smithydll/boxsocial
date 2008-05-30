@@ -152,7 +152,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is PPage)
             {
-                Member.ShowProfile(core, (PPage)sender);
+                User.ShowProfile(core, (PPage)sender);
             }
             else if (sender is APage)
             {

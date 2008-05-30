@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
 
         private long pageId;
         private int ownerId;
-        private Member owner;
+        private User owner;
         private string slug;
         private string title;
         private string body;
@@ -289,7 +289,7 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(modifiedRaw);
         }
 
-        public Page(Mysql db, Member owner, string pageName)
+        public Page(Mysql db, User owner, string pageName)
         {
             this.db = db;
             this.owner = owner;
@@ -315,7 +315,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Page(Mysql db, Member owner, string pageName, string pageParentPath)
+        public Page(Mysql db, User owner, string pageName, string pageParentPath)
         {
             this.db = db;
             this.owner = owner;
@@ -340,7 +340,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Page(Mysql db, Member owner, long pageId)
+        public Page(Mysql db, User owner, long pageId)
         {
             this.db = db;
             this.owner = owner;
@@ -483,7 +483,7 @@ namespace BoxSocial.Internals
             Page parentPage = null;
             try
             {
-                parentPage = new Page(core.db, (Member)owner, parent);
+                parentPage = new Page(core.db, (User)owner, parent);
 
                 parentPath = parentPage.FullPath;
                 parent = parentPage.PageId;
@@ -595,7 +595,7 @@ namespace BoxSocial.Internals
 
             pageId = core.db.Query(iquery);
 
-            return new Page(core.db, (Member)owner, pageId);
+            return new Page(core.db, (User)owner, pageId);
         }
 
         internal void Update()
@@ -693,7 +693,7 @@ namespace BoxSocial.Internals
                 Page parentPage = null;
                 try
                 {
-                    parentPage = new Page(db, (Member)owner, parentId);
+                    parentPage = new Page(db, (User)owner, parentId);
 
                     parentPath = parentPage.FullPath;
                     parentId = parentPage.PageId;
@@ -867,7 +867,7 @@ namespace BoxSocial.Internals
                 Page parentPage = null;
                 try
                 {
-                    parentPage = new Page(core.db, (Member)owner, parent);
+                    parentPage = new Page(core.db, (User)owner, parent);
 
                     parentPath = parentPage.FullPath;
                     parent = parentPage.PageId;

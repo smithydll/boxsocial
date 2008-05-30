@@ -31,7 +31,7 @@ namespace BoxSocial.Internals
     public class Feed
     {
 
-        public static List<Action> GetItems(Core core, Member owner)
+        public static List<Action> GetItems(Core core, User owner)
         {
             List<Action> feedItems = new List<Action>();
 
@@ -60,7 +60,7 @@ namespace BoxSocial.Internals
             return feedItems;
         }
 
-        public static void Show(Core core, TPage page, Member owner)
+        public static void Show(Core core, TPage page, User owner)
         {
             Template template = new Template("viewfeed.html");
 

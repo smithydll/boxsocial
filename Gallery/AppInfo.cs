@@ -170,7 +170,7 @@ namespace BoxSocial.Applications.Gallery
         {
         }
 
-        private bool photoCanPostComment(long itemId, Member member)
+        private bool photoCanPostComment(long itemId, User member)
         {
             DataTable galleryItemTable = core.db.Query(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
                 itemId, GalleryItem.GALLERY_ITEM_INFO_FIELDS));
@@ -181,7 +181,7 @@ namespace BoxSocial.Applications.Gallery
                 switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
                 {
                     case "USER":
-                        owner = new Member(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                        owner = new User(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         break;
                     case "GROUP":
                         owner = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
@@ -209,7 +209,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        private bool photoCanDeleteComment(long itemId, Member member)
+        private bool photoCanDeleteComment(long itemId, User member)
         {
             DataTable galleryItemTable = core.db.Query(string.Format("SELECT {1} FROM gallery_items gi WHERE gi.gallery_item_id = {0};",
                 itemId, GalleryItem.GALLERY_ITEM_INFO_FIELDS));

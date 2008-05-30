@@ -31,9 +31,9 @@ namespace BoxSocial.Applications.GuestBook
 {
     public class UserGuestBook : Item, ICommentableItem
     {
-        private Member owner;
+        private User owner;
 
-        public UserGuestBook(Core core, Member owner) : base(core)
+        public UserGuestBook(Core core, User owner) : base(core)
         {
             this.db = core.db;
 
@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        public string BuildConversationUri(Member user)
+        public string BuildConversationUri(User user)
         {
             return Linker.AppendSid(string.Format("{0}/{1}",
                     Linker.StripSid(Uri), user.UserName));

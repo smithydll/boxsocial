@@ -27,7 +27,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -42,7 +41,7 @@ namespace BoxSocial.Internals
         private long itemId;
         private string itemType;
         private long ownerId;
-        private Member owner;
+        private User owner;
         private long timeRaw;
         private string ip;
 
@@ -151,7 +150,7 @@ namespace BoxSocial.Internals
         private int rating;
         private string itemType;
         private long itemId;
-        private Member rater;
+        private User rater;
 
         public int Rating
         {
@@ -177,7 +176,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member Rater
+        public User Rater
         {
             get
             {
@@ -185,7 +184,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ItemRatedEventArgs(int rating, Member rater, string itemType, long itemId)
+        public ItemRatedEventArgs(int rating, User rater, string itemType, long itemId)
         {
             this.rating = rating;
             this.rater = rater;

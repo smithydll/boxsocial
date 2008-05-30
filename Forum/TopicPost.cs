@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Forum
         private long modifiedRaw;
 
         private bool batchPostLoad;
-        private Member poster;
+        private User poster;
 
         public long PostId
         {

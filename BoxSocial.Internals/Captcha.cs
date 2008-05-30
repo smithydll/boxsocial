@@ -39,7 +39,7 @@ namespace BoxSocial.Internals
                 captchaString += chars[j].ToString();
             }
 
-            return Member.HashPassword(captchaString);
+            return User.HashPassword(captchaString);
         }
     }
 }

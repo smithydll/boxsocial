@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemId">Gallery item Id</param>
-        public UserGalleryItem(Core core, Member owner, long itemId)
+        public UserGalleryItem(Core core, User owner, long itemId)
             : base(core, (Primitive)owner, itemId)
         {
         }
@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        public UserGalleryItem(Core core, Member owner, DataRow itemRow)
+        public UserGalleryItem(Core core, User owner, DataRow itemRow)
             : base(core, (Primitive)owner, itemRow)
         {
         }
@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="path">Gallery item path</param>
-        public UserGalleryItem(Core core, Member owner, string path)
+        public UserGalleryItem(Core core, User owner, string path)
             : base(core, (Primitive)owner, path)
         {
         }
@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="classification">Classification</param>
         /// <remarks>Slug is a reference</remarks>
         /// <returns>New gallery item</returns>
-        public static GalleryItem Create(Core core, Member owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        public static GalleryItem Create(Core core, User owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
 
@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.Gallery
         public override string BuildUri()
         {
             return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
-                ((Member)owner).UserName, parentPath, path));
+                ((User)owner).UserName, parentPath, path));
         }
 
         /// <summary>

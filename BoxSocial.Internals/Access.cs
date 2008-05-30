@@ -22,7 +22,6 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Web;
-using System.Web.Security;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -66,7 +65,7 @@ namespace BoxSocial.Internals
         private bool canChange = false;
 
         private Primitive owner;
-        private Member viewer;
+        private User viewer;
 
         private ushort accessBits;
 
@@ -78,7 +77,7 @@ namespace BoxSocial.Internals
             this.accessBits = accessBits;
         }
 
-        public long SetViewer(Member viewer)
+        public long SetViewer(User viewer)
         {
             this.viewer = viewer;
 
@@ -95,7 +94,7 @@ namespace BoxSocial.Internals
 
         public long SetSessionViewer(SessionState session)
         {
-            long loggedIdUid = Member.GetMemberId(session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(session.LoggedInMember);
 
             SetViewer(session.LoggedInMember);
 

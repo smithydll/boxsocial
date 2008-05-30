@@ -27,7 +27,6 @@ using System.Drawing;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Security;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using BoxSocial.IO;
@@ -251,12 +250,12 @@ namespace BoxSocial.Internals
             return ConfirmBoxResult.None;
         }
 
-        public static void DisplayComments(Template template, Member profileOwner, ICommentableItem item)
+        public static void DisplayComments(Template template, User profileOwner, ICommentableItem item)
         {
             DisplayComments(template, (Primitive)profileOwner, item);
         }
 
-        public static void DisplayComments(Template template, Member profileOwner, ICommentableItem item, DisplayCommentHookHandler hook)
+        public static void DisplayComments(Template template, User profileOwner, ICommentableItem item, DisplayCommentHookHandler hook)
         {
             DisplayComments(template, (Primitive)profileOwner, item, null, -1, hook);
         }
@@ -266,7 +265,7 @@ namespace BoxSocial.Internals
             DisplayComments(template, owner, item, null, -1, null);
         }
 
-        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<Member> commenters, long commentCount, DisplayCommentHookHandler hook)
+        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
             Mysql db = core.db;
 
@@ -378,7 +377,7 @@ namespace BoxSocial.Internals
 
                 try
                 {
-                    Member commentPoster = core.UserProfiles[comment.UserId];
+                    User commentPoster = core.UserProfiles[comment.UserId];
 
                     commentsVariableCollection.ParseVariables("ID", comment.CommentId.ToString());
                     commentsVariableCollection.ParseVariables("USERNAME", commentPoster.DisplayName);
@@ -506,13 +505,13 @@ namespace BoxSocial.Internals
 
         }
 
-        public static Member fillLoggedInMember(System.Security.Principal.IPrincipal User, Member loggedInMember)
+        public static User fillLoggedInMember(System.Security.Principal.IPrincipal User, User loggedInMember)
         {
             if (loggedInMember == null)
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    return loggedInMember = new Member(core, User.Identity.Name, false);
+                    return loggedInMember = new User(core, User.Identity.Name, UserLoadOptions.Info);
                 }
             }
             return null;
@@ -587,12 +586,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string GeneratePageList(Member owner, Member loggedInMember, bool fragment)
+        public static string GeneratePageList(User owner, User loggedInMember, bool fragment)
         {
             Database db = core.db;
 
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
-            long loggedIdUid = Member.GetMemberId(loggedInMember);
+            long loggedIdUid = User.GetMemberId(loggedInMember);
 
             DataTable pagesTable = db.Query(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_icon FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = 'PUBLISH' AND (page_access & {1:0} = {1:0} OR user_id = {2}) ORDER BY upg.page_order",
                 owner.UserId, readAccessLevel, loggedIdUid));
@@ -775,9 +774,9 @@ namespace BoxSocial.Internals
         private Core core;
         private VariableCollection commentVariableCollection;
         private Primitive owner;
-        private Member poster;
+        private User poster;
 
-        public DisplayCommentHookEventArgs(Core core, Primitive owner, Member poster, VariableCollection variableCollection)
+        public DisplayCommentHookEventArgs(Core core, Primitive owner, User poster, VariableCollection variableCollection)
         {
             this.core = core;
             this.owner = owner;
@@ -801,7 +800,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member Poster
+        public User Poster
         {
             get
             {

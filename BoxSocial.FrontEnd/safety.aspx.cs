@@ -23,7 +23,6 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;

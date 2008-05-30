@@ -249,7 +249,7 @@ namespace BoxSocial.Applications.Blog
             {
                 loadBlogEntryInfo(postEntryDataTable.Rows[0]);
 
-                this.owner = new Member(core, ownerId, true);
+                this.owner = new User(core, ownerId, true);
             }
             else
             {
@@ -294,7 +294,7 @@ namespace BoxSocial.Applications.Blog
 
             if (owner == null)
             {
-                owner = new Member(core, OwnerId);
+                owner = new User(core, OwnerId);
             }
             blogEntryAccess = new Access(db, access, owner);
         }
@@ -328,8 +328,8 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                UnixTime tz = new UnixTime(((Member)owner).TimeZoneCode);
-                return Linker.BuildBlogPostUri((Member)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+                UnixTime tz = new UnixTime(((User)owner).TimeZoneCode);
+                return Linker.BuildBlogPostUri((User)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
             }
         }
 

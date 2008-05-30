@@ -130,12 +130,12 @@ namespace BoxSocial.Internals
             UpdateQuery uquery = new UpdateQuery("notifications");
         }
 
-        internal static Notification Create(Member receiver, string subject, string body)
+        internal static Notification Create(User receiver, string subject, string body)
         {
             return Create(null, receiver, subject, body);
         }
 
-        public static Notification Create(ApplicationEntry application, Member receiver, string subject, string body)
+        public static Notification Create(ApplicationEntry application, User receiver, string subject, string body)
         {
             int applicationId = 0;
 

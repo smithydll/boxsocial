@@ -170,11 +170,11 @@ namespace BoxSocial.Applications.GuestBook
             core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
         }
 
-        private bool userCanPostComment(long itemId, Member member)
+        private bool userCanPostComment(long itemId, User member)
         {
             try
             {
-                Member owner = new Member(core, itemId, true);
+                User owner = new User(core, itemId, true);
 
                 owner.ProfileAccess.SetViewer(member);
 
@@ -193,7 +193,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool userCanDeleteComment(long itemId, Member member)
+        private bool userCanDeleteComment(long itemId, User member)
         {
             if (itemId == member.UserId)
             {
@@ -208,7 +208,7 @@ namespace BoxSocial.Applications.GuestBook
         private void userCommentPosted(CommentPostedEventArgs e)
         {
             // Notify of a new comment
-            Member userProfile = new Member(core, e.ItemId);
+            User userProfile = new User(core, e.ItemId);
 
             SelectQuery query = new SelectQuery("guestbook_comment_counts gcc");
             query.AddFields("comment_comments");
@@ -246,7 +246,7 @@ namespace BoxSocial.Applications.GuestBook
 
         private void userCommentDeleted(CommentPostedEventArgs e)
         {
-            Member userProfile = new Member(core, e.ItemId);
+            User userProfile = new User(core, e.ItemId);
 
             UpdateQuery uquery = new UpdateQuery("guestbook_comment_counts");
             uquery.AddField("comment_comments", new QueryOperation("comment_comments", QueryOperations.Subtraction, 1));
@@ -274,7 +274,7 @@ namespace BoxSocial.Applications.GuestBook
                 itemId, adjustment));
         }
 
-        private bool groupCanPostComment(long itemId, Member member)
+        private bool groupCanPostComment(long itemId, User member)
         {
             try
             {
@@ -295,7 +295,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool groupCanDeleteComment(long itemId, Member member)
+        private bool groupCanDeleteComment(long itemId, User member)
         {
             try
             {
@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.GuestBook
                 itemId, adjustment));
         }
 
-        private bool networkCanPostComment(long itemId, Member member)
+        private bool networkCanPostComment(long itemId, User member)
         {
             try
             {
@@ -343,7 +343,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool networkCanDeleteComment(long itemId, Member member)
+        private bool networkCanDeleteComment(long itemId, User member)
         {
             return false;
         }
@@ -354,7 +354,7 @@ namespace BoxSocial.Applications.GuestBook
                 itemId, adjustment));
         }
 
-        private bool applicationCanPostComment(long itemId, Member member)
+        private bool applicationCanPostComment(long itemId, User member)
         {
             if (member != null)
             {
@@ -366,7 +366,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool applicationCanDeleteComment(long itemId, Member member)
+        private bool applicationCanDeleteComment(long itemId, User member)
         {
             // TODO: scrape for owner
             return false;
@@ -438,7 +438,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public void ShowMemberGuestBook(HookEventArgs e)
         {
-            Member profileOwner = (Member)e.Owner;
+            User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
             profileOwner.ProfileAccess.SetViewer(e.core.session.LoggedInMember);

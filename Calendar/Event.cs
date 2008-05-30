@@ -164,11 +164,11 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public Member Owner
+        public User Owner
         {
             get
             {
-                return (Member)owner;
+                return (User)owner;
             }
         }
 
@@ -267,13 +267,13 @@ namespace BoxSocial.Applications.Calendar
         {
             if (owner == null || ownerId != owner.Id)
             {
-                owner = new Member(core, userId);
+                owner = new User(core, userId);
             }
 
             eventAccess = new Access(db, permissions, owner);
         }
 
-        public static Event Create(Core core, Member creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
+        public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
         {
             long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, '{2}', '{3}', '{4}', '{5}', {6}, {7}, {8})",
                 creator.UserId, owner.Id, Mysql.Escape(owner.Type), Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
@@ -318,10 +318,10 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public void Invite(Core core, Member invitee)
+        public void Invite(Core core, User invitee)
         {
             core.LoadUserProfile(userId);
-            Member user = core.UserProfiles[userId];
+            User user = core.UserProfiles[userId];
             // only the person who created the event can invite people to it
             if (core.LoggedInMemberId == userId)
             {
@@ -369,15 +369,15 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public void Invite(Core core, List<Member> invitees)
+        public void Invite(Core core, List<User> invitees)
         {
             core.LoadUserProfile(userId);
-            Member user = core.UserProfiles[userId];
+            User user = core.UserProfiles[userId];
             // only the person who created the event can invite people to it
             if (core.LoggedInMemberId == userId)
             {
                 long friends = 0;
-                foreach (Member invitee in invitees)
+                foreach (User invitee in invitees)
                 {
                     // we can only invite people friends with us to an event
                     if (invitee.IsFriend(user))
@@ -447,7 +447,7 @@ namespace BoxSocial.Applications.Calendar
             return ids;
         }
 
-        public bool IsInvitee(Member member)
+        public bool IsInvitee(User member)
         {
             if (member != null)
             {
@@ -588,7 +588,7 @@ namespace BoxSocial.Applications.Calendar
                         break;
                     }
                     VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
-                    Member attendee = core.UserProfiles[attendeeId];
+                    User attendee = core.UserProfiles[attendeeId];
 
                     attendeesVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(attendee.Uri));
                     attendeesVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(attendee.DisplayName));

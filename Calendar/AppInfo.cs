@@ -163,7 +163,7 @@ namespace BoxSocial.Applications.Calendar
         {
             // Notify of a new comment
             Event calendarEvent = new Event(core, null, e.ItemId);
-            Member owner = (Member)calendarEvent.Owner;
+            User owner = (User)calendarEvent.Owner;
 
             ApplicationEntry ae = new ApplicationEntry(core, owner, "Calendar");
 
@@ -181,7 +181,7 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool eventCanPostComment(long itemId, Member member)
+        private bool eventCanPostComment(long itemId, User member)
         {
             Event calendarEvent = new Event(core, null, itemId);
             calendarEvent.EventAccess.SetViewer(member);
@@ -202,7 +202,7 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool eventCanDeleteComment(long itemId, Member member)
+        private bool eventCanDeleteComment(long itemId, User member)
         {
             Event calendarEvent = new Event(core, null, itemId);
 

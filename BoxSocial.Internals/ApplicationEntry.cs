@@ -415,7 +415,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
 
                 if (this.owner == null)
                 {
-                    this.owner = new Member(core, creatorId);
+                    this.owner = new User(core, creatorId);
                 }
             }
             else
@@ -586,12 +586,12 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             }
         }
 
-        public override bool CanModerateComments(Member member)
+        public override bool CanModerateComments(User member)
         {
             return false;
         }
 
-        public override bool IsCommentOwner(Member member)
+        public override bool IsCommentOwner(User member)
         {
             if (member != null)
             {
@@ -603,12 +603,12 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             return false;
         }
 
-        public override ushort GetAccessLevel(Member viewer)
+        public override ushort GetAccessLevel(User viewer)
         {
             return 0x0001;
         }
 
-        public override void GetCan(ushort accessBits, Member viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             if (viewer != null)
             {
@@ -662,7 +662,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
         {
             if (!HasInstalled(viewer))
             {
-                if (viewer is Member)
+                if (viewer is User)
                 {
                     Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
@@ -671,7 +671,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
                     foreach (string slug in slugs.Keys)
                     {
                         string tSlug = slug;
-                        Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
@@ -693,7 +693,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             }
             else
             {
-                if (viewer is Member)
+                if (viewer is User)
                 {
                     Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
@@ -703,7 +703,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
                     {
                         SelectQuery query = new SelectQuery("user_pages");
                         query.AddFields("page_id");
-                        query.AddCondition("user_id", ((Member)viewer).UserId);
+                        query.AddCondition("user_id", ((User)viewer).UserId);
                         query.AddCondition("page_title", slugs[slug]);
                         query.AddCondition("page_slug", slug);
                         query.AddCondition("page_parent_path", "");
@@ -711,13 +711,13 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
                         if (db.Query(query).Rows.Count == 0)
                         {
                             string tSlug = slug;
-                            Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
                         else
                         {
                             try
                             {
-                                Page myPage = new Page(db, (Member)viewer, slug, "");
+                                Page myPage = new Page(db, (User)viewer, slug, "");
 
                                 if (myPage.ListOnly)
                                 {
@@ -732,7 +732,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
                             catch (PageNotFoundException)
                             {
                                 string tSlug = slug;
-                                Page.Create(core, (Member)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                                Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                             }
                         }
                     }
@@ -770,7 +770,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
 
             if (HasInstalled(viewer))
             {
-                if (viewer is Member)
+                if (viewer is User)
                 {
                     Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
@@ -778,7 +778,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
 
                     foreach (string slug in slugs.Keys)
                     {
-                        Page page = new Page(db, (Member)viewer, slug, "");
+                        Page page = new Page(db, (User)viewer, slug, "");
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}';",
@@ -810,7 +810,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             return output;
         }
 
-        public void SendNotification(Member receiver, string subject, string body, Template emailBody)
+        public void SendNotification(User receiver, string subject, string body, Template emailBody)
         {
             if (canNotify(receiver))
             {
@@ -823,7 +823,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             }
         }
 
-        public void SendNotification(Member receiver, string subject, string body)
+        public void SendNotification(User receiver, string subject, string body)
         {
             if (canNotify(receiver))
             {
@@ -841,7 +841,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             }
         }
 
-        private bool canNotify(Member owner)
+        private bool canNotify(User owner)
         {
             SelectQuery query = new SelectQuery("notifications");
             query.AddField(new QueryFunction("notification_id", QueryFunctions.Count, "twentyfour")); //"COUNT(notification_id) as twentyfour");
@@ -859,12 +859,12 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             return false;
         }
 
-        public void PublishToFeed(Member owner, string title)
+        public void PublishToFeed(User owner, string title)
         {
             PublishToFeed(owner, title, "");
         }
 
-        public void PublishToFeed(Member owner, string title, string message)
+        public void PublishToFeed(User owner, string title, string message)
         {
             if (title.Length > 63)
             {
@@ -930,7 +930,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
         /// </summary>
         /// <param name="owner"></param>
         /// <returns></returns>
-        public Action GetMostRecentFeedAction(Member owner)
+        public Action GetMostRecentFeedAction(User owner)
         {
             SelectQuery query = new SelectQuery("actions at");
             query.AddFields(Action.FEED_FIELDS);
@@ -957,7 +957,7 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
-            Member Creator = new Member(core, page.AnApplication.CreatorId, true);
+            User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
 
             core.template.ParseVariables("APPLICATION_NAME", HttpUtility.HtmlEncode(page.AnApplication.Title));
             core.template.ParseVariables("U_APPLICATION", HttpUtility.HtmlEncode(page.AnApplication.Uri));

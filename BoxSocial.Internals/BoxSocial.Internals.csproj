@@ -115,6 +115,8 @@
     <Compile Include="Uri.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserEmail.cs" />
+    <Compile Include="UserInfo.cs" />
+    <Compile Include="UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">

@@ -29,7 +29,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.IO;
 using BoxSocial.Internals;

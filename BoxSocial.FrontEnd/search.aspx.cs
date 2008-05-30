@@ -26,7 +26,6 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -132,7 +131,7 @@ namespace BoxSocial.FrontEnd
         private void showFriends()
         {
             string needle = Request["name"];
-            List<Member> friends;
+            List<User> friends;
             if (IsAjax)
             {
                 friends = loggedInMember.SearchFriendNames(needle, 1, 10);
@@ -151,7 +150,7 @@ namespace BoxSocial.FrontEnd
 
                 friends = loggedInMember.SearchFriendNames(needle, page, 20);
 
-                foreach (Member friend in friends)
+                foreach (User friend in friends)
                 {
                     VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 

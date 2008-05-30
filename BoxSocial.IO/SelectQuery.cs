@@ -52,6 +52,11 @@ namespace BoxSocial.IO
         public JoinTypes Type;
 
         /// <summary>
+        /// 
+        /// </summary>
+        public string JoinTable;
+
+        /// <summary>
         /// table to join
         /// </summary>
         public string Table;
@@ -66,9 +71,10 @@ namespace BoxSocial.IO
         /// </summary>
         public string TableField;
 
-        public TableJoin(JoinTypes type, string table, string joinField, string tableField)
+        public TableJoin(JoinTypes type, string joinTable, string table, string joinField, string tableField)
         {
             Type = type;
+            JoinTable = joinTable;
             Table = table;
             JoinField = joinField;
             TableField = tableField;
@@ -79,14 +85,14 @@ namespace BoxSocial.IO
             switch (Type)
             {
                 case JoinTypes.Inner:
-                    return string.Format("INNER JOIN {0} ON {1} = {2}",
-                        Table, TableField, JoinField);
+                    return string.Format("INNER JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
+                        Table, TableField, JoinField, JoinTable);
                 case JoinTypes.Left:
-                    return string.Format("LEFT JOIN {0} ON {1} = {2}",
-                        Table, TableField, JoinField);
+                    return string.Format("LEFT JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
+                        Table, TableField, JoinField, JoinTable);
                 case JoinTypes.Right:
-                    return string.Format("RIGHT JOIN {0} ON {1} = {2}",
-                        Table, TableField, JoinField);
+                    return string.Format("RIGHT JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
+                        Table, TableField, JoinField, JoinTable);
                 default:
                     return "";
             }
@@ -153,9 +159,16 @@ namespace BoxSocial.IO
             this.fields.Add(field.ToString());
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type">Type of table join</param>
+        /// <param name="table">Table adjoining the parent</param>
+        /// <param name="joinField">Join field in the table being adjoined to the parent</param>
+        /// <param name="tableField">Join field in the parent table</param>
         public void AddJoin(JoinTypes type, string table, string joinField, string tableField)
         {
-            joins.Add(new TableJoin(type, table, joinField, tableField));
+            joins.Add(new TableJoin(type, this.tables[0], table, joinField, tableField));
         }
 
         public void AddSort(SortOrder order, string field)

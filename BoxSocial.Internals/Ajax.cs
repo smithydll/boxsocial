@@ -28,7 +28,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.IO;
@@ -46,7 +45,6 @@ namespace BoxSocial.Internals
                 core = value;
             }
         }
-
 
         /// <summary>
         /// Send a status code only the client has to work out what to do with.

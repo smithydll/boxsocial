@@ -24,7 +24,6 @@ using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -59,13 +58,13 @@ namespace BoxSocial.Internals
                 pictureId), true);
         }
 
-        public static string BuildHomepageUri(Member member)
+        public static string BuildHomepageUri(User member)
         {
             return AppendSid(string.Format("/{0}",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildProfileUri(Member member)
+        public static string BuildProfileUri(User member)
         {
             if (member.ProfileHomepage == "/profile")
             {
@@ -79,31 +78,31 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildGuestBookUri(Member member)
+        public static string BuildGuestBookUri(User member)
         {
             return AppendSid(string.Format("/{0}/profile/comments",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildGuestBookUri(Member member, Member member2)
+        public static string BuildGuestBookUri(User member, User member2)
         {
             return AppendSid(string.Format("/{0}/profile/comments/{1}",
                 member.UserName.ToLower(), member2.UserName.ToLower()));
         }
 
-        public static string BuildStatusUri(Member member)
+        public static string BuildStatusUri(User member)
         {
             return AppendSid(string.Format("/{0}/profile/status",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildListsUri(Member member)
+        public static string BuildListsUri(User member)
         {
             return AppendSid(string.Format("/{0}/lists",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildListUri(Member member, string slug)
+        public static string BuildListUri(User member, string slug)
         {
             return AppendSid(string.Format("/{0}/lists/{1}",
                 member.UserName.ToLower(), slug));
@@ -127,7 +126,7 @@ namespace BoxSocial.Internals
                 deleteId), true);
         }
 
-        public static string BuildBlogUri(Member member)
+        public static string BuildBlogUri(User member)
         {
             if (member.ProfileHomepage == "/blog")
             {
@@ -141,79 +140,79 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildBlogRssUri(Member member)
+        public static string BuildBlogRssUri(User member)
         {
             return AppendSid(string.Format("/{0}/blog?rss=true",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildBlogUri(Member member, string category)
+        public static string BuildBlogUri(User member, string category)
         {
             return AppendSid(string.Format("/{0}/blog/category/{1}",
                 member.UserName.ToLower(), category));
         }
 
-        public static string BuildBlogRssUri(Member member, string category)
+        public static string BuildBlogRssUri(User member, string category)
         {
             return AppendSid(string.Format("/{0}/blog/category/{1}?rss=true",
                 member.UserName.ToLower(), category));
         }
 
-        public static string BuildBlogUri(Member member, int year)
+        public static string BuildBlogUri(User member, int year)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}",
                 member.UserName.ToLower(), year));
         }
 
-        public static string BuildBlogRssUri(Member member, int year)
+        public static string BuildBlogRssUri(User member, int year)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}?rss=true",
                 member.UserName.ToLower(), year));
         }
 
-        public static string BuildBlogUri(Member member, int year, int month)
+        public static string BuildBlogUri(User member, int year, int month)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}",
                 member.UserName.ToLower(), year, month));
         }
 
-        public static string BuildBlogRssUri(Member member, int year, int month)
+        public static string BuildBlogRssUri(User member, int year, int month)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}?rss=true",
                 member.UserName.ToLower(), year, month));
         }
 
-        public static string BuildBlogUri(Member member, int year, int month, long postId)
+        public static string BuildBlogUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}/{3}",
                 member.UserName.ToLower(), year, month, postId));
         }
 
-        public static string BuildBlogRssUri(Member member, int year, int month, long postId)
+        public static string BuildBlogRssUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}/{3}?rss=true",
                 member.UserName.ToLower(), year, month, postId));
         }
 
-        public static string BuildFriendsUri(Member member)
+        public static string BuildFriendsUri(User member)
         {
             return AppendSid(string.Format("/{0}/friends",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildGalleryUri(Member member)
+        public static string BuildGalleryUri(User member)
         {
             return AppendSid(string.Format("/{0}/gallery",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildGalleryCommentsUri(Member member)
+        public static string BuildGalleryCommentsUri(User member)
         {
             return AppendSid(string.Format("/{0}/gallery/comments",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildGalleryCommentsUri(Member member, string path)
+        public static string BuildGalleryCommentsUri(User member, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -238,7 +237,7 @@ namespace BoxSocial.Internals
                 galleryId), true);
         }
 
-        public static string BuildPageUri(Member member, string pageSlug)
+        public static string BuildPageUri(User member, string pageSlug)
         {
             return AppendSid(string.Format("/{0}/{1}",
                 member.UserName.ToLower(), pageSlug));
@@ -282,13 +281,13 @@ namespace BoxSocial.Internals
             return AppendSid("/sign-in/", true);
         }
 
-        public static string BuildBlogPostUri(Member member, int year, int month, long postId)
+        public static string BuildBlogPostUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}/{3}",
                 member.UserName.ToLower(), year, month, postId));
         }
 
-        public static string BuildBlogPostRssUri(Member member, int year, int month, long postId)
+        public static string BuildBlogPostRssUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("/{0}/blog/{1:0000}/{2:00}/{3}?rss=true",
                 member.UserName.ToLower(), year, month, postId));

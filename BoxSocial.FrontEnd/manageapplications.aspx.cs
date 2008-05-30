@@ -26,12 +26,12 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                List<Member> members = new List<Member>();
+                List<User> members = new List<User>();
 
                 SelectQuery query = new SelectQuery("primitive_apps pa");
                 query.AddFields(ApplicationEntry.APPLICATION_FIELDS);
                 query.AddFields(ApplicationEntry.USER_APPLICATION_FIELDS);
-                query.AddFields(Member.USER_INFO_FIELDS);
+                query.AddFields(BoxSocial.Internals.User.USER_INFO_FIELDS);
                 query.AddJoin(JoinTypes.Inner, "applications ap", "ap.application_id", "pa.application_id");
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "pa.item_id", "ui.user_id");
                 query.AddCondition("pa.item_type", "USER");
@@ -41,7 +41,7 @@ namespace BoxSocial.FrontEnd
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
                     dr["user_id"] = dr["item_id"];
-                    Member member = new Member(core, dr, false);
+                    User member = new User(core, dr, false);
                     members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);

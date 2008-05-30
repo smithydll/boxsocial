@@ -52,12 +52,12 @@ namespace BoxSocial.Internals
             this.commentDeleted = commentDeleted;
         }
 
-        public bool CanPostComment(long itemId, Member viewer)
+        public bool CanPostComment(long itemId, User viewer)
         {
             return canPostComment(itemId, viewer);
         }
 
-        public bool CanDeleteComment(long itemId, Member viewer)
+        public bool CanDeleteComment(long itemId, User viewer)
         {
             return canDeleteComment(itemId, viewer);
         }
@@ -67,12 +67,12 @@ namespace BoxSocial.Internals
             adjustCommentCount(itemId, adjustment);
         }
 
-        public void CommentPosted(Comment comment, Member poster, string itemType, long itemId)
+        public void CommentPosted(Comment comment, User poster, string itemType, long itemId)
         {
             commentPosted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
         }
 
-        public void CommentDeleted(Comment comment, Member poster, string itemType, long itemId)
+        public void CommentDeleted(Comment comment, User poster, string itemType, long itemId)
         {
             if (commentDeleted != null)
             {

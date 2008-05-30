@@ -42,7 +42,7 @@ namespace BoxSocial.Applications.Pages
 
         private long listId;
         private int ownerId;
-        private Member owner;
+        private User owner;
         private short type;
         private string title;
         private uint items;
@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public List(Mysql db, Member owner, long listId)
+        public List(Mysql db, User owner, long listId)
         {
             this.db = db;
             this.owner = owner;
@@ -137,7 +137,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public List(Mysql db, Member owner, string listName)
+        public List(Mysql db, User owner, string listName)
         {
             this.db = db;
             this.owner = owner;
@@ -159,7 +159,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        private List(Mysql db, Member owner, DataRow listRow)
+        private List(Mysql db, User owner, DataRow listRow)
         {
             this.db = db;
             this.owner = owner;
@@ -205,11 +205,11 @@ namespace BoxSocial.Applications.Pages
         /// <param name="db"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        public static List<List> GetLists(Core core, Member owner)
+        public static List<List> GetLists(Core core, User owner)
         {
             List<List> lists = new List<List>();
 
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             DataTable listsTable = core.db.Query(string.Format("SELECT {0} FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {1} AND (list_access & {3:0} OR ul.user_id = {2})",
@@ -223,7 +223,7 @@ namespace BoxSocial.Applications.Pages
             return lists;
         }
 
-        public static string BuildListsUri(Member member)
+        public static string BuildListsUri(User member)
         {
             return Linker.AppendSid(string.Format("/{0}/lists",
                 member.UserName.ToLower()));

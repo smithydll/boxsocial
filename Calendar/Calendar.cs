@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<Event> events = new List<Event>();
 
-            long loggedIdUid = Member.GetMemberId(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE (ev.event_access & {5:0} OR ev.user_id = {6}) AND ev.event_item_id = {1} AND ev.event_item_type = '{2}' AND ((ev.event_time_start_ut >= {3} AND ev.event_time_start_ut <= {4}) OR (ev.event_time_end_ut >= {3} AND ev.event_time_end_ut <= {4})) ORDER BY ev.event_time_start_ut ASC;",
@@ -101,7 +101,7 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="startTimeRaw"></param>
         /// <param name="endTimeRaw"></param>
         /// <returns></returns>
-        public List<Event> GetMyEvents(Member owner, long startTimeRaw, long endTimeRaw)
+        public List<Event> GetMyEvents(User owner, long startTimeRaw, long endTimeRaw)
         {
             List<Event> events = new List<Event>();
 

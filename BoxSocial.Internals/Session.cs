@@ -29,7 +29,6 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.IO;
@@ -43,7 +42,7 @@ namespace BoxSocial.Internals
     {
         private const int SESSION_EXPIRES = 3600;
 
-        private Member loggedInMember;
+        private User loggedInMember;
         private IPAddress ipAddress;
         private bool isLoggedIn;
         private HttpRequest Request;
@@ -195,11 +194,11 @@ namespace BoxSocial.Internals
                             INNER JOIN user_info ui ON uk.user_id = ui.user_id
                             INNER JOIN session_keys sk ON sk.user_id = uk.user_id
                             WHERE uk.user_id = {0} AND ui.user_active = 1 AND sk.key_id = '{2}'",
-                        userId, Member.USER_INFO_FIELDS, SessionState.SessionMd5(sessionData.autoLoginId)));
+                        userId, User.USER_INFO_FIELDS, SessionState.SessionMd5(sessionData.autoLoginId)));
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new Member(core, userSessionTable.Rows[0], false);
+                        loggedInMember = new User(core, userSessionTable.Rows[0], false);
                         enableAutologin = isLoggedIn = true;
                     }
                     else
@@ -232,11 +231,11 @@ namespace BoxSocial.Internals
                     sessionData.userId = userId;
 
                     DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0} AND ui.user_active = 1",
-                        userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
+                        userId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new Member(core, userSessionTable.Rows[0], false, true);
+                        loggedInMember = new User(core, userSessionTable.Rows[0], false, true);
                         isLoggedIn = true;
                     }
                     else
@@ -272,11 +271,11 @@ namespace BoxSocial.Internals
                 enableAutologin = isLoggedIn = false;
 
                 DataTable userTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
-                    userId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
+                    userId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
 
                 if (userTable.Rows.Count == 1)
                 {
-                    loggedInMember = new Member(core, userTable.Rows[0], false, true);
+                    loggedInMember = new User(core, userTable.Rows[0], false, true);
                 }
             }
 
@@ -427,7 +426,7 @@ namespace BoxSocial.Internals
                 // data in preparation
                 //
                 DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2}, us.session_string, us.session_ip, us.session_time_ut FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_sessions us ON us.user_id = uk.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE us.session_string = '{0}';",
-                    sessionId, Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS));
+                    sessionId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
 
                 //
                 // Did the session exist in the DB?
@@ -435,7 +434,7 @@ namespace BoxSocial.Internals
                 if (userSessionTable.Rows.Count == 1)
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
-                    loggedInMember = new Member(core, userSessionRow, false, true);
+                    loggedInMember = new User(core, userSessionRow, false, true);
                     Linker.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
@@ -565,11 +564,11 @@ namespace BoxSocial.Internals
             //
 
             DataTable userTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_id = {0}",
-                    0, Member.USER_INFO_FIELDS));
+                    0, User.USER_INFO_FIELDS));
 
             if (userTable.Rows.Count == 1)
             {
-                loggedInMember = new Member(core, userTable.Rows[0], false);
+                loggedInMember = new User(core, userTable.Rows[0], false);
             }
 
             HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
@@ -600,7 +599,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member LoggedInMember
+        public User LoggedInMember
         {
             get
             {
@@ -650,7 +649,7 @@ namespace BoxSocial.Internals
 
         public static string SessionMd5(string input)
         {
-            return FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
+            return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
 
         public static void RedirectAuthenticate()

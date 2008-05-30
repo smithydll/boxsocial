@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Gallery
 
         private Core core;
 
-        private Member taggedMember;
+        private User taggedMember;
         private GalleryItem taggedGalleryItem;
         private long galleryItemId;
         private long userId;
@@ -61,7 +61,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the user tagged
         /// </summary>
-        public Member TaggedMember
+        public User TaggedMember
         {
             get
             {
@@ -236,7 +236,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="member"></param>
         /// <param name="location"></param>
         /// <returns></returns>
-        public static UserTag Create(Core core, GalleryItem galleryItem, Member owner, Member member, Point location)
+        public static UserTag Create(Core core, GalleryItem galleryItem, User owner, User member, Point location)
         {
             InsertQuery query = new InsertQuery("user_tags");
             query.AddField("user_id", owner.UserId);

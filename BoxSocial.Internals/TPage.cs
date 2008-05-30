@@ -27,7 +27,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Web;
 using System.Web.Configuration;
-using System.Web.Security;
 using System.Drawing;
 using BoxSocial.IO;
 
@@ -65,7 +64,7 @@ namespace BoxSocial.Internals
 
         public Template template;
         public Mysql db;
-        public Member loggedInMember;
+        public User loggedInMember;
         public SessionState session;
         protected Random rand;
         Stopwatch timer;

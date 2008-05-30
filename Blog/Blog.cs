@@ -145,7 +145,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core Token</param>
         /// <param name="owner">Owner whose blog to retrieve</param>
-        public Blog(Core core, Member owner)
+        public Blog(Core core, User owner)
         {
             this.core = core;
             this.db = core.db;
@@ -275,7 +275,7 @@ namespace BoxSocial.Applications.Blog
         {
             List<BlogEntry> entries = new List<BlogEntry>();
 
-            long loggedIdUid = Member.GetMemberId(page.loggedInMember);
+            long loggedIdUid = User.GetMemberId(page.loggedInMember);
             readAccessLevel = page.ProfileOwner.GetAccessLevel(page.loggedInMember);
 
             string sqlWhere = "";

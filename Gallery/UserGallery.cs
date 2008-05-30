@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
-        public UserGallery(Core core, Member owner)
+        public UserGallery(Core core, User owner)
             : base(core, (Primitive)owner)
         {
         }
@@ -49,7 +49,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of user gallery</param>
         /// <param name="hasIcon">True if the raw data contains icon data</param>
-        public UserGallery(Core core, Member owner, DataRow galleryRow, bool hasIcon)
+        public UserGallery(Core core, User owner, DataRow galleryRow, bool hasIcon)
             : base(core, (Primitive)owner, galleryRow, hasIcon)
         {
         }
@@ -60,7 +60,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryId">Gallery Id</param>
-        public UserGallery(Core core, Member owner, long galleryId)
+        public UserGallery(Core core, User owner, long galleryId)
             : base(core, (Primitive)owner, galleryId)
         {
         }
@@ -71,7 +71,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="db">Database</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="path">Gallery path</param>
-        public UserGallery(Core core, Member owner, string path)
+        public UserGallery(Core core, User owner, string path)
             : base(core, (Primitive)owner, path)
         {
         }
@@ -87,7 +87,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core))
             {
-                items.Add(new UserGalleryItem(core, (Member)owner, dr));
+                items.Add(new UserGalleryItem(core, (User)owner, dr));
             }
 
             return items;
@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
             {
-                items.Add(new UserGalleryItem(core, (Member)owner, dr));
+                items.Add(new UserGalleryItem(core, (User)owner, dr));
             }
 
             return items;
@@ -123,7 +123,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetGalleryDataRows(core))
             {
-                items.Add(new UserGallery(core, (Member)owner, dr, true));
+                items.Add(new UserGallery(core, (User)owner, dr, true));
             }
 
             return items;

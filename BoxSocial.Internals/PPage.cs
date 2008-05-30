@@ -31,7 +31,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Web;
-using System.Web.Security;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -42,7 +41,7 @@ namespace BoxSocial.Internals
     public abstract partial class PPage : TPage
     {
         protected string profileUserName;
-        protected Member profileOwner;
+        protected User profileOwner;
 
         public PPage()
             : base()
@@ -73,7 +72,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Member ProfileOwner
+        public User ProfileOwner
         {
             get
             {
@@ -87,7 +86,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                profileOwner = new Member(core, profileUserName);
+                profileOwner = new User(core, profileUserName);
             }
             catch (InvalidUserException)
             {

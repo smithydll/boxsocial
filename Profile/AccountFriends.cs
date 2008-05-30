@@ -29,7 +29,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.IO;
 using BoxSocial.Internals;
@@ -450,12 +449,12 @@ namespace BoxSocial
             foreach (string friendEmail in friendEmails)
             {
                 //Response.Write(friendEmail + "<br />"); // DEBUG
-                if (Member.CheckEmailValid(friendEmail))
+                if (User.CheckEmailValid(friendEmail))
                 {
-                    if (Member.CheckEmailUnique(db, friendEmail))
+                    if (User.CheckEmailUnique(db, friendEmail))
                     {
                         DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
-                            Mysql.Escape(Member.HashPassword(friendEmail))));
+                            Mysql.Escape(User.HashPassword(friendEmail))));
 
                         if (inviteKeysTable.Rows.Count > 0)
                         {
@@ -464,7 +463,7 @@ namespace BoxSocial
                         else
                         {
                             Random rand = new Random();
-                            string emailKey = Member.HashPassword(friendEmail + rand.NextDouble().ToString());
+                            string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                             emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
                             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
@@ -481,7 +480,7 @@ namespace BoxSocial
                                 emailTemplate.ToString());
 
                             db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
-                                Mysql.Escape(emailKey), Mysql.Escape(Member.HashPassword(friendEmail))));
+                                Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
                         }
                     }
                     else
@@ -490,11 +489,11 @@ namespace BoxSocial
                         if (friendEmail.ToLower() != loggedInMember.AlternateEmail.ToLower())
                         {
                             DataTable friendTable = db.Query(string.Format("SELECT {1} FROM user_info ui WHERE LCASE(user_alternate_email) = '{1}'",
-                                Mysql.Escape(friendEmail.ToLower()), Member.USER_INFO_FIELDS));
+                                Mysql.Escape(friendEmail.ToLower()), User.USER_INFO_FIELDS));
 
                             if (friendTable.Rows.Count == 1)
                             {
-                                Member friendProfile = new Member(core, friendTable.Rows[0], false);
+                                User friendProfile = new User(core, friendTable.Rows[0], false);
                                 long friendId = friendProfile.UserId;
 
                                 db.BeginTransaction();
@@ -568,12 +567,12 @@ namespace BoxSocial
                 return;
             }
 
-            if (Member.CheckEmailValid(friendEmail))
+            if (User.CheckEmailValid(friendEmail))
             {
-                if (Member.CheckEmailUnique(db, friendEmail))
+                if (User.CheckEmailUnique(db, friendEmail))
                 {
                     DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
-                        Mysql.Escape(Member.HashPassword(friendEmail))));
+                        Mysql.Escape(User.HashPassword(friendEmail))));
 
                     if (inviteKeysTable.Rows.Count > 0)
                     {
@@ -583,7 +582,7 @@ namespace BoxSocial
                     else
                     {
                         Random rand = new Random();
-                        string emailKey = Member.HashPassword(friendEmail + rand.NextDouble().ToString());
+                        string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                         emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
                         Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
@@ -605,13 +604,13 @@ namespace BoxSocial
                             emailTemplate.ToString());
 
                         db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
-                            Mysql.Escape(emailKey), Mysql.Escape(Member.HashPassword(friendEmail))));
+                            Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
                     }
                 }
                 else
                 {
                     Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
-                        Linker.BuildAddFriendUri(Member.lastEmailId)));
+                        Linker.BuildAddFriendUri(User.lastEmailId)));
                     return;
                 }
             }
@@ -667,7 +666,7 @@ namespace BoxSocial
                 }
             }
 
-            Member friendProfile = new Member(core, friendId);
+            User friendProfile = new User(core, friendId);
 
             bool isFriend = friendProfile.IsFriend(session.LoggedInMember);
 

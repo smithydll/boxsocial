@@ -167,7 +167,7 @@ namespace BoxSocial.Groups
 
         public void ShowMemberGroups(HookEventArgs e)
         {
-            Member profileOwner = (Member)e.Owner;
+            User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegroups");
 
             List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);

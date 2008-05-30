@@ -23,7 +23,6 @@ using System.Collections;
 using System.Configuration;
 using System.Data;
 using System.Web;
-using System.Web.Security;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -57,7 +56,6 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (session.IsLoggedIn)
             {
                 // redirect to the homepage if we are already logged in
@@ -146,22 +144,22 @@ namespace BoxSocial.FrontEnd
                     template.ParseVariables("ERROR", "Captcha is invalid, please try again.");
                     prepareNewCaptcha();
                 }
-                else if (!Member.CheckUserNameValid(Request.Form["username"]))
+                else if (!BoxSocial.Internals.User.CheckUserNameValid(Request.Form["username"]))
                 {
                     template.ParseVariables("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                     prepareNewCaptcha();
                 }
-                else if (!Member.CheckUserNameUnique(db, Request.Form["username"]))
+                else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, Request.Form["username"]))
                 {
                     template.ParseVariables("ERROR", "Username is already taken, please choose another one.");
                     prepareNewCaptcha();
                 }
-                else if (!Member.CheckEmailValid(Request.Form["email"]))
+                else if (!BoxSocial.Internals.User.CheckEmailValid(Request.Form["email"]))
                 {
                     template.ParseVariables("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
                     prepareNewCaptcha();
                 }
-                else if (!Member.CheckEmailUnique(db, Request.Form["email"]))
+                else if (!BoxSocial.Internals.User.CheckEmailUnique(db, Request.Form["email"]))
                 {
                     template.ParseVariables("ERROR", "The e-mail address you have entered has already been registered.");
                     prepareNewCaptcha();
@@ -188,7 +186,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    if (Member.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
+                    if (BoxSocial.Internals.User.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
                     {
                         template.ParseVariables("ERROR", "Bad registration details");
                         prepareNewCaptcha();

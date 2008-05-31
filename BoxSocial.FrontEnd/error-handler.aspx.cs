@@ -44,6 +44,8 @@ namespace BoxSocial.FrontEnd
         {
             Exception ex = Server.GetLastError();
 
+            Display.ShowMessage("", Bbcode.Strip(ex.ToString()));
+
             try
             {
                 Email.SendEmail("xxx", "An Error occured at ZinZam.com", ex.ToString());

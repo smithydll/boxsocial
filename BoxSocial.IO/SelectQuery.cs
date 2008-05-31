@@ -71,6 +71,15 @@ namespace BoxSocial.IO
         /// </summary>
         public string TableField;
 
+        public TableJoin(JoinTypes type, DataField joinField, DataField tableField)
+        {
+            Type = type;
+            JoinTable = joinField.Table;
+            JoinField = joinField.Name;
+            Table = tableField.Table;
+            TableField = tableField.Name;
+        }
+
         public TableJoin(JoinTypes type, string joinTable, string table, string joinField, string tableField)
         {
             Type = type;
@@ -159,6 +168,11 @@ namespace BoxSocial.IO
             this.fields.Add(field.ToString());
         }
 
+        public void AddField(DataField field)
+        {
+            this.fields.Add(field.ToString());
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -169,6 +183,11 @@ namespace BoxSocial.IO
         public void AddJoin(JoinTypes type, string table, string joinField, string tableField)
         {
             joins.Add(new TableJoin(type, this.tables[0], table, joinField, tableField));
+        }
+
+        public void AddJoin(JoinTypes type, DataField joinField, DataField tableField)
+        {
+            joins.Add(new TableJoin(type, joinField, tableField));
         }
 
         public void AddSort(SortOrder order, string field)

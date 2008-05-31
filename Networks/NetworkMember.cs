@@ -32,17 +32,25 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Networks
 {
+    [DataTable("network_members")]
     public class NetworkMember : User
     {
         public const string USER_NETWORK_FIELDS = "nm.user_id, nm.network_id, nm.member_join_date_ut, nm.member_join_ip, nm.member_email, nm.member_active, nm.member_activate_code";
 
-        private int networkId;
+        [DataField("user_id")]
+        private new long userId; // hide the parent variable to have it register in the table
+        [DataField("network_id")]
+        private long networkId;
+        [DataField("member_join_date_ut")]
         private long memberJoinDateRaw;
+        [DataField("member_email", 255)]
         private string memberEmail;
+        [DataField("member_active")]
         private bool memberActive;
+        [DataField("member_activate_code", 64)]
         private string memberActivateCode;
 
-        public int NetworkId
+        public long NetworkId
         {
             get
             {
@@ -79,7 +87,15 @@ namespace BoxSocial.Networks
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
-        public NetworkMember(Core core, int networkId, int memberId) : base(core)
+        public NetworkMember(Core core, int networkId, User user)
+            : base(core)
+        {
+            this.userInfo = user.Info;
+            this.userProfile = user.Profile;
+        }
+
+        public NetworkMember(Core core, int networkId, int memberId)
+            : base(core)
         {
             SelectQuery query = new SelectQuery("network_members nm");
             query.AddFields(NetworkMember.USER_NETWORK_FIELDS, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
@@ -89,9 +105,6 @@ namespace BoxSocial.Networks
             query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
             query.AddCondition("nm.user_id", memberId);
             query.AddCondition("nm.network_id", networkId);
-
-            /*DataTable memberTable = db.Query(string.Format("SELECT {2}, {3}, {4}, {5} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.user_id = {0} AND nm.network_id = {1}",
-                memberId, networkId, USER_INFO_FIELDS, USER_PROFILE_FIELDS, USER_ICON_FIELDS, USER_NETWORK_FIELDS));*/
 
             DataTable memberTable = db.Query(query);
 
@@ -104,7 +117,7 @@ namespace BoxSocial.Networks
             }
             else
             {
-                throw new Exception("Invalid User Exception");
+                throw new InvalidUserException();
             }
         }
 

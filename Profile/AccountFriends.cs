@@ -493,7 +493,7 @@ namespace BoxSocial
 
                             if (friendTable.Rows.Count == 1)
                             {
-                                User friendProfile = new User(core, friendTable.Rows[0], false);
+                                User friendProfile = new User(core, friendTable.Rows[0], UserLoadOptions.Info);
                                 long friendId = friendProfile.UserId;
 
                                 db.BeginTransaction();

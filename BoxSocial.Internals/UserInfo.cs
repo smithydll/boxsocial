@@ -30,7 +30,7 @@ namespace BoxSocial.Internals
     [DataTable("user_info")]
     public sealed class UserInfo : Item
     {
-        [DataField("user_info", DataFieldKeys.Unique)]
+        [DataField("user_id", DataFieldKeys.Unique)]
         private long userId;
         [DataField("user_name", 64)]
         private string userName;
@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
         [DataField("user_alternate_email", 255)]
         private string primaryEmail;
         [DataField("user_time_zone")]
-        private ushort timeZone;
+        private ushort timeZoneCode;
         [DataField("user_active")]
         private bool userActivated;
         [DataField("user_activate_code", 64)]
@@ -77,9 +77,9 @@ namespace BoxSocial.Internals
         [DataField("user_show_custom_styles")]
         private bool showCustomStyles;
         [DataField("user_email_notifications")]
-        private bool sendNotifications;
+        private bool emailNotifications;
         [DataField("user_bytes")]
-        private long bytes;
+        private ulong bytes;
         [DataField("user_reg_date_ut")]
         private long registrationDateRaw;
         [DataField("user_last_visit_ut")]
@@ -88,7 +88,11 @@ namespace BoxSocial.Internals
         private long userStatusMessages;
 
         private string userNameOwnership;
+        private UnixTime timeZone;
 
+        /// <summary>
+        /// Gets the user Id
+        /// </summary>
         public long UserId
         {
             get
@@ -97,6 +101,9 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Gets the user name
+        /// </summary>
         public string UserName
         {
             get
@@ -105,6 +112,9 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Gets the user's Display name
+        /// </summary>
         public string DisplayName
         {
             get
@@ -120,6 +130,9 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Gets the user's Display name with ownership
+        /// </summary>
         public string DisplayNameOwnership
         {
             get
@@ -141,6 +154,156 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Gets whether the user wants to see custom styles
+        /// </summary>
+        public bool ShowCustomStyles
+        {
+            get
+            {
+                return showCustomStyles;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the user wants to see images in BBcode enabled fields
+        /// </summary>
+        public bool BbcodeShowImages
+        {
+            get
+            {
+                return ((BbcodeOptions)showBbcode & BbcodeOptions.ShowImages) == BbcodeOptions.ShowImages;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the user wants to see flash in BBcode enabled fields
+        /// </summary>
+        public bool BbcodeShowFlash
+        {
+            get
+            {
+                return ((BbcodeOptions)showBbcode & BbcodeOptions.ShowFlash) == BbcodeOptions.ShowFlash;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the user wants to see vieos in BBcode enabled fields
+        /// </summary>
+        public bool BbcodeShowVideos
+        {
+            get
+            {
+                return ((BbcodeOptions)showBbcode & BbcodeOptions.ShowVideo) == BbcodeOptions.ShowVideo;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's BBcode display options
+        /// </summary>
+        public BbcodeOptions GetUserBbcodeOptions
+        {
+            get
+            {
+                return (BbcodeOptions)showBbcode;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's homepage
+        /// </summary>
+        public string ProfileHomepage
+        {
+            get
+            {
+                return profileHomepage;
+            }
+            set
+            {
+                SetProperty("profileHomepage", value);
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's friend count
+        /// </summary>
+        public long Friends
+        {
+            get
+            {
+                return friends;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's primary e-mail address
+        /// </summary>
+        public string PrimaryEmail
+        {
+            get
+            {
+                return primaryEmail;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's e-mail notifications preference
+        /// </summary>
+        public bool EmailNotifications
+        {
+            get
+            {
+                return emailNotifications;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of bytes the user has consumed on the filesystem
+        /// </summary>
+        public ulong BytesUsed
+        {
+            get
+            {
+                return bytes;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's number of status messages
+        /// </summary>
+        public long StatusMessages
+        {
+            get
+            {
+                return userStatusMessages;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's time zone code
+        /// </summary>
+        public ushort TimeZoneCode
+        {
+            get
+            {
+                return timeZoneCode;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's time zone object
+        /// </summary>
+        public UnixTime GetTimeZone
+        {
+            get
+            {
+                return timeZone;
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's number of blog subscribers
+        /// </summary>
         public long BlogSubscriptions
         {
             get
@@ -149,20 +312,52 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Gets the user's registration date
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
         public DateTime GetRegistrationDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(registrationDateRaw);
         }
 
+        /// <summary>
+        /// Gets the user's last online date
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
         public DateTime GetLastOnlineDate(UnixTime tz)
         {
-            return tz.DateTimeFromMysql(lastVisitDateRaw);
+            if (tz != null)
+            {
+                return tz.DateTimeFromMysql(lastVisitDateRaw);
+            }
+            else
+            {
+                return timeZone.DateTimeFromMysql(lastVisitDateRaw);
+            }
+        }
+
+        internal UserInfo(Core core, long userId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserInfo_ItemLoad);
+
+            try
+            {
+                LoadItem("user_id", userId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
         }
 
         internal UserInfo(Core core, DataRow memberRow)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(MemberInfo_ItemLoad);
+            ItemLoad += new ItemLoadHandler(UserInfo_ItemLoad);
 
             try
             {
@@ -174,8 +369,9 @@ namespace BoxSocial.Internals
             }
         }
 
-        void MemberInfo_ItemLoad()
+        void UserInfo_ItemLoad()
         {
+            timeZone = new UnixTime(timeZoneCode);
         }
 
         public override long Id

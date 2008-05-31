@@ -1055,7 +1055,7 @@ namespace BoxSocial.Groups
 
             for (int i = 0; i < operatorsTable.Rows.Count; i++)
             {
-                User groupOperator = new User(core, operatorsTable.Rows[i], false, false);
+                User groupOperator = new User(core, operatorsTable.Rows[i], UserLoadOptions.Info);
                 string userDisplayName = (groupOperator.DisplayName != "") ? groupOperator.DisplayName : groupOperator.UserName;
 
                 VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
@@ -1131,7 +1131,7 @@ namespace BoxSocial.Groups
 
                 memberVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
                 memberVariableCollection.ParseVariables("JOIN_DATE", HttpUtility.HtmlEncode(page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz))));
-                memberVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(member.GetAgeString()));
+                memberVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(member.AgeString));
                 memberVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(member.Country));
                 memberVariableCollection.ParseVariables("USER_CAPTION", "");
 

@@ -30,7 +30,9 @@ namespace BoxSocial.Internals
     [DataTable("user_profile")]
     public sealed class UserProfile : Item
     {
-        [DataField("user_info", DataFieldKeys.Unique)]
+        private User user;
+
+        [DataField("user_id", DataFieldKeys.Unique)]
         private long userId;
         [DataField("profile_autobiography", MYSQL_TEXT)]
         private string autobiography;
@@ -53,11 +55,11 @@ namespace BoxSocial.Internals
         [DataField("profile_name_suffix", 8)]
         private string nameSuffix;
         [DataField("profile_hometown")]
-        private int hometown;
+        private uint hometown;
         [DataField("profile_views")]
         private long profileViews;
-        [DataField("country", 2)]
-        private char[] country;
+        [DataField("profile_country", 2)]
+        private string country;
         [DataField("profile_access")]
         private ushort permissions;
         [DataField("profile_height")]
@@ -70,6 +72,8 @@ namespace BoxSocial.Internals
         private long profileComments;
         [DataField("profile_date_of_birth_ut")]
         private long dateofBirthRaw;
+
+        private Access profileAccess;
 
         public long UserId
         {
@@ -201,7 +205,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                DateTime dateOfBirth = GetDateOfBirth(core.tz);
+                DateTime dateOfBirth = DateOfBirth;
                 if (dateOfBirth.Year == 1000) return 0;
                 if (DateTime.UtcNow.DayOfYear < dateOfBirth.DayOfYear)
                 {
@@ -214,20 +218,30 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string GetAgeString(UnixTime tz)
+        public string AgeString
         {
-            string age;
-            int ageInt = Age;
-            if (ageInt == 0)
+            get
             {
-                age = "FALSE";
-            }
-            else
-            {
-                age = ageInt.ToString() + " years old";
-            }
+                string age;
+                int ageInt = Age;
+                if (ageInt == 0)
+                {
+                    age = "FALSE";
+                }
+                else
+                {
+                    if (ageInt == 1)
+                    {
+                        age = ageInt.ToString() + " year old";
+                    }
+                    else
+                    {
+                        age = ageInt.ToString() + " years old";
+                    }
+                }
 
-            return age;
+                return age;
+            }
         }
 
         public string Title
@@ -270,6 +284,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long Comments
+        {
+            get
+            {
+                return profileComments;
+            }
+        }
+
         public short ReligionId
         {
             get
@@ -286,15 +308,59 @@ namespace BoxSocial.Internals
             }
         }
 
-        public DateTime GetDateOfBirth(UnixTime tz)
+        public Access ProfileAccess
         {
-            return tz.DateTimeFromMysql(dateofBirthRaw);
+            get
+            {
+                return profileAccess;
+            }
         }
 
-        internal UserProfile(Core core, DataRow memberRow)
+        public DateTime DateOfBirth
+        {
+            get
+            {
+                if (core.tz == null)
+                {
+                    if (user.Info != null)
+                    {
+                        return user.Info.GetTimeZone.DateTimeFromMysql(dateofBirthRaw);
+                    }
+                    else
+                    {
+                        UnixTime tz = new UnixTime(0);
+                        return tz.DateTimeFromMysql(dateofBirthRaw);
+                    }
+                }
+                else
+                {
+                    return core.tz.DateTimeFromMysql(dateofBirthRaw);
+                }
+            }
+        }
+
+        internal UserProfile(Core core, User user)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(MemberProfile_ItemLoad);
+            this.user = user;
+            ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+
+            try
+            {
+                LoadItem("user_id", user.UserId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
+        }
+
+        internal UserProfile(Core core, User user, DataRow memberRow)
+            : base(core)
+        {
+            this.user = user;
+
+            ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
 
             try
             {
@@ -306,13 +372,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal UserProfile(Core core, DataRow memberRow, UserLoadOptions loadOptions)
-            : this(core, memberRow)
+        internal UserProfile(Core core, User user, DataRow memberRow, UserLoadOptions loadOptions)
+            : this(core, user, memberRow)
         {
         }
 
-        void MemberProfile_ItemLoad()
+        void UserProfile_ItemLoad()
         {
+            profileAccess = new Access(db, permissions, user);
         }
 
         public override long Id

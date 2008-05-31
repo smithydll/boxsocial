@@ -96,11 +96,6 @@ namespace BoxSocial.Internals
             if (itemTable.Rows.Count == 1)
             {
                 loadItemInfo(itemTable.Rows[0]);
-
-                if (ItemLoad != null)
-                {
-                    ItemLoad();
-                }
             }
             else
             {
@@ -254,7 +249,7 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
-        internal protected static string[] GetFieldsPrefixed(Type type)
+        public static string[] GetFieldsPrefixed(Type type)
         {
             string tableName = GetTable(type);
             List<DataFieldInfo> fields = GetFields(type);
@@ -352,12 +347,31 @@ namespace BoxSocial.Internals
                         {
                             if (!(itemRow[columnName] is DBNull))
                             {
-                                fi.SetValue(this, itemRow[columnName]);
+                                try
+                                {
+                                    if (fi.FieldType == typeof(bool))
+                                    {
+                                        fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
+                                    }
+                                    else
+                                    {
+                                        fi.SetValue(this, itemRow[columnName]);
+                                    }
+                                }
+                                catch (ArgumentException ex)
+                                {
+                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
+                                }
                             }
                         }
                     }
                 }
 
+            }
+
+            if (ItemLoad != null)
+            {
+                ItemLoad();
             }
         }
     }

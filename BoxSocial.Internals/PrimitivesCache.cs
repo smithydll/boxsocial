@@ -84,19 +84,24 @@ namespace BoxSocial.Internals
 
             if (idList.Count > 0)
             {
-                SelectQuery query = new SelectQuery("user_keys uk");
-                query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
-                query.AddJoin(JoinTypes.Inner, "user_info ui", "uk.user_id", "ui.user_id");
-                query.AddJoin(JoinTypes.Inner, "user_profile up", "uk.user_id", "up.user_id");
-                query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-                query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-                query.AddCondition("uk.user_id", ConditionEquality.In, idList);
+                SelectQuery query = new SelectQuery("user_keys");
+                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+                query.AddCondition("`user_keys`.`user_id`", ConditionEquality.In, idList);
 
                 DataTable usersTable = db.Query(query);
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    User newUser = new User(core, userRow, true, true);
+                    User newUser = new User(core, userRow, UserLoadOptions.All);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                 }
@@ -151,7 +156,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
-                    User newUser = new User(core, userRow, true, true);
+                    User newUser = new User(core, userRow, UserLoadOptions.All);
                     userProfileCache.Add(newUser.Id, newUser);
                     userNameCache.Add(newUser.UserName, newUser.Id);
                     userIds.Add(newUser.Id);

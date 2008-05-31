@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database.cs" />
+    <Compile Include="DataField.cs" />
     <Compile Include="DataFieldAttribute.cs" />
     <Compile Include="DataFieldInfo.cs" />
     <Compile Include="DataTableAttribute.cs" />

@@ -249,7 +249,7 @@ namespace BoxSocial.Applications.Blog
             {
                 loadBlogEntryInfo(postEntryDataTable.Rows[0]);
 
-                this.owner = new User(core, ownerId, true);
+                this.owner = new User(core, ownerId, UserLoadOptions.All);
             }
             else
             {

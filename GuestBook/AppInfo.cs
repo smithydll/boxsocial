@@ -174,7 +174,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             try
             {
-                User owner = new User(core, itemId, true);
+                User owner = new User(core, itemId, UserLoadOptions.All);
 
                 owner.ProfileAccess.SetViewer(member);
 

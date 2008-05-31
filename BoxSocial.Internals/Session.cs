@@ -198,7 +198,7 @@ namespace BoxSocial.Internals
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new User(core, userSessionTable.Rows[0], false);
+                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                         enableAutologin = isLoggedIn = true;
                     }
                     else
@@ -235,7 +235,7 @@ namespace BoxSocial.Internals
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new User(core, userSessionTable.Rows[0], false, true);
+                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info | UserLoadOptions.Icon);
                         isLoggedIn = true;
                     }
                     else
@@ -275,7 +275,7 @@ namespace BoxSocial.Internals
 
                 if (userTable.Rows.Count == 1)
                 {
-                    loggedInMember = new User(core, userTable.Rows[0], false, true);
+                    loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info | UserLoadOptions.Icon);
                 }
             }
 
@@ -434,7 +434,7 @@ namespace BoxSocial.Internals
                 if (userSessionTable.Rows.Count == 1)
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
-                    loggedInMember = new User(core, userSessionRow, false, true);
+                    loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info | UserLoadOptions.Icon);
                     Linker.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
@@ -568,7 +568,7 @@ namespace BoxSocial.Internals
 
             if (userTable.Rows.Count == 1)
             {
-                loggedInMember = new User(core, userTable.Rows[0], false);
+                loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
             }
 
             HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");

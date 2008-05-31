@@ -234,7 +234,7 @@ namespace BoxSocial.IO
                     {
                         case "Groups":
                         case "Networks":
-                            rm = new ResourceManager(templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                            rm = new ResourceManager("BoxSocial." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
                             break;
                         default:
                             rm = new ResourceManager("BoxSocial.Applications." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);

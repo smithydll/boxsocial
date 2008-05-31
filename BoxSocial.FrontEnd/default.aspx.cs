@@ -121,22 +121,22 @@ namespace BoxSocial.FrontEnd
 
                 // new_points
 
-                DataTable newUsers = db.Query(string.Format("SELECT {0}, {1}, {2} FROM user_info ui INNER JOIN user_profile up ON ui.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE up.profile_access & 4369 = 4369 AND gi.gallery_item_uri IS NOT NULL ORDER BY user_reg_date_ut DESC LIMIT 3",
+                /*DataTable newUsers = db.Query(string.Format("SELECT {0}, {1}, {2} FROM user_info ui INNER JOIN user_profile up ON ui.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE up.profile_access & 4369 = 4369 AND gi.gallery_item_uri IS NOT NULL ORDER BY user_reg_date_ut DESC LIMIT 3",
                     BoxSocial.Internals.User.USER_PROFILE_FIELDS, BoxSocial.Internals.User.USER_INFO_FIELDS, BoxSocial.Internals.User.USER_ICON_FIELDS));
 
                 for (int i = 0; i < newUsers.Rows.Count; i++)
                 {
-                    User newMember = new User(core, newUsers.Rows[i], true, true);
+                    User newMember = new User(core, newUsers.Rows[i], UserLoadOptions.All);
 
                     VariableCollection newPointsVariableCollection = template.CreateChild("new_points");
 
                     newPointsVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(newMember.DisplayName));
-                    newPointsVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(newMember.GetAgeString()));
+                    newPointsVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(newMember.AgeString));
                     newPointsVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(newMember.Country));
                     newPointsVariableCollection.ParseVariables("USER_CAPTION", "");
                     newPointsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildHomepageUri(newMember)));
                     newPointsVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(newMember.UserIcon));
-                }
+                }*/
             }
             EndResponse();
         }

@@ -23,6 +23,7 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -48,7 +49,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                Email.SendEmail("xxx", "An Error occured at ZinZam.com", ex.ToString());
+                Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", ex.ToString());
             }
             catch
             {

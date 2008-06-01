@@ -294,15 +294,100 @@ namespace BoxSocial.Groups
         {
             List<GroupMember> members = new List<GroupMember>();
 
-            DataTable membersTable = db.Query(string.Format("SELECT {1}, {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 1 LIMIT {5}, {6};",
-                groupId, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS, (page - 1) * perPage, perPage));
+            SelectQuery query = new SelectQuery("group_members");
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
+            TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_members", "user_id"), new DataField("group_operators", "user_id"));
+            tj.AddCondition(new DataField("group_members", "group_id"), new DataField("group_operators", "group_id"));
+            query.AddCondition("`group_members`.`group_id`", groupId);
+            query.AddCondition("group_member_approved", true);
+            query.AddSort(SortOrder.Ascending, "group_member_date_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                members.Add(new GroupMember(core, dr, true, true, true));
+                memberIds.Add((long)(int)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                members.Add(new GroupMember(core, dr));
             }
 
             return members;
+        }
+
+        public List<GroupMember> GetOperators()
+        {
+            return GetOperators(1, 255);
+        }
+
+        public List<GroupMember> GetOperators(int page, int perPage)
+        {
+            List<GroupMember> operators = new List<GroupMember>();
+
+            SelectQuery query = new SelectQuery("group_operators");
+            query.AddField(new DataField("group_operators", "user_id"));
+            query.AddCondition("group_id", groupId);
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)(int)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                operators.Add(new GroupMember(core, dr));
+            }
+
+            return operators;
+        }
+
+        // TODO: change type to GroupOfficer
+        public List<GroupMember> GetOfficers()
+        {
+            return GetOfficers(1, 255);
+        }
+
+        public List<GroupMember> GetOfficers(int page, int perPage)
+        {
+            List<GroupMember> operators = new List<GroupMember>();
+
+            SelectQuery query = new SelectQuery("group_officers");
+            query.AddField(new DataField("group_officers", "user_id"));
+            query.AddField(new DataField("group_officers", "officer_title"));
+            query.AddCondition("group_id", groupId);
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)(int)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                operators.Add(new GroupMember(core, dr));
+            }
+
+            return operators;
         }
 
         public bool IsGroupInvitee(User member)
@@ -1076,7 +1161,7 @@ namespace BoxSocial.Groups
 
             for (int i = 0; i < officersTable.Rows.Count; i++)
             {
-                GroupMember groupOfficer = new GroupMember(core, officersTable.Rows[i], true, false, false);
+                GroupMember groupOfficer = new GroupMember(core, officersTable.Rows[i], UserLoadOptions.Info);
                 string userDisplayName = (groupOfficer.DisplayName != "") ? groupOfficer.DisplayName : groupOfficer.UserName;
 
                 VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
@@ -1113,7 +1198,7 @@ namespace BoxSocial.Groups
 
                 for (int i = 0; i < approvalTable.Rows.Count; i++)
                 {
-                    GroupMember approvalMember = new GroupMember(core, approvalTable.Rows[i], true, true, false);
+                    GroupMember approvalMember = new GroupMember(core, approvalTable.Rows[i], UserLoadOptions.Profile);
 
                     VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
 

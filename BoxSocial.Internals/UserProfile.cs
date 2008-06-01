@@ -73,6 +73,8 @@ namespace BoxSocial.Internals
         [DataField("profile_date_of_birth_ut")]
         private long dateofBirthRaw;
 
+        private string countryName;
+
         private Access profileAccess;
 
         public long UserId
@@ -313,6 +315,29 @@ namespace BoxSocial.Internals
             get
             {
                 return profileAccess;
+            }
+        }
+
+        public string Country
+        {
+            get
+            {
+                if (countryName != "")
+                {
+                    return countryName;
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        public string CountryIso
+        {
+            get
+            {
+                return country;
             }
         }
 

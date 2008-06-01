@@ -44,6 +44,11 @@ namespace BoxSocial.Internals
         private long emailTimeRaw;
         [DataField("email_activate_code")]
         private string emailActivateKey;
+        [DataField("email_access")]
+        private ushort permissions;
+
+        private User owner;
+        private Access emailAccess;
 
         public long EmailId
         {
@@ -58,6 +63,31 @@ namespace BoxSocial.Internals
             get
             {
                 return emailEmail;
+            }
+        }
+
+        public Access EmailAccess
+        {
+            get
+            {
+                return emailAccess;
+            }
+        }
+
+        public User Owner
+        {
+            get
+            {
+                if (owner == null || userId != owner.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    owner = core.UserProfiles[userId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -76,14 +106,76 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserEmail(Core core, DataRow emailRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserEmail_ItemLoad);
+
+            try
+            {
+                loadItemInfo(emailRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserEmailException();
+            }
+        }
+
         private void UserEmail_ItemLoad()
         {
-            /*if (owner == null || ownerId != owner.Id)
+            emailAccess = new Access(db, permissions, owner);
+        }
+
+        public static UserEmail Create(Core core, string email, ushort permissions)
+        {
+            if (!User.CheckEmailValid(email))
             {
-                owner = new Member(core, userId);
+                throw new EmailInvalidException();
             }
 
-            eventAccess = new Access(db, permissions, owner);*/
+            if (!User.CheckEmailUnique(core.db, email))
+            {
+                throw new EmailAlreadyRegisteredException();
+            }
+
+            string activateKey = User.GenerateActivationSecurityToken();
+
+            InsertQuery iquery = new InsertQuery(UserEmail.GetTable(typeof(User)));
+            iquery.AddField("email_user_id", core.LoggedInMemberId);
+            iquery.AddField("email_email", email);
+            iquery.AddField("email_verified", false);
+            iquery.AddField("email_time_ut", UnixTime.UnixTimeStamp());
+            iquery.AddField("email_activate_code", activateKey);
+            iquery.AddField("email_access", permissions);
+
+            long emailId = core.db.Query(iquery);
+
+            string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
+                emailId, activateKey);
+
+            Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
+
+            emailTemplate.ParseVariables("TO_NAME", core.session.LoggedInMember.DisplayName);
+            emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
+            emailTemplate.ParseVariables("USERNAME", core.session.LoggedInMember.UserName);
+
+            BoxSocial.Internals.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
+
+            return new UserEmail(core, emailId);
+        }
+
+        public bool Activate(string activationCode)
+        {
+            if (activationCode == this.emailActivateKey)
+            {
+                emailVerified = true;
+                UpdateThis();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override long Id

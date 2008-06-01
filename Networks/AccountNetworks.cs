@@ -83,11 +83,11 @@ namespace BoxSocial.Networks
 
             List<Network> networks = new List<Network>();
 
-            SelectQuery query = new SelectQuery("network_members nm");
-            query.AddJoin(JoinTypes.Inner, "network_keys nk", "nm.network_id", "nk.network_id");
-            query.AddJoin(JoinTypes.Inner, "network_info ni", "nk.network_id", "ni.network_id");
-            query.AddFields(Network.NETWORK_INFO_FIELDS, "nk.network_network");
-            query.AddCondition("nm.user_id", loggedInMember.Id);
+            SelectQuery query = new SelectQuery("network_members");
+            query.AddJoin(JoinTypes.Inner, "network_keys", "network_id", "network_id");
+            query.AddJoin(JoinTypes.Inner, "network_info", "network_id", "network_id");
+            query.AddFields(Network.NETWORK_INFO_FIELDS, "network_network");
+            query.AddCondition("user_id", loggedInMember.Id);
 
             DataTable networksTable = db.Query(query);
 

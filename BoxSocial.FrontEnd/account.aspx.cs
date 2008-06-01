@@ -200,7 +200,13 @@ namespace BoxSocial.FrontEnd
                     catch (Exception ex)
                     {
                         // TODO: e-mail application author of the error details
-                        Response.Write("<hr />" + ex.ToString() + "<hr />");
+                        ///Response.Write("<hr />" + ex.ToString() + "<hr />");
+                        accountModule.DisplayError("");
+
+                        ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
+
+                        core.LoadUserProfile(ae.CreatorId);
+                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title  + "` at ZinZam.com", ex.ToString());
                     }
                 }
             }

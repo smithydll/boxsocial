@@ -49,6 +49,8 @@ namespace BoxSocial.Networks
         private bool memberActive;
         [DataField("member_activate_code", 64)]
         private string memberActivateCode;
+        [DataField("member_join_ip", 50)]
+        private string memberJoinIpRaw;
 
         public long NetworkId
         {
@@ -110,7 +112,7 @@ namespace BoxSocial.Networks
 
             if (memberTable.Rows.Count == 1)
             {
-                loadMemberInfo(memberTable.Rows[0]);
+                loadItemInfo(memberTable.Rows[0]);
                 loadUserInfo(memberTable.Rows[0]);
                 loadUserProfile(memberTable.Rows[0]);
                 loadUserIcon(memberTable.Rows[0]);
@@ -121,66 +123,35 @@ namespace BoxSocial.Networks
             }
         }
 
+        public NetworkMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
+            : base(core, memberRow, loadOptions)
+        {
+            loadItemInfo(memberRow);
+        }
+
         public NetworkMember(Core core, DataRow memberRow)
-            : this (core, memberRow, false, false, false)
+            : base(core)
         {
+            loadItemInfo(memberRow);
+            loadUserFromUser(core.UserProfiles[userId]);
         }
 
-        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo)
-            : this(core, memberRow, containsUserInfo, false, false)
-        {
-        }
-
-        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile)
-            : this(core, memberRow, containsUserInfo, containsUserProfile, false)
-        {
-        }
-
-        public NetworkMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon) : base(core)
-        {
-            loadMemberInfo(memberRow);
-
-            if (containsUserInfo)
-            {
-                loadUserInfo(memberRow);
-            }
-
-            if (containsUserProfile)
-            {
-                loadUserProfile(memberRow);
-            }
-
-            if (containsUserIcon)
-            {
-                loadUserIcon(memberRow);
-            }
-        }
-
-        public NetworkMember(Core core, Network theNetwork, User member) : base(core)
+        public NetworkMember(Core core, Network theNetwork, User member)
+            : base(core)
         {
             DataTable memberTable = db.Query(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
                 member.UserId, theNetwork.NetworkId, USER_NETWORK_FIELDS));
 
             if (memberTable.Rows.Count == 1)
             {
-                loadMemberInfo(memberTable.Rows[0]);
+                loadItemInfo(memberTable.Rows[0]);
             }
             else
             {
-                throw new Exception("Invalid User Exception");
+                throw new InvalidUserException();
             }
 
             loadUserFromUser(member);
-        }
-
-        private void loadMemberInfo(DataRow memberRow)
-        {
-            networkId = (int)memberRow["network_id"];
-            userId = (int)memberRow["user_id"];
-            memberJoinDateRaw = (long)memberRow["member_join_date_ut"];
-            memberEmail = (string)memberRow["member_email"];
-            memberActive = ((byte)memberRow["member_active"] > 0) ? true : false;
-            memberActivateCode = (string)memberRow["member_activate_code"];
         }
 
         /// <summary>
@@ -197,7 +168,7 @@ namespace BoxSocial.Networks
 
             foreach (DataRow memberRow in userNetworks.Rows)
             {
-                networks.Add((int)memberRow["network_id"], new NetworkMember(core, memberRow));
+                networks.Add((int)memberRow["network_id"], new NetworkMember(core, memberRow, UserLoadOptions.Key));
             }
 
             return networks;

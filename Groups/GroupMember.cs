@@ -40,13 +40,20 @@ namespace BoxSocial.Groups
         Banned = 2,
     }
 
+    [DataTable("group_members")]
     public class GroupMember : User
     {
         public const string USER_GROUP_FIELDS = "gm.user_id, gm.group_id, gm.group_member_approved, gm.group_member_ip, gm.group_member_date_ut";
 
+        [DataField("user_id")]
+        private new long userId;
+        [DataField("group_id")]
         private long groupId;
+        [DataField("group_member_date_ut")]
         private long memberJoinDateRaw;
-        private GroupMemberApproval memberApproval;
+        [DataField("group_member_approved")]
+        private byte memberApproval;
+
         private bool isOperator;
 
         public bool IsOperator
@@ -87,25 +94,17 @@ namespace BoxSocial.Groups
             }
         }
 
-        public GroupMember(Core core, DataRow memberRow, bool containsUserInfo, bool containsUserProfile, bool containsUserIcon) : base(core)
+        public GroupMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
+            : base(core, memberRow, loadOptions)
         {
-            this.db = db;
-            loadMemberInfo(memberRow);
+            loadItemInfo(memberRow);
+        }
 
-            if (containsUserInfo)
-            {
-                loadUserInfo(memberRow);
-            }
-
-            if (containsUserProfile)
-            {
-                loadUserProfile(memberRow);
-            }
-
-            if (containsUserIcon)
-            {
-                loadUserIcon(memberRow);
-            }
+        public GroupMember(Core core, DataRow memberRow)
+            : base(core)
+        {
+            loadItemInfo(memberRow);
+            loadUserFromUser(core.UserProfiles[userId]);
         }
 
         private void loadMemberInfo(DataRow memberRow)
@@ -113,7 +112,7 @@ namespace BoxSocial.Groups
             groupId = (long)memberRow["group_id"];
             userId = (int)memberRow["user_id"];
             memberJoinDateRaw = (long)memberRow["group_member_date_ut"];
-            memberApproval = (GroupMemberApproval)(byte)memberRow["group_member_approved"];
+            memberApproval = (byte)memberRow["group_member_approved"];
             try
             {
                 if (memberRow["user_id_go"] is DBNull)

@@ -320,6 +320,11 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(DataRow itemRow)
         {
+            loadItemInfo(this.GetType(), itemRow);
+        }
+
+        protected void loadItemInfo(Type type, DataRow itemRow)
+        {
             List<string> columns = new List<string>();
 
             foreach (DataColumn column in itemRow.Table.Columns)
@@ -327,7 +332,7 @@ namespace BoxSocial.Internals
                 columns.Add(column.ColumnName);
             }
 
-            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -349,7 +354,7 @@ namespace BoxSocial.Internals
                             {
                                 try
                                 {
-                                    if (fi.FieldType == typeof(bool))
+                                    if (fi.FieldType == typeof(bool) && !(itemRow[columnName] is bool))
                                     {
                                         fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
                                     }

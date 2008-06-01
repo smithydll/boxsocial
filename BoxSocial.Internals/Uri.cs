@@ -66,15 +66,22 @@ namespace BoxSocial.Internals
 
         public static string BuildProfileUri(User member)
         {
-            if (member.ProfileHomepage == "/profile")
+            if (member != null && member.UserName != null)
             {
-                return AppendSid(string.Format("/{0}",
-                    member.UserName.ToLower())); 
+                if (member.ProfileHomepage == "/profile")
+                {
+                    return AppendSid(string.Format("/{0}",
+                        member.UserName.ToLower()));
+                }
+                else
+                {
+                    return AppendSid(string.Format("/{0}/profile",
+                        member.UserName.ToLower()));
+                }
             }
             else
             {
-                return AppendSid(string.Format("/{0}/profile",
-                    member.UserName.ToLower()));
+                return "";
             }
         }
 

@@ -49,9 +49,9 @@ namespace BoxSocial.Networks
     /// </summary>
     public class Network : Primitive, ICommentableItem
     {
-        public const string NETWORK_INFO_FIELDS = "ni.network_id, ni.network_name_display, ni.network_abstract, ni.network_members, ni.network_comments, ni.network_require_confirmation, ni.network_type, ni.network_gallery_items, ni.network_bytes";
+        public const string NETWORK_INFO_FIELDS = "`network_info`.network_id, `network_info`.network_name_display, `network_info`.network_abstract, `network_info`.network_members, `network_info`.network_comments, `network_info`.network_require_confirmation, `network_info`.network_type, `network_info`.network_gallery_items, `network_info`.network_bytes";
 
-        private Mysql db;
+        [DataField("network_id", DataFieldKeys.Unique)]
         private int networkId;
         private string networkNetwork;
         private string displayName;
@@ -213,8 +213,6 @@ namespace BoxSocial.Networks
 
         public Network(Core core, long networkId) : base(core)
         {
-            this.db = db;
-
             DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_id = {0}",
                 networkId, NETWORK_INFO_FIELDS));
 
@@ -230,9 +228,7 @@ namespace BoxSocial.Networks
 
         public Network(Core core, string network) : base(core)
         {
-            this.db = db;
-
-            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_network = '{0}'",
+            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ON nk.network_id = `network_info`.network_id WHERE nk.network_network = '{0}'",
                 Mysql.Escape(network), NETWORK_INFO_FIELDS));
 
             if (networkTable.Rows.Count == 1)
@@ -288,12 +284,27 @@ namespace BoxSocial.Networks
         {
             List<NetworkMember> members = new List<NetworkMember>();
 
-            DataTable membersTable = db.Query(string.Format("SELECT {1}, {2}, {3}, {4} FROM network_members nm INNER JOIN user_info ui ON nm.user_id = ui.user_id INNER JOIN user_profile up ON nm.user_id = up.user_id LEFT JOIN countries c ON c.country_iso = up.profile_country LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE nm.network_id = {0} ORDER BY nm.member_join_date_ut ASC LIMIT {5}, {6}",
-                networkId, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS, NetworkMember.USER_NETWORK_FIELDS, (page - 1) * perPage, perPage));
+            SelectQuery query = new SelectQuery(NetworkMember.GetTable(typeof(NetworkMember)));
+            query.AddFields(NetworkMember.GetFieldsPrefixed(typeof(NetworkMember)));
+            query.AddCondition("network_id", networkId);
+            query.AddSort(SortOrder.Ascending, "member_join_date_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                members.Add(new NetworkMember(core, dr, true, true, true));
+                memberIds.Add((long)(int)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                members.Add(new NetworkMember(core, dr));
             }
 
             return members;

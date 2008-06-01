@@ -70,26 +70,7 @@ namespace BoxSocial.Internals
         [DataField("user_name", DataFieldKeys.Unique)]
         private string userName;
 
-        private string sexuality;
-        private string gender;
-        private string maritialStatus;
-        private string autobiography;
-        private DateTime dateOfBirth;
-        private DateTime registrationDate;
-        private DateTime lastOnlineTime;
-        private uint profileViews;
-        private ulong profileComments;
-        private string country;
-        private string countryIso;
-        private ushort permissions;
-        private Access profileAccess;
         private string userIconUri;
-        private string firstName;
-        private string lastName;
-        private string middleName;
-        private string suffix;
-        private string title;
-        private short religion;
 
         private bool sessionRelationsSet = false;
         private Relation sessionRelations;
@@ -98,6 +79,8 @@ namespace BoxSocial.Internals
         protected UserProfile userProfile;
         
         protected bool iconLoaded = false;
+
+        protected List<UserEmail> emailAddresses;
 
         /// <summary>
         /// user ID (read only)
@@ -289,7 +272,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return dateOfBirth;
+                return userProfile.DateOfBirth;
             }
         }
 
@@ -309,19 +292,19 @@ namespace BoxSocial.Internals
             }
         }
 
-        public uint ProfileViews
+        public long ProfileViews
         {
             get
             {
-                return profileViews;
+                return userProfile.ProfileViews;
             }
         }
 
-        public ulong ProfileComments
+        public long ProfileComments
         {
             get
             {
-                return profileComments;
+                return userProfile.ProfileComments;
             }
         }
 
@@ -337,14 +320,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (country != "")
-                {
-                    return country;
-                }
-                else
-                {
-                    return "FALSE";
-                }
+                return userProfile.Country;
             }
         }
 
@@ -352,7 +328,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return countryIso;
+                return userProfile.CountryIso;
             }
         }
 
@@ -474,7 +450,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return religion;
+                return userProfile.ReligionId;
             }
         }
 
@@ -482,7 +458,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return permissions;
+                return userProfile.Permissions;
             }
         }
 
@@ -669,7 +645,7 @@ namespace BoxSocial.Internals
 
                 if (memberTable.Rows.Count > 0)
                 {
-                    loadItemInfo(memberTable.Rows[0]);
+                    loadItemInfo(typeof(User), memberTable.Rows[0]);
 
                     if (containsInfoData)
                     {
@@ -763,7 +739,7 @@ namespace BoxSocial.Internals
 
                 if (memberTable.Rows.Count > 0)
                 {
-                    loadItemInfo(memberTable.Rows[0]);
+                    loadItemInfo(typeof(User), memberTable.Rows[0]);
 
                     if (containsInfoData)
                     {
@@ -794,7 +770,7 @@ namespace BoxSocial.Internals
 
             if (userRow != null)
             {
-                loadItemInfo(userRow);
+                loadItemInfo(typeof(User), userRow);
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
                 {
@@ -835,26 +811,6 @@ namespace BoxSocial.Internals
         /// <param name="userRow"></param>
         protected void loadUserInfo(DataRow userRow)
         {
-            /*userId = (int)userRow["user_id"];
-            userName = (string)userRow["user_name"];
-            displayName = (string)userRow["user_name_display"];
-            timeZoneCode = (ushort)userRow["user_time_zone"];
-            timeZone = new UnixTime(timeZoneCode);
-            registrationDate = timeZone.DateTimeFromMysql(userRow["user_reg_date_ut"]);
-            lastOnlineTime = timeZone.DateTimeFromMysql(userRow["user_last_visit_ut"]);
-            blogSubscriptions = (uint)userRow["user_blog_subscriptions"];
-            showBbcode = (BbcodeOptions)(byte)userRow["user_show_bbcode"];
-            showCustomStyles = ((byte)userRow["user_show_custom_styles"] > 0) ? true : false;
-            if (!(userRow["user_home_page"] is DBNull))
-            {
-                profileHomepage = (string)userRow["user_home_page"];
-            }
-            friends = (int)userRow["user_friends"];
-            alternateEmail = (string)userRow["user_alternate_email"];
-            emailNotifications = ((byte)userRow["user_email_notifications"] > 0) ? true : false;
-            bytesUsed = (ulong)userRow["user_bytes"];
-            statusMessages = (long)userRow["user_status_messages"];*/
-
             userInfo = new UserInfo(core, userRow);
         }
 
@@ -864,33 +820,10 @@ namespace BoxSocial.Internals
         /// <param name="userRow"></param>
         protected void loadUserProfile(DataRow userRow)
         {
-            sexuality = (string)userRow["profile_sexuality"];
-            gender = (string)userRow["profile_gender"];
-            if (!(userRow["profile_autobiography"] is System.DBNull))
-            {
-                autobiography = (string)userRow["profile_autobiography"];
-            }
-            maritialStatus = (string)userRow["profile_maritial_status"];
-            profileViews = (uint)userRow["profile_views"];
-            profileComments = (ulong)userRow["profile_comments"];
-            if (!(userRow["country_name"] is System.DBNull))
-            {
-                country = (string)userRow["country_name"];
-            }
-
-            firstName = (string)userRow["profile_name_first"];
-            lastName = (string)userRow["profile_name_last"];
-            middleName = (string)userRow["profile_name_middle"];
-            suffix = (string)userRow["profile_name_suffix"];
-            title = (string)userRow["profile_name_title"];
-            religion = (short)userRow["profile_religion"];
-            countryIso = (string)userRow["profile_country"];
-
-            permissions = (ushort)userRow["profile_access"];
-            profileAccess = new Access(db, (ushort)userRow["profile_access"], this);
-
             // use the user's timezone, after all it is _their_ birthday
-            dateOfBirth = GetTimeZone.DateTimeFromMysql(userRow["profile_date_of_birth_ut"]);
+            //dateOfBirth = GetTimeZone.DateTimeFromMysql(userRow["profile_date_of_birth_ut"]);
+
+            userProfile = new UserProfile(core, this, userRow);
         }
 
         protected void loadUserIcon(DataRow userRow)
@@ -910,40 +843,7 @@ namespace BoxSocial.Internals
             this.userInfo = member.userInfo;
             this.userProfile = member.userProfile;
 
-            /*this.userNameOwnership = member.userNameOwnership;
-            this.alternateEmail = member.alternateEmail;
-            this.autobiography = member.autobiography;
-            this.blogSubscriptions = member.blogSubscriptions;
-            this.bytesUsed = member.bytesUsed;
-            this.country = member.country;
-            this.countryIso = member.countryIso;
-            this.dateOfBirth = member.dateOfBirth;
-            this.db = member.db;
-            this.displayName = member.displayName;
-            this.emailNotifications = member.emailNotifications;
-            this.firstName = member.firstName;
-            this.friends = member.friends;
-            this.gender = member.gender;
-            this.lastName = member.lastName;
-            this.lastOnlineTime = member.lastOnlineTime;
-            this.maritialStatus = member.maritialStatus;
-            this.middleName = member.middleName;
-            //this.networks = member.networks;
-            this.permissions = member.permissions;
-            this.profileAccess = member.profileAccess;
-            this.profileComments = member.profileComments;
-            this.profileHomepage = member.profileHomepage;
-            this.profileViews = member.profileViews;
-            this.registrationDate = member.registrationDate;
-            this.religion = member.religion;
-            this.sexuality = member.sexuality;
-            this.showBbcode = member.showBbcode;
-            this.showCustomStyles = member.showCustomStyles;
-            this.suffix = member.suffix;
-            this.timeZone = member.timeZone;
-            this.timeZoneCode = member.timeZoneCode;
-            this.title = member.title;
-            this.userIconUri = member.userIconUri;*/
+            this.userIconUri = member.userIconUri;
         }
 
         public string GetUserStyle()
@@ -1060,6 +960,27 @@ namespace BoxSocial.Internals
             }
 
             return friends;
+        }
+
+        public List<UserEmail> GetEmailAddresses()
+        {
+            if (emailAddresses == null)
+            {
+                // let's load some
+
+                SelectQuery query = new SelectQuery(UserEmail.GetTable(typeof(UserEmail)));
+                query.AddFields(UserEmail.GetFieldsPrefixed(typeof(UserEmail)));
+                query.AddCondition("user_id", userId);
+
+                DataTable emailsTable = db.Query(query);
+
+                foreach (DataRow emailRow in emailsTable.Rows)
+                {
+                    emailAddresses.Add(new UserEmail(core, emailRow));
+                }
+            }
+
+            return emailAddresses;
         }
 
         public List<User> SearchFriendNames(string needle)
@@ -1403,6 +1324,11 @@ namespace BoxSocial.Internals
                 return false;
             }
 
+            SelectQuery query = new SelectQuery(UserEmail.GetTable(typeof(UserEmail)));
+            query.AddCondition(new QueryFunction("email_email", QueryFunctions.ToLowerCase).ToString(), eMail.ToLower());
+
+            DataTable emailsTable = db.Query(query);
+
             return true;
         }
 
@@ -1524,6 +1450,7 @@ namespace BoxSocial.Internals
             disallowedNames.Add("tasks");
             disallowedNames.Add("application");
             disallowedNames.Add("applications");
+            disallowedNames.Add("error-handler");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(userName.ToLower()) >= 0)
@@ -1974,6 +1901,8 @@ namespace BoxSocial.Internals
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));
+
+            page.ProfileOwner.ProfileViewed(core.session.LoggedInMember);
         }
 
         public override string Namespace
@@ -2010,6 +1939,22 @@ namespace BoxSocial.Internals
     }
 
     public class InvalidUserException : Exception
+    {
+    }
+
+    public class UserNameInvalidException : Exception
+    {
+    }
+
+    public class UserNameAlreadyRegisteredException : Exception
+    {
+    }
+
+    public class EmailInvalidException : Exception
+    {
+    }
+
+    public class EmailAlreadyRegisteredException : Exception
     {
     }
 }

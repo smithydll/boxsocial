@@ -23,6 +23,7 @@ using System.Data;
 using System.Configuration;
 using System.Net.Mail;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -32,9 +33,6 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Email
     {
-        public static string BOARD_ADDRESS = "zinzam@zinzam.com";
-        public static string SMTP_SERVER = "mail.zinzam.com";
-
         private static Core core;
 
         public static Core Core
@@ -47,7 +45,7 @@ namespace BoxSocial.Internals
 
         public static void SendEmail(string toAddress, string subject, string message)
         {
-            SmtpClient mailClient = new SmtpClient("localhost");
+            SmtpClient mailClient = new SmtpClient(WebConfigurationManager.AppSettings["smtp-server"]);
             Type t = Type.GetType ("Mono.Runtime");
             if (t == null)
             {
@@ -57,7 +55,7 @@ namespace BoxSocial.Internals
             //mailClient.c
             //SmtpMail.SmtpServer = SMTP_SERVER;
 
-            MailMessage newMessage = new MailMessage(new MailAddress(BOARD_ADDRESS, "ZinZam"), new MailAddress(toAddress));
+            MailMessage newMessage = new MailMessage(new MailAddress(WebConfigurationManager.AppSettings["email"], "ZinZam"), new MailAddress(toAddress));
             newMessage.Subject = subject;
             newMessage.IsBodyHtml = false;
             newMessage.Body = message;

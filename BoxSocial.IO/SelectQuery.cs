@@ -46,6 +46,8 @@ namespace BoxSocial.IO
 
     public struct TableJoin
     {
+        private QueryCondition conditions;
+
         /// <summary>
         /// Type of join
         /// </summary>
@@ -73,20 +75,88 @@ namespace BoxSocial.IO
 
         public TableJoin(JoinTypes type, DataField joinField, DataField tableField)
         {
+            conditions = new QueryCondition();
+
             Type = type;
             JoinTable = joinField.Table;
             JoinField = joinField.Name;
             Table = tableField.Table;
             TableField = tableField.Name;
+
+            AddCondition(joinField.ToString(), tableField);
         }
 
         public TableJoin(JoinTypes type, string joinTable, string table, string joinField, string tableField)
         {
+            conditions = new QueryCondition();
+
             Type = type;
             JoinTable = joinTable;
             Table = table;
             JoinField = joinField;
             TableField = tableField;
+
+            AddCondition(new DataField(joinTable, joinField).ToString(), new DataField(table, tableField));
+        }
+
+        public QueryCondition AddCondition(DataField field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field.ToString(), ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field.ToString(), ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, string field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(relation, field, ConditionEquality.Equal, value);
+            }
+        }
+
+        public QueryCondition AddCondition(string field, ConditionEquality equality, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, equality, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field, equality, value);
+            }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field, equality, value);
+            }
+            else
+            {
+                return conditions.AddCondition(relation, field, equality, value);
+            }
         }
 
         public override string ToString()
@@ -94,14 +164,14 @@ namespace BoxSocial.IO
             switch (Type)
             {
                 case JoinTypes.Inner:
-                    return string.Format("INNER JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
-                        Table, TableField, JoinField, JoinTable);
+                    return string.Format("INNER JOIN `{0}` ON {1}",
+                        Table, conditions.ToString());
                 case JoinTypes.Left:
-                    return string.Format("LEFT JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
-                        Table, TableField, JoinField, JoinTable);
+                    return string.Format("LEFT JOIN `{0}` ON {1}",
+                        Table, conditions.ToString());
                 case JoinTypes.Right:
-                    return string.Format("RIGHT JOIN `{0}` ON `{0}`.`{1}` = `{3}`.`{2}`",
-                        Table, TableField, JoinField, JoinTable);
+                    return string.Format("RIGHT JOIN `{0}` ON {1}",
+                        Table, conditions.ToString());
                 default:
                     return "";
             }
@@ -180,14 +250,18 @@ namespace BoxSocial.IO
         /// <param name="table">Table adjoining the parent</param>
         /// <param name="joinField">Join field in the table being adjoined to the parent</param>
         /// <param name="tableField">Join field in the parent table</param>
-        public void AddJoin(JoinTypes type, string table, string joinField, string tableField)
+        public TableJoin AddJoin(JoinTypes type, string table, string joinField, string tableField)
         {
-            joins.Add(new TableJoin(type, this.tables[0], table, joinField, tableField));
+            TableJoin tj = new TableJoin(type, this.tables[0], table, joinField, tableField);
+            joins.Add(tj);
+            return tj;
         }
 
-        public void AddJoin(JoinTypes type, DataField joinField, DataField tableField)
+        public TableJoin AddJoin(JoinTypes type, DataField joinField, DataField tableField)
         {
-            joins.Add(new TableJoin(type, joinField, tableField));
+            TableJoin tj = new TableJoin(type, joinField, tableField);
+            joins.Add(tj);
+            return tj;
         }
 
         public void AddSort(SortOrder order, string field)

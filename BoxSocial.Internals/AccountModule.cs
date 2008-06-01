@@ -125,6 +125,17 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
+        /// Renders an error to the account panel.
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        public void DisplayError(string errorMessage)
+        {
+            template = new Template("1302.html");
+            template.ParseVariables("ERROR_MESSAGE", errorMessage);
+            RenderTemplate();
+        }
+
+        /// <summary>
         /// Callback on registration of a sub module in the account module.
         /// </summary>
         /// <param name="submodule">The sub module having been registered.</param>

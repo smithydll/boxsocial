@@ -141,12 +141,14 @@ namespace BoxSocial.Internals
             {
                 VariableCollection statusMessageVariableCollection = core.template.CreateChild("status_messages");
 
-                statusMessageVariableCollection.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(item.Message));
-                statusMessageVariableCollection.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(item.GetTime(core.tz))));
+                statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+                statusMessageVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(item.GetTime(core.tz)));
             }
 
-            core.template.ParseVariables("PAGINATION", Display.GeneratePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0)));
-            core.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(owner.UserName, "profile/status"));
+            //core.template.ParseRaw("PAGINATION", Display.GeneratePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0)));
+            //core.template.ParseRaw("BREADCRUMBS", Functions.GenerateBreadCrumbs(owner.UserName, "profile/status"));
+            Display.ParsePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0));
+            owner.ParseBreadCrumbs("profile/status");
         }
     }
 }

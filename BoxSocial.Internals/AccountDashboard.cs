@@ -93,12 +93,12 @@ namespace BoxSocial
 
             /*if (friendNotificationsTable.Rows.Count > 0)
             {
-                template.ParseVariables("IS_NOTIFICATIONS", "TRUE");
+                template.Parse("IS_NOTIFICATIONS", "TRUE");
             }*/
 
             /*if (groupInvitesTable.Rows.Count > 0)
             {
-                template.ParseVariables("IS_INVITATIONS", "TRUE");
+                template.Parse("IS_INVITATIONS", "TRUE");
             }*/
 
             /*for (int i = 0; i < friendNotificationsTable.Rows.Count; i++)
@@ -107,9 +107,9 @@ namespace BoxSocial
 
                 Member friend = new Member(db, friendNotificationsTable.Rows[i], false);
 
-                friendNotificationsVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(tz.MysqlToString(friendNotificationsTable.Rows[i]["notification_time_ut"])));
-                friendNotificationsVariableCollection.ParseVariables("ACTION", "New Friend");
-                friendNotificationsVariableCollection.ParseVariables("DESCRIPTION", string.Format("<a href=\"{2}\">{0}</a> Added you as a friend... <a href=\"{1}\">Add as friend</a>",
+                friendNotificationsVariableCollection.Parse("DATE", tz.MysqlToString(friendNotificationsTable.Rows[i]["notification_time_ut"])));
+                friendNotificationsVariableCollection.Parse("ACTION", "New Friend");
+                friendNotificationsVariableCollection.Parse("DESCRIPTION", string.Format("<a href=\"{2}\">{0}</a> Added you as a friend... <a href=\"{1}\">Add as friend</a>",
                     friend.UserName, HttpUtility.HtmlEncode(ZzUri.BuildAddFriendUri(friend.UserId)), HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(friend))));
             }/*
 
@@ -120,9 +120,9 @@ namespace BoxSocial
                 Member friend = new Member(db, groupInvitesTable.Rows[i], false);
                 UserGroup thisGroup = new UserGroup(db, groupInvitesTable.Rows[i]);
 
-                groupInvitationsVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(tz.MysqlToString(groupInvitesTable.Rows[i]["invite_date_ut"])));
-                groupInvitationsVariableCollection.ParseVariables("ACTION", "Group Invite");
-                groupInvitationsVariableCollection.ParseVariables("DESCRIPTION", string.Format("<a href=\"{2}\">{0}</a> Added invited you to '{3}' ... <a href=\"{1}\">Join Group</a>",
+                groupInvitationsVariableCollection.Parse("DATE", tz.MysqlToString(groupInvitesTable.Rows[i]["invite_date_ut"])));
+                groupInvitationsVariableCollection.Parse("ACTION", "Group Invite");
+                groupInvitationsVariableCollection.Parse("DESCRIPTION", string.Format("<a href=\"{2}\">{0}</a> Added invited you to '{3}' ... <a href=\"{1}\">Join Group</a>",
                     friend.UserName, HttpUtility.HtmlEncode(thisGroup.JoinUri), HttpUtility.HtmlEncode(ZzUri.BuildProfileUri(friend)), HttpUtility.HtmlEncode(thisGroup.DisplayName)));
             }*/
 
@@ -131,7 +131,7 @@ namespace BoxSocial
 
             if (notifications.Count > 0)
             {
-                template.ParseVariables("IS_NOTIFICATIONS", "TRUE");
+                template.Parse("IS_NOTIFICATIONS", "TRUE");
             }
 
             core.LoadUserProfile(core.LoggedInMemberId);
@@ -139,13 +139,15 @@ namespace BoxSocial
             {
                 VariableCollection notificationVariableCollection = template.CreateChild("notifications_list");
 
-                notificationVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(tz.DateTimeToString(notification.GetTime(tz))));
-                notificationVariableCollection.ParseVariables("ACTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Title)));
-                notificationVariableCollection.ParseVariables("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Body), core.session.LoggedInMember, core.UserProfiles[core.LoggedInMemberId]));
+                notificationVariableCollection.Parse("DATE", tz.DateTimeToString(notification.GetTime(tz)));
+                //notificationVariableCollection.ParseRaw("ACTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Title)));
+                //notificationVariableCollection.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(notification.Body), core.session.LoggedInMember, core.UserProfiles[core.LoggedInMemberId]));
+                Display.ParseBbcode(notificationVariableCollection, "ACTION", notification.Title);
+                Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.UserProfiles[core.LoggedInMemberId]);
 
                 if (notification.IsSeen)
                 {
-                    notificationVariableCollection.ParseVariables("SEEN", "TRUE");
+                    notificationVariableCollection.Parse("SEEN", "TRUE");
                 }
 
                 ids.Add(notification.NotificationId);
@@ -192,14 +194,14 @@ namespace BoxSocial
             {
                 VariableCollection applicationsVariableCollection = template.CreateChild("application_list");
 
-                applicationsVariableCollection.ParseVariables("NAME", ae.Title);
-                applicationsVariableCollection.ParseVariables("U_SETTINGS", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=settings&id={0}",
-                    ae.ApplicationId))));
+                applicationsVariableCollection.Parse("NAME", ae.Title);
+                applicationsVariableCollection.Parse("U_SETTINGS", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=settings&id={0}",
+                    ae.ApplicationId)));
 
                 if (ae.AssemblyName != "Profile" && ae.AssemblyName != "GuestBook" && !ae.IsPrimitive)
                 {
-                    applicationsVariableCollection.ParseVariables("U_UNINSTALL", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
-                    ae.ApplicationId), true)));
+                    applicationsVariableCollection.Parse("U_UNINSTALL", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
+                    ae.ApplicationId), true));
                 }
             }
         }
@@ -232,7 +234,7 @@ namespace BoxSocial
             /*db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (item_id, item_type, application_id, app_access) VALUES ({0}, '{1}', {2}, {3});",
                 loggedInMember.UserId, Mysql.Escape("USER"), id, 0x1111));*/
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
+            template.Parse("REDIRECT_URI", Linker.AppendSid("/account/dashboard/applications"));
             Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
         }
 
@@ -264,7 +266,7 @@ namespace BoxSocial
             /*db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE item_id = {0} AND item_type = '{1}' AND application_id = {2}",
                 loggedInMember.UserId, Mysql.Escape("USER"), id));*/
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
+            template.Parse("REDIRECT_URI", Linker.AppendSid("/account/dashboard/applications"));
             Display.ShowMessage("Application Uninstalled", "The application has been uninstalled from your profile.");
         }
 
@@ -304,10 +306,11 @@ namespace BoxSocial
                 List<string> applicationPermissions = new List<string>();
                 applicationPermissions.Add("Can Access");
 
-                template.ParseVariables("APPLICATION_NAME", HttpUtility.HtmlEncode(ae.Title));
-                template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
-                template.ParseVariables("S_GAPPLICATION_PERMS", Functions.BuildPermissionsBox(ae.Permissions, applicationPermissions));
-                template.ParseVariables("S_APPLICATION_ID", HttpUtility.HtmlEncode(ae.ApplicationId.ToString()));
+                template.Parse("APPLICATION_NAME", ae.Title);
+                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+                //template.ParseRaw("S_GAPPLICATION_PERMS", Functions.BuildPermissionsBox(ae.Permissions, applicationPermissions));
+                Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
+                template.Parse("S_APPLICATION_ID", ae.ApplicationId.ToString());
             }
             else
             {
@@ -334,7 +337,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format(@"UPDATE primitive_apps SET app_access = {3} WHERE item_id = {0} AND item_type = '{1}' AND application_id = {2}",
                 loggedInMember.UserId, Mysql.Escape("USER"), id, Functions.GetPermission()));
 
-            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(Linker.AppendSid("/account/dashboard/applications")));
+            template.Parse("REDIRECT_URI", Linker.AppendSid("/account/dashboard/applications"));
             Display.ShowMessage("Settings updated", "The settings for this application have been successfully updated.");
         }
 
@@ -355,47 +358,47 @@ namespace BoxSocial
 
             if (loggedInMember.EmailNotifications)
             {
-                template.ParseVariables("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
+                template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
             }
             else
             {
-                template.ParseVariables("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
+                template.Parse("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
             }
 
             if (loggedInMember.ShowCustomStyles)
             {
-                template.ParseVariables("S_SHOW_STYLES_YES", radioChecked);
+                template.Parse("S_SHOW_STYLES_YES", radioChecked);
             }
             else
             {
-                template.ParseVariables("S_SHOW_STYLES_NO", radioChecked);
+                template.Parse("S_SHOW_STYLES_NO", radioChecked);
             }
 
             if (loggedInMember.BbcodeShowImages)
             {
-                template.ParseVariables("S_DISPLAY_IMAGES_YES", radioChecked);
+                template.Parse("S_DISPLAY_IMAGES_YES", radioChecked);
             }
             else
             {
-                template.ParseVariables("S_DISPLAY_IMAGES_NO", radioChecked);
+                template.Parse("S_DISPLAY_IMAGES_NO", radioChecked);
             }
 
             if (loggedInMember.BbcodeShowFlash)
             {
-                template.ParseVariables("S_DISPLAY_FLASH_YES", radioChecked);
+                template.Parse("S_DISPLAY_FLASH_YES", radioChecked);
             }
             else
             {
-                template.ParseVariables("S_DISPLAY_FLASH_NO", radioChecked);
+                template.Parse("S_DISPLAY_FLASH_NO", radioChecked);
             }
 
             if (loggedInMember.BbcodeShowVideos)
             {
-                template.ParseVariables("S_DISPLAY_VIDEOS_YES", radioChecked);
+                template.Parse("S_DISPLAY_VIDEOS_YES", radioChecked);
             }
             else
             {
-                template.ParseVariables("S_DISPLAY_VIDEOS_NO", radioChecked);
+                template.Parse("S_DISPLAY_VIDEOS_NO", radioChecked);
             }
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
@@ -418,8 +421,9 @@ namespace BoxSocial
                 }
             }
 
-            template.ParseVariables("S_HOMEPAGE", Functions.BuildSelectBox("homepage", pages, loggedInMember.ProfileHomepage.ToString()));
-            template.ParseVariables("S_TIMEZONE", UnixTime.BuildTimeZoneSelectBox(loggedInMember.TimeZoneCode.ToString()));
+            //template.Parse("S_HOMEPAGE", Functions.BuildSelectBox("homepage", pages, loggedInMember.ProfileHomepage.ToString()));
+            template.Parse("S_TIMEZONE", UnixTime.BuildTimeZoneSelectBox(loggedInMember.TimeZoneCode.ToString()));
+            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, loggedInMember.ProfileHomepage.ToString());
         }
 
         public void PreferencesSave()
@@ -481,7 +485,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info SET user_show_bbcode = {1}, user_show_custom_styles = {2}, user_email_notifications = {3}, user_home_page = '{4}', user_time_zone = {5} WHERE user_id = {0};",
                 loggedInMember.UserId, (byte)showBbcode, showCustomStyles, emailNotifications, Mysql.Escape(homepage), timeZoneCode));
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=&sub=preferences");
+            template.Parse("REDIRECT_URI", "/account/?module=&sub=preferences");
             Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.<br /><a href=\"/account/?module=&sub=preferences\">Return</a>");
         }
 
@@ -492,7 +496,7 @@ namespace BoxSocial
 
             template.SetTemplate("account_password.html");
 
-            template.ParseVariables("S_CHANGE_PASSWORD", Linker.AppendSid("/account", true));
+            template.Parse("S_CHANGE_PASSWORD", Linker.AppendSid("/account", true));
 
             string password = Request.Form["old-password"];
 

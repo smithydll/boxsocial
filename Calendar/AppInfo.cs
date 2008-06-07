@@ -168,9 +168,9 @@ namespace BoxSocial.Applications.Calendar
             ApplicationEntry ae = new ApplicationEntry(core, owner, "Calendar");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_event_notification");
-            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(calendarEvent));
-            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
-            notificationTemplate.ParseVariables("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
+            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(calendarEvent));
+            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
+            notificationTemplate.Parse("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
 
             ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), notificationTemplate.ToString());
         }
@@ -323,15 +323,15 @@ namespace BoxSocial.Applications.Calendar
             Calendar cal = new Calendar(e.core);
             List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
 
-            template.ParseVariables("U_CALENDAR", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/{0}/calendar",
-                e.core.session.LoggedInMember.UserName))));
+            template.Parse("U_CALENDAR", Linker.AppendSid(string.Format("/{0}/calendar",
+                e.core.session.LoggedInMember.UserName)));
 
             VariableCollection appointmentDaysVariableCollection = null;
             DateTime lastDay = e.core.tz.Now;
 
             if (events.Count > 0)
             {
-                template.ParseVariables("HAS_EVENTS", "TRUE");
+                template.Parse("HAS_EVENTS", "TRUE");
             }
 
             foreach(Event calendarEvent in events)
@@ -344,15 +344,15 @@ namespace BoxSocial.Applications.Calendar
                     lastDay = eventDay;
                     appointmentDaysVariableCollection = template.CreateChild("appointment_days_list");
 
-                    appointmentDaysVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(eventDay.DayOfWeek.ToString()));
+                    appointmentDaysVariableCollection.Parse("DAY", eventDay.DayOfWeek.ToString());
                 }
 
                 VariableCollection appointmentVariableCollection = appointmentDaysVariableCollection.CreateChild("appointments_list");
 
-                appointmentVariableCollection.ParseVariables("TIME", HttpUtility.HtmlEncode(eventDay.ToShortTimeString() + " - " + eventEnd.ToShortTimeString()));
-                appointmentVariableCollection.ParseVariables("SUBJECT", HttpUtility.HtmlEncode(calendarEvent.Subject));
-                appointmentVariableCollection.ParseVariables("LOCATION", HttpUtility.HtmlEncode(calendarEvent.Location));
-                appointmentVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
+                appointmentVariableCollection.Parse("TIME", eventDay.ToShortTimeString() + " - " + eventEnd.ToShortTimeString());
+                appointmentVariableCollection.Parse("SUBJECT", calendarEvent.Subject);
+                appointmentVariableCollection.Parse("LOCATION", calendarEvent.Location);
+                appointmentVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
             }
 
             e.core.AddMainPanel(template);
@@ -369,10 +369,10 @@ namespace BoxSocial.Applications.Calendar
 
             if (tasks.Count > 0)
             {
-                template.ParseVariables("HAS_TASKS", "TRUE");
+                template.Parse("HAS_TASKS", "TRUE");
             }
 
-            template.ParseVariables("U_TASKS", HttpUtility.HtmlEncode(Task.BuildTasksUri(e.core.session.LoggedInMember)));
+            template.Parse("U_TASKS", Task.BuildTasksUri(e.core.session.LoggedInMember));
 
             foreach (Task calendarTask in tasks)
             {
@@ -383,39 +383,39 @@ namespace BoxSocial.Applications.Calendar
                     lastDay = taskDue;
                     taskDaysVariableCollection = template.CreateChild("task_days");
 
-                    taskDaysVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(taskDue.DayOfWeek.ToString()));
+                    taskDaysVariableCollection.Parse("DAY", taskDue.DayOfWeek.ToString());
                 }
 
                 VariableCollection taskVariableCollection = taskDaysVariableCollection.CreateChild("task_list");
 
-                taskVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(taskDue.ToShortDateString() + " (" + taskDue.ToShortTimeString() + ")"));
-                taskVariableCollection.ParseVariables("TOPIC", HttpUtility.HtmlEncode(calendarTask.Topic));
-                taskVariableCollection.ParseVariables("ID", HttpUtility.HtmlEncode(calendarTask.Id.ToString()));
-                taskVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Task.BuildTaskUri(calendarTask)));
-                taskVariableCollection.ParseVariables("U_MARK_COMPLETE", HttpUtility.HtmlEncode(Task.BuildTaskMarkCompleteUri(calendarTask)));
+                taskVariableCollection.Parse("DATE", taskDue.ToShortDateString() + " (" + taskDue.ToShortTimeString() + ")");
+                taskVariableCollection.Parse("TOPIC", calendarTask.Topic);
+                taskVariableCollection.Parse("ID", calendarTask.Id.ToString());
+                taskVariableCollection.Parse("URI", Task.BuildTaskUri(calendarTask));
+                taskVariableCollection.Parse("U_MARK_COMPLETE", Task.BuildTaskMarkCompleteUri(calendarTask));
 
                 if (calendarTask.Status == TaskStatus.Overdue)
                 {
-                    taskVariableCollection.ParseVariables("OVERDUE", "TRUE");
-                    taskVariableCollection.ParseVariables("CLASS", "overdue-task");
+                    taskVariableCollection.Parse("OVERDUE", "TRUE");
+                    taskVariableCollection.Parse("CLASS", "overdue-task");
                 }
                 else if (calendarTask.Status == TaskStatus.Completed)
                 {
-                    taskVariableCollection.ParseVariables("COMPLETE", "TRUE");
-                    taskVariableCollection.ParseVariables("CLASS", "complete-task");
+                    taskVariableCollection.Parse("COMPLETE", "TRUE");
+                    taskVariableCollection.Parse("CLASS", "complete-task");
                 }
                 else
                 {
-                    taskVariableCollection.ParseVariables("CLASS", "task");
+                    taskVariableCollection.Parse("CLASS", "task");
                 }
 
                 if (calendarTask.Priority == TaskPriority.High)
                 {
-                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"high-priority\">H</span>]");
+                    taskDaysVariableCollection.Parse("PRIORITY", "[<span class=\"high-priority\">H</span>]");
                 }
                 else if (calendarTask.Priority == TaskPriority.Low)
                 {
-                    taskDaysVariableCollection.ParseVariables("PRIORITY", "[<span class=\"low-priority\">L</span>]");
+                    taskDaysVariableCollection.Parse("PRIORITY", "[<span class=\"low-priority\">L</span>]");
                 }
             }
 

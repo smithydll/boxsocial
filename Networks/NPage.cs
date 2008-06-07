@@ -90,7 +90,7 @@ namespace BoxSocial.Networks
                     {
                         if (theNetwork.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
                         {
-                            template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(theNetwork.Uri));
+                            template.Parse("REDIRECT_URI", theNetwork.Uri);
                             Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                             return;
                         }

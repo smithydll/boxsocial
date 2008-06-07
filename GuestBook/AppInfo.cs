@@ -237,9 +237,9 @@ namespace BoxSocial.Applications.GuestBook
             ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "GuestBook");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
-            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
-            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
-            notificationTemplate.ParseVariables("COMMENT", e.Comment.Body);
+            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
+            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
+            notificationTemplate.Parse("COMMENT", e.Comment.Body);
 
             ae.SendNotification(userProfile, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
         }
@@ -445,18 +445,18 @@ namespace BoxSocial.Applications.GuestBook
 
             if (e.core.session.IsLoggedIn)
             {
-                template.ParseVariables("LOGGED_IN", "TRUE");
+                template.Parse("LOGGED_IN", "TRUE");
                 if (profileOwner.ProfileAccess.CanComment)
                 {
-                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                    template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
 
-            template.ParseVariables("IS_USER_GUESTBOOK", "TRUE");
+            template.Parse("IS_USER_GUESTBOOK", "TRUE");
 
             Display.DisplayComments(template, profileOwner, profileOwner, GuestBook.UserGuestBookHook);
-            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(profileOwner)));
-            template.ParseVariables("IS_PROFILE", "TRUE");
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(profileOwner));
+            template.Parse("IS_PROFILE", "TRUE");
 
             e.core.AddMainPanel(template);
         }
@@ -470,12 +470,12 @@ namespace BoxSocial.Applications.GuestBook
             {
                 if (thisGroup.IsGroupMember(e.core.session.LoggedInMember))
                 {
-                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                    template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
 
             Display.DisplayComments(template, thisGroup, thisGroup);
-            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(thisGroup)));
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(thisGroup));
 
             e.core.AddMainPanel(template);
         }
@@ -489,12 +489,12 @@ namespace BoxSocial.Applications.GuestBook
             {
                 if (theNetwork.IsNetworkMember(e.core.session.LoggedInMember))
                 {
-                    template.ParseVariables("CAN_COMMENT", "TRUE");
+                    template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
 
             Display.DisplayComments(template, theNetwork, theNetwork);
-            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(theNetwork)));
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(theNetwork));
 
             e.core.AddMainPanel(template);
         }
@@ -506,11 +506,11 @@ namespace BoxSocial.Applications.GuestBook
 
             if (e.core.session.IsLoggedIn)
             {
-                template.ParseVariables("CAN_COMMENT", "TRUE");
+                template.Parse("CAN_COMMENT", "TRUE");
             }
 
             Display.DisplayComments(template, anApplication, anApplication);
-            template.ParseVariables("U_VIEW_ALL", HttpUtility.HtmlEncode(GuestBook.Uri(anApplication)));
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(anApplication));
 
             e.core.AddMainPanel(template);
         }

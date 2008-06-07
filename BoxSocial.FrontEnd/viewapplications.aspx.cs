@@ -54,11 +54,11 @@ namespace BoxSocial.FrontEnd
 
                 VariableCollection applicationVariableCollection = template.CreateChild("application_list");
 
-                applicationVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(ae.Title));
-                applicationVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(ae.Uri));
+                applicationVariableCollection.Parse("TITLE", ae.Title);
+                applicationVariableCollection.Parse("URI", ae.Uri);
             }
 
-            Display.GeneratePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
+            Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
 
             EndResponse();
         }

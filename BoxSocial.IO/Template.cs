@@ -64,6 +64,39 @@ namespace BoxSocial.IO
             return vc;
         }
 
+        public void Parse(string key, string value)
+        {
+            if (!variables.ContainsKey(key))
+            {
+                variables.Add(key, HttpUtility.HtmlEncode(value));
+            }
+        }
+
+        /// <summary>
+        /// Parse raw data to a template, only valid for Box Social internals
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void ParseRaw(string key, string value)
+        {
+            Assembly asm = Assembly.GetCallingAssembly();
+            if (asm.GetName().Name == "BoxSocial.Internals")
+            {
+                if (!variables.ContainsKey(key))
+                {
+                    variables.Add(key, value);
+                }
+            }
+        }
+
+        internal void parseRaw(string key, string value)
+        {
+            if (!variables.ContainsKey(key))
+            {
+                variables.Add(key, value);
+            }
+        }
+
         public void ParseVariables(string key, string value)
         {
             try
@@ -203,9 +236,28 @@ namespace BoxSocial.IO
             templateName = fileName;
         }
 
+        public void Parse(string key, string value)
+        {
+            variables.Parse(key, value);
+        }
+
+        /// <summary>
+        /// Parse raw data to a template, only valid for Box Social internals
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void ParseRaw(string key, string value)
+        {
+            Assembly asm = Assembly.GetCallingAssembly();
+            if (asm.GetName().Name == "BoxSocial.Internals")
+            {
+                variables.parseRaw(key, value);
+            }
+        }
+
         public void ParseVariables(string key, string value)
         {
-            variables.ParseVariables(key, value);
+            variables.Parse(key, value);
         }
 
         public void ParseVariables(Dictionary<string, string> vars)

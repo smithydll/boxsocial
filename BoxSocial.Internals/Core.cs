@@ -301,14 +301,14 @@ namespace BoxSocial.Internals
         {
             VariableCollection panelVariableCollection = createMainPanel();
 
-            panelVariableCollection.ParseVariables("BODY", t.ToString());
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
         }
 
         public void AddSidePanel(Template t)
         {
             VariableCollection panelVariableCollection = createSidePanel();
 
-            panelVariableCollection.ParseVariables("BODY", t.ToString());
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
         }
 
         public void AddPageAssembly(Assembly assembly)

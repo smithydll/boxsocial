@@ -1,3 +1,23 @@
+/*
+ * Box Social™
+ * http://boxsocial.net/
+ * Copyright © 2007, David Lachlan Smith
+ * 
+ * $Id:$
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,8 +67,6 @@ namespace BoxSocial.FrontEnd
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);
 
                     ae.UpdateInstall(core, member);
-
-                    //HttpContext.Current.Response.Write(dr["user_id"].ToString() + ", ");
                 }
 
                 Display.ShowMessage("Application Updated", "The application has been updated for all users.");
@@ -57,195 +75,213 @@ namespace BoxSocial.FrontEnd
             {
 
                 string assemblyPath = "";
-                bool isPrimitive;
+                bool isPrimitive = false;
+                bool isInternals = false;
                 switch (assemblyName)
                 {
+                    case "Internals":
+                        assemblyName = "/bin/BoxSocial.Internals.dll";
+                        isInternals = true;
+                        isPrimitive = false;
+                        break;
                     case "Groups":
                     case "Networks":
                         assemblyPath = string.Format("/bin/{0}.dll", assemblyName);
+                        isInternals = false;
                         isPrimitive = true;
                         break;
                     default:
                         assemblyPath = string.Format("/bin/applications/{0}.dll", assemblyName);
+                        isInternals = false;
                         isPrimitive = false;
                         break;
                 }
 
                 Assembly loadApplication = Assembly.LoadFrom(HttpContext.Current.Server.MapPath(assemblyPath));
 
-                Type[] types = loadApplication.GetTypes();
-                foreach (Type type in types)
+                if (isInternals)
                 {
-                    if (type.IsSubclassOf(typeof(Application)))
+                    BoxSocial.Internals.Application.InstallTables(core, loadApplication);
+
+                    Display.ShowMessage("Internals Updated", "Internals have been updated.");
+                }
+                else
+                {
+                    Type[] types = loadApplication.GetTypes();
+                    foreach (Type type in types)
                     {
-                        BoxSocial.Internals.Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
-
-                        if (newApplication != null)
+                        if (type.IsSubclassOf(typeof(Application)))
                         {
-                            long updatedRaw = UnixTime.UnixTimeStamp();
-                            long applicationId = 0;
+                            BoxSocial.Internals.Application newApplication = System.Activator.CreateInstance(type, new object[] { core }) as Application;
 
-                            DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
+                            if (newApplication != null)
+                            {
+                                long updatedRaw = UnixTime.UnixTimeStamp();
+                                long applicationId = 0;
+
+                                DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
                             FROM applications ap
                             WHERE application_assembly_name = '{1}'",
-                                ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
+                                    ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
 
-                            if (applicationTable.Rows.Count == 1)
-                            {
-                                ApplicationEntry updateApplication = new ApplicationEntry(core, applicationTable.Rows[0]);
-                                applicationId = updateApplication.ApplicationId;
-
-                                if (updateApplication.CreatorId == core.LoggedInMemberId)
+                                if (applicationTable.Rows.Count == 1)
                                 {
+                                    ApplicationEntry updateApplication = new ApplicationEntry(core, applicationTable.Rows[0]);
+                                    applicationId = updateApplication.ApplicationId;
 
-                                    //
-                                    // Save Icon
-                                    //
-                                    if (newApplication.Icon != null)
+                                    if (updateApplication.CreatorId == core.LoggedInMemberId)
                                     {
-                                        if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key))))
+
+                                        //
+                                        // Save Icon
+                                        //
+                                        if (newApplication.Icon != null)
                                         {
-                                            Directory.CreateDirectory(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key)));
+                                            if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key))))
+                                            {
+                                                Directory.CreateDirectory(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key)));
+                                            }
+
+                                            newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateApplication.Key)), System.Drawing.Imaging.ImageFormat.Png);
                                         }
 
-                                        newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateApplication.Key)), System.Drawing.Imaging.ImageFormat.Png);
-                                    }
-
-                                    //
-                                    // Save StyleSheet
-                                    //
-                                    if (!string.IsNullOrEmpty(newApplication.StyleSheet))
-                                    {
-                                        if (!Directory.Exists(Server.MapPath(@".\styles\applications\")))
+                                        //
+                                        // Save StyleSheet
+                                        //
+                                        if (!string.IsNullOrEmpty(newApplication.StyleSheet))
                                         {
-                                            Directory.CreateDirectory(Server.MapPath(@".\styles\applications\"));
+                                            if (!Directory.Exists(Server.MapPath(@".\styles\applications\")))
+                                            {
+                                                Directory.CreateDirectory(Server.MapPath(@".\styles\applications\"));
+                                            }
+
+                                            SaveTextFile(newApplication.StyleSheet, Server.MapPath(string.Format(@".\styles\applications\{0}.css",
+                                                updateApplication.Key)));
                                         }
 
-                                        SaveTextFile(newApplication.StyleSheet, Server.MapPath(string.Format(@".\styles\applications\{0}.css",
-                                            updateApplication.Key)));
-                                    }
+                                        //
+                                        // Save JavaScript
+                                        //
+                                        if (!string.IsNullOrEmpty(newApplication.JavaScript))
+                                        {
+                                            SaveTextFile(newApplication.JavaScript, Server.MapPath(string.Format(@".\scripts\{0}.js",
+                                                updateApplication.Key)));
+                                        }
 
-                                    //
-                                    // Save JavaScript
-                                    //
-                                    if (!string.IsNullOrEmpty(newApplication.JavaScript))
+                                        UpdateQuery query = new UpdateQuery("applications");
+                                        query.AddField("application_title", newApplication.Title);
+                                        query.AddField("application_description", newApplication.Description);
+                                        query.AddField("application_primitive", isPrimitive);
+                                        query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
+                                        query.AddField("application_comment", newApplication.UsesComments);
+                                        query.AddField("application_rating", newApplication.UsesRatings);
+                                        query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
+                                        query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
+                                        query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
+                                        query.AddCondition("application_assembly_name", assemblyName);
+
+                                        db.BeginTransaction();
+                                        db.Query(query);
+                                    }
+                                    else
                                     {
-                                        SaveTextFile(newApplication.JavaScript, Server.MapPath(string.Format(@".\scripts\{0}.js",
-                                            updateApplication.Key)));
+                                        Functions.Generate403();
+                                        return;
                                     }
-
-                                    UpdateQuery query = new UpdateQuery("applications");
-                                    query.AddField("application_title", newApplication.Title);
-                                    query.AddField("application_description", newApplication.Description);
-                                    query.AddField("application_primitive", isPrimitive);
-                                    query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
-                                    query.AddField("application_comment", newApplication.UsesComments);
-                                    query.AddField("application_rating", newApplication.UsesRatings);
-                                    query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
-                                    query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
-                                    query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
-                                    query.AddCondition("application_assembly_name", assemblyName);
-
-                                    db.BeginTransaction();
-                                    db.Query(query);
                                 }
                                 else
                                 {
-                                    Functions.Generate403();
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
-                                    Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));
+                                    applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
+                                        Mysql.Escape(assemblyName), core.LoggedInMemberId, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));
 
-                                try
-                                {
-                                    ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        profileAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
-                                }
-                                catch
-                                {
-                                }
-
-                                try
-                                {
-                                    ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
-                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        guestbookAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
-                                }
-                                catch
-                                {
-                                }
-                            }
-
-                            if (applicationId > 0)
-                            {
-                                ApplicationInstallationInfo aii = newApplication.Install();
-
-                                if (aii.ApplicationSlugs != null)
-                                {
-                                    foreach (ApplicationSlug slug in aii.ApplicationSlugs)
+                                    try
                                     {
-                                        if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
-                                            (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId)) != 1)
-                                        {
-                                            db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
-                                                Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));
-                                        }
+                                        ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
+                                            profileAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    try
+                                    {
+                                        ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
+                                            guestbookAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
+                                    }
+                                    catch
+                                    {
                                     }
                                 }
 
-                                if (aii.ApplicationModules != null)
+                                if (applicationId > 0)
                                 {
-                                    foreach (ApplicationModule module in aii.ApplicationModules)
+                                    ApplicationInstallationInfo aii = newApplication.Install();
+
+                                    if (aii.ApplicationSlugs != null)
                                     {
-                                        if (db.UpdateQuery(string.Format(@"UPDATE account_modules SET module_updated_ut = {0} WHERE module_module = '{1}' AND application_id = {2};",
-                                            updatedRaw, Mysql.Escape(module.Slug), applicationId)) != 1)
+                                        foreach (ApplicationSlug slug in aii.ApplicationSlugs)
                                         {
-                                            db.UpdateQuery(string.Format(@"INSERT INTO account_modules (module_module, application_id, module_updated_ut) VALUES ('{0}', {1}, {2});",
-                                                Mysql.Escape(module.Slug), applicationId, updatedRaw));
+                                            if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
+                                                (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId)) != 1)
+                                            {
+                                                db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
+                                                    Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));
+                                            }
                                         }
                                     }
-                                }
 
-                                if (aii.ApplicationCommentTypes != null)
-                                {
-                                    foreach (ApplicationCommentType ct in aii.ApplicationCommentTypes)
+                                    if (aii.ApplicationModules != null)
                                     {
-                                        if (db.UpdateQuery(string.Format(@"UPDATE comment_types SET type_updated_ut = {0} WHERE type_type = '{1}' AND application_id = {2};",
-                                            updatedRaw, Mysql.Escape(ct.Type), applicationId)) != 1)
+                                        foreach (ApplicationModule module in aii.ApplicationModules)
                                         {
-                                            db.UpdateQuery(string.Format(@"INSERT INTO comment_types (type_type, application_id, type_updated_ut) VALUES ('{0}', {1}, {2});",
-                                                Mysql.Escape(ct.Type), applicationId, updatedRaw));
+                                            if (db.UpdateQuery(string.Format(@"UPDATE account_modules SET module_updated_ut = {0} WHERE module_module = '{1}' AND application_id = {2};",
+                                                updatedRaw, Mysql.Escape(module.Slug), applicationId)) != 1)
+                                            {
+                                                db.UpdateQuery(string.Format(@"INSERT INTO account_modules (module_module, application_id, module_updated_ut) VALUES ('{0}', {1}, {2});",
+                                                    Mysql.Escape(module.Slug), applicationId, updatedRaw));
+                                            }
                                         }
                                     }
+
+                                    if (aii.ApplicationCommentTypes != null)
+                                    {
+                                        foreach (ApplicationCommentType ct in aii.ApplicationCommentTypes)
+                                        {
+                                            if (db.UpdateQuery(string.Format(@"UPDATE comment_types SET type_updated_ut = {0} WHERE type_type = '{1}' AND application_id = {2};",
+                                                updatedRaw, Mysql.Escape(ct.Type), applicationId)) != 1)
+                                            {
+                                                db.UpdateQuery(string.Format(@"INSERT INTO comment_types (type_type, application_id, type_updated_ut) VALUES ('{0}', {1}, {2});",
+                                                    Mysql.Escape(ct.Type), applicationId, updatedRaw));
+                                            }
+                                        }
+                                    }
+
+                                    db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
+                                        applicationId, updatedRaw));
+
+                                    db.UpdateQuery(string.Format(@"DELETE FROM account_modules WHERE application_id = {0} AND module_updated_ut <> {1};",
+                                        applicationId, updatedRaw));
+
+                                    db.UpdateQuery(string.Format(@"DELETE FROM comment_types WHERE application_id = {0} AND type_updated_ut <> {1};",
+                                        applicationId, updatedRaw));
+
+                                    BoxSocial.Internals.Application.InstallTables(core, loadApplication);
+
                                 }
-
-                                db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
-                                    applicationId, updatedRaw));
-
-                                db.UpdateQuery(string.Format(@"DELETE FROM account_modules WHERE application_id = {0} AND module_updated_ut <> {1};",
-                                    applicationId, updatedRaw));
-
-                                db.UpdateQuery(string.Format(@"DELETE FROM comment_types WHERE application_id = {0} AND type_updated_ut <> {1};",
-                                    applicationId, updatedRaw));
-
-                                newApplication.InstallTables(loadApplication);
-
-                            }
-                            else
-                            {
-                                Display.ShowMessage("Error", "Error installing application");
-                                EndResponse();
+                                else
+                                {
+                                    Display.ShowMessage("Error", "Error installing application");
+                                    EndResponse();
+                                }
                             }
                         }
                     }
-                }
 
-                Display.ShowMessage("Application Installed", "The application has been installed.");
+                    Display.ShowMessage("Application Installed", "The application has been installed.");
+
+                }
 
             }
             EndResponse();

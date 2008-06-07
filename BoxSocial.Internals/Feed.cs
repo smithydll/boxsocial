@@ -68,7 +68,7 @@ namespace BoxSocial.Internals
 
             if (feedActions.Count > 0)
             {
-                template.ParseVariables("HAS_FEED_ITEMS", "TRUE");
+                template.Parse("HAS_FEED_ITEMS", "TRUE");
                 VariableCollection feedDateVariableCollection = null;
                 string lastDay = core.tz.ToStringPast(core.tz.Now);
 
@@ -81,13 +81,15 @@ namespace BoxSocial.Internals
                         lastDay = core.tz.ToStringPast(feedItemDay);
                         feedDateVariableCollection = template.CreateChild("feed_days_list");
 
-                        feedDateVariableCollection.ParseVariables("DAY", HttpUtility.HtmlEncode(lastDay));
+                        feedDateVariableCollection.Parse("DAY", lastDay);
                     }
 
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
-                    feedItemVariableCollection.ParseVariables("TITLE", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Title)));
-                    feedItemVariableCollection.ParseVariables("TEXT", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Body), core.session.LoggedInMember, core.UserProfiles[feedAction.OwnerId]));
+                    //feedItemVariableCollection.ParseRaw("TITLE", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Title)));
+                    //feedItemVariableCollection.ParseRaw("TEXT", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Body), core.session.LoggedInMember, core.UserProfiles[feedAction.OwnerId]));
+                    Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                    Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.UserProfiles[feedAction.OwnerId]);
                 }
             }
 

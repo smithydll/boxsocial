@@ -319,7 +319,7 @@ namespace BoxSocial.Applications.Forum
 
             List<Forum> forums = thisForum.GetForums();
 
-            page.template.ParseVariables("FORUMS", HttpUtility.HtmlEncode(forums.Count.ToString()));
+            page.template.Parse("FORUMS", forums.Count.ToString());
 
             // ForumId, TopicPost
             Dictionary<long, TopicPost> lastPosts;
@@ -336,23 +336,23 @@ namespace BoxSocial.Applications.Forum
             {
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
 
-                forumVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(forum.Title));
-                forumVariableCollection.ParseVariables("POSTS", HttpUtility.HtmlEncode(forum.Posts.ToString()));
-                forumVariableCollection.ParseVariables("TOPICS", HttpUtility.HtmlEncode(forum.Topics.ToString()));
+                forumVariableCollection.Parse("TITLE", forum.Title);
+                forumVariableCollection.Parse("POSTS", forum.Posts.ToString());
+                forumVariableCollection.Parse("TOPICS", forum.Topics.ToString());
 
                 if (lastPosts.ContainsKey(forum.Id))
                 {
-                    forumVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode(lastPosts[forum.Id].Title));
+                    forumVariableCollection.Parse("LAST_POST", lastPosts[forum.Id].Title);
                 }
                 else
                 {
-                    forumVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode("No posts"));
+                    forumVariableCollection.Parse("LAST_POST", "No posts");
                 }
             }
 
             List<ForumTopic> topics = thisForum.GetTopics(1, 10);
 
-            page.template.ParseVariables("TOPICS", HttpUtility.HtmlEncode(topics.Count.ToString()));
+            page.template.Parse("TOPICS", topics.Count.ToString());
 
             // TopicId, TopicPost
             Dictionary<long, TopicPost> topicLastPosts;
@@ -369,17 +369,17 @@ namespace BoxSocial.Applications.Forum
             {
                 VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
 
-                topicVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(topic.Title));
-                topicVariableCollection.ParseVariables("VIEWS", HttpUtility.HtmlEncode(topic.Views.ToString()));
-                topicVariableCollection.ParseVariables("REPLIES", HttpUtility.HtmlEncode(topic.Posts.ToString()));
+                topicVariableCollection.Parse("TITLE", topic.Title);
+                topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
+                topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
 
                 if (topicLastPosts.ContainsKey(topic.Id))
                 {
-                    topicVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode(topicLastPosts[topic.Id].Title));
+                    topicVariableCollection.Parse("LAST_POST", topicLastPosts[topic.Id].Title);
                 }
                 else
                 {
-                    topicVariableCollection.ParseVariables("LAST_POST", HttpUtility.HtmlEncode("No posts"));
+                    topicVariableCollection.Parse("LAST_POST", "No posts");
                 }
             }
         }

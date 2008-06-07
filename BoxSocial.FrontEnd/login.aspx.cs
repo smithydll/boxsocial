@@ -92,11 +92,11 @@ namespace BoxSocial.FrontEnd
                 else
                 {
                     //Response.Write(" Bad credentials given. ");
-                    template.ParseVariables("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
+                    template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
                 }
             }
 
-            template.ParseVariables("REDIRECT", HttpUtility.HtmlEncode(redirect));
+            template.Parse("REDIRECT", redirect);
 
             EndResponse();
         }

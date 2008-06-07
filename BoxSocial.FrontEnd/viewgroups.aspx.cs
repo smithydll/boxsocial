@@ -46,18 +46,18 @@ namespace BoxSocial.FrontEnd
         {
             if (string.IsNullOrEmpty(Request.QueryString["category"]))
             {
-                template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create")));
+                template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
                 DataTable categoriesTable = db.Query("SELECT category_title, category_path, category_groups FROM global_categories");
 
-                template.ParseVariables("CATEGORIES", HttpUtility.HtmlEncode(categoriesTable.Rows.Count.ToString()));
+                template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 
                 for (int i = 0; i < categoriesTable.Rows.Count; i++)
                 {
                     VariableCollection categoriesVariableCollection = template.CreateChild("category_list");
 
-                    categoriesVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)categoriesTable.Rows[i]["category_title"]));
-                    categoriesVariableCollection.ParseVariables("GROUPS", HttpUtility.HtmlEncode(((long)categoriesTable.Rows[i]["category_groups"]).ToString()));
-                    categoriesVariableCollection.ParseVariables("U_GROUP_CATEGORY", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/" + (string)categoriesTable.Rows[i]["category_path"])));
+                    categoriesVariableCollection.Parse("TITLE", (string)categoriesTable.Rows[i]["category_title"]);
+                    categoriesVariableCollection.Parse("GROUPS", ((long)categoriesTable.Rows[i]["category_groups"]).ToString());
+                    categoriesVariableCollection.Parse("U_GROUP_CATEGORY", Linker.AppendSid("/groups/" + (string)categoriesTable.Rows[i]["category_path"]));
                 }
 
             }
@@ -69,14 +69,14 @@ namespace BoxSocial.FrontEnd
 
                 if (categoryTable.Rows.Count > 0)
                 {
-                    template.ParseVariables("CATEGORY_TITLE", HttpUtility.HtmlEncode((string)categoryTable.Rows[0]["category_title"]));
-                    template.ParseVariables("U_CREATE_GROUP_C", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString())));
-                    template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString())));
+                    template.Parse("CATEGORY_TITLE", (string)categoryTable.Rows[0]["category_title"]);
+                    template.Parse("U_CREATE_GROUP_C", Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString()));
+                    template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString()));
 
                     DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_info gi WHERE gi.group_category = {0} AND gi.group_type <> 'PRIVATE'",
                         (short)categoryTable.Rows[0]["category_id"], UserGroup.GROUP_INFO_FIELDS));
 
-                    template.ParseVariables("GROUPS", HttpUtility.HtmlEncode(groupsTable.Rows.Count.ToString()));
+                    template.Parse("GROUPS", groupsTable.Rows.Count.ToString());
 
                     for (int i = 0; i < groupsTable.Rows.Count; i++)
                     {
@@ -84,8 +84,8 @@ namespace BoxSocial.FrontEnd
 
                         VariableCollection groupsVariableCollection = template.CreateChild("groups_list");
 
-                        groupsVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(groupRow.DisplayName));
-                        groupsVariableCollection.ParseVariables("U_GROUP", HttpUtility.HtmlEncode(groupRow.Uri));
+                        groupsVariableCollection.Parse("TITLE", groupRow.DisplayName);
+                        groupsVariableCollection.Parse("U_GROUP", groupRow.Uri);
                     }
                 }
             }

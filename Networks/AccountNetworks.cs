@@ -98,18 +98,18 @@ namespace BoxSocial.Networks
 
             if (networks.Count > 0)
             {
-                template.ParseVariables("NETWORK_MEMBERSHIPS", "TRUE");
+                template.Parse("NETWORK_MEMBERSHIPS", "TRUE");
             }
 
             foreach (Network theNetwork in networks)
             {
                 VariableCollection networkVariableCollection = template.CreateChild("network_list");
 
-                networkVariableCollection.ParseVariables("NETWORK_DISPLAY_NAME", HttpUtility.HtmlEncode(theNetwork.DisplayName));
-                networkVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(theNetwork.Members.ToString()));
+                networkVariableCollection.Parse("NETWORK_DISPLAY_NAME", theNetwork.DisplayName);
+                networkVariableCollection.Parse("MEMBERS", theNetwork.Members.ToString());
 
-                networkVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(theNetwork.Uri));
-                networkVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(theNetwork.MemberlistUri));
+                networkVariableCollection.Parse("U_VIEW", theNetwork.Uri);
+                networkVariableCollection.Parse("U_MEMBERLIST", theNetwork.MemberlistUri);
             }
         }
 
@@ -125,7 +125,7 @@ namespace BoxSocial.Networks
             }
 
             template.SetTemplate("Networks", "account_network_join");
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
+            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
 
             AuthoriseRequestSid();
 
@@ -141,7 +141,7 @@ namespace BoxSocial.Networks
                 return;
             }
 
-            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(networkId.ToString()));
+            template.Parse("S_ID", networkId.ToString());
 
             try
             {

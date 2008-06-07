@@ -51,7 +51,7 @@ namespace BoxSocial.FrontEnd
             long confirmId = db.UpdateQuery(string.Format("INSERT INTO confirm (session_id, confirm_code, confirm_type) VALUES ('{0}', '{1}', '{2}')",
                 Mysql.Escape(session.SessionId), Mysql.Escape(captchaString), 1));
 
-            template.ParseVariables("U_CAPTCHA", HttpUtility.HtmlEncode(Linker.AppendSid("/captcha.aspx?secureid=" + confirmId.ToString(), true)));
+            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -127,68 +127,68 @@ namespace BoxSocial.FrontEnd
             else
             {
                 // submit the form
-                template.ParseVariables("USERNAME", HttpUtility.HtmlEncode((string)Request.Form["username"]));
-                template.ParseVariables("EMAIL", HttpUtility.HtmlEncode((string)Request.Form["email"]));
-                template.ParseVariables("CONFIRM_EMAIL", HttpUtility.HtmlEncode((string)Request.Form["confirm-email"]));
+                template.Parse("USERNAME", (string)Request.Form["username"]);
+                template.Parse("EMAIL", (string)Request.Form["email"]);
+                template.Parse("CONFIRM_EMAIL", (string)Request.Form["confirm-email"]);
 
                 DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
                     Mysql.Escape(session.SessionId)));
 
                 if (confirmTable.Rows.Count != 1)
                 {
-                    template.ParseVariables("ERROR", "Captcha is invalid, please try again.");
+                    template.Parse("ERROR", "Captcha is invalid, please try again.");
                     prepareNewCaptcha();
                 }
                 else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)Request.Form["captcha"]).ToLower())
                 {
-                    template.ParseVariables("ERROR", "Captcha is invalid, please try again.");
+                    template.Parse("ERROR", "Captcha is invalid, please try again.");
                     prepareNewCaptcha();
                 }
                 else if (!BoxSocial.Internals.User.CheckUserNameValid(Request.Form["username"]))
                 {
-                    template.ParseVariables("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                    template.Parse("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                     prepareNewCaptcha();
                 }
                 else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, Request.Form["username"]))
                 {
-                    template.ParseVariables("ERROR", "Username is already taken, please choose another one.");
+                    template.Parse("ERROR", "Username is already taken, please choose another one.");
                     prepareNewCaptcha();
                 }
                 else if (!BoxSocial.Internals.User.CheckEmailValid(Request.Form["email"]))
                 {
-                    template.ParseVariables("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
+                    template.Parse("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
                     prepareNewCaptcha();
                 }
                 else if (!BoxSocial.Internals.User.CheckEmailUnique(db, Request.Form["email"]))
                 {
-                    template.ParseVariables("ERROR", "The e-mail address you have entered has already been registered.");
+                    template.Parse("ERROR", "The e-mail address you have entered has already been registered.");
                     prepareNewCaptcha();
                 }
                 else if (Request.Form["email"] != Request.Form["confirm-email"])
                 {
-                    template.ParseVariables("ERROR", "The e-mail addresses you entered do not match, may sure you have entered your e-mail address correctly.");
+                    template.Parse("ERROR", "The e-mail addresses you entered do not match, may sure you have entered your e-mail address correctly.");
                     prepareNewCaptcha();
                 }
                 else if (Request.Form["password"] != Request.Form["confirm-password"])
                 {
-                    template.ParseVariables("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
+                    template.Parse("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
                     prepareNewCaptcha();
                 }
                 else if (((string)Request.Form["password"]).Length < 6)
                 {
-                    template.ParseVariables("ERROR", "The password you entered is too short. Please choose a strong password of 6 characters or more.");
+                    template.Parse("ERROR", "The password you entered is too short. Please choose a strong password of 6 characters or more.");
                     prepareNewCaptcha();
                 }
                 else if ((string)Request.Form["agree"] != "true")
                 {
-                    template.ParseVariables("ERROR", "You must accept the ZinZam Terms of Service to register an account.");
+                    template.Parse("ERROR", "You must accept the ZinZam Terms of Service to register an account.");
                     prepareNewCaptcha();
                 }
                 else
                 {
                     if (BoxSocial.Internals.User.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
                     {
-                        template.ParseVariables("ERROR", "Bad registration details");
+                        template.Parse("ERROR", "Bad registration details");
                         prepareNewCaptcha();
                     }
                     else

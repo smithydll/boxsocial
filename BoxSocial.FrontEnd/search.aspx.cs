@@ -154,9 +154,9 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 
-                    friendVariableCollection.ParseVariables("NAME", friend.DisplayName);
-                    friendVariableCollection.ParseVariables("URI", friend.Uri);
-                    friendVariableCollection.ParseVariables("DISPLAY_PIC", friend.UserIcon);
+                    friendVariableCollection.Parse("NAME", friend.DisplayName);
+                    friendVariableCollection.Parse("URI", friend.Uri);
+                    friendVariableCollection.Parse("DISPLAY_PIC", friend.UserIcon);
                 }
             }
         }

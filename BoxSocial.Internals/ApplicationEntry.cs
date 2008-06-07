@@ -30,11 +30,6 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    /*
-     * TODO: SQL
-ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYINT(1) UNSIGNED NOT NULL AFTER `application_rating`,
- ADD COLUMN `application_script` TINYINT(1) UNSIGNED NOT NULL AFTER `application_style`;
-     */
     public class ApplicationEntry : Primitive, ICommentableItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
@@ -833,8 +828,8 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
                 {
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
 
-                    emailTemplate.ParseVariables("TO_NAME", receiver.DisplayName);
-                    emailTemplate.ParseVariables("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
+                    emailTemplate.Parse("TO_NAME", receiver.DisplayName);
+                    emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
 
                     Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
                 }
@@ -959,20 +954,20 @@ ALTER TABLE `zinzam0_zinzam`.`applications` ADD COLUMN `application_style` TINYI
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
 
-            core.template.ParseVariables("APPLICATION_NAME", HttpUtility.HtmlEncode(page.AnApplication.Title));
-            core.template.ParseVariables("U_APPLICATION", HttpUtility.HtmlEncode(page.AnApplication.Uri));
-            core.template.ParseVariables("DESCRIPTION", HttpUtility.HtmlEncode(page.AnApplication.Description));
-            core.template.ParseVariables("CREATOR_DISPLAY_NAME", HttpUtility.HtmlEncode(Creator.DisplayName));
+            core.template.Parse("APPLICATION_NAME", page.AnApplication.Title);
+            core.template.Parse("U_APPLICATION", page.AnApplication.Uri);
+            core.template.Parse("DESCRIPTION", page.AnApplication.Description);
+            core.template.Parse("CREATOR_DISPLAY_NAME", Creator.DisplayName);
 
             if (page.AnApplication.HasInstalled(core.session.LoggedInMember))
             {
-                core.template.ParseVariables("U_UNINSTALL", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
-                    page.AnApplication.ApplicationId), true)));
+                core.template.Parse("U_UNINSTALL", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
+                    page.AnApplication.ApplicationId), true));
             }
             else
             {
-                core.template.ParseVariables("U_INSTALL", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/account/dashboard/applications?mode=install&id={0}",
-                    page.AnApplication.ApplicationId), true)));
+                core.template.Parse("U_INSTALL", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=install&id={0}",
+                    page.AnApplication.ApplicationId), true));
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));

@@ -135,27 +135,27 @@ namespace BoxSocial.Applications.Pages
                     levelString += "&mdash; ";
                 }
 
-                pagesVariableCollection.ParseVariables("TITLE", levelString + HttpUtility.HtmlEncode((string)pagesRow["page_title"]));
-                pagesVariableCollection.ParseVariables("UPDATED", HttpUtility.HtmlEncode(tz.MysqlToString(pagesRow["page_modified_ut"])));
+                pagesVariableCollection.Parse("TITLE", levelString + HttpUtility.HtmlEncode((string)pagesRow["page_title"]));
+                pagesVariableCollection.Parse("UPDATED", tz.MysqlToString(pagesRow["page_modified_ut"]));
                 if ((string)pagesTable.Rows[i]["page_parent_path"] != "")
                 {
-                    pagesVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(string.Format("/{0}/{1}/{2}",
-                        loggedInMember.UserName, (string)pagesRow["page_parent_path"], (string)pagesRow["page_slug"])));
+                    pagesVariableCollection.Parse("U_VIEW", string.Format("/{0}/{1}/{2}",
+                        loggedInMember.UserName, (string)pagesRow["page_parent_path"], (string)pagesRow["page_slug"]));
                 }
                 else
                 {
-                    pagesVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(string.Format("/{0}/{1}",
-                        loggedInMember.UserName, (string)pagesRow["page_slug"])));
+                    pagesVariableCollection.Parse("U_VIEW", string.Format("/{0}/{1}",
+                        loggedInMember.UserName, (string)pagesRow["page_slug"]));
                 }
 
-                pagesVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(string.Format("/account/pages/write?action=edit&id={0}",
-                    (long)pagesRow["page_id"])));
-                pagesVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(string.Format("/account/pages/write?action=delete&id={0}",
-                    (long)pagesRow["page_id"])));
+                pagesVariableCollection.Parse("U_EDIT", string.Format("/account/pages/write?action=edit&id={0}",
+                    (long)pagesRow["page_id"]));
+                pagesVariableCollection.Parse("U_DELETE", string.Format("/account/pages/write?action=delete&id={0}",
+                    (long)pagesRow["page_id"]));
 
                 if (i % 2 == 0)
                 {
-                    pagesVariableCollection.ParseVariables("INDEX_EVEN", "TRUE");
+                    pagesVariableCollection.Parse("INDEX_EVEN", "TRUE");
                 }
             }
         }
@@ -308,15 +308,18 @@ namespace BoxSocial.Applications.Pages
             {
                 disabledItems.Add(pageId.ToString());
             }
-            template.ParseVariables("S_PAGE_PARENT", Functions.BuildSelectBox("page-parent", pages, pageParentId.ToString(), disabledItems));
-            template.ParseVariables("S_PAGE_CLASSIFICATION", Classification.BuildClassificationBox(pageClassification));
-            template.ParseVariables("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
-            template.ParseVariables("S_PAGE_PERMS", Functions.BuildPermissionsBox(pagePermissions, permissions));
+            //template.Parse("S_PAGE_PARENT", Functions.BuildSelectBox("page-parent", pages, pageParentId.ToString(), disabledItems));
+            template.Parse("S_PAGE_CLASSIFICATION", Classification.BuildClassificationBox(pageClassification));
+            template.Parse("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
+            //template.Parse("S_PAGE_PERMS", Functions.BuildPermissionsBox(pagePermissions, permissions));
+            Display.ParseSelectBox(template, "S_PAGE_PARENT", "page-parent", pages, pageParentId.ToString(), disabledItems);
 
-            template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode(pageTitle));
-            template.ParseVariables("S_SLUG", HttpUtility.HtmlEncode(pageSlug));
-            template.ParseVariables("S_PAGE_TEXT", HttpUtility.HtmlEncode(pageText));
-            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(pageId.ToString()));
+            Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
+
+            template.Parse("S_TITLE", pageTitle);
+            template.Parse("S_SLUG", pageSlug);
+            template.Parse("S_PAGE_TEXT", pageText);
+            template.Parse("S_ID", pageId.ToString());
         }
 
         private void WritePageSave()
@@ -441,13 +444,13 @@ namespace BoxSocial.Applications.Pages
             {
                 VariableCollection listVariableCollection = template.CreateChild("list_list");
 
-                listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)listsTable.Rows[i]["list_title"]));
-                listVariableCollection.ParseVariables("TYPE", HttpUtility.HtmlEncode((string)listsTable.Rows[i]["list_type_title"]));
-                listVariableCollection.ParseVariables("ITEMS", HttpUtility.HtmlEncode(((uint)listsTable.Rows[i]["list_items"]).ToString()));
+                listVariableCollection.Parse("TITLE", (string)listsTable.Rows[i]["list_title"]);
+                listVariableCollection.Parse("TYPE", (string)listsTable.Rows[i]["list_type_title"]);
+                listVariableCollection.Parse("ITEMS", ((uint)listsTable.Rows[i]["list_items"]).ToString());
 
-                listVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Linker.BuildListUri(loggedInMember, (string)listsTable.Rows[i]["list_path"])));
-                listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"])));
-                listVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"])));
+                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(loggedInMember, (string)listsTable.Rows[i]["list_path"]));
+                listVariableCollection.Parse("U_DELETE", Linker.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"]));
+                listVariableCollection.Parse("U_EDIT", Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"]));
             }
 
             DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
@@ -463,8 +466,10 @@ namespace BoxSocial.Applications.Pages
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            template.ParseVariables("S_LIST_TYPES", Functions.BuildSelectBox("type", listTypes, "1"));
-            template.ParseVariables("S_LIST_PERMS", Functions.BuildPermissionsBox(listPermissions, permissions));
+            //template.Parse("S_LIST_TYPES", Functions.BuildSelectBox("type", listTypes, "1"));
+            //template.Parse("S_LIST_PERMS", Functions.BuildPermissionsBox(listPermissions, permissions));
+            Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, "1");
+            Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
         }
 
         public void ManageListsSave()
@@ -617,14 +622,16 @@ namespace BoxSocial.Applications.Pages
                 List<string> permissions = new List<string>();
                 permissions.Add("Can Read");
 
-                template.ParseVariables("S_LIST_TYPES", Functions.BuildSelectBox("type", listTypes, listType.ToString()));
-                template.ParseVariables("S_LIST_PERMS", Functions.BuildPermissionsBox(listPermissions, permissions));
+                //template.Parse("S_LIST_TYPES", Functions.BuildSelectBox("type", listTypes, listType.ToString()));
+                //template.Parse("S_LIST_PERMS", Functions.BuildPermissionsBox(listPermissions, permissions));
+                Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, listType.ToString());
+                Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
 
-                template.ParseVariables("S_LIST_TITLE", HttpUtility.HtmlEncode(listTitle));
-                template.ParseVariables("S_LIST_SLUG", HttpUtility.HtmlEncode(listSlug));
-                template.ParseVariables("S_LIST_ABSTRACT", HttpUtility.HtmlEncode(listAbstract));
+                template.Parse("S_LIST_TITLE", listTitle);
+                template.Parse("S_LIST_SLUG", listSlug);
+                template.Parse("S_LIST_ABSTRACT", listAbstract);
 
-                template.ParseVariables("S_LIST_ID", HttpUtility.HtmlEncode(((long)listTable.Rows[0]["list_id"]).ToString()));
+                template.Parse("S_LIST_ID", ((long)listTable.Rows[0]["list_id"]).ToString());
             }
             else
             {
@@ -750,7 +757,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (ajax)
                 {
-                    Ajax.SendRawText("posted", HttpUtility.HtmlEncode(text));
+                    Ajax.SendRawText("posted", text);
 
                     if (db != null)
                     {

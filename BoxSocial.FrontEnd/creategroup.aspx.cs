@@ -59,14 +59,14 @@ namespace BoxSocial.FrontEnd
             long confirmId = db.UpdateQuery(string.Format("INSERT INTO confirm (session_id, confirm_code, confirm_type) VALUES ('{0}', '{1}', '{2}')",
                 Mysql.Escape(session.SessionId), Mysql.Escape(captchaString), 2));
 
-            template.ParseVariables("U_CAPTCHA", HttpUtility.HtmlEncode(Linker.AppendSid("/captcha.aspx?secureid=" + confirmId.ToString(), true)));
+            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (session.IsLoggedIn == false)
             {
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/sign-in/?redirect=/groups/create"));
+                template.Parse("REDIRECT_URI", "/sign-in/?redirect=/groups/create");
                 Display.ShowMessage("Not Logged In", "You must be logged in to create a group.");
                 return;
             }
@@ -129,27 +129,29 @@ namespace BoxSocial.FrontEnd
             if (Request.Form["submit"] == null)
             {
                 prepareNewCaptcha();
-                template.ParseVariables("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
-                template.ParseVariables("S_OPEN_CHECKED", selected);
+                //template.Parse("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
+                Display.ParseSelectBox("S_CATEGORIES", "category", categories, category.ToString());
+                template.Parse("S_OPEN_CHECKED", selected);
             }
             else
             {
                 // submit the form
-                template.ParseVariables("GROUP_TITLE", HttpUtility.HtmlEncode((string)Request.Form["title"]));
-                template.ParseVariables("GROUP_NAME_SLUG", HttpUtility.HtmlEncode(slug));
-                template.ParseVariables("GROUP_DESCRIPTION", HttpUtility.HtmlEncode((string)Request.Form["description"]));
-                template.ParseVariables("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
+                template.Parse("GROUP_TITLE", (string)Request.Form["title"]);
+                template.Parse("GROUP_NAME_SLUG", slug);
+                template.Parse("GROUP_DESCRIPTION", (string)Request.Form["description"]);
+                //template.ParseRaw("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
+                Display.ParseSelectBox("S_CATEGORIES", "category", categories, category.ToString());
 
                 switch ((string)Request.Form["type"])
                 {
                     case "open":
-                        template.ParseVariables("S_OPEN_CHECKED", selected);
+                        template.Parse("S_OPEN_CHECKED", selected);
                         break;
                     case "closed":
-                        template.ParseVariables("S_CLOSED_CHECKED", selected);
+                        template.Parse("S_CLOSED_CHECKED", selected);
                         break;
                     case "private":
-                        template.ParseVariables("S_PRIVATE_CHECKED", selected);
+                        template.Parse("S_PRIVATE_CHECKED", selected);
                         break;
                     default:
                         typeError = true;
@@ -161,37 +163,37 @@ namespace BoxSocial.FrontEnd
 
                 if (confirmTable.Rows.Count != 1)
                 {
-                    template.ParseVariables("ERROR", "Captcha is invalid, please try again.");
+                    template.Parse("ERROR", "Captcha is invalid, please try again.");
                     prepareNewCaptcha();
                 }
                 else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)Request.Form["captcha"]).ToLower())
                 {
-                    template.ParseVariables("ERROR", "Captcha is invalid, please try again.");
+                    template.Parse("ERROR", "Captcha is invalid, please try again.");
                     prepareNewCaptcha();
                 }
                 else if (!UserGroup.CheckGroupNameValid(slug))
                 {
-                    template.ParseVariables("ERROR", "Group slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                    template.Parse("ERROR", "Group slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                     prepareNewCaptcha();
                 }
                 else if (!UserGroup.CheckGroupNameUnique(core, slug))
                 {
-                    template.ParseVariables("ERROR", "Group slug is already taken, please choose another one.");
+                    template.Parse("ERROR", "Group slug is already taken, please choose another one.");
                     prepareNewCaptcha();
                 }
                 else if (categoryError)
                 {
-                    template.ParseVariables("ERROR", "Invalid Category selected, you may have to reload the page.");
+                    template.Parse("ERROR", "Invalid Category selected, you may have to reload the page.");
                     prepareNewCaptcha();
                 }
                 else if (typeError)
                 {
-                    template.ParseVariables("ERROR", "Invalid group type selected, you may have to reload the page.");
+                    template.Parse("ERROR", "Invalid group type selected, you may have to reload the page.");
                     prepareNewCaptcha();
                 }
                 else if ((string)Request.Form["agree"] != "true")
                 {
-                    template.ParseVariables("ERROR", "You must accept the ZinZam Terms of Service to create a group.");
+                    template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create a group.");
                     prepareNewCaptcha();
                 }
                 else
@@ -199,7 +201,7 @@ namespace BoxSocial.FrontEnd
                     UserGroup newGroup = UserGroup.Create(core, Request.Form["title"], slug, Request.Form["description"], category, Request.Form["type"]);
                     if (newGroup == null)
                     {
-                        template.ParseVariables("ERROR", "Bad registration details");
+                        template.Parse("ERROR", "Bad registration details");
                         prepareNewCaptcha();
                     }
                     else
@@ -209,7 +211,7 @@ namespace BoxSocial.FrontEnd
                             Mysql.Escape(session.SessionId)));
 
                         //Response.Redirect("/", true);
-                        template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(newGroup.Uri));
+                        template.Parse("REDIRECT_URI", newGroup.Uri);
                         Display.ShowMessage("Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
                         return; /* stop processing the display of this page */
                     }

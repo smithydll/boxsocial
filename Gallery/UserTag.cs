@@ -274,10 +274,10 @@ namespace BoxSocial.Applications.Gallery
                 {
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "photo_tag_notification.eml");
 
-                    emailTemplate.ParseVariables("TO_NAME", tag.TaggedMember.DisplayName);
-                    emailTemplate.ParseVariables("FROM_NAME", core.session.LoggedInMember.DisplayName);
-                    emailTemplate.ParseVariables("FROM_USERNAME", core.session.LoggedInMember.UserName);
-                    emailTemplate.ParseVariables("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
+                    emailTemplate.Parse("TO_NAME", tag.TaggedMember.DisplayName);
+                    emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);
+                    emailTemplate.Parse("FROM_USERNAME", core.session.LoggedInMember.UserName);
+                    emailTemplate.Parse("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
 
                     Email.SendEmail(tag.TaggedMember.AlternateEmail, string.Format("{0} tagged you in a photo",
                         core.session.LoggedInMember.DisplayName),

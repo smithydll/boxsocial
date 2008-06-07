@@ -203,7 +203,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/"));
+                        core.template.Parse("REDIRECT_URI", "/");
                         Display.ShowMessage("Error", "Error starting session");
                         
                         HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");

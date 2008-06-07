@@ -173,15 +173,15 @@ namespace BoxSocial.Groups
             List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);
             if (groups.Count > 0)
             {
-                template.ParseVariables("HAS_GROUPS", "TRUE");
+                template.Parse("HAS_GROUPS", "TRUE");
             }
 
             foreach(UserGroup group in groups)
             {
                 VariableCollection groupVariableCollection = template.CreateChild("groups_list");
 
-                groupVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(group.DisplayName));
-                groupVariableCollection.ParseVariables("U_GROUP", HttpUtility.HtmlEncode(group.Uri));
+                groupVariableCollection.Parse("TITLE", group.DisplayName);
+                groupVariableCollection.Parse("U_GROUP", group.Uri);
             }
 
             e.core.AddSidePanel(template);

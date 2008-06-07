@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
         public void CreateTemplate()
         {
             template = new Template("1301.html");
-            template.ParseVariables("U_ACCOUNT", Linker.AppendSid("/account", true));
+            template.Parse("U_ACCOUNT", Linker.AppendSid("/account", true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
@@ -121,7 +121,7 @@ namespace BoxSocial.Internals
         /// </summary>
         public void RenderTemplate()
         {
-            core.template.ParseVariables("MODULE_CONTENT", template.ToString());
+            core.template.ParseRaw("MODULE_CONTENT", template.ToString());
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace BoxSocial.Internals
         public void DisplayError(string errorMessage)
         {
             template = new Template("1302.html");
-            template.ParseVariables("ERROR_MESSAGE", errorMessage);
+            template.Parse("ERROR_MESSAGE", errorMessage);
             RenderTemplate();
         }
 
@@ -396,7 +396,7 @@ namespace BoxSocial.Internals
         /// <param name="uri">URI to redirect to</param>
         protected void SetRedirectUri(string uri)
         {
-            core.template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(uri));
+            core.template.Parse("REDIRECT_URI", uri);
         }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace BoxSocial.Internals
         /// <param name="errorString">String of error to be posted</param>
         protected void SetError(string errorString)
         {
-            core.template.ParseVariables("ERROR", errorString);
+            core.template.Parse("ERROR", errorString);
         }
 
         protected void AssertFormVariable(string var)

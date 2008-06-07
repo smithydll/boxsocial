@@ -907,45 +907,46 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
                     page.ProfileOwner.UserName, photoPath, photo.Path);
-                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(photo.ItemTitle));
-                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(photo.ParentId)));
+                page.template.Parse("PHOTO_DISPLAY", displayUri);
+                page.template.Parse("PHOTO_TITLE", photo.ItemTitle);
+                page.template.Parse("PHOTO_ID", photo.ItemId.ToString());
+                page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(photo.ParentId));
 
                 if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
-                    page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
+                    //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
+                    Display.ParseBbcode("PHOTO_DESCRIPTION", photo.ItemAbstract);
                 }
                 else
                 {
-                    page.template.ParseVariables("PHOTO_DESCRIPTION", "FALSE");
+                    page.template.Parse("PHOTO_DESCRIPTION", "FALSE");
                 }
 
-                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(photo.ItemComments)));
+                page.template.Parse("PHOTO_COMMENTS", Functions.LargeIntegerToString(photo.ItemComments));
 
                 Display.RatingBlock(photo.ItemRating, page.template, photo.ItemId, "PHOTO");
 
-                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(photo.ItemId.ToString()));
-                page.template.ParseVariables("U_MARK_DISPLAY_PIC", HttpUtility.HtmlEncode(Linker.BuildMarkDisplayPictureUri(photo.ItemId)));
-                page.template.ParseVariables("U_MARK_GALLERY_COVER", HttpUtility.HtmlEncode(Linker.BuildMarkGalleryCoverUri(photo.ItemId)));
-                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildPhotoEditUri(photo.ItemId)));
-                page.template.ParseVariables("U_ROTATE_LEFT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateLeftUri(photo.ItemId)));
-                page.template.ParseVariables("U_ROTATE_RIGHT", HttpUtility.HtmlEncode(Linker.BuildPhotoRotateRightUri(photo.ItemId)));
-                page.template.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(photo.BuildDeleteUri()));
+                page.template.Parse("ID", photo.ItemId.ToString());
+                page.template.Parse("U_MARK_DISPLAY_PIC", Linker.BuildMarkDisplayPictureUri(photo.ItemId));
+                page.template.Parse("U_MARK_GALLERY_COVER", Linker.BuildMarkGalleryCoverUri(photo.ItemId));
+                page.template.Parse("U_EDIT", Linker.BuildPhotoEditUri(photo.ItemId));
+                page.template.Parse("U_ROTATE_LEFT", Linker.BuildPhotoRotateLeftUri(photo.ItemId));
+                page.template.Parse("U_ROTATE_RIGHT", Linker.BuildPhotoRotateRightUri(photo.ItemId));
+                page.template.Parse("U_DELETE", photo.BuildDeleteUri());
 
                 switch (photo.Classification)
                 {
                     case Classifications.Everyone:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
                         break;
                     case Classifications.Mature:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
                         break;
                     case Classifications.Restricted:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
                         break;
                 }
 
@@ -953,15 +954,15 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (!string.IsNullOrEmpty(photo.License.Title))
                     {
-                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Title));
+                        page.template.Parse("PAGE_LICENSE", photo.License.Title);
                     }
                     if (!string.IsNullOrEmpty(photo.License.Icon))
                     {
-                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Icon));
+                        page.template.Parse("I_PAGE_LICENSE", photo.License.Icon);
                     }
                     if (!string.IsNullOrEmpty(photo.License.Link))
                     {
-                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(photo.License.Link));
+                        page.template.Parse("U_PAGE_LICENSE", photo.License.Link);
                     }
                 }
 
@@ -969,7 +970,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (tags.Count > 0)
                 {
-                    page.template.ParseVariables("HAS_USER_TAGS", "TRUE");
+                    page.template.Parse("HAS_USER_TAGS", "TRUE");
                 }
 
                 int i = 0;
@@ -977,12 +978,12 @@ namespace BoxSocial.Applications.Gallery
                 {
                     VariableCollection tagsVariableCollection = page.template.CreateChild("user_tags");
 
-                    tagsVariableCollection.ParseVariables("INDEX", i.ToString());
-                    tagsVariableCollection.ParseVariables("TAG_ID", tag.TagId.ToString());
-                    tagsVariableCollection.ParseVariables("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
-                    tagsVariableCollection.ParseVariables("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
-                    tagsVariableCollection.ParseVariables("DISPLAY_NAME", tag.TaggedMember.DisplayName);
-                    tagsVariableCollection.ParseVariables("U_MEMBER", tag.TaggedMember.Uri);
+                    tagsVariableCollection.Parse("INDEX", i.ToString());
+                    tagsVariableCollection.Parse("TAG_ID", tag.TagId.ToString());
+                    tagsVariableCollection.Parse("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("DISPLAY_NAME", tag.TaggedMember.DisplayName);
+                    tagsVariableCollection.Parse("U_MEMBER", tag.TaggedMember.Uri);
 
                     i++;
                 }
@@ -999,15 +1000,16 @@ namespace BoxSocial.Applications.Gallery
 
                 if (photo.ItemAccess.CanComment)
                 {
-                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.Parse("CAN_COMMENT", "TRUE");
                 }
                 Display.DisplayComments(page.template, page.ProfileOwner, photo);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
                     HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
-                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
-
-                page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
+                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
+                //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
+                Display.ParsePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0));
+                page.ProfileOwner.ParseBreadCrumbs("gallery/" + photo.ParentPath + "/" + photo.Path);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1052,26 +1054,27 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/group/{0}/images/_display/{1}",
                         page.ThisGroup.Slug, galleryItem.Path);
-                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.Parse("PHOTO_DISPLAY", displayUri);
+                page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
+                page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
+                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
+                Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
+                page.template.Parse("PHOTO_COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
+                page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(galleryItem.ParentId));
 
                 switch (galleryItem.Classification)
                 {
                     case Classifications.Everyone:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
                         break;
                     case Classifications.Mature:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
                         break;
                     case Classifications.Restricted:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
                         break;
                 }
 
@@ -1079,22 +1082,22 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (!string.IsNullOrEmpty(galleryItem.License.Title))
                     {
-                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Title));
+                        page.template.Parse("PAGE_LICENSE", galleryItem.License.Title);
                     }
                     if (!string.IsNullOrEmpty(galleryItem.License.Icon))
                     {
-                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Icon));
+                        page.template.Parse("I_PAGE_LICENSE", galleryItem.License.Icon);
                     }
                     if (!string.IsNullOrEmpty(galleryItem.License.Link))
                     {
-                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Link));
+                        page.template.Parse("U_PAGE_LICENSE", galleryItem.License.Link);
                     }
                 }
 
                 Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
-                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                //template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
+                page.template.Parse("ID", galleryItem.ItemId.ToString());
+                //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
 
@@ -1108,15 +1111,16 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                 {
-                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.Parse("CAN_COMMENT", "TRUE");
                 }
                 Display.DisplayComments(page.template, page.ThisGroup, galleryItem);
 
                 string pageUri = string.Format("/group/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.ThisGroup.Slug), photoName);
-                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
-
-                page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
+                //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                page.ThisGroup.ParseBreadCrumbs("gallery/" + galleryItem.Path);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1163,26 +1167,27 @@ namespace BoxSocial.Applications.Gallery
 
                 string displayUri = string.Format("/network/{0}/images/_display/{1}",
                         page.TheNetwork.NetworkNetwork, galleryItem.Path);
-                page.template.ParseVariables("PHOTO_DISPLAY", HttpUtility.HtmlEncode(displayUri));
-                page.template.ParseVariables("PHOTO_TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                page.template.ParseVariables("PHOTO_ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                page.template.ParseVariables("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                page.template.ParseVariables("PHOTO_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(galleryItem.ItemComments)));
-                page.template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(galleryItem.ParentId)));
+                page.template.Parse("PHOTO_DISPLAY", displayUri);
+                page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
+                page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
+                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
+                Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
+                page.template.Parse("PHOTO_COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
+                page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(galleryItem.ParentId));
 
                 switch (galleryItem.Classification)
                 {
                     case Classifications.Everyone:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
                         break;
                     case Classifications.Mature:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
                         break;
                     case Classifications.Restricted:
-                        page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
                         break;
                 }
 
@@ -1190,22 +1195,22 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (!string.IsNullOrEmpty(galleryItem.License.Title))
                     {
-                        page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Title));
+                        page.template.Parse("PAGE_LICENSE", galleryItem.License.Title);
                     }
                     if (!string.IsNullOrEmpty(galleryItem.License.Icon))
                     {
-                        page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Icon));
+                        page.template.Parse("I_PAGE_LICENSE", galleryItem.License.Icon);
                     }
                     if (!string.IsNullOrEmpty(galleryItem.License.Link))
                     {
-                        page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(galleryItem.License.Link));
+                        page.template.Parse("U_PAGE_LICENSE", galleryItem.License.Link);
                     }
                 }
 
                 Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
 
-                page.template.ParseVariables("ID", HttpUtility.HtmlEncode(galleryItem.ItemId.ToString()));
-                //template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
+                page.template.Parse("ID", galleryItem.ItemId.ToString());
+                //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
 
@@ -1219,15 +1224,16 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.Parse("CAN_COMMENT", "TRUE");
                 }
                 Display.DisplayComments(page.template, page.TheNetwork, galleryItem);
 
                 string pageUri = string.Format("/network/{0}/gallery/{1}",
                     HttpUtility.HtmlEncode(page.TheNetwork.NetworkNetwork), photoName);
-                page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
-
-                page.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
+                //page.template.Parse("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                page.TheNetwork.ParseBreadCrumbs("gallery/" + galleryItem.Path);
 
             }
             catch (GalleryItemNotFoundException)

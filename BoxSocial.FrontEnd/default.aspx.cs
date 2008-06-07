@@ -42,7 +42,7 @@ namespace BoxSocial.FrontEnd
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(core, session.LoggedInMember, "Calendar"));
 
-                template.ParseVariables("DATE_STRING", tz.Now.ToLongDateString());
+                template.Parse("DATE_STRING", tz.Now.ToLongDateString());
 
                 ShowUnseenNotifications();
                 ShowStatusUpdates();
@@ -58,9 +58,9 @@ namespace BoxSocial.FrontEnd
 
             if (myStatusMessage != null)
             {
-                template.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(loggedInMember.DisplayName));
-                template.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(myStatusMessage.Message));
-                template.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(myStatusMessage.GetTime(core.tz))));
+                template.Parse("USER_DISPLAY_NAME", loggedInMember.DisplayName);
+                template.Parse("STATUS_MESSAGE", myStatusMessage.Message);
+                template.Parse("STATUS_UPDATED", core.tz.DateTimeToString(myStatusMessage.GetTime(core.tz)));
             }
 
             /* Friends status */
@@ -70,10 +70,10 @@ namespace BoxSocial.FrontEnd
             {
                 VariableCollection statusMessagesVariableCollection = template.CreateChild("status_messages");
 
-                statusMessagesVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(statusMessage.Owner.DisplayName));
-                statusMessagesVariableCollection.ParseVariables("USER_NAME", HttpUtility.HtmlEncode(statusMessage.Owner.Key));
-                statusMessagesVariableCollection.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(statusMessage.Message));
-                statusMessagesVariableCollection.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(statusMessage.GetTime(core.tz))));
+                statusMessagesVariableCollection.Parse("USER_DISPLAY_NAME", statusMessage.Owner.DisplayName);
+                statusMessagesVariableCollection.Parse("USER_NAME", statusMessage.Owner.Key);
+                statusMessagesVariableCollection.Parse("STATUS_MESSAGE", statusMessage.Message);
+                statusMessagesVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(statusMessage.GetTime(core.tz)));
             }
 
             core.AddSidePanel(template);
@@ -111,12 +111,12 @@ namespace BoxSocial.FrontEnd
 
                 Random rand = new Random((int)DateTime.Now.Ticks);
 
-                template.ParseVariables("I_DEFAULT", (string)defaultImages[rand.Next(defaultImages.Count)]);
+                template.Parse("I_DEFAULT", (string)defaultImages[rand.Next(defaultImages.Count)]);
 
                 if (loggedInMember != null)
                 {
-                    template.ParseVariables("U_INVITE", HttpUtility.HtmlEncode(Linker.AppendSid("/account/?module=friends&sub=invite")));
-                    template.ParseVariables("U_WRITE_BLOG", HttpUtility.HtmlEncode(Linker.AppendSid("/account/?module=blog&sub=write")));
+                    template.Parse("U_INVITE", Linker.AppendSid("/account/?module=friends&sub=invite"));
+                    template.Parse("U_WRITE_BLOG", Linker.AppendSid("/account/?module=blog&sub=write"));
                 }
 
                 // new_points
@@ -130,12 +130,12 @@ namespace BoxSocial.FrontEnd
 
                     VariableCollection newPointsVariableCollection = template.CreateChild("new_points");
 
-                    newPointsVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(newMember.DisplayName));
-                    newPointsVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(newMember.AgeString));
-                    newPointsVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(newMember.Country));
-                    newPointsVariableCollection.ParseVariables("USER_CAPTION", "");
-                    newPointsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildHomepageUri(newMember)));
-                    newPointsVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(newMember.UserIcon));
+                    newPointsVariableCollection.Parse("USER_DISPLAY_NAME", newMember.DisplayName));
+                    newPointsVariableCollection.Parse("USER_AGE", newMember.AgeString));
+                    newPointsVariableCollection.Parse("USER_COUNTRY", newMember.Country));
+                    newPointsVariableCollection.Parse("USER_CAPTION", "");
+                    newPointsVariableCollection.Parse("U_PROFILE", Linker.BuildHomepageUri(newMember)));
+                    newPointsVariableCollection.Parse("ICON", newMember.UserIcon));
                 }*/
             }
             EndResponse();

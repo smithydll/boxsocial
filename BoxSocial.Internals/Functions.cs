@@ -382,16 +382,6 @@ namespace BoxSocial.Internals
 
             foreach (SelectBoxItem item in items)
             {
-                /*StylePropertyList style = new StylePropertyList();
-                if (!string.IsNullOrEmpty(item.Icon))
-                {
-                    style.SetProperty("background-image", string.Format("url('{0}')",
-                        item.Icon));
-                    style.SetProperty("backgound-repeat", "no-repeat");
-                    style.SetProperty("backgound-position", "left top");
-                    style.SetProperty("padding-left", "18px");
-                }*/
-
                 if (item.Key == selectedItem && disabledItems.Contains(item.Key))
                 {
                     selectBox.AppendLine(string.Format("<option value=\"{0}\"{1}{2}>{3}</option>",
@@ -531,7 +521,7 @@ namespace BoxSocial.Internals
             else
             {
                 HttpContext.Current.Response.StatusCode = 404;
-                core.template.ParseVariables("IS_404", "TRUE");
+                core.template.Parse("IS_404", "TRUE");
             }
         }
 
@@ -551,7 +541,7 @@ namespace BoxSocial.Internals
             else
             {
                 HttpContext.Current.Response.StatusCode = 403;
-                core.template.ParseVariables("IS_403", "TRUE");
+                core.template.Parse("IS_403", "TRUE");
             }
         }
 

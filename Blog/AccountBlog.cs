@@ -150,18 +150,18 @@ namespace BoxSocial.Applications.Blog
 
                 DateTime postedTime = tz.DateTimeFromMysql(blogRow["post_time_ut"]);
 
-                blogVariableCollection.ParseVariables("COMMENTS", HttpUtility.HtmlEncode(((uint)blogRow["post_comments"]).ToString()));
-                blogVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)blogRow["post_title"]));
-                blogVariableCollection.ParseVariables("POSTED", HttpUtility.HtmlEncode(tz.DateTimeToString(postedTime)));
+                blogVariableCollection.Parse("COMMENTS", ((uint)blogRow["post_comments"]).ToString());
+                blogVariableCollection.Parse("TITLE", (string)blogRow["post_title"]);
+                blogVariableCollection.Parse("POSTED", tz.DateTimeToString(postedTime));
 
-                blogVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Linker.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, (long)blogRow["post_id"])));
+                blogVariableCollection.Parse("U_VIEW", Linker.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, (long)blogRow["post_id"]));
 
-                blogVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=edit", string.Format("id={0}", (long)blogRow["post_id"]))));
-                blogVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(BuildModuleUri("blog", "write", "action=delete", string.Format("id={0}", (long)blogRow["post_id"]))));
+                blogVariableCollection.Parse("U_EDIT", BuildModuleUri("blog", "write", "action=edit", string.Format("id={0}", (long)blogRow["post_id"])));
+                blogVariableCollection.Parse("U_DELETE", BuildModuleUri("blog", "write", "action=delete", string.Format("id={0}", (long)blogRow["post_id"])));
 
                 if (i % 2 == 0)
                 {
-                    blogVariableCollection.ParseVariables("INDEX_EVEN", "TRUE");
+                    blogVariableCollection.Parse("INDEX_EVEN", "TRUE");
                 }
             }
         }
@@ -251,12 +251,15 @@ namespace BoxSocial.Applications.Blog
                 }
             }
 
-            template.ParseVariables("S_POST_YEAR", Functions.BuildSelectBox("post-year", postYears, postTime.Year.ToString()));
-            template.ParseVariables("S_POST_MONTH", Functions.BuildSelectBox("post-month", postMonths, postTime.Month.ToString()));
-            template.ParseVariables("S_POST_DAY", Functions.BuildSelectBox("post-day", postDays, postTime.Day.ToString()));
+            //template.Parse("S_POST_YEAR", Functions.BuildSelectBox("post-year", postYears, postTime.Year.ToString()));
+            //template.Parse("S_POST_MONTH", Functions.BuildSelectBox("post-month", postMonths, postTime.Month.ToString()));
+            //template.Parse("S_POST_DAY", Functions.BuildSelectBox("post-day", postDays, postTime.Day.ToString()));
+            Display.ParseSelectBox(template, "S_POST_YEAR", "post-year", postYears, postTime.Year.ToString());
+            Display.ParseSelectBox(template, "S_POST_MONTH", "post-month", postMonths, postTime.Month.ToString());
+            Display.ParseSelectBox(template, "S_POST_DAY", "post-day", postDays, postTime.Day.ToString());
 
-            template.ParseVariables("S_POST_HOUR", HttpUtility.HtmlEncode(postTime.Hour.ToString()));
-            template.ParseVariables("S_POST_MINUTE", HttpUtility.HtmlEncode(postTime.Minute.ToString()));
+            template.Parse("S_POST_HOUR", postTime.Hour.ToString());
+            template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
 
             template.SetTemplate("Blog", "account_post");
 
@@ -280,13 +283,16 @@ namespace BoxSocial.Applications.Blog
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
             }
 
-            template.ParseVariables("S_BLOG_LICENSE", Functions.BuildSelectBox("license", licenses, licenseId.ToString()));
-            template.ParseVariables("S_BLOG_CATEGORY", Functions.BuildSelectBox("category", categories, categoryId.ToString()));
-            template.ParseVariables("S_BLOG_PERMS", Functions.BuildPermissionsBox(blogPermissions, permissions));
+            //template.Parse("S_BLOG_LICENSE", Functions.BuildSelectBox("license", licenses, licenseId.ToString()));
+            //template.Parse("S_BLOG_CATEGORY", Functions.BuildSelectBox("category", categories, categoryId.ToString()));
+            //template.Parse("S_BLOG_PERMS", Functions.BuildPermissionsBox(blogPermissions, permissions));
+            Display.ParseSelectBox(template, "S_BLOG_LICENSE", "license", licenses, licenseId.ToString());
+            Display.ParseSelectBox(template, "S_BLOG_CATEGORY", "category", categories, categoryId.ToString());
+            Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
 
-            template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode(postTitle));
-            template.ParseVariables("S_BLOG_TEXT", HttpUtility.HtmlEncode(postText));
-            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(postId.ToString()));
+            template.Parse("S_TITLE", postTitle);
+            template.Parse("S_BLOG_TEXT", postText);
+            template.Parse("S_ID", postId.ToString());
         }
 
         /// <summary>
@@ -372,13 +378,13 @@ namespace BoxSocial.Applications.Blog
 
             if (string.IsNullOrEmpty(title))
             {
-                template.ParseVariables("ERROR", "You must give the blog post a title.");
+                template.Parse("ERROR", "You must give the blog post a title.");
                 return;
             }
 
             if (string.IsNullOrEmpty(postBody))
             {
-                template.ParseVariables("ERROR", "You cannot save an empty blog post. You must post some content.");
+                template.Parse("ERROR", "You cannot save an empty blog post. You must post some content.");
                 return;
             }
 
@@ -485,7 +491,7 @@ namespace BoxSocial.Applications.Blog
 
             List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
 
-            template.ParseVariables("BLOG_ROLL_ENTRIES", HttpUtility.HtmlEncode(blogRollEntries.Count.ToString()));
+            template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
 
             foreach (BlogRollEntry bre in blogRollEntries)
             {
@@ -493,14 +499,14 @@ namespace BoxSocial.Applications.Blog
 
                 if (!string.IsNullOrEmpty(bre.Title))
                 {
-                    breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.Title));
+                    breVariableCollection.Parse("TITLE", bre.Title);
                 }
                 else if (bre.User != null)
                 {
-                    breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.User.DisplayName));
+                    breVariableCollection.Parse("TITLE", bre.User.DisplayName);
                 }
 
-                breVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(bre.Uri));
+                breVariableCollection.Parse("URI", bre.Uri);
             }
         }
 
@@ -539,8 +545,9 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Read");
             permissions.Add("Can Comment");
 
-            template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode(myBlog.Title));
-            template.ParseVariables("S_BLOG_PERMS", Functions.BuildPermissionsBox(myBlog.Permissions, permissions));
+            template.Parse("S_TITLE", myBlog.Title);
+            //template.ParseRaw("S_BLOG_PERMS", Functions.BuildPermissionsBox(myBlog.Permissions, permissions));
+            Display.ParsePermissionsBox(template, "S_BLOG_PERMS", myBlog.Permissions, permissions);
         }
 
         /// <summary>

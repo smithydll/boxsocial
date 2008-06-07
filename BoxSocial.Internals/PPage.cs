@@ -108,34 +108,34 @@ namespace BoxSocial.Internals
             {
                 if (loggedInMember.ShowCustomStyles)
                 {
-                    template.ParseVariables("USER_STYLE_SHEET", HttpUtility.HtmlEncode(string.Format("{0}.css", profileOwner.UserName)));
+                    template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
                 }
             }
             else
             {
-                template.ParseVariables("USER_STYLE_SHEET", HttpUtility.HtmlEncode(string.Format("{0}.css", profileOwner.UserName)));
+                template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
             }
-            template.ParseVariables("USER_NAME", HttpUtility.HtmlEncode(profileOwner.UserName));
-            template.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(profileOwner.DisplayName));
-            template.ParseVariables("USER_DISPLAY_NAME_OWNERSHIP", HttpUtility.HtmlEncode(profileOwner.DisplayNameOwnership));
+            template.Parse("USER_NAME", profileOwner.UserName);
+            template.Parse("USER_DISPLAY_NAME", profileOwner.DisplayName);
+            template.Parse("USER_DISPLAY_NAME_OWNERSHIP", profileOwner.DisplayNameOwnership);
 
             if (loggedInMember != null)
             {
                 if (loggedInMember.UserId == profileOwner.UserId)
                 {
-                    template.ParseVariables("OWNER", "TRUE");
-                    template.ParseVariables("SELF", "TRUE");
+                    template.Parse("OWNER", "TRUE");
+                    template.Parse("SELF", "TRUE");
                 }
                 else
                 {
-                    template.ParseVariables("OWNER", "FALSE");
-                    template.ParseVariables("SELF", "FALSE");
+                    template.Parse("OWNER", "FALSE");
+                    template.Parse("SELF", "FALSE");
                 }
             }
             else
             {
-                template.ParseVariables("OWNER", "FALSE");
-                template.ParseVariables("SELF", "FALSE");
+                template.Parse("OWNER", "FALSE");
+                template.Parse("SELF", "FALSE");
             }
         }
     }

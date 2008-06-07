@@ -52,9 +52,9 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection topicsVariableCollection = template.CreateChild("topics");
 
-                    topicsVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/help/{0}",
-                        (string)topicRow["topic_slug"]))));
-                    topicsVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)topicRow["topic_title"]));
+                    topicsVariableCollection.Parse("URI", Linker.AppendSid(string.Format("/help/{0}",
+                        (string)topicRow["topic_slug"])));
+                    topicsVariableCollection.Parse("TITLE", (string)topicRow["topic_title"]);
                 }
             }
 

@@ -44,23 +44,24 @@ namespace BoxSocial.FrontEnd
 
             string langFriends = (profileOwner.Friends != 1) ? "friends" : "friend";
 
-            template.ParseVariables("FRIENDS_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Friends", profileOwner.DisplayNameOwnership)));
+            template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", profileOwner.DisplayNameOwnership));
 
-            template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(profileOwner.Friends.ToString()));
-            template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
+            template.Parse("FRIENDS", profileOwner.Friends.ToString());
+            template.Parse("L_FRIENDS", langFriends);
 
             List<User> friends = profileOwner.GetFriends(page, 18);
             foreach (User friend in friends)
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 
-                friendVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(friend.DisplayName));
-                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(friend)));
-                friendVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(friend.UserIcon));
+                friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
+                friendVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(friend));
+                friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
             string pageUri = Linker.BuildFriendsUri(profileOwner);
-            template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0)));
+            //template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0)));
+            Display.ParsePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0));
 
             EndResponse();
         }

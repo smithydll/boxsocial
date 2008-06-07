@@ -134,12 +134,12 @@ namespace BoxSocial.FrontEnd
 
             if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {
-                template.ParseVariables("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
+                template.Parse("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
             }
 
             if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
             {
-                template.ParseVariables("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
+                template.Parse("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
             }
 
             Account accountObject = new Account(Core);
@@ -173,14 +173,14 @@ namespace BoxSocial.FrontEnd
             {
                 VariableCollection modulesVariableCollection = template.CreateChild("module_list");
 
-                modulesVariableCollection.ParseVariables("NAME", accountModule.Name);
+                modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.ParseVariables("URI", "/account/");
+                    modulesVariableCollection.Parse("URI", "/account/");
                 }
                 else
                 {
-                    modulesVariableCollection.ParseVariables("URI", "/account/" + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", "/account/" + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
@@ -217,9 +217,9 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
 
-                    modulesVariableCollection.ParseVariables("TITLE", modules[key]);
-                    modulesVariableCollection.ParseVariables("SUB", key);
-                    modulesVariableCollection.ParseVariables("MODULE", module);
+                    modulesVariableCollection.Parse("TITLE", modules[key]);
+                    modulesVariableCollection.Parse("SUB", key);
+                    modulesVariableCollection.Parse("MODULE", module);
                 }
             }
 

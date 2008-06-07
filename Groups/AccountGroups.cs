@@ -91,7 +91,7 @@ namespace BoxSocial.Groups
 
             template.SetTemplate("Groups", "account_group_manage");
 
-            template.ParseVariables("U_CREATE_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/groups/create")));
+            template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
 
             DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
                 loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
@@ -102,24 +102,24 @@ namespace BoxSocial.Groups
 
                 UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
 
-                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
-                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
+                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
 
-                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
-                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
-                groupVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(thisGroup.EditUri));
-                groupVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(thisGroup.DeleteUri));
+                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
+                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
+                groupVariableCollection.Parse("U_EDIT", thisGroup.EditUri);
+                groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
 
                 switch (thisGroup.GroupType)
                 {
                     case "OPEN":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
                         break;
                     case "CLOSED":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
                         break;
                     case "PRIVATE":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
                         break;
                 }
             }
@@ -228,23 +228,24 @@ namespace BoxSocial.Groups
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
             }
 
-            template.ParseVariables("S_EDIT_GROUP", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
-            template.ParseVariables("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
-            template.ParseVariables("S_GROUP_ID", HttpUtility.HtmlEncode(thisGroup.GroupId.ToString()));
-            template.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
-            template.ParseVariables("GROUP_DESCRIPTION", HttpUtility.HtmlEncode(thisGroup.Description));
+            template.Parse("S_EDIT_GROUP", Linker.AppendSid("/account/", true));
+            //template.ParseRaw("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
+            Display.ParseSelectBox(template, "S_CATEGORIES", "category", categories, category.ToString());
+            template.Parse("S_GROUP_ID", thisGroup.GroupId.ToString());
+            template.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
+            template.Parse("GROUP_DESCRIPTION", thisGroup.Description);
 
             string selected = "checked=\"checked\" ";
             switch (thisGroup.GroupType)
             {
                 case "OPEN":
-                    template.ParseVariables("S_OPEN_CHECKED", selected);
+                    template.Parse("S_OPEN_CHECKED", selected);
                     break;
                 case "CLOSED":
-                    template.ParseVariables("S_CLOSED_CHECKED", selected);
+                    template.Parse("S_CLOSED_CHECKED", selected);
                     break;
                 case "PRIVATE":
-                    template.ParseVariables("S_PRIVATE_CHECKED", selected);
+                    template.Parse("S_PRIVATE_CHECKED", selected);
                     break;
             }
         }
@@ -340,7 +341,7 @@ namespace BoxSocial.Groups
 
             if (pendingGroupsTable.Rows.Count > 0)
             {
-                template.ParseVariables("PENDING_MEMBERSHIPS", "TRUE");
+                template.Parse("PENDING_MEMBERSHIPS", "TRUE");
             }
 
             for (int i = 0; i < pendingGroupsTable.Rows.Count; i++)
@@ -349,23 +350,23 @@ namespace BoxSocial.Groups
 
                 UserGroup thisGroup = new UserGroup(core, pendingGroupsTable.Rows[i]);
 
-                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
-                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
+                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
 
-                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
-                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
-                groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
+                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
+                groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
 
                 switch (thisGroup.GroupType)
                 {
                     case "OPEN":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
                         break;
                     case "CLOSED":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
                         break;
                     case "PRIVATE":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
                         break;
                 }
             }
@@ -375,7 +376,7 @@ namespace BoxSocial.Groups
 
             if (groupsTable.Rows.Count > 0)
             {
-                template.ParseVariables("GROUP_MEMBERSHIPS", "TRUE");
+                template.Parse("GROUP_MEMBERSHIPS", "TRUE");
             }
 
             for (int i = 0; i < groupsTable.Rows.Count; i++)
@@ -384,34 +385,34 @@ namespace BoxSocial.Groups
 
                 UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
 
-                groupVariableCollection.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(thisGroup.DisplayName));
-                groupVariableCollection.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(thisGroup.Members.ToString()));
+                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
+                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
 
-                groupVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(thisGroup.Uri));
-                groupVariableCollection.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(thisGroup.MemberlistUri));
+                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
+                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
                 if (!(groupsTable.Rows[i]["user_id_go"] is DBNull))
                 {
                     if ((int)groupsTable.Rows[i]["user_id_go"] != loggedInMember.UserId)
                     {
-                        groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+                        groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
                     }
                 }
                 else
                 {
-                    groupVariableCollection.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(thisGroup.LeaveUri));
+                    groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
                 }
-                groupVariableCollection.ParseVariables("U_INVITE", HttpUtility.HtmlEncode(thisGroup.InviteUri));
+                groupVariableCollection.Parse("U_INVITE", thisGroup.InviteUri);
 
                 switch (thisGroup.GroupType)
                 {
                     case "OPEN":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Open"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
                         break;
                     case "CLOSED":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Closed"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
                         break;
                     case "PRIVATE":
-                        groupVariableCollection.ParseVariables("GROUP_TYPE", HttpUtility.HtmlEncode("Private"));
+                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
                         break;
                 }
             }
@@ -624,8 +625,8 @@ namespace BoxSocial.Groups
                     break;
             }
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
-            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(groupId.ToString()));
+            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+            template.Parse("S_ID", groupId.ToString());
         }
 
         private void InviteGroupSend()
@@ -670,12 +671,12 @@ namespace BoxSocial.Groups
                         {
                             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
 
-                            emailTemplate.ParseVariables("TO_NAME", inviteMember.DisplayName);
-                            emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                            emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
-                            emailTemplate.ParseVariables("GROUP_NAME", thisGroup.DisplayName);
-                            emailTemplate.ParseVariables("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
-                            emailTemplate.ParseVariables("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
+                            emailTemplate.Parse("TO_NAME", inviteMember.DisplayName);
+                            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
+                            emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
+                            emailTemplate.Parse("GROUP_NAME", thisGroup.DisplayName);
+                            emailTemplate.Parse("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
+                            emailTemplate.Parse("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
 
                             ApplicationEntry ae = Application.GetExecutingApplication(core, loggedInMember);
                             ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), "{TODO}" ,emailTemplate);
@@ -819,9 +820,9 @@ namespace BoxSocial.Groups
                         if (thisGroup.IsGroupMember(member))
                         {
                             // all ok, don't really need to do much, so let's do it
-                            template.ParseVariables("S_ID", HttpUtility.HtmlEncode(string.Format("{0},{1}", groupId, userId)));
-                            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
-                            template.ParseVariables("S_USERNAME", HttpUtility.HtmlEncode(member.UserName));
+                            template.Parse("S_ID", string.Format("{0},{1}", groupId, userId));
+                            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+                            template.Parse("S_USERNAME", member.UserName);
                         }
                         else
                         {

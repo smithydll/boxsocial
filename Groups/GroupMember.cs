@@ -97,13 +97,14 @@ namespace BoxSocial.Groups
         public GroupMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
-            loadItemInfo(memberRow);
+            loadItemInfo(typeof(GroupMember), memberRow);
         }
 
         public GroupMember(Core core, DataRow memberRow)
             : base(core)
         {
-            loadItemInfo(memberRow);
+            loadItemInfo(typeof(GroupMember), memberRow);
+            core.LoadUserProfile(userId);
             loadUserFromUser(core.UserProfiles[userId]);
         }
 

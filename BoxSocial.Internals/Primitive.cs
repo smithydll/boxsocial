@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -115,6 +116,36 @@ namespace BoxSocial.Internals
             bool canRead, canComment, canCreate, canChange;
             GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
             return canChange;
+        }
+
+        public void ParseBreadCrumbs(string path)
+        {
+            ParseBreadCrumbs("BREADCRUMBS", path);
+        }
+
+        public void ParseBreadCrumbs(string templateVar, string path)
+        {
+            ParseBreadCrumbs(core.template, templateVar, path);
+        }
+
+        public void ParseBreadCrumbs(Template template, string templateVar, string path)
+        {
+            template.ParseRaw(templateVar, GenerateBreadCrumbs(path));
+        }
+
+        public void ParseBreadCrumbs(List<string[]> parts)
+        {
+            ParseBreadCrumbs("BREADCRUMBS", parts);
+        }
+
+        public void ParseBreadCrumbs(string templateVar, List<string[]> parts)
+        {
+            ParseBreadCrumbs(core.template, templateVar, parts);
+        }
+
+        public void ParseBreadCrumbs(Template template, string templateVar, List<string[]> parts)
+        {
+            template.ParseRaw(templateVar, GenerateBreadCrumbs(parts));
         }
 
         public abstract string GenerateBreadCrumbs(List<string[]> parts);

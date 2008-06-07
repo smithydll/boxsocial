@@ -124,9 +124,12 @@ namespace BoxSocial
             sexualities.Add("BISEXUAL", "Bisexual");
             sexualities.Add("TRANSEXUAL", "Transexual");
 
-            template.ParseVariables("S_MARITIAL_STATUS", Functions.BuildSelectBox("maritial-status", maritialStatuses, loggedInMember.MaritialStatusRaw));
-            template.ParseVariables("S_RELIGION", Functions.BuildSelectBox("religion", religions, loggedInMember.ReligionRaw.ToString()));
-            template.ParseVariables("S_SEXUALITY", Functions.BuildSelectBox("sexuality", sexualities, loggedInMember.SexualityRaw));
+            //template.Parse("S_MARITIAL_STATUS", Functions.BuildSelectBox("maritial-status", maritialStatuses, loggedInMember.MaritialStatusRaw));
+            //template.Parse("S_RELIGION", Functions.BuildSelectBox("religion", religions, loggedInMember.ReligionRaw.ToString()));
+            //template.Parse("S_SEXUALITY", Functions.BuildSelectBox("sexuality", sexualities, loggedInMember.SexualityRaw));
+            Display.ParseSelectBox(template, "S_MARITIAL_STATUS", "maritial-status", maritialStatuses, loggedInMember.MaritialStatusRaw);
+            Display.ParseSelectBox(template, "S_RELIGION", "religion", religions, loggedInMember.ReligionRaw.ToString());
+            Display.ParseSelectBox(template, "S_SEXUALITY", "sexuality", sexualities, loggedInMember.SexualityRaw);
         }
 
         public void LifestyleSave()
@@ -154,13 +157,13 @@ namespace BoxSocial
             switch (loggedInMember.GenderRaw)
             {
                 case "UNDEF":
-                    template.ParseVariables("S_GENDER_UNDEF", selected);
+                    template.Parse("S_GENDER_UNDEF", selected);
                     break;
                 case "MALE":
-                    template.ParseVariables("S_GENDER_MALE", selected);
+                    template.Parse("S_GENDER_MALE", selected);
                     break;
                 case "FEMALE":
-                    template.ParseVariables("S_GENDER_FEMALE", selected);
+                    template.Parse("S_GENDER_FEMALE", selected);
                     break;
             }
 
@@ -192,11 +195,15 @@ namespace BoxSocial
                 countries.Add((string)countryRow["country_iso"], (string)countryRow["country_name"]);
             }
 
-            template.ParseVariables("S_DOB_YEAR", Functions.BuildSelectBox("dob-year", dobYears, loggedInMember.DateOfBirth.Year.ToString()));
-            template.ParseVariables("S_DOB_MONTH", Functions.BuildSelectBox("dob-month", dobMonths, loggedInMember.DateOfBirth.Month.ToString()));
-            template.ParseVariables("S_DOB_DAY", Functions.BuildSelectBox("dob-day", dobDays, loggedInMember.DateOfBirth.Day.ToString()));
-            template.ParseVariables("S_COUNTRY", Functions.BuildSelectBox("country", countries, loggedInMember.CountryIso));
-            template.ParseVariables("S_AUTO_BIOGRAPHY", HttpUtility.HtmlEncode(loggedInMember.Autobiography));
+            //template.Parse("S_DOB_YEAR", Functions.BuildSelectBox("dob-year", dobYears, loggedInMember.DateOfBirth.Year.ToString()));
+            //template.Parse("S_DOB_MONTH", Functions.BuildSelectBox("dob-month", dobMonths, loggedInMember.DateOfBirth.Month.ToString()));
+            //template.Parse("S_DOB_DAY", Functions.BuildSelectBox("dob-day", dobDays, loggedInMember.DateOfBirth.Day.ToString()));
+            //template.Parse("S_COUNTRY", Functions.BuildSelectBox("country", countries, loggedInMember.CountryIso));
+            Display.ParseSelectBox(template, "S_DOB_YEAR", "dob-year", dobYears, loggedInMember.DateOfBirth.Year.ToString());
+            Display.ParseSelectBox(template, "S_DOB_MONTH", "dob-month", dobMonths, loggedInMember.DateOfBirth.Month.ToString());
+            Display.ParseSelectBox(template, "S_DOB_DAY", "dob-day", dobDays, loggedInMember.DateOfBirth.Day.ToString());
+            Display.ParseSelectBox(template, "S_COUNTRY", "country", countries, loggedInMember.CountryIso);
+            template.Parse("S_AUTO_BIOGRAPHY", loggedInMember.Autobiography);
 
             template.SetTemplate("account_profile.html");
         }
@@ -260,11 +267,11 @@ namespace BoxSocial
 
             if (editor == StyleGenerator.Theme)
             {
-                template.ParseVariables("THEME_EDITOR", "TRUE");
+                template.Parse("THEME_EDITOR", "TRUE");
 
                 if (css.Hue == -1)
                 {
-                    template.ParseVariables("DEFAULT_SELECTED", " checked=\"checked\"");
+                    template.Parse("DEFAULT_SELECTED", " checked=\"checked\"");
                 }
 
                 for (int i = 0; i < 8; i++)
@@ -278,37 +285,37 @@ namespace BoxSocial
                     System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F - 180F, 0.7F, 0.2F); // box border
                     System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F - 180F, 0.4F, 0.85F); // box background colour
 
-                    themeVariableCollection.ParseVariables("C_ONE", string.Format("{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B));
-                    themeVariableCollection.ParseVariables("C_TWO", string.Format("{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B));
-                    themeVariableCollection.ParseVariables("C_THREE", string.Format("{0:x2}{1:x2}{2:x2}", three.R, three.G, three.B));
-                    themeVariableCollection.ParseVariables("C_FOUR", string.Format("{0:x2}{1:x2}{2:x2}", four.R, four.G, four.B));
-                    themeVariableCollection.ParseVariables("C_FIVE", string.Format("{0:x2}{1:x2}{2:x2}", five.R, five.G, five.B));
-                    themeVariableCollection.ParseVariables("HUE", ((int)baseHue).ToString());
+                    themeVariableCollection.Parse("C_ONE", string.Format("{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B));
+                    themeVariableCollection.Parse("C_TWO", string.Format("{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B));
+                    themeVariableCollection.Parse("C_THREE", string.Format("{0:x2}{1:x2}{2:x2}", three.R, three.G, three.B));
+                    themeVariableCollection.Parse("C_FOUR", string.Format("{0:x2}{1:x2}{2:x2}", four.R, four.G, four.B));
+                    themeVariableCollection.Parse("C_FIVE", string.Format("{0:x2}{1:x2}{2:x2}", five.R, five.G, five.B));
+                    themeVariableCollection.Parse("HUE", ((int)baseHue).ToString());
 
                     if ((int)baseHue == css.Hue)
                     {
-                        themeVariableCollection.ParseVariables("SELECTED", " checked=\"checked\"");
+                        themeVariableCollection.Parse("SELECTED", " checked=\"checked\"");
                     }
                 }
             }
 
             if (editor == StyleGenerator.Standard)
             {
-                template.ParseVariables("STANDARD_EDITOR", "TRUE");
+                template.Parse("STANDARD_EDITOR", "TRUE");
 
                 if (css.HasKey("body"))
                 {
                     if (css["body"].HasProperty("background-color"))
                     {
-                        template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["body"]["background-color"].Value));
+                        template.Parse("BACKGROUND_COLOUR", css["body"]["background-color"].Value);
                     }
                     if (css["body"].HasProperty("color"))
                     {
-                        template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["body"]["color"].Value));
+                        template.Parse("FORE_COLOUR", css["body"]["color"].Value);
                     }
                     if (css["body"].HasProperty("background-image"))
                     {
-                        template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["body"]["background-image"].Value));
+                        template.Parse("BACKGROUND_IMAGE", css["body"]["background-image"].Value);
                     }
                     if (css["body"].HasProperty("background-repeat"))
                     {
@@ -334,15 +341,15 @@ namespace BoxSocial
                 {
                     if (css["html"].HasProperty("background-color"))
                     {
-                        template.ParseVariables("BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["html"]["background-color"].Value));
+                        template.Parse("BACKGROUND_COLOUR", css["html"]["background-color"].Value);
                     }
                     if (css["html"].HasProperty("color"))
                     {
-                        template.ParseVariables("FORE_COLOUR", HttpUtility.HtmlEncode(css["html"]["color"].Value));
+                        template.Parse("FORE_COLOUR", css["html"]["color"].Value);
                     }
                     if (css["html"].HasProperty("background-image"))
                     {
-                        template.ParseVariables("BACKGROUND_IMAGE", HttpUtility.HtmlEncode(css["html"]["background-image"].Value));
+                        template.Parse("BACKGROUND_IMAGE", css["html"]["background-image"].Value);
                     }
                     if (css["html"].HasProperty("background-repeat"))
                     {
@@ -369,7 +376,7 @@ namespace BoxSocial
                 {
                     if (css["a"].HasProperty("color"))
                     {
-                        template.ParseVariables("LINK_COLOUR", HttpUtility.HtmlEncode(css["a"]["color"].Value));
+                        template.Parse("LINK_COLOUR", css["a"]["color"].Value);
                     }
                 }
 
@@ -377,17 +384,17 @@ namespace BoxSocial
                 {
                     if (css["#pane-profile div.pane"].HasProperty("border-color"))
                     {
-                        template.ParseVariables("BOX_BORDER_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["border-color"].Value));
+                        template.Parse("BOX_BORDER_COLOUR", css["#pane-profile div.pane"]["border-color"].Value);
                     }
 
                     if (css["#pane-profile div.pane"].HasProperty("background-color"))
                     {
-                        template.ParseVariables("BOX_BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["background-color"].Value));
+                        template.Parse("BOX_BACKGROUND_COLOUR", css["#pane-profile div.pane"]["background-color"].Value);
                     }
 
                     if (css["#pane-profile div.pane"].HasProperty("color"))
                     {
-                        template.ParseVariables("BOX_FORE_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane"]["color"].Value));
+                        template.Parse("BOX_FORE_COLOUR", css["#pane-profile div.pane"]["color"].Value);
                     }
                 }
 
@@ -395,12 +402,12 @@ namespace BoxSocial
                 {
                     if (css["#pane-profile div.pane h3"].HasProperty("background-color"))
                     {
-                        template.ParseVariables("BOX_H_BACKGROUND_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane h3"]["background-color"].Value));
+                        template.Parse("BOX_H_BACKGROUND_COLOUR", css["#pane-profile div.pane h3"]["background-color"].Value);
                     }
 
                     if (css["#pane-profile div.pane h3"].HasProperty("color"))
                     {
-                        template.ParseVariables("BOX_H_FORE_COLOUR", HttpUtility.HtmlEncode(css["#pane-profile div.pane h3"]["color"].Value));
+                        template.Parse("BOX_H_FORE_COLOUR", css["#pane-profile div.pane h3"]["color"].Value);
                     }
                 }
 
@@ -410,7 +417,8 @@ namespace BoxSocial
                 repeatBoxItems.Add(new SelectBoxItem("repeat-y", "Vertical", "/images/bg-rpt-y.png"));
                 repeatBoxItems.Add(new SelectBoxItem("repeat", "Tile", "/images/bg-rpt.png"));
 
-                template.ParseVariables("S_BACKGROUND_REPEAT", Functions.BuildRadioArray("background-repeat", 2, repeatBoxItems, backgroundRepeat));
+                //template.ParseRaw("S_BACKGROUND_REPEAT", Functions.BuildRadioArray("background-repeat", 2, repeatBoxItems, backgroundRepeat));
+                Display.ParseRadioArray(template, "S_BACKGROUND_REPEAT", "background-repeat", 2, repeatBoxItems, backgroundRepeat);
 
                 List<SelectBoxItem> positionBoxItems = new List<SelectBoxItem>();
                 positionBoxItems.Add(new SelectBoxItem("left top", "Top Left", "/images/bg-t-l.png"));
@@ -423,20 +431,21 @@ namespace BoxSocial
                 positionBoxItems.Add(new SelectBoxItem("center bottom", "Bottom Centre", "/images/bg-b-c.png"));
                 positionBoxItems.Add(new SelectBoxItem("right bottom", "Bottom Right", "/images/bg-b-r.png"));
 
-                template.ParseVariables("S_BACKGROUND_POSITION", Functions.BuildRadioArray("background-position", 3, positionBoxItems, backgroundPosition));
+                //template.ParseRaw("S_BACKGROUND_POSITION", Functions.BuildRadioArray("background-position", 3, positionBoxItems, backgroundPosition));
+                Display.ParseRadioArray(template, "S_BACKGROUND_POSITION", "background-position", 3, positionBoxItems, backgroundPosition);
 
                 if (backgroundAttachment)
                 {
-                    template.ParseVariables("BACKGROUND_IMAGE_FIXED", "checked=\"checked\"");
+                    template.Parse("BACKGROUND_IMAGE_FIXED", "checked=\"checked\"");
                 }
             }
 
             if (editor == StyleGenerator.Advanced)
             {
-                template.ParseVariables("ADVANCED_EDITOR", "TRUE");
+                template.Parse("ADVANCED_EDITOR", "TRUE");
 
                 css.Generator = StyleGenerator.Advanced;
-                template.ParseVariables("STYLE", HttpUtility.HtmlEncode(css.ToString())); //  + "\n----\n" + loggedInMember.GetUserStyle())
+                template.Parse("STYLE", css.ToString()); //  + "\n----\n" + loggedInMember.GetUserStyle())
             }
         }
 
@@ -625,7 +634,8 @@ namespace BoxSocial
             permissions.Add("Can Read");
             permissions.Add("Can Comment");
 
-            template.ParseVariables("S_PROFILE_PERMS", Functions.BuildPermissionsBox(loggedInMember.Permissions, permissions));
+            //template.Parse("S_PROFILE_PERMS", Functions.BuildPermissionsBox(loggedInMember.Permissions, permissions));
+            Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", loggedInMember.Permissions, permissions);
             template.SetTemplate("account_permissions.html");
         }
 
@@ -654,44 +664,44 @@ namespace BoxSocial
             loggedInMember.LoadProfileInfo();
 
             template.SetTemplate("account_name.html");
-            template.ParseVariables("DISPLAY_NAME", HttpUtility.HtmlEncode(loggedInMember.DisplayName));
-            template.ParseVariables("FIRST_NAME", HttpUtility.HtmlEncode(loggedInMember.FirstName));
-            template.ParseVariables("MIDDLE_NAME", HttpUtility.HtmlEncode(loggedInMember.MiddleName));
-            template.ParseVariables("LAST_NAME", HttpUtility.HtmlEncode(loggedInMember.LastName));
-            template.ParseVariables("SUFFIX", HttpUtility.HtmlEncode(loggedInMember.Suffix));
+            template.Parse("DISPLAY_NAME", loggedInMember.DisplayName);
+            template.Parse("FIRST_NAME", loggedInMember.FirstName);
+            template.Parse("MIDDLE_NAME", loggedInMember.MiddleName);
+            template.Parse("LAST_NAME", loggedInMember.LastName);
+            template.Parse("SUFFIX", loggedInMember.Suffix);
 
             string selected = " selected=\"selected\"";
             switch (loggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
             {
                 default:
-                    template.ParseVariables("TITLE_NONE", selected);
+                    template.Parse("TITLE_NONE", selected);
                     break;
                 case "master":
-                    template.ParseVariables("TITLE_MASTER", selected);
+                    template.Parse("TITLE_MASTER", selected);
                     break;
                 case "mr":
-                    template.ParseVariables("TITLE_MR", selected);
+                    template.Parse("TITLE_MR", selected);
                     break;
                 case "miss":
-                    template.ParseVariables("TITLE_MISS", selected);
+                    template.Parse("TITLE_MISS", selected);
                     break;
                 case "ms":
-                    template.ParseVariables("TITLE_MS", selected);
+                    template.Parse("TITLE_MS", selected);
                     break;
                 case "mrs":
-                    template.ParseVariables("TITLE_MRS", selected);
+                    template.Parse("TITLE_MRS", selected);
                     break;
                 case "fr":
-                    template.ParseVariables("TITLE_FR", selected);
+                    template.Parse("TITLE_FR", selected);
                     break;
                 case "sr":
-                    template.ParseVariables("TITLE_SR", selected);
+                    template.Parse("TITLE_SR", selected);
                     break;
                 case "prof":
-                    template.ParseVariables("TITLE_PROF", selected);
+                    template.Parse("TITLE_PROF", selected);
                     break;
                 case "lord":
-                    template.ParseVariables("TITLE_LORD", selected);
+                    template.Parse("TITLE_LORD", selected);
                     break;
             }
         }
@@ -722,11 +732,11 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_display_picture");
 
-            template.ParseVariables("S_DISPLAY_PICTURE", HttpUtility.HtmlEncode(Linker.AppendSid("/account", true)));
+            template.Parse("S_DISPLAY_PICTURE", Linker.AppendSid("/account", true));
 
             if (!string.IsNullOrEmpty(loggedInMember.UserThumbnail))
             {
-                template.ParseVariables("I_DISPLAY_PICTURE", HttpUtility.HtmlEncode(loggedInMember.UserThumbnail));
+                template.Parse("I_DISPLAY_PICTURE", loggedInMember.UserThumbnail);
             }
         }
 

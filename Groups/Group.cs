@@ -356,15 +356,14 @@ namespace BoxSocial.Groups
             return operators;
         }
 
-        // TODO: change type to GroupOfficer
-        public List<GroupMember> GetOfficers()
+        public List<GroupOfficer> GetOfficers()
         {
             return GetOfficers(1, 255);
         }
 
-        public List<GroupMember> GetOfficers(int page, int perPage)
+        public List<GroupOfficer> GetOfficers(int page, int perPage)
         {
-            List<GroupMember> operators = new List<GroupMember>();
+            List<GroupOfficer> officers = new List<GroupOfficer>();
 
             SelectQuery query = new SelectQuery("group_officers");
             query.AddField(new DataField("group_officers", "user_id"));
@@ -384,10 +383,10 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                operators.Add(new GroupMember(core, dr));
+                officers.Add(new GroupOfficer(core, dr));
             }
 
-            return operators;
+            return officers;
         }
 
         public bool IsGroupInvitee(User member)
@@ -1076,33 +1075,34 @@ namespace BoxSocial.Groups
         {
             page.template.SetTemplate("Groups", "viewgroup");
 
-            page.template.ParseVariables("U_GROUP", HttpUtility.HtmlEncode(page.ThisGroup.Uri));
-            page.template.ParseVariables("GROUP_DISPLAY_NAME", HttpUtility.HtmlEncode(page.ThisGroup.DisplayName));
+            page.template.Parse("U_GROUP", page.ThisGroup.Uri);
+            page.template.Parse("GROUP_DISPLAY_NAME", page.ThisGroup.DisplayName);
 
             string langMembers = (page.ThisGroup.Members != 1) ? "members" : "member";
             string langIsAre = (page.ThisGroup.Members != 1) ? "are" : "is";
 
-            page.template.ParseVariables("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.ThisGroup.Description), core.session.LoggedInMember));
-            page.template.ParseVariables("DATE_CREATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(page.ThisGroup.DateCreated(core.tz))));
-            page.template.ParseVariables("CATEGORY", HttpUtility.HtmlEncode(page.ThisGroup.Category));
+            //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.ThisGroup.Description), core.session.LoggedInMember));
+            Display.ParseBbcode("DESCRIPTION", page.ThisGroup.Description);
+            page.template.Parse("DATE_CREATED", core.tz.DateTimeToString(page.ThisGroup.DateCreated(core.tz)));
+            page.template.Parse("CATEGORY", page.ThisGroup.Category);
 
-            page.template.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(page.ThisGroup.Members.ToString()));
-            page.template.ParseVariables("OPERATORS", HttpUtility.HtmlEncode(page.ThisGroup.Operators.ToString()));
-            page.template.ParseVariables("OFFICERS", HttpUtility.HtmlEncode(page.ThisGroup.Officers.ToString()));
-            page.template.ParseVariables("L_MEMBERS", HttpUtility.HtmlEncode(langMembers));
-            page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode(langIsAre));
-            page.template.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(page.ThisGroup.MemberlistUri));
+            page.template.Parse("MEMBERS", page.ThisGroup.Members.ToString());
+            page.template.Parse("OPERATORS", page.ThisGroup.Operators.ToString());
+            page.template.Parse("OFFICERS", page.ThisGroup.Officers.ToString());
+            page.template.Parse("L_MEMBERS", langMembers);
+            page.template.Parse("L_IS_ARE", langIsAre);
+            page.template.Parse("U_MEMBERLIST", page.ThisGroup.MemberlistUri);
 
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
-                page.template.ParseVariables("IS_OPERATOR", "TRUE");
+                page.template.Parse("IS_OPERATOR", "TRUE");
             }
 
             if (core.session.IsLoggedIn)
             {
                 if (!page.ThisGroup.IsGroupMemberAbsolute(core.session.LoggedInMember))
                 {
-                    page.template.ParseVariables("U_JOIN", HttpUtility.HtmlEncode(page.ThisGroup.JoinUri));
+                    page.template.Parse("U_JOIN", page.ThisGroup.JoinUri);
                 }
                 else
                 {
@@ -1110,66 +1110,59 @@ namespace BoxSocial.Groups
                     {
                         if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
-                            page.template.ParseVariables("U_LEAVE", HttpUtility.HtmlEncode(page.ThisGroup.LeaveUri));
+                            page.template.Parse("U_LEAVE", page.ThisGroup.LeaveUri);
                         }
                         else if (page.ThisGroup.IsGroupMemberPending(core.session.LoggedInMember))
                         {
-                            page.template.ParseVariables("U_CANCEL", HttpUtility.HtmlEncode(page.ThisGroup.LeaveUri));
+                            page.template.Parse("U_CANCEL", page.ThisGroup.LeaveUri);
                         }
                     }
 
                     if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                     {
-                        page.template.ParseVariables("U_INVITE", HttpUtility.HtmlEncode(page.ThisGroup.InviteUri));
+                        page.template.Parse("U_INVITE", page.ThisGroup.InviteUri);
                     }
                 }
             }
 
             List<GroupMember> members = page.ThisGroup.GetMembers(1, 8);
+
             foreach (GroupMember member in members)
             {
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
-                membersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
-                membersVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
+                membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
+                membersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                membersVariableCollection.Parse("ICON", member.UserIcon);
             }
 
-            DataTable operatorsTable = core.db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
-                page.ThisGroup.GroupId, User.USER_INFO_FIELDS));
+            List<GroupMember> operators = page.ThisGroup.GetOperators();
 
-            for (int i = 0; i < operatorsTable.Rows.Count; i++)
+            foreach (GroupMember groupOperator in operators)
             {
-                User groupOperator = new User(core, operatorsTable.Rows[i], UserLoadOptions.Info);
-                string userDisplayName = (groupOperator.DisplayName != "") ? groupOperator.DisplayName : groupOperator.UserName;
-
                 VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
 
-                operatorsVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(userDisplayName));
-                operatorsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(groupOperator)));
+                operatorsVariableCollection.Parse("USER_DISPLAY_NAME", groupOperator.DisplayName);
+                operatorsVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(groupOperator));
                 if (core.session.LoggedInMember != null)
                 {
                     if (groupOperator.UserId == core.session.LoggedInMember.UserId)
                     {
-                        operatorsVariableCollection.ParseVariables("U_RESIGN", HttpUtility.HtmlEncode(page.ThisGroup.ResignOperatorUri));
+                        operatorsVariableCollection.Parse("U_RESIGN", page.ThisGroup.ResignOperatorUri);
                     }
                 }
             }
 
-            DataTable officersTable = core.db.Query(string.Format("SELECT {1}, {2}, officer_title FROM group_officers go INNER JOIN group_members gm ON gm.user_id = go.user_id AND gm.group_id = go.group_id INNER JOIN user_info ui ON go.user_id = ui.user_id WHERE go.group_id = {0};",
-                page.ThisGroup.GroupId, User.USER_INFO_FIELDS, GroupMember.USER_GROUP_FIELDS));
+            List<GroupOfficer> officers = page.ThisGroup.GetOfficers();
 
-            for (int i = 0; i < officersTable.Rows.Count; i++)
+            foreach (GroupOfficer groupOfficer in officers)
             {
-                GroupMember groupOfficer = new GroupMember(core, officersTable.Rows[i], UserLoadOptions.Info);
-                string userDisplayName = (groupOfficer.DisplayName != "") ? groupOfficer.DisplayName : groupOfficer.UserName;
-
                 VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
 
-                officersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(userDisplayName));
-                officersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(groupOfficer)));
-                officersVariableCollection.ParseVariables("OFFICER_TITLE", HttpUtility.HtmlEncode((string)officersTable.Rows[i]["officer_title"]));
-                officersVariableCollection.ParseVariables("U_REMOVE", HttpUtility.HtmlEncode(groupOfficer.RemoveOfficerUri((string)officersTable.Rows[i]["officer_title"])));
+                officersVariableCollection.Parse("USER_DISPLAY_NAME", groupOfficer.DisplayName);
+                officersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(groupOfficer));
+                officersVariableCollection.Parse("OFFICER_TITLE", groupOfficer.OfficeTitle);
+                officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Group, page.ThisGroup));
@@ -1181,19 +1174,19 @@ namespace BoxSocial.Groups
 
             int p = Functions.RequestInt("p", 1);
 
-            page.template.ParseVariables("MEMBERS_TITLE", HttpUtility.HtmlEncode("Member list for " + page.ThisGroup.DisplayName));
-            page.template.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(((ulong)page.ThisGroup.Members).ToString()));
+            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.ThisGroup.DisplayName);
+            page.template.Parse("MEMBERS", ((ulong)page.ThisGroup.Members).ToString());
 
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
-                page.template.ParseVariables("GROUP_OPERATOR", "TRUE");
+                page.template.Parse("GROUP_OPERATOR", "TRUE");
 
                 DataTable approvalTable = core.db.Query(string.Format("SELECT {1}, {2}, {3}, {4} group_member_date_ut, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 0 ORDER BY group_member_date_ut ASC",
                     page.ThisGroup.GroupId, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
 
                 if (approvalTable.Rows.Count > 0)
                 {
-                    page.template.ParseVariables("IS_WAITING_APPROVAL", "TRUE");
+                    page.template.Parse("IS_WAITING_APPROVAL", "TRUE");
                 }
 
                 for (int i = 0; i < approvalTable.Rows.Count; i++)
@@ -1202,9 +1195,9 @@ namespace BoxSocial.Groups
 
                     VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
 
-                    approvalVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(approvalMember.DisplayName));
-                    approvalVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(approvalMember)));
-                    approvalVariableCollection.ParseVariables("U_APPROVE", HttpUtility.HtmlEncode(approvalMember.ApproveMemberUri));
+                    approvalVariableCollection.Parse("USER_DISPLAY_NAME", approvalMember.DisplayName);
+                    approvalVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(approvalMember));
+                    approvalVariableCollection.Parse("U_APPROVE", approvalMember.ApproveMemberUri);
                 }
 
             }
@@ -1214,26 +1207,28 @@ namespace BoxSocial.Groups
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
 
-                memberVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                memberVariableCollection.ParseVariables("JOIN_DATE", HttpUtility.HtmlEncode(page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz))));
-                memberVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(member.AgeString));
-                memberVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(member.Country));
-                memberVariableCollection.ParseVariables("USER_CAPTION", "");
+                memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
+                memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));
+                memberVariableCollection.Parse("USER_AGE", member.AgeString);
+                memberVariableCollection.Parse("USER_COUNTRY", member.Country);
+                memberVariableCollection.Parse("USER_CAPTION", "");
 
-                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
+                memberVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
                 if (!member.IsOperator)
                 {
                     // let's say you can't ban an operator, show ban link if not an operator
-                    memberVariableCollection.ParseVariables("U_BAN", HttpUtility.HtmlEncode(member.BanUri));
-                    memberVariableCollection.ParseVariables("U_MAKE_OPERATOR", HttpUtility.HtmlEncode(member.MakeOperatorUri));
+                    memberVariableCollection.Parse("U_BAN", member.BanUri);
+                    memberVariableCollection.Parse("U_MAKE_OPERATOR", member.MakeOperatorUri);
                 }
-                memberVariableCollection.ParseVariables("U_MAKE_OFFICER", HttpUtility.HtmlEncode(member.MakeOfficerUri));
-                memberVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
+                memberVariableCollection.Parse("U_MAKE_OFFICER", member.MakeOfficerUri);
+                memberVariableCollection.Parse("ICON", member.UserIcon);
             }
 
             string pageUri = page.ThisGroup.MemberlistUri;
-            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0)));
-            page.template.ParseVariables("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("members"));
+            //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0)));
+            //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("members"));
+            Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0));
+            page.ThisGroup.ParseBreadCrumbs("members");
         }
 
         public override string Namespace

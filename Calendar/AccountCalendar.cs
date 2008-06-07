@@ -202,8 +202,8 @@ namespace BoxSocial.Applications.Calendar
                     Event calendarEvent = new Event(core, loggedInMember, id);
                     inviteeIds.AddRange(calendarEvent.GetInvitees());
 
-                    template.ParseVariables("EDIT", "TRUE");
-                    template.ParseVariables("ID", HttpUtility.HtmlEncode(calendarEvent.EventId.ToString()));
+                    template.Parse("EDIT", "TRUE");
+                    template.Parse("ID", calendarEvent.EventId.ToString());
 
                     startDate = calendarEvent.GetStartTime(core.tz);
                     endDate = calendarEvent.GetEndTime(core.tz);
@@ -220,35 +220,46 @@ namespace BoxSocial.Applications.Calendar
                 }
             }
 
-            template.ParseVariables("S_YEAR", HttpUtility.HtmlEncode(year.ToString()));
-            template.ParseVariables("S_MONTH", HttpUtility.HtmlEncode(month.ToString()));
-            template.ParseVariables("S_DAY", HttpUtility.HtmlEncode(day.ToString()));
+            template.Parse("S_YEAR", year.ToString());
+            template.Parse("S_MONTH", month.ToString());
+            template.Parse("S_DAY", day.ToString());
 
-            template.ParseVariables("S_START_YEAR", Functions.BuildSelectBox("start-year", years, startDate.Year.ToString()));
-            template.ParseVariables("S_END_YEAR", Functions.BuildSelectBox("end-year", years, endDate.Year.ToString()));
+            //template.Parse("S_START_YEAR", Functions.BuildSelectBox("start-year", years, startDate.Year.ToString()));
+            //template.Parse("S_END_YEAR", Functions.BuildSelectBox("end-year", years, endDate.Year.ToString()));
+            Display.ParseSelectBox(template, "S_START_YEAR", "start-year", years, startDate.Year.ToString());
+            Display.ParseSelectBox(template, "S_END_YEAR", "end-year", years, endDate.Year.ToString());
 
-            template.ParseVariables("S_START_MONTH", Functions.BuildSelectBox("start-month", months, startDate.Month.ToString()));
-            template.ParseVariables("S_END_MONTH", Functions.BuildSelectBox("end-month", months, endDate.Month.ToString()));
+            //template.Parse("S_START_MONTH", Functions.BuildSelectBox("start-month", months, startDate.Month.ToString()));
+            //template.Parse("S_END_MONTH", Functions.BuildSelectBox("end-month", months, endDate.Month.ToString()));
+            Display.ParseSelectBox(template, "S_START_MONTH", "start-month", months, startDate.Month.ToString());
+            Display.ParseSelectBox(template, "S_END_MONTH", "end-month", months, endDate.Month.ToString());
 
-            template.ParseVariables("S_START_DAY", Functions.BuildSelectBox("start-day", days, startDate.Day.ToString()));
-            template.ParseVariables("S_END_DAY", Functions.BuildSelectBox("end-day", days, endDate.Day.ToString()));
+            //template.Parse("S_START_DAY", Functions.BuildSelectBox("start-day", days, startDate.Day.ToString()));
+            //template.Parse("S_END_DAY", Functions.BuildSelectBox("end-day", days, endDate.Day.ToString()));
+            Display.ParseSelectBox(template, "S_START_DAY", "start-day", days, startDate.Day.ToString());
+            Display.ParseSelectBox(template, "S_END_DAY", "end-day", days, endDate.Day.ToString());
 
-            template.ParseVariables("S_START_HOUR", Functions.BuildSelectBox("start-hour", hours, startDate.Hour.ToString()));
-            template.ParseVariables("S_END_HOUR", Functions.BuildSelectBox("end-hour", hours, endDate.Hour.ToString()));
+            //template.Parse("S_START_HOUR", Functions.BuildSelectBox("start-hour", hours, startDate.Hour.ToString()));
+            //template.Parse("S_END_HOUR", Functions.BuildSelectBox("end-hour", hours, endDate.Hour.ToString()));
+            Display.ParseSelectBox(template, "S_START_HOUR", "start-hour", hours, startDate.Hour.ToString());
+            Display.ParseSelectBox(template, "S_END_HOUR", "end-hour", hours, endDate.Hour.ToString());
 
-            template.ParseVariables("S_START_MINUTE", Functions.BuildSelectBox("start-minute", minutes, startDate.Minute.ToString()));
-            template.ParseVariables("S_END_MINUTE", Functions.BuildSelectBox("end-minute", minutes, endDate.Minute.ToString()));
+            //template.Parse("S_START_MINUTE", Functions.BuildSelectBox("start-minute", minutes, startDate.Minute.ToString()));
+            //template.Parse("S_END_MINUTE", Functions.BuildSelectBox("end-minute", minutes, endDate.Minute.ToString()));
+            Display.ParseSelectBox(template, "S_START_MINUTE", "start-minute", minutes, startDate.Minute.ToString());
+            Display.ParseSelectBox(template, "S_END_MINUTE", "end-minute", minutes, endDate.Minute.ToString());
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            template.ParseVariables("S_EVENT_PERMS", Functions.BuildPermissionsBox(eventAccess, permissions));
+            //template.ParseRaw("S_EVENT_PERMS", Functions.BuildPermissionsBox(eventAccess, permissions));
+            Display.ParsePermissionsBox(template, "S_EVENT_PERMS", eventAccess, permissions);
 
-            template.ParseVariables("S_SUBJECT", HttpUtility.HtmlEncode(subject));
-            template.ParseVariables("S_LOCATION", HttpUtility.HtmlEncode(location));
-            template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
+            template.Parse("S_SUBJECT", subject);
+            template.Parse("S_LOCATION", location);
+            template.Parse("S_DESCRIPTION", description);
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
+            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
 
             StringBuilder outputInvitees = null;
             StringBuilder outputInviteesIds = null;
@@ -274,12 +285,12 @@ namespace BoxSocial.Applications.Calendar
 
             if (outputInvitees != null)
             {
-                template.ParseVariables("S_INVITEES", HttpUtility.HtmlEncode(outputInvitees.ToString()));
+                template.Parse("S_INVITEES", outputInvitees.ToString());
             }
 
             if (outputInviteesIds != null)
             {
-                template.ParseVariables("INVITEES_ID_LIST", HttpUtility.HtmlEncode(outputInviteesIds.ToString()));
+                template.Parse("INVITEES_ID_LIST", outputInviteesIds.ToString());
             }
         }
 
@@ -552,8 +563,8 @@ namespace BoxSocial.Applications.Calendar
                 {
                     Task calendarTask = new Task(core, loggedInMember, id);
 
-                    template.ParseVariables("EDIT", "TRUE");
-                    template.ParseVariables("ID", HttpUtility.HtmlEncode(calendarTask.TaskId.ToString()));
+                    template.Parse("EDIT", "TRUE");
+                    template.Parse("ID", calendarTask.TaskId.ToString());
 
                     dueDate = calendarTask.GetDueTime(core.tz);
 
@@ -571,32 +582,33 @@ namespace BoxSocial.Applications.Calendar
                 }
             }
 
-            template.ParseVariables("S_YEAR", HttpUtility.HtmlEncode(year.ToString()));
-            template.ParseVariables("S_MONTH", HttpUtility.HtmlEncode(month.ToString()));
-            template.ParseVariables("S_DAY", HttpUtility.HtmlEncode(day.ToString()));
+            template.Parse("S_YEAR", year.ToString());
+            template.Parse("S_MONTH", month.ToString());
+            template.Parse("S_DAY", day.ToString());
 
-            template.ParseVariables("S_DUE_YEAR", Functions.BuildSelectBox("due-year", years, dueDate.Year.ToString()));
+            template.Parse("S_DUE_YEAR", Functions.BuildSelectBox("due-year", years, dueDate.Year.ToString()));
 
-            template.ParseVariables("S_DUE_MONTH", Functions.BuildSelectBox("due-month", months, dueDate.Month.ToString()));
+            template.Parse("S_DUE_MONTH", Functions.BuildSelectBox("due-month", months, dueDate.Month.ToString()));
 
-            template.ParseVariables("S_DUE_DAY", Functions.BuildSelectBox("due-day", days, dueDate.Day.ToString()));
+            template.Parse("S_DUE_DAY", Functions.BuildSelectBox("due-day", days, dueDate.Day.ToString()));
 
-            template.ParseVariables("S_DUE_HOUR", Functions.BuildSelectBox("due-hour", hours, dueDate.Hour.ToString()));
+            template.Parse("S_DUE_HOUR", Functions.BuildSelectBox("due-hour", hours, dueDate.Hour.ToString()));
 
-            template.ParseVariables("S_DUE_MINUTE", Functions.BuildSelectBox("due-minute", minutes, dueDate.Minute.ToString()));
+            template.Parse("S_DUE_MINUTE", Functions.BuildSelectBox("due-minute", minutes, dueDate.Minute.ToString()));
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            template.ParseVariables("S_TASK_PERMS", Functions.BuildPermissionsBox(taskAccess, permissions));
+            //template.Parse("S_TASK_PERMS", Functions.BuildPermissionsBox(taskAccess, permissions));
+            Display.ParsePermissionsBox(template, "S_TASK_PERMS", taskAccess, permissions);
 
-            template.ParseVariables("S_TOPIC", HttpUtility.HtmlEncode(topic));
-            template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode(description));
+            template.Parse("S_TOPIC", topic);
+            template.Parse("S_DESCRIPTION", description);
 
-            template.ParseVariables("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
-            template.ParseVariables("S_PRIORITY", Functions.BuildSelectBox("priority", priorities, ((byte)priority).ToString()));
+            template.Parse("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
+            template.Parse("S_PRIORITY", Functions.BuildSelectBox("priority", priorities, ((byte)priority).ToString()));
 
-            template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
+            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
         }
 
         private void SaveNewTask()

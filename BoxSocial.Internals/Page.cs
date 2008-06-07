@@ -1060,7 +1060,8 @@ namespace BoxSocial.Internals
             page.ProfileOwner.LoadProfileInfo();
 
             // TODO: generate page list
-            page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
+            //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
+            Display.ParsePageList(page.ProfileOwner, true);
 
             if (!thePage.PageAccess.CanRead)
             {
@@ -1070,10 +1071,11 @@ namespace BoxSocial.Internals
 
             BoxSocial.Internals.Classification.ApplyRestrictions(core, thePage.Classification);
 
-            page.template.ParseVariables("PAGE_TITLE", HttpUtility.HtmlEncode(thePage.Title));
-            page.template.ParseVariables("PAGE_BODY", Bbcode.Parse(HttpUtility.HtmlEncode(thePage.Body), core.session.LoggedInMember, page.ProfileOwner));
+            page.template.Parse("PAGE_TITLE", thePage.Title);
+            //page.template.ParseRaw("PAGE_BODY", Bbcode.Parse(HttpUtility.HtmlEncode(thePage.Body), core.session.LoggedInMember, page.ProfileOwner));
+            Display.ParseBbcode("PAGE_BODY", thePage.Body, page.ProfileOwner);
             DateTime pageDateTime = thePage.GetModifiedDate(core.tz);
-            page.template.ParseVariables("PAGE_LAST_MODIFIED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(pageDateTime)));
+            page.template.Parse("PAGE_LAST_MODIFIED", core.tz.DateTimeToString(pageDateTime));
 
             if (core.session.LoggedInMember != null)
             {
@@ -1088,46 +1090,47 @@ namespace BoxSocial.Internals
             {
                 if (!string.IsNullOrEmpty(thePage.License.Title))
                 {
-                    page.template.ParseVariables("PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Title));
+                    page.template.Parse("PAGE_LICENSE", thePage.License.Title);
                 }
                 if (!string.IsNullOrEmpty(thePage.License.Icon))
                 {
-                    page.template.ParseVariables("I_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Icon));
+                    page.template.Parse("I_PAGE_LICENSE", thePage.License.Icon);
                 }
                 if (!string.IsNullOrEmpty(thePage.License.Link))
                 {
-                    page.template.ParseVariables("U_PAGE_LICENSE", HttpUtility.HtmlEncode(thePage.License.Link));
+                    page.template.Parse("U_PAGE_LICENSE", thePage.License.Link);
                 }
             }
 
             switch (thePage.Classification)
             {
                 case Classifications.Everyone:
-                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_e.png");
+                    page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                    page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
                     break;
                 case Classifications.Mature:
-                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_15.png");
+                    page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                    page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
                     break;
                 case Classifications.Restricted:
-                    page.template.ParseVariables("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                    page.template.ParseVariables("I_PAGE_CLASSIFICATION", "rating_18.png");
+                    page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                    page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
                     break;
             }
 
-            page.template.ParseVariables("PAGE_VIEWS", HttpUtility.HtmlEncode(thePage.Views.ToString()));
+            page.template.Parse("PAGE_VIEWS", thePage.Views.ToString());
 
-            page.template.ParseVariables("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, thePage.FullPath));
+            //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, thePage.FullPath));
+            page.ProfileOwner.ParseBreadCrumbs(thePage.FullPath);
 
-            page.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode((Linker.BuildProfileUri(page.ProfileOwner))));
-            page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((Linker.BuildBlogUri(page.ProfileOwner))));
-            page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((Linker.BuildGalleryUri(page.ProfileOwner))));
-            page.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((Linker.BuildFriendsUri(page.ProfileOwner))));
+            page.template.Parse("U_PROFILE", (Linker.BuildProfileUri(page.ProfileOwner)));
+            page.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));
+            page.template.Parse("U_GALLERY", (Linker.BuildGalleryUri(page.ProfileOwner)));
+            page.template.Parse("U_FRIENDS", (Linker.BuildFriendsUri(page.ProfileOwner)));
 
             if (page.ProfileOwner.UserId == core.LoggedInMemberId)
             {
-                page.template.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("pages", "write", "action=edit", string.Format("id={0}", thePage.PageId))));
+                page.template.Parse("U_EDIT", AccountModule.BuildModuleUri("pages", "write", "action=edit", string.Format("id={0}", thePage.PageId)));
             }
         }
     }

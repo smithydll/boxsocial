@@ -45,16 +45,16 @@ namespace BoxSocial.Internals
             switch (classification)
             {
                 case Classifications.None:
-                    template.ParseVariables("IS_NONE", boxChecked);
+                    template.Parse("IS_NONE", boxChecked);
                     break;
                 case Classifications.Everyone:
-                    template.ParseVariables("IS_EVERYONE", boxChecked);
+                    template.Parse("IS_EVERYONE", boxChecked);
                     break;
                 case Classifications.Mature:
-                    template.ParseVariables("IS_MATURE", boxChecked);
+                    template.Parse("IS_MATURE", boxChecked);
                     break;
                 case Classifications.Restricted:
-                    template.ParseVariables("IS_RESTRICTED", boxChecked);
+                    template.Parse("IS_RESTRICTED", boxChecked);
                     break;
             }
 

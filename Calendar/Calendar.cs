@@ -115,14 +115,14 @@ namespace BoxSocial.Applications.Calendar
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
 
-            template.ParseVariables("CURRENT_MONTH", Functions.IntToMonth(core.tz.Now.Month));
-            template.ParseVariables("CURRENT_YEAR", core.tz.Now.Year.ToString());
+            template.Parse("CURRENT_MONTH", Functions.IntToMonth(core.tz.Now.Month));
+            template.Parse("CURRENT_YEAR", core.tz.Now.Year.ToString());
 
             for (int week = 0; week < weeks; week++)
             {
                 VariableCollection weekVariableCollection = template.CreateChild("week");
 
-                weekVariableCollection.ParseVariables("WEEK", HttpUtility.HtmlEncode((week + 1).ToString()));
+                weekVariableCollection.Parse("WEEK", (week + 1).ToString());
 
                 if (week + 1 == 1)
                 {
@@ -132,16 +132,16 @@ namespace BoxSocial.Applications.Calendar
                         int day = daysPrev - i;
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-                        dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-                        dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day)));
+                        dayVariableCollection.Parse("DATE", day.ToString());
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day));
                     }
                     for (int i = offset; i < 7; i++)
                     {
                         int day = i - offset + 1;
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-                        dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-                        dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year, month, day)));
+                        dayVariableCollection.Parse("DATE", day.ToString());
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
                     }
                 }
                 else if (week + 1 == weeks)
@@ -151,16 +151,16 @@ namespace BoxSocial.Applications.Calendar
                         int day = i + 1;
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-                        dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-                        dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year, month, day)));
+                        dayVariableCollection.Parse("DATE", day.ToString());
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
                     }
                     for (int i = 0; i < weeks * 7 - days - offset; i++)
                     {
                         int day = i + 1;
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-                        dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-                        dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year + (month) / 12, (month) % 12 + 1, day)));
+                        dayVariableCollection.Parse("DATE", day.ToString());
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year + (month) / 12, (month) % 12 + 1, day));
                     }
                 }
                 else
@@ -170,8 +170,8 @@ namespace BoxSocial.Applications.Calendar
                         int day = week * 7 + i + 1 - offset;
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-                        dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-                        dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year, month, day)));
+                        dayVariableCollection.Parse("DATE", day.ToString());
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
                     }
                 }
             }
@@ -215,15 +215,15 @@ namespace BoxSocial.Applications.Calendar
         {
             page.template.SetTemplate("Calendar", "viewcalendarmonth");
 
-            page.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
-            page.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
+            page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+            page.template.Parse("CURRENT_YEAR", year.ToString());
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
-                    string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1)))));
+                    string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1))));
             }
 
             int days = DateTime.DaysInMonth(year, month);
@@ -259,7 +259,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 VariableCollection weekVariableCollection = page.template.CreateChild("week");
 
-                weekVariableCollection.ParseVariables("WEEK", HttpUtility.HtmlEncode((week + 1).ToString()));
+                weekVariableCollection.Parse("WEEK", (week + 1).ToString());
 
                 /* lead in week */
                 if (week + 1 == 1)
@@ -313,23 +313,24 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
-            page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            owner.ParseBreadCrumbs(calendarPath);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, int year, int month, int day)
         {
             page.template.SetTemplate("Calendar", "viewcalendarday");
 
-            page.template.ParseVariables("CURRENT_DAY", HttpUtility.HtmlEncode(day.ToString()));
-            page.template.ParseVariables("CURRENT_MONTH", HttpUtility.HtmlEncode(Functions.IntToMonth(month)));
-            page.template.ParseVariables("CURRENT_YEAR", HttpUtility.HtmlEncode(year.ToString()));
+            page.template.Parse("CURRENT_DAY", day.ToString());
+            page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+            page.template.Parse("CURRENT_YEAR", year.ToString());
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
-                    string.Format("day={0}", day))));
+                    string.Format("day={0}", day)));
             }
 
             long startTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
@@ -344,7 +345,7 @@ namespace BoxSocial.Applications.Calendar
 
                 DateTime hourTime = new DateTime(year, month, day, hour, 0, 0);
 
-                timeslotVariableCollection.ParseVariables("TIME", HttpUtility.HtmlEncode(hourTime.ToString("h tt").ToLower()));
+                timeslotVariableCollection.Parse("TIME", hourTime.ToString("h tt").ToLower());
 
                 showHourEvents(core, owner, year, month, day, hour, timeslotVariableCollection, events);
             }
@@ -354,14 +355,15 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
             calendarPath.Add(new string[] { day.ToString(), day.ToString() });
-            page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            owner.ParseBreadCrumbs(calendarPath);
         }
 
         private static void showDayEvents(Core core, Primitive owner, int year, int month, int day, VariableCollection weekVariableCollection, List<Event> events)
         {
             VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
-            dayVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(day.ToString()));
-            dayVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Calendar.BuildDateUri(owner, year, month, day)));
+            dayVariableCollection.Parse("DATE", day.ToString());
+            dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
             bool hasEvents = false;
 
             List<Event> expired = new List<Event>();
@@ -375,9 +377,9 @@ namespace BoxSocial.Applications.Calendar
 
                 VariableCollection eventVariableCollection = dayVariableCollection.CreateChild("event");
 
-                eventVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length))));
-                eventVariableCollection.ParseVariables("START_TIME", HttpUtility.HtmlEncode(calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower()));
-                eventVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
+                eventVariableCollection.Parse("TITLE", calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length)));
+                eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower());
+                eventVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
 
                 hasEvents = true;
 
@@ -390,7 +392,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (hasEvents)
             {
-                dayVariableCollection.ParseVariables("EVENTS", "TRUE");
+                dayVariableCollection.Parse("EVENTS", "TRUE");
             }
 
             foreach (Event calendarEvent in expired)
@@ -415,9 +417,9 @@ namespace BoxSocial.Applications.Calendar
 
                 long height = (calendarEvent.EndTimeRaw - calendarEvent.StartTimeRaw) * 24 / 60 / 60;
 
-                eventVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(calendarEvent.Subject));
-                eventVariableCollection.ParseVariables("HEIGHT", HttpUtility.HtmlEncode(height.ToString()));
-                eventVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(Event.BuildEventUri(calendarEvent)));
+                eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
+                eventVariableCollection.Parse("HEIGHT", height.ToString());
+                eventVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
 
                 hasEvents = true;
 
@@ -426,7 +428,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (hasEvents)
             {
-                timeslotVariableCollection.ParseVariables("EVENTS", "TRUE");
+                timeslotVariableCollection.Parse("EVENTS", "TRUE");
             }
 
             foreach (Event calendarEvent in expired)

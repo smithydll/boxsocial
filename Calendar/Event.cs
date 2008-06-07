@@ -347,12 +347,12 @@ namespace BoxSocial.Applications.Calendar
 
                     Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
-                    emailTemplate.ParseVariables("FROM_NAME", user.DisplayName);
-                    emailTemplate.ParseVariables("FROM_EMAIL", user.AlternateEmail);
-                    emailTemplate.ParseVariables("FROM_NAMES", user.DisplayNameOwnership);
-                    emailTemplate.ParseVariables("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                    emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
-                    emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
+                    emailTemplate.Parse("FROM_NAME", user.DisplayName);
+                    emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
+                    emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
+                    emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
+                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
+                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
                     AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
@@ -397,12 +397,12 @@ namespace BoxSocial.Applications.Calendar
 
                         Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
-                        emailTemplate.ParseVariables("FROM_NAME", user.DisplayName);
-                        emailTemplate.ParseVariables("FROM_EMAIL", user.AlternateEmail);
-                        emailTemplate.ParseVariables("FROM_NAMES", user.DisplayNameOwnership);
-                        emailTemplate.ParseVariables("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                        emailTemplate.ParseVariables("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
-                        emailTemplate.ParseVariables("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
+                        emailTemplate.Parse("FROM_NAME", user.DisplayName);
+                        emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
+                        emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
+                        emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
+                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
+                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
 
                         AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
@@ -519,15 +519,15 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.ParseVariables("U_NEW_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
-                    string.Format("day={0}", core.tz.Now.Day))));
-                page.template.ParseVariables("U_EDIT_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "new-event", true,
+                    string.Format("day={0}", core.tz.Now.Day)));
+                page.template.Parse("U_EDIT_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
                     "mode=edit",
-                    string.Format("id={0}", eventId))));
-                page.template.ParseVariables("U_DELETE_EVENT", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("calendar", "delete-event", true,
-                    string.Format("id={0}", eventId))));
+                    string.Format("id={0}", eventId)));
+                page.template.Parse("U_DELETE_EVENT", AccountModule.BuildModuleUri("calendar", "delete-event", true,
+                    string.Format("id={0}", eventId)));
             }
 
             try
@@ -545,38 +545,39 @@ namespace BoxSocial.Applications.Calendar
                     return;
                 }
 
-                page.template.ParseVariables("SUBJECT", HttpUtility.HtmlEncode(calendarEvent.Subject));
-                page.template.ParseVariables("LOCATION", HttpUtility.HtmlEncode(calendarEvent.Location));
-                page.template.ParseVariables("DESCRIPTION", HttpUtility.HtmlEncode(calendarEvent.Description));
-                page.template.ParseVariables("START_TIME", HttpUtility.HtmlEncode(calendarEvent.GetStartTime(core.tz).ToString()));
-                page.template.ParseVariables("END_TIME", HttpUtility.HtmlEncode(calendarEvent.GetEndTime(core.tz).ToString()));
+                page.template.Parse("SUBJECT", calendarEvent.Subject);
+                page.template.Parse("LOCATION", calendarEvent.Location);
+                page.template.Parse("DESCRIPTION", calendarEvent.Description);
+                page.template.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString());
+                page.template.Parse("END_TIME", calendarEvent.GetEndTime(core.tz).ToString());
 
                 List<string[]> calendarPath = new List<string[]>();
                 calendarPath.Add(new string[] { "calendar", "Calendar" });
                 //calendarPath.Add(new string[] { "events", "Events" });
                 calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
-                page.template.ParseVariables("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+                //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+                owner.ParseBreadCrumbs(calendarPath);
 
                 if (calendarEvent.EventAccess.CanComment)
                 {
-                    page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                    page.template.Parse("CAN_COMMENT", "TRUE");
                 }
                 Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
 
                 List<long> attendees = calendarEvent.GetAttendees();
                 core.LoadUserProfiles(attendees);
 
-                page.template.ParseVariables("ATTENDEES", HttpUtility.HtmlEncode(calendarEvent.Attendees.ToString()));
-                page.template.ParseVariables("INVITEES", HttpUtility.HtmlEncode(calendarEvent.Invitees.ToString()));
+                page.template.Parse("ATTENDEES", calendarEvent.Attendees.ToString());
+                page.template.Parse("INVITEES", calendarEvent.Invitees.ToString());
                 if (attendees.Count > 1)
                 {
-                    page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode("is"));
-                    page.template.ParseVariables("L_ATTENDEES", HttpUtility.HtmlEncode("attendees"));
+                    page.template.Parse("L_IS_ARE", "is");
+                    page.template.Parse("L_ATTENDEES", "attendees");
                 }
                 else
                 {
-                    page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode("are"));
-                    page.template.ParseVariables("L_ATTENDEES", HttpUtility.HtmlEncode("attendee"));
+                    page.template.Parse("L_IS_ARE", "are");
+                    page.template.Parse("L_ATTENDEES", "attendee");
                 }
 
                 int i = 0;
@@ -590,10 +591,10 @@ namespace BoxSocial.Applications.Calendar
                     VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
                     User attendee = core.UserProfiles[attendeeId];
 
-                    attendeesVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(attendee.Uri));
-                    attendeesVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(attendee.DisplayName));
-                    attendeesVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(attendee.UserTile));
-                    attendeesVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(attendee.UserTile));
+                    attendeesVariableCollection.Parse("U_PROFILE", attendee.Uri);
+                    attendeesVariableCollection.Parse("USER_DISPLAY_NAME", attendee.DisplayName);
+                    attendeesVariableCollection.Parse("ICON", attendee.UserTile);
+                    attendeesVariableCollection.Parse("ICON", attendee.UserTile);
                 }
             }
             catch (Exception ex)

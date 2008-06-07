@@ -209,9 +209,9 @@ namespace BoxSocial.Applications.Blog
             ApplicationEntry ae = new ApplicationEntry(core, owner, "Blog");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_blog_notification");
-            notificationTemplate.ParseVariables("U_PROFILE", e.Comment.BuildUri(blogEntry));
-            notificationTemplate.ParseVariables("POSTER", e.Poster.DisplayName);
-            notificationTemplate.ParseVariables("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
+            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(blogEntry));
+            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
+            notificationTemplate.Parse("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
 
             ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
         }

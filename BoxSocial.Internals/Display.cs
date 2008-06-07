@@ -60,6 +60,36 @@ namespace BoxSocial.Internals
 
         public delegate void DisplayCommentHookHandler(DisplayCommentHookEventArgs e);
 
+        public static void ParsePagination(string baseUri, int currentPage, int maxPages)
+        {
+            ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages);
+        }
+
+        public static void ParsePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
+        {
+            ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages, isBlog);
+        }
+
+        public static void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
+        {
+            ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages);
+        }
+
+        public static void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        {
+            ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages, isBlog);
+        }
+
+        public static void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
+        {
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
+        }
+
+        public static void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        {
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, isBlog));
+        }
+
         public static string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
             return GeneratePagination(baseUri, currentPage, maxPages, false);
@@ -196,8 +226,8 @@ namespace BoxSocial.Internals
         public static void ShowMessage(string title, string message)
         {
             core.template.SetTemplate("std.message.html");
-            core.template.ParseVariables("MESSAGE_TITLE", title);
-            core.template.ParseVariables("MESSAGE_BODY", message);
+            core.template.Parse("MESSAGE_TITLE", title);
+            core.template.Parse("MESSAGE_BODY", message);
 
             /* Something wrong here, .net likes to end the page TWICE! */
             /* Fixed by adding a flag to EndResponse to only execute once. */
@@ -233,16 +263,16 @@ namespace BoxSocial.Internals
 
             page.template.SetTemplate("std.confirm.html");
 
-            page.template.ParseVariables("S_FORM_ACTION", formAction);
-            page.template.ParseVariables("CONFIRM_TITLE", title);
-            page.template.ParseVariables("CONFIRM_TEXT", message);
+            page.template.Parse("S_FORM_ACTION", formAction);
+            page.template.Parse("CONFIRM_TITLE", title);
+            page.template.Parse("CONFIRM_TEXT", message);
 
             foreach (string key in hiddenFieldList.Keys)
             {
                 VariableCollection hiddenVariableCollection = page.template.CreateChild("hidden_list");
 
-                hiddenVariableCollection.ParseVariables("NAME", key);
-                hiddenVariableCollection.ParseVariables("VALUE", hiddenFieldList[key]);
+                hiddenVariableCollection.Parse("NAME", key);
+                hiddenVariableCollection.Parse("VALUE", hiddenFieldList[key]);
             }
 
             page.EndResponse();
@@ -284,19 +314,8 @@ namespace BoxSocial.Internals
                 {
                     if (commenters.Count == 2)
                     {
-                        /*List<long> commentersIds = new List<long>();
-
-                        foreach (Member commenter in commenters)
-                        {
-                            commentersIds.Add(commenter.Id);
-                        }*/
-
                         if (item.Namespace == "USER")
                         {
-                            /*query.AddCondition("user_id", ConditionEquality.In, commentersIds);
-                            query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
-                            query.AddCondition("c.comment_item_type", item.Namespace);*/
-
                             QueryCondition qc1 = query.AddCondition("c.comment_item_id", commenters[0].Id);
                             qc1.AddCondition("user_id", commenters[1].Id);
 
@@ -345,48 +364,49 @@ namespace BoxSocial.Internals
 
             if (commentCount >= 0)
             {
-                template.ParseVariables("COMMENTS", commentCount.ToString());
+                template.Parse("COMMENTS", commentCount.ToString());
             }
             else if (item.Comments >= 0)
             {
-                template.ParseVariables("COMMENTS", item.Comments.ToString());
+                template.Parse("COMMENTS", item.Comments.ToString());
             }
             else
             {
-                template.ParseVariables("COMMENTS", comments.Count.ToString());
+                template.Parse("COMMENTS", comments.Count.ToString());
             }
-            template.ParseVariables("ITEM_ID", item.Id.ToString());
-            template.ParseVariables("ITEM_TYPE", item.Namespace);
+            template.Parse("ITEM_ID", item.Id.ToString());
+            template.Parse("ITEM_TYPE", item.Namespace);
 
             if (item.CommentSortOrder == SortOrder.Ascending)
             {
-                template.ParseVariables("COMMENTS_ASC", "TRUE");
-                template.ParseVariables("COMMENT_SORT", "asc");
+                template.Parse("COMMENTS_ASC", "TRUE");
+                template.Parse("COMMENT_SORT", "asc");
             }
             else
             {
-                template.ParseVariables("COMMENTS_DESC", "TRUE");
-                template.ParseVariables("COMMENT_SORT", "desc");
+                template.Parse("COMMENTS_DESC", "TRUE");
+                template.Parse("COMMENT_SORT", "desc");
             }
 
             foreach (Comment comment in comments)
             {
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
-                commentsVariableCollection.ParseVariables("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
+                //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
+                Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body);
 
                 try
                 {
                     User commentPoster = core.UserProfiles[comment.UserId];
 
-                    commentsVariableCollection.ParseVariables("ID", comment.CommentId.ToString());
-                    commentsVariableCollection.ParseVariables("USERNAME", commentPoster.DisplayName);
-                    commentsVariableCollection.ParseVariables("U_PROFILE", commentPoster.ProfileUri);
-                    commentsVariableCollection.ParseVariables("U_QUOTE", HttpUtility.HtmlEncode(Linker.BuildCommentQuoteUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("U_REPORT", HttpUtility.HtmlEncode(Linker.BuildCommentReportUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildCommentDeleteUri(comment.CommentId)));
-                    commentsVariableCollection.ParseVariables("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
-                    commentsVariableCollection.ParseVariables("USER_TILE", HttpUtility.HtmlEncode(commentPoster.UserTile));
+                    commentsVariableCollection.Parse("ID", comment.CommentId.ToString());
+                    commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
+                    commentsVariableCollection.Parse("U_PROFILE", commentPoster.ProfileUri);
+                    commentsVariableCollection.Parse("U_QUOTE", Linker.BuildCommentQuoteUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_REPORT", Linker.BuildCommentReportUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_DELETE", Linker.BuildCommentDeleteUri(comment.CommentId));
+                    commentsVariableCollection.Parse("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
+                    commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
 
                     if (hook != null)
                     {
@@ -395,23 +415,23 @@ namespace BoxSocial.Internals
 
                     if (owner.CanModerateComments(core.session.LoggedInMember))
                     {
-                        commentsVariableCollection.ParseVariables("MODERATE", "TRUE");
+                        commentsVariableCollection.Parse("MODERATE", "TRUE");
                     }
 
                     if (owner.IsCommentOwner(commentPoster))
                     {
-                        commentsVariableCollection.ParseVariables("OWNER", "TRUE");
-                        commentsVariableCollection.ParseVariables("NORMAL", "FALSE");
+                        commentsVariableCollection.Parse("OWNER", "TRUE");
+                        commentsVariableCollection.Parse("NORMAL", "FALSE");
                     }
                     else
                     {
-                        commentsVariableCollection.ParseVariables("OWNER", "FALSE");
-                        commentsVariableCollection.ParseVariables("NORMAL", "TRUE");
+                        commentsVariableCollection.Parse("OWNER", "FALSE");
+                        commentsVariableCollection.Parse("NORMAL", "TRUE");
                     }
 
                     if (comment.SpamScore >= 10)
                     {
-                        commentsVariableCollection.ParseVariables("IS_SPAM", "TRUE");
+                        commentsVariableCollection.Parse("IS_SPAM", "TRUE");
                     }
                 }
                 catch
@@ -528,10 +548,10 @@ namespace BoxSocial.Internals
             Template template = page.template;
             SessionState session = page.session;
 
-            template.ParseVariables("TITLE", page.PageTitle); // the set page title function sanitises
-            template.ParseVariables("HEADING", WebConfigurationManager.AppSettings["boxsocial-title"]);
-            template.ParseVariables("SITE_TITLE", WebConfigurationManager.AppSettings["boxsocial-title"]);
-            template.ParseVariables("YEAR", DateTime.Now.Year.ToString());
+            template.Parse("TITLE", page.PageTitle); // the set page title function sanitises
+            template.Parse("HEADING", WebConfigurationManager.AppSettings["boxsocial-title"]);
+            template.Parse("SITE_TITLE", WebConfigurationManager.AppSettings["boxsocial-title"]);
+            template.Parse("YEAR", DateTime.Now.Year.ToString());
 
             /*string bgColour = "";
 
@@ -551,39 +571,54 @@ namespace BoxSocial.Internals
 
             bgColour = string.Format("{0:x2}{1:x2}{2:x2}", headColour.R, headColour.G, headColour.B);
 
-            template.ParseVariables("HEAD_COLOUR", bgColour);
-            template.ParseVariables("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));*/
+            template.Parse("HEAD_COLOUR", bgColour);
+            template.Parse("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));*/
 
-            template.ParseVariables("HEAD_COLOUR", "ffffff");
-            template.ParseVariables("HEAD_FORE_COLOUR", "black");
+            template.Parse("HEAD_COLOUR", "ffffff");
+            template.Parse("HEAD_FORE_COLOUR", "black");
 
             /*
              * URIs
              */
-            template.ParseVariables("U_HOME", HttpUtility.HtmlEncode(Linker.BuildHomeUri()));
-            template.ParseVariables("U_ABOUT", HttpUtility.HtmlEncode(Linker.BuildAboutUri()));
-            template.ParseVariables("U_SAFETY", HttpUtility.HtmlEncode(Linker.BuildSafetyUri()));
-            template.ParseVariables("U_PRIVACY", HttpUtility.HtmlEncode(Linker.BuildPrivacyUri()));
-            template.ParseVariables("U_TOS", HttpUtility.HtmlEncode(Linker.BuildTermsOfServiceUri()));
-            template.ParseVariables("U_SIGNIN", HttpUtility.HtmlEncode(Linker.BuildLoginUri()));
-            template.ParseVariables("U_SIGNOUT", HttpUtility.HtmlEncode(Linker.BuildLogoutUri()));
-            template.ParseVariables("U_REGISTER", HttpUtility.HtmlEncode(Linker.BuildRegisterUri()));
-            template.ParseVariables("U_HELP", HttpUtility.HtmlEncode(Linker.BuildHelpUri()));
-            template.ParseVariables("U_SITEMAP", HttpUtility.HtmlEncode(Linker.BuildSitemapUri()));
-            template.ParseVariables("U_COPYRIGHT", HttpUtility.HtmlEncode(Linker.BuildCopyrightUri()));
-            template.ParseVariables("U_ACCOUNT", HttpUtility.HtmlEncode(Linker.BuildAccountUri()));
+            template.Parse("U_HOME", Linker.BuildHomeUri());
+            template.Parse("U_ABOUT", Linker.BuildAboutUri());
+            template.Parse("U_SAFETY", Linker.BuildSafetyUri());
+            template.Parse("U_PRIVACY", Linker.BuildPrivacyUri());
+            template.Parse("U_TOS", Linker.BuildTermsOfServiceUri());
+            template.Parse("U_SIGNIN", Linker.BuildLoginUri());
+            template.Parse("U_SIGNOUT", Linker.BuildLogoutUri());
+            template.Parse("U_REGISTER", Linker.BuildRegisterUri());
+            template.Parse("U_HELP", Linker.BuildHelpUri());
+            template.Parse("U_SITEMAP", Linker.BuildSitemapUri());
+            template.Parse("U_COPYRIGHT", Linker.BuildCopyrightUri());
+            template.Parse("U_ACCOUNT", Linker.BuildAccountUri());
 
             if (session != null)
             {
-                template.ParseVariables("SID", session.SessionId);
+                template.Parse("SID", session.SessionId);
                 if (session.IsLoggedIn)
                 {
-                    template.ParseVariables("LOGGED_IN", "TRUE");
-                    template.ParseVariables("L_GREETING", HttpUtility.HtmlEncode("G'day"));
-                    template.ParseVariables("USERNAME", HttpUtility.HtmlEncode(session.LoggedInMember.UserName));
-                    template.ParseVariables("U_USER_PROFILE", HttpUtility.HtmlEncode(Linker.BuildHomepageUri(session.LoggedInMember)));
+                    template.Parse("LOGGED_IN", "TRUE");
+                    template.Parse("L_GREETING", "G'day");
+                    template.Parse("USERNAME", session.LoggedInMember.UserName);
+                    template.Parse("U_USER_PROFILE", Linker.BuildHomepageUri(session.LoggedInMember));
                 }
             }
+        }
+
+        public static void ParsePageList(User owner, bool fragment)
+        {
+            ParsePageList(core.template, "PAGE_LIST", owner, fragment);
+        }
+
+        public static void ParsePageList(string templateVar, User owner, bool fragment)
+        {
+            ParsePageList(core.template, templateVar, owner, fragment);
+        }
+
+        public static void ParsePageList(Template template, string templateVar, User owner, bool fragment)
+        {
+            template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment));
         }
 
         public static string GeneratePageList(User owner, User loggedInMember, bool fragment)
@@ -697,6 +732,120 @@ namespace BoxSocial.Internals
             }
 
             return output.ToString();
+        }
+
+        public static void ParseBbcode(string templateVar, string input)
+        {
+            ParseBbcode(templateVar, input, null);
+        }
+
+        public static void ParseBbcode(string templateVar, string input, User owner)
+        {
+            ParseBbcode(core.template, templateVar, input, owner);
+        }
+
+        public static void ParseBbcode(Template template, string templateVar, string input)
+        {
+            ParseBbcode(template, templateVar, input, null);
+        }
+
+        public static void ParseBbcode(Template template, string templateVar, string input, User owner)
+        {
+            if (owner != null)
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+            }
+            else
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+            }
+        }
+
+        public static void ParseBbcode(VariableCollection template, string templateVar, string input)
+        {
+            ParseBbcode(template, templateVar, input, null);
+        }
+
+        public static void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
+        {
+            if (owner != null)
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+            }
+            else
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+            }
+        }
+
+        public static void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
+        {
+            ParsePermissionsBox(core.template, templateVar, permission, permissions);
+        }
+
+        public static void ParsePermissionsBox(Template template, string templateVar, ushort permission, List<string> permissions)
+        {
+            template.ParseRaw(templateVar, Functions.BuildPermissionsBox(permission, permissions));
+        }
+
+        public static void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        {
+            ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem);
+        }
+
+        public static void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem));
+        }
+
+        public static void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem, disabledItems);
+        }
+
+        public static void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem, disabledItems));
+        }
+
+        public static void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
+        {
+            ParseSelectBox(core.template, templateVar, name, items, selectedItem);
+        }
+
+        public static void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
+        }
+
+        public static void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            ParseSelectBox(core.template, templateVar, name, items, selectedItem, disabledItems);
+        }
+
+        public static void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
+        }
+
+        public static void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem)
+        {
+            ParseSelectBox(core.template, templateVar, name, items, selectedItem);
+        }
+
+        public static void ParseSelectBox(Template template, string templateVar, string name, Dictionary<string, string> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
+        }
+
+        public static void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
+        {
+            ParseSelectBox(core.template, templateVar, name, items, selectedItem, disabledItems);
+        }
+
+        public static void ParseSelectBox(Template template, string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
         }
 
         /// <summary>

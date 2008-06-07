@@ -66,13 +66,13 @@ namespace BoxSocial.FrontEnd
 
             if (networks != null)
             {
-                template.ParseVariables("NETWORKS", networks.Count.ToString());
+                template.Parse("NETWORKS", networks.Count.ToString());
                 foreach (Network network in networks)
                 {
                     VariableCollection networkVariableCollection = template.CreateChild("networks_list");
 
-                    networkVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(network.DisplayName));
-                    networkVariableCollection.ParseVariables("U_NETWORK", HttpUtility.HtmlEncode(network.Uri));
+                    networkVariableCollection.Parse("TITLE", network.DisplayName);
+                    networkVariableCollection.Parse("U_NETWORK", network.Uri);
                 }
             }
 

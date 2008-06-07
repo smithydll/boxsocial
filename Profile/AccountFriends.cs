@@ -110,18 +110,18 @@ namespace BoxSocial
 
                 byte order = (byte)friendsTable.Rows[i]["relation_order"];
 
-                friendsVariableCollection.ParseVariables("NAME", (string)friendsTable.Rows[i]["user_name"]);
+                friendsVariableCollection.Parse("NAME", (string)friendsTable.Rows[i]["user_name"]);
 
                 if (order > 0)
                 {
-                    friendsVariableCollection.ParseVariables("ORDER", order.ToString());
+                    friendsVariableCollection.Parse("ORDER", order.ToString());
                 }
 
-                friendsVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.AppendSid(string.Format("/{0}", (string)friendsTable.Rows[i]["user_name"]))));
-                friendsVariableCollection.ParseVariables("U_BLOCK", HttpUtility.HtmlEncode(Linker.BuildBlockUserUri((long)(int)friendsTable.Rows[i]["user_id"])));
-                friendsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildDeleteFriendUri((long)(int)friendsTable.Rows[i]["user_id"])));
-                friendsVariableCollection.ParseVariables("U_PROMOTE", HttpUtility.HtmlEncode(Linker.BuildPromoteFriendUri((long)(int)friendsTable.Rows[i]["user_id"])));
-                friendsVariableCollection.ParseVariables("U_DEMOTE", HttpUtility.HtmlEncode(Linker.BuildDemoteFriendUri((long)(int)friendsTable.Rows[i]["user_id"])));
+                friendsVariableCollection.Parse("U_PROFILE", Linker.AppendSid(string.Format("/{0}", (string)friendsTable.Rows[i]["user_name"])));
+                friendsVariableCollection.Parse("U_BLOCK", Linker.BuildBlockUserUri((long)(int)friendsTable.Rows[i]["user_id"]));
+                friendsVariableCollection.Parse("U_DELETE", Linker.BuildDeleteFriendUri((long)(int)friendsTable.Rows[i]["user_id"]));
+                friendsVariableCollection.Parse("U_PROMOTE", Linker.BuildPromoteFriendUri((long)(int)friendsTable.Rows[i]["user_id"]));
+                friendsVariableCollection.Parse("U_DEMOTE", Linker.BuildDemoteFriendUri((long)(int)friendsTable.Rows[i]["user_id"]));
             }
         }
 
@@ -150,10 +150,10 @@ namespace BoxSocial
 
                 byte order = (byte)familyTable.Rows[i]["relation_order"];
 
-                familyVariableCollection.ParseVariables("NAME", (string)familyTable.Rows[i]["user_name"]);
+                familyVariableCollection.Parse("NAME", (string)familyTable.Rows[i]["user_name"]);
 
-                familyVariableCollection.ParseVariables("U_BLOCK", HttpUtility.HtmlEncode(Linker.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"])));
-                familyVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"])));
+                familyVariableCollection.Parse("U_BLOCK", Linker.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"]));
+                familyVariableCollection.Parse("U_DELETE", Linker.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"]));
             }
         }
 
@@ -212,7 +212,7 @@ namespace BoxSocial
                     }
                 }
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=friends&sub=friends"));
+                template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
                 Display.ShowMessage("Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
                 return;
             }
@@ -298,7 +298,7 @@ namespace BoxSocial
                     }
                 }
 
-                template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode("/account/?module=friends&sub=friends"));
+                template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
                 Display.ShowMessage("Friend Promoted", "You have successfully promoted your friend in your social hierarchy.");
                 return;
             }
@@ -360,7 +360,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - {1} WHERE ui.user_id = {0};",
                 loggedInMember.UserId, deletedRows));
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Deleted friend", "You have deleted a friend.");
         }
 
@@ -441,7 +441,7 @@ namespace BoxSocial
 
             template.SetTemplate("Profile", "account_friend_invite");
 
-            template.ParseVariables("S_INVITE_FRIEND", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
+            template.Parse("S_INVITE_FRIEND", Linker.AppendSid("/account/", true));
         }
 
         private void InviteFriendsSend(string[] friendEmails)
@@ -468,12 +468,12 @@ namespace BoxSocial
 
                             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
 
-                            emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                            emailTemplate.ParseVariables("FROM_EMAIL", loggedInMember.AlternateEmail);
-                            emailTemplate.ParseVariables("FROM_NAMES", loggedInMember.DisplayNameOwnership);
-                            emailTemplate.ParseVariables("U_REGISTER", "http://zinzam.com/register/");
-                            emailTemplate.ParseVariables("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
-                            emailTemplate.ParseVariables("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
+                            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
+                            emailTemplate.Parse("FROM_EMAIL", loggedInMember.AlternateEmail);
+                            emailTemplate.Parse("FROM_NAMES", loggedInMember.DisplayNameOwnership);
+                            emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
+                            emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
+                            emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                             Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                                 loggedInMember.DisplayName),
@@ -512,9 +512,9 @@ namespace BoxSocial
                                 {
                                     Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
-                                    emailTemplate.ParseVariables("TO_NAME", friendProfile.DisplayName);
-                                    emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                                    emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
+                                    emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
+                                    emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
+                                    emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
 
                                     Email.SendEmail(friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
                                         loggedInMember.DisplayName),
@@ -530,7 +530,7 @@ namespace BoxSocial
                 }
             }
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=invite");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=invite");
             Display.ShowMessage("Invited Friend", "You have invited all your friends to ZinZam.");
         }
 
@@ -589,15 +589,15 @@ namespace BoxSocial
 
                         if (!string.IsNullOrEmpty(friendName))
                         {
-                            emailTemplate.ParseVariables("TO_NAME", " " + friendName);
+                            emailTemplate.Parse("TO_NAME", " " + friendName);
                         }
 
-                        emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-                        emailTemplate.ParseVariables("FROM_EMAIL", loggedInMember.AlternateEmail);
-                        emailTemplate.ParseVariables("FROM_NAMES", loggedInMember.DisplayNameOwnership);
-                        emailTemplate.ParseVariables("U_REGISTER", "http://zinzam.com/register/");
-                        emailTemplate.ParseVariables("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
-                        emailTemplate.ParseVariables("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
+                        emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
+                        emailTemplate.Parse("FROM_EMAIL", loggedInMember.AlternateEmail);
+                        emailTemplate.Parse("FROM_NAMES", loggedInMember.DisplayNameOwnership);
+                        emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
+                        emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
+                        emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                         Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                             loggedInMember.DisplayName),
@@ -620,7 +620,7 @@ namespace BoxSocial
                 return;
             }
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=invite");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=invite");
             Display.ShowMessage("Invited Friend", "You have invited a friend to ZinZam.");
         }
 
@@ -682,9 +682,9 @@ namespace BoxSocial
 
             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
-            emailTemplate.ParseVariables("TO_NAME", friendProfile.DisplayName);
-            emailTemplate.ParseVariables("FROM_NAME", loggedInMember.DisplayName);
-            emailTemplate.ParseVariables("FROM_USERNAME", loggedInMember.UserName);
+            emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
+            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
+            emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
 
             if (!isFriend)
             {
@@ -698,7 +698,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
                 loggedInMember.UserId));
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Added friend", "You have added a friend.");
         }
 
@@ -727,9 +727,9 @@ namespace BoxSocial
 
                 byte order = (byte)blockTable.Rows[i]["relation_order"];
 
-                friendsVariableCollection.ParseVariables("NAME", (string)blockTable.Rows[i]["user_name"]);
+                friendsVariableCollection.Parse("NAME", (string)blockTable.Rows[i]["user_name"]);
 
-                friendsVariableCollection.ParseVariables("U_UNBLOCK", HttpUtility.HtmlEncode(Linker.BuildUnBlockUserUri((long)(int)blockTable.Rows[i]["user_id"])));
+                friendsVariableCollection.Parse("U_UNBLOCK", Linker.BuildUnBlockUserUri((long)(int)blockTable.Rows[i]["user_id"]));
             }
         }
 
@@ -776,7 +776,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block - 1 WHERE ui.user_id = {0};",
                 loggedInMember.UserId));
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=friends");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
             Display.ShowMessage("Unblocked Person", "You have unblocked a person.");
         }
 
@@ -856,7 +856,7 @@ namespace BoxSocial
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block + 1 WHERE ui.user_id = {0};",
                 loggedInMember.UserId));
 
-            template.ParseVariables("REDIRECT_URI", "/account/?module=friends&sub=block");
+            template.Parse("REDIRECT_URI", "/account/?module=friends&sub=block");
             Display.ShowMessage("Blocked Person", "You have blocked a person.");
         }
     }

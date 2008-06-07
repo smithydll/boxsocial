@@ -471,56 +471,57 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                page.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
-                page.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode((Linker.BuildProfileUri(page.ProfileOwner))));
-                page.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((Linker.BuildBlogUri(page.ProfileOwner))));
-                page.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((Linker.BuildGalleryUri(page.ProfileOwner))));
-                page.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((Linker.BuildFriendsUri(page.ProfileOwner))));
+                //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
+                Display.ParsePageList(page.ProfileOwner, true);
+                page.template.Parse("U_PROFILE", (Linker.BuildProfileUri(page.ProfileOwner)));
+                page.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));
+                page.template.Parse("U_GALLERY", (Linker.BuildGalleryUri(page.ProfileOwner)));
+                page.template.Parse("U_FRIENDS", (Linker.BuildFriendsUri(page.ProfileOwner)));
 
                 if (page.ProfileOwner.UserId == core.LoggedInMemberId)
                 {
-                    page.template.ParseVariables("U_POST", HttpUtility.HtmlEncode(AccountModule.BuildModuleUri("blog", "write")));
+                    page.template.Parse("U_POST", AccountModule.BuildModuleUri("blog", "write"));
                 }
             }
 
             List<BlogEntry> blogEntries = myBlog.GetEntries(page, category, post, year, month, p, 10, ref readAccessLevel);
 
-            page.template.ParseVariables("BLOGPOSTS", HttpUtility.HtmlEncode(blogEntries.Count.ToString()));
+            page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
 
             if (!rss)
             {
                 DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
                     page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
-                page.template.ParseVariables("ARCHIVES", HttpUtility.HtmlEncode(archiveTable.Rows.Count.ToString()));
+                page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
 
                 for (int i = 0; i < archiveTable.Rows.Count; i++)
                 {
                     VariableCollection archiveVariableCollection = page.template.CreateChild("archive_list");
 
-                    archiveVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(string.Format("{0} {1}",
-                        Functions.IntToMonth((int)archiveTable.Rows[i]["month"]), ((int)archiveTable.Rows[i]["year"]).ToString())));
+                    archiveVariableCollection.Parse("TITLE", string.Format("{0} {1}",
+                        Functions.IntToMonth((int)archiveTable.Rows[i]["month"]), ((int)archiveTable.Rows[i]["year"]).ToString()));
 
-                    archiveVariableCollection.ParseVariables("URL", HttpUtility.HtmlEncode(Linker.BuildBlogUri(page.ProfileOwner, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"])));
+                    archiveVariableCollection.Parse("URL", Linker.BuildBlogUri(page.ProfileOwner, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
                 }
 
                 DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(post_category) as category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
                     page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
-                page.template.ParseVariables("CATEGORIES", HttpUtility.HtmlEncode(categoriesTable.Rows.Count.ToString()));
+                page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 
                 for (int i = 0; i < categoriesTable.Rows.Count; i++)
                 {
                     VariableCollection categoryVariableCollection = page.template.CreateChild("category_list");
 
-                    categoryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)categoriesTable.Rows[i]["category_title"]));
+                    categoryVariableCollection.Parse("TITLE", (string)categoriesTable.Rows[i]["category_title"]);
 
-                    categoryVariableCollection.ParseVariables("URL", HttpUtility.HtmlEncode(Linker.BuildBlogUri(page.ProfileOwner, (string)categoriesTable.Rows[i]["category_path"])));
+                    categoryVariableCollection.Parse("URL", Linker.BuildBlogUri(page.ProfileOwner, (string)categoriesTable.Rows[i]["category_path"]));
                 }
 
                 List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
 
-                page.template.ParseVariables("BLOG_ROLL_ENTRIES", HttpUtility.HtmlEncode(blogRollEntries.Count.ToString()));
+                page.template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
 
                 foreach (BlogRollEntry bre in blogRollEntries)
                 {
@@ -528,36 +529,36 @@ namespace BoxSocial.Applications.Blog
 
                     if (!string.IsNullOrEmpty(bre.Title))
                     {
-                        breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.Title));
+                        breVariableCollection.Parse("TITLE", bre.Title);
                     }
                     else if (bre.User != null)
                     {
-                        breVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(bre.User.DisplayName));
+                        breVariableCollection.Parse("TITLE", bre.User.DisplayName);
                     }
 
-                    breVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(bre.Uri));
+                    breVariableCollection.Parse("URI", bre.Uri);
                 }
             }
 
             if (!string.IsNullOrEmpty(category))
             {
-                page.template.ParseVariables("U_RSS", HttpUtility.HtmlEncode(Linker.BuildBlogRssUri(page.ProfileOwner, category)));
+                page.template.Parse("U_RSS", Linker.BuildBlogRssUri(page.ProfileOwner, category));
             }
             else if (post > 0)
             {
-                page.template.ParseVariables("U_RSS", HttpUtility.HtmlEncode(Linker.BuildBlogPostRssUri(page.ProfileOwner, year, month, post)));
+                page.template.Parse("U_RSS", Linker.BuildBlogPostRssUri(page.ProfileOwner, year, month, post));
             }
             else if (month > 0)
             {
-                page.template.ParseVariables("U_RSS", HttpUtility.HtmlEncode(Linker.BuildBlogRssUri(page.ProfileOwner, year, month)));
+                page.template.Parse("U_RSS", Linker.BuildBlogRssUri(page.ProfileOwner, year, month));
             }
             else if (year > 0)
             {
-                page.template.ParseVariables("U_RSS", HttpUtility.HtmlEncode(Linker.BuildBlogRssUri(page.ProfileOwner, year)));
+                page.template.Parse("U_RSS", Linker.BuildBlogRssUri(page.ProfileOwner, year));
             }
             else
             {
-                page.template.ParseVariables("U_RSS", HttpUtility.HtmlEncode(Linker.BuildBlogRssUri(page.ProfileOwner)));
+                page.template.Parse("U_RSS", Linker.BuildBlogRssUri(page.ProfileOwner));
             }
 
             if (rss)
@@ -624,22 +625,23 @@ namespace BoxSocial.Applications.Blog
                 {
                     VariableCollection blogPostVariableCollection = page.template.CreateChild("blog_list");
 
-                    blogPostVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(blogEntries[i].Title));
-                    blogPostVariableCollection.ParseVariables("COMMENTS", HttpUtility.HtmlEncode(blogEntries[i].Comments.ToString()));
+                    blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
+                    blogPostVariableCollection.Parse("COMMENTS", blogEntries[i].Comments.ToString());
 
                     DateTime postDateTime = blogEntries[i].GetCreatedDate(core.tz);
 
                     string postUrl = HttpUtility.HtmlEncode(string.Format("/{0}/blog/{1}/{2:00}/{3}",
                             page.ProfileOwner.UserName, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
-                    blogPostVariableCollection.ParseVariables("DATE", HttpUtility.HtmlEncode(core.tz.DateTimeToString(postDateTime)));
-                    blogPostVariableCollection.ParseVariables("URL", HttpUtility.HtmlEncode(postUrl));
-                    blogPostVariableCollection.ParseVariables("POST", Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner));
+                    blogPostVariableCollection.Parse("DATE", core.tz.DateTimeToString(postDateTime));
+                    blogPostVariableCollection.Parse("URL", postUrl);
+                    //blogPostVariableCollection.ParseRaw("POST", Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner));
+                    Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.ProfileOwner);
                     if (blogEntries[i].PostId == post)
                     {
                         comments = blogEntries[i].Comments;
-                        page.template.ParseVariables("BLOG_POST_COMMENTS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(comments)));
-                        page.template.ParseVariables("BLOGPOST_ID", HttpUtility.HtmlEncode(blogEntries[i].PostId.ToString()));
+                        page.template.Parse("BLOG_POST_COMMENTS", Functions.LargeIntegerToString(comments));
+                        page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
 
                         myBlog.blogAccess = new Access(core.db, blogEntries[i].Permissions, page.ProfileOwner);
                         myBlog.blogAccess.SetViewer(core.session.LoggedInMember);
@@ -655,10 +657,10 @@ namespace BoxSocial.Applications.Blog
                 {
                     if (myBlog.BlogAccess.CanComment)
                     {
-                        page.template.ParseVariables("CAN_COMMENT", "TRUE");
+                        page.template.Parse("CAN_COMMENT", "TRUE");
                     }
                     Display.DisplayComments(page.template, page.ProfileOwner, new BlogEntry(core, post));
-                    page.template.ParseVariables("SINGLE", "TRUE");
+                    page.template.Parse("SINGLE", "TRUE");
                 }
 
                 string pageUri = "";
@@ -705,15 +707,18 @@ namespace BoxSocial.Applications.Blog
                         pageUri = Linker.BuildBlogUri(page.ProfileOwner);
                     }
                 }
-                page.template.ParseVariables("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
+                //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
+                page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
 
                 if (post <= 0)
                 {
-                    page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true));
+                    //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true));
+                    Display.ParsePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true);
                 }
                 else
                 {
-                    page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
+                    //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
+                    Display.ParsePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0));
                 }
             }
         }

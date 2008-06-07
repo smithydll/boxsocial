@@ -239,22 +239,22 @@ namespace BoxSocial.Applications.Pages
         {
             page.template.SetTemplate("viewlist.html");
 
-            page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(string.Format("{0} Lists", page.ProfileOwner.DisplayNameOwnership)));
-            page.template.ParseVariables("LIST_ABSTRACT", "FALSE");
+            page.template.Parse("LIST_TITLE", string.Format("{0} Lists", page.ProfileOwner.DisplayNameOwnership));
+            page.template.Parse("LIST_ABSTRACT", "FALSE");
 
             List<List> lists = List.GetLists(core, page.ProfileOwner);
 
             if (lists.Count > 0)
             {
-                page.template.ParseVariables("NOT_EMPTY", "TRUE");
+                page.template.Parse("NOT_EMPTY", "TRUE");
             }
 
             foreach (List list in lists)
             {
                 VariableCollection listVariableCollection = page.template.CreateChild("list_list");
 
-                listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(list.Title));
-                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(List.BuildListUri(list)));
+                listVariableCollection.Parse("TITLE", list.Title);
+                listVariableCollection.Parse("URI", List.BuildListUri(list));
             }
         }
 
@@ -274,34 +274,35 @@ namespace BoxSocial.Applications.Pages
                     return;
                 }
 
-                page.template.ParseVariables("LIST_TITLE", HttpUtility.HtmlEncode(list.title));
-                page.template.ParseVariables("LIST_ID", HttpUtility.HtmlEncode(list.ListId.ToString()));
-                page.template.ParseVariables("LIST_LIST", "TRUE");
+                page.template.Parse("LIST_TITLE", list.title);
+                page.template.Parse("LIST_ID", list.ListId.ToString());
+                page.template.Parse("LIST_LIST", "TRUE");
 
                 if (!string.IsNullOrEmpty(list.Abstract))
                 {
-                    page.template.ParseVariables("LIST_ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(list.Abstract)));
+                    //page.template.ParseRaw("LIST_ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(list.Abstract)));
+                    Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
                 }
                 else
                 {
-                    page.template.ParseVariables("LIST_ABSTRACT", "FALSE");
+                    page.template.Parse("LIST_ABSTRACT", "FALSE");
                 }
 
                 List<ListItem> listItems = list.GetListItems();
 
                 if (listItems.Count > 0)
                 {
-                    page.template.ParseVariables("NOT_EMPTY", "TRUE");
+                    page.template.Parse("NOT_EMPTY", "TRUE");
                 }
 
                 foreach (ListItem listItem in listItems)
                 {
                     VariableCollection listVariableCollection = page.template.CreateChild("list_list");
 
-                    listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(listItem.Text));
-                    listVariableCollection.ParseVariables("URI", "FALSE");
+                    listVariableCollection.Parse("TITLE", listItem.Text);
+                    listVariableCollection.Parse("URI", "FALSE");
 
-                    listVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildRemoveFromListUri(listItem.ListItemId)));
+                    listVariableCollection.Parse("U_DELETE", Linker.BuildRemoveFromListUri(listItem.ListItemId));
                 }
             }
             catch

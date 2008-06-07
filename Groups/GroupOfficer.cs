@@ -40,10 +40,27 @@ namespace BoxSocial.Groups
         [DataField("officer_title", 31)]
         private string title;
 
+        public string OfficeTitle
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                SetProperty("title", value);
+            }
+        }
+
         internal GroupOfficer(Core core, DataRow officerRow)
             : base(core, officerRow)
         {
             loadItemInfo(officerRow);
+        }
+
+        public string BuildRemoveOfficerUri()
+        {
+            return RemoveOfficerUri(title);
         }
     }
 }

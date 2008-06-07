@@ -114,7 +114,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void InstallTables(Assembly asm)
+        public static void InstallTables(Core core, Assembly asm)
         {
             Type[] types = asm.GetTypes();
 
@@ -464,14 +464,14 @@ namespace BoxSocial.Internals
                                         {
                                             VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
 
-                                            styleSheetVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/styles/applications/" + ae.Key + @".css"));
+                                            styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
                                         }
 
                                         if (ae.HasJavascript)
                                         {
                                             VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
 
-                                            javaScriptVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/scripts/" + ae.Key + @".js"));
+                                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                                         }
                                     }
                                 }
@@ -547,14 +547,14 @@ namespace BoxSocial.Internals
                     {
                         VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
 
-                        styleSheetVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/styles/applications/" + ae.Key + @".css"));
+                        styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
                     }
 
                     if (ae.HasJavascript)
                     {
                         VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
 
-                        javaScriptVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode(@"/scripts/" + ae.Key + @".js"));
+                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
                 }
             }

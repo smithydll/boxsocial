@@ -412,9 +412,9 @@ namespace BoxSocial.Networks
             {
                 Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
-                emailTemplate.ParseVariables("TO_NAME", member.DisplayName);
-                emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
-                emailTemplate.ParseVariables("S_EMAIL", member.MemberEmail);
+                emailTemplate.Parse("TO_NAME", member.DisplayName);
+                emailTemplate.Parse("U_ACTIVATE", activateUri);
+                emailTemplate.Parse("S_EMAIL", member.MemberEmail);
 
                 Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
@@ -459,9 +459,9 @@ namespace BoxSocial.Networks
             {
                 Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
-                emailTemplate.ParseVariables("TO_NAME", member.DisplayName);
-                emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
-                emailTemplate.ParseVariables("S_EMAIL", networkEmail);
+                emailTemplate.Parse("TO_NAME", member.DisplayName);
+                emailTemplate.Parse("U_ACTIVATE", activateUri);
+                emailTemplate.Parse("S_EMAIL", networkEmail);
 
                 Email.SendEmail(networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
@@ -635,20 +635,21 @@ namespace BoxSocial.Networks
                 }
                 else
                 {
-                    page.template.ParseVariables("U_JOIN", HttpUtility.HtmlEncode(page.TheNetwork.BuildJoinUri()));
+                    page.template.Parse("U_JOIN", page.TheNetwork.BuildJoinUri());
                 }
             }
 
-            page.template.ParseVariables("NETWORK_DISPLAY_NAME", HttpUtility.HtmlEncode(page.TheNetwork.DisplayName));
-            page.template.ParseVariables("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.TheNetwork.Description), core.session.LoggedInMember));
+            page.template.Parse("NETWORK_DISPLAY_NAME", page.TheNetwork.DisplayName);
+            //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.TheNetwork.Description), core.session.LoggedInMember));
+            Display.ParseBbcode("DESCRIPTION", page.TheNetwork.Description);
 
             string langMembers = (page.TheNetwork.Members != 1) ? "members" : "member";
             string langIsAre = (page.TheNetwork.Members != 1) ? "are" : "is";
 
-            page.template.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(page.TheNetwork.Members.ToString()));
-            page.template.ParseVariables("L_MEMBERS", HttpUtility.HtmlEncode(langMembers));
-            page.template.ParseVariables("L_IS_ARE", HttpUtility.HtmlEncode(langIsAre));
-            page.template.ParseVariables("U_MEMBERLIST", HttpUtility.HtmlEncode(page.TheNetwork.BuildMemberListUri()));
+            page.template.Parse("MEMBERS", page.TheNetwork.Members.ToString());
+            page.template.Parse("L_MEMBERS", langMembers);
+            page.template.Parse("L_IS_ARE", langIsAre);
+            page.template.Parse("U_MEMBERLIST", page.TheNetwork.BuildMemberListUri());
 
             List<NetworkMember> members = page.TheNetwork.GetMembers(1, 8);
 
@@ -657,9 +658,9 @@ namespace BoxSocial.Networks
                 Dictionary<string, string> membersLoopVars = new Dictionary<string, string>();
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
-                membersVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                membersVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
-                membersVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
+                membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
+                membersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                membersVariableCollection.Parse("ICON", member.UserIcon);
 
             }
 
@@ -672,8 +673,8 @@ namespace BoxSocial.Networks
 
             int p = Functions.RequestInt("p", 1);
 
-            page.template.ParseVariables("MEMBERS_TITLE", HttpUtility.HtmlEncode("Member list for " + page.TheNetwork.DisplayName));
-            page.template.ParseVariables("MEMBERS", HttpUtility.HtmlEncode(((ulong)page.TheNetwork.Members).ToString()));
+            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.TheNetwork.DisplayName);
+            page.template.Parse("MEMBERS", ((ulong)page.TheNetwork.Members).ToString());
 
             foreach (NetworkMember member in page.TheNetwork.GetMembers(p, 18))
             {
@@ -691,19 +692,21 @@ namespace BoxSocial.Networks
                     age = ageInt.ToString() + " years old";
                 }
 
-                memberVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(member.DisplayName));
-                memberVariableCollection.ParseVariables("JOIN_DATE", HttpUtility.HtmlEncode(page.tz.DateTimeToString(member.GetNetworkMemberJoinDate(page.tz))));
-                memberVariableCollection.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(age));
-                memberVariableCollection.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(member.Country));
-                memberVariableCollection.ParseVariables("USER_CAPTION", "");
+                memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
+                memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetNetworkMemberJoinDate(page.tz)));
+                memberVariableCollection.Parse("USER_AGE", age);
+                memberVariableCollection.Parse("USER_COUNTRY", member.Country);
+                memberVariableCollection.Parse("USER_CAPTION", "");
 
-                memberVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(member)));
-                memberVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(member.UserIcon));
+                memberVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                memberVariableCollection.Parse("ICON", member.UserIcon);
             }
 
             string pageUri = page.TheNetwork.MemberlistUri;
-            page.template.ParseVariables("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0)));
-            page.template.ParseVariables("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("members"));
+            //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0)));
+            //page.template.ParseRaw("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("members"));
+            Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0));
+            page.TheNetwork.GenerateBreadCrumbs("members");
         }
 
         public override string Namespace

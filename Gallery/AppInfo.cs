@@ -349,21 +349,21 @@ namespace BoxSocial.Applications.Gallery
 
                 List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 
-                template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(thisGroup.GalleryItems.ToString()));
+                template.Parse("PHOTOS", thisGroup.GalleryItems.ToString());
 
                 foreach (GalleryItem galleryItem in galleryItems)
                 {
                     VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
-                    galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                    galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(thisGroup, galleryItem.Path)));
+                    galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
+                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(thisGroup, galleryItem.Path));
 
                     string thumbUri = string.Format("/group/{0}/images/_tiny/{1}",
                         thisGroup.Slug, galleryItem.Path);
-                    galleryVariableCollection.ParseVariables("THUMBNAIL", HttpUtility.HtmlEncode(thumbUri));
+                    galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
                 }
 
-                template.ParseVariables("U_GROUP_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(thisGroup)));
+                template.Parse("U_GROUP_GALLERY", Gallery.BuildGalleryUri(thisGroup));
 
                 e.core.AddMainPanel(template);
             }
@@ -379,21 +379,21 @@ namespace BoxSocial.Applications.Gallery
 
             List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 
-            template.ParseVariables("PHOTOS", HttpUtility.HtmlEncode(theNetwork.GalleryItems.ToString()));
+            template.Parse("PHOTOS", theNetwork.GalleryItems.ToString());
 
             foreach (GalleryItem galleryItem in galleryItems)
             {
                 VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
-                galleryVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode(galleryItem.ItemTitle));
-                galleryVariableCollection.ParseVariables("PHOTO_URI", HttpUtility.HtmlEncode(Gallery.BuildPhotoUri(theNetwork, galleryItem.Path)));
+                galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(theNetwork, galleryItem.Path));
 
                 string thumbUri = string.Format("/network/{0}/images/_tiny/{1}",
                     theNetwork.NetworkNetwork, galleryItem.Path);
-                galleryVariableCollection.ParseVariables("THUMBNAIL", HttpUtility.HtmlEncode(thumbUri));
+                galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
             }
 
-            template.ParseVariables("U_NETWORK_GALLERY", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(theNetwork)));
+            template.Parse("U_NETWORK_GALLERY", Gallery.BuildGalleryUri(theNetwork));
 
             e.core.AddMainPanel(template);
         }

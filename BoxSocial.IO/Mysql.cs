@@ -240,6 +240,7 @@ namespace BoxSocial.IO
                 sqlCommand.Dispose();
             }
             sqlConnection.Close();
+            sqlConnection.Dispose();
         }
 
         public static string Escape(string input)

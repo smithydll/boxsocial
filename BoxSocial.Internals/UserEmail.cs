@@ -155,9 +155,9 @@ namespace BoxSocial.Internals
 
             Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
 
-            emailTemplate.ParseVariables("TO_NAME", core.session.LoggedInMember.DisplayName);
-            emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
-            emailTemplate.ParseVariables("USERNAME", core.session.LoggedInMember.UserName);
+            emailTemplate.Parse("TO_NAME", core.session.LoggedInMember.DisplayName);
+            emailTemplate.Parse("U_ACTIVATE", activateUri);
+            emailTemplate.Parse("USERNAME", core.session.LoggedInMember.UserName);
 
             BoxSocial.Internals.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
 

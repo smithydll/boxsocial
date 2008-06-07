@@ -78,7 +78,7 @@ namespace BoxSocial.FrontEnd
                     string quotedComment = string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
                         (string)commentsTable.Rows[0]["user_name"], (string)commentsTable.Rows[0]["comment_text"]);
 
-                    template.ParseVariables("COMMENT_TEXT", HttpUtility.HtmlEncode(quotedComment));
+                    template.Parse("COMMENT_TEXT", quotedComment);
                 }
                 else
                 {
@@ -302,18 +302,19 @@ namespace BoxSocial.FrontEnd
 
                 VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
 
-                commentsVariableCollection.ParseVariables("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment), core.session.LoggedInMember));
+                //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment), core.session.LoggedInMember));
+                Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment);
                 // TODO: finish comments this
-                commentsVariableCollection.ParseVariables("ID", commentId.ToString());
-                commentsVariableCollection.ParseVariables("USERNAME", loggedInMember.DisplayName);
-                commentsVariableCollection.ParseVariables("U_PROFILE", loggedInMember.ProfileUri);
-                commentsVariableCollection.ParseVariables("U_QUOTE", HttpUtility.HtmlEncode(Linker.BuildCommentQuoteUri(commentId)));
-                commentsVariableCollection.ParseVariables("U_REPORT", HttpUtility.HtmlEncode(Linker.BuildCommentReportUri(commentId)));
-                commentsVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildCommentDeleteUri(commentId)));
-                commentsVariableCollection.ParseVariables("TIME", tz.DateTimeToString(tz.Now));
-                commentsVariableCollection.ParseVariables("USER_TILE", HttpUtility.HtmlEncode(loggedInMember.UserTile));
+                commentsVariableCollection.Parse("ID", commentId.ToString());
+                commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
+                commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);
+                commentsVariableCollection.Parse("U_QUOTE", Linker.BuildCommentQuoteUri(commentId));
+                commentsVariableCollection.Parse("U_REPORT", Linker.BuildCommentReportUri(commentId));
+                commentsVariableCollection.Parse("U_DELETE", Linker.BuildCommentDeleteUri(commentId));
+                commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
+                commentsVariableCollection.Parse("USER_TILE", loggedInMember.UserTile);
 
-                commentsVariableCollection.ParseVariables("NORMAL", "TRUE");
+                commentsVariableCollection.Parse("NORMAL", "TRUE");
 
                 //Response.Write(ct.ToString());
                 Ajax.SendRawText("comment", ct.ToString());
@@ -330,7 +331,7 @@ namespace BoxSocial.FrontEnd
                 string redirect = Request["redirect"];
                 if (!string.IsNullOrEmpty(redirect))
                 {
-                    template.ParseVariables("REDIRECT_URI", HttpUtility.HtmlEncode(redirect));
+                    template.Parse("REDIRECT_URI", redirect);
                 }
                 Display.ShowMessage("Comment Posted", "Your comment has been successfully posted.");
             }

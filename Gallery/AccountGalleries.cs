@@ -114,8 +114,8 @@ namespace BoxSocial.Applications.Gallery
 
                 if (galleryParentTable.Rows.Count > 0)
                 {
-                    template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(parentGalleryId)));
-                    template.ParseVariables("U_UPLOAD_PHOTO", HttpUtility.HtmlEncode(Linker.BuildPhotoUploadUri(parentGalleryId)));
+                    template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(parentGalleryId));
+                    template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(parentGalleryId));
 
                     if (!(galleryParentTable.Rows[0]["gallery_parent_path"] is DBNull))
                     {
@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                template.ParseVariables("U_NEW_GALLERY", HttpUtility.HtmlEncode(Linker.BuildNewGalleryUri(0)));
+                template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
             }
 
             template.SetTemplate("Gallery", "account_galleries");
@@ -144,26 +144,26 @@ namespace BoxSocial.Applications.Gallery
             {
                 VariableCollection galleryVariableCollection = template.CreateChild("gallery_list");
 
-                galleryVariableCollection.ParseVariables("NAME", HttpUtility.HtmlEncode((string)galleriesTable.Rows[i]["gallery_title"]));
-                galleryVariableCollection.ParseVariables("ITEMS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString((long)galleriesTable.Rows[i]["gallery_items"])));
+                galleryVariableCollection.Parse("NAME", (string)galleriesTable.Rows[i]["gallery_title"]);
+                galleryVariableCollection.Parse("ITEMS", Functions.LargeIntegerToString((long)galleriesTable.Rows[i]["gallery_items"]));
 
-                galleryVariableCollection.ParseVariables("U_MANAGE", HttpUtility.HtmlEncode(string.Format("/account/?module=galleries&sub=galleries&id={0}",
-                    (long)galleriesTable.Rows[i]["gallery_id"])));
+                galleryVariableCollection.Parse("U_MANAGE", string.Format("/account/?module=galleries&sub=galleries&id={0}",
+                    (long)galleriesTable.Rows[i]["gallery_id"]));
 
                 if (!(galleriesTable.Rows[i]["gallery_parent_path"] is DBNull))
                 {
                     if ((string)galleriesTable.Rows[i]["gallery_parent_path"] == "")
                     {
-                        galleryVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(loggedInMember, (string)galleriesTable.Rows[i]["gallery_path"])));
+                        galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(loggedInMember, (string)galleriesTable.Rows[i]["gallery_path"]));
                     }
                     else
                     {
-                        galleryVariableCollection.ParseVariables("U_VIEW", HttpUtility.HtmlEncode(Gallery.BuildGalleryUri(loggedInMember, (string)galleriesTable.Rows[i]["gallery_parent_path"] + "/" + (string)galleriesTable.Rows[i]["gallery_path"])));
+                        galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(loggedInMember, (string)galleriesTable.Rows[i]["gallery_parent_path"] + "/" + (string)galleriesTable.Rows[i]["gallery_path"]));
                     }
                 }
 
-                galleryVariableCollection.ParseVariables("U_EDIT", HttpUtility.HtmlEncode(Linker.BuildGalleryEditUri((long)galleriesTable.Rows[i]["gallery_id"])));
-                galleryVariableCollection.ParseVariables("U_DELETE", HttpUtility.HtmlEncode(Linker.BuildGalleryDeleteUri((long)galleriesTable.Rows[i]["gallery_id"])));
+                galleryVariableCollection.Parse("U_EDIT", Linker.BuildGalleryEditUri((long)galleriesTable.Rows[i]["gallery_id"]));
+                galleryVariableCollection.Parse("U_DELETE", Linker.BuildGalleryDeleteUri((long)galleriesTable.Rows[i]["gallery_id"]));
             }
         }
 
@@ -223,7 +223,8 @@ namespace BoxSocial.Applications.Gallery
                         Dictionary<string, string> licenses = new Dictionary<string, string>();
                         DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
-                        template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                        //template.Parse("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                        Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
                     }
                     else
                     {
@@ -232,24 +233,25 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(0x3333, permissions));
+                    //template.Parse("S_GALLERY_PERMS", Functions.BuildPermissionsBox(0x3333, permissions));
+                    Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", 0x3333, permissions);
                 }
             }
             else
             {
                 // edit
-                template.ParseVariables("EDIT", "TRUE");
+                template.Parse("EDIT", "TRUE");
 
                 DataTable galleryTable = db.Query(string.Format("SELECT gallery_title, gallery_access, gallery_abstract FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
                         galleryId, loggedInMember.UserId));
 
                 if (galleryTable.Rows.Count == 1)
                 {
-                    template.ParseVariables("S_TITLE", HttpUtility.HtmlEncode((string)galleryTable.Rows[0]["gallery_title"]));
+                    template.Parse("S_TITLE", (string)galleryTable.Rows[0]["gallery_title"]);
 
                     if (!(galleryTable.Rows[0]["gallery_abstract"] is DBNull))
                     {
-                        template.ParseVariables("S_DESCRIPTION", HttpUtility.HtmlEncode((string)galleryTable.Rows[0]["gallery_abstract"]));
+                        template.Parse("S_DESCRIPTION", (string)galleryTable.Rows[0]["gallery_abstract"]);
                     }
 
                     ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
@@ -257,7 +259,8 @@ namespace BoxSocial.Applications.Gallery
                     Dictionary<string, string> licenses = new Dictionary<string, string>();
                     DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
-                    template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                    //template.Parse("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                    Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
                 }
                 else
                 {
@@ -265,7 +268,7 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            template.ParseVariables("S_GALLERY_ID", HttpUtility.HtmlEncode(galleryId.ToString()));
+            template.Parse("S_GALLERY_ID", galleryId.ToString());
         }
 
         private void GalleryDelete()
@@ -470,11 +473,12 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                template.ParseVariables("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
-                template.ParseVariables("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
-                template.ParseVariables("S_GALLERY_ID", HttpUtility.HtmlEncode(galleryId.ToString()));
-                template.ParseVariables("S_FORM_ACTION", HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)));
-                template.ParseVariables("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
+                template.Parse("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
+                //template.Parse("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
+                template.Parse("S_GALLERY_ID", galleryId.ToString());
+                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+                template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
             }
             else
             {
@@ -577,12 +581,13 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                template.ParseVariables("S_PHOTO_LICENSE", ContentLicense.BuildLicenseSelectBox(db, license));
-                template.ParseVariables("S_PHOTO_PERMS", Functions.BuildPermissionsBox(photoAccess, permissions));
-                template.ParseVariables("S_PHOTO_TITLE", HttpUtility.HtmlEncode(title));
-                template.ParseVariables("S_PHOTO_DESCRIPTION", HttpUtility.HtmlEncode(description));
-                template.ParseVariables("S_PHOTO_ID", HttpUtility.HtmlEncode(photoId.ToString()));
-                template.ParseVariables("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox((Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]));
+                template.Parse("S_PHOTO_LICENSE", ContentLicense.BuildLicenseSelectBox(db, license));
+                //template.Parse("S_PHOTO_PERMS", Functions.BuildPermissionsBox(photoAccess, permissions));
+                Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
+                template.Parse("S_PHOTO_TITLE", title);
+                template.Parse("S_PHOTO_DESCRIPTION", description);
+                template.Parse("S_PHOTO_ID", photoId.ToString());
+                template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox((Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]));
             }
             else
             {

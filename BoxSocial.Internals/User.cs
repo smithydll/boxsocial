@@ -1231,10 +1231,10 @@ namespace BoxSocial.Internals
 
             Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "registration_welcome.eml");
 
-            emailTemplate.ParseVariables("TO_NAME", userName);
-            emailTemplate.ParseVariables("U_ACTIVATE", activateUri);
-            emailTemplate.ParseVariables("USERNAME", userName);
-            emailTemplate.ParseVariables("PASSWORD", passwordClearText);
+            emailTemplate.Parse("TO_NAME", userName);
+            emailTemplate.Parse("U_ACTIVATE", activateUri);
+            emailTemplate.Parse("USERNAME", userName);
+            emailTemplate.Parse("PASSWORD", passwordClearText);
 
             Email.SendEmail(eMail, "Welcome to ZinZam", emailTemplate.ToString());
 
@@ -1816,24 +1816,25 @@ namespace BoxSocial.Internals
                 age = ageInt.ToString() + " years old";
             }
 
-            core.template.ParseVariables("USER_SEXUALITY", HttpUtility.HtmlEncode(page.ProfileOwner.Sexuality));
-            core.template.ParseVariables("USER_GENDER", HttpUtility.HtmlEncode(page.ProfileOwner.Gender));
-            core.template.ParseVariables("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(page.ProfileOwner.Autobiography), core.session.LoggedInMember));
-            core.template.ParseVariables("USER_MARITIAL_STATUS", HttpUtility.HtmlEncode(page.ProfileOwner.MaritialStatus));
-            core.template.ParseVariables("USER_AGE", HttpUtility.HtmlEncode(age));
-            core.template.ParseVariables("USER_JOINED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate)));
-            core.template.ParseVariables("USER_LAST_SEEN", HttpUtility.HtmlEncode(core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true)));
-            core.template.ParseVariables("USER_PROFILE_VIEWS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews)));
-            core.template.ParseVariables("USER_SUBSCRIPTIONS", HttpUtility.HtmlEncode(Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions)));
-            core.template.ParseVariables("USER_COUNTRY", HttpUtility.HtmlEncode(page.ProfileOwner.Country));
-            core.template.ParseVariables("USER_ICON", HttpUtility.HtmlEncode(page.ProfileOwner.UserThumbnail));
+            core.template.Parse("USER_SEXUALITY", page.ProfileOwner.Sexuality);
+            core.template.Parse("USER_GENDER", page.ProfileOwner.Gender);
+            //core.template.ParseRaw("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(page.ProfileOwner.Autobiography), core.session.LoggedInMember));
+            Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
+            core.template.Parse("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
+            core.template.Parse("USER_AGE", age);
+            core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate));
+            core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true));
+            core.template.Parse("USER_PROFILE_VIEWS", Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews));
+            core.template.Parse("USER_SUBSCRIPTIONS", Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions));
+            core.template.Parse("USER_COUNTRY", page.ProfileOwner.Country);
+            core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
 
-            core.template.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(page.ProfileOwner)));
-            core.template.ParseVariables("U_BLOG", HttpUtility.HtmlEncode((Linker.BuildBlogUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_GALLERY", HttpUtility.HtmlEncode((Linker.BuildGalleryUri(page.ProfileOwner))));
-            core.template.ParseVariables("U_FRIENDS", HttpUtility.HtmlEncode((Linker.BuildFriendsUri(page.ProfileOwner))));
+            core.template.Parse("U_PROFILE", Linker.BuildProfileUri(page.ProfileOwner));
+            core.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));
+            core.template.Parse("U_GALLERY", (Linker.BuildGalleryUri(page.ProfileOwner)));
+            core.template.Parse("U_FRIENDS", (Linker.BuildFriendsUri(page.ProfileOwner)));
 
-            core.template.ParseVariables("IS_PROFILE", "TRUE");
+            core.template.Parse("IS_PROFILE", "TRUE");
 
             if (page.ProfileOwner.MaritialStatusRaw != "UNDEF")
             {
@@ -1850,25 +1851,25 @@ namespace BoxSocial.Internals
 
             if (hasProfileInfo)
             {
-                core.template.ParseVariables("HAS_PROFILE_INFO", "TRUE");
+                core.template.Parse("HAS_PROFILE_INFO", "TRUE");
             }
 
-            core.template.ParseVariables("U_ADD_FRIEND", HttpUtility.HtmlEncode(Linker.BuildAddFriendUri(page.ProfileOwner.UserId)));
-            core.template.ParseVariables("U_BLOCK_USER", HttpUtility.HtmlEncode(Linker.BuildBlockUserUri(page.ProfileOwner.UserId)));
+            core.template.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(page.ProfileOwner.UserId));
+            core.template.Parse("U_BLOCK_USER", Linker.BuildBlockUserUri(page.ProfileOwner.UserId));
 
             string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
 
-            core.template.ParseVariables("FRIENDS", HttpUtility.HtmlEncode(page.ProfileOwner.Friends.ToString()));
-            core.template.ParseVariables("L_FRIENDS", HttpUtility.HtmlEncode(langFriends));
+            core.template.Parse("FRIENDS", page.ProfileOwner.Friends.ToString());
+            core.template.Parse("L_FRIENDS", langFriends);
 
             List<User> friends = page.ProfileOwner.GetFriends(1, 8);
             foreach (User friend in friends)
             {
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
 
-                friendVariableCollection.ParseVariables("USER_DISPLAY_NAME", HttpUtility.HtmlEncode(friend.DisplayName));
-                friendVariableCollection.ParseVariables("U_PROFILE", HttpUtility.HtmlEncode(Linker.BuildProfileUri(friend)));
-                friendVariableCollection.ParseVariables("ICON", HttpUtility.HtmlEncode(friend.UserIcon));
+                friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
+                friendVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(friend));
+                friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
             ushort readAccessLevel = page.ProfileOwner.GetAccessLevel(core.session.LoggedInMember);
@@ -1882,22 +1883,23 @@ namespace BoxSocial.Internals
             {
                 VariableCollection listVariableCollection = core.template.CreateChild("list_list");
 
-                listVariableCollection.ParseVariables("TITLE", HttpUtility.HtmlEncode((string)listTable.Rows[i]["list_title"]));
-                listVariableCollection.ParseVariables("URI", HttpUtility.HtmlEncode("/" + page.ProfileOwner.UserName + "/lists/" + Linker.AppendSid((string)listTable.Rows[i]["list_path"])));
+                listVariableCollection.Parse("TITLE", (string)listTable.Rows[i]["list_title"]);
+                listVariableCollection.Parse("URI", "/" + page.ProfileOwner.UserName + "/lists/" + Linker.AppendSid((string)listTable.Rows[i]["list_path"]));
             }
 
-            core.template.ParseVariables("LISTS", listTable.Rows.Count.ToString());
+            core.template.Parse("LISTS", listTable.Rows.Count.ToString());
 
             /* pages */
-            core.template.ParseVariables("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
+            //core.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
+            Display.ParsePageList(page.ProfileOwner, true);
 
             /* status */
             StatusMessage statusMessage = StatusFeed.GetLatest(core, page.ProfileOwner);
 
             if (statusMessage != null)
             {
-                core.template.ParseVariables("STATUS_MESSAGE", HttpUtility.HtmlEncode(statusMessage.Message));
-                core.template.ParseVariables("STATUS_UPDATED", HttpUtility.HtmlEncode(core.tz.DateTimeToString(statusMessage.GetTime(core.tz))));
+                core.template.Parse("STATUS_MESSAGE", statusMessage.Message);
+                core.template.Parse("STATUS_UPDATED", core.tz.DateTimeToString(statusMessage.GetTime(core.tz)));
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));

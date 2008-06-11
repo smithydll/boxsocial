@@ -848,6 +848,26 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
         }
 
+        public static void ParseLicensingBox(string templateVar, byte selectedLicense)
+        {
+            ParseLicensingBox(core.template, templateVar, selectedLicense);
+        }
+
+        public static void ParseLicensingBox(Template template, string templateVar, byte selectedLicense)
+        {
+            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
+        }
+
+        public static void ParseClassification(string templateVar, Classifications classification)
+        {
+            ParseClassification(core.template, templateVar, classification);
+        }
+
+        public static void ParseClassification(Template template, string templateVar, Classifications classification)
+        {
+            template.ParseRaw(templateVar, Classification.BuildClassificationBox(classification));
+        }
+
         /// <summary>
         /// Algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV
         /// </summary>

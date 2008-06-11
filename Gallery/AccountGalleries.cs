@@ -473,12 +473,14 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                template.Parse("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
+                //template.Parse("S_GALLERY_LICENSE", ContentLicense.BuildLicenseSelectBox(db, 0));
                 //template.Parse("S_GALLERY_PERMS", Functions.BuildPermissionsBox(galleryAccess, permissions));
+                Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
                 Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
                 template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
-                template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
+                //template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox(Classifications.Everyone));
+                Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
             else
             {
@@ -581,13 +583,15 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                template.Parse("S_PHOTO_LICENSE", ContentLicense.BuildLicenseSelectBox(db, license));
+                //template.Parse("S_PHOTO_LICENSE", ContentLicense.BuildLicenseSelectBox(db, license));
                 //template.Parse("S_PHOTO_PERMS", Functions.BuildPermissionsBox(photoAccess, permissions));
+                Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
                 Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
                 template.Parse("S_PHOTO_TITLE", title);
                 template.Parse("S_PHOTO_DESCRIPTION", description);
                 template.Parse("S_PHOTO_ID", photoId.ToString());
-                template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox((Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]));
+                //template.Parse("S_PHOTO_CLASSIFICATION", Classification.BuildClassificationBox((Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]));
+                Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", (Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]);
             }
             else
             {

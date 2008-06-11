@@ -24,6 +24,7 @@ using System.Text;
 
 namespace BoxSocial.Internals
 {
+    [AttributeUsage(AttributeTargets.Class)]
     public class AccountModuleAttribute : Attribute
     {
         private string moduleName;

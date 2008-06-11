@@ -300,6 +300,39 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Gets the trackbacks for the blog entry
+        /// </summary>
+        /// <returns></returns>
+        public List<TrackBack> GetTrackBacks()
+        {
+            return GetTrackBacks(1, 10);
+        }
+
+        /// <summary>
+        /// Gets the trackbacks for the blog entry
+        /// </summary>
+        /// <param name="page">The page</param>
+        /// <param name="perPage">Number of trackbacks per page</param>
+        /// <returns></returns>
+        public List<TrackBack> GetTrackBacks(int page, int perPage)
+        {
+            List<TrackBack> trackBacks = new List<TrackBack>();
+
+            SelectQuery query = new SelectQuery(TrackBack.GetTable(typeof(TrackBack)));
+            query.AddFields(TrackBack.GetFieldsPrefixed(typeof(TrackBack)));
+            query.AddCondition("post_id", postId);
+
+            DataTable trackBacksTable = db.Query(query);
+
+            foreach (DataRow dr in trackBacksTable.Rows)
+            {
+                trackBacks.Add(new TrackBack(core, dr));
+            }
+
+            return trackBacks;
+        }
+
+        /// <summary>
         /// Gets the blog post id.
         /// </summary>
         public override long Id

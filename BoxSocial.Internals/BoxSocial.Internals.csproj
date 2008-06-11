@@ -59,9 +59,12 @@
   <ItemGroup>
     <Compile Include="Access.cs" />
     <Compile Include="Account.cs" />
+    <Compile Include="AccountApplications.cs" />
     <Compile Include="AccountDashboard.cs" />
     <Compile Include="AccountModule.cs" />
     <Compile Include="AccountModuleAttribute.cs" />
+    <Compile Include="AccountSubModule.cs" />
+    <Compile Include="AccountSubModuleAttribute.cs" />
     <Compile Include="Action.cs" />
     <Compile Include="Ajax.cs" />
     <Compile Include="APage.cs">

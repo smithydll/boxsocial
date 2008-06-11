@@ -309,9 +309,11 @@ namespace BoxSocial.Applications.Pages
                 disabledItems.Add(pageId.ToString());
             }
             //template.Parse("S_PAGE_PARENT", Functions.BuildSelectBox("page-parent", pages, pageParentId.ToString(), disabledItems));
-            template.Parse("S_PAGE_CLASSIFICATION", Classification.BuildClassificationBox(pageClassification));
-            template.Parse("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
+            //template.Parse("S_PAGE_CLASSIFICATION", Classification.BuildClassificationBox(pageClassification));
+            //template.Parse("S_PAGE_LICENSE", ContentLicense.BuildLicenseSelectBox(db, licenseId));
             //template.Parse("S_PAGE_PERMS", Functions.BuildPermissionsBox(pagePermissions, permissions));
+            Display.ParseLicensingBox(template, "S_PAGE_LICENSE", licenseId);
+            Display.ParseClassification(template, "S_PAGE_CLASSIFICATION", pageClassification);
             Display.ParseSelectBox(template, "S_PAGE_PARENT", "page-parent", pages, pageParentId.ToString(), disabledItems);
 
             Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);

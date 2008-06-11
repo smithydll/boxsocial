@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -24,21 +24,32 @@ using System.Text;
 
 namespace BoxSocial.Internals
 {
-    public enum AppPrimitives : byte
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AccountSubModuleAttribute : Attribute
     {
-        None = 0x00,
-        Member = 0x01,
-        Group = 0x02,
-        Network = 0x04,
-        Application = 0x08,
-        Musician = 0x10,
-        Any = Member | Group | Network | Application | Musician,
-    }
+        private string moduleName;
+        private string subModuleName;
 
-    public interface IAppInfo
-    {
-        void Initialise(Core core);
+        public string ModuleName
+        {
+            get
+            {
+                return moduleName;
+            }
+        }
 
-        AppPrimitives GetAppPrimitiveSupport();
+        public string Name
+        {
+            get
+            {
+                return subModuleName;
+            }
+        }
+
+        public AccountSubModuleAttribute(string moduleName, string subModuleName)
+        {
+            this.moduleName = moduleName;
+            this.subModuleName = subModuleName;
+        }
     }
 }

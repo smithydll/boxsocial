@@ -718,7 +718,7 @@ namespace BoxSocial.Applications.Blog
                 else
                 {
                     //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
-                    Display.ParsePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0));
+                    Display.ParsePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0));
                 }
             }
         }

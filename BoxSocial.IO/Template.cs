@@ -228,6 +228,7 @@ namespace BoxSocial.IO
         {
             templateAssembly = null;
             templateName = fileName;
+            //HttpContext.Current.Response.Write("I'm here, now what?? " + fileName + "; ");
         }
 
         public void SetTemplate(string assembly, string fileName)

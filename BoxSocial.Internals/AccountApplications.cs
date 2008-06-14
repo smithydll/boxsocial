@@ -20,7 +20,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -96,7 +98,32 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            // TODO: fill this in
+            SelectQuery query = new SelectQuery("primitive_apps");
+            query.AddFields(ApplicationEntry.APPLICATION_FIELDS);
+            query.AddFields(ApplicationEntry.USER_APPLICATION_FIELDS);
+            query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
+            query.AddCondition("application_id", id);
+            query.AddCondition("item_id", core.LoggedInMemberId);
+            query.AddCondition("item_type", "USER");
+
+            DataTable applicationTable = db.Query(query);
+
+            if (applicationTable.Rows.Count == 1)
+            {
+                ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, applicationTable.Rows[0]);
+
+                List<string> applicationPermissions = new List<string>();
+                applicationPermissions.Add("Can Access");
+
+                template.Parse("APPLICATION_NAME", ae.Title);
+                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+                Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
+                template.Parse("S_APPLICATION_ID", ae.ApplicationId.ToString());
+            }
+            else
+            {
+                Display.ShowMessage("Error", "Error!");
+            }
 
             Save(new EventHandler(ApplicationSettingsSave));
         }

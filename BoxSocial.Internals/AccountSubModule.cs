@@ -50,11 +50,12 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="template">Module inner template</param>
-        public void ModuleVector(Core core, Template template)
+        public void ModuleVector(Core core)
         {
+            CreateTemplate();
+
             this.core = core;
             this.db = core.db;
-            this.template = template;
             this.session = core.session;
             this.tz = core.tz;
             this.loggedInMember = session.LoggedInMember;
@@ -80,6 +81,8 @@ namespace BoxSocial.Internals
             {
                 ShowMode(mode);
             }
+
+            RenderTemplate();
         }
 
         /// <summary>
@@ -177,6 +180,36 @@ namespace BoxSocial.Internals
 
         protected event EventHandler Load;
         protected event EventHandler Show;
+
+        /// <summary>
+        /// Creates an isolated template class for the module to render
+        /// inside.
+        /// </summary>
+        private void CreateTemplate()
+        {
+            template = new Template("1301.html");
+            template.Parse("U_ACCOUNT", Linker.AppendSid("/account", true));
+            template.AddPageAssembly(Assembly.GetCallingAssembly());
+        }
+
+        /// <summary>
+        /// Renders the template to the account panel.
+        /// </summary>
+        private void RenderTemplate()
+        {
+            core.template.ParseRaw("MODULE_CONTENT", template.ToString());
+        }
+
+        /// <summary>
+        /// Renders an error to the account panel.
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        protected void DisplayError(string errorMessage)
+        {
+            template = new Template("1302.html");
+            template.Parse("ERROR_MESSAGE", errorMessage);
+            RenderTemplate();
+        }
 
         protected void SetTemplate(string templateName)
         {
@@ -290,5 +323,73 @@ namespace BoxSocial.Internals
             if (!(obj is AccountModule)) return -1;
             return Order.CompareTo(((AccountModule)obj).Order);
         }
+
+        protected void ParseBbcode(string templateVar, string input)
+        {
+            ParseBbcode(templateVar, input, null);
+        }
+
+        protected void ParseBbcode(string templateVar, string input, User owner)
+        {
+            if (owner != null)
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+            }
+            else
+            {
+                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+            }
+        }
+
+        protected void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
+        {
+            template.ParseRaw(templateVar, Functions.BuildPermissionsBox(permission, permissions));
+        }
+
+        protected void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem));
+        }
+
+        protected void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem, disabledItems));
+        }
+
+        protected void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
+        }
+
+        protected void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
+        }
+
+        protected void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
+        }
+
+        protected void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
+        {
+            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
+        }
+
+        protected void ParseLicensingBox(string templateVar, byte selectedLicense)
+        {
+            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
+        }
+
+        protected void ParseClassification(string templateVar, Classifications classification)
+        {
+            template.ParseRaw(templateVar, Classification.BuildClassificationBox(classification));
+        }
+
+        protected void ParseTimeZoneBox(string templateVar, string timeZone)
+        {
+            template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
+        }
+
     }
 }

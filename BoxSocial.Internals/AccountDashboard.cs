@@ -422,8 +422,9 @@ namespace BoxSocial
             }
 
             //template.Parse("S_HOMEPAGE", Functions.BuildSelectBox("homepage", pages, loggedInMember.ProfileHomepage.ToString()));
-            template.Parse("S_TIMEZONE", UnixTime.BuildTimeZoneSelectBox(loggedInMember.TimeZoneCode.ToString()));
+            //template.Parse("S_TIMEZONE", UnixTime.BuildTimeZoneSelectBox(loggedInMember.TimeZoneCode.ToString()));
             Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, loggedInMember.ProfileHomepage.ToString());
+            Display.ParseTimeZoneBox(template, "S_TIMEZONE", loggedInMember.TimeZoneCode.ToString());
         }
 
         public void PreferencesSave()

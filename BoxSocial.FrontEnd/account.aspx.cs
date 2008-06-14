@@ -42,6 +42,7 @@ namespace BoxSocial.FrontEnd
     {
 
         private List<AccountModule> accountModules = new List<AccountModule>();
+        private List<AccountSubModule> accountSubModules = new List<AccountSubModule>();
         private Dictionary<string, Dictionary<string, string>> modulesList = new Dictionary<string, Dictionary<string, string>>();
 
         public account()
@@ -68,6 +69,7 @@ namespace BoxSocial.FrontEnd
              */
             Assembly dashboardAssembly = Assembly.GetAssembly(typeof(AccountDashboard));
             loadModulesFromAssembly(accountObject, dashboardAssembly, module);
+            loadSubModulesFromAssembly(accountObject, dashboardAssembly, module);
 
             /*
              * Applications
@@ -88,6 +90,7 @@ namespace BoxSocial.FrontEnd
                     Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
                     loadModulesFromAssembly(accountObject, assembly, module);
+                    loadSubModulesFromAssembly(accountObject, assembly, module);
                 }
             }
         }
@@ -114,6 +117,26 @@ namespace BoxSocial.FrontEnd
             }
         }
 
+        private void loadSubModulesFromAssembly(Account accountObject, Assembly assembly, string module)
+        {
+            Type[] types = assembly.GetTypes();
+            foreach (Type type in types)
+            {
+                if (type.IsSubclassOf(typeof(AccountSubModule)))
+                {
+                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { }) as AccountSubModule;
+
+                    if (newModule != null)
+                    {
+                        if (newModule.ModuleKey == module)
+                        {
+                            accountSubModules.Add(newModule);
+                        }
+                    }
+                }
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string module = (!String.IsNullOrEmpty(Request.Form["module"])) ? Request.Form["module"] : Request.QueryString["module"];
@@ -134,12 +157,12 @@ namespace BoxSocial.FrontEnd
 
             if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {
-                template.Parse("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
+                template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
             }
 
             if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
             {
-                template.Parse("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
+                template.ParseRaw("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
             }
 
             Account accountObject = new Account(Core);
@@ -191,7 +214,7 @@ namespace BoxSocial.FrontEnd
                     {
                         accountModule.RegisterSubModules(submodule);
                         modules = accountModule.SubModules;
-                        accountModule.RenderTemplate();
+                        //accountModule.RenderTemplate();
                     }
                     catch (System.Threading.ThreadAbortException)
                     {
@@ -221,6 +244,22 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("SUB", key);
                     modulesVariableCollection.Parse("MODULE", module);
                 }
+            }
+
+            accountSubModules.Sort();
+
+            foreach (AccountSubModule asm in accountSubModules)
+            {
+                VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+
+                    modulesVariableCollection.Parse("TITLE", asm.Title);
+                    modulesVariableCollection.Parse("SUB", asm.Key);
+                    modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
+
+                    if (asm.Key == submodule && asm.ModuleKey == module)
+                    {
+                        asm.ModuleVector(core);
+                    }
             }
 
             EndResponse();

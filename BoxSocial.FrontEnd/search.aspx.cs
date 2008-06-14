@@ -70,11 +70,11 @@ namespace BoxSocial.FrontEnd
         private void showSearchResults()
         {
             string query = Request["q"];
-            string email;
-            string firstName;
-            string middleName;
-            string lastName;
-            string userName;
+            string email = null;
+            string firstName = null;
+            string middleName = null;
+            string lastName = null;
+            string userName = null;
 
             Match match = Regex.Match(query, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
 
@@ -126,6 +126,68 @@ namespace BoxSocial.FrontEnd
                     userName = parts[0];
                 }
             }
+
+            SelectQuery squery = new SelectQuery("user_keys");
+            squery.AddFields(Item.GetFieldsPrefixed(typeof(BoxSocial.Internals.User)));
+            squery.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+            squery.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            squery.AddField(new DataField("gallery_items", "gallery_item_uri"));
+            squery.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            squery.AddJoin(JoinTypes.Inner, "user_info", "user_id", "user_id");
+            squery.AddJoin(JoinTypes.Inner, "user_profile", "user_id", "user_id");
+            squery.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+            squery.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            squery.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                squery.AddCondition("user_alternate_email", email.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(firstName))
+            {
+                squery.AddCondition(ConditionRelations.Or, "profile_name_first", firstName.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(middleName))
+            {
+                squery.AddCondition(ConditionRelations.Or, "profile_name_middle", firstName.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                squery.AddCondition(ConditionRelations.Or, "profile_name_suffix", firstName.ToLower());
+            }
+
+            if (!string.IsNullOrEmpty(userName))
+            {
+                squery.AddCondition(ConditionRelations.Or, "user_keys.user_name", userName.ToLower());
+                squery.AddCondition(ConditionRelations.Or, "user_name_display", userName.ToLower());
+            }
+
+            squery.LimitCount = 10;
+            squery.LimitStart = 10 * (page - 1);
+
+            DataTable searchDataTable = db.Query(squery);
+
+            template.SetTemplate("search_results.html");
+
+            template.Parse("RESULTS", searchDataTable.Rows.Count.ToString());
+
+            foreach (DataRow dr in searchDataTable.Rows)
+            {
+                BoxSocial.Internals.User user = new User(core, dr, UserLoadOptions.All);
+
+                VariableCollection userVariableCollection = template.CreateChild("search_listing");
+
+                userVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
+                userVariableCollection.Parse("ICON", user.UserIcon);
+                userVariableCollection.Parse("U_PROFILE", user.Uri);
+                userVariableCollection.Parse("JOIN_DATE", tz.DateTimeToString(user.Info.GetRegistrationDate(tz)));
+                userVariableCollection.Parse("USER_AGE", user.AgeString);
+                userVariableCollection.Parse("USER_COUNTRY", user.Country);
+            }
+            
         }
 
         private void showFriends()

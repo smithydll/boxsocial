@@ -158,7 +158,7 @@ namespace BoxSocial.Internals
         /// <param name="submodule">The sub module having been called.</param>
         public void RegisterSubModules(string submodule)
         {
-            this.RegisterSubModule(submodule);
+            //this.RegisterSubModule(submodule);
         }
 
         /// <summary>

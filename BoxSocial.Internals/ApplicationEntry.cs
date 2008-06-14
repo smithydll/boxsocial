@@ -30,6 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    [DataTable("applications")]
     public class ApplicationEntry : Primitive, ICommentableItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
@@ -37,12 +38,18 @@ namespace BoxSocial.Internals
         public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
         private Primitive owner;
-        private int applicationId;
+        [DataField("application_id", DataFieldKeys.Primary)]
+        private long applicationId;
+        [DataField("user_id")]
         private int creatorId;
         private long itemId;
+        [DataField("application_title", 63)]
         private string title;
+        [DataField("application_description", MYSQL_TEXT)]
         private string description;
+        [DataField("application_icon", 63)]
         private string icon;
+        [DataField("application_assembly_name", 63)]
         private string assemblyName;
         private string displayNameOwnership;
         private Boolean isPrimitive;

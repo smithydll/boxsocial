@@ -44,6 +44,10 @@ namespace BoxSocial.Internals
         private string sexuality;
         [DataField("profile_maritial_status", 15)]
         private string maritialStatus;
+        [DataField("profile_maritial_with")]
+        private long maritialWith;
+        [DataField("profile_maritial_with_confirmed")]
+        private bool maritialWithConfirmed;
         [DataField("profile_name_title", 8)]
         private string nameTitle;
         [DataField("profile_name_first", 36)]
@@ -107,6 +111,10 @@ namespace BoxSocial.Internals
             {
                 return gender;
             }
+            set
+            {
+                SetProperty("gender", value);
+            }
         }
 
         public string Sexuality
@@ -144,6 +152,10 @@ namespace BoxSocial.Internals
             {
                 return sexuality;
             }
+            set
+            {
+                SetProperty("sexuality", value);
+            }
         }
 
         public string MaritialStatus
@@ -170,11 +182,39 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long MaritialWithId
+        {
+            get
+            {
+                return maritialWith;
+            }
+            set
+            {
+                SetProperty("maritialWith", value);
+            }
+        }
+
+        public bool MaritialWithConfirmed
+        {
+            get
+            {
+                return maritialWithConfirmed;
+            }
+            set
+            {
+                SetProperty("maritialWithConfirmed", value);
+            }
+        }
+
         public string MaritialStatusRaw
         {
             get
             {
                 return maritialStatus;
+            }
+            set
+            {
+                SetProperty("maritialStatus", value);
             }
         }
 
@@ -183,6 +223,10 @@ namespace BoxSocial.Internals
             get
             {
                 return autobiography;
+            }
+            set
+            {
+                SetProperty("autobiography", value);
             }
         }
 
@@ -252,6 +296,10 @@ namespace BoxSocial.Internals
             {
                 return nameTitle;
             }
+            set
+            {
+                SetProperty("nameTitle", value);
+            }
         }
 
         public string FirstName
@@ -259,6 +307,10 @@ namespace BoxSocial.Internals
             get
             {
                 return nameFirst;
+            }
+            set
+            {
+                SetProperty("nameFirst", value);
             }
         }
 
@@ -268,6 +320,10 @@ namespace BoxSocial.Internals
             {
                 return nameMiddle;
             }
+            set
+            {
+                SetProperty("nameMiddle", value);
+            }
         }
 
         public string LastName
@@ -276,6 +332,10 @@ namespace BoxSocial.Internals
             {
                 return nameLast;
             }
+            set
+            {
+                SetProperty("nameLast", value);
+            }
         }
 
         public string Suffix
@@ -283,6 +343,10 @@ namespace BoxSocial.Internals
             get
             {
                 return nameSuffix;
+            }
+            set
+            {
+                SetProperty("nameSuffix", value);
             }
         }
 
@@ -299,6 +363,10 @@ namespace BoxSocial.Internals
             get
             {
                 return religionId;
+            }
+            set
+            {
+                SetProperty("religionId", value);
             }
         }
 
@@ -339,6 +407,10 @@ namespace BoxSocial.Internals
             {
                 return country;
             }
+            set
+            {
+                SetProperty("country", value);
+            }
         }
 
         public DateTime DateOfBirth
@@ -362,6 +434,10 @@ namespace BoxSocial.Internals
                     return core.tz.DateTimeFromMysql(dateofBirthRaw);
                 }
             }
+            set
+            {
+                SetProperty("dateofBirthRaw", UnixTime.UnixTimeStamp(value));
+            }
         }
 
         internal UserProfile(Core core, User user)
@@ -369,6 +445,7 @@ namespace BoxSocial.Internals
         {
             this.user = user;
             ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+            ItemUpdated += new EventHandler(UserProfile_ItemUpdated);
 
             try
             {
@@ -386,6 +463,7 @@ namespace BoxSocial.Internals
             this.user = user;
 
             ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+            ItemUpdated += new EventHandler(UserProfile_ItemUpdated);
 
             try
             {
@@ -405,6 +483,93 @@ namespace BoxSocial.Internals
         void UserProfile_ItemLoad()
         {
             profileAccess = new Access(db, permissions, user);
+        }
+
+        void UserProfile_ItemUpdated(object sender, EventArgs e)
+        {
+            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
+
+            if (HasPropertyUpdated("sexuality"))
+            {
+                if (!string.IsNullOrEmpty(Sexuality) && Sexuality != "FALSE")
+                {
+                    if (GenderRaw == "MALE")
+                    {
+                        ae.PublishToFeed(core.session.LoggedInMember, "changed his sexuality to " + Sexuality);
+                    }
+                    else if (GenderRaw == "FEMALE")
+                    {
+                        ae.PublishToFeed(core.session.LoggedInMember, "changed her sexuality to " + Sexuality);
+                    }
+                }
+            }
+
+            if (HasPropertyUpdated("religionId"))
+            {
+                // TODO: religion
+                /*if (GenderRaw == "MALE")
+                {
+                    ae.PublishToFeed(core.session.LoggedInMember, "changed his religion to " + Religion);
+                }
+                else if (GenderRaw == "FEMALE")
+                {
+                    ae.PublishToFeed(core.session.LoggedInMember, "changed her religion to " + Religion);
+                }*/
+            }
+
+            if (HasPropertyUpdated("maritialStatus"))
+            {
+                if (maritialWith == 0)
+                {
+                    switch (maritialStatus)
+                    {
+                        case null:
+                        case "":
+                            // Ignore if empty or null
+                            break;
+                        default:
+                            if (GenderRaw == "MALE")
+                            {
+                                ae.PublishToFeed(core.session.LoggedInMember, "changed his relationship status to " + MaritialStatus.ToLower());
+                            }
+                            else if (GenderRaw == "FEMALE")
+                            {
+                                ae.PublishToFeed(core.session.LoggedInMember, "changed her relationship status to " + MaritialStatus.ToLower());
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (HasPropertyUpdated("maritialWithConfirmed"))
+            {
+                switch (maritialStatus)
+                {
+                    case null:
+                    case "":
+                        // Ignore if empty or null
+                        break;
+                    default:
+                        if (maritialWith > 0)
+                        {
+                            core.LoadUserProfile(maritialWith);
+                            ApplicationEntry aem = new ApplicationEntry(core, core.UserProfiles[maritialWith], "Profile");
+                            switch (maritialStatus)
+                            {
+                                case "RELATIONSHIP":
+                                    ae.PublishToFeed(core.session.LoggedInMember, "is now in a relationship with [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    break;
+                                case "MARRIED":
+                                    ae.PublishToFeed(core.session.LoggedInMember, "is now married to [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    break;
+                            }
+                            break;
+                        }
+                        break;
+                }
+            }
         }
 
         public override long Id

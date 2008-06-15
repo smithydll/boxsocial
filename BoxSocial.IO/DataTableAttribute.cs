@@ -22,49 +22,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BoxSocial.Internals
+namespace BoxSocial.IO
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class AccountSubModuleAttribute : Attribute
+    public class DataTableAttribute : Attribute
     {
-        private string moduleName;
-        private string subModuleName;
-        private bool isDefault;
+        private string tableName;
 
-        public string ModuleName
+        public DataTableAttribute(string tableName)
+        {
+            this.tableName = tableName;
+        }
+
+        public string TableName
         {
             get
             {
-                return moduleName;
+                return tableName;
             }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return subModuleName;
-            }
-        }
-
-        public bool IsDefault
-        {
-            get
-            {
-                return isDefault;
-            }
-        }
-
-        public AccountSubModuleAttribute(string moduleName, string subModuleName)
-            : this(moduleName, subModuleName, false)
-        {
-        }
-
-        public AccountSubModuleAttribute(string moduleName, string subModuleName, bool isDefault)
-        {
-            this.moduleName = moduleName;
-            this.subModuleName = subModuleName;
-            this.isDefault = isDefault;
         }
     }
 }

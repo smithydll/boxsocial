@@ -37,45 +37,47 @@ namespace BoxSocial.Internals
         public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type";
         public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
-        private Primitive owner;
         [DataField("application_id", DataFieldKeys.Primary)]
         private long applicationId;
         [DataField("user_id")]
         private int creatorId;
-        private long itemId;
         [DataField("application_title", 63)]
         private string title;
         [DataField("application_description", MYSQL_TEXT)]
         private string description;
         [DataField("application_icon", 63)]
         private string icon;
-        [DataField("application_assembly_name", 63)]
+        [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
         private string assemblyName;
-        private string displayNameOwnership;
-        private Boolean isPrimitive;
-        private AppPrimitives primitives;
+        [DataField("application_primitive")]
+        private bool isPrimitive;
+        [DataField("application_primitives")]
+        private byte primitives;
+        [DataField("application_date_ut")]
         private long dateRaw;
-        private ushort permissions;
-        private Access applicationAccess;
+        [DataField("application_comments")]
         private long comments;
-        private List<string> slugExs;
-        private List<string> modules;
+        [DataField("application_comment")]
         private bool usesComments;
+        [DataField("application_rating")]
         private bool usesRatings;
+        [DataField("application_style")]
         private bool hasStyleSheet;
+        [DataField("application_script")]
         private bool hasJavaScript;
 
-        private bool titleChanged;
-        private bool descriptionChanged;
-        private bool iconChanged;
-        private bool isPrimitiveChanged;
-        private bool primitivesChanged;
-        private bool usesCommentsChanged;
-        private bool usesRatingsChanged;
-        private bool hasStyleSheetChanged;
-        private bool hasJavaScriptChanged;
+        //TODO: USER_APPLICATION_FIELDS
+        private ushort permissions;
+        private long itemId;
 
-        public int ApplicationId
+        private List<string> slugExs;
+        private List<string> modules;
+        private string displayNameOwnership;
+
+        private Primitive owner; // primitive installed the application
+        private Access applicationAccess; // primitive application access rights
+
+        public long ApplicationId
         {
             get
             {
@@ -131,8 +133,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                title = value;
-                titleChanged = true;
+                SetProperty("title", value);
             }
         }
 
@@ -189,8 +190,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                description = value;
-                descriptionChanged = true;
+                SetProperty("description", value);
             }
         }
 
@@ -210,8 +210,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                isPrimitive = value;
-                isPrimitiveChanged = true;
+                SetProperty("isPrimitive", value);
             }
         }
 
@@ -255,8 +254,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                icon = value;
-                iconChanged = true;
+                SetProperty("icon", value);
             }
         }
 
@@ -283,8 +281,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                hasStyleSheet = value;
-                hasStyleSheetChanged = true;
+                SetProperty("hasStyleSheet", value);
             }
         }
 
@@ -296,8 +293,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                hasJavaScript = value;
-                hasJavaScriptChanged = true;
+                SetProperty("hasJavaScript", value);
             }
         }
 
@@ -305,12 +301,11 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return primitives;
+                return (AppPrimitives)primitives;
             }
             set
             {
-                primitives = value;
-                primitivesChanged = true;
+                SetProperty("primitives", (byte)value);
             }
         }
 
@@ -322,8 +317,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                usesComments = value;
-                usesCommentsChanged = true;
+                SetProperty("usesComments", value);
             }
         }
 
@@ -335,8 +329,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                usesRatings = value;
-                usesRatingsChanged = true;
+                SetProperty("usesRatings", value);
             }
         }
 
@@ -374,7 +367,8 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public ApplicationEntry(Core core) : base(core)
+        public ApplicationEntry(Core core)
+            : base(core)
         {
             this.owner = core.session.LoggedInMember;
 
@@ -382,28 +376,21 @@ namespace BoxSocial.Internals
 
             string assemblyName = asm.GetName().Name;
 
-            SelectQuery query = new SelectQuery("applications ap");
-            query.AddFields(APPLICATION_FIELDS);
-            query.AddCondition("ap.application_assembly_name", assemblyName);
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
-            DataTable assemblyTable = db.Query(query);
-
-            if (assemblyTable.Rows.Count == 1)
+            try
             {
-                loadApplicationInfo(assemblyTable.Rows[0]);
-
-                if (this.owner == null)
-                {
-                    applicationAccess = new Access(db, permissions, owner);
-                }
+                LoadItem("application_assembly_name", assemblyName);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidApplicationException();
             }
         }
 
-        public ApplicationEntry(Core core, ApplicationCommentType act) : base(core)
+        public ApplicationEntry(Core core, ApplicationCommentType act)
+            : base(core)
         {
             DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
                 FROM applications ap
@@ -413,7 +400,7 @@ namespace BoxSocial.Internals
 
             if (assemblyTable.Rows.Count == 1)
             {
-                loadApplicationInfo(assemblyTable.Rows[0]);
+                loadItemInfo(assemblyTable.Rows[0]);
 
                 if (this.owner == null)
                 {
@@ -426,57 +413,48 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Core core, Primitive owner, string assemblyName) : base(core)
+        public ApplicationEntry(Core core, Primitive owner, string assemblyName)
+            : base(core)
         {
             this.owner = owner;
 
-            DataTable assemblyTable = core.db.Query(string.Format(@"SELECT {0}
-                FROM applications ap
-                WHERE ap.application_assembly_name = '{1}';",
-                ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
-            if (assemblyTable.Rows.Count == 1)
+            try
             {
-                loadApplicationInfo(assemblyTable.Rows[0]);
-
-                if (this.owner == null)
-                {
-                    applicationAccess = new Access(db, permissions, owner);
-                }
+                LoadItem("application_assembly_name", assemblyName);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidApplicationException();
             }
         }
 
-        public ApplicationEntry(Core core, Primitive owner, long applicationId) : base(core)
+        public ApplicationEntry(Core core, Primitive owner, long applicationId)
+            : base(core)
         {
             this.owner = owner;
 
-            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
-                FROM applications ap
-                WHERE ap.application_id = {1};",
-                ApplicationEntry.APPLICATION_FIELDS, applicationId));
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
-            if (assemblyTable.Rows.Count == 1)
+            try
             {
-                loadApplicationInfo(assemblyTable.Rows[0]);
-
-                if (this.owner == null)
-                {
-                    applicationAccess = new Access(db, permissions, owner);
-                }
+                LoadItem(applicationId);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidApplicationException();
             }
         }
 
-        public ApplicationEntry(Core core, Primitive installee, DataRow applicationRow) : base(core)
+        public ApplicationEntry(Core core, Primitive installee, DataRow applicationRow)
+            : base(core)
         {
-            loadApplicationInfo(applicationRow);
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
+
+            loadItemInfo(applicationRow);
+
+            // TODO: change this
             loadApplicationUserInfo(applicationRow);
 
             if (installee != null)
@@ -485,10 +463,20 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Core core, DataRow applicationRow) : base (core)
+        public ApplicationEntry(Core core, DataRow applicationRow)
+            : base(core)
         {
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
-            loadApplicationInfo(applicationRow);
+            loadItemInfo(applicationRow);
+        }
+
+        private void ApplicationEntry_ItemLoad()
+        {
+            if (owner != null)
+            {
+                applicationAccess = new Access(db, permissions, owner);
+            }
         }
 
         private void loadApplicationInfo(DataRow applicationRow)
@@ -509,7 +497,7 @@ namespace BoxSocial.Internals
             }
             assemblyName = (string)applicationRow["application_assembly_name"];
             isPrimitive = ((byte)applicationRow["application_primitive"] > 0) ? true : false;
-            primitives = (AppPrimitives)applicationRow["application_primitives"];
+            primitives = (byte)applicationRow["application_primitives"];
             dateRaw = (long)applicationRow["application_date_ut"];
             comments = (long)applicationRow["application_comments"];
             usesComments = ((byte)applicationRow["application_comment"] > 0) ? true : false;
@@ -524,59 +512,11 @@ namespace BoxSocial.Internals
             permissions = (ushort)applicationRow["app_access"];
         }
 
-        public void Create()
+        public static ApplicationEntry Create()
         {
-        }
+            // TODO:
 
-        /*public ApplicationEntry Update()
-        {
-            return Update(false);
-        }*/
-
-        public new ApplicationEntry Update()
-        {
-            UpdateQuery query = new UpdateQuery("applications");
-            if (titleChanged)
-            {
-                query.AddField("application_title", title);
-            }
-            if (descriptionChanged)
-            {
-                query.AddField("application_description", description);
-            }
-            if (isPrimitiveChanged)
-            {
-                query.AddField("application_primitive", isPrimitive);
-            }
-            if (primitivesChanged)
-            {
-                query.AddField("application_primitives", (byte)primitives);
-            }
-            if (usesCommentsChanged)
-            {
-                query.AddField("application_comment", usesComments);
-            }
-            if (usesRatingsChanged)
-            {
-                query.AddField("application_rating", usesRatings);
-            }
-            if (iconChanged)
-            {
-                query.AddField("application_icon", icon);
-            }
-            if (hasStyleSheetChanged)
-            {
-                query.AddField("application_style", hasStyleSheet);
-            }
-            if (hasJavaScriptChanged)
-            {
-                query.AddField("application_script", hasJavaScript);
-            }
-            query.AddCondition("application_id", Id);
-
-            db.Query(query);
-
-            return this;
+            throw new NotImplementedException();
         }
 
         public override string Uri

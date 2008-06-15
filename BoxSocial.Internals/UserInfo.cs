@@ -128,6 +128,10 @@ namespace BoxSocial.Internals
                     return userDisplayName;
                 }
             }
+            set
+            {
+                SetProperty("userDisplayName", value);
+            }
         }
 
         /// <summary>
@@ -162,6 +166,10 @@ namespace BoxSocial.Internals
             get
             {
                 return showCustomStyles;
+            }
+            set
+            {
+                SetProperty("showCustomStyles", value);
             }
         }
 
@@ -206,6 +214,14 @@ namespace BoxSocial.Internals
             get
             {
                 return (BbcodeOptions)showBbcode;
+            }
+        }
+
+        public BbcodeOptions SetUserBbcodeOptions
+        {
+            set
+            {
+                SetProperty("showBbcode", (byte)value);
             }
         }
 
@@ -255,6 +271,10 @@ namespace BoxSocial.Internals
             {
                 return emailNotifications;
             }
+            set
+            {
+                SetProperty("emailNotifications", value);
+            }
         }
 
         /// <summary>
@@ -287,6 +307,10 @@ namespace BoxSocial.Internals
             get
             {
                 return timeZoneCode;
+            }
+            set
+            {
+                SetProperty("timeZoneCode", value);
             }
         }
 

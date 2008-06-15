@@ -330,7 +330,7 @@ namespace BoxSocial.Internals
         public static List<ApplicationEntry> GetModuleApplications(Core core, Primitive owner)
         {
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
-            Dictionary<int, ApplicationEntry> applicationsDictionary = new Dictionary<int, ApplicationEntry>();
+            Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
 
             DataTable userApplicationsTable = GetApplicationRows(core, owner);
 
@@ -372,7 +372,7 @@ namespace BoxSocial.Internals
         public static List<ApplicationEntry> GetApplications(Core core, Primitive owner)
         {
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
-            Dictionary<int, ApplicationEntry> applicationsDictionary = new Dictionary<int, ApplicationEntry>();
+            Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
 
             DataTable userApplicationsTable = GetApplicationRows(core, owner);
 

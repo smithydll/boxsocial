@@ -50,6 +50,7 @@ namespace BoxSocial.Internals
         public delegate void ItemLoadHandler();
 
         public event ItemLoadHandler ItemLoad;
+        public event EventHandler ItemUpdated;
 
         protected Item(Core core)
         {
@@ -170,12 +171,28 @@ namespace BoxSocial.Internals
             {
                 Type thisType = this.GetType();
                 FieldInfo fi = thisType.GetField(key, BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic);
-                fi.SetValue(this, value);
 
-                updatedItems.Add(key);
+                if (fi.GetValue(this) != value)
+                {
+                    fi.SetValue(this, value);
+
+                    updatedItems.Add(key);
+                }
             }
             catch
             {
+            }
+        }
+
+        protected bool HasPropertyUpdated(string key)
+        {
+            if (updatedItems.Contains(key))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -249,6 +266,28 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
+        internal static object GetFieldValue(DataFieldInfo dfi, Item item)
+        {
+            foreach (FieldInfo fi in item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                {
+                    if (attr.GetType() == typeof(DataFieldAttribute))
+                    {
+                        if (((DataFieldAttribute)attr).FieldName != null)
+                        {
+                            if (dfi.Name == ((DataFieldAttribute)attr).FieldName)
+                            {
+                                return fi.GetValue(item);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
         public static string[] GetFieldsPrefixed(Type type)
         {
             string tableName = GetTable(type);
@@ -315,7 +354,35 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return db.Query(uQuery);
+            List<DataFieldInfo> fields = GetFields(this.GetType());
+            bool foundKey = false;
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.IsPrimaryKey || field.IsUnique)
+                {
+                    uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                    foundKey = true;
+                }
+            }
+
+            if (!foundKey)
+            {
+                // Error
+                throw new NoPrimaryKeyException();
+            }
+
+            long result = db.Query(uQuery);
+
+            if (result > 0)
+            {
+                if (ItemUpdated != null)
+                {
+                    ItemUpdated(this, new EventArgs());
+                }
+            }
+
+            return result;
         }
 
         protected void loadItemInfo(DataRow itemRow)
@@ -363,7 +430,7 @@ namespace BoxSocial.Internals
                                         fi.SetValue(this, itemRow[columnName]);
                                     }
                                 }
-                                catch (ArgumentException ex)
+                                catch (Exception ex)
                                 {
                                     Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
                                 }

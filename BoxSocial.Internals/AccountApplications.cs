@@ -56,6 +56,7 @@ namespace BoxSocial.Internals
         void AccountApplications_Load(object sender, EventArgs e)
         {
             AddModeHandler("settings", new EventHandler(ApplicationSettings));
+            AddSaveHandler("settings", new EventHandler(ApplicationSettingsSave));
             AddModeHandler("install", new EventHandler(ApplicationInstall));
             AddModeHandler("uninstall", new EventHandler(ApplicationUninstall));
         }
@@ -90,6 +91,7 @@ namespace BoxSocial.Internals
         public void ApplicationSettings(object sender, EventArgs e)
         {
             template.SetTemplate("account_application_settings.html");
+
             long id = Functions.RequestLong("id", 0);
 
             if (id == 0)
@@ -99,10 +101,10 @@ namespace BoxSocial.Internals
             }
 
             SelectQuery query = new SelectQuery("primitive_apps");
-            query.AddFields(ApplicationEntry.APPLICATION_FIELDS);
-            query.AddFields(ApplicationEntry.USER_APPLICATION_FIELDS);
+            query.AddFields(ApplicationEntry.GetFieldsPrefixed(typeof(ApplicationEntry)));
+            query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
             query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
-            query.AddCondition("application_id", id);
+            query.AddCondition("primitive_apps.application_id", id);
             query.AddCondition("item_id", core.LoggedInMemberId);
             query.AddCondition("item_type", "USER");
 
@@ -124,8 +126,6 @@ namespace BoxSocial.Internals
             {
                 Display.ShowMessage("Error", "Error!");
             }
-
-            Save(new EventHandler(ApplicationSettingsSave));
         }
 
         private void ApplicationSettingsSave(object sender, EventArgs e)
@@ -136,7 +136,7 @@ namespace BoxSocial.Internals
 
             if (id == 0)
             {
-                Display.ShowMessage("Error", "Error!");
+                DisplayGenericError();
                 return;
             }
 
@@ -154,10 +154,60 @@ namespace BoxSocial.Internals
 
         public void ApplicationInstall(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
+            int id;
+
+            try
+            {
+                id = int.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage("Error", "Error!");
+                return;
+            }
+
+            /*try
+            {*/
+            ApplicationEntry ae = new ApplicationEntry(core, null, id);
+            ae.Install(core, loggedInMember);
+            /*}
+            catch
+            {
+            }*/
+
+            SetRedirectUri(BuildUri());
+            Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
         }
 
         public void ApplicationUninstall(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
+            int id;
+
+            try
+            {
+                id = int.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage("Error", "Error!");
+                return;
+            }
+
+            try
+            {
+                ApplicationEntry ae = new ApplicationEntry(core, null, id);
+                ae.Uninstall(core, loggedInMember);
+            }
+            catch
+            {
+            }
+
+            SetRedirectUri(BuildUri());
+            Display.ShowMessage("Application Uninstalled", "The application has been uninstalled from your profile.");
         }
         
     }

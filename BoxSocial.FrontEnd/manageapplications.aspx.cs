@@ -80,7 +80,7 @@ namespace BoxSocial.FrontEnd
                 switch (assemblyName)
                 {
                     case "Internals":
-                        assemblyName = "/bin/BoxSocial.Internals.dll";
+                        assemblyPath = "/bin/BoxSocial.Internals.dll";
                         isInternals = true;
                         isPrimitive = false;
                         break;

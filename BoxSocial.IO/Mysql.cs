@@ -400,40 +400,40 @@ namespace BoxSocial.IO
         {
             if (type.Type == typeof(ulong))
             {
-                    return "bigint(20) unsigned";
+                return "bigint(20) unsigned";
             }
             else if (type.Type == typeof(long))
             {
-                    return "bigint(20)";
+                return "bigint(20)";
             }
-                else if (type.Type == typeof(uint))
+            else if (type.Type == typeof(uint))
             {
-                    return "int(11) unsigned";
-                }
-                else if (type.Type == typeof(int))
+                return "int(11) unsigned";
+            }
+            else if (type.Type == typeof(int))
             {
-                    return "int(11)";
-                }
-                else if (type.Type == typeof(ushort))
+                return "int(11)";
+            }
+            else if (type.Type == typeof(ushort))
             {
-                    return "smallint(5) unsigned";
-                }
-                else if (type.Type == typeof(short))
+                return "smallint(5) unsigned";
+            }
+            else if (type.Type == typeof(short))
             {
-                    return "smallint(5)";
-                }
-                else if (type.Type == typeof(byte))
+                return "smallint(5)";
+            }
+            else if (type.Type == typeof(byte))
             {
-                    return "tinyint(3) unsigned";
-                }
-                else if (type.Type == typeof(sbyte))
+                return "tinyint(3) unsigned";
+            }
+            else if (type.Type == typeof(sbyte))
             {
-                    return "tinyint(3)";
-                }
-                else if (type.Type == typeof(bool))
+                return "tinyint(3)";
+            }
+            else if (type.Type == typeof(bool))
             {
-                    return "tinyint(1)";
-                }
+                return "tinyint(1) unsigned";
+            }
             else if (type.Type == typeof(string))
             {
                 if (type.Length < 256)
@@ -502,6 +502,8 @@ namespace BoxSocial.IO
             sb.Append(string.Format(@"ALTER TABLE `{0}`",
                 Mysql.Escape(tableName)));
 
+            bool first = true;
+
             foreach (DataFieldInfo field in fields)
             {
                 string type = TypeToMysql(field);
@@ -524,6 +526,15 @@ namespace BoxSocial.IO
                     {
                         defaultValue = " DEFAULT 0";
                     }
+                }
+
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    sb.Append(",");
                 }
 
                 sb.Append(string.Format(@" ADD COLUMN `{0}` {1}{2}{3}",

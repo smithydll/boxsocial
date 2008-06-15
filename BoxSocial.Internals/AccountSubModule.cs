@@ -43,6 +43,7 @@ namespace BoxSocial.Internals
         protected HttpResponse Response;
         protected HttpServerUtility Server;
         private Dictionary<string, EventHandler> modes = new Dictionary<string,EventHandler>();
+        private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
 
         /// <summary>
         /// We do this so we don't have to keep re-declaring the same
@@ -148,6 +149,28 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsDefault
+        {
+            get
+            {
+                Type type = this.GetType();
+
+                foreach (Attribute attr in type.GetCustomAttributes(typeof(AccountSubModuleAttribute), false))
+                {
+                    if (attr != null)
+                    {
+                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        {
+                            return ((AccountSubModuleAttribute)attr).IsDefault;
+                        }
+                    }
+                }
+
+                // null key, should not happen!!!
+                return false;
+            }
+        }
+
         private bool HasModeHandler(string mode)
         {
             if (modes.ContainsKey(mode))
@@ -162,12 +185,25 @@ namespace BoxSocial.Internals
 
         private void ShowMode(string mode)
         {
+            if (Request.Form["save"] != null)
+            {
+                if (saveHandlers.ContainsKey(mode))
+                {
+                    Save(saveHandlers[mode]);
+                    return;
+                }
+            }
             modes[mode](this, new EventArgs());
         }
 
         protected void AddModeHandler(string mode, EventHandler modeHandler)
         {
             modes.Add(mode, modeHandler);
+        }
+
+        protected void AddSaveHandler(string mode, EventHandler saveHandler)
+        {
+            saveHandlers.Add(mode, saveHandler);
         }
 
         protected void Save(EventHandler saveHandler)
@@ -189,6 +225,7 @@ namespace BoxSocial.Internals
         {
             template = new Template("1301.html");
             template.Parse("U_ACCOUNT", Linker.AppendSid("/account", true));
+            template.Parse("S_ACCOUNT", Linker.AppendSid("/account", true));
             template.AddPageAssembly(Assembly.GetCallingAssembly());
         }
 
@@ -211,8 +248,20 @@ namespace BoxSocial.Internals
             RenderTemplate();
         }
 
+        /// <summary>
+        /// Renders an error to the account panel.
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        protected void DisplayGenericError()
+        {
+            template = new Template("1302.html");
+            template.ParseRaw("ERROR_MESSAGE", "An error has occured accessing this account module, maybe you are accessing it incorrectly. <a href=\"javascript:history.go(-1);\">Go Back</a>");
+            RenderTemplate();
+        }
+
         protected void SetTemplate(string templateName)
         {
+            template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetTemplate(Assembly.GetCallingAssembly().GetName().Name, templateName);
         }
 
@@ -231,7 +280,7 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return Linker.AppendSid(string.Format("/account/{1}/{0}",
+            return Linker.AppendSid(string.Format("/account/{0}/{1}",
                 ModuleKey, sub));
         }
 
@@ -320,8 +369,8 @@ namespace BoxSocial.Internals
         /// <returns>Comparisson value</returns>
         public int CompareTo(object obj)
         {
-            if (!(obj is AccountModule)) return -1;
-            return Order.CompareTo(((AccountModule)obj).Order);
+            if (!(obj is AccountSubModule)) return -1;
+            return Order.CompareTo(((AccountSubModule)obj).Order);
         }
 
         protected void ParseBbcode(string templateVar, string input)

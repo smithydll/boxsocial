@@ -194,7 +194,10 @@ namespace BoxSocial.IO
 
         public void AddPageAssembly(Assembly value)
         {
-            pageAssembly.Add(value.GetName().Name, value);
+            if (!pageAssembly.ContainsKey(value.GetName().Name))
+            {
+                pageAssembly.Add(value.GetName().Name, value);
+            }
         }
 
         public Template()

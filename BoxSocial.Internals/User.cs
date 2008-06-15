@@ -67,7 +67,7 @@ namespace BoxSocial.Internals
 
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
-        [DataField("user_name", DataFieldKeys.Unique)]
+        [DataField("user_name", DataFieldKeys.Unique, 64)]
         private string userName;
 
         private string userIconUri;

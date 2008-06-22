@@ -321,44 +321,37 @@ namespace BoxSocial.Internals
 
         public static string BuildAddFamilyUri(long friendId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=family&mode=add&id={0}",
-                friendId), true);
+            return AccountModule.BuildModuleUri("friends", "family", "add", friendId);
         }
 
         public static string BuildBlockUserUri(long blockId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=block&mode=block&id={0}",
-                blockId), true);
+            return AccountModule.BuildModuleUri("friends", "block", "block", blockId);
         }
 
         public static string BuildUnBlockUserUri(long blockId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=block&mode=unblock&id={0}",
-                blockId), true);
+            return AccountModule.BuildModuleUri("friends", "block", "unblock", blockId);
         }
 
         public static string BuildDeleteFriendUri(long deleteId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=friends&mode=delete&id={0}",
-                deleteId), true);
+            return AccountModule.BuildModuleUri("friends", "friends", "delete", deleteId);
         }
 
         public static string BuildDeleteFamilyUri(long deleteId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=family&mode=delete&id={0}",
-                deleteId), true);
+            return AccountModule.BuildModuleUri("friends", "family", "delete", deleteId);
         }
 
         public static string BuildPromoteFriendUri(long promoteId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=friends&mode=promote&id={0}",
-                promoteId), true);
+            return AccountModule.BuildModuleUri("friends", "friends", "promote", promoteId);
         }
 
         public static string BuildDemoteFriendUri(long demoteId)
         {
-            return AppendSid(string.Format("/account/?module=friends&sub=friends&mode=demote&id={0}",
-                demoteId), true);
+            return AccountModule.BuildModuleUri("friends", "friends", "demote", demoteId);
         }
 
         public static string BuildCommentQuoteUri(long commentId)

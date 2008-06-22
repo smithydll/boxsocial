@@ -40,7 +40,8 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a user blog.
     /// </summary>
-    public class Blog
+    [DataTable("user_blog")]
+    public class Blog : Item
     {
 
         /// <summary>
@@ -51,22 +52,26 @@ namespace BoxSocial.Applications.Blog
         /// </remarks>
         public const string BLOG_FIELDS = "ub.user_id, ub.blog_title, ub.blog_entries, ub.blog_comments, ub.blog_visits, ub.blog_access";
 
-        private Core core;
-        private Mysql db;
-
-        private int userId;
-        private Primitive owner;
+        [DataField("user_id", DataFieldKeys.Primary)]
+        private long userId;
+        [DataField("blog_title", 63)]
         private string title;
+        [DataField("blog_entries")]
         private long entries;
+        [DataField("blog_comments")]
         private long comments;
+        [DataField("blog_visits")]
         private long visits;
+        [DataField("blog_access")]
         private ushort permissions;
+
+        private User owner;
         private Access blogAccess;
 
         /// <summary>
         /// Gets the id of the owner of the blog.
         /// </summary>
-        public int UserId
+        public long UserId
         {
             get
             {
@@ -136,7 +141,28 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
+                if (blogAccess == null)
+                {
+                    blogAccess = new Access(db, permissions, Owner);
+                }
                 return blogAccess;
+            }
+        }
+
+        public User Owner
+        {
+            get
+            {
+                if (owner == null || userId != owner.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    owner = core.UserProfiles[userId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -146,22 +172,25 @@ namespace BoxSocial.Applications.Blog
         /// <param name="core">Core Token</param>
         /// <param name="owner">Owner whose blog to retrieve</param>
         public Blog(Core core, User owner)
+            : base(core)
         {
-            this.core = core;
-            this.db = core.db;
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Blog_ItemLoad);
 
-            DataTable blogTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_blog ub ON uk.user_id = ub.user_id WHERE uk.user_id = {0}",
-                owner.UserId, Blog.BLOG_FIELDS));
-
-            if (blogTable.Rows.Count == 1)
+            try
             {
-                loadUserBlog(blogTable.Rows[0]);
+                LoadItem(owner.Id);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidBlogException();
             }
+        }
+
+        private void Blog_ItemLoad()
+        {
+            core.LoadUserProfile(userId);
+            blogAccess = new Access(db, permissions, Owner);
         }
 
         /// <summary>
@@ -212,7 +241,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A blog entry as a list</returns>
         public List<BlogEntry> GetEntry(PPage page, int post, ref ushort readAccessLevel)
         {
-            return GetEntries(page, null, post, -1, -1, 1, 1, ref readAccessLevel);
+            return GetEntries(null, post, -1, -1, 1, 1, ref readAccessLevel);
         }
 
         /// <summary>
@@ -226,7 +255,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A list of blog entries</returns>
         public List<BlogEntry> GetEntry(PPage page, string category, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(page, category, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(category, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
@@ -240,7 +269,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A list of blog entries</returns>
         public List<BlogEntry> GetEntry(PPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(page, null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
@@ -255,13 +284,12 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A list of blog entries</returns>
         public List<BlogEntry> GetEntry(PPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(page, null, -1, year, month, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, -1, year, month, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
-        /// Gets a list of entries in the blog fullfilling a given criteria.
+        /// Gets a list of draft entries in the blog fullfilling a given criteria.
         /// </summary>
-        /// <param name="page">Page calling</param>
         /// <param name="category">Category to select</param>
         /// <param name="post">Post id to select</param>
         /// <param name="year">Year to select</param>
@@ -271,12 +299,47 @@ namespace BoxSocial.Applications.Blog
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private List<BlogEntry> GetEntries(PPage page, string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        internal List<BlogEntry> GetDrafts(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        {
+            return GetEntries(category, post, year, month, currentPage, perPage, ref readAccessLevel, true);
+        }
+
+        /// <summary>
+        /// Gets a list of published entries in the blog fullfilling a given criteria.
+        /// </summary>
+        /// <param name="category">Category to select</param>
+        /// <param name="post">Post id to select</param>
+        /// <param name="year">Year to select</param>
+        /// <param name="month">Month to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <returns>A list of blog entries</returns>
+        /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
+        internal List<BlogEntry> GetEntries(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        {
+            return GetEntries(category, post, year, month, currentPage, perPage, ref readAccessLevel, false);
+        }
+
+        /// <summary>
+        /// Gets a list of entries in the blog fullfilling a given criteria.
+        /// </summary>
+        /// <param name="category">Category to select</param>
+        /// <param name="post">Post id to select</param>
+        /// <param name="year">Year to select</param>
+        /// <param name="month">Month to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <param name="readAccessLevel">Access level user has to read</param>
+        /// <param name="drafts">Flag to select draft posts or published posts (true for drafts)</param>
+        /// <returns>A list of blog entries</returns>
+        /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
+        private List<BlogEntry> GetEntries(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel, bool drafts)
         {
             List<BlogEntry> entries = new List<BlogEntry>();
 
-            long loggedIdUid = User.GetMemberId(page.loggedInMember);
-            readAccessLevel = page.ProfileOwner.GetAccessLevel(page.loggedInMember);
+            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
+            readAccessLevel = Owner.GetAccessLevel(core.session.LoggedInMember);
 
             string sqlWhere = "";
             string sqlInnerJoin = "";
@@ -322,8 +385,10 @@ namespace BoxSocial.Applications.Blog
                 bpage = 1;
             }
 
-            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings be {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
-                page.ProfileOwner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, BlogEntry.BLOG_ENTRY_FIELDS));
+            string status = (drafts) ? "DRAFT" : "PUBLISH";
+
+            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings be {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = '{8}' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
+                Owner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, BlogEntry.BLOG_ENTRY_FIELDS, status));
 
             foreach (DataRow dr in blogEntriesTable.Rows)
             {
@@ -484,7 +549,7 @@ namespace BoxSocial.Applications.Blog
                 }
             }
 
-            List<BlogEntry> blogEntries = myBlog.GetEntries(page, category, post, year, month, p, 10, ref readAccessLevel);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, post, year, month, p, 10, ref readAccessLevel);
 
             page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
 
@@ -720,6 +785,30 @@ namespace BoxSocial.Applications.Blog
                     //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
                     Display.ParsePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0));
                 }
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return userId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return "BLOG";
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                return Linker.BuildBlogUri(Owner);
             }
         }
     }

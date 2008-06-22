@@ -56,7 +56,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountLifestyle_Load(object sender, EventArgs e)
         {
-            AddModeHandler("confirm-relationship", new EventHandler(AccountLifestyle_ConfirmRelationship));
+            AddModeHandler("confirm-relationship", new ModuleModeHandler(AccountLifestyle_ConfirmRelationship));
             AddSaveHandler("confirm-relationship", new EventHandler(AccountLifestyle_ConfirmRelationship_Save));
         }
 
@@ -95,9 +95,12 @@ namespace BoxSocial.Applications.Profile
             Display.ParseSelectBox(template, "S_RELIGION", "religion", religions, loggedInMember.ReligionRaw.ToString());
             Display.ParseSelectBox(template, "S_SEXUALITY", "sexuality", sexualities, loggedInMember.SexualityRaw);
 
-            core.LoadUserProfile(loggedInMember.Profile.MaritialWithId);
+            if (loggedInMember.Profile.MaritialWithConfirmed && loggedInMember.Profile.MaritialWithId > 0)
+            {
+                core.LoadUserProfile(loggedInMember.Profile.MaritialWithId);
 
-            template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[loggedInMember.Profile.MaritialWithId].UserName);
+                template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[loggedInMember.Profile.MaritialWithId].UserName);
+            }
 
             Save(new EventHandler(AccountLifestyle_Save));
         }
@@ -126,11 +129,54 @@ namespace BoxSocial.Applications.Profile
             {
                 loggedInMember.Profile.MaritialWithId = relation.Id;
             }
+            else
+            {
+                loggedInMember.Profile.MaritialWithId = 0;
+            }
 
             switch (Request.Form["maritial-status"])
             {
-                case null:
-                case "":
+                case "RELATIONSHIP":
+                case "MARRIED":
+                    if (relation != null && relation.Id != existingMaritialWith)
+                    {
+                        ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
+
+                        RawTemplate atpl = new RawTemplate("emails/user_relationship_notification.eml");
+
+                        atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
+                        atpl.Parse("U_CONFIRM", AccountModule.BuildModuleUri("profile", "lifestyle", "mode=confirm-relationship", "id=" + core.LoggedInMemberId.ToString()));
+
+                        ae.SendNotification(relation, string.Format("[user]{0}[/user] wants to be in a relationship with you", core.LoggedInMemberId), atpl.ToString());
+
+                        if (existingMaritialWith > 0)
+                        {
+                            core.LoadUserProfile(existingMaritialWith);
+                            User oldRelation = core.UserProfiles[existingMaritialWith];
+
+                            oldRelation.Profile.MaritialWithId = 0;
+                            oldRelation.Profile.MaritialWithConfirmed = false;
+                            oldRelation.Profile.MaritialStatusRaw = "";
+
+                            oldRelation.Profile.Update();
+                        }
+                    }
+                    else
+                    {
+                        if (existingMaritialWith > 0)
+                        {
+                            core.LoadUserProfile(existingMaritialWith);
+                            User oldRelation = core.UserProfiles[existingMaritialWith];
+
+                            oldRelation.Profile.MaritialWithId = 0;
+                            oldRelation.Profile.MaritialWithConfirmed = false;
+                            oldRelation.Profile.MaritialStatusRaw = "";
+
+                            oldRelation.Profile.Update();
+                        }
+                    }
+                    break;
+                default:
                     switch (existingMaritialStatus)
                     {
                         case "RELATIONSHIP":
@@ -147,26 +193,12 @@ namespace BoxSocial.Applications.Profile
                                 relation.Profile.MaritialWithConfirmed = false;
                                 relation.Profile.MaritialStatusRaw = "";
 
-                                relation.Update();
+                                relation.Profile.Update();
                             }
                             break;
                         default:
                             // Ignore if empty or null
                             break;
-                    }
-                    break;
-                case "RELATIONSHIP":
-                case "MARRIED":
-                    if (relation != null && relation.Id != loggedInMember.Profile.MaritialWithId)
-                    {
-                        ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
-
-                        Template atpl = new Template("emails/user_relationship_notification.eml");
-
-                        atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
-                        atpl.Parse("U_CONFIRM", AccountModule.BuildModuleUri("profile", "lifestyle", "mode=confirm-relationship", "id=" + core.LoggedInMemberId.ToString()));
-
-                        ae.SendNotification(relation, string.Format("[user]{0}[/user] wants to be in a relationship with you", core.LoggedInMemberId), atpl.ToString());
                     }
                     break;
             }

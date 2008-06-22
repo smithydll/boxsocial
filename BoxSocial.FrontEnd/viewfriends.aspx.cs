@@ -49,8 +49,8 @@ namespace BoxSocial.FrontEnd
             template.Parse("FRIENDS", profileOwner.Friends.ToString());
             template.Parse("L_FRIENDS", langFriends);
 
-            List<User> friends = profileOwner.GetFriends(page, 18);
-            foreach (User friend in friends)
+            List<UserRelation> friends = profileOwner.GetFriends(page, 18);
+            foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 
@@ -60,7 +60,6 @@ namespace BoxSocial.FrontEnd
             }
 
             string pageUri = Linker.BuildFriendsUri(profileOwner);
-            //template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0)));
             Display.ParsePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0));
 
             EndResponse();

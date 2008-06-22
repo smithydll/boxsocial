@@ -124,6 +124,7 @@
     <Compile Include="UserEmail.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="UserProfile.cs" />
+    <Compile Include="UserRelation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">

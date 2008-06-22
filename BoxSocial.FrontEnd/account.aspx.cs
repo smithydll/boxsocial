@@ -250,7 +250,9 @@ namespace BoxSocial.FrontEnd
 
             foreach (AccountSubModule asm in accountSubModules)
             {
-                VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+                if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
+                {
+                    VariableCollection modulesVariableCollection = template.CreateChild("account_links");
 
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
@@ -260,6 +262,7 @@ namespace BoxSocial.FrontEnd
                     {
                         asm.ModuleVector(core);
                     }
+                }
             }
 
             EndResponse();

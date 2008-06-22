@@ -882,7 +882,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friendIds.Add((long)(int)dr["relation_you"]);
+                friendIds.Add((long)dr["relation_you"]);
             }
 
             return friendIds;
@@ -892,19 +892,20 @@ namespace BoxSocial.Internals
         /// return a maximum of the first 255
         /// </summary>
         /// <returns></returns>
-        public List<User> GetFriends()
+        public List<UserRelation> GetFriends()
         {
             return GetFriends(1, 255);
         }
 
-        public List<User> GetFriends(int page, int perPage)
+        public List<UserRelation> GetFriends(int page, int perPage)
         {
-            List<User> friends = new List<User>();
+            List<UserRelation> friends = new List<UserRelation>();
 
             SelectQuery query = new SelectQuery("user_relations");
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
             query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
             query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
@@ -923,7 +924,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new User(core, dr, UserLoadOptions.All));
+                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
             }
 
             return friends;
@@ -1862,8 +1863,8 @@ namespace BoxSocial.Internals
             core.template.Parse("FRIENDS", page.ProfileOwner.Friends.ToString());
             core.template.Parse("L_FRIENDS", langFriends);
 
-            List<User> friends = page.ProfileOwner.GetFriends(1, 8);
-            foreach (User friend in friends)
+            List<UserRelation> friends = page.ProfileOwner.GetFriends(1, 8);
+            foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
 
@@ -1937,6 +1938,11 @@ namespace BoxSocial.Internals
             {
                 return 10;
             }
+        }
+
+        public new long Update()
+        {
+            throw new Exception("Cannot update user key table.");
         }
     }
 

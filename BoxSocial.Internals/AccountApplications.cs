@@ -55,10 +55,10 @@ namespace BoxSocial.Internals
 
         void AccountApplications_Load(object sender, EventArgs e)
         {
-            AddModeHandler("settings", new EventHandler(ApplicationSettings));
+            AddModeHandler("settings", new ModuleModeHandler(ApplicationSettings));
             AddSaveHandler("settings", new EventHandler(ApplicationSettingsSave));
-            AddModeHandler("install", new EventHandler(ApplicationInstall));
-            AddModeHandler("uninstall", new EventHandler(ApplicationUninstall));
+            AddModeHandler("install", new ModuleModeHandler(ApplicationInstall));
+            AddModeHandler("uninstall", new ModuleModeHandler(ApplicationUninstall));
         }
 
         private void AccountApplications_Show(object sender, EventArgs e)

@@ -214,6 +214,10 @@ namespace BoxSocial.IO
                     {
                         // rollback failed
                     }
+                    catch (InvalidOperationException)
+                    {
+                        // rollback failed
+                    }
                     return false;
                 }
             }
@@ -323,11 +327,6 @@ namespace BoxSocial.IO
         {
             type = type.ToLower();
 
-            if (type == "tinyint(1)" || type == "tinyint(1) unsigned")
-            {
-                return new DataFieldInfo(name, typeof(bool), 0);
-            }
-
             bool unsigned = type.EndsWith("unsigned");
             long length = 0;
             int indexOpenBracket = type.IndexOf("(");
@@ -370,14 +369,22 @@ namespace BoxSocial.IO
                     {
                         return new DataFieldInfo(name, typeof(short), length);
                     }
+                case "tinyint":
                 case "tiny":
-                    if (unsigned)
+                    if (length == 1)
                     {
-                        return new DataFieldInfo(name, typeof(byte), length);
+                        return new DataFieldInfo(name, typeof(bool), 0);
                     }
                     else
                     {
-                        return new DataFieldInfo(name, typeof(sbyte), length);
+                        if (unsigned)
+                        {
+                            return new DataFieldInfo(name, typeof(byte), length);
+                        }
+                        else
+                        {
+                            return new DataFieldInfo(name, typeof(sbyte), length);
+                        }
                     }
                 case "varchar":
                     return new DataFieldInfo(name, typeof(string), length);
@@ -552,6 +559,14 @@ namespace BoxSocial.IO
             string defaultValue = "";
             string notNull = "";
 
+            if (field.Type == typeof(string))
+            {
+                if (field.Length == 0)
+                {
+                    throw new Exception("String Length must not be zero thrown on " + field.Name);
+                }
+            }
+
             if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
             {
                 notNull = " NOT NULL";
@@ -573,7 +588,15 @@ namespace BoxSocial.IO
             string query = string.Format(@"ALTER TABLE `{0}` MODIFY COLUMN `{1}` {2}{3}{4};",
                 Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull, defaultValue);
 
-            UpdateQuery(query);
+            try
+            {
+                UpdateQuery(query);
+            }
+            catch
+            {
+                HttpContext.Current.Response.Write(query.ToString());
+                HttpContext.Current.Response.End();
+            }
         }
 
         public override void DeleteColumn(string tableName, string fieldName)

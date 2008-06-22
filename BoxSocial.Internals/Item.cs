@@ -50,7 +50,9 @@ namespace BoxSocial.Internals
         public delegate void ItemLoadHandler();
 
         public event ItemLoadHandler ItemLoad;
+        public event EventHandler ItemChangeAuthenticationProvider;
         public event EventHandler ItemUpdated;
+        public event EventHandler ItemDeleted;
 
         protected Item(Core core)
         {
@@ -170,7 +172,7 @@ namespace BoxSocial.Internals
             try
             {
                 Type thisType = this.GetType();
-                FieldInfo fi = thisType.GetField(key, BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic);
+                FieldInfo fi = thisType.GetField(key, BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
                 if (fi.GetValue(this) != value)
                 {
@@ -242,7 +244,7 @@ namespace BoxSocial.Internals
         {
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -268,7 +270,7 @@ namespace BoxSocial.Internals
 
         internal static object GetFieldValue(DataFieldInfo dfi, Item item)
         {
-            foreach (FieldInfo fi in item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (FieldInfo fi in item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -330,9 +332,14 @@ namespace BoxSocial.Internals
 
         public long Update()
         {
+            if (ItemChangeAuthenticationProvider != null)
+            {
+                ItemChangeAuthenticationProvider(this, new EventArgs());
+            }
+
             UpdateQuery uQuery = new UpdateQuery(Item.GetTable(this.GetType()));
-            
-            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+
+            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -385,6 +392,46 @@ namespace BoxSocial.Internals
             return result;
         }
 
+        public long Delete()
+        {
+            if (ItemChangeAuthenticationProvider != null)
+            {
+                ItemChangeAuthenticationProvider(this, new EventArgs());
+            }
+
+            DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
+
+            List<DataFieldInfo> fields = GetFields(this.GetType());
+            bool foundKey = false;
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.IsPrimaryKey || field.IsUnique)
+                {
+                    dQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                    foundKey = true;
+                }
+            }
+
+            if (!foundKey)
+            {
+                // Error
+                throw new NoPrimaryKeyException();
+            }
+
+            long result = db.Query(dQuery);
+
+            if (result > 0)
+            {
+                if (ItemDeleted != null)
+                {
+                    ItemDeleted(this, new EventArgs());
+                }
+            }
+
+            return result;
+        }
+
         protected void loadItemInfo(DataRow itemRow)
         {
             loadItemInfo(this.GetType(), itemRow);
@@ -399,7 +446,7 @@ namespace BoxSocial.Internals
                 columns.Add(column.ColumnName);
             }
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -423,7 +470,14 @@ namespace BoxSocial.Internals
                                 {
                                     if (fi.FieldType == typeof(bool) && !(itemRow[columnName] is bool))
                                     {
-                                        fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
+                                        if (itemRow[columnName] is byte)
+                                        {
+                                            fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
+                                        }
+                                        else if (itemRow[columnName] is sbyte)
+                                        {
+                                            fi.SetValue(this, ((sbyte)itemRow[columnName] > 0) ? true : false);
+                                        }
                                     }
                                     else
                                     {
@@ -457,6 +511,14 @@ namespace BoxSocial.Internals
     }
 
     public class FieldNotUniqueIndexException : Exception
+    {
+    }
+
+    public class UnauthorisedToUpdateItemException : Exception
+    {
+    }
+
+    public class UnauthorisedToDeleteItemException : Exception
     {
     }
 }

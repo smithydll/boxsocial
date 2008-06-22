@@ -1,0 +1,47 @@
+﻿<!-- INCLUDE page_header.html -->
+
+<!-- IF RESULTS -->
+<h2>Search Results</h2>
+
+<ul id="group-members">
+<!-- BEGIN search_listing -->
+	<li class="member">
+		<div class="frame">
+			<div class="avatar">
+				<a href="{search_listing.U_PROFILE}">
+				<!-- IF search_listing.ICON -->
+				<img src="{search_listing.ICON}" alt="{search_listing.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{search_listing.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a>
+			</div>
+			<ul class="details">
+				<li><a href="{search_listing.U_PROFILE}">{search_listing.USER_DISPLAY_NAME}</a></li>
+				<!-- IF search_listing.USER_AGE -->
+				<li>{search_listing.USER_AGE}</li>
+				<!-- ENDIF -->
+				<!-- IF search_listing.USER_COUNTRY -->
+				<li>{search_listing.USER_COUNTRY}</li>
+				<!-- ENDIF -->
+				<li>Joined {search_listing.JOIN_DATE}</li>
+				<li><em>{search_listing.USER_CAPTION}</em></li>
+			</ul>
+		</div>
+	</li>
+<!-- END search_listing -->
+</ul>
+<!-- ELSE -->
+<h2>Search</h2>
+
+			<div id="search">
+				<form action="./search" method="get">
+					<fieldset>
+						<input type="text" id="search-text" name="q" value="" maxlength="127" />
+						<input type="submit" value="Search" />
+					</fieldset>
+				</form>
+			</div>
+<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

@@ -42,7 +42,7 @@ namespace BoxSocial.Internals
         protected HttpRequest Request;
         protected HttpResponse Response;
         protected HttpServerUtility Server;
-        private Dictionary<string, EventHandler> modes = new Dictionary<string,EventHandler>();
+        private Dictionary<string, ModuleModeHandler> modes = new Dictionary<string, ModuleModeHandler>();
         private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
 
         /// <summary>
@@ -171,6 +171,8 @@ namespace BoxSocial.Internals
             }
         }
 
+        public delegate void ModuleModeHandler(object sender, ModuleModeEventArgs e);
+
         private bool HasModeHandler(string mode)
         {
             if (modes.ContainsKey(mode))
@@ -193,10 +195,10 @@ namespace BoxSocial.Internals
                     return;
                 }
             }
-            modes[mode](this, new EventArgs());
+            modes[mode](this, new ModuleModeEventArgs(mode));
         }
 
-        protected void AddModeHandler(string mode, EventHandler modeHandler)
+        protected void AddModeHandler(string mode, ModuleModeHandler modeHandler)
         {
             modes.Add(mode, modeHandler);
         }
@@ -211,6 +213,17 @@ namespace BoxSocial.Internals
             if (Request.Form["save"] != null)
             {
                 saveHandler(this, new EventArgs());
+            }
+        }
+
+        protected void SaveMode(ModuleModeHandler saveHandler)
+        {
+            if (Request.Form["save"] != null)
+            {
+                if (Request.Form["mode"] != null)
+                {
+                    saveHandler(this, new ModuleModeEventArgs(Request.Form["mode"]));
+                }
             }
         }
 
@@ -234,7 +247,7 @@ namespace BoxSocial.Internals
         /// </summary>
         private void RenderTemplate()
         {
-            core.template.ParseRaw("MODULE_CONTENT", template.ToString());
+            core.template.ParseRaw("MODULE_CONTENT", ((Template)template).ToString());
         }
 
         /// <summary>
@@ -282,6 +295,12 @@ namespace BoxSocial.Internals
         {
             return Linker.AppendSid(string.Format("/account/{0}/{1}",
                 ModuleKey, sub));
+        }
+
+        public string BuildUri(string sub, string mode, long id)
+        {
+            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}&id={3}",
+                ModuleKey, sub, mode, id), true);
         }
 
         /// <summary>
@@ -440,5 +459,23 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
         }
 
+    }
+
+    public class ModuleModeEventArgs : EventArgs
+    {
+        private string mode;
+
+        public string Mode
+        {
+            get
+            {
+                return mode;
+            }
+        }
+
+        public ModuleModeEventArgs(string mode)
+        {
+            this.mode = mode;
+        }
     }
 }

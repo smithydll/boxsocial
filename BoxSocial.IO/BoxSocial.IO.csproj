@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RawTemplate.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DataField.cs" />
     <Compile Include="DataFieldAttribute.cs" />

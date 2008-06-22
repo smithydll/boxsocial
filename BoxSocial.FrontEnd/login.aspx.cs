@@ -67,13 +67,11 @@ namespace BoxSocial.FrontEnd
                     DataRow userRow = userTable.Rows[0];
                     if (Request.Form["remember"] == "true")
                     {
-                        //FormsAuthentication.SetAuthCookie(userName, true);
-                        session.SessionBegin((long)(int)userRow["user_id"], false, true);
+                        session.SessionBegin((long)userRow["user_id"], false, true);
                     }
                     else
                     {
-                        //FormsAuthentication.SetAuthCookie(userName, false);
-                        session.SessionBegin((long)(int)userRow["user_id"], false, false);
+                        session.SessionBegin((long)userRow["user_id"], false, false);
                     }
                     if (!string.IsNullOrEmpty(redirect))
                     {
@@ -91,7 +89,6 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    //Response.Write(" Bad credentials given. ");
                     template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
                 }
             }

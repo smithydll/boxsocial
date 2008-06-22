@@ -219,6 +219,19 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
+        public static short FormShort(string var, short defaultValue)
+        {
+            short outValue = defaultValue;
+            try
+            {
+                outValue = short.Parse(HttpContext.Current.Request.Form[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
         public static int FormInt(string var, int defaultValue)
         {
             int outValue = defaultValue;

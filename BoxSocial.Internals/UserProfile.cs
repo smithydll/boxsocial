@@ -557,12 +557,12 @@ namespace BoxSocial.Internals
                             switch (maritialStatus)
                             {
                                 case "RELATIONSHIP":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "is now in a relationship with [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
                                     break;
                                 case "MARRIED":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "is now married to [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
                                     break;
                             }
                             break;

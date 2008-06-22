@@ -70,6 +70,10 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (emailAccess == null)
+                {
+                    emailAccess = new Access(db, permissions, Owner);
+                }
                 return emailAccess;
             }
         }
@@ -123,7 +127,6 @@ namespace BoxSocial.Internals
 
         private void UserEmail_ItemLoad()
         {
-            emailAccess = new Access(db, permissions, owner);
         }
 
         public static UserEmail Create(Core core, string email, ushort permissions)

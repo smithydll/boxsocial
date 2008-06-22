@@ -33,16 +33,21 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class ContentLicense
+    [DataTable("licenses")]
+    public class ContentLicense : Item
     {
         public const string LICENSE_FIELDS = "li.license_id, li.license_title, li.license_icon, li.license_link";
 
-        private Mysql db;
-
+        [DataField("license_id", DataFieldKeys.Primary)]
         private byte licenseId;
+        [DataField("license_title", 63)]
         private string title;
+        [DataField("license_icon", 63)]
         private string icon;
+        [DataField("license_link", 255)]
         private string link;
+        [DataField("license_text", MYSQL_TEXT)]
+        private string text;
 
         public byte LicenseId
         {
@@ -76,52 +81,39 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ContentLicense(Mysql db, byte licenseId)
+        public string Text
         {
-            this.db = db;
-
-            DataTable licenseTable = db.Query(string.Format("SELECT {0} FROM licenses li WHERE license_id = {1}",
-                ContentLicense.LICENSE_FIELDS, licenseId));
-
-            if (licenseTable.Rows.Count == 1)
+            get
             {
-                loadLicenseInfo(licenseTable.Rows[0]);
+                return text;
             }
-            else
+        }
+
+        public ContentLicense(Core core, byte licenseId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ContentLicense_ItemLoad);
+
+            try
+            {
+                LoadItem(licenseId);
+            }
+            catch (InvalidItemException)
             {
                 throw new InvalidLicenseException();
             }
         }
 
-        public ContentLicense(Mysql db, DataRow licenseRow)
+        public ContentLicense(Core core, DataRow licenseRow)
+            : base(core)
         {
-            this.db = db;
+            ItemLoad += new ItemLoadHandler(ContentLicense_ItemLoad);
 
-            loadLicenseInfo(licenseRow);
+            loadItemInfo(licenseRow);
         }
 
-        private void loadLicenseInfo(DataRow licenseRow)
+        private void ContentLicense_ItemLoad()
         {
-            if (!(licenseRow["license_id"] is DBNull))
-            {
-                licenseId = (byte)licenseRow["license_id"];
-            }
-            else
-            {
-                throw new NonexistantLicenseException();
-            }
-            if (!(licenseRow["license_title"] is DBNull))
-            {
-                title = (string)licenseRow["license_title"];
-            }
-            if (!(licenseRow["license_icon"] is DBNull))
-            {
-                icon = (string)licenseRow["license_icon"];
-            }
-            if (!(licenseRow["license_link"] is DBNull))
-            {
-                link = (string)licenseRow["license_link"];
-            }
         }
 
         public static string BuildLicenseSelectBox(Mysql db, byte selectedLicense)
@@ -139,6 +131,30 @@ namespace BoxSocial.Internals
             }
 
             return Functions.BuildSelectBox("license", licenses, selectedLicense.ToString());
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return licenseId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                return link;
+            }
         }
     }
 

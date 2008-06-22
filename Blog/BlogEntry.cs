@@ -169,6 +169,17 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Gets the category Id for the blog entry.
+        /// </summary>
+        public short Category
+        {
+            get
+            {
+                return category;
+            }
+        }
+
+        /// <summary>
         /// Gets the access information (permissions) for the blog entry.
         /// </summary>
         public Access BlogEntryAccess
@@ -253,7 +264,7 @@ namespace BoxSocial.Applications.Blog
             }
             else
             {
-                throw new Exception("Invalid Blog Entry Exception");
+                throw new InvalidBlogEntryException();
             }
         }
 
@@ -387,5 +398,9 @@ namespace BoxSocial.Applications.Blog
                 return 10;
             }
         }
+    }
+
+    public class InvalidBlogEntryException : Exception
+    {
     }
 }

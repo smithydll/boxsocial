@@ -288,6 +288,60 @@ namespace BoxSocial.Internals
 
         /// <summary>
         /// Builds a URI to the sub module key given of a module key given,
+        /// appending a mode query argument
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="mode">Mode query argument</param>
+        /// <returns>URI built</returns>
+        public static string BuildModuleUri(string module, string sub, string mode)
+        {
+            return BuildModuleUri(module, sub, mode, false);
+        }
+
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
+        /// appending a mode query argument
+        /// </summary>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="mode">Mode query argument</param>
+        /// <param name="appendSid">True if force appending SID, otherwise false</param>
+        /// <returns>URI built</returns>
+        public static string BuildModuleUri(string module, string sub, string mode, bool appendSid)
+        {
+            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}",
+                module, sub, mode), appendSid);
+        }
+
+        public string BuildModuleUri(string sub, string mode, bool appendSid)
+        {
+            return BuildModuleUri(Key, sub, mode, appendSid);
+        }
+
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
+        /// appending a mode query argument, and an Id.
+        /// </summary>
+        /// <remarks>Always with the SID appended</remarks>
+        /// <param name="module">Module key</param>
+        /// <param name="sub">Sub module key</param>
+        /// <param name="mode">Mode query argument</param>
+        /// <param name="id">Id</param>
+        /// <returns>URI built</returns>
+        public static string BuildModuleUri(string module, string sub, string mode, long id)
+        {
+            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}&id={3}",
+                module, sub, mode, id), true);
+        }
+
+        public string BuildModuleUri(string sub, string mode, long id)
+        {
+            return BuildModuleUri(Key, sub, mode, id);
+        }
+
+        /// <summary>
+        /// Builds a URI to the sub module key given of a module key given,
         /// appending additional query string arguments given.
         /// </summary>
         /// <param name="module">Module key</param>

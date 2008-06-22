@@ -41,10 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountListsManage.cs" />
     <Compile Include="AccountPages.cs" />
+    <Compile Include="AccountPagesDrafts.cs" />
+    <Compile Include="AccountPagesManage.cs" />
+    <Compile Include="AccountPagesWrite.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="List.cs" />
     <Compile Include="ListItem.cs" />
+    <Compile Include="Pages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates.Designer.cs">
       <AutoGen>True</AutoGen>

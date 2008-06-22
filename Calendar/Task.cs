@@ -54,9 +54,9 @@ namespace BoxSocial.Applications.Calendar
         #region Data Fields
         [DataField("task_id")]
         private long taskId;
-        [DataField("task_topic")]
+        [DataField("task_topic", 127)]
         private string topic;
-        [DataField("task_description")]
+        [DataField("task_description", MYSQL_TEXT)]
         private string description;
         [DataField("task_views")]
         private long views;
@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Calendar
         private ushort permissions;
         [DataField("task_item_id")]
         private long ownerId;
-        [DataField("task_item_type")]
+        [DataField("task_item_type", 31)]
         private string ownerType;
         [DataField("user_id")]
         private int userId; // creator

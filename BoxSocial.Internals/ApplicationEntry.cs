@@ -659,7 +659,7 @@ namespace BoxSocial.Internals
                         {
                             try
                             {
-                                Page myPage = new Page(db, (User)viewer, slug, "");
+                                Page myPage = new Page(core, (User)viewer, slug, "");
 
                                 if (myPage.ListOnly)
                                 {
@@ -720,7 +720,7 @@ namespace BoxSocial.Internals
 
                     foreach (string slug in slugs.Keys)
                     {
-                        Page page = new Page(db, (User)viewer, slug, "");
+                        Page page = new Page(core, (User)viewer, slug, "");
                     }
                 }
                 if (db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}';",
@@ -773,7 +773,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.EmailNotifications)
                 {
-                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
+                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
 
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
                     emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));

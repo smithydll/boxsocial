@@ -44,6 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountBlog.cs" />
+    <Compile Include="AccountBlogDrafts.cs" />
+    <Compile Include="AccountBlogManage.cs" />
+    <Compile Include="AccountBlogPreferences.cs" />
+    <Compile Include="AccountBlogRoll.cs" />
+    <Compile Include="AccountBlogWrite.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Blog.cs" />
     <Compile Include="BlogEntry.cs" />
@@ -78,6 +83,7 @@
     <Content Include="templates\account_blog_manage.html" />
     <Content Include="templates\account_blog_preferences.html" />
     <Content Include="templates\account_blog_roll.html" />
+    <Content Include="templates\account_blog_roll_new.html" />
     <Content Include="templates\account_post.html" />
   </ItemGroup>
   <ItemGroup>

@@ -530,7 +530,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="itemRow"></param>
         private void loadLicenseInfo(DataRow itemRow)
         {
-            license = new ContentLicense(db, itemRow);
+            license = new ContentLicense(core, itemRow);
         }
 
         /// <summary>

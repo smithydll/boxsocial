@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,43 +19,24 @@
  */
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Applications.Pages
+namespace BoxSocial.Applications.Profile
 {
-    [AccountModule("pages")]
-    public class AccountPages : AccountModule
+    [AccountSubModule("profile", "status")]
+    public class AccountStatus : AccountSubModule
     {
-        public AccountPages(Account account)
-            : base(account)
-        {
-            //RegisterSubModule += new RegisterSubModuleHandler(ManagePages);
-            //RegisterSubModule += new RegisterSubModuleHandler(WritePage);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageDrafts);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageLists);
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {       
-        }
-
-        public override string Name
+        public override string Title
         {
             get
             {
-                return "Pages";
+                return null;
             }
         }
 
@@ -63,8 +44,29 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return 5;
+                return -1;
             }
+        }
+
+        public AccountStatus()
+        {
+            this.Load += new EventHandler(AccountStatus_Load);
+            this.Show += new EventHandler(AccountStatus_Show);
+        }
+
+        void AccountStatus_Load(object sender, EventArgs e)
+        {
+        }
+
+        void AccountStatus_Show(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            string message = Request.Form["message"];
+
+            StatusFeed.SaveMessage(core, message);
+
+            Ajax.SendRawText("Success", message);
         }
     }
 }

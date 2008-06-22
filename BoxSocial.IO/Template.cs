@@ -182,7 +182,7 @@ namespace BoxSocial.IO
 
     public class Template
     {
-        private VariableCollection variables = new VariableCollection();
+        protected VariableCollection variables = new VariableCollection();
         private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>();
 
         private string template;
@@ -231,7 +231,6 @@ namespace BoxSocial.IO
         {
             templateAssembly = null;
             templateName = fileName;
-            //HttpContext.Current.Response.Write("I'm here, now what?? " + fileName + "; ");
         }
 
         public void SetTemplate(string assembly, string fileName)

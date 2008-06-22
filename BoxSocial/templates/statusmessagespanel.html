@@ -1,14 +1,14 @@
 <div id="today-statuses" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
-    <p id="status-message" onclick="hide('status-message');show('status-form');ge('message').focus();" style="cursor: pointer;">
+    <p id="status-message-p" onclick="hide('status-message-l');show('status-form');ge('message').focus();" style="cursor: pointer;">
 	    <!-- IF STATUS_MESSAGE -->
-	    {USER_DISPLAY_NAME} {STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em>
+	    {USER_DISPLAY_NAME} <span id="status-message-l"><span id="status-message">{STATUS_MESSAGE}</span> <em>Updated {STATUS_UPDATED}</em></span>
 	    <!-- ELSE -->
-	    Click here to change your status message.
+	    <span id="status-message-l">Click here to change your status message.</span>
 	    <!-- ENDIF -->
 	</p>
 	<div>
 		<form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
-			<p><input type="text" id="message" name="message" value="is " onblur="show('status-message');hide('status-form');" />
+			<p><input type="text" id="message" name="message" value="is " onblur="show('status-message-l');hide('status-form');" />
 			<input type="submit" id="status-submit" value="Submit"/>
 			<input type="hidden" name="module" value="profile" />
 			<input type="hidden" name="sub" value="status" /></p>

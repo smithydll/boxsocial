@@ -34,21 +34,29 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    public class List
+    [DataTable("user_lists")]
+    public class List : Item
     {
         public const string LIST_FIELDS = "ul.list_id, ul.user_id, ul.list_type, ul.list_title, ul.list_items, ul.list_abstract, ul.list_path, ul.list_access";
 
-        private Mysql db;
-
+        [DataField("list_id", DataFieldKeys.Primary)]
         private long listId;
-        private int ownerId;
-        private User owner;
+        [DataField("user_id")]
+        private long ownerId;
+        [DataField("list_type")]
         private short type;
+        [DataField("list_title", 31)]
         private string title;
-        private uint items;
+        [DataField("list_items")]
+        private long items;
+        [DataField("list_abstract", MYSQL_TEXT)]
         private string listAbstract;
+        [DataField("list_path", 31)]
         private string path;
+        [DataField("list_access")]
         private ushort permissions;
+
+        private User owner;
         private Access listAccess;
 
         public long ListId
@@ -75,7 +83,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public uint Items
+        public long Items
         {
             get
             {
@@ -111,60 +119,81 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
+                if (listAccess == null)
+                {
+                    listAccess = new Access(db, permissions, Owner);
+                }
                 return listAccess;
             }
         }
 
-        public List(Mysql db, User owner, long listId)
+        public User Owner
         {
-            this.db = db;
-            this.owner = owner;
+            get
+            {
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.UserProfiles[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
 
-            SelectQuery query = new SelectQuery("user_lists ul");
-            query.AddFields(LIST_FIELDS);
-            query.AddCondition("ul.user_id", owner.Id);
-            query.AddCondition("ul.list_id", listId);
+        public List(Core core, User owner, long listId)
+            : base(core)
+        {
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(List_ItemLoad);
+
+            try
+            {
+                LoadItem(listId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidListException();
+            }
+        }
+
+        public List(Core core, User owner, string listName)
+            : base(core)
+        {
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(List_ItemLoad);
+
+            SelectQuery query = new SelectQuery(List.GetTable(typeof(List)));
+            query.AddFields(List.GetFieldsPrefixed(typeof(List)));
+            query.AddCondition("list_path", listName);
+            query.AddCondition("user_id", owner.Id);
 
             DataTable listTable = db.Query(query);
 
             if (listTable.Rows.Count == 1)
             {
-                loadListInfo(listTable.Rows[0]);
+                loadItemInfo(listTable.Rows[0]);
             }
             else
             {
-                throw new Exception("Could not load list exception");
+                throw new InvalidListException();
             }
         }
 
-        public List(Mysql db, User owner, string listName)
+        private List(Core core, User owner, DataRow listRow)
+            : base(core)
         {
-            this.db = db;
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(List_ItemLoad);
 
-            SelectQuery query = new SelectQuery("user_lists ul");
-            query.AddFields(LIST_FIELDS);
-            query.AddCondition("ul.user_id", owner.Id);
-            query.AddCondition("ul.list_path", listName);
-
-            DataTable listTable = db.Query(query);
-
-            if (listTable.Rows.Count == 1)
-            {
-                loadListInfo(listTable.Rows[0]);
-            }
-            else
-            {
-                throw new Exception("Could not load list exception");
-            }
+            loadItemInfo(listRow);
         }
 
-        private List(Mysql db, User owner, DataRow listRow)
+        private void List_ItemLoad()
         {
-            this.db = db;
-            this.owner = owner;
-
-            loadListInfo(listRow);
         }
 
         private void loadListInfo(DataRow listRow)
@@ -188,12 +217,18 @@ namespace BoxSocial.Applications.Pages
         {
             List<ListItem> listItems = new List<ListItem>();
 
-            DataTable listItemsTable = db.Query(string.Format("SElECT {0} FROM list_items li INNER JOIN list_items_text lit ON li.list_item_text_id = lit.list_item_text_id WHERE li.list_id = {1} ORDER BY lit.list_item_text_normalised ASC;",
-                ListItem.LIST_ITEM_FIELDS, listId));
+            SelectQuery query = new SelectQuery(ListItem.GetTable(typeof(ListItem)));
+            query.AddFields(ListItem.GetFieldsPrefixed(typeof(ListItem)));
+            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
+            query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
+            query.AddCondition("list_id", listId);
+            query.AddSort(SortOrder.Ascending, "list_item_text_normalised");
+
+            DataTable listItemsTable = db.Query(query);
 
             foreach (DataRow dr in listItemsTable.Rows)
             {
-                listItems.Add(new ListItem(db, dr));
+                listItems.Add(new ListItem(core, dr));
             }
 
             return listItems;
@@ -217,7 +252,7 @@ namespace BoxSocial.Applications.Pages
 
             foreach (DataRow dr in listsTable.Rows)
             {
-                lists.Add(new List(core.db, owner, dr));
+                lists.Add(new List(core, owner, dr));
             }
 
             return lists;
@@ -264,7 +299,7 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                List list = new List(core.db, page.ProfileOwner, listName);
+                List list = new List(core, page.ProfileOwner, listName);
 
                 list.ListAccess.SetSessionViewer(core.session);
 
@@ -280,7 +315,6 @@ namespace BoxSocial.Applications.Pages
 
                 if (!string.IsNullOrEmpty(list.Abstract))
                 {
-                    //page.template.ParseRaw("LIST_ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(list.Abstract)));
                     Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
                 }
                 else
@@ -305,9 +339,33 @@ namespace BoxSocial.Applications.Pages
                     listVariableCollection.Parse("U_DELETE", Linker.BuildRemoveFromListUri(listItem.ListItemId));
                 }
             }
-            catch
+            catch (InvalidListException)
             {
                 Functions.Generate404();
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return listId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                return Linker.BuildListUri(Owner, path);
             }
         }
     }

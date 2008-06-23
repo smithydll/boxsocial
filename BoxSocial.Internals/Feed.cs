@@ -86,8 +86,6 @@ namespace BoxSocial.Internals
 
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
-                    //feedItemVariableCollection.ParseRaw("TITLE", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Title)));
-                    //feedItemVariableCollection.ParseRaw("TEXT", Bbcode.Parse(HttpUtility.HtmlEncode(feedAction.Body), core.session.LoggedInMember, core.UserProfiles[feedAction.OwnerId]));
                     Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
                     Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.UserProfiles[feedAction.OwnerId]);
                 }

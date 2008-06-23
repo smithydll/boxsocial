@@ -34,16 +34,19 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    public class ListItem
+    [DataTable("list_items")]
+    public class ListItem : Item
     {
         public const string LIST_ITEM_FIELDS = "li.list_item_id, li.list_id, li.list_item_text_id, lit.list_item_text, lit.list_item_text_normalised";
 
-        private Mysql db;
-
+        [DataField("list_item_id", DataFieldKeys.Primary)]
         private long listItemId;
+        [DataField("list_id")]
         private long listId;
-        private string text;
-        private string textNormalised;
+        [DataField("list_item_text_id")]
+        private long listItemTextId;
+
+        private ListItemText lit;
 
         public long ListItemId
         {
@@ -65,6 +68,110 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
+                return lit.Text;
+            }
+        }
+
+        public string TextNormalised
+        {
+            get
+            {
+                return lit.TextNormalised;
+            }
+        }
+
+        public ListItemText ItemText
+        {
+            get
+            {
+                return lit;
+            }
+        }
+
+        internal ListItem(Core core, long listItemId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+
+            
+            SelectQuery query = new SelectQuery(ListItem.GetTable(typeof(ListItem)));
+            query.AddFields(ListItem.GetFieldsPrefixed(typeof(ListItem)));
+            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
+            query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
+            query.AddCondition("list_item_id", listItemId);
+
+            DataTable listItemTable = db.Query(query);
+
+            if (listItemTable.Rows.Count == 1)
+            {
+                loadItemInfo(listItemTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidListException();
+            }
+        }
+
+        internal ListItem(Core core, DataRow listItemRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+
+            loadItemInfo(listItemRow);
+            lit = new ListItemText(core, listItemRow);
+        }
+
+        private void ListItemText_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return listItemId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    [DataTable("list_items_text")]
+    public class ListItemText : Item
+    {
+        [DataField("list_item_text_id", DataFieldKeys.Primary)]
+        private long listItemTextId;
+        [DataField("list_item_text", 63)]
+        private string text;
+        [DataField("list_item_text_normalised", 63)]
+        private string textNormalised;
+
+        public long ListItemTextId
+        {
+            get
+            {
+                return listItemTextId;
+            }
+        }
+
+        public string Text
+        {
+            get
+            {
                 return text;
             }
         }
@@ -77,19 +184,44 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public ListItem(Mysql db, DataRow listItemRow)
+        internal ListItemText(Core core, DataRow listTextRow)
+            : base(core)
         {
-            this.db = db;
+            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
 
-            loadListItemInfo(listItemRow);
+            loadItemInfo(listTextRow);
         }
 
-        private void loadListItemInfo(DataRow listItemRow)
+        private void ListItemText_ItemLoad()
         {
-            listItemId = (long)listItemRow["list_item_id"];
-            listId = (long)listItemRow["list_id"];
-            text = (string)listItemRow["list_item_text"];
-            textNormalised = (string)listItemRow["list_item_text_normalised"];
         }
+
+        public override long Id
+        {
+            get
+            {
+                return listItemTextId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    public class InvalidListItemException : Exception
+    {
     }
 }

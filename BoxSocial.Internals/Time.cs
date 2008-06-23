@@ -440,7 +440,8 @@ namespace BoxSocial.Internals
         public string ToStringPast(DateTime time)
         {
             DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
-            TimeSpan ts = time.Subtract(now);
+            DateTime then = new DateTime(time.Year, time.Month, time.Day);
+            TimeSpan ts = then.Subtract(now);
             if (Math.Sign(ts.Days) >= 0)
             {
                 // Present
@@ -476,6 +477,18 @@ namespace BoxSocial.Internals
                 else if (ts.TotalDays > -14)
                 {
                     return "Last Week";
+                }
+                else if (now.Month - 1 == then.Month)
+                {
+                    return "Last Month";
+                }
+                else if (ts.TotalDays > -21)
+                {
+                    return "Two Weeks Ago";
+                }
+                else if (now.Month == then.Month)
+                {
+                    return "Earlier in the Month";
                 }
                 else
                 {

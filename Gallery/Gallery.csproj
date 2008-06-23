@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountGalleries.cs" />
+    <Compile Include="AccountGalleriesManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Exif.cs" />
     <Compile Include="Gallery.cs" />

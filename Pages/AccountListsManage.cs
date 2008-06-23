@@ -395,7 +395,7 @@ namespace BoxSocial.Applications.Pages
             // check that the list exists for the given user
             try
             {
-                List list = new List(db, loggedInMember, listId);
+                List list = new List(core, loggedInMember, listId);
 
                 DataTable listItemTextTable = db.Query(string.Format("SELECT list_item_text_id FROM list_items_text WHERE list_item_text_normalised = '{0}';",
                     Mysql.Escape(slug)));

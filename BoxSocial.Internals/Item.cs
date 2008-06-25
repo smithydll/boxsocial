@@ -63,13 +63,18 @@ namespace BoxSocial.Internals
 
         protected void LoadItem(long primaryKey)
         {
+            LoadItem(this.GetType(), primaryKey);
+        }
+
+        protected void LoadItem(Type type, long primaryKey)
+        {
             // 1. Discover primary key
             // 2. Build query
             // 3. Execute query
             // 4. Fill results
 
-            string tableName = GetTable(this.GetType());
-            List<DataFieldInfo> fields = GetFields(this.GetType());
+            string tableName = GetTable(type);
+            List<DataFieldInfo> fields = GetFields(type);
             string keyField = "";
 
             SelectQuery query = new SelectQuery(tableName);
@@ -92,13 +97,11 @@ namespace BoxSocial.Internals
 
             query.AddCondition(keyField, primaryKey);
 
-            //HttpContext.Current.Response.Write(query.ToString());
-
             DataTable itemTable = Query(query);
 
             if (itemTable.Rows.Count == 1)
             {
-                loadItemInfo(itemTable.Rows[0]);
+                loadItemInfo(type, itemTable.Rows[0]);
             }
             else
             {
@@ -238,6 +241,14 @@ namespace BoxSocial.Internals
             List<ItemTag> tags = new List<ItemTag>();
 
             return tags;
+        }
+
+        public static SelectQuery GetSelectQueryStub(Type type)
+        {
+            SelectQuery query = new SelectQuery(GetTable(type));
+            query.AddFields(GetFieldsPrefixed(type));
+
+            return query;
         }
 
         internal protected static List<DataFieldInfo> GetFields(Type type)

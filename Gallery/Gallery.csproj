@@ -45,6 +45,12 @@
   <ItemGroup>
     <Compile Include="AccountGalleries.cs" />
     <Compile Include="AccountGalleriesManage.cs" />
+    <Compile Include="AccountGalleriesPhotoDelete.cs" />
+    <Compile Include="AccountGalleriesPhotoDisplayPic.cs" />
+    <Compile Include="AccountGalleriesPhotoEdit.cs" />
+    <Compile Include="AccountGalleriesPhotoRotate.cs" />
+    <Compile Include="AccountGalleriesPhotoTag.cs" />
+    <Compile Include="AccountGalleriesUpload.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Exif.cs" />
     <Compile Include="Gallery.cs" />

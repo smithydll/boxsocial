@@ -35,7 +35,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the UserGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         public UserGallery(Core core, User owner)
             : base(core, (Primitive)owner)
@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the UserGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of user gallery</param>
         /// <param name="hasIcon">True if the raw data contains icon data</param>
@@ -57,7 +57,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the UserGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryId">Gallery Id</param>
         public UserGallery(Core core, User owner, long galleryId)
@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the UserGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="path">Gallery path</param>
         public UserGallery(Core core, User owner, string path)
@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <returns>A list of sub-galleries</returns>
         public override List<Gallery> GetGalleries(Core core)
         {
@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Creates a new gallery for the logged in user.
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <param name="parent">Parent gallery</param>
         /// <param name="title">Gallery title</param>
         /// <param name="slug">Gallery slug</param>

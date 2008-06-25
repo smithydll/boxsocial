@@ -167,6 +167,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public ushort Permissions
+        {
+            get
+            {
+                return permissions;
+            }
+        }
+
         /// <summary>
         /// Gets the access object for the gallery
         /// </summary>
@@ -174,7 +182,28 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                if (galleryAccess == null)
+                {
+                    galleryAccess = new Access(db, permissions, Owner);
+                }
                 return galleryAccess;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || userId != owner.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    owner = core.UserProfiles[userId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -365,16 +394,15 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryId > 0)
             {
-                DataTable galleryTable = db.Query(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_id = {2} AND ug.user_id = {0}",
-                        owner.Id, Gallery.GALLERY_INFO_FIELDS, galleryId));
+                ItemLoad += new ItemLoadHandler(Gallery_ItemLoad);
 
-                if (galleryTable.Rows.Count == 1)
+                try
                 {
-                    loadGalleryInfo(galleryTable.Rows[0]);
+                    LoadItem(typeof(Gallery), galleryId);
                 }
-                else
+                catch (InvalidItemException)
                 {
-                    throw new GalleryNotFoundException();
+                    throw new InvalidGalleryException();
                 }
             }
             else
@@ -395,24 +423,29 @@ namespace BoxSocial.Applications.Gallery
             : base(core)
         {
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Gallery_ItemLoad);
 
-            DataTable galleryTable = db.Query(string.Format("SELECT {1} FROM user_galleries ug WHERE ug.gallery_parent_path = '{3}' AND ug.gallery_path = '{2}' AND ug.user_id = {0}",
-                    owner.Id, Gallery.GALLERY_INFO_FIELDS, Mysql.Escape(Gallery.GetNameFromPath(path)), Mysql.Escape(Gallery.GetParentPath(path))));
+            SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
+            query.AddCondition("gallery_parent_path", Gallery.GetParentPath(path));
+            query.AddCondition("gallery_path", Gallery.GetNameFromPath(path));
+            query.AddCondition("user_id", owner.Id);
+
+            DataTable galleryTable = db.Query(query);
 
             if (galleryTable.Rows.Count == 1)
             {
-                loadGalleryInfo(galleryTable.Rows[0]);
+                loadItemInfo(typeof(Gallery), galleryTable.Rows[0]);
             }
             else
             {
-                throw new GalleryNotFoundException();
+                throw new InvalidGalleryException();
             }
         }
 
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
-        /// <param name="Core">Core token</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of gallery</param>
         /// <param name="hasIcon">True if contains raw data for icon</param>
@@ -430,6 +463,13 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        private void Gallery_ItemLoad()
+        {
+        }
+
+        /// <summary>
         /// Loads the database information into the Gallery class object.
         /// </summary>
         /// <param name="galleryRow">Raw data row of blog entry</param>
@@ -443,12 +483,12 @@ namespace BoxSocial.Applications.Gallery
                 galleryAbstract = (string)galleryRow["gallery_abstract"];
             }
             galleryDescription = (string)galleryRow["gallery_description"];
+            permissions = (ushort)galleryRow["gallery_access"];
             if (owner is User)
             {
                 galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
             }
             items = (long)galleryRow["gallery_items"];
-            //HttpContext.Current.Response.Write(galleryRow["gallery_items"].GetType().ToString());
             bytes = (long)galleryRow["gallery_bytes"];
             visits = (long)galleryRow["gallery_visits"];
             path = (string)galleryRow["gallery_path"];
@@ -548,12 +588,12 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Updates data for the gallery
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Core token</param>
         /// <param name="title">New gallery title</param>
         /// <param name="slug">New gallery slug</param>
         /// <param name="description">New gallery description</param>
         /// <param name="permissions">New gallery permission mask</param>
-        public void Update(TPage page, string title, string slug, string description, ushort permissions)
+        public void Update(Core core, string title, string slug, string description, ushort permissions)
         {
             if (GalleryId == 0)
             {
@@ -562,7 +602,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (owner is User)
             {
-                if (page.loggedInMember.UserId != ((User)owner).UserId)
+                if (core.LoggedInMemberId != ((User)owner).UserId)
                 {
                     throw new GalleryPermissionException();
                 }
@@ -583,7 +623,7 @@ namespace BoxSocial.Applications.Gallery
                     throw new GallerySlugNotValidException();
                 }
 
-                if (!Gallery.CheckGallerySlugUnique(page.db, member, parentPath, slug))
+                if (!Gallery.CheckGallerySlugUnique(core.db, member, parentPath, slug))
                 {
                     throw new GallerySlugNotUniqueException();
                 }
@@ -1160,7 +1200,7 @@ namespace BoxSocial.Applications.Gallery
                     Display.ParsePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
                     page.ProfileOwner.ParseBreadCrumbs("gallery/" + gallery.FullPath);
                 }
-                catch (GalleryNotFoundException)
+                catch (InvalidGalleryException)
                 {
                     Functions.Generate404();
                     return;
@@ -1315,7 +1355,7 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
                 }
-                catch (GalleryNotFoundException)
+                catch (InvalidGalleryException)
                 {
                     Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
@@ -1492,7 +1532,7 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
                 }
-                catch (GalleryNotFoundException)
+                catch (InvalidGalleryException)
                 {
                     Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
@@ -1647,7 +1687,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// The exception that is thrown when a requested gallery does not exist.
     /// </summary>
-    public class GalleryNotFoundException : Exception
+    public class InvalidGalleryException : Exception
     {
     }
 

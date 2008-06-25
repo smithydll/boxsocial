@@ -48,13 +48,13 @@ namespace BoxSocial.Internals
 
         public static string BuildMarkGalleryCoverUri(long pictureId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=gallery-cover&id={0}",
+            return AppendSid(string.Format("/account/galleries/gallery-cover?id={0}",
                 pictureId), true);
         }
 
         public static string BuildMarkDisplayPictureUri(long pictureId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=display-pic&id={0}",
+            return AppendSid(string.Format("/account/galleries/display-pic?id={0}",
                 pictureId), true);
         }
 
@@ -117,20 +117,17 @@ namespace BoxSocial.Internals
 
         public static string BuildDeleteListUri(long deleteId)
         {
-            return AppendSid(string.Format("/account/?module=pages&sub=lists&mode=delete&id={0}",
-                deleteId), true);
+            return AccountModule.BuildModuleUri("pages", "lists", "delete", deleteId);
         }
 
-        public static string BuildEditListUri(long deleteId)
+        public static string BuildEditListUri(long editId)
         {
-            return AppendSid(string.Format("/account/?module=pages&sub=lists&mode=edit&id={0}",
-                deleteId));
+            return AccountModule.BuildModuleUri("pages", "lists", "edit", editId);
         }
 
-        public static string BuildRemoveFromListUri(long deleteId)
+        public static string BuildRemoveFromListUri(long removeId)
         {
-            return AppendSid(string.Format("/account/?module=pages&sub=lists&mode=remove&id={0}",
-                deleteId), true);
+            return AccountModule.BuildModuleUri("pages", "lists", "remove", removeId);
         }
 
         public static string BuildBlogUri(User member)
@@ -234,14 +231,12 @@ namespace BoxSocial.Internals
 
         public static string BuildGalleryEditUri(long galleryId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=galleries&mode=edit&id={0}",
-                galleryId), true);
+            return AccountModule.BuildModuleUri("galleries", "galleries", "edit", galleryId);
         }
 
         public static string BuildGalleryDeleteUri(long galleryId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=galleries&mode=delete&id={0}",
-                galleryId), true);
+            return AccountModule.BuildModuleUri("galleries", "galleries", "delete", galleryId);
         }
 
         public static string BuildPageUri(User member, string pageSlug)
@@ -252,14 +247,12 @@ namespace BoxSocial.Internals
 
         public static string BuildPhotoUploadUri(long galleryId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=upload&id={0}",
-                galleryId), true);
+            return AccountModule.BuildModuleUri("galleries", "upload", true, string.Format("id={0}", galleryId));
         }
 
         public static string BuildPhotoEditUri(long photoId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=edit-photo&id={0}",
-                photoId), true);
+            return AccountModule.BuildModuleUri("galleries", "edit-photo", true, string.Format("id={0}", photoId));
         }
 
         public static string BuildPhotoRotateLeftUri(long photoId)
@@ -274,8 +267,7 @@ namespace BoxSocial.Internals
 
         public static string BuildNewGalleryUri(long galleryId)
         {
-            return AppendSid(string.Format("/account/?module=galleries&sub=new&id={0}",
-                galleryId), true);
+            return AccountModule.BuildModuleUri("galleries", "galleries", "new", galleryId);
         }
 
         public static string BuildLogoutUri()
@@ -421,85 +413,6 @@ namespace BoxSocial.Internals
                 return uri;
             }
         }
-
-        // DONE
-        /*public static string BuildGroupUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/group/{0}",
-                newGroup.Slug));
-        }
-
-        public static string BuildGroupEditUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=edit&id={0}",
-                newGroup.GroupId));
-        }
-
-        public static string BuildGroupDeleteUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=delete&id={0}",
-                newGroup.GroupId));
-        }
-
-        public static string BuildJoinGroupUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=join&id={0}",
-                newGroup.GroupId), true);
-        }
-
-        public static string BuildLeaveGroupUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=leave&id={0}",
-                newGroup.GroupId), true);
-        }
-
-        public static string BuildInviteGroupUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=invite&id={0}",
-                newGroup.GroupId), true);
-        }
-
-        public static string BuildGroupMakeOperatorUri(Group newGroup, Member member)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=make-operator&id={0},{1}",
-                newGroup.GroupId, member.UserId), true);
-        }
-
-        public static string BuildGroupResignOperatorUri(Group newGroup)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=resign-operator&id={0}",
-                newGroup.GroupId), true);
-        }
-
-        public static string BuildGroupMakeOfficerUri(Group newGroup, Member member)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=make-officer&id={0},{1}",
-                newGroup.GroupId, member.UserId), true);
-        }
-
-        public static string BuildGroupRemoveOfficerUri(Group newGroup, Member member, string title)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=remove-officer&id={0},{1},{2}",
-                newGroup.GroupId, member.UserId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))), true);
-        }
-
-        public static string BuildGroupApprovalUri(Group newGroup, Member member)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=approve&id={0},{1}",
-                newGroup.GroupId, member.UserId), true);
-        }
-
-        public static string BuildGroupBanUri(Group newGroup, Member member)
-        {
-            return AppendSid(string.Format("/account/?module=groups&sub=ban&id={0},{1}",
-                newGroup.GroupId, member.UserId), true);
-        }
-
-        public static string BuildGroupMemberList(Group thisGroup)
-        {
-            return AppendSid(string.Format("/group/{0}/members",
-                thisGroup.Slug));
-        }*/
 
         public static string BuildHomeUri()
         {

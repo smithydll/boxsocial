@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.Profile
             {
                 profileGallery = new UserGallery(core, loggedInMember, meSlug);
             }
-            catch (GalleryNotFoundException)
+            catch (InvalidGalleryException)
             {
                 UserGallery root = new UserGallery(core, loggedInMember);
                 profileGallery = UserGallery.Create(core, root, "Display Pictures", ref meSlug, "All my uploaded display pictures", 0);

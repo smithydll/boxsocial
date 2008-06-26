@@ -513,7 +513,7 @@ namespace BoxSocial.Applications.Gallery
             itemViews = (long)itemRow["gallery_item_views"];
             itemRating = (float)itemRow["gallery_item_rating"];
             permissions = (ushort)itemRow["gallery_item_access"];
-            itemAccess = new Access(db, permissions, owner);
+            itemAccess = new Access(core, permissions, owner);
             contentType = (string)itemRow["gallery_item_content_type"];
             storagePath = (string)itemRow["gallery_item_storage_path"];
             if (!(itemRow["gallery_item_abstract"] is System.DBNull))
@@ -717,10 +717,18 @@ namespace BoxSocial.Applications.Gallery
             throw new Exception("Transaction failed, panic!");
         }
 
-        public void Update(TPage page, string title, string description, ushort permissions, byte license, Classifications classification)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="permissions"></param>
+        /// <param name="license"></param>
+        /// <param name="classification"></param>
+        public void Update(string title, string description, ushort permissions, byte license, Classifications classification)
         {
             long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5}, gallery_item_classification = {8} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type = '{7}';",
-                page.loggedInMember.UserId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.Type, (byte)classification));
+                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.Type, (byte)classification));
 
             if (rowsChanged == 0)
             {

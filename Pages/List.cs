@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Pages
             {
                 if (listAccess == null)
                 {
-                    listAccess = new Access(db, permissions, Owner);
+                    listAccess = new Access(core, permissions, Owner);
                 }
                 return listAccess;
             }
@@ -210,7 +210,7 @@ namespace BoxSocial.Applications.Pages
             path = (string)listRow["list_path"];
             permissions = (ushort)listRow["list_access"];
 
-            listAccess = new Access(db, permissions, owner);
+            listAccess = new Access(core, permissions, owner);
         }
 
         public List<ListItem> GetListItems()

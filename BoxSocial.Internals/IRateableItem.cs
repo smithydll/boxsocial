@@ -31,6 +31,10 @@ namespace BoxSocial.Internals
 {
     public interface IRateableItem
     {
+
+        /// <summary>
+        /// Rating stored in database
+        /// </summary>
         float Rating
         {
             get;

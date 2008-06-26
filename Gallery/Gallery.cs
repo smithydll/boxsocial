@@ -184,7 +184,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (galleryAccess == null)
                 {
-                    galleryAccess = new Access(db, permissions, Owner);
+                    galleryAccess = new Access(core, permissions, Owner);
                 }
                 return galleryAccess;
             }
@@ -486,7 +486,7 @@ namespace BoxSocial.Applications.Gallery
             permissions = (ushort)galleryRow["gallery_access"];
             if (owner is User)
             {
-                galleryAccess = new Access(db, (ushort)galleryRow["gallery_access"], owner);
+                galleryAccess = new Access(core, (ushort)galleryRow["gallery_access"], owner);
             }
             items = (long)galleryRow["gallery_items"];
             bytes = (long)galleryRow["gallery_bytes"];

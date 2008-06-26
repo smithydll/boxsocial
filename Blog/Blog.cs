@@ -143,7 +143,7 @@ namespace BoxSocial.Applications.Blog
             {
                 if (blogAccess == null)
                 {
-                    blogAccess = new Access(db, permissions, Owner);
+                    blogAccess = new Access(core, permissions, Owner);
                 }
                 return blogAccess;
             }
@@ -190,7 +190,7 @@ namespace BoxSocial.Applications.Blog
         private void Blog_ItemLoad()
         {
             core.LoadUserProfile(userId);
-            blogAccess = new Access(db, permissions, Owner);
+            blogAccess = new Access(core, permissions, Owner);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace BoxSocial.Applications.Blog
             comments = (long)blogRow["blog_comments"];
             visits = (long)blogRow["blog_visits"];
             permissions = (ushort)blogRow["blog_access"];
-            blogAccess = new Access(db, permissions, owner);
+            blogAccess = new Access(core, permissions, owner);
         }
 
         /// <summary>
@@ -708,7 +708,7 @@ namespace BoxSocial.Applications.Blog
                         page.template.Parse("BLOG_POST_COMMENTS", Functions.LargeIntegerToString(comments));
                         page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
 
-                        myBlog.blogAccess = new Access(core.db, blogEntries[i].Permissions, page.ProfileOwner);
+                        myBlog.blogAccess = new Access(core,  blogEntries[i].Permissions, page.ProfileOwner);
                         myBlog.blogAccess.SetViewer(core.session.LoggedInMember);
                     }
 

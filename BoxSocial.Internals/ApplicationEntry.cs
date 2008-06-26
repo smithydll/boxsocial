@@ -459,7 +459,7 @@ namespace BoxSocial.Internals
 
             if (installee != null)
             {
-                applicationAccess = new Access(db, permissions, installee);
+                applicationAccess = new Access(core, permissions, installee);
             }
         }
 
@@ -475,7 +475,7 @@ namespace BoxSocial.Internals
         {
             if (owner != null)
             {
-                applicationAccess = new Access(db, permissions, owner);
+                applicationAccess = new Access(core, permissions, owner);
             }
         }
 

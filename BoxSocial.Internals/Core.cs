@@ -345,7 +345,7 @@ namespace BoxSocial.Internals
                         break;
                 }
 
-                Access photoAccess = new Access(db, (ushort)itemTable.Rows[0][columnPrefix + "access"], owner);
+                Access photoAccess = new Access(core, (ushort)itemTable.Rows[0][columnPrefix + "access"], owner);
 
                 return photoAccess;
             }

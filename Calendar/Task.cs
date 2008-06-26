@@ -252,7 +252,7 @@ namespace BoxSocial.Applications.Calendar
                 status = (byte)TaskStatus.Overdue;
             }
 
-            taskAccess = new Access(core.db, permissions, owner);
+            taskAccess = new Access(core,  permissions, owner);
         }
 
         public static Task Create(Core core, User creator, Primitive owner, string topic, string description, long dueTimestamp, ushort permissions, TaskStatus status, byte percentComplete, TaskPriority priority)

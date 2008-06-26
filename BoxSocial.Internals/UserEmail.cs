@@ -72,7 +72,7 @@ namespace BoxSocial.Internals
             {
                 if (emailAccess == null)
                 {
-                    emailAccess = new Access(db, permissions, Owner);
+                    emailAccess = new Access(core, permissions, Owner);
                 }
                 return emailAccess;
             }

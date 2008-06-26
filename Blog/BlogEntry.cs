@@ -307,7 +307,7 @@ namespace BoxSocial.Applications.Blog
             {
                 owner = new User(core, OwnerId);
             }
-            blogEntryAccess = new Access(db, access, owner);
+            blogEntryAccess = new Access(core, access, owner);
         }
 
         /// <summary>

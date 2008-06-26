@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Calendar
     }
 
     [DataTable("events")]
-    public class Event : Item, ICommentableItem
+    public class Event : Item, ICommentableItem, IPermissibleItem
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
@@ -164,11 +164,11 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public User Owner
+        public Primitive Owner
         {
             get
             {
-                return (User)owner;
+                return owner;
             }
         }
 
@@ -270,7 +270,7 @@ namespace BoxSocial.Applications.Calendar
                 owner = new User(core, userId);
             }
 
-            eventAccess = new Access(db, permissions, owner);
+            eventAccess = new Access(core, permissions, owner);
         }
 
         public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
@@ -627,9 +627,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #region ICommentableItem Members
-
-
         public SortOrder CommentSortOrder
         {
             get
@@ -646,7 +643,25 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #endregion
+        public Access Access
+        {
+            get
+            {
+                return EventAccess;
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                List<string> permissions = new List<string>();
+                permissions.Add("Can Read");
+
+                return permissions;
+            }
+        }
+
     }
 
     public class InvalidEventException : Exception

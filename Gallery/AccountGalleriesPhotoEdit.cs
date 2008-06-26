@@ -61,11 +61,85 @@ namespace BoxSocial.Applications.Gallery
         void AccountGalleriesPhotoEdit_Show(object sender, EventArgs e)
         {
             Save(new EventHandler(AccountGalleriesPhotoEdit_Save));
+
+            AuthoriseRequestSid();
+
+            long photoId = 0;
+            try
+            {
+                photoId = long.Parse(Request.QueryString["id"]);
+            }
+            catch
+            {
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
+
+            template.SetTemplate("Gallery", "account_galleries_photo_edit");
+
+            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
+                loggedInMember.UserId, photoId));
+
+            if (photoTable.Rows.Count == 1)
+            {
+                ushort photoAccess = (ushort)photoTable.Rows[0]["gallery_item_access"];
+                byte license = (byte)photoTable.Rows[0]["gallery_item_license"];
+                string title = (string)photoTable.Rows[0]["gallery_item_title"];
+                string description = "";
+
+                if (!(photoTable.Rows[0]["gallery_item_abstract"] is DBNull))
+                {
+                    description = (string)photoTable.Rows[0]["gallery_item_abstract"];
+                }
+
+                List<string> permissions = new List<string>();
+                permissions.Add("Can Read");
+                permissions.Add("Can Comment");
+
+                Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
+                Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
+
+                template.Parse("S_PHOTO_TITLE", title);
+                template.Parse("S_PHOTO_DESCRIPTION", description);
+                template.Parse("S_PHOTO_ID", photoId.ToString());
+
+                Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", (Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]);
+            }
+            else
+            {
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
         }
 
         void AccountGalleriesPhotoEdit_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
+
+            long photoId = Functions.FormLong("id", 0);
+            string title = Request.Form["title"];
+            string description = Request.Form["description"];
+
+            if (photoId == 0)
+            {
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x09)");
+                return;
+            }
+
+            try
+            {
+                UserGalleryItem galleryItem = new UserGalleryItem(core, loggedInMember, photoId);
+                galleryItem.Update(title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+
+                SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path));
+                Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
+                return;
+            }
+            catch (GalleryItemNotFoundException)
+            {
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
+                return;
+            }
         }
     }
 }

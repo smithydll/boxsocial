@@ -300,6 +300,21 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
+        /// Gets the user's display picture Id
+        /// </summary>
+        public long DisplayPictureId
+        {
+            get
+            {
+                return displayPictureId;
+            }
+            set
+            {
+                SetProperty("displayPictureId", value);
+            }
+        }
+
+        /// <summary>
         /// Gets the user's time zone code
         /// </summary>
         public ushort TimeZoneCode

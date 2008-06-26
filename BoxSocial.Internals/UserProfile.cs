@@ -482,7 +482,7 @@ namespace BoxSocial.Internals
 
         void UserProfile_ItemLoad()
         {
-            profileAccess = new Access(db, permissions, user);
+            profileAccess = new Access(core, permissions, user);
         }
 
         void UserProfile_ItemUpdated(object sender, EventArgs e)

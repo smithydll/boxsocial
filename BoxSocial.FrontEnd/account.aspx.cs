@@ -257,11 +257,11 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
+                }
 
-                    if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
-                    {
-                        asm.ModuleVector(core);
-                    }
+                if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                {
+                    asm.ModuleVector(core);
                 }
             }
 

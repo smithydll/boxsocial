@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountGroups.cs" />
+    <Compile Include="AccountGroupsManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="GPage.cs">
       <SubType>ASPXCodeBehind</SubType>

@@ -174,7 +174,7 @@ namespace BoxSocial.Internals
             {
                 if (pageAccess == null)
                 {
-                    pageAccess = new Access(db, permissions, Owner);
+                    pageAccess = new Access(core, permissions, Owner);
                 }
                 return pageAccess;
             }
@@ -438,7 +438,7 @@ namespace BoxSocial.Internals
             classification = (Classifications)(byte)pageRow["page_classification"];
             listOnly = ((byte)pageRow["page_list_only"] > 0) ? true : false;
 
-            pageAccess = new Access(db, permissions, owner);
+            pageAccess = new Access(core, permissions, owner);
         }
 
         private void loadLicenseInfo(DataRow pageRow)

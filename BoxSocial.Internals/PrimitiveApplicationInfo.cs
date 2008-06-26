@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
             {
                 if (applicationAccess == null)
                 {
-                    applicationAccess = new Access(db, permissions, Owner);
+                    applicationAccess = new Access(core, permissions, Owner);
                 }
 
                 return applicationAccess;

@@ -58,6 +58,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        private Core core;
         private Mysql db;
         private bool canRead = false;
         private bool canComment = false;
@@ -69,9 +70,10 @@ namespace BoxSocial.Internals
 
         private ushort accessBits;
 
-        public Access(Mysql db, ushort accessBits, Primitive owner)
+        public Access(Core core, ushort accessBits, Primitive owner)
         {
-            this.db = db;
+            this.core = core;
+            this.db = core.db;
             this.owner = owner;
 
             this.accessBits = accessBits;

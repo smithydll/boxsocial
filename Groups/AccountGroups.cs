@@ -41,7 +41,7 @@ namespace BoxSocial.Groups
         public AccountGroups(Account account)
             : base(account)
         {
-            RegisterSubModule += new RegisterSubModuleHandler(ManageGroups);
+            //RegisterSubModule += new RegisterSubModuleHandler(ManageGroups);
             RegisterSubModule += new RegisterSubModuleHandler(ManageGroupMemberships);
             RegisterSubModule += new RegisterSubModuleHandler(DeleteGroup);
             RegisterSubModule += new RegisterSubModuleHandler(EditGroup);
@@ -81,47 +81,6 @@ namespace BoxSocial.Groups
             get
             {
                 return 7;
-            }
-        }
-
-        private void ManageGroups(string submodule)
-        {
-            subModules.Add("groups", "Manage Groups");
-            if (submodule != "groups" && !string.IsNullOrEmpty(submodule)) return;
-
-            template.SetTemplate("Groups", "account_group_manage");
-
-            template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
-
-            DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
-                loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
-
-            for (int i = 0; i < groupsTable.Rows.Count; i++)
-            {
-                VariableCollection groupVariableCollection = template.CreateChild("group_list");
-
-                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
-
-                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
-                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
-
-                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
-                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_EDIT", thisGroup.EditUri);
-                groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
-
-                switch (thisGroup.GroupType)
-                {
-                    case "OPEN":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
-                        break;
-                    case "CLOSED":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
-                        break;
-                    case "PRIVATE":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
-                        break;
-                }
             }
         }
 

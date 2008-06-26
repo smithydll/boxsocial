@@ -1684,6 +1684,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="accessBits"></param>
+        /// <param name="viewer"></param>
+        /// <param name="canRead"></param>
+        /// <param name="canComment"></param>
+        /// <param name="canCreate"></param>
+        /// <param name="canChange"></param>
         public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             Relation viewerRelation;
@@ -1710,6 +1719,7 @@ namespace BoxSocial.Internals
                 canCreate = false;
                 canChange = false;
             }
+            // TODO: ACL
             else if ((viewerRelation & Relation.Owner) == Relation.Owner)
             {
                 canRead = true;

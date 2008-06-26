@@ -182,7 +182,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            forumAccess = new Access(core.db, permissions, owner);
+            forumAccess = new Access(core,  permissions, owner);
         }
 
         public List<Forum> GetForums()

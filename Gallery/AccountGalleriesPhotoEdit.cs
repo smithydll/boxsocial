@@ -29,9 +29,17 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+
+    /// <summary>
+    /// 
+    /// </summary>
     [AccountSubModule("galleries", "edit-photo")]
     public class AccountGalleriesPhotoEdit : AccountSubModule
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override string Title
         {
             get
@@ -40,6 +48,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override int Order
         {
             get
@@ -48,6 +59,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public AccountGalleriesPhotoEdit()
         {
             this.Load += new EventHandler(AccountGalleriesPhotoEdit_Load);

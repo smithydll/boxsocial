@@ -29,6 +29,10 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+
+    /// <summary>
+    /// 
+    /// </summary>
     [AccountSubModule("galleries", "rotate-photo")]
     public class AccountGalleriesPhotoRotate : AccountSubModule
     {

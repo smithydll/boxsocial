@@ -167,6 +167,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the raw permissions of the gallery
+        /// </summary>
         public ushort Permissions
         {
             get
@@ -190,6 +193,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the owner of the gallery
+        /// </summary>
         public Primitive Owner
         {
             get

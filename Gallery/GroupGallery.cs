@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the GroupGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Group owning</param>
         public GroupGallery(Core core, UserGroup owner)
             : base(core, owner)
@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the GroupGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Group owning</param>
         /// <param name="galleryRow">Raw data row</param>
         /// <param name="hasIcon">Raw data contains icon</param>
@@ -59,7 +59,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Initialises a new instance of the GroupGallery class
         /// </summary>
-        /// <param name="db">Database</param>
+        /// <param name="core">Core token</param>
         /// <param name="owner">Group owning</param>
         /// <param name="galleryId">Gallery Id</param>
         public GroupGallery(Core core, UserGroup owner, long galleryId)

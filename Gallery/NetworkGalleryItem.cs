@@ -28,36 +28,82 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class NetworkGalleryItem : GalleryItem
     {
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="owner"></param>
+        /// <param name="itemId"></param>
         public NetworkGalleryItem(Core core, Network owner, long itemId)
             : base(core, (Primitive)owner, itemId)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="owner"></param>
+        /// <param name="itemRow"></param>
         public NetworkGalleryItem(Core core, Network owner, DataRow itemRow)
             : base(core, (Primitive)owner, itemRow)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="owner"></param>
+        /// <param name="path"></param>
         public NetworkGalleryItem(Core core, Network owner, string path)
             : base(core, (Primitive)owner, path)
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="owner"></param>
+        /// <param name="parent"></param>
+        /// <param name="title"></param>
+        /// <param name="slug"></param>
+        /// <param name="fileName"></param>
+        /// <param name="storageName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="bytes"></param>
+        /// <param name="description"></param>
+        /// <param name="permissions"></param>
+        /// <param name="license"></param>
+        /// <param name="classification"></param>
+        /// <returns></returns>
         public static GalleryItem Create(Core core, Network owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
             return new NetworkGalleryItem(core, owner, itemId);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string BuildUri()
         {
             return Linker.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
                 owner.Key, parentPath, path));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override string Uri
         {
             get

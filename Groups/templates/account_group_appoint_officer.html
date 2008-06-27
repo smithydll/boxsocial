@@ -1,7 +1,7 @@
 <h3>Appoint Group Officer</h3>
 <p>Officers are special people in groups. They do not get any special privledges other than being grated a title. Enter a title for the officer you are appointing below.</p>
 
-<form action="{S_FORM_ACTION}" method="post">
+<form action="{S_ACCOUNT}" method="post">
 	<fieldset>
 		<legend>Appoint Group Officer</legend>
 		<dl>
@@ -15,7 +15,8 @@
 			</dd>
 		</dl>
 		<input type="hidden" name="module" value="groups" />
-		<input type="hidden" name="sub" value="make-officer" />
+    <input type="hidden" name="sub" value="memberships" />
+		<input type="hidden" name="mode" value="make-officer" />
 		<!-- IF S_ID -->
 		<input type="hidden" name="id" value="{S_ID}" />
 		<!-- ENDIF -->

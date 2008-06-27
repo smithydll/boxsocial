@@ -29,9 +29,16 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [AccountSubModule("galleries", "delete")]
     public class AccountGalleriesPhotoDelete : AccountSubModule
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
         public override string Title
         {
             get
@@ -40,6 +47,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override int Order
         {
             get
@@ -48,6 +58,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public AccountGalleriesPhotoDelete()
         {
             this.Load += new EventHandler(AccountGalleriesPhotoDelete_Load);

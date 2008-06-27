@@ -1020,7 +1020,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "delete", string.Format("id={0}", GroupId));
+                return AccountModule.BuildModuleUri("groups", "groups", "delete", GroupId);
             }
         }
 
@@ -1028,7 +1028,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "join", true, string.Format("id={0}", GroupId));
+                return AccountModule.BuildModuleUri("groups", "memberships", "join", GroupId);
             }
         }
 
@@ -1036,7 +1036,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "leave", true, string.Format("id={0}", GroupId));
+                return AccountModule.BuildModuleUri("groups", "memberships", "leave", GroupId);
             }
         }
 

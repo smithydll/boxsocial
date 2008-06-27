@@ -59,6 +59,8 @@ namespace BoxSocial.Groups
 
         void AccountGroupsManage_Load(object sender, EventArgs e)
         {
+            AddModeHandler("delete", new ModuleModeHandler(AccountGroupsManage_Delete));
+            AddSaveHandler("delete", new EventHandler(AccountGroupsManage_Delete_Save));
         }
 
         void AccountGroupsManage_Show(object sender, EventArgs e)
@@ -96,6 +98,59 @@ namespace BoxSocial.Groups
                         groupVariableCollection.Parse("GROUP_TYPE", "Private");
                         break;
                 }
+            }
+        }
+
+        void AccountGroupsManage_Delete(object sender, EventArgs e)
+        {
+            long groupId = Functions.RequestLong("id", -1);
+
+            if (groupId >= 0)
+            {
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "groups");
+                hiddenFieldList.Add("sub", "groups");
+                hiddenFieldList.Add("mode", "delete");
+                hiddenFieldList.Add("id", groupId.ToString());
+
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                    "Are you sure you want to delete this group?",
+                    "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
+                    hiddenFieldList);
+            }
+            else
+            {
+                DisplayGenericError();
+                return;
+            }
+        }
+
+        void AccountGroupsManage_Delete_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long groupId = Functions.RequestLong("id", -1);
+
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            {
+                try
+                {
+                    UserGroup group = new UserGroup(core, groupId);
+
+                    SetRedirectUri(BuildUri());
+                    Display.ShowMessage("Cancelled", "This feature is currently not supported.");
+                    return;
+                }
+                catch (InvalidGroupException)
+                {
+                    DisplayGenericError();
+                    return;
+                }
+            }
+            else
+            {
+                Display.ShowMessage("Cancelled", "You cancelled the deletion of the group.");
+                return;
             }
         }
     }

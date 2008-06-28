@@ -26,10 +26,6 @@ using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -44,33 +40,45 @@ namespace BoxSocial.Networks
         Workplace
     }
 
+    public enum NetworkLoadOptions : byte
+    {
+        Key = 0x01,
+        Info = Key | 0x02,
+        Icon = Key | 0x08,
+        Common = Key | Info,
+        All = Key | Info | Icon,
+    }
+
     /// <summary>
     /// 
     /// </summary>
+    [DataTable("network_keys")]
     public class Network : Primitive, ICommentableItem
     {
         public const string NETWORK_INFO_FIELDS = "`network_info`.network_id, `network_info`.network_name_display, `network_info`.network_abstract, `network_info`.network_members, `network_info`.network_comments, `network_info`.network_require_confirmation, `network_info`.network_type, `network_info`.network_gallery_items, `network_info`.network_bytes";
 
-        [DataField("network_id", DataFieldKeys.Unique)]
-        private int networkId;
+        [DataField("network_id", DataFieldKeys.Primary)]
+        private long networkId;
+        [DataField("network_network", DataFieldKeys.Unique, 24)]
         private string networkNetwork;
-        private string displayName;
-        private string description;
-        private long members;
-        private ulong comments;
-        private bool requireConfirmation;
-        private NetworkTypes networkType;
-        private uint galleryItems;
-        private long bytes;
-        private string displayNameOwnership;
+
+        private NetworkInfo networkInfo;
 
         private Dictionary<User, bool> networkMemberCache = new Dictionary<User, bool>();
 
-        public int NetworkId
+        public long NetworkId
         {
             get
             {
                 return networkId;
+            }
+        }
+
+        public NetworkInfo Info
+        {
+            get
+            {
+                return networkInfo;
             }
         }
 
@@ -122,7 +130,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return displayName;
+                return networkInfo.DisplayName;
             }
         }
 
@@ -130,20 +138,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                if (displayNameOwnership == null)
-                {
-                    displayNameOwnership = (displayName != "") ? displayName : networkNetwork;
-
-                    if (displayNameOwnership.EndsWith("s"))
-                    {
-                        displayNameOwnership = displayNameOwnership + "'";
-                    }
-                    else
-                    {
-                        displayNameOwnership = displayNameOwnership + "'s";
-                    }
-                }
-                return displayNameOwnership;
+                return networkInfo.DisplayNameOwnership;
             }
         }
 
@@ -167,7 +162,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return description;
+                return networkInfo.Description;
             }
         }
 
@@ -175,7 +170,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return members;
+                return networkInfo.Members;
             }
         }
 
@@ -183,7 +178,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return (long)comments;
+                return networkInfo.Comments;
             }
         }
 
@@ -191,7 +186,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return requireConfirmation;
+                return networkInfo.RequireConfirmation;
             }
         }
 
@@ -199,26 +194,181 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return networkType;
+                return networkInfo.NetworkType;
             }
         }
 
-        public uint GalleryItems
+        public long GalleryItems
         {
             get
             {
-                return galleryItems;
+                return networkInfo.GalleryItems;
             }
         }
 
-        public Network(Core core, long networkId) : base(core)
+        public Network(Core core, long networkId)
+            : this(core, networkId, NetworkLoadOptions.Info | NetworkLoadOptions.Icon)
         {
-            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE nk.network_id = {0}",
-                networkId, NETWORK_INFO_FIELDS));
+        }
 
-            if (networkTable.Rows.Count == 1)
+        public Network(Core core, long networkId, NetworkLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Network_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == NetworkLoadOptions.Key)
             {
-                loadNetworkInfo(networkTable.Rows[0]);
+                try
+                {
+                    LoadItem(networkId);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidNetworkException();
+                }
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
+                query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+                query.AddCondition("`network_keys`.`network_id`", networkId);
+
+                if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
+                {
+                    containsInfoData = true;
+
+                    query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
+                    query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+
+                    if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
+                    {
+                        // TODO: Network Icon
+                        /*containsIconData = true;
+
+                        query.AddJoin(JoinTypes.Left, new DataField("network_info", "network_icon"), new DataField("gallery_items", "gallery_item_id"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));*/
+                    }
+                }
+
+                DataTable networkTable = db.Query(query);
+
+                if (networkTable.Rows.Count > 0)
+                {
+                    loadItemInfo(typeof(Network), networkTable.Rows[0]);
+
+                    if (containsInfoData)
+                    {
+                        networkInfo = new NetworkInfo(core, networkTable.Rows[0]);
+                    }
+
+                    if (containsIconData)
+                    {
+                        // TODO: Network Icon
+                        //loadNetworkIcon(networkTable.Rows[0]);
+                    }
+                }
+                else
+                {
+                    throw new InvalidNetworkException();
+                }
+            }
+        }
+
+        public Network(Core core, string networkNetwork)
+            : this(core, networkNetwork, NetworkLoadOptions.Info | NetworkLoadOptions.Icon)
+        {
+        }
+
+        public Network(Core core, string networkNetwork, NetworkLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Network_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == NetworkLoadOptions.Key)
+            {
+                try
+                {
+                    LoadItem("network_network", networkNetwork);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidNetworkException();
+                }
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
+                query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+                query.AddCondition("`network_keys`.`network_network`", networkNetwork);
+
+                if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
+                {
+                    containsInfoData = true;
+
+                    query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
+                    query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+
+                    if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
+                    {
+                        // TODO: Network Icon
+                        /*containsIconData = true;
+
+                        query.AddJoin(JoinTypes.Left, new DataField("network_info", "network_icon"), new DataField("gallery_items", "gallery_item_id"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));*/
+                    }
+                }
+
+                DataTable networkTable = db.Query(query);
+
+                if (networkTable.Rows.Count > 0)
+                {
+                    loadItemInfo(typeof(Network), networkTable.Rows[0]);
+
+                    if (containsInfoData)
+                    {
+                        networkInfo = new NetworkInfo(core, networkTable.Rows[0]);
+                    }
+
+                    if (containsIconData)
+                    {
+                        // TODO: Network Icon
+                        //loadUserGroupIcon(networkTable.Rows[0]);
+                    }
+                }
+                else
+                {
+                    throw new InvalidNetworkException();
+                }
+            }
+        }
+
+        public Network(Core core, DataRow networkRow, NetworkLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Network_ItemLoad);
+
+            if (networkRow != null)
+            {
+                loadItemInfo(typeof(Network), networkRow);
+
+                if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
+                {
+                    networkInfo = new NetworkInfo(core, networkRow);
+                }
+
+                if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
+                {
+                    // TODO: Network Icon
+                    //loadUserGroupIcon(groupRow);
+                }
             }
             else
             {
@@ -226,58 +376,8 @@ namespace BoxSocial.Networks
             }
         }
 
-        public Network(Core core, string network) : base(core)
+        void Network_ItemLoad()
         {
-            DataTable networkTable = db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ON nk.network_id = `network_info`.network_id WHERE nk.network_network = '{0}'",
-                Mysql.Escape(network), NETWORK_INFO_FIELDS));
-
-            if (networkTable.Rows.Count == 1)
-            {
-                loadNetworkInfo(networkTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidNetworkException();
-            }
-        }
-
-        public Network(Core core, DataRow networkRow) : base(core)
-        {
-            loadNetworkInfo(networkRow);
-        }
-
-        private void loadNetworkInfo(DataRow networkRow)
-        {
-            networkId = (int)networkRow["network_id"];
-            networkNetwork = (string)networkRow["network_network"];
-            displayName = (string)networkRow["network_name_display"];
-            if (!(networkRow["network_abstract"] is DBNull))
-            {
-                description = (string)networkRow["network_abstract"];
-            }
-            members = (long)networkRow["network_members"];
-            comments = (ulong)networkRow["network_comments"];
-            requireConfirmation = ((byte)networkRow["network_require_confirmation"] > 0) ? true : false;
-            switch ((string)networkRow["network_type"])
-            {
-                case "UNIVERSITY":
-                    networkType = NetworkTypes.University;
-                    break;
-                case "SCHOOL":
-                    networkType = NetworkTypes.School;
-                    break;
-                case "WORKKPLACE":
-                    networkType = NetworkTypes.Workplace;
-                    break;
-                case "COUNTRY":
-                    networkType = NetworkTypes.Country;
-                    break;
-                case "GLOBAL":
-                    networkType = NetworkTypes.Global;
-                    break;
-            }
-            galleryItems = (uint)networkRow["network_gallery_items"];
-            bytes = (long)networkRow["network_bytes"];
         }
 
         public List<NetworkMember> GetMembers(int page, int perPage)
@@ -297,7 +397,7 @@ namespace BoxSocial.Networks
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                memberIds.Add((long)(int)dr["user_id"]);
+                memberIds.Add((long)dr["user_id"]);
             }
 
             core.LoadUserProfiles(memberIds);
@@ -334,12 +434,16 @@ namespace BoxSocial.Networks
                     break;
             }
 
-            DataTable networksTable = core.db.Query(string.Format("SELECT {1}, nk.network_network FROM network_keys nk INNER JOIN network_info ni ON nk.network_id = ni.network_id WHERE ni.network_type = '{0}'",
-                Mysql.Escape(typeString), NETWORK_INFO_FIELDS));
+            SelectQuery query = Network.GetSelectQueryStub(typeof(Network));
+            query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+            query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
+            query.AddCondition("network_type", typeString);
+
+            DataTable networksTable = core.db.Query(query);
 
             foreach (DataRow dr in networksTable.Rows)
             {
-                networks.Add(new Network(core, dr));
+                networks.Add(new Network(core, dr, NetworkLoadOptions.Common));
             }
 
             return networks;
@@ -403,12 +507,12 @@ namespace BoxSocial.Networks
         {
             string activateKey = member.MemberActivationCode;
 
-            int isActive = (requireConfirmation) ? 0 : 1;
+            int isActive = (networkInfo.RequireConfirmation) ? 0 : 1;
 
             string activateUri = string.Format("http://zinzam.com/network/{0}?mode=activate&id={1}&key={2}",
                 networkNetwork, member.UserId, activateKey);
 
-            if (requireConfirmation)
+            if (networkInfo.RequireConfirmation)
             {
                 Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
@@ -424,7 +528,7 @@ namespace BoxSocial.Networks
         {
             string activateKey = User.GenerateActivationSecurityToken();
 
-            if (!IsValidNetworkEmail(networkEmail) && requireConfirmation)
+            if (!IsValidNetworkEmail(networkEmail) && networkInfo.RequireConfirmation)
             {
                 return null;
             }
@@ -434,14 +538,14 @@ namespace BoxSocial.Networks
                 return null;
             }
 
-            int isActive = (requireConfirmation) ? 0 : 1;
+            int isActive = (networkInfo.RequireConfirmation) ? 0 : 1;
 
             // delete any existing unactivated e-mails for this user in this network, re-send the invitation
             db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
                 networkId, member.UserId));
 
-            if (!requireConfirmation)
+            if (!networkInfo.RequireConfirmation)
             {
                 db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members + 1 WHERE network_id = {0}",
                     networkId));
@@ -455,7 +559,7 @@ namespace BoxSocial.Networks
                 networkNetwork, member.UserId, activateKey);
 
 
-            if (requireConfirmation)
+            if (networkInfo.RequireConfirmation)
             {
                 Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
@@ -612,8 +716,12 @@ namespace BoxSocial.Networks
 
         public string BuildJoinUri()
         {
-            return Linker.AppendSid(string.Format("/account/?module=networks&sub=join&id={0}",
-                NetworkId), true);
+            return AccountModule.BuildModuleUri("networks", "networks", "join", NetworkId);
+        }
+
+        public string BuildLeaveUri()
+        {
+            return AccountModule.BuildModuleUri("networks", "networks", "leave", NetworkId);
         }
 
         public string BuildMemberListUri()
@@ -631,7 +739,7 @@ namespace BoxSocial.Networks
             {
                 if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    // TODO: leave network URI
+                    page.template.Parse("U_LEAVE", page.TheNetwork.BuildLeaveUri());
                 }
                 else
                 {
@@ -640,7 +748,6 @@ namespace BoxSocial.Networks
             }
 
             page.template.Parse("NETWORK_DISPLAY_NAME", page.TheNetwork.DisplayName);
-            //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.TheNetwork.Description), core.session.LoggedInMember));
             Display.ParseBbcode("DESCRIPTION", page.TheNetwork.Description);
 
             string langMembers = (page.TheNetwork.Members != 1) ? "members" : "member";
@@ -703,8 +810,6 @@ namespace BoxSocial.Networks
             }
 
             string pageUri = page.TheNetwork.MemberlistUri;
-            //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0)));
-            //page.template.ParseRaw("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("members"));
             Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0));
             page.TheNetwork.GenerateBreadCrumbs("members");
         }
@@ -740,6 +845,10 @@ namespace BoxSocial.Networks
     }
 
     public class InvalidNetworkException : Exception
+    {
+    }
+
+    public class InvalidNetworkTypeException : Exception
     {
     }
 }

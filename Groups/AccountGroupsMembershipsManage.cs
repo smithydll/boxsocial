@@ -63,19 +63,25 @@ namespace BoxSocial.Groups
             AddModeHandler("leave", new ModuleModeHandler(AccountGroupsMembershipsManage_Leave));
             AddModeHandler("make-officer", new ModuleModeHandler(AccountGroupsMembershipsManage_MakeOfficer));
             AddSaveHandler("make-officer", new EventHandler(AccountGroupsMembershipsManage_MakeOfficer_Save));
+            AddModeHandler("remove-officer", new ModuleModeHandler(AccountGroupsMembershipsManage_RemoveOfficer));
             AddModeHandler("make-operator", new ModuleModeHandler(AccountGroupsMembershipsManage_MakeOperator));
+            AddModeHandler("resign-operator", new ModuleModeHandler(AccountGroupsMembershipsManage_ResignOperator));
+            AddSaveHandler("resign-operator", new EventHandler(AccountGroupsMembershipsManage_ResignOperator_Save));
+            AddModeHandler("approve", new ModuleModeHandler(AccountGroupsMembershipsManage_ApproveMember));
+            AddModeHandler("ban-member", new ModuleModeHandler(AccountGroupsMembershipsManage_BanMember));
+            AddSaveHandler("ban-member", new EventHandler(AccountGroupsMembershipsManage_BanMember_Save));
         }
 
         void AccountGroupsMembershipsManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_group_membership");
 
-            SelectQuery query = new SelectQuery("group_members gm");
-            query.AddFields(UserGroup.GROUP_INFO_FIELDS);
-            query.AddJoin(JoinTypes.Inner, "group_keys gk", "gm.group_id", "gk.group_id");
-            query.AddJoin(JoinTypes.Inner, "group_info gi", "gm.group_id", "gi.group_id");
-            query.AddCondition("gm.user_id", loggedInMember.UserId);
-            query.AddCondition("gm.group_member_approved", 0);
+            SelectQuery query = new SelectQuery("group_members");
+            query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+            query.AddJoin(JoinTypes.Inner, "group_keys", "group_id", "group_id");
+            query.AddJoin(JoinTypes.Inner, "group_info", "group_id", "group_id");
+            query.AddCondition("user_id", loggedInMember.UserId);
+            query.AddCondition("group_member_approved", 0);
 
             DataTable pendingGroupsTable = db.Query(query);
 
@@ -88,7 +94,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("pending_list");
 
-                UserGroup thisGroup = new UserGroup(core, pendingGroupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, pendingGroupsTable.Rows[i], UserGroupLoadOptions.Common);
 
                 groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
                 groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
@@ -123,7 +129,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("group_list");
 
-                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i], UserGroupLoadOptions.Common);
 
                 groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
                 groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
@@ -473,6 +479,59 @@ namespace BoxSocial.Groups
             }
         }
 
+        void AccountGroupsMembershipsManage_RemoveOfficer(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long groupId;
+            long userId;
+            string title;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+                title = UTF8Encoding.UTF8.GetString(Convert.FromBase64String(idString[2]));
+            }
+            catch
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(core, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    db.BeginTransaction();
+                    long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1} AND officer_title = '{2}'",
+                        groupId, userId, Mysql.Escape(title)));
+
+                    if (deletedRows >= 0)
+                    {
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_officers = group_officers - {1} WHERE group_id = {0}",
+                            thisGroup.GroupId, deletedRows));
+
+                        SetRedirectUri(thisGroup.Uri);
+                        Display.ShowMessage("Officer Removed from Group", "You have successfully removed an officer from the group.");
+                    }
+                    else
+                    {
+                        Display.ShowMessage("Error", "Could not delete officer, they may have already been delted.");
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+                DisplayGenericError();
+                return;
+            }
+        }
+
         void AccountGroupsMembershipsManage_MakeOperator(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
@@ -536,6 +595,243 @@ namespace BoxSocial.Groups
             catch
             {
                 DisplayGenericError();
+                return;
+            }
+        }
+
+        void AccountGroupsMembershipsManage_ResignOperator(object sender, ModuleModeEventArgs e)
+        {
+            long groupId = Functions.RequestLong("id", 0);
+
+            if (groupId == 0)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+            hiddenFieldList.Add("module", "groups");
+            hiddenFieldList.Add("sub", "memberships");
+            hiddenFieldList.Add("mdoe", "resign-operator");
+            hiddenFieldList.Add("id", groupId.ToString());
+
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                "Are you sure you want to resign as operator from this group?",
+                "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
+                hiddenFieldList);
+        }
+
+        void AccountGroupsMembershipsManage_ResignOperator_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long groupId = Functions.RequestLong("id", 0);
+
+            if (groupId == 0)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            UserGroup thisGroup = new UserGroup(core, groupId);
+
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            {
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    if (thisGroup.Operators > 1)
+                    {
+                        db.BeginTransaction();
+                        long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_operators WHERE group_id = {0} AND user_id = {1}",
+                            thisGroup.GroupId, loggedInMember.UserId));
+
+                        db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators - {1} WHERE group_id = {0}",
+                            thisGroup.GroupId, deletedRows));
+
+                        SetRedirectUri(thisGroup.Uri);
+                        Display.ShowMessage("Success", "You successfully resigned as a group operator. You are still a member of the group. You will be redirected in a second.");
+                    }
+                    else
+                    {
+                        Display.ShowMessage("Cannot resign as operator", "Groups must have at least one operator, you cannot resign from this group at this moment.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage("Error", "An error has occured. You are not an operator of this group, go back.");
+                    return;
+                }
+            }
+            else
+            {
+                SetRedirectUri(thisGroup.Uri);
+                Display.ShowMessage("Cancelled", "You cancelled resignation from being a group operator.");
+            }
+        }
+
+        void AccountGroupsMembershipsManage_ApproveMember(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            try
+            {
+                UserGroup thisGroup = new UserGroup(core, groupId);
+
+                if (thisGroup.IsGroupOperator(loggedInMember))
+                {
+                    try
+                    {
+                        User member = new User(core, userId);
+
+                        if (thisGroup.IsGroupMemberPending(member))
+                        {
+                            // we can approve the pending membership
+                            db.BeginTransaction();
+                            long rowsChanged = db.UpdateQuery(string.Format("UPDATE group_members SET group_member_approved = 1, group_member_date_ut = UNIX_TIMESTAMP() WHERE group_id = {0} AND user_id = {1} AND group_member_approved = 0;",
+                                thisGroup.GroupId, member.UserId));
+
+                            if (rowsChanged > 0) // committ the change
+                            {
+                                db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
+                                    thisGroup.GroupId));
+
+                                SetRedirectUri(thisGroup.MemberlistUri);
+                                Display.ShowMessage("Membership Approved", "You have approved the membership for the user.");
+                                return;
+                            }
+                            else
+                            {
+                                Display.ShowMessage("Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            Display.ShowMessage("Not Pending", "This member is not pending membership. They may have cancelled their request, or been approved by another operator.");
+                            return;
+                        }
+                    }
+                    catch
+                    {
+                        Display.ShowMessage("Error", "An error has occured, group member does not exist, go back.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Display.ShowMessage("Not Group Operator", "You must be an operator of the group to approve new memberships.");
+                    return;
+                }
+            }
+            catch
+            {
+                Display.ShowMessage("Error", "An error has occured, group does not exist, go back.");
+                return;
+            }
+        }
+
+        void AccountGroupsMembershipsManage_BanMember(object sender, ModuleModeEventArgs e)
+        {
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Functions.ThrowError();
+                return;
+            }
+
+            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+            hiddenFieldList.Add("module", "groups");
+            hiddenFieldList.Add("sub", "memberships");
+            hiddenFieldList.Add("mode", "ban-member");
+            hiddenFieldList.Add("id", string.Format("{0},{1}", groupId, userId));
+
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                "Are you sure you want to ban this member?",
+                "Banning a member from the group prevents them from seeing, or participating in the group.",
+                hiddenFieldList);
+        }
+
+        void AccountGroupsMembershipsManage_BanMember_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long groupId;
+            long userId;
+
+            try
+            {
+                string[] idString = Request.Form["id"].Split(new char[] { ',' });
+                groupId = long.Parse(idString[0]);
+                userId = long.Parse(idString[1]);
+            }
+            catch
+            {
+                Functions.ThrowError();
+                return;
+            }
+
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            {
+                try
+                {
+                    UserGroup group = new UserGroup(core, groupId);
+
+                    if (group.IsGroupOperator(loggedInMember))
+                    {
+                        try
+                        {
+                            GroupMember member = new GroupMember(core, group, userId);
+
+                            member.Ban();
+
+                            Display.ShowMessage("Member Banned", "The member has been banned from the group.");
+                            return;
+                        }
+                        catch (InvalidUserException)
+                        {
+                            DisplayGenericError();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Display.ShowMessage("Cannot ban member", "Only group operators can ban members from groups.");
+                        return;
+                    }
+                }
+                catch (InvalidGroupException)
+                {
+                    DisplayGenericError();
+                    return;
+                }
+            }
+            else
+            {
+                Display.ShowMessage("Cancelled", "You cancelled the banning of this member.");
                 return;
             }
         }

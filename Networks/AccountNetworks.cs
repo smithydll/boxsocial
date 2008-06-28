@@ -42,8 +42,8 @@ namespace BoxSocial.Networks
         public AccountNetworks(Account account)
             : base(account)
         {
-            RegisterSubModule += new RegisterSubModuleHandler(ManageNetworkMemberships);
-            RegisterSubModule += new RegisterSubModuleHandler(JoinNetwork);
+            //RegisterSubModule += new RegisterSubModuleHandler(ManageNetworkMemberships);
+            //RegisterSubModule += new RegisterSubModuleHandler(JoinNetwork);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)
@@ -58,194 +58,12 @@ namespace BoxSocial.Networks
             }
         }
 
-        /*public override string Key
-        {
-            get
-            {
-                return "networks";
-            }
-        }*/
-
         public override int Order
         {
             get
             {
                 return 8;
             }
-        }
-
-        private void ManageNetworkMemberships(string submodule)
-        {
-            subModules.Add("memberships", "Manage Memberships");
-            if (submodule != "memberships" && !string.IsNullOrEmpty(submodule)) return;
-
-            template.SetTemplate("Networks", "account_network_membership");
-
-            List<Network> networks = new List<Network>();
-
-            SelectQuery query = new SelectQuery("network_members");
-            query.AddJoin(JoinTypes.Inner, "network_keys", "network_id", "network_id");
-            query.AddJoin(JoinTypes.Inner, "network_info", "network_id", "network_id");
-            query.AddFields(Network.NETWORK_INFO_FIELDS, "network_network");
-            query.AddCondition("user_id", loggedInMember.Id);
-
-            DataTable networksTable = db.Query(query);
-
-            foreach (DataRow dr in networksTable.Rows)
-            {
-                networks.Add(new Network(core, dr));
-            }
-
-            if (networks.Count > 0)
-            {
-                template.Parse("NETWORK_MEMBERSHIPS", "TRUE");
-            }
-
-            foreach (Network theNetwork in networks)
-            {
-                VariableCollection networkVariableCollection = template.CreateChild("network_list");
-
-                networkVariableCollection.Parse("NETWORK_DISPLAY_NAME", theNetwork.DisplayName);
-                networkVariableCollection.Parse("MEMBERS", theNetwork.Members.ToString());
-
-                networkVariableCollection.Parse("U_VIEW", theNetwork.Uri);
-                networkVariableCollection.Parse("U_MEMBERLIST", theNetwork.MemberlistUri);
-            }
-        }
-
-        private void JoinNetwork(string submodule)
-        {
-            subModules.Add("join", null);
-            if (submodule != "join") return;
-
-            if (Request.Form["join"] != null)
-            {
-                JoinNetworkSave();
-                return;
-            }
-
-            template.SetTemplate("Networks", "account_network_join");
-            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
-
-            AuthoriseRequestSid();
-
-            long networkId;
-
-            try
-            {
-                networkId = long.Parse(Request.QueryString["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("Error", "An error has occured, go back.");
-                return;
-            }
-
-            template.Parse("S_ID", networkId.ToString());
-
-            try
-            {
-                Network theNetwork = new Network(core, networkId);
-
-                if (theNetwork.IsNetworkMember(loggedInMember))
-                {
-                    SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage("Already a member", "You are already a member of this network");
-                    return;
-                }
-
-                if (theNetwork.RequireConfirmation)
-                {
-                    // show form
-                }
-                else
-                {
-                    // just join the network
-                    if (theNetwork.Join(core, loggedInMember, "") != null)
-                    {
-                        SetRedirectUri(theNetwork.Uri);
-                        Display.ShowMessage("Joined Network", "You have successfully joined the network.");
-                        return;
-                    }
-                    else
-                    {
-                    }
-                }
-            }
-            catch
-            {
-                Display.ShowMessage("Error", "The network you are trying to join does not exist, go back.");
-                return;
-            }
-        }
-
-        private void JoinNetworkSave()
-        {
-            AuthoriseRequestSid();
-
-            long networkId;
-
-            try
-            {
-                networkId = long.Parse(Request.Form["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("Error", "An error has occured, go back.");
-                return;
-            }
-
-            /*try
-            {*/
-            Network theNetwork = new Network(core, networkId);
-
-            string networkEmail = Request.Form["email"];
-
-            if (!theNetwork.IsValidNetworkEmail(networkEmail))
-            {
-                Display.ShowMessage("Invalid e-mail for network", "You have attempted to register an e-mail that is not associated with the network you are attempting to join. The e-mail address should have the form _user_@" + theNetwork.NetworkNetwork + ". Go back and enter a valid e-mail address for this network.");
-                return;
-            }
-
-            if (!NetworkMember.CheckNetworkEmailUnique(db, networkEmail))
-            {
-                NetworkMember member = new NetworkMember(core, (int)theNetwork.Id, (int)loggedInMember.Id);
-                if (!member.IsMemberActive)
-                {
-                    theNetwork.ResendConfirmationKey(core, member);
-
-                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
-                    return;
-                }
-                else
-                {
-                    Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
-                    return;
-                }
-            }
-            else if (theNetwork.Join(core, loggedInMember, networkEmail) != null)
-            {
-                if (theNetwork.RequireConfirmation)
-                {
-                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
-                    return;
-                }
-                else
-                {
-                    SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage("Joined Network", "You have successfully joined the network.");
-                    return;
-                }
-            }
-            else
-            {
-                Display.ShowMessage("Error", "Could not join network.");
-                return;
-            }
-            /*}
-            catch
-            {
-            }*/
         }
 
         private void LeaveNetwork(string submodule)

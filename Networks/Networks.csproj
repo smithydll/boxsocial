@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountNetworks.cs" />
+    <Compile Include="AccountNetworksMemberships.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Network.cs" />
+    <Compile Include="NetworkInfo.cs" />
     <Compile Include="NetworkMember.cs" />
     <Compile Include="NPage.cs">
       <SubType>ASPXCodeBehind</SubType>

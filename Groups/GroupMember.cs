@@ -136,21 +136,21 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "make-officer", true, string.Format("id={0},{1}", groupId, userId));
+                return AccountModule.BuildModuleUri("groups", "memberships", true, "mode=make-officer", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
         public string RemoveOfficerUri(string title)
         {
-            return AccountModule.BuildModuleUri("groups", "remove-officer", true,
-                string.Format("id={0},{1},{2}", groupId, userId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))));
+            return AccountModule.BuildModuleUri("groups", "memberships", true,
+                "mode=remove-officer", string.Format("id={0},{1},{2}", groupId, userId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))));
         }
 
         public string MakeOperatorUri
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "make-operator", true, string.Format("id={0},{1}", groupId, userId));
+                return AccountModule.BuildModuleUri("groups", "memberships", true, "mode=make-operator", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
@@ -158,7 +158,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "ban-member", true, string.Format("id={0},{1}", groupId, userId));
+                return AccountModule.BuildModuleUri("groups", "memberships", true, "mode=ban-member", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
@@ -166,7 +166,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "approve", true, string.Format("id={0},{1}", groupId, userId));
+                return AccountModule.BuildModuleUri("groups", "memberships", true, "mode=approve", string.Format("id={0},{1}", groupId, userId));
             }
         }
 

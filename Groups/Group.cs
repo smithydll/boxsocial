@@ -26,33 +26,31 @@ using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
+    public enum UserGroupLoadOptions : byte
+    {
+        Key = 0x01,
+        Info = Key | 0x02,
+        Icon = Key | 0x08,
+        Common = Key | Info,
+        All = Key | Info | Icon,
+    }
+
+    [DataTable("group_keys")]
     public class UserGroup : Primitive, ICommentableItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
 
+        [DataField("group_id", DataFieldKeys.Primary)]
         private long groupId;
+        [DataField("group_name", DataFieldKeys.Unique, 64)]
         private string slug;
-        private string displayName;
-        private string displayNameOwnership;
-        private string groupType;
-        private string groupDescription;
-        private long timestampCreated;
-        private uint groupOperators;
-        private uint groupOfficers;
-        private ulong groupMembers;
-        private short rawCategory;
-        private string category;
-        private ulong comments;
-        private uint galleryItems;
+
+        private UserGroupInfo groupInfo;
 
         private Dictionary<User, bool> groupMemberCache = new Dictionary<User,bool>();
         private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
@@ -65,6 +63,18 @@ namespace BoxSocial.Groups
             get
             {
                 return groupId;
+            }
+        }
+
+        public UserGroupInfo Info
+        {
+            get
+            {
+                if (groupInfo == null)
+                {
+                    groupInfo = new UserGroupInfo(core, groupId);
+                }
+                return groupInfo;
             }
         }
 
@@ -116,7 +126,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return displayName;
+                return groupInfo.DisplayName;
             }
         }
 
@@ -124,20 +134,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                if (displayNameOwnership == null)
-                {
-                    displayNameOwnership = (displayName != "") ? displayName : slug;
-
-                    if (displayNameOwnership.EndsWith("s"))
-                    {
-                        displayNameOwnership = displayNameOwnership + "'";
-                    }
-                    else
-                    {
-                        displayNameOwnership = displayNameOwnership + "'s";
-                    }
-                }
-                return displayNameOwnership;
+                return groupInfo.DisplayNameOwnership;
             }
         }
 
@@ -161,7 +158,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return groupType;
+                return groupInfo.GroupType;
             }
         }
 
@@ -169,31 +166,31 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return groupDescription;
+                return groupInfo.Description;
             }
         }
 
-        public ulong Members
+        public long Members
         {
             get
             {
-                return groupMembers;
+                return groupInfo.Members;
             }
         }
 
-        public uint Officers
+        public long Officers
         {
             get
             {
-                return groupOfficers;
+                return groupInfo.Officers;
             }
         }
 
-        public uint Operators
+        public long Operators
         {
             get
             {
-                return groupOperators;
+                return groupInfo.Operators;
             }
         }
 
@@ -201,7 +198,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return category;
+                return groupInfo.Category;
             }
         }
 
@@ -209,7 +206,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return rawCategory;
+                return groupInfo.RawCategory;
             }
         }
 
@@ -217,77 +214,194 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return (long)comments;
+                return groupInfo.Comments;
             }
         }
 
-        public uint GalleryItems
+        public long GalleryItems
         {
             get
             {
-                return galleryItems;
+                return groupInfo.GalleryItems;
             }
         }
 
         public DateTime DateCreated(UnixTime tz)
         {
-            return tz.DateTimeFromMysql(timestampCreated);
+            return groupInfo.DateCreated(tz);
         }
 
-        public UserGroup(Core core, long groupId) : base(core)
-        {
-            DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_id = {0}",
-                groupId, GROUP_INFO_FIELDS));
+            public UserGroup(Core core, long groupId)
+                : this(core, groupId, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
+            {
+            }
 
-            if (groupTable.Rows.Count == 1)
+            public UserGroup(Core core, long groupId, UserGroupLoadOptions loadOptions)
+                : base(core)
             {
-                loadGroupInfo(groupTable.Rows[0]);
-                category = (string)groupTable.Rows[0]["category_title"];
+                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+                bool containsInfoData = false;
+                bool containsIconData = false;
+
+                if (loadOptions == UserGroupLoadOptions.Key)
+                {
+                    try
+                    {
+                        LoadItem(groupId);
+                    }
+                    catch (InvalidItemException)
+                    {
+                        throw new InvalidGroupException();
+                    }
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
+                    query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                    query.AddCondition("`group_keys`.`group_id`", groupId);
+
+                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                    {
+                        containsInfoData = true;
+
+                        query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
+                        query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+
+                        if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                        {
+                            containsIconData = true;
+
+                            query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
+                            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                        }
+                    }
+
+                    DataTable groupTable = db.Query(query);
+
+                    if (groupTable.Rows.Count > 0)
+                    {
+                        loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
+
+                        if (containsInfoData)
+                        {
+                            groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
+                        }
+
+                        if (containsIconData)
+                        {
+                            loadUserGroupIcon(groupTable.Rows[0]);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidGroupException();
+                    }
+                }
             }
-            else
+
+            public UserGroup(Core core, string groupName)
+                : this (core, groupName, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
             {
-                throw new InvalidGroupException();
             }
+
+            public UserGroup(Core core, string groupName, UserGroupLoadOptions loadOptions)
+                : base(core)
+            {
+                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+                bool containsInfoData = false;
+                bool containsIconData = false;
+
+                if (loadOptions == UserGroupLoadOptions.Key)
+                {
+                    try
+                    {
+                        LoadItem("group_name", groupName);
+                    }
+                    catch (InvalidItemException)
+                    {
+                        throw new InvalidGroupException();
+                    }
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
+                    query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                    query.AddCondition("`group_keys`.`group_name`", groupName);
+
+                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                    {
+                        containsInfoData = true;
+
+                        query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
+                        query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+
+                        if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                        {
+                            containsIconData = true;
+
+                            query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
+                            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                        }
+                    }
+
+                    DataTable groupTable = db.Query(query);
+
+                    if (groupTable.Rows.Count > 0)
+                    {
+                        loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
+
+                        if (containsInfoData)
+                        {
+                            groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
+                        }
+
+                        if (containsIconData)
+                        {
+                            loadUserGroupIcon(groupTable.Rows[0]);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidGroupException();
+                    }
+                }
+            }
+
+            public UserGroup(Core core, DataRow groupRow, UserGroupLoadOptions loadOptions)
+                : base(core)
+            {
+                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+                if (groupRow != null)
+                {
+                    loadItemInfo(typeof(UserGroup), groupRow);
+
+                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                    {
+                        groupInfo = new UserGroupInfo(core, groupRow);
+                    }
+
+                    if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                    {
+                        loadUserGroupIcon(groupRow);
+                    }
+                }
+                else
+                {
+                    throw new InvalidGroupException();
+                }
+            }
+
+        void UserGroup_ItemLoad()
+        {
         }
 
-        public UserGroup(Core core, string groupSlug) : base(core)
+        private void loadUserGroupIcon(DataRow groupRow)
         {
-            DataTable groupTable = db.Query(string.Format("SELECT {1}, c.category_title FROM group_keys gk INNER JOIN group_info gi ON gk.group_id = gi.group_id INNER JOIN global_categories c ON gi.group_category = c.category_id WHERE gk.group_name = '{0}'",
-                Mysql.Escape(groupSlug), GROUP_INFO_FIELDS));
-
-            if (groupTable.Rows.Count == 1)
-            {
-                loadGroupInfo(groupTable.Rows[0]);
-                category = (string)groupTable.Rows[0]["category_title"];
-            }
-            else
-            {
-                throw new InvalidGroupException();
-            }
-        }
-
-        public UserGroup(Core core, DataRow groupRow) : base(core)
-        {
-            loadGroupInfo(groupRow);
-        }
-
-        private void loadGroupInfo(DataRow groupRow)
-        {
-            groupId = (long)groupRow["group_id"];
-            slug = (string)groupRow["group_name"];
-            displayName = (string)groupRow["group_name_display"];
-            groupType = (string)groupRow["group_type"];
-            if (!(groupRow["group_abstract"] is DBNull))
-            {
-                groupDescription = (string)groupRow["group_abstract"];
-            }
-            timestampCreated = (long)groupRow["group_reg_date_ut"];
-            groupOperators = (uint)groupRow["group_operators"];
-            groupOfficers = (uint)groupRow["group_officers"];
-            groupMembers = (ulong)groupRow["group_members"];
-            comments = (ulong)groupRow["group_comments"];
-            rawCategory = (short)groupRow["group_category"];
-            galleryItems = (uint)groupRow["group_gallery_items"];
         }
 
         public List<GroupMember> GetMembers(int page, int perPage)
@@ -311,7 +425,7 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                memberIds.Add((long)(int)dr["user_id"]);
+                memberIds.Add((long)dr["user_id"]);
             }
 
             core.LoadUserProfiles(memberIds);
@@ -376,7 +490,7 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                memberIds.Add((long)(int)dr["user_id"]);
+                memberIds.Add((long)dr["user_id"]);
             }
 
             core.LoadUserProfiles(memberIds);
@@ -1065,7 +1179,7 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in groupsTable.Rows)
             {
-                groups.Add(new UserGroup(core, dr));
+                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
             }
 
             return groups;

@@ -52,6 +52,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Group.cs" />
+    <Compile Include="GroupInfo.cs" />
     <Compile Include="GroupMember.cs" />
     <Compile Include="GroupOfficer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

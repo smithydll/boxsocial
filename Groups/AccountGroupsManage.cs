@@ -76,7 +76,7 @@ namespace BoxSocial.Groups
             {
                 VariableCollection groupVariableCollection = template.CreateChild("group_list");
 
-                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i]);
+                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i], UserGroupLoadOptions.Common);
 
                 groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
                 groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());

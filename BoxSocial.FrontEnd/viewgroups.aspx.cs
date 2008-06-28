@@ -80,7 +80,7 @@ namespace BoxSocial.FrontEnd
 
                     for (int i = 0; i < groupsTable.Rows.Count; i++)
                     {
-                        UserGroup groupRow = new UserGroup(core, groupsTable.Rows[i]);
+                        UserGroup groupRow = new UserGroup(core, groupsTable.Rows[i], UserGroupLoadOptions.Common);
 
                         VariableCollection groupsVariableCollection = template.CreateChild("groups_list");
 

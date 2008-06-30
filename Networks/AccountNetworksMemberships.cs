@@ -223,10 +223,62 @@ namespace BoxSocial.Networks
 
         void AccountNetworksMemberships_Leave(object sender, ModuleModeEventArgs e)
         {
+            long networkId = Functions.RequestLong("id", -1);
+
+            if (networkId >= 0)
+            {
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "networks");
+                hiddenFieldList.Add("sub", "leave");
+                hiddenFieldList.Add("id", networkId.ToString());
+
+                Display.ShowConfirmBox(Linker.AppendSid("/account", true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
+            }
+            else
+            {
+                DisplayGenericError();
+                return;
+            }
         }
 
         void AccountNetworksMemberships_Leave_Save(object sender, EventArgs e)
         {
+            long networkId = Functions.RequestLong("id", -1);
+
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            {
+                try
+                {
+                    Network theNetwork = new Network(core, networkId);
+
+                    if (theNetwork.IsNetworkMember(loggedInMember))
+                    {
+                        db.BeginTransaction();
+                        db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1};",
+                            theNetwork.Id, loggedInMember.UserId));
+
+                        db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members - 1 WHERE network_id = {0}",
+                            theNetwork.Id));
+
+                        SetRedirectUri(theNetwork.Uri);
+                        Display.ShowMessage("Left Network", "You have left the network.");
+                        return;
+                    }
+                    else
+                    {
+                        SetRedirectUri(theNetwork.Uri);
+                        Display.ShowMessage("Not a Member", "You cannot leave a network you are not a member of.");
+                        return;
+                    }
+                }
+                catch (InvalidNetworkException)
+                {
+                    DisplayGenericError();
+                }
+            }
+            else
+            {
+            }
         }
     }
 }

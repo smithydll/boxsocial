@@ -42,6 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountCalendar.cs" />
+    <Compile Include="AccountCalendarEventDelete.cs" />
+    <Compile Include="AccountCalendarEventInvite.cs" />
+    <Compile Include="AccountCalendarEventNew.cs" />
+    <Compile Include="AccountCalendarManage.cs" />
+    <Compile Include="AccountCalendarTaskNew.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="Event.cs" />

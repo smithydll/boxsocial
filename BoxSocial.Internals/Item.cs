@@ -160,6 +160,30 @@ namespace BoxSocial.Internals
             }
         }
 
+        private List<Type> getSubTypes()
+        {
+            List<Type> types = new List<Type>();
+
+            return types;
+        }
+
+        protected List<Item> getSubItems(Type typeToGet)
+        {
+            List<Item> items = new List<Item>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeToGet);
+            //query.AddCondition(Item.GetParentField(this.GetType()), Id);
+
+            DataTable itemsTable = db.Query(query);
+
+            foreach (DataRow dr in itemsTable.Rows)
+            {
+                items.Add(Activator.CreateInstance(typeToGet, new object[] {core, dr}) as Item);
+            }
+
+            return items;
+        }
+
         protected void UpdateThis()
         {
             StackTrace st = new StackTrace();
@@ -241,6 +265,11 @@ namespace BoxSocial.Internals
             List<ItemTag> tags = new List<ItemTag>();
 
             return tags;
+        }
+
+        public static void GetParentField(Type parentType)
+        {
+            // TODO: is the prototype correct?
         }
 
         public static SelectQuery GetSelectQueryStub(Type type)
@@ -409,6 +438,17 @@ namespace BoxSocial.Internals
             {
                 ItemChangeAuthenticationProvider(this, new EventArgs());
             }
+
+            /*List<Type> subTypes = getSubTypes();
+            foreach (Type subType in subTypes)
+            {
+                List<Item> subItems = getSubItems(subType);
+
+                foreach (Item item in subItems)
+                {
+                    item.Delete();
+                }
+            }*/
 
             DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
 

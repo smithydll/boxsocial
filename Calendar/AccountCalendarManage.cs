@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,42 +19,24 @@
  */
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
-using BoxSocial.Networks;
 
-namespace BoxSocial.Networks
+namespace BoxSocial.Applications.Calendar
 {
-    [AccountModule("networks")]
-    public class AccountNetworks : AccountModule
+    [AccountSubModule("calendar", "calendar", true)]
+    public class AccountCalendarManage : AccountSubModule
     {
-        public AccountNetworks(Account account)
-            : base(account)
-        {
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageNetworkMemberships);
-            //RegisterSubModule += new RegisterSubModuleHandler(JoinNetwork);
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {
-        }
-
-        public override string Name
+        public override string Title
         {
             get
             {
-                return "Networks";
+                return "Manage Calendar";
             }
         }
 
@@ -62,8 +44,23 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return 8;
+                return 1;
             }
+        }
+
+        public AccountCalendarManage()
+        {
+            this.Load += new EventHandler(AccountCalendarManage_Load);
+            this.Show += new EventHandler(AccountCalendarManage_Show);
+        }
+
+        void AccountCalendarManage_Load(object sender, EventArgs e)
+        {
+        }
+
+        void AccountCalendarManage_Show(object sender, EventArgs e)
+        {
+            SetTemplate("account_calendar_manage");
         }
     }
 }

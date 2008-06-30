@@ -31,6 +31,8 @@ namespace BoxSocial.IO
         private bool isPrimaryKey;
         private bool isUnique;
         private long length;
+        private Type parentType;
+        private string parentFieldName;
 
         public DataFieldAttribute()
         {
@@ -42,6 +44,8 @@ namespace BoxSocial.IO
             this.isPrimaryKey = false;
             this.isUnique = false;
             this.length = 0;
+            this.parentFieldName = null;
+            this.parentType = null;
         }
 
         public DataFieldAttribute(string fieldName, long fieldLength)
@@ -50,6 +54,8 @@ namespace BoxSocial.IO
             this.isPrimaryKey = false;
             this.isUnique = false;
             this.length = fieldLength;
+            this.parentFieldName = null;
+            this.parentType = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key)
@@ -66,12 +72,36 @@ namespace BoxSocial.IO
                     break;
             }
             this.length = 0;
+            this.parentFieldName = null;
+            this.parentType = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, long fieldLength)
             : this(fieldName, key)
         {
             this.length = fieldLength;
+            this.parentFieldName = null;
+            this.parentType = null;
+        }
+
+        /// <summary>
+        /// Parent type assumes that the relationship is of the same field name in the parent table
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="parentType"></param>
+        public DataFieldAttribute(string fieldName, Type parentType)
+            : this (fieldName, parentType, fieldName)
+        {
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName)
+        {
+            this.fieldName = fieldName;
+            this.isPrimaryKey = false;
+            this.isUnique = false;
+            this.length = 0;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
         }
 
         public string FieldName
@@ -122,6 +152,22 @@ namespace BoxSocial.IO
             get
             {
                 return length;
+            }
+        }
+
+        public Type ParentType
+        {
+            get
+            {
+                return parentType;
+            }
+        }
+
+        public string ParentFieldName
+        {
+            get
+            {
+                return parentFieldName;
             }
         }
     }

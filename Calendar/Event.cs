@@ -345,11 +345,12 @@ namespace BoxSocial.Applications.Calendar
 
                     db.Query(uQuery);
 
-                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
                     emailTemplate.Parse("FROM_NAME", user.DisplayName);
                     emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
+                    emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                     emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
                     emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
                     emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
@@ -395,11 +396,12 @@ namespace BoxSocial.Applications.Calendar
 
                         long invitationId = db.Query(iQuery);
 
-                        Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+                        RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
 
                         emailTemplate.Parse("FROM_NAME", user.DisplayName);
                         emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
+                        emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                         emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
                         emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
                         emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));

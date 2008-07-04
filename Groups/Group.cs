@@ -482,6 +482,7 @@ namespace BoxSocial.Groups
             SelectQuery query = new SelectQuery("group_officers");
             query.AddField(new DataField("group_officers", "user_id"));
             query.AddField(new DataField("group_officers", "officer_title"));
+            query.AddField(new DataField("group_officers", "group_id"));
             query.AddCondition("group_id", groupId);
 
             DataTable membersTable = db.Query(query);
@@ -1339,8 +1340,6 @@ namespace BoxSocial.Groups
             }
 
             string pageUri = page.ThisGroup.MemberlistUri;
-            //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0)));
-            //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("members"));
             Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0));
             page.ThisGroup.ParseBreadCrumbs("members");
         }

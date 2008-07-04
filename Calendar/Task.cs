@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Calendar
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
         #region Data Fields
-        [DataField("task_id")]
+        [DataField("task_id", DataFieldKeys.Primary)]
         private long taskId;
         [DataField("task_topic", 127)]
         private string topic;
@@ -348,6 +348,7 @@ namespace BoxSocial.Applications.Calendar
                     taskVariableCollection.Parse("CLASS", "task");
                 }
 
+                // TODO: fix this
                 if (calendarTask.Priority == TaskPriority.High)
                 {
                     taskDaysVariableCollection.ParseRaw("PRIORITY", "[<span class=\"high-priority\" title=\"High Priority\">H</span>]");
@@ -361,7 +362,6 @@ namespace BoxSocial.Applications.Calendar
             List<string[]> calendarPath = new List<string[]>();
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { "*tasks", "Tasks" });
-            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
             owner.ParseBreadCrumbs(calendarPath);
         }
 

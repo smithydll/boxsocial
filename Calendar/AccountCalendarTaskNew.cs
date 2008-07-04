@@ -162,26 +162,26 @@ namespace BoxSocial.Applications.Calendar
             template.Parse("S_MONTH", month.ToString());
             template.Parse("S_DAY", day.ToString());
 
-            template.Parse("S_DUE_YEAR", Functions.BuildSelectBox("due-year", years, dueDate.Year.ToString()));
+            ParseSelectBox("S_DUE_YEAR", "due-year", years, dueDate.Year.ToString());
 
-            template.Parse("S_DUE_MONTH", Functions.BuildSelectBox("due-month", months, dueDate.Month.ToString()));
+            ParseSelectBox("S_DUE_MONTH", "due-month", months, dueDate.Month.ToString());
 
-            template.Parse("S_DUE_DAY", Functions.BuildSelectBox("due-day", days, dueDate.Day.ToString()));
+            ParseSelectBox("S_DUE_DAY", "due-day", days, dueDate.Day.ToString());
 
-            template.Parse("S_DUE_HOUR", Functions.BuildSelectBox("due-hour", hours, dueDate.Hour.ToString()));
+            ParseSelectBox("S_DUE_HOUR", "due-hour", hours, dueDate.Hour.ToString());
 
-            template.Parse("S_DUE_MINUTE", Functions.BuildSelectBox("due-minute", minutes, dueDate.Minute.ToString()));
+            ParseSelectBox("S_DUE_MINUTE", "due-minute", minutes, dueDate.Minute.ToString());
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            Display.ParsePermissionsBox(template, "S_TASK_PERMS", taskAccess, permissions);
+            ParsePermissionsBox("S_TASK_PERMS", taskAccess, permissions);
 
             template.Parse("S_TOPIC", topic);
             template.Parse("S_DESCRIPTION", description);
 
-            template.Parse("S_PERCENT_COMPLETE", Functions.BuildSelectBox("percent-complete", percentages, percentComplete.ToString()));
-            template.Parse("S_PRIORITY", Functions.BuildSelectBox("priority", priorities, ((byte)priority).ToString()));
+            ParseSelectBox("S_PERCENT_COMPLETE", "percent-complete", percentages, percentComplete.ToString());
+            ParseSelectBox("S_PRIORITY", "priority", priorities, ((byte)priority).ToString());
 
             template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
 

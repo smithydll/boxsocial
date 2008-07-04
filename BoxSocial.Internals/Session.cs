@@ -204,7 +204,6 @@ namespace BoxSocial.Internals
                     else
                     {
                         core.template.Parse("REDIRECT_URI", "/");
-                        Display.ShowMessage("Error", "Error starting session");
                         
                         HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");
                         sessionDataCookie.Value = "";
@@ -217,6 +216,8 @@ namespace BoxSocial.Internals
                         sessionSidCookie.Expires = DateTime.MinValue;
                         sessionSidCookie.Secure = false; // TODO: secure cookies
                         Response.Cookies.Add(sessionSidCookie);
+
+                        Display.ShowMessage("Error", "Error starting session");
 
                         if (db != null)
                         {

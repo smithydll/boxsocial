@@ -47,8 +47,28 @@ namespace BoxSocial.Applications.Calendar
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
-            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE (ev.event_access & {5:0} OR ev.user_id = {6}) AND ev.event_item_id = {1} AND ev.event_item_type = '{2}' AND ((ev.event_time_start_ut >= {3} AND ev.event_time_start_ut <= {4}) OR (ev.event_time_end_ut >= {3} AND ev.event_time_end_ut <= {4})) ORDER BY ev.event_time_start_ut ASC;",
+            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE (ev.event_access & {5:0} OR ev.user_id = {6}) AND ev.event_item_id = {1} AND ev.event_item_type = '{2}' AND ((ev.event_time_start_ut >= {3} AND ev.event_time_start_ut <= {4}) OR (ev.event_time_end_ut >= {3} AND ev.event_time_end_ut <= {4}) OR (ev.event_time_start_ut < {3} AND ev.event_time_end_ut > {4})) ORDER BY ev.event_time_start_ut ASC;",
                 Event.EVENT_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+
+            foreach (DataRow dr in eventsTable.Rows)
+            {
+                events.Add(new Event(core, owner, dr));
+            }
+
+            // now select events invited to
+            SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
+            query.AddFields("event_invites.item_id", "event_invites.item_type", "event_invites.inviter_id", "event_invites.event_id");
+            query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
+            query.AddCondition("item_id", loggedIdUid);
+            query.AddCondition("item_type", "USER");
+            QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+            qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+            QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+            qc3.AddCondition("event_time_end_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+            QueryCondition qc4 = qc3.AddCondition(ConditionRelations.Or, "event_time_start_ut", ConditionEquality.LessThan, startTimeRaw);
+            qc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
+
+            eventsTable = db.Query(query);
 
             foreach (DataRow dr in eventsTable.Rows)
             {
@@ -230,7 +250,7 @@ namespace BoxSocial.Applications.Calendar
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
-            int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (core.tz.Now.Month - 1) % 12 + 1);
+            int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (core.tz.Now.Month - 2) % 12 + 1);
 
             long startTime = 0;
             if (offset > 0)
@@ -313,7 +333,6 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
-            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
             owner.ParseBreadCrumbs(calendarPath);
         }
 
@@ -355,7 +374,6 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
             calendarPath.Add(new string[] { day.ToString(), day.ToString() });
-            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
             owner.ParseBreadCrumbs(calendarPath);
         }
 
@@ -405,17 +423,36 @@ namespace BoxSocial.Applications.Calendar
         {
             bool hasEvents = false;
 
+            long startOfDay = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
+            long endOfDay = startOfDay + 60 * 60 * 24;
+
             List<Event> expired = new List<Event>();
             foreach (Event calendarEvent in events)
             {
-                if (calendarEvent.GetStartTime(core.tz).CompareTo(new DateTime(year, month, day, hour, 59, 59)) > 0)
+                long startTime = calendarEvent.StartTimeRaw;
+                long endTime = calendarEvent.EndTimeRaw;
+
+                if (endTime > endOfDay)
+                {
+                    endTime = endOfDay;
+                }
+
+                if (startTime < startOfDay)
+                {
+                    startTime = startOfDay;
+                }
+
+                long hourTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, hour, 59, 59));
+
+                //if (calendarEvent.GetStartTime(core.tz).CompareTo(new DateTime(year, month, day, hour, 59, 59)) > 0)
+                if (startTime > hourTime)
                 {
                     break;
                 }
 
                 VariableCollection eventVariableCollection = timeslotVariableCollection.CreateChild("event");
 
-                long height = (calendarEvent.EndTimeRaw - calendarEvent.StartTimeRaw) * 24 / 60 / 60;
+                long height = (endTime - startTime) * 24 / 60 / 60;
 
                 eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
                 eventVariableCollection.Parse("HEIGHT", height.ToString());

@@ -14,7 +14,15 @@
 					<dt>{task_days.task_list.DATE}</dt>
 					<dd>
 						<span class="{task_days.task_list.CLASS}">
-						{task_days.task_list.PRIORITY}
+              <!-- IF HIGH_PRIORITY -->
+              [<span class="high-priority">H</span>]
+              <!-- ELSE -->
+              <!-- IF LOW_PRIORITY -->
+              [<span class="low-priority">L</span>]
+              <!-- ELSE -->
+              {task_days.task_list.PRIORITY}
+              <!-- ENDIF -->
+              <!-- ENDIF -->
 						<a href="{task_days.task_list.URI}">{task_days.task_list.TOPIC}</a>
 						<!-- IF task_days.task_list.COMPLETE -->
 						<!-- ELSE -->

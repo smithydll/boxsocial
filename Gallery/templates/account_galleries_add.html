@@ -4,7 +4,7 @@
 <h3>Add New Gallery</h3>
 <!-- ENDIF -->
 
-<form action="/account/" method="post" enctype="multipart/form-data">
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
 	<fieldset>
 		<!-- IF EDIT -->
 		<legend>Edit Gallery</legend>
@@ -35,7 +35,8 @@
 			</dd>
 		</dl>
 		<input type="hidden" name="module" value="galleries" />
-		<input type="hidden" name="sub" value="new" />
+    <input type="hidden" name="sub" value="galleries" />
+		<input type="hidden" name="mode" value="new" />
 		<input type="hidden" name="id" value="{S_GALLERY_ID}" />
 		<!-- IF EDIT -->
 		<input type="hidden" name="mode" value="edit" />

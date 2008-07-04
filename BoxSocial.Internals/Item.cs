@@ -45,6 +45,8 @@ namespace BoxSocial.Internals
         /// </summary>
         protected Core core;
 
+        private Assembly assembly;
+
         private List<string> updatedItems;
 
         public delegate void ItemLoadHandler();
@@ -58,6 +60,7 @@ namespace BoxSocial.Internals
         {
             this.core = core;
             this.db = core.db;
+            assembly = Assembly.GetCallingAssembly();
             updatedItems = new List<string>();
         }
 
@@ -164,21 +167,59 @@ namespace BoxSocial.Internals
         {
             List<Type> types = new List<Type>();
 
+            Type currentType = this.GetType();
+            Type[] allTypes = currentType.Assembly.GetTypes();
+
+            foreach (Type type in allTypes)
+            {
+                List<DataFieldInfo> fields = GetFields(type);
+
+                foreach (DataFieldInfo field in fields)
+                {
+                    if (field.ParentType == currentType)
+                    {
+                        types.Add(type);
+                        break;
+                    }
+                }
+            }
+
             return types;
         }
 
         protected List<Item> getSubItems(Type typeToGet)
         {
+            return getSubItems(typeToGet, 0, 0);
+        }
+
+        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage)
+        {
             List<Item> items = new List<Item>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeToGet);
-            //query.AddCondition(Item.GetParentField(this.GetType()), Id);
+            SelectQuery query;
+
+            if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub") != null)
+            {
+                query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
+            }
+            else
+            {
+                query = Item.GetSelectQueryStub(typeToGet);
+            }
+
+            if (perPage > 0)
+            {
+                query.LimitStart = (currentPage - 1) * perPage;
+                query.LimitCount = perPage;
+            }
+
+            query.AddCondition(Item.GetParentField(this.GetType()), Id);
 
             DataTable itemsTable = db.Query(query);
 
             foreach (DataRow dr in itemsTable.Rows)
             {
-                items.Add(Activator.CreateInstance(typeToGet, new object[] {core, dr}) as Item);
+                items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
             }
 
             return items;
@@ -267,13 +308,60 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        public static void GetParentField(Type parentType)
+        /// <summary>
+        /// returns the field that is linked to the parent of a given type
+        /// </summary>
+        /// <param name="parentType"></param>
+        /// <returns></returns>
+        public static string GetParentField(Type parentType)
         {
-            // TODO: is the prototype correct?
+            string returnValue = null;
+
+            Type[] types = parentType.Assembly.GetTypes();
+            foreach (Type type in types)
+            {
+                List<DataFieldInfo> fields = GetFields(type);
+
+                foreach (DataFieldInfo field in fields)
+                {
+                    if (field.ParentType == parentType)
+                    {
+                        if (string.IsNullOrEmpty(returnValue))
+                        {
+                            returnValue = field.Name;
+                        }
+                        else
+                        {
+                            // TODO: create a new exception
+                            throw new Exception("Multiple children types");
+                        }
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(returnValue))
+            {
+                return returnValue;
+            }
+            else
+            {
+                // TODO: Exception
+                throw new Exception("No parent of type " + parentType.Name + " found.");
+            }
         }
 
         public static SelectQuery GetSelectQueryStub(Type type)
         {
+            SelectQuery query = new SelectQuery(GetTable(type));
+            query.AddFields(GetFieldsPrefixed(type));
+
+            return query;
+        }
+
+        public SelectQuery getSelectQueryStub()
+        {
+            Type type = this.GetType();
+
             SelectQuery query = new SelectQuery(GetTable(type));
             query.AddFields(GetFieldsPrefixed(type));
 
@@ -293,6 +381,8 @@ namespace BoxSocial.Internals
                         if (((DataFieldAttribute)attr).FieldName != null)
                         {
                             DataFieldInfo dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+                            dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
+                            dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 
                             returnValue.Add(dfi);
                         }

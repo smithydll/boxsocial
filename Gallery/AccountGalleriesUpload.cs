@@ -61,25 +61,13 @@ namespace BoxSocial.Applications.Gallery
         {
             SetTemplate("account_galleries_upload");
 
-            long galleryId = 0;
+            long galleryId = Functions.RequestLong("id", 0);
+
             try
             {
-                galleryId = long.Parse(Request.QueryString["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
-                return;
-            }
+                UserGallery gallery = new UserGallery(core, loggedInMember, galleryId);
 
-            DataTable galleryTable = db.Query(string.Format("SELECT gallery_access FROM user_galleries WHERE gallery_id = {0} AND user_id = {1}",
-                galleryId, loggedInMember.UserId));
-
-
-            if (galleryTable.Rows.Count == 1)
-            {
-
-                ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
+                ushort galleryAccess = gallery.Permissions;
 
                 List<string> permissions = new List<string>();
                 permissions.Add("Can Read");
@@ -93,9 +81,9 @@ namespace BoxSocial.Applications.Gallery
 
                 Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
-            else
+            catch (InvalidGalleryException)
             {
-                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                DisplayGenericError();
                 return;
             }
 
@@ -106,14 +94,13 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long galleryId = Functions.RequestLong("id", 0);
-            long photoId = 0;
+            long galleryId = Functions.FormLong("id", 0);
             string title = Request.Form["title"];
             string description = Request.Form["description"];
 
-            if (galleryId == 0)
+            if (Request.Files["photo-file"] == null)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x08)");
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -121,17 +108,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 UserGallery parent = new UserGallery(core, loggedInMember, galleryId);
 
-                string slug = "";
-
-                try
-                {
-                    slug = Request.Files["photo-file"].FileName;
-                }
-                catch
-                {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
-                    return;
-                }
+                string slug = Request.Files["photo-file"].FileName;
 
                 try
                 {

@@ -206,6 +206,16 @@ namespace BoxSocial.Applications.Forum
 
         public List<ForumTopic> GetTopics(int currentPage, int perPage)
         {
+            return getSubItems(typeof(ForumTopic), currentPage, perPage).ConvertAll<ForumTopic>(new Converter<Item, ForumTopic>(convertToForumTopic));
+        }
+
+        public ForumTopic convertToForumTopic(Item input)
+        {
+            return (ForumTopic)input;
+        }
+
+        /*public List<ForumTopic> GetTopics(int currentPage, int perPage)
+        {
             List<ForumTopic> topics = new List<ForumTopic>();
 
             SelectQuery query = new SelectQuery("forum_topics");
@@ -221,7 +231,7 @@ namespace BoxSocial.Applications.Forum
                 LEFT JOIN topic_posts tp ON tp.post_id = ft.topic_last_post_id
                 WHERE ft.item_id = {1} AND ft.item_type = '{2}'
                 ORDER BY ft.topic_last_post_time DESC",
-                ForumTopic.FORUM_TOPIC_INFO_FIELDS, owner.Id, owner.GetType()));*/
+                ForumTopic.FORUM_TOPIC_INFO_FIELDS, owner.Id, owner.GetType()));*\/
 
             foreach (DataRow dr in topicsTable.Rows)
             {
@@ -229,7 +239,7 @@ namespace BoxSocial.Applications.Forum
             }
 
             return topics;
-        }
+        }*/
 
         public List<ForumTopic> GetTopicsFlat(int currentPge, int perPage)
         {

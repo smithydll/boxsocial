@@ -94,7 +94,7 @@ namespace BoxSocial.Applications.Gallery
                 Display.ShowConfirmBox(Linker.AppendSid("/account", true),
                     "Confirm Delete Photo",
                     string.Format("Are you sure you want to delete the photo `{0}`",
-                    ugi.ItemTitle), hiddenFieldList);
+                    ugi.Path), hiddenFieldList);
             }
             catch
             {

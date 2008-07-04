@@ -186,6 +186,12 @@ namespace BoxSocial.FrontEnd
                 userVariableCollection.Parse("JOIN_DATE", tz.DateTimeToString(user.Info.GetRegistrationDate(tz)));
                 userVariableCollection.Parse("USER_AGE", user.AgeString);
                 userVariableCollection.Parse("USER_COUNTRY", user.Country);
+
+                List<long> friendIds = loggedInMember.GetFriendIds();
+                if (!friendIds.Contains(user.Id))
+                {
+                    userVariableCollection.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(user.Id, true));
+                }
             }
             
         }

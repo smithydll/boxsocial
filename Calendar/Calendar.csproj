@@ -46,6 +46,7 @@
     <Compile Include="AccountCalendarEventInvite.cs" />
     <Compile Include="AccountCalendarEventNew.cs" />
     <Compile Include="AccountCalendarManage.cs" />
+    <Compile Include="AccountCalendarTaskMarkComplete.cs" />
     <Compile Include="AccountCalendarTaskNew.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Calendar.cs" />

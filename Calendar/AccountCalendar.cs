@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Calendar
             //RegisterSubModule += new RegisterSubModuleHandler(ManageCalendar);
             //RegisterSubModule += new RegisterSubModuleHandler(NewEvent);
             //RegisterSubModule += new RegisterSubModuleHandler(NewTask);
-            RegisterSubModule += new RegisterSubModuleHandler(MarkTaskComplete);
+            //RegisterSubModule += new RegisterSubModuleHandler(MarkTaskComplete);
             //RegisterSubModule += new RegisterSubModuleHandler(EventInvite);
             //RegisterSubModule += new RegisterSubModuleHandler(DeleteEvent);
         }
@@ -67,46 +67,6 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return 9;
-            }
-        }
-
-        private void MarkTaskComplete(string submodule)
-        {
-            if (submodule != "task-complete") return;
-
-            long taskId = Functions.FormLong("id", 0);
-            bool isAjax = false;
-
-            if (Request["ajax"] == "true")
-            {
-                isAjax = true;
-            }
-
-            AuthoriseRequestSid();
-
-            try
-            {
-                Task task = new Task(core, session.LoggedInMember, taskId);
-
-                UpdateQuery query = new UpdateQuery("tasks");
-                query.AddField("task_status", (byte)TaskStatus.Completed);
-                query.AddField("task_percent_complete", 100);
-                query.AddField("task_time_completed_ut", UnixTime.UnixTimeStamp());
-                query.AddCondition("user_id", core.LoggedInMemberId);
-                query.AddCondition("task_id", taskId);
-
-                if (db.Query(query) == 1)
-                {
-                    if (!isAjax)
-                    {
-                        SetRedirectUri(Task.BuildTaskUri(task));
-                    }
-                    Ajax.ShowMessage(isAjax, "success", "Task Complete", "The task has been marked as complete.");
-                }
-            }
-            catch (InvalidTaskException)
-            {
-                Ajax.ShowMessage(isAjax, "error", "Error", "An error occured while marking the task as complete, go back");
             }
         }
     }

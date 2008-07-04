@@ -38,6 +38,8 @@ namespace BoxSocial.IO
         private long fieldLength;
         private bool isPrimaryKey;
         private bool isUnique;
+        private Type parentType;
+        private string parentFieldName;
 
         public string Name
         {
@@ -87,6 +89,30 @@ namespace BoxSocial.IO
             }
         }
 
+        public Type ParentType
+        {
+            get
+            {
+                return parentType;
+            }
+            set
+            {
+                parentType = value;
+            }
+        }
+
+        public string ParentFieldName
+        {
+            get
+            {
+                return parentFieldName;
+            }
+            set
+            {
+                parentFieldName = value;
+            }
+        }
+
         public DataFieldInfo(string name, Type type, long length)
         {
             this.fieldName = name;
@@ -94,6 +120,8 @@ namespace BoxSocial.IO
             this.fieldLength = length;
             this.isPrimaryKey = false;
             this.isUnique = false;
+            this.parentType = null;
+            this.parentFieldName = null;
         }
 
         public DataFieldInfo(string name, Type type, long length, DataFieldKeys key)
@@ -111,6 +139,8 @@ namespace BoxSocial.IO
                     this.isPrimaryKey = false;
                     break;
             }
+            this.parentType = null;
+            this.parentFieldName = null;
         }
     }
 }

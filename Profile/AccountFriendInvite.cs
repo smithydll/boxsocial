@@ -65,6 +65,8 @@ namespace BoxSocial.Applications.Profile
             SetTemplate("account_friend_invite");
 
             template.Parse("S_INVITE_FRIEND", Linker.AppendSid("/account/", true));
+
+            Save(new EventHandler(AccountFriendInvite_Send));
         }
 
         void AccountFriendInvite_Send(object sender, EventArgs e)
@@ -136,8 +138,8 @@ namespace BoxSocial.Applications.Profile
                             loggedInMember.DisplayName),
                             emailTemplate.ToString());
 
-                        db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
-                            Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
+                        db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_time_ut) VALUES ('{0}', 1, '{1}', {2});",
+                            Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail)), Mysql.Escape(UnixTime.UnixTimeStamp().ToString())));
                     }
                 }
                 else

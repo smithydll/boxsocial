@@ -213,25 +213,15 @@ namespace BoxSocial.Applications.Pages
             listAccess = new Access(core, permissions, owner);
         }
 
+        /* EXAMPLE getSubItems */
         public List<ListItem> GetListItems()
         {
-            List<ListItem> listItems = new List<ListItem>();
+            return getSubItems(typeof(ListItem)).ConvertAll<ListItem>(new Converter<Item, ListItem>(convertToListItem));
+        }
 
-            SelectQuery query = new SelectQuery(ListItem.GetTable(typeof(ListItem)));
-            query.AddFields(ListItem.GetFieldsPrefixed(typeof(ListItem)));
-            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
-            query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
-            query.AddCondition("list_id", listId);
-            query.AddSort(SortOrder.Ascending, "list_item_text_normalised");
-
-            DataTable listItemsTable = db.Query(query);
-
-            foreach (DataRow dr in listItemsTable.Rows)
-            {
-                listItems.Add(new ListItem(core, dr));
-            }
-
-            return listItems;
+        public ListItem convertToListItem(Item input)
+        {
+            return (ListItem)input;
         }
 
         /// <summary>

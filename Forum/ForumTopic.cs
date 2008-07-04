@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Forum
 
         [DataField("topic_id", DataFieldKeys.Primary)]
         private long topicId;
-        [DataField("forum_id")]
+        [DataField("forum_id", typeof(Forum))]
         private long forumId;
         [DataField("topic_title", 127)]
         private string topicTitle;
@@ -202,18 +202,23 @@ namespace BoxSocial.Applications.Forum
 
         void Topic_ItemLoad()
         {
-
-            if (forum == null)
+            /*if (forum == null)
             {
                 forum = new Forum(core, forumId);
-            }
+            }*/
         }
 
-        public void LoadTopicInfo(DataRow topicRow)
+
+        public static SelectQuery ForumTopic_GetSelectQueryStub()
         {
-            topicId = (long)topicRow["topic_id"];
-            topicTitle = (string)topicRow["topic_title"];
-            userId = (int)topicRow["user_id"];
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ForumTopic));
+
+            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
+
+            query.AddSort(SortOrder.Descending, "topic_last_post_time");
+
+            return query;
         }
 
         public static ForumTopic Create(Core core, Forum forum, string topic, string messageBody)

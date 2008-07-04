@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Pages
 
         [DataField("list_item_id", DataFieldKeys.Primary)]
         private long listItemId;
-        [DataField("list_id")]
+        [DataField("list_id", typeof(List))]
         private long listId;
         [DataField("list_item_text_id")]
         private long listItemTextId;
@@ -91,13 +91,10 @@ namespace BoxSocial.Applications.Pages
         internal ListItem(Core core, long listItemId)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+            ItemLoad += new ItemLoadHandler(ListItem_ItemLoad);
 
             
-            SelectQuery query = new SelectQuery(ListItem.GetTable(typeof(ListItem)));
-            query.AddFields(ListItem.GetFieldsPrefixed(typeof(ListItem)));
-            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
-            query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
+            SelectQuery query = ListItem_GetSelectQueryStub();
             query.AddCondition("list_item_id", listItemId);
 
             DataTable listItemTable = db.Query(query);
@@ -112,17 +109,29 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        internal ListItem(Core core, DataRow listItemRow)
+        public ListItem(Core core, DataRow listItemRow)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+            ItemLoad += new ItemLoadHandler(ListItem_ItemLoad);
 
             loadItemInfo(listItemRow);
             lit = new ListItemText(core, listItemRow);
         }
 
-        private void ListItemText_ItemLoad()
+        private void ListItem_ItemLoad()
         {
+        }
+
+        public static SelectQuery ListItem_GetSelectQueryStub()
+        {
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ListItem));
+
+            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
+            query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
+
+            query.AddSort(SortOrder.Ascending, "list_item_text_normalised");
+
+            return query;
         }
 
         public override long Id

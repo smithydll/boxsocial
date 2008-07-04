@@ -129,12 +129,6 @@ namespace BoxSocial.Applications.Gallery
             long galleryId = Functions.RequestLong("id", 0);
             bool edit = false;
 
-            if (galleryId == 0)
-            {
-                DisplayGenericError();
-                return;
-            }
-
             if (e.Mode == "edit")
             {
                 edit = true;

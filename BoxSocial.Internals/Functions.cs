@@ -172,7 +172,7 @@ namespace BoxSocial.Internals
             byte outValue = defaultValue;
             try
             {
-                outValue = byte.Parse(HttpContext.Current.Request.QueryString[var]);
+                outValue = byte.Parse(HttpContext.Current.Request[var]);
             }
             catch
             {
@@ -185,7 +185,7 @@ namespace BoxSocial.Internals
             int outValue = defaultValue;
             try
             {
-                outValue = int.Parse(HttpContext.Current.Request.QueryString[var]);
+                outValue = int.Parse(HttpContext.Current.Request[var]);
             }
             catch
             {
@@ -198,7 +198,7 @@ namespace BoxSocial.Internals
             long outValue = defaultValue;
             try
             {
-                outValue = long.Parse(HttpContext.Current.Request.QueryString[var]);
+                outValue = long.Parse(HttpContext.Current.Request[var]);
             }
             catch
             {

@@ -411,11 +411,11 @@ namespace BoxSocial.Applications.Calendar
 
                 if (calendarTask.Priority == TaskPriority.High)
                 {
-                    taskDaysVariableCollection.Parse("PRIORITY", "[<span class=\"high-priority\">H</span>]");
+                    taskDaysVariableCollection.Parse("HIGH_PRIORITY", "TRUE");
                 }
                 else if (calendarTask.Priority == TaskPriority.Low)
                 {
-                    taskDaysVariableCollection.Parse("PRIORITY", "[<span class=\"low-priority\">L</span>]");
+                    taskDaysVariableCollection.Parse("LOW_PRIORITY", "TRUE");
                 }
             }
 

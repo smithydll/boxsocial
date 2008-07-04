@@ -68,30 +68,31 @@ namespace BoxSocial.Groups
 
             long groupId = Functions.RequestLong("id", 0);
 
-            if (groupId == 0)
+            try
+            {
+                UserGroup thisGroup = new UserGroup(core, groupId);
+
+                if (!thisGroup.IsGroupMember(loggedInMember))
+                {
+                    Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
+                    return;
+                }
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                    case "CLOSED":
+                    case "PRIVATE":
+                        break;
+                }
+
+                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
+                template.Parse("S_ID", groupId.ToString());
+            }
+            catch (InvalidGroupException)
             {
                 DisplayGenericError();
-                return;
             }
-
-            UserGroup thisGroup = new UserGroup(core, groupId);
-
-            if (!thisGroup.IsGroupMember(loggedInMember))
-            {
-                Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
-                return;
-            }
-
-            switch (thisGroup.GroupType)
-            {
-                case "OPEN":
-                case "CLOSED":
-                case "PRIVATE":
-                    break;
-            }
-
-            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
-            template.Parse("S_ID", groupId.ToString());
 
             Save(new EventHandler(AccountGroupsInvite_Save));
         }
@@ -100,14 +101,8 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = Functions.RequestLong("id", 0);
+            long groupId = Functions.FormLong("id", 0);
             string username = Request.Form["username"];
-
-            if (groupId == 0)
-            {
-                DisplayGenericError();
-                return;
-            }
 
             try
             {
@@ -115,7 +110,7 @@ namespace BoxSocial.Groups
 
                 try
                 {
-                    User inviteMember = new User(core, username);
+                    User inviteMember = core.UserProfiles[core.LoadUserProfile(username)];
 
                     if (!thisGroup.IsGroupMember(loggedInMember))
                     {
@@ -148,25 +143,25 @@ namespace BoxSocial.Groups
                         }
                         else
                         {
-                            Display.ShowMessage("Cannot Invite User", "You can only invite people who are friends with you to join a group.");
+                            SetError("You can only invite people who are friends with you to join a group.");
                             return;
                         }
                     }
                     else
                     {
-                        Display.ShowMessage("Already in Group", "The person you are trying to invite is already a member of the group. An invitation has not been sent.");
+                        SetError("The person you are trying to invite is already a member of the group. An invitation has not been sent.");
                         return;
                     }
                 }
-                catch
+                catch (InvalidUserException)
                 {
-                    Display.ShowMessage("Username does not exist", "The username you have entered does not exist, go back.");
+                    SetError("The username you have entered does not exist.");
                     return;
                 }
             }
-            catch
+            catch (InvalidGroupException)
             {
-                Display.ShowMessage("Error", "An error has occured, go back.");
+                DisplayGenericError();
                 return;
             }
         }

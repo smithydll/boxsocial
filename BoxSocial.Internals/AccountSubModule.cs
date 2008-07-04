@@ -39,6 +39,7 @@ namespace BoxSocial.Internals
         protected SessionState session;
         protected UnixTime tz;
         protected User loggedInMember;
+        protected Primitive Owner;
         protected HttpRequest Request;
         protected HttpResponse Response;
         protected HttpServerUtility Server;
@@ -50,8 +51,18 @@ namespace BoxSocial.Internals
         /// constructor
         /// </summary>
         /// <param name="core">Core token</param>
-        /// <param name="template">Module inner template</param>
         public void ModuleVector(Core core)
+        {
+            ModuleVector(core, core.session.LoggedInMember);
+        }
+
+        /// <summary>
+        /// We do this so we don't have to keep re-declaring the same
+        /// constructor
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Owner</param>
+        public void ModuleVector(Core core, Primitive owner)
         {
             CreateTemplate();
 
@@ -60,6 +71,7 @@ namespace BoxSocial.Internals
             this.session = core.session;
             this.tz = core.tz;
             this.loggedInMember = session.LoggedInMember;
+            this.Owner = owner;
             this.Request = HttpContext.Current.Request;
             this.Response = HttpContext.Current.Response;
             this.Server = HttpContext.Current.Server;
@@ -175,7 +187,7 @@ namespace BoxSocial.Internals
 
         private bool HasModeHandler(string mode)
         {
-            if (modes.ContainsKey(mode))
+            if (modes.ContainsKey(mode) || saveHandlers.ContainsKey(mode))
             {
                 return true;
             }
@@ -267,6 +279,7 @@ namespace BoxSocial.Internals
         /// <param name="errorMessage"></param>
         protected void DisplayGenericError()
         {
+            throw new Exception("Error");
             template = new Template("1302.html");
             template.ParseRaw("ERROR_MESSAGE", "An error has occured accessing this account module, maybe you are accessing it incorrectly. <a href=\"javascript:history.go(-1);\">Go Back</a>");
             RenderTemplate();

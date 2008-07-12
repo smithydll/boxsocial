@@ -80,7 +80,7 @@ namespace BoxSocial.Groups
             query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
             query.AddJoin(JoinTypes.Inner, "group_keys", "group_id", "group_id");
             query.AddJoin(JoinTypes.Inner, "group_info", "group_id", "group_id");
-            query.AddCondition("user_id", loggedInMember.UserId);
+            query.AddCondition("user_id", LoggedInMember.Id);
             query.AddCondition("group_member_approved", 0);
 
             DataTable pendingGroupsTable = db.Query(query);
@@ -118,7 +118,7 @@ namespace BoxSocial.Groups
             }
 
             DataTable groupsTable = db.Query(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
-                loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
+                LoggedInMember.Id, UserGroup.GROUP_INFO_FIELDS));
 
             if (groupsTable.Rows.Count > 0)
             {
@@ -138,7 +138,7 @@ namespace BoxSocial.Groups
                 groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
                 if (!(groupsTable.Rows[i]["user_id_go"] is DBNull))
                 {
-                    if ((int)groupsTable.Rows[i]["user_id_go"] != loggedInMember.UserId)
+                    if ((int)groupsTable.Rows[i]["user_id_go"] != LoggedInMember.Id)
                     {
                         groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
                     }
@@ -186,7 +186,7 @@ namespace BoxSocial.Groups
                 int activated = 0;
 
                 DataTable membershipTable = db.Query(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                    thisGroup.GroupId, loggedInMember.UserId));
+                    thisGroup.GroupId, LoggedInMember.Id));
 
                 if (membershipTable.Rows.Count > 0)
                 {
@@ -206,7 +206,7 @@ namespace BoxSocial.Groups
                         break;
                 }
 
-                bool isInvited = thisGroup.IsGroupInvitee(loggedInMember);
+                bool isInvited = thisGroup.IsGroupInvitee(LoggedInMember);
 
                 // do not need an invite unless the group is private
                 // private groups you must be invited to
@@ -214,7 +214,7 @@ namespace BoxSocial.Groups
                 {
                     db.BeginTransaction();
                     db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
-                        thisGroup.GroupId, loggedInMember.UserId, activated, Mysql.Escape(session.IPAddress.ToString()), true));
+                        thisGroup.GroupId, LoggedInMember.Id, activated, Mysql.Escape(session.IPAddress.ToString()), true));
 
                     if (activated == 1)
                     {
@@ -224,7 +224,7 @@ namespace BoxSocial.Groups
 
                     // just do it anyway, can be invited to any type of group
                     db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
-                        thisGroup.GroupId, loggedInMember.UserId));
+                        thisGroup.GroupId, LoggedInMember.Id));
 
                     SetRedirectUri(thisGroup.Uri);
                     if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
@@ -270,11 +270,11 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                bool isGroupMemberPending = thisGroup.IsGroupMemberPending(loggedInMember);
-                bool isGroupMember = thisGroup.IsGroupMember(loggedInMember);
+                bool isGroupMemberPending = thisGroup.IsGroupMemberPending(LoggedInMember);
+                bool isGroupMember = thisGroup.IsGroupMember(LoggedInMember);
 
                 DataTable operatorsTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
-                    thisGroup.GroupId, loggedInMember.UserId));
+                    thisGroup.GroupId, LoggedInMember.Id));
 
                 if (operatorsTable.Rows.Count > 0)
                 {
@@ -288,10 +288,10 @@ namespace BoxSocial.Groups
                     {
                         db.BeginTransaction();
                         db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                            thisGroup.GroupId, loggedInMember.UserId));
+                            thisGroup.GroupId, LoggedInMember.Id));
 
                         long officerRowsChanged = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1};",
-                            thisGroup.GroupId, loggedInMember.UserId));
+                            thisGroup.GroupId, LoggedInMember.Id));
 
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members - 1, group_officers = group_officers - {1} WHERE group_id = {0}",
                             thisGroup.GroupId, officerRowsChanged));

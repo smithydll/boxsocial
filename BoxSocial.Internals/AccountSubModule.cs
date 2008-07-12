@@ -39,7 +39,14 @@ namespace BoxSocial.Internals
         protected SessionState session;
         protected UnixTime tz;
         protected User loggedInMember;
+        /// <summary>
+        /// Account panel owner
+        /// </summary>
         protected Primitive Owner;
+        /// <summary>
+        /// Account panel viewer
+        /// </summary>
+        protected User LoggedInMember;
         protected HttpRequest Request;
         protected HttpResponse Response;
         protected HttpServerUtility Server;
@@ -72,6 +79,7 @@ namespace BoxSocial.Internals
             this.tz = core.tz;
             this.loggedInMember = session.LoggedInMember;
             this.Owner = owner;
+            this.LoggedInMember = session.LoggedInMember;
             this.Request = HttpContext.Current.Request;
             this.Response = HttpContext.Current.Response;
             this.Server = HttpContext.Current.Server;

@@ -55,25 +55,39 @@ namespace BoxSocial.Applications.Calendar
                 events.Add(new Event(core, owner, dr));
             }
 
-            // now select events invited to
-            SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
-            query.AddFields("event_invites.item_id", "event_invites.item_type", "event_invites.inviter_id", "event_invites.event_id");
-            query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
-            query.AddCondition("item_id", loggedIdUid);
-            query.AddCondition("item_type", "USER");
-            QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
-            qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
-            QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
-            qc3.AddCondition("event_time_end_ut", ConditionEquality.LessThanEqual, endTimeRaw);
-            QueryCondition qc4 = qc3.AddCondition(ConditionRelations.Or, "event_time_start_ut", ConditionEquality.LessThan, startTimeRaw);
-            qc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
-
-            eventsTable = db.Query(query);
-
-            foreach (DataRow dr in eventsTable.Rows)
+            if (owner.Type == "USER")
             {
-                events.Add(new Event(core, owner, dr));
+                // now select events invited to
+                SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
+                query.AddFields("event_invites.item_id", "event_invites.item_type", "event_invites.inviter_id", "event_invites.event_id");
+                query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
+                query.AddCondition("item_id", loggedIdUid);
+                query.AddCondition("item_type", "USER");
+                QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+                qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+                QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+                qc3.AddCondition("event_time_end_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+                QueryCondition qc4 = qc3.AddCondition(ConditionRelations.Or, "event_time_start_ut", ConditionEquality.LessThan, startTimeRaw);
+                qc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
+
+                eventsTable = db.Query(query);
+
+                foreach (DataRow dr in eventsTable.Rows)
+                {
+                    events.Add(new Event(core, owner, dr));
+                }
+
+
+                User user = (User)owner;
+                List<UserRelation> friends = user.GetFriendsBirthdays(startTimeRaw, endTimeRaw);
+
+                foreach (UserRelation friend in friends)
+                {
+                    events.Add(new BirthdayEvent(core, user, friend, core.tz.DateTimeFromMysql(startTimeRaw).Year));
+                }
             }
+
+            events.Sort();
 
             return events;
         }
@@ -130,17 +144,43 @@ namespace BoxSocial.Applications.Calendar
 
         public static void DisplayMiniCalendar(Core core, Template template, Primitive owner, int year, int month)
         {
+            DisplayMiniCalendar(core, template, null, owner, year, month);
+        }
+
+        public static void DisplayMiniCalendar(Core core, VariableCollection vc1, Primitive owner, int year, int month)
+        {
+            DisplayMiniCalendar(core, null, vc1, owner, year, month);
+        }
+
+        private static void DisplayMiniCalendar(Core core, Template template, VariableCollection vc1, Primitive owner, int year, int month)
+        {
             int days = DateTime.DaysInMonth(year, month);
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
 
-            template.Parse("CURRENT_MONTH", Functions.IntToMonth(core.tz.Now.Month));
-            template.Parse("CURRENT_YEAR", core.tz.Now.Year.ToString());
+            if (template != null)
+            {
+                template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+                template.Parse("CURRENT_YEAR", year.ToString());
+            }
+            else
+            {
+                vc1.Parse("MONTH", Functions.IntToMonth(month));
+                vc1.Parse("U_MONTH", BuildMonthUri(owner, year, month));
+            }
 
             for (int week = 0; week < weeks; week++)
             {
-                VariableCollection weekVariableCollection = template.CreateChild("week");
+                VariableCollection weekVariableCollection;
+                if (template != null)
+                {
+                    weekVariableCollection = template.CreateChild("week");
+                }
+                else
+                {
+                    weekVariableCollection = vc1.CreateChild("week");
+                }
 
                 weekVariableCollection.Parse("WEEK", (week + 1).ToString());
 
@@ -203,6 +243,18 @@ namespace BoxSocial.Applications.Calendar
                 owner.Key, year, month, day));
         }
 
+        private static string BuildMonthUri(Primitive owner, int year, int month)
+        {
+            return Linker.AppendSid(string.Format("/{0}/calendar/{1}/{2}",
+                owner.Key, year, month));
+        }
+
+        private static string BuildYearUri(Primitive owner, int year)
+        {
+            return Linker.AppendSid(string.Format("/{0}/calendar/{1}",
+                owner.Key, year));
+        }
+
         private static int GetFirstDayOfMonthOffset(DayOfWeek firstDay)
         {
             // First day of the week is Monday
@@ -226,9 +278,72 @@ namespace BoxSocial.Applications.Calendar
             return 0;
         }
 
+        public static int YearOfPreviousMonth(int year, int month)
+        {
+            if (month > 1)
+            {
+                return year;
+            }
+            else
+            {
+                return year - 1;
+            }
+        }
+
+        public static int PreviousMonth(int month)
+        {
+            if (month > 1)
+            {
+                return month - 1;
+            }
+            else
+            {
+                return 12;
+            }
+        }
+
+        public static int YearOfNextMonth(int year, int month)
+        {
+            if (month < 12)
+            {
+                return year;
+            }
+            else
+            {
+                return year + 1;
+            }
+        }
+
+        public static int NextMonth(int month)
+        {
+            if (month < 12)
+            {
+                return month + 1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+
         public static void Show(Core core, TPage page, Primitive owner)
         {
             Show(core, page, owner, core.tz.Now.Year, core.tz.Now.Month);
+        }
+
+        public static void Show(Core core, TPage page, Primitive owner, int year)
+        {
+            page.template.SetTemplate("Calendar", "viewcalendaryear");
+
+            page.template.Parse("CURRENT_YEAR", year.ToString());
+
+            page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(owner, year - 1));
+            page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(owner, year + 1));
+
+            for (int i = 1; i <= 12; i++)
+            {
+                DisplayMiniCalendar(core, page.template.CreateChild("month"), owner, year, i);
+            }
         }
 
         public static void Show(Core core, TPage page, Primitive owner, int year, int month)
@@ -237,6 +352,8 @@ namespace BoxSocial.Applications.Calendar
 
             page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
             page.template.Parse("CURRENT_YEAR", year.ToString());
+            page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
+            page.template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(owner, YearOfNextMonth(year, month), NextMonth(month)));
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
@@ -250,13 +367,13 @@ namespace BoxSocial.Applications.Calendar
             DayOfWeek firstDay = new DateTime(year, month, 1).DayOfWeek;
             int offset = Calendar.GetFirstDayOfMonthOffset(firstDay);
             int weeks = (int)Math.Ceiling((days + offset) / 7.0);
-            int daysPrev = DateTime.DaysInMonth(year - (month - 1) / 12, (core.tz.Now.Month - 2) % 12 + 1);
+            int daysPrev = DateTime.DaysInMonth(YearOfPreviousMonth(year, month), PreviousMonth(month));
 
             long startTime = 0;
             if (offset > 0)
             {
                 // the whole month including entry days
-                startTime = core.tz.GetUnixTimeStamp(new DateTime(year - (month - 2) / 12, (month - 2) % 12 + 1, daysPrev - offset + 1, 0, 0, 0));
+                startTime = core.tz.GetUnixTimeStamp(new DateTime(YearOfPreviousMonth(year, month), PreviousMonth(month), daysPrev - offset + 1, 0, 0, 0));
             }
             else
             {
@@ -284,13 +401,13 @@ namespace BoxSocial.Applications.Calendar
                 /* lead in week */
                 if (week + 1 == 1)
                 {
-                    int daysPrev2 = DateTime.DaysInMonth(year - (month - 2) / 12, (month - 2) % 12 + 1);
+                    int daysPrev2 = DateTime.DaysInMonth(YearOfPreviousMonth(year, month), PreviousMonth(month));
                     /* days in month prior */
                     for (int i = offset - 1; i >= 0; i--)
                     {
                         int day = daysPrev2 - i;
 
-                        Calendar.showDayEvents(core, owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day, weekVariableCollection, events);
+                        Calendar.showDayEvents(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month), day, weekVariableCollection, events);
                     }
                     /* first days in month */
                     for (int i = offset; i < 7; i++)
@@ -315,7 +432,7 @@ namespace BoxSocial.Applications.Calendar
                     {
                         int day = i + 1;
 
-                        Calendar.showDayEvents(core, owner, year + (month) / 12, (month) % 12 + 1, day, weekVariableCollection, events);
+                        Calendar.showDayEvents(core, owner, YearOfNextMonth(year, month), NextMonth(month), day, weekVariableCollection, events);
                     }
                 }
                 else
@@ -358,6 +475,25 @@ namespace BoxSocial.Applications.Calendar
             Calendar cal = new Calendar(core);
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
+            bool hasAllDaysEvents = false;
+
+            foreach (Event calendarEvent in events)
+            {
+                if (calendarEvent.AllDay)
+                {
+                    hasAllDaysEvents = true;
+                    VariableCollection eventVariableCollection = page.template.CreateChild("event");
+
+                    eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
+                    eventVariableCollection.Parse("URI", calendarEvent.Uri);
+                }
+            }
+
+            if (hasAllDaysEvents)
+            {
+                page.template.Parse("ALL_DAY_EVENTS", "TRUE");
+            }
+
             for (int hour = 0; hour < 24; hour++)
             {
                 VariableCollection timeslotVariableCollection = page.template.CreateChild("timeslot");
@@ -397,7 +533,7 @@ namespace BoxSocial.Applications.Calendar
 
                 eventVariableCollection.Parse("TITLE", calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length)));
                 eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower());
-                eventVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
+                eventVariableCollection.Parse("URI", calendarEvent.Uri);
 
                 hasEvents = true;
 
@@ -429,6 +565,11 @@ namespace BoxSocial.Applications.Calendar
             List<Event> expired = new List<Event>();
             foreach (Event calendarEvent in events)
             {
+                if (calendarEvent.AllDay)
+                {
+                    continue;
+                }
+
                 long startTime = calendarEvent.StartTimeRaw;
                 long endTime = calendarEvent.EndTimeRaw;
 
@@ -456,7 +597,7 @@ namespace BoxSocial.Applications.Calendar
 
                 eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
                 eventVariableCollection.Parse("HEIGHT", height.ToString());
-                eventVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
+                eventVariableCollection.Parse("URI", calendarEvent.Uri);
 
                 hasEvents = true;
 

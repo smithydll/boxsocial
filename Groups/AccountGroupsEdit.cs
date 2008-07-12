@@ -75,7 +75,7 @@ namespace BoxSocial.Groups
 
             UserGroup thisGroup = new UserGroup(core, groupId);
 
-            if (!thisGroup.IsGroupOperator(loggedInMember))
+            if (!thisGroup.IsGroupOperator(LoggedInMember))
             {
                 Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
@@ -155,7 +155,7 @@ namespace BoxSocial.Groups
 
             UserGroup thisGroup = new UserGroup(core, groupId);
 
-            if (!thisGroup.IsGroupOperator(loggedInMember))
+            if (!thisGroup.IsGroupOperator(LoggedInMember))
             {
                 Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;

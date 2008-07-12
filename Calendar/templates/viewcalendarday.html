@@ -6,6 +6,14 @@
 		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
 	</div>
 	<!-- ENDIF -->
+<!-- IF ALL_DAY_EVENTS -->
+    <ul class="all-day-events">
+      <!-- BEGIN event -->
+        <li class="event" style="width: 100%; height: 32px;"><a href="{event.URI}">{event.TITLE}</a>
+        </li>
+      <!-- END event -->
+    </ul>
+<!-- ENDIF -->
 	<ul id="day-timeslots">
 		<!-- BEGIN timeslot -->
 		<li>

@@ -76,6 +76,10 @@ namespace BoxSocial.Internals
         private long profileComments;
         [DataField("profile_date_of_birth_ut")]
         private long dateofBirthRaw;
+        [DataField("profile_date_of_birth_month_cache")]
+        private byte dateofBirthMonthRaw;
+        [DataField("profile_date_of_birth_day_cache")]
+        private byte dateofBirthDayRaw;
 
         private string countryName;
 
@@ -167,7 +171,14 @@ namespace BoxSocial.Internals
                     case "SINGLE":
                         return "Single";
                     case "RELATIONSHIP":
-                        return "In a Relationship";
+                        if (MaritialWithConfirmed && MaritialWithId > 0)
+                        {
+                            return "In a Relationship with [user]" + MaritialWithId + "[/user]";
+                        }
+                        else
+                        {
+                            return "In a Relationship";
+                        }
                     case "MARRIED":
                         return "Married";
                     case "SWINGER":
@@ -437,6 +448,8 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("dateofBirthRaw", UnixTime.UnixTimeStamp(value));
+                SetProperty("dateofBirthMonthRaw", (byte)value.Month);
+                SetProperty("dateofBirthDayRaw", (byte)value.Day);
             }
         }
 
@@ -521,10 +534,12 @@ namespace BoxSocial.Internals
             {
                 if (maritialWith == 0)
                 {
-                    switch (maritialStatus)
+                    switch (maritialStatus.ToUpper())
                     {
                         case null:
                         case "":
+                        case "FALSE":
+                        case "UNDEF":
                             // Ignore if empty or null
                             break;
                         default:
@@ -543,10 +558,12 @@ namespace BoxSocial.Internals
 
             if (HasPropertyUpdated("maritialWithConfirmed"))
             {
-                switch (maritialStatus)
+                switch (maritialStatus.ToUpper())
                 {
                     case null:
                     case "":
+                    case "FALSE":
+                    case "UNDEF":
                         // Ignore if empty or null
                         break;
                     default:

@@ -72,7 +72,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (!thisGroup.IsGroupMember(loggedInMember))
+                if (!thisGroup.IsGroupMember(LoggedInMember))
                 {
                     Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                     return;
@@ -112,7 +112,7 @@ namespace BoxSocial.Groups
                 {
                     User inviteMember = core.UserProfiles[core.LoadUserProfile(username)];
 
-                    if (!thisGroup.IsGroupMember(loggedInMember))
+                    if (!thisGroup.IsGroupMember(LoggedInMember))
                     {
                         Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                         return;
@@ -122,20 +122,20 @@ namespace BoxSocial.Groups
                     {
                         // use their relation, otherwise you could just create a billion pending friends and still SPAM them with group invites
                         DataTable friendsTable = db.Query(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND';",
-                            inviteMember.UserId, loggedInMember.UserId));
+                            inviteMember.UserId, LoggedInMember.Id));
 
                         if (friendsTable.Rows.Count > 0)
                         {
                             Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
 
-                            emailTemplate.Parse("TO_NAME", inviteMember.DisplayName);
-                            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
-                            emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
-                            emailTemplate.Parse("GROUP_NAME", thisGroup.DisplayName);
+                            emailTemplate.Parse("TO_NAME", LoggedInMember.DisplayName);
+                            emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
+                            emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
+                            emailTemplate.Parse("GROUP_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
                             emailTemplate.Parse("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
 
-                            ApplicationEntry ae = Application.GetExecutingApplication(core, loggedInMember);
+                            ApplicationEntry ae = Application.GetExecutingApplication(core, LoggedInMember);
                             ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), "{TODO}", emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);

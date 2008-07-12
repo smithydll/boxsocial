@@ -59,6 +59,7 @@ namespace BoxSocial.Internals
 
         void AccountPreferences_Show(object sender, EventArgs e)
         {
+            //User loggedInMember = (User)loggedInMember;
             template.SetTemplate("account_preferences.html");
 
             string radioChecked = " checked=\"checked\"";
@@ -136,6 +137,7 @@ namespace BoxSocial.Internals
 
         void AccountPreferences_Save(object sender, EventArgs e)
         {
+            //User loggedInMember = (User)loggedInMember;
             AuthoriseRequestSid();
 
             bool displayImages = true;
@@ -165,11 +167,11 @@ namespace BoxSocial.Internals
 
             if (homepage != "/profile" && homepage != "/blog")
             {
-                string[] paths = homepage.Split('/');
-                DataTable pageTable = db.Query(string.Format("SELECT page_id FROM user_pages WHERE page_slug = '{1}' AND page_parent_path = '{2}' AND user_id = {0};",
-                    loggedInMember.UserId, Mysql.Escape(homepage.Remove(homepage.Length - paths[paths.GetUpperBound(0)].Length).TrimEnd('/'))));
-
-                if (pageTable.Rows.Count == 0)
+                try
+                {
+                    Page thisPage = new Page(core, (User)loggedInMember, homepage.TrimStart(new char[] { '/' }));
+                }
+                catch (PageNotFoundException)
                 {
                     homepage = "/profile";
                 }

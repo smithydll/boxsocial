@@ -62,7 +62,17 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_blog_manage");
 
-            Blog myBlog = new Blog(core, loggedInMember);
+            Blog myBlog;
+
+            try
+            {
+                myBlog = new Blog(core, loggedInMember);
+            }
+            catch (InvalidBlogException)
+            {
+                myBlog = Blog.Create(core);
+            }
+
             ushort readAccessLevel = 0x0000;
             List<BlogEntry> blogEntries = myBlog.GetEntries(null, -1, -1, -1, 1, 50, ref readAccessLevel);
 

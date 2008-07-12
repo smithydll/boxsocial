@@ -49,6 +49,7 @@
     <Compile Include="AccountCalendarTaskMarkComplete.cs" />
     <Compile Include="AccountCalendarTaskNew.cs" />
     <Compile Include="AppInfo.cs" />
+    <Compile Include="BirthdayEvent.cs" />
     <Compile Include="Calendar.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +98,7 @@
     <Content Include="templates\viewcalendarmonth.html" />
     <Content Include="templates\viewcalendartask.html" />
     <Content Include="templates\viewcalendartasks.html" />
+    <Content Include="templates\viewcalendaryear.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

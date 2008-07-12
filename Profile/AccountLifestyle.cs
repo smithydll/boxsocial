@@ -127,7 +127,14 @@ namespace BoxSocial.Applications.Profile
 
             if (relation != null)
             {
-                loggedInMember.Profile.MaritialWithId = relation.Id;
+                if (loggedInMember.Id != relation.Id)
+                {
+                    loggedInMember.Profile.MaritialWithId = relation.Id;
+                }
+                else
+                {
+                    loggedInMember.Profile.MaritialWithId = 0;
+                }
             }
             else
             {

@@ -38,47 +38,47 @@ namespace BoxSocial.Applications.Calendar
     }
 
     [DataTable("events")]
-    public class Event : Item, ICommentableItem, IPermissibleItem
+    public class Event : Item, ICommentableItem, IPermissibleItem, IComparable
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
 
         #region Data Fields
         [DataField("event_id", DataFieldKeys.Primary)]
-        private long eventId;
+        protected long eventId;
         [DataField("event_subject", 127)]
-        private string subject;
+        protected string subject;
         [DataField("event_description", MYSQL_TEXT)]
-        private string description;
+        protected string description;
         [DataField("event_views")]
-        private long views;
+        protected long views;
         [DataField("event_attendees")]
-        private long attendees;
+        protected long attendees;
         [DataField("event_access")]
-        private ushort permissions;
+        protected ushort permissions;
         [DataField("event_comments")]
-        private long comments;
+        protected long comments;
         [DataField("event_item_id")]
-        private long ownerId;
+        protected long ownerId;
         [DataField("event_item_type", 63)]
-        private string ownerType;
+        protected string ownerType;
         [DataField("user_id")]
-        private long userId; // creator
+        protected long userId; // creator
         [DataField("event_time_start_ut")]
-        private long startTimeRaw;
+        protected long startTimeRaw;
         [DataField("event_time_end_ut")]
-        private long endTimeRaw;
+        protected long endTimeRaw;
         [DataField("event_all_day")]
-        private bool allDay;
+        protected bool allDay;
         [DataField("event_invitees")]
-        private long invitees;
+        protected long invitees;
         [DataField("event_category")]
-        private ushort category;
+        protected ushort category;
         [DataField("event_location", 127)]
-        private string location;
+        protected string location;
         #endregion
 
-        private Access eventAccess;
-        private Primitive owner;
+        protected Access eventAccess;
+        protected Primitive owner;
 
         public long EventId
         {
@@ -236,6 +236,11 @@ namespace BoxSocial.Applications.Calendar
         public DateTime GetEndTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(endTimeRaw);
+        }
+
+        protected Event(Core core)
+            : base(core)
+        {
         }
 
         public Event(Core core, Primitive owner, long eventId)
@@ -664,6 +669,22 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+
+        #region IComparable Members
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Event || obj is BirthdayEvent)
+            {
+                return startTimeRaw.CompareTo(((Event)obj).startTimeRaw);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidEventException : Exception

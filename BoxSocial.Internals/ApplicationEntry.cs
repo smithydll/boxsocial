@@ -376,7 +376,6 @@ namespace BoxSocial.Internals
 
             string assemblyName = asm.GetName().Name;
 
-            this.owner = owner;
             ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
             try

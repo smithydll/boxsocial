@@ -161,12 +161,25 @@ ul.day-events {
 	margin: 0 5px;
 }
 
+ul.all-day-events {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+}
+
 ul#day-timeslots li ul.day-events li.event {
 	position: relative;
 	background-color: #FFFFFF;
 	padding: 1px;
 	border: solid 1px #E7E7E7;
 	border-left: solid 5px #27DD66;
+}
+
+ul.all-day-events li.event {
+	background-color: #FFFFFF;
+	padding: 1px;
+	border: solid 1px #E7E7E7;
+	border-left: solid 5px #DDDD66;
 }
 
 span.overdue-task a {

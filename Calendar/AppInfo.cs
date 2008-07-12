@@ -238,6 +238,11 @@ namespace BoxSocial.Applications.Calendar
 
         private void showCalendarYear(Core core, object sender)
         {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value));
+            }
         }
 
         private void showCalendarMonth(Core core, object sender)

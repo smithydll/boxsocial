@@ -70,7 +70,7 @@ namespace BoxSocial.Groups
             template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
 
             DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
-                loggedInMember.UserId, UserGroup.GROUP_INFO_FIELDS));
+                LoggedInMember.Id, UserGroup.GROUP_INFO_FIELDS));
 
             for (int i = 0; i < groupsTable.Rows.Count; i++)
             {

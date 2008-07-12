@@ -1,0 +1,39 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>{CURRENT_YEAR}</h2>
+
+<div>
+  <p>
+    <a href="{U_PREVIOUS_YEAR}">&lt;&lt; Previous Year</a> |
+    <a href="{U_NEXT_YEAR}">Next Year&gt;&gt;</a>
+  </p>
+</div>
+<ul style="list-style: none; padding: 0px; margin: 0 2px;">
+<!-- BEGIN month -->
+  <li style="float: left; width: 32%; height: 185px;">
+    <div style="margin: auto; width: 190px;">
+    <h3><a href="{month.U_MONTH}">{month.MONTH}</a></h3>
+<div class="month-small">
+  <div class="week">
+    <div class="day">Mo</div>
+    <div class="day">Tu</div>
+    <div class="day">Wd</div>
+    <div class="day">Th</div>
+    <div class="day">Fr</div>
+    <div class="day">Sa</div>
+    <div class="day">Su</div>
+  </div>
+  <!-- BEGIN month.week -->
+  <div class="week">
+    <!-- BEGIN month.week.day -->
+    <div class="day">
+      <a href="{month.week.day.URI}">{month.week.day.DATE}</a>
+    </div>
+    <!-- END month.week.day -->
+  </div>
+  <!-- END month.week -->
+</div>
+  </div>
+  </li>
+<!-- END month -->
+</ul>
+<!-- INCLUDE page_footer.html -->

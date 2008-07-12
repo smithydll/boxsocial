@@ -930,6 +930,50 @@ namespace BoxSocial.Internals
             return friends;
         }
 
+        public List<UserRelation> GetFriendsBirthdays(long startTimeRaw, long endTimeRaw)
+        {
+            DateTime st = core.tz.DateTimeFromMysql(startTimeRaw - 23 * 60 * 60);
+            DateTime et = core.tz.DateTimeFromMysql(endTimeRaw + 23 * 60 * 60);
+
+            List<UserRelation> friends = new List<UserRelation>();
+
+            SelectQuery query = new SelectQuery("user_relations");
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
+            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            query.AddCondition("relation_me", userId);
+            query.AddCondition("relation_type", "FRIEND");
+            query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.GreaterThanEqual, st.Month * 31 + st.Day);
+            query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.LessThanEqual, et.Month * 31 + et.Day);
+
+            DataTable friendsTable = db.Query(query);
+
+            foreach (DataRow dr in friendsTable.Rows)
+            {
+                UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
+                UnixTime tz = new UnixTime(friend.TimeZoneCode);
+                DateTime dob = new DateTime(tz.Now.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
+                long dobUt = tz.GetUnixTimeStamp(dob);
+
+                if (dobUt >= startTimeRaw &&
+                    dobUt <= endTimeRaw)
+                {
+                    friends.Add(friend);
+                }
+            }
+
+            return friends;
+        }
+
         public List<User> GetFriendsOnline()
         {
             return GetFriendsOnline(1, 255);
@@ -1166,6 +1210,7 @@ namespace BoxSocial.Internals
 
             query = new InsertQuery("user_profile");
             query.AddField("user_id", userId);
+            query.AddField("profile_date_of_birth_ut", UnixTime.UnixTimeStamp(new DateTime(1000, 1, 1)));
             query.AddField("profile_access", 0x3331);
 
             db.Query(query);
@@ -1831,7 +1876,7 @@ namespace BoxSocial.Internals
             core.template.Parse("USER_GENDER", page.ProfileOwner.Gender);
             //core.template.ParseRaw("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(page.ProfileOwner.Autobiography), core.session.LoggedInMember));
             Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
-            core.template.Parse("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
+            Display.ParseBbcode("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
             core.template.Parse("USER_AGE", age);
             core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate));
             core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true));

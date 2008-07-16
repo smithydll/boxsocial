@@ -167,25 +167,6 @@ namespace BoxSocial.FrontEnd
 
             Account accountObject = new Account(Core);
             loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, session.LoggedInMember), module);
-            /*Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (Assembly assembly in assemblies)
-            {
-                Type[] types = assembly.GetTypes();
-                foreach (Type type in types)
-                {
-                    if (type.IsSubclassOf(typeof(AccountModule)))
-                    {
-                        AccountModule newModule = System.Activator.CreateInstance(type, accountObject) as AccountModule;
-
-                        if (newModule != null)
-                        {
-                            accountModules.Add(newModule);
-                        }
-                    }
-                }
-            }*/
-
 
             accountObject.RegisterModule += new Account.RegisterModuleHandler(OnRegisterModule);
             accountObject.RegisterAllModules();

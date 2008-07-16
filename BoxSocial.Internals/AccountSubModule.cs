@@ -287,7 +287,6 @@ namespace BoxSocial.Internals
         /// <param name="errorMessage"></param>
         protected void DisplayGenericError()
         {
-            throw new Exception("Error");
             template = new Template("1302.html");
             template.ParseRaw("ERROR_MESSAGE", "An error has occured accessing this account module, maybe you are accessing it incorrectly. <a href=\"javascript:history.go(-1);\">Go Back</a>");
             RenderTemplate();

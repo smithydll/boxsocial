@@ -73,14 +73,11 @@ namespace BoxSocial.Groups
         {
             this.db = db;
 
-            /*SelectQuery query = new SelectQuery("group_members gm");
-            query.AddFields(Member.USER_INFO_FIELDS, Member.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS, "go.user_id AS user_id_go");
-            query.joins.Add(new TableJoin(JoinTypes.Inner, "user_info ui", "gm.user_id", "ui.user_id"));
-            query.joins.Add(new TableJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id"));
-            query.joins.Add(new TableJoin(JoinTypes.Left, "group_operators go", "ui.user_id", "go.user_id"));*/
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_id", userId);
+            query.AddCondition("group_members.group_id", group.GroupId);
 
-            DataTable memberTable = db.Query(string.Format("SELECT {2}, {3}, {4}, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.user_id = {1};",
-                group.GroupId, userId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
+            DataTable memberTable = db.Query(query);
 
             if (memberTable.Rows.Count == 1)
             {
@@ -187,6 +184,34 @@ namespace BoxSocial.Groups
             query.AddCondition("group_id", groupId);
 
             db.Query(query);
+        }
+
+        public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        {
+            SelectQuery query = GetSelectQueryStub(typeof(GroupMember));
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
+            query.AddJoin(JoinTypes.Left, "group_operators", "user_id", "user_id");
+            if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+            {
+                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+            }
+            if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+            {
+                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            }
+            if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+            {
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            }
+
+            return query;
         }
     }
 }

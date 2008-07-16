@@ -532,8 +532,22 @@ namespace BoxSocial.Applications.Calendar
                 VariableCollection eventVariableCollection = dayVariableCollection.CreateChild("event");
 
                 eventVariableCollection.Parse("TITLE", calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length)));
-                eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower());
+                if (calendarEvent.GetStartTime(core.tz).Day != day)
+                {
+                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("d MMMM h:mmt").ToLower());
+                }
+                else
+                {
+                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower());
+                }
                 eventVariableCollection.Parse("URI", calendarEvent.Uri);
+
+                if (calendarEvent is BirthdayEvent)
+                {
+                    BirthdayEvent birthdayEvent = (BirthdayEvent)calendarEvent;
+
+                    eventVariableCollection.Parse("BIRTH_DATE", birthdayEvent.User.Profile.DateOfBirth.ToString("d MMMM"));
+                }
 
                 hasEvents = true;
 

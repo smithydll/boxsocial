@@ -60,8 +60,6 @@ namespace BoxSocial.Internals
     public class User : Primitive, ICommentableItem
     {
         public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes, ui.user_status_messages";
-        public const string USER_PROFILE_FIELDS = "up.profile_comments, up.profile_country, c.country_name, up.profile_religion, up.profile_name_title, up.profile_name_suffix, up.profile_name_first, up.profile_name_middle, up.profile_name_last, up.profile_access, up.profile_views, up.profile_date_of_birth+0, up.profile_maritial_status, up.profile_autobiography, up.profile_sexuality, up.profile_gender, up.profile_date_of_birth_ut";
-        public const string USER_ICON_FIELDS = "gi.gallery_item_parent_path, gi.gallery_item_uri";
 
         public static long lastEmailId;
 
@@ -932,24 +930,12 @@ namespace BoxSocial.Internals
 
         public List<UserRelation> GetFriendsBirthdays(long startTimeRaw, long endTimeRaw)
         {
-            DateTime st = core.tz.DateTimeFromMysql(startTimeRaw - 23 * 60 * 60);
-            DateTime et = core.tz.DateTimeFromMysql(endTimeRaw + 23 * 60 * 60);
+            DateTime st = core.tz.DateTimeFromMysql(startTimeRaw - 24 * 60 * 60);
+            DateTime et = core.tz.DateTimeFromMysql(endTimeRaw + 48 * 60 * 60);
 
             List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = new SelectQuery("user_relations");
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
-            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
-            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
-            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
-            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
-            query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
-            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
-            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
-            query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
             query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.GreaterThanEqual, st.Month * 31 + st.Day);
@@ -961,11 +947,11 @@ namespace BoxSocial.Internals
             {
                 UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
                 UnixTime tz = new UnixTime(friend.TimeZoneCode);
-                DateTime dob = new DateTime(tz.Now.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
+                DateTime dob = new DateTime(st.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
                 long dobUt = tz.GetUnixTimeStamp(dob);
 
-                if (dobUt >= startTimeRaw &&
-                    dobUt <= endTimeRaw)
+                if ((dobUt >= startTimeRaw && dobUt <= endTimeRaw) ||
+                    (dobUt + 24 * 60 * 60 - 1 >= startTimeRaw && dobUt + 24 * 60 * 60 - 1 <= endTimeRaw))
                 {
                     friends.Add(friend);
                 }
@@ -974,23 +960,18 @@ namespace BoxSocial.Internals
             return friends;
         }
 
-        public List<User> GetFriendsOnline()
+        public List<UserRelation> GetFriendsOnline()
         {
             return GetFriendsOnline(1, 255);
         }
 
-        public List<User> GetFriendsOnline(int page, int perPage)
+        public List<UserRelation> GetFriendsOnline(int page, int perPage)
         {
-            List<User> friends = new List<User>();
+            List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = new SelectQuery("user_relations uf");
-            query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
-            query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
-            query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
-            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-            query.AddCondition("uf.relation_me", userId);
-            query.AddCondition("uf.relation_type", "FRIEND");
+            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("relation_me", userId);
+            query.AddCondition("relation_type", "FRIEND");
             // last 15 minutes
             query.AddCondition("UNIX_TIMSTAMP() - ui.user_last_visit_ut", ConditionEquality.LessThan, 900);
             query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
@@ -1001,7 +982,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new User(core, dr, UserLoadOptions.All & ~UserLoadOptions.Religion));
+                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
             }
 
             return friends;
@@ -1028,29 +1009,24 @@ namespace BoxSocial.Internals
             return emailAddresses;
         }
 
-        public List<User> SearchFriendNames(string needle)
+        public List<UserRelation> SearchFriendNames(string needle)
         {
             return SearchFriendNames(needle, 1, 255);
         }
 
-        public List<User> SearchFriendNames(string needle, int page, int perPage)
+        public List<UserRelation> SearchFriendNames(string needle, int page, int perPage)
         {
-            List<User> friends = new List<User>();
+            List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = new SelectQuery("user_relations uf");
-            query.AddFields(User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
-            query.AddJoin(JoinTypes.Inner, "user_info ui", "uf.relation_you", "ui.user_id");
-            query.AddJoin(JoinTypes.Inner, "user_profile up", "uf.relation_you", "up.user_id");
-            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-            query.AddCondition("uf.relation_me", userId);
-            query.AddCondition("uf.relation_type", "FRIEND");
+            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("relation_me", userId);
+            query.AddCondition("relation_type", "FRIEND");
 
             // here we are grouping the condition to do an OR between these two conditions only
-            QueryCondition qc = query.AddCondition("ui.user_name", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
-            qc.AddCondition(ConditionRelations.Or, "ui.user_name_display", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
+            QueryCondition qc = query.AddCondition("user_info.user_name", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
+            qc.AddCondition(ConditionRelations.Or, "user_info.user_name_display", ConditionEquality.Like, QueryCondition.EscapeLikeness(needle) + "%");
 
-            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
@@ -1058,7 +1034,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new User(core, dr, UserLoadOptions.All & ~UserLoadOptions.Religion));
+                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
             }
 
             return friends;
@@ -1136,6 +1112,32 @@ namespace BoxSocial.Internals
             {
                 return false;
             }
+        }
+
+        public static SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        {
+            SelectQuery query = new SelectQuery("user_keys");
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+            {
+                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+            }
+            if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+            {
+                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            }
+            if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+            {
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            }
+
+            return query;
         }
 
         /// <summary>

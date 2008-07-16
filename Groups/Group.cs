@@ -1296,8 +1296,12 @@ namespace BoxSocial.Groups
             {
                 page.template.Parse("GROUP_OPERATOR", "TRUE");
 
-                DataTable approvalTable = core.db.Query(string.Format("SELECT {1}, {2}, {3}, {4} group_member_date_ut, go.user_id AS user_id_go FROM group_members gm INNER JOIN user_info ui ON gm.user_id = ui.user_id INNER JOIN user_profile up ON gm.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) LEFT JOIN group_operators go ON ui.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.group_id = {0} AND gm.group_member_approved = 0 ORDER BY group_member_date_ut ASC",
-                    page.ThisGroup.GroupId, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS, GroupMember.USER_GROUP_FIELDS));
+                SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.All);
+                query.AddCondition("group_members.group_id", page.ThisGroup.Id);
+                query.AddCondition("group_member_approved", false);
+                query.AddSort(SortOrder.Ascending, "group_member_date_ut");
+
+                DataTable approvalTable = core.db.Query(query);
 
                 if (approvalTable.Rows.Count > 0)
                 {

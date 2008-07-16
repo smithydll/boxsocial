@@ -199,7 +199,7 @@ namespace BoxSocial.FrontEnd
         private void showFriends()
         {
             string needle = Request["name"];
-            List<User> friends;
+            List<UserRelation> friends;
             if (IsAjax)
             {
                 friends = loggedInMember.SearchFriendNames(needle, 1, 10);
@@ -218,7 +218,7 @@ namespace BoxSocial.FrontEnd
 
                 friends = loggedInMember.SearchFriendNames(needle, page, 20);
 
-                foreach (User friend in friends)
+                foreach (UserRelation friend in friends)
                 {
                     VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 

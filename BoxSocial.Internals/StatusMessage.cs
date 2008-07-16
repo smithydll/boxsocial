@@ -33,8 +33,6 @@ namespace BoxSocial.Internals
     {
         public const string STATUS_MESSAGE_FIELDS = "usm.status_id, usm.user_id, usm.status_message, usm.status_time_ut";
 
-        private Mysql db;
-
         private long statusId;
         private User owner;
         private long ownerId;

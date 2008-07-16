@@ -10,6 +10,10 @@
     <ul class="all-day-events">
       <!-- BEGIN event -->
         <li class="event" style="width: 100%; height: 32px;"><a href="{event.URI}">{event.TITLE}</a>
+          <span class="ade-start-time">{event.START_TIME}</span>
+        <!-- IF event.IS_BIRTHDAY -->
+          (<span class="birth-date">{event.BIRTH_DATE}</span>)
+          <!-- ENDIF -->
         </li>
       <!-- END event -->
     </ul>

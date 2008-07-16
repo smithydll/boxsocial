@@ -231,8 +231,11 @@ namespace BoxSocial.Internals
                     sessionData.autoLoginId = "";
                     sessionData.userId = userId;
 
-                    DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0} AND ui.user_active = 1",
-                        userId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
+                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                    query.AddCondition("user_active", true);
+                    query.AddCondition("user_id", userId);
+
+                    DataTable userSessionTable = db.Query(query);
 
                     if (userSessionTable.Rows.Count == 1)
                     {
@@ -271,8 +274,10 @@ namespace BoxSocial.Internals
                 sessionData.userId = userId = 0;
                 enableAutologin = isLoggedIn = false;
 
-                DataTable userTable = db.Query(string.Format("SELECT {1}, {2} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE uk.user_id = {0}",
-                    userId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
+                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                query.AddCondition("user_id", userId);
+
+                DataTable userTable = db.Query(query);
 
                 if (userTable.Rows.Count == 1)
                 {
@@ -426,8 +431,12 @@ namespace BoxSocial.Internals
                 // session_id exists so go ahead and attempt to grab all
                 // data in preparation
                 //
-                DataTable userSessionTable = db.Query(string.Format("SELECT {1}, {2}, us.session_string, us.session_ip, us.session_time_ut FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id INNER JOIN user_sessions us ON us.user_id = uk.user_id LEFT JOIN gallery_items gi ON ui.user_icon = gi.gallery_item_id WHERE us.session_string = '{0}';",
-                    sessionId, User.USER_INFO_FIELDS, User.USER_ICON_FIELDS));
+                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                query.AddFields("session_ip", "session_time_ut");
+                query.AddJoin(JoinTypes.Inner, "user_sessions", "user_id", "user_id");
+                query.AddCondition("session_string", sessionId);
+
+                DataTable userSessionTable = db.Query(query);
 
                 //
                 // Did the session exist in the DB?

@@ -99,14 +99,9 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, int networkId, int memberId)
             : base(core)
         {
-            SelectQuery query = new SelectQuery("network_members nm");
-            query.AddFields(NetworkMember.USER_NETWORK_FIELDS, User.USER_INFO_FIELDS, User.USER_PROFILE_FIELDS, User.USER_ICON_FIELDS);
-            query.AddJoin(JoinTypes.Inner, "user_info ui", "nm.user_id", "ui.user_id");
-            query.AddJoin(JoinTypes.Inner, "user_profile up", "nm.user_id", "up.user_id");
-            query.AddJoin(JoinTypes.Left, "countries c", "up.profile_country", "c.country_iso");
-            query.AddJoin(JoinTypes.Left, "gallery_items gi", "ui.user_icon", "gi.gallery_item_id");
-            query.AddCondition("nm.user_id", memberId);
-            query.AddCondition("nm.network_id", networkId);
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_id", memberId);
+            query.AddCondition("network_id", networkId);
 
             DataTable memberTable = db.Query(query);
 
@@ -185,6 +180,33 @@ namespace BoxSocial.Networks
             }
 
             return true;
+        }
+
+        public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        {
+            SelectQuery query = GetSelectQueryStub(typeof(NetworkMember));
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
+            if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+            {
+                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+            }
+            if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+            {
+                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            }
+            if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+            {
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            }
+
+            return query;
         }
     }
 }

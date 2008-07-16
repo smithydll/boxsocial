@@ -34,6 +34,14 @@ namespace BoxSocial.Applications.Calendar
 
         private User user;
 
+        public User User
+        {
+            get
+            {
+                return user;
+            }
+        }
+
         public BirthdayEvent(Core core, User owner, User user, int year)
             : base(core)
         {

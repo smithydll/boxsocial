@@ -495,8 +495,6 @@ namespace BoxSocial.Internals
                                     string insertEnd = "";
                                     bool listItem = false;
 
-                                    BbcodeAttributes attrs;
-
                                     /*
                                      * A couple of special cases
                                      */

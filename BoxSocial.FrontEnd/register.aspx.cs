@@ -159,7 +159,7 @@ namespace BoxSocial.FrontEnd
                     template.Parse("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
                     prepareNewCaptcha();
                 }
-                else if (!BoxSocial.Internals.User.CheckEmailUnique(db, Request.Form["email"]))
+                else if (!BoxSocial.Internals.User.CheckEmailUnique(core, Request.Form["email"]))
                 {
                     template.Parse("ERROR", "The e-mail address you have entered has already been registered.");
                     prepareNewCaptcha();

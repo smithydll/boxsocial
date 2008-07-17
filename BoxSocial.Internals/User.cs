@@ -59,8 +59,6 @@ namespace BoxSocial.Internals
     [DataTable("user_keys")]
     public class User : Primitive, ICommentableItem
     {
-        public const string USER_INFO_FIELDS = "ui.user_id, ui.user_name, ui.user_time_zone, ui.user_friends, ui.user_show_custom_styles, ui.user_show_bbcode, ui.user_reg_date_ut, ui.user_last_visit_ut, ui.user_alternate_email, ui.user_active, ui.user_activate_code, ui.user_name_display, ui.user_live_messenger, ui.user_yahoo_messenger, ui.user_jabber_address, ui.user_home_page, ui.user_blog_subscriptions, ui.user_email_notifications, ui.user_bytes, ui.user_status_messages";
-
         public static long lastEmailId;
 
         [DataField("user_id", DataFieldKeys.Primary)]
@@ -992,21 +990,15 @@ namespace BoxSocial.Internals
         {
             if (emailAddresses == null)
             {
-                // let's load some
-
-                SelectQuery query = new SelectQuery(UserEmail.GetTable(typeof(UserEmail)));
-                query.AddFields(UserEmail.GetFieldsPrefixed(typeof(UserEmail)));
-                query.AddCondition("user_id", userId);
-
-                DataTable emailsTable = db.Query(query);
-
-                foreach (DataRow emailRow in emailsTable.Rows)
-                {
-                    emailAddresses.Add(new UserEmail(core, emailRow));
-                }
+                emailAddresses = getSubItems(typeof(UserEmail)).ConvertAll<UserEmail>(new Converter<Item, UserEmail>(convertToUserEmail));
             }
 
             return emailAddresses;
+        }
+
+        public UserEmail convertToUserEmail(Item input)
+        {
+            return (UserEmail)input;
         }
 
         public List<UserRelation> SearchFriendNames(string needle)
@@ -1218,6 +1210,7 @@ namespace BoxSocial.Internals
             db.Query(query);
 
             User newUser = new User(core, userId);
+            UserEmail registrationEmail = UserEmail.Create(core, newUser, eMail, 0x0000, true);
 
             // Install a couple of applications
             try
@@ -1353,10 +1346,20 @@ namespace BoxSocial.Internals
             return true;
         }
 
-        public static bool CheckEmailUnique(Mysql db, string eMail)
+        public static bool CheckEmailUnique(Core core, string eMail)
         {
+            try
+            {
+                UserEmail uMail = new UserEmail(core, eMail);
+                return true;
+            }
+            catch (InvalidUserEmailException)
+            {
+                return false;
+            }
+
             // TODO: register all e-mail addresses into a new table, along with privacy controls
-            DataTable userTable = db.Query(string.Format("SELECT user_id, user_alternate_email FROM user_info WHERE LCASE(user_alternate_email) = '{0}';",
+            /*DataTable userTable = db.Query(string.Format("SELECT user_id, user_alternate_email FROM user_info WHERE LCASE(user_alternate_email) = '{0}';",
                 Mysql.Escape(eMail.ToLower())));
             if (userTable.Rows.Count > 0)
             {
@@ -1377,7 +1380,7 @@ namespace BoxSocial.Internals
 
             DataTable emailsTable = db.Query(query);
 
-            return true;
+            return true;*/
         }
 
         public static bool CheckUserNameValid(string userName)

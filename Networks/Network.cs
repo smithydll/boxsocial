@@ -541,6 +541,7 @@ namespace BoxSocial.Networks
             int isActive = (networkInfo.RequireConfirmation) ? 0 : 1;
 
             // delete any existing unactivated e-mails for this user in this network, re-send the invitation
+            // TODO: delete e-mails first
             db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
                 networkId, member.UserId));
@@ -558,9 +559,10 @@ namespace BoxSocial.Networks
             string activateUri = string.Format("http://zinzam.com/network/{0}?mode=activate&id={1}&key={2}",
                 networkNetwork, member.UserId, activateKey);
 
-
             if (networkInfo.RequireConfirmation)
             {
+                UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, 0x0000, true);
+
                 Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
                 emailTemplate.Parse("TO_NAME", member.DisplayName);

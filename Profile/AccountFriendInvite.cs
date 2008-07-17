@@ -104,7 +104,7 @@ namespace BoxSocial.Applications.Profile
 
             if (User.CheckEmailValid(friendEmail))
             {
-                if (User.CheckEmailUnique(db, friendEmail))
+                if (User.CheckEmailUnique(core, friendEmail))
                 {
                     DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
                         Mysql.Escape(User.HashPassword(friendEmail))));
@@ -166,7 +166,7 @@ namespace BoxSocial.Applications.Profile
                 //Response.Write(friendEmail + "<br />"); // DEBUG
                 if (User.CheckEmailValid(friendEmail))
                 {
-                    if (User.CheckEmailUnique(db, friendEmail))
+                    if (User.CheckEmailUnique(core, friendEmail))
                     {
                         DataTable inviteKeysTable = db.Query(string.Format("SELECT email_key FROM invite_keys WHERE email_hash = '{0}' AND invite_allow = 0",
                             Mysql.Escape(User.HashPassword(friendEmail))));
@@ -203,8 +203,10 @@ namespace BoxSocial.Applications.Profile
                         // ignore already a member, plough on
                         if (friendEmail.ToLower() != loggedInMember.AlternateEmail.ToLower())
                         {
-                            DataTable friendTable = db.Query(string.Format("SELECT {1} FROM user_info ui WHERE LCASE(user_alternate_email) = '{1}'",
-                                Mysql.Escape(friendEmail.ToLower()), User.USER_INFO_FIELDS));
+                            SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                            query.AddCondition("LCASE(user_alternate_email)", Mysql.Escape(friendEmail.ToLower()));
+
+                            DataTable friendTable = db.Query(query);
 
                             if (friendTable.Rows.Count == 1)
                             {

@@ -34,9 +34,9 @@ namespace BoxSocial.Internals
     {
         [DataField("email_id", DataFieldKeys.Primary)]
         private long emailId;
-        [DataField("email_user_id")]
+        [DataField("email_user_id", typeof(User))]
         private long userId;
-        [DataField("email_email", 127)]
+        [DataField("email_email", DataFieldKeys.Unique ,127)]
         private string emailEmail;
         [DataField("email_verified")]
         private bool emailVerified;
@@ -110,6 +110,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserEmail(Core core, string email)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserEmail_ItemLoad);
+
+            try
+            {
+                LoadItem("email_email", email);
+            }
+            catch
+            {
+                throw new InvalidUserEmailException();
+            }
+        }
+
         public UserEmail(Core core, DataRow emailRow)
             : base(core)
         {
@@ -131,12 +146,17 @@ namespace BoxSocial.Internals
 
         public static UserEmail Create(Core core, string email, ushort permissions)
         {
+            return Create(core, core.session.LoggedInMember, email, permissions, false);
+        }
+
+        public static UserEmail Create(Core core, User owner, string email, ushort permissions, bool isRegistration)
+        {
             if (!User.CheckEmailValid(email))
             {
                 throw new EmailInvalidException();
             }
 
-            if (!User.CheckEmailUnique(core.db, email))
+            if (!User.CheckEmailUnique(core, email))
             {
                 throw new EmailAlreadyRegisteredException();
             }
@@ -144,25 +164,35 @@ namespace BoxSocial.Internals
             string activateKey = User.GenerateActivationSecurityToken();
 
             InsertQuery iquery = new InsertQuery(UserEmail.GetTable(typeof(User)));
-            iquery.AddField("email_user_id", core.LoggedInMemberId);
+            iquery.AddField("email_user_id", owner.Id);
             iquery.AddField("email_email", email);
-            iquery.AddField("email_verified", false);
+            if (!isRegistration)
+            {
+                iquery.AddField("email_verified", false);
+            }
+            else
+            {
+                iquery.AddField("email_verified", true);
+            }
             iquery.AddField("email_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("email_activate_code", activateKey);
             iquery.AddField("email_access", permissions);
 
             long emailId = core.db.Query(iquery);
 
-            string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
-                emailId, activateKey);
+            if (!isRegistration)
+            {
+                string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
+                    emailId, activateKey);
 
-            Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
+                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
 
-            emailTemplate.Parse("TO_NAME", core.session.LoggedInMember.DisplayName);
-            emailTemplate.Parse("U_ACTIVATE", activateUri);
-            emailTemplate.Parse("USERNAME", core.session.LoggedInMember.UserName);
+                emailTemplate.Parse("TO_NAME", owner.DisplayName);
+                emailTemplate.Parse("U_ACTIVATE", activateUri);
+                emailTemplate.Parse("USERNAME", owner.UserName);
 
-            BoxSocial.Internals.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
+                BoxSocial.Internals.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
+            }
 
             return new UserEmail(core, emailId);
         }

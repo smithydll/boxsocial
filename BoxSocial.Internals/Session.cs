@@ -188,13 +188,13 @@ namespace BoxSocial.Internals
                 //if (isset($sessiondata['autologinid']) && (string) $sessiondata['autologinid'] != '' && $user_id)
                 if (!string.IsNullOrEmpty(sessionData.autoLoginId) && userId > 0)
                 {
-                    DataTable userSessionTable = db.Query(string.Format(
-                        @"SELECT {1}
-                            FROM user_keys uk
-                            INNER JOIN user_info ui ON uk.user_id = ui.user_id
-                            INNER JOIN session_keys sk ON sk.user_id = uk.user_id
-                            WHERE uk.user_id = {0} AND ui.user_active = 1 AND sk.key_id = '{2}'",
-                        userId, User.USER_INFO_FIELDS, SessionState.SessionMd5(sessionData.autoLoginId)));
+                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                    query.AddJoin(JoinTypes.Inner, "session_keys", "user_id", "user_id");
+                    query.AddCondition("user_keys.user_id", userId);
+                    query.AddCondition("user_active", true);
+                    query.AddCondition("key_id", SessionState.SessionMd5(sessionData.autoLoginId));
+
+                    DataTable userSessionTable = db.Query(query);
 
                     if (userSessionTable.Rows.Count == 1)
                     {
@@ -573,8 +573,10 @@ namespace BoxSocial.Internals
             // but just in case it isn't, reset $userdata to the details for a guest
             //
 
-            DataTable userTable = db.Query(string.Format("SELECT {1} FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_id = {0}",
-                    0, User.USER_INFO_FIELDS));
+            SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+            query.AddCondition("user_keys.user_id", 0);
+
+            DataTable userTable = db.Query(query);
 
             if (userTable.Rows.Count == 1)
             {

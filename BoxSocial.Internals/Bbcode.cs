@@ -86,6 +86,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeYouTube);
             BbcodeHooks += new BbcodeHookHandler(BbcodeLaTeX);
             // TODO: flash
+            //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
             BbcodeHooks += new BbcodeHookHandler(BbcodeUser);
         }

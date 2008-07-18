@@ -38,6 +38,7 @@ namespace BoxSocial.FrontEnd
         {
             DataTable userData = db.Query("SELECT COUNT(user_id) as registrations FROM user_keys");
             DataTable inviteData = db.Query("SELECT COUNT(email_key) as invites FROM invite_keys");
+            DataTable lastUserData = db.Query("SELECT * FROM user_keys ORDER BY user_id DESC LIMIT 1");
 
             Response.Clear();
             Response.ContentType = "text/plain";
@@ -49,6 +50,9 @@ namespace BoxSocial.FrontEnd
             {
                 Response.Write("Users: " + userData.Rows[0]["registrations"].ToString() + "\n");
             }
+
+            Response.Write("Newest user: " + lastUserData.Rows[0]["user_name"].ToString() + "\n");
+
             Response.End();
         }
     }

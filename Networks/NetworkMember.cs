@@ -39,7 +39,7 @@ namespace BoxSocial.Networks
 
         [DataField("user_id")]
         private new long userId; // hide the parent variable to have it register in the table
-        [DataField("network_id")]
+        [DataField("network_id", typeof(Network))]
         private long networkId;
         [DataField("member_join_date_ut")]
         private long memberJoinDateRaw;
@@ -89,14 +89,14 @@ namespace BoxSocial.Networks
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
-        public NetworkMember(Core core, int networkId, User user)
+        public NetworkMember(Core core, long networkId, User user)
             : base(core)
         {
             this.userInfo = user.Info;
             this.userProfile = user.Profile;
         }
 
-        public NetworkMember(Core core, int networkId, int memberId)
+        public NetworkMember(Core core, long networkId, long memberId)
             : base(core)
         {
             SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);

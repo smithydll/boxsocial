@@ -410,6 +410,23 @@ namespace BoxSocial.Networks
             return members;
         }
 
+        public static List<NetworkMember> GetNetworkMemberships(Core core, User member)
+        {
+            List<NetworkMember> memberships = new List<NetworkMember>();
+
+            SelectQuery query = NetworkMember.GetSelectQueryStub(UserLoadOptions.Key);
+            query.AddCondition("user_id", member.Id);
+
+            DataTable membershipsTable = core.db.Query(query);
+
+            foreach (DataRow dr in membershipsTable.Rows)
+            {
+                memberships.Add(new NetworkMember(core, dr, UserLoadOptions.Key));
+            }
+
+            return memberships;
+        }
+
         public static List<Network> GetNetworks(Core core, NetworkTypes type)
         {
             List<Network> networks = new List<Network>();
@@ -543,14 +560,42 @@ namespace BoxSocial.Networks
             // delete any existing unactivated e-mails for this user in this network, re-send the invitation
             // TODO: delete e-mails first
             db.BeginTransaction();
-            db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
-                networkId, member.UserId));
+
+            try
+            {
+                NetworkMember nm = new NetworkMember(core, this, member);
+                UserEmail uMail = new UserEmail(core, nm.MemberEmail);
+                uMail.Delete();
+                nm.Delete();
+            }
+            catch (InvalidNetworkException)
+            {
+                // Do Nothing
+            }
+
+            //List<NetworkMember> memberships = GetNetworkMemberships(core, member);
+
+            //foreach (NetworkMember nm in memberships)
+            //{
+            //    if (nm.NetworkId == networkId && !nm.IsMemberActive)
+            //    {
+            //        UserEmail uMail = new UserEmail(core, nm.MemberEmail);
+            //        uMail.Delete();
+            //    }
+            //}
+
+            //db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
+            //    networkId, member.UserId));
 
             if (!networkInfo.RequireConfirmation)
             {
                 db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members + 1 WHERE network_id = {0}",
                     networkId));
             }
+
+            /*InsertQuery iQuery = new InsertQuery(GetTable(typeof(NetworkMember)));
+            iQuery.AddField("network_id", this.Id);
+            ... */
 
             db.UpdateQuery(string.Format("INSERT INTO network_members (network_id, user_id, member_join_date_ut, member_join_ip, member_email, member_active, member_activate_code) VALUES ({0}, {1}, UNIX_TIMESTAMP(), '{2}', '{3}', {4}, '{5}');",
                 networkId, member.UserId, Mysql.Escape(core.session.IPAddress.ToString()), Mysql.Escape(networkEmail), isActive, Mysql.Escape(activateKey)));
@@ -718,12 +763,12 @@ namespace BoxSocial.Networks
 
         public string BuildJoinUri()
         {
-            return AccountModule.BuildModuleUri("networks", "networks", "join", NetworkId);
+            return AccountModule.BuildModuleUri("networks", "memberships", "join", NetworkId);
         }
 
         public string BuildLeaveUri()
         {
-            return AccountModule.BuildModuleUri("networks", "networks", "leave", NetworkId);
+            return AccountModule.BuildModuleUri("networks", "memberships", "leave", NetworkId);
         }
 
         public string BuildMemberListUri()

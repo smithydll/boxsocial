@@ -260,6 +260,33 @@ namespace BoxSocial.Applications.Pages
                 list.owner.UserName.ToLower(), list.path));
         }
 
+        public static void Create(Core core, string title, ref string slug, string listAbstract, short listType)
+        {
+            Navigation.GenerateSlug(title, ref slug);
+
+            // TODO: verify listType
+
+            try
+            {
+                Page listPage;
+                long parentId = 0;
+                try
+                {
+                    listPage = new Page(core, core.session.LoggedInMember, "lists");
+                }
+                catch (PageNotFoundException)
+                {
+                    string listSlug = "lists";
+                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                }
+                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, parentId, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+            }
+            catch (PageSlugNotUniqueException)
+            {
+                throw new ListSlugNotUniqueException();
+            }
+        }
+
         public static void ShowLists(Core core, PPage page)
         {
             page.template.SetTemplate("viewlist.html");
@@ -361,6 +388,10 @@ namespace BoxSocial.Applications.Pages
     }
 
     public class InvalidListException : Exception
+    {
+    }
+
+    public class ListSlugNotUniqueException : Exception
     {
     }
 }

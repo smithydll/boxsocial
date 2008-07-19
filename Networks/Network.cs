@@ -531,7 +531,7 @@ namespace BoxSocial.Networks
 
             if (networkInfo.RequireConfirmation)
             {
-                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
+                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
@@ -558,47 +558,50 @@ namespace BoxSocial.Networks
             int isActive = (networkInfo.RequireConfirmation) ? 0 : 1;
 
             // delete any existing unactivated e-mails for this user in this network, re-send the invitation
-            // TODO: delete e-mails first
             db.BeginTransaction();
 
             try
             {
                 NetworkMember nm = new NetworkMember(core, this, member);
-                UserEmail uMail = new UserEmail(core, nm.MemberEmail);
-                uMail.Delete();
-                nm.Delete();
+
+                if (!nm.IsMemberActive)
+                {
+                    try
+                    {
+                        UserEmail uMail = new UserEmail(core, nm.MemberEmail);
+                        uMail.Delete();
+                    }
+                    catch (InvalidUserEmailException)
+                    {
+                        // Do Nothing
+                    }
+                    nm.Delete();
+                }
             }
-            catch (InvalidNetworkException)
+            catch (InvalidUserException)
             {
                 // Do Nothing
             }
 
-            //List<NetworkMember> memberships = GetNetworkMemberships(core, member);
-
-            //foreach (NetworkMember nm in memberships)
-            //{
-            //    if (nm.NetworkId == networkId && !nm.IsMemberActive)
-            //    {
-            //        UserEmail uMail = new UserEmail(core, nm.MemberEmail);
-            //        uMail.Delete();
-            //    }
-            //}
-
-            //db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 0",
-            //    networkId, member.UserId));
-
             if (!networkInfo.RequireConfirmation)
             {
-                db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members + 1 WHERE network_id = {0}",
-                    networkId));
+                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Network)));
+                uQuery.AddField("network_members", new QueryOperation("network_members", QueryOperations.Addition, 1));
+                uQuery.AddCondition("network_id", networkId);
+
+                db.Query(uQuery);
             }
 
-            /*InsertQuery iQuery = new InsertQuery(GetTable(typeof(NetworkMember)));
+            InsertQuery iQuery = new InsertQuery(GetTable(typeof(NetworkMember)));
             iQuery.AddField("network_id", this.Id);
-            ... */
+            iQuery.AddField("user_id", member.UserId);
+            iQuery.AddField("member_join_date_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("member_join_ip", core.session.IPAddress.ToString());
+            iQuery.AddField("member_email", networkEmail);
+            iQuery.AddField("member_active", isActive);
+            iQuery.AddField("member_activate_code", activateKey);
 
-            db.UpdateQuery(string.Format("INSERT INTO network_members (network_id, user_id, member_join_date_ut, member_join_ip, member_email, member_active, member_activate_code) VALUES ({0}, {1}, UNIX_TIMESTAMP(), '{2}', '{3}', {4}, '{5}');",
-                networkId, member.UserId, Mysql.Escape(core.session.IPAddress.ToString()), Mysql.Escape(networkEmail), isActive, Mysql.Escape(activateKey)));
+            db.Query(iQuery);
 
             NetworkMember newMember = new NetworkMember(core, this, member);
             string activateUri = string.Format("http://zinzam.com/network/{0}?mode=activate&id={1}&key={2}",
@@ -608,7 +611,7 @@ namespace BoxSocial.Networks
             {
                 UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, 0x0000, true);
 
-                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
+                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
 
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);

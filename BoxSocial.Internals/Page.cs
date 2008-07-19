@@ -479,7 +479,7 @@ namespace BoxSocial.Internals
             return Create(core, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
         }
 
-        internal static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+        public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
         {
             string parentPath = "";
             long pageId = 0;

@@ -182,7 +182,7 @@ namespace BoxSocial.Networks
 
             if (!NetworkMember.CheckNetworkEmailUnique(db, networkEmail))
             {
-                NetworkMember member = new NetworkMember(core, (int)theNetwork.Id, (int)loggedInMember.Id);
+                NetworkMember member = new NetworkMember(core, theNetwork.Id, loggedInMember.Id);
                 if (!member.IsMemberActive)
                 {
                     theNetwork.ResendConfirmationKey(core, member);

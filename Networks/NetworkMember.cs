@@ -100,7 +100,7 @@ namespace BoxSocial.Networks
             : base(core)
         {
             SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
-            query.AddCondition("user_id", memberId);
+            query.AddCondition("network_members.user_id", memberId);
             query.AddCondition("network_id", networkId);
 
             DataTable memberTable = db.Query(query);
@@ -175,7 +175,7 @@ namespace BoxSocial.Networks
                 Mysql.Escape(eMail.ToLower())));
             if (networkMemberTable.Rows.Count > 0)
             {
-                lastEmailId = (int)networkMemberTable.Rows[0]["user_id"];
+                lastEmailId = (long)networkMemberTable.Rows[0]["user_id"];
                 return false;
             }
 

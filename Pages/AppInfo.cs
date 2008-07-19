@@ -127,6 +127,7 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("lists", "Lists");
                 return slugs;
             }
         }

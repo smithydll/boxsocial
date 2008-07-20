@@ -121,5 +121,29 @@ namespace BoxSocial.Internals
                 return canComment;
             }
         }
+
+        public bool CanCreate
+        {
+            get
+            {
+                return canCreate;
+            }
+        }
+
+        public bool CanEdit
+        {
+            get
+            {
+                return canChange;
+            }
+        }
+
+        public bool CanDelete
+        {
+            get
+            {
+                return canChange;
+            }
+        }
     }
 }

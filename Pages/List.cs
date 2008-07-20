@@ -35,13 +35,13 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("user_lists")]
-    public class List : Item
+    public class List : Item, IPermissibleItem
     {
         public const string LIST_FIELDS = "ul.list_id, ul.user_id, ul.list_type, ul.list_title, ul.list_items, ul.list_abstract, ul.list_path, ul.list_access";
 
         [DataField("list_id", DataFieldKeys.Primary)]
         private long listId;
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Unique)]
         private long ownerId;
         [DataField("list_type")]
         private short type;
@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Pages
         private long items;
         [DataField("list_abstract", MYSQL_TEXT)]
         private string listAbstract;
-        [DataField("list_path", 31)]
+        [DataField("list_path", DataFieldKeys.Unique, 31)]
         private string path;
         [DataField("list_access")]
         private ushort permissions;
@@ -73,6 +73,10 @@ namespace BoxSocial.Applications.Pages
             {
                 return type;
             }
+            set
+            {
+                SetProperty("type", value);
+            }
         }
 
         public string Title
@@ -80,6 +84,15 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 return title;
+            }
+            set
+            {
+                string slug = value;
+                Navigation.GenerateSlug(title, ref slug);
+
+                SetProperty("title", value);
+
+                Path = slug;
             }
         }
 
@@ -97,6 +110,10 @@ namespace BoxSocial.Applications.Pages
             {
                 return listAbstract;
             }
+            set
+            {
+                SetProperty("listAbstract", value);
+            }
         }
 
         public string Path
@@ -105,6 +122,10 @@ namespace BoxSocial.Applications.Pages
             {
                 return path;
             }
+            set
+            {
+                SetProperty("path", value);
+            }
         }
 
         public ushort Permissions
@@ -112,6 +133,10 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 return permissions;
+            }
+            set
+            {
+                SetProperty("permissions", value);
             }
         }
 
@@ -122,6 +147,7 @@ namespace BoxSocial.Applications.Pages
                 if (listAccess == null)
                 {
                     listAccess = new Access(core, permissions, Owner);
+                    listAccess.SetSessionViewer(core.session);
                 }
                 return listAccess;
             }
@@ -196,23 +222,6 @@ namespace BoxSocial.Applications.Pages
         {
         }
 
-        private void loadListInfo(DataRow listRow)
-        {
-            listId = (long)listRow["list_id"];
-            ownerId = (int)listRow["user_id"];
-            type = (short)listRow["list_type"];
-            title = (string)listRow["list_title"];
-            items = (uint)listRow["list_items"];
-            if (!(listRow["list_abstract"] is DBNull))
-            {
-                listAbstract = (string)listRow["list_abstract"];
-            }
-            path = (string)listRow["list_path"];
-            permissions = (ushort)listRow["list_access"];
-
-            listAccess = new Access(core, permissions, owner);
-        }
-
         /* EXAMPLE getSubItems */
         public List<ListItem> GetListItems()
         {
@@ -260,16 +269,35 @@ namespace BoxSocial.Applications.Pages
                 list.owner.UserName.ToLower(), list.path));
         }
 
-        public static void Create(Core core, string title, ref string slug, string listAbstract, short listType)
+        public static bool IsValidListType(Core core, short listType)
+        {
+            // verify that the type exists
+            SelectQuery query = new SelectQuery("list_types");
+            query.AddFields("list_type_id");
+            query.AddCondition("list_type_id", listType);
+
+            DataTable listTypeTable = core.db.Query(query);
+
+            if (listTypeTable.Rows.Count == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static List Create(Core core, string title, ref string slug, string listAbstract, short listType, ushort permissions)
         {
             Navigation.GenerateSlug(title, ref slug);
 
-            // TODO: verify listType
+            if (!IsValidListType(core, listType))
+            {
+                throw new ListTypeNotValidException();
+            }
 
             try
             {
                 Page listPage;
-                long parentId = 0;
                 try
                 {
                     listPage = new Page(core, core.session.LoggedInMember, "lists");
@@ -277,9 +305,30 @@ namespace BoxSocial.Applications.Pages
                 catch (PageNotFoundException)
                 {
                     string listSlug = "lists";
-                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                    try
+                    {
+                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                    }
+                    catch (PageSlugNotUniqueException)
+                    {
+                        throw new Exception("Cannot create lists slug.");
+                    }
                 }
-                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, parentId, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+
+                // Create list
+
+                InsertQuery iQuery = new InsertQuery(GetTable(typeof(List)));
+                iQuery.AddField("user_id", core.LoggedInMemberId);
+                iQuery.AddField("list_title", title);
+                iQuery.AddField("list_path", slug);
+                iQuery.AddField("list_type", listType);
+                iQuery.AddField("list_abstract", listAbstract);
+                iQuery.AddField("list_access", permissions);
+
+                long listId = core.db.Query(iQuery);
+
+                return new List(core, core.session.LoggedInMember, listId);
             }
             catch (PageSlugNotUniqueException)
             {
@@ -385,6 +434,33 @@ namespace BoxSocial.Applications.Pages
                 return Linker.BuildListUri(Owner, path);
             }
         }
+
+        public Access Access
+        {
+            get
+            {
+                return ListAccess;
+            }
+        }
+
+        Primitive IPermissibleItem.Owner
+        {
+            get
+            {
+                return this.Owner;
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                List<string> permissions = new List<string>();
+                permissions.Add("Can Read");
+                return permissions;
+            }
+        }
+
     }
 
     public class InvalidListException : Exception
@@ -392,6 +468,10 @@ namespace BoxSocial.Applications.Pages
     }
 
     public class ListSlugNotUniqueException : Exception
+    {
+    }
+
+    public class ListTypeNotValidException : Exception
     {
     }
 }

@@ -111,69 +111,26 @@ namespace BoxSocial.Applications.Pages
             string title = Request.Form["title"];
             string slug = Request.Form["title"];
             string listAbstract = Request.Form["abstract"];
-            short type = 1;
-            long listId = 0;
-
-            // normalise slug if it has been fiddeled with
-            slug = slug.ToLower().Normalize(NormalizationForm.FormD);
-            string normalisedSlug = "";
-
-            for (int i = 0; i < slug.Length; i++)
-            {
-                if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
-                {
-                    normalisedSlug += slug[i];
-                }
-            }
-            slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");
-
-            try
-            {
-                // edit page
-                listId = long.Parse(Request.Form["id"]);
-                type = short.Parse(Request.Form["type"]);
-
-                DataTable pageTable = db.Query(string.Format("SELECT list_id FROM user_lists WHERE list_id = {0} AND user_id = {1};",
-                    listId, loggedInMember.UserId));
-
-                if (pageTable.Rows.Count == 1)
-                {
-                }
-                else
-                {
-                    Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
-                    return;
-                }
-            }
-            catch (Exception)
-            {
-            }
+            short type = Functions.FormShort("type", 1);
+            long listId = Functions.FormLong("id", 0);
 
             // new
             if (listId == 0)
             {
-                // check that a list with the slug given does not already exist
-                if (db.Query(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}';",
-                    loggedInMember.UserId, Mysql.Escape(slug))).Rows.Count == 0)
+                try
                 {
-                    // verify that the type exists
-                    DataTable listTypeTable = db.Query(string.Format("SELECT list_type_id FROM list_types WHERE list_type_id = {0};",
-                        type));
-                    if (listTypeTable.Rows.Count == 1)
-                    {
-                        listId = db.UpdateQuery(string.Format("INSERT INTO user_lists (user_id, list_title, list_path, list_type, list_abstract, list_access) VALUES ({0}, '{1}', '{2}', {3}, '{4}', {5});",
-                            loggedInMember.UserId, Mysql.Escape(title), Mysql.Escape(slug), type, Mysql.Escape(listAbstract), Functions.GetPermission()));
+                    List newList = List.Create(core, title, ref slug, listAbstract, type, Functions.GetPermission());
 
-                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
-                        Display.ShowMessage("List Created", "You have created a new list");
-                    }
-                    else
-                    {
-                        Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
-                        return;
-                    }
+                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
+                    Display.ShowMessage("List Created", "You have created a new list");
+                    return;
                 }
-                else
+                catch (ListTypeNotValidException)
+                {
+                    Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
+                    return;
+                }
+                catch (ListSlugNotUniqueException)
                 {
                     Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
                     return;
@@ -183,19 +140,72 @@ namespace BoxSocial.Applications.Pages
             // edit
             if (listId > 0)
             {
-                // check that a list with the slug given does not already exist, ignoring itself
-                if (db.Query(string.Format("SELECT list_path FROM user_lists WHERE user_id = {0} AND list_path = '{1}' AND list_id <> {2};",
-                    loggedInMember.UserId, Mysql.Escape(slug), listId)).Rows.Count == 0)
+                try
                 {
-                    db.UpdateQuery(string.Format("UPDATE user_lists SET list_title = '{1}', list_access = {2}, list_path = '{3}', list_abstract = '{4}', list_type = {5} WHERE list_id = {0}",
-                        listId, Mysql.Escape(title), Functions.GetPermission(), Mysql.Escape(slug), Mysql.Escape(listAbstract), type));
+                    List list = new List(core, session.LoggedInMember, listId);
 
-                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
-                    Display.ShowMessage("List Saved", "You have saved the list");
+                    string oldSlug = list.Path;
+
+                    list.Title = title;
+                    list.Permissions = Functions.GetPermission();
+                    list.Abstract = listAbstract;
+                    list.Type = type;
+
+                    try
+                    {
+                        list.Update();
+
+                        // Update page
+                        try
+                        {
+                            Page listPage = new Page(core, core.session.LoggedInMember, oldSlug, "lists");
+
+                            listPage.Title = list.Title;
+                            listPage.Slug = list.Path;
+
+                            listPage.Update();
+                        }
+                        catch (PageNotFoundException)
+                        {
+                            Page listPage;
+                            try
+                            {
+                                listPage = new Page(core, core.session.LoggedInMember, "lists");
+                            }
+                            catch (PageNotFoundException)
+                            {
+                                string listSlug = "lists";
+                                try
+                                {
+                                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                                }
+                                catch (PageSlugNotUniqueException)
+                                {
+                                    throw new Exception("Cannot create lists slug.");
+                                }
+                            }
+                            slug = list.Path;
+                            Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        }
+
+                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
+                        Display.ShowMessage("List Saved", "You have saved the list");
+                        return;
+                    }
+                    catch (UnauthorisedToUpdateItemException)
+                    {
+                        DisplayGenericError();
+                        return;
+                    }
+                    catch (RecordNotUniqueException)
+                    {
+                        Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
+                        return;
+                    }
                 }
-                else
+                catch (InvalidListException)
                 {
-                    Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
+                    DisplayGenericError();
                     return;
                 }
             }
@@ -252,35 +262,38 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long listId = 0;
+            long listId = Functions.RequestLong("id", 0);
 
             try
             {
-                listId = long.Parse(Request.QueryString["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
-                return;
-            }
+                List list = new List(core, core.session.LoggedInMember, listId);
 
-            DataTable listTable = db.Query(string.Format("SELECT list_items FROM user_lists WHERE user_id = {0} AND list_id = {1};",
-                loggedInMember.UserId, listId));
+                try
+                {
+                    list.Delete();
+                }
+                catch (UnauthorisedToDeleteItemException)
+                {
+                    Display.ShowMessage("Cannot Delete", "You are unauthorised to delete this list");
+                    return;
+                }
 
-            if (listTable.Rows.Count == 1)
-            {
-                db.BeginTransaction();
-                db.UpdateQuery(string.Format("DELETE FROM list_items WHERE list_id = {0}",
-                    listId));
+                try
+                {
+                    Page listPage = new Page(core, core.session.LoggedInMember, list.Path, "lists");
 
-                db.UpdateQuery(string.Format("DELETE FROM user_lists WHERE user_id = {0} AND list_id = {1}",
-                    loggedInMember.UserId, listId));
+                    listPage.Delete();
+                }
+                catch (PageNotFoundException)
+                {
+                    // Can ignore
+                }
 
                 SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
                 Display.ShowMessage("List Deleted", "You have deleted a list.");
                 return;
             }
-            else
+            catch (InvalidListException)
             {
                 Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;
@@ -292,36 +305,19 @@ namespace BoxSocial.Applications.Pages
         /// </summary>
         void AccountListsManage_Edit(object sender, EventArgs e)
         {
-            long listId = 0;
+            long listId = Functions.RequestLong("id", 0);
 
-            string listTitle = "";
-            string listSlug = "";
-            string listAbstract = "";
-            ushort listPermissions = 0x1111;
-            short listType = 1;
+            SetTemplate("account_list_edit");
 
             try
             {
-                listId = long.Parse(Request.QueryString["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
-                return;
-            }
+                List list = new List(core, session.LoggedInMember, listId);
 
-            template.SetTemplate("Pages", "account_list_edit");
-
-            DataTable listTable = db.Query(string.Format("SELECT list_id, list_title, list_access, list_path, list_abstract, list_type FROM user_lists WHERE user_id = {0} AND list_id = {1};",
-                loggedInMember.UserId, listId));
-
-            if (listTable.Rows.Count == 1)
-            {
-                listTitle = (string)listTable.Rows[0]["list_title"];
-                listPermissions = (ushort)listTable.Rows[0]["list_access"];
-                listSlug = (string)listTable.Rows[0]["list_path"];
-                listAbstract = (string)listTable.Rows[0]["list_abstract"];
-                listType = (short)listTable.Rows[0]["list_type"];
+                if (!list.Access.CanEdit)
+                {
+                    DisplayGenericError();
+                    return;
+                }
 
                 DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
 
@@ -333,19 +329,16 @@ namespace BoxSocial.Applications.Pages
                         (string)listTypesTable.Rows[i]["list_type_title"]);
                 }
 
-                List<string> permissions = new List<string>();
-                permissions.Add("Can Read");
+                Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, list.Type.ToString());
+                Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
 
-                Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, listType.ToString());
-                Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
+                template.Parse("S_LIST_TITLE", list.Title);
+                template.Parse("S_LIST_SLUG", list.Path);
+                template.Parse("S_LIST_ABSTRACT", list.Abstract);
 
-                template.Parse("S_LIST_TITLE", listTitle);
-                template.Parse("S_LIST_SLUG", listSlug);
-                template.Parse("S_LIST_ABSTRACT", listAbstract);
-
-                template.Parse("S_LIST_ID", ((long)listTable.Rows[0]["list_id"]).ToString());
+                template.Parse("S_LIST_ID", list.Id.ToString());
             }
-            else
+            catch (InvalidListException)
             {
                 Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;

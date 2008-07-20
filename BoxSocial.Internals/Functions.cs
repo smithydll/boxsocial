@@ -57,7 +57,7 @@ namespace BoxSocial.Internals
             int matches = 0;
 
             List<string> disallowedNames = new List<string>();
-            disallowedNames.Add("lists");
+            //disallowedNames.Add("lists");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(userName) >= 0)
@@ -173,6 +173,19 @@ namespace BoxSocial.Internals
             try
             {
                 outValue = byte.Parse(HttpContext.Current.Request[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
+        public static short RequestShort(string var, short defaultValue)
+        {
+            short outValue = defaultValue;
+            try
+            {
+                outValue = short.Parse(HttpContext.Current.Request[var]);
             }
             catch
             {

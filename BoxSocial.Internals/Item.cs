@@ -50,9 +50,10 @@ namespace BoxSocial.Internals
         private List<string> updatedItems;
 
         public delegate void ItemLoadHandler();
+        public delegate void ItemChangeAuthenticationProviderHandler(object sender, ItemChangeAuthenticationProviderEventArgs e);
 
         public event ItemLoadHandler ItemLoad;
-        public event EventHandler ItemChangeAuthenticationProvider;
+        public event ItemChangeAuthenticationProviderHandler ItemChangeAuthenticationProvider;
         public event EventHandler ItemUpdated;
         public event EventHandler ItemDeleted;
 
@@ -462,11 +463,20 @@ namespace BoxSocial.Internals
 
         public long Update()
         {
-            if (ItemChangeAuthenticationProvider != null)
+            if (this is IPermissibleItem)
             {
-                ItemChangeAuthenticationProvider(this, new EventArgs());
+                if (!((IPermissibleItem)this).Access.CanEdit)
+                {
+                    throw new UnauthorisedToUpdateItemException();
+                }
             }
 
+            if (ItemChangeAuthenticationProvider != null)
+            {
+                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Edit));
+            }
+
+            SelectQuery sQuery = new SelectQuery(Item.GetTable(this.GetType()));
             UpdateQuery uQuery = new UpdateQuery(Item.GetTable(this.GetType()));
 
             foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
@@ -493,13 +503,46 @@ namespace BoxSocial.Internals
 
             List<DataFieldInfo> fields = GetFields(this.GetType());
             bool foundKey = false;
+            bool containsUniqueFields = false;
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.IsPrimaryKey || field.IsUnique)
+                if (field.IsPrimaryKey)
                 {
+                    sQuery.AddFields(field.Name);
+                    sQuery.AddCondition(field.Name, ConditionEquality.NotEqual, GetFieldValue(field, this));
                     uQuery.AddCondition(field.Name, GetFieldValue(field, this));
                     foundKey = true;
+                }
+            }
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.IsUnique && !field.IsPrimaryKey)
+                {
+                    containsUniqueFields = true;
+                    sQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                }
+            }
+
+            if (!foundKey)
+            {
+                foreach (DataFieldInfo field in fields)
+                {
+                    if (field.IsUnique)
+                    {
+                        uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                        if (updatedItems.Contains(field.Name))
+                        {
+                            foundKey = false;
+                            break;
+                        }
+                        else
+                        {
+                            foundKey = true;
+                            // continue, all must match
+                        }
+                    }
                 }
             }
 
@@ -507,6 +550,17 @@ namespace BoxSocial.Internals
             {
                 // Error
                 throw new NoPrimaryKeyException();
+            }
+
+            // check uniqueness
+            if (containsUniqueFields)
+            {
+                long uniqueness = db.Query(sQuery).Rows.Count;
+
+                if (uniqueness != 0)
+                {
+                    throw new RecordNotUniqueException();
+                }
             }
 
             long result = db.Query(uQuery);
@@ -524,12 +578,22 @@ namespace BoxSocial.Internals
 
         public long Delete()
         {
-            if (ItemChangeAuthenticationProvider != null)
+            if (this is IPermissibleItem)
             {
-                ItemChangeAuthenticationProvider(this, new EventArgs());
+                if (!((IPermissibleItem)this).Access.CanDelete)
+                {
+                    throw new UnauthorisedToDeleteItemException();
+                }
             }
 
-            /*List<Type> subTypes = getSubTypes();
+            if (ItemChangeAuthenticationProvider != null)
+            {
+                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Delete));
+            }
+
+            db.BeginTransaction();
+
+            List<Type> subTypes = getSubTypes();
             foreach (Type subType in subTypes)
             {
                 List<Item> subItems = getSubItems(subType);
@@ -538,7 +602,7 @@ namespace BoxSocial.Internals
                 {
                     item.Delete();
                 }
-            }*/
+            }
 
             DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
 
@@ -643,6 +707,30 @@ namespace BoxSocial.Internals
         }
     }
 
+    public enum ItemChangeAction
+    {
+        Edit,
+        Delete,
+    }
+
+    public class ItemChangeAuthenticationProviderEventArgs : EventArgs
+    {
+        private ItemChangeAction action;
+
+        public ItemChangeAction Action
+        {
+            get
+            {
+                return action;
+            }
+        }
+
+        public ItemChangeAuthenticationProviderEventArgs(ItemChangeAction action)
+        {
+            this.action = action;
+        }
+    }
+
     public class InvalidItemException : Exception
     {
     }
@@ -651,7 +739,15 @@ namespace BoxSocial.Internals
     {
     }
 
+    public class RecordNotUniqueException : Exception
+    {
+    }
+
     public class FieldNotUniqueIndexException : Exception
+    {
+    }
+
+    public class UnauthorisedToCreateItemException : Exception
     {
     }
 

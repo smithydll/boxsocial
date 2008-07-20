@@ -29,6 +29,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum PermissibleAction : byte
+    {
+        View = 0x01,
+        Comment = 0x02,
+        Edit = 0x04,
+        Delete = 0x08,
+        AddChild = 0x10,
+    }
+
     public interface IPermissibleItem
     {
 

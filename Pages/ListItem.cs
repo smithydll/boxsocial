@@ -134,6 +134,58 @@ namespace BoxSocial.Applications.Pages
             return query;
         }
 
+        public static ListItem Create(Core core, List list, string text)
+        {
+            string normalisedText = text;
+
+            if (!list.Access.CanCreate)
+            {
+                throw new UnauthorisedToCreateItemException();
+            }
+
+            NormaliseListItem(text, ref normalisedText);
+
+            ListItemText lit;
+
+            try
+            {
+                lit = new ListItemText(core, normalisedText);
+            }
+            catch (InvalidListItemTextException)
+            {
+                lit = ListItemText.Create(core, normalisedText);
+            }
+
+            InsertQuery iQuery = new InsertQuery(GetTable(typeof(ListItem)));
+            iQuery.AddField("list_id", list.Id);
+
+            long listItemId = core.db.Query(iQuery);
+
+            return new ListItem(core, listItemId);
+        }
+
+        public static void NormaliseListItem(string text, ref string normalisedText)
+        {
+            if (string.IsNullOrEmpty(normalisedText))
+            {
+                normalisedText = text;
+            }
+
+            // normalise slug if it has been fiddeled with
+            normalisedText = normalisedText.ToLower().Normalize(NormalizationForm.FormD);
+            string normalisedSlug = "";
+
+            for (int i = 0; i < normalisedText.Length; i++)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(normalisedText[i]) != UnicodeCategory.NonSpacingMark)
+                {
+                    normalisedSlug += normalisedText[i];
+                }
+            }
+            // we want to be a little less stringent with list items to allow for some punctuation of being of importance
+            normalisedText = Regex.Replace(normalisedSlug, @"([^\w\+\&\*\(\)\=\:\?\-\#\@\!\$]+)", "-");
+        }
+
         public override long Id
         {
             get
@@ -166,7 +218,7 @@ namespace BoxSocial.Applications.Pages
         private long listItemTextId;
         [DataField("list_item_text", 63)]
         private string text;
-        [DataField("list_item_text_normalised", 63)]
+        [DataField("list_item_text_normalised", DataFieldKeys.Unique, 63)]
         private string textNormalised;
 
         public long ListItemTextId
@@ -193,6 +245,36 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        internal ListItemText(Core core, long listItemTextId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+
+            try
+            {
+                LoadItem(listItemTextId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidListItemTextException();
+            }
+        }
+
+        internal ListItemText(Core core, string textNormalised)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ListItemText_ItemLoad);
+
+            try
+            {
+                LoadItem("list_item_text_normalised", textNormalised);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidListItemTextException();
+            }
+        }
+
         internal ListItemText(Core core, DataRow listTextRow)
             : base(core)
         {
@@ -203,6 +285,13 @@ namespace BoxSocial.Applications.Pages
 
         private void ListItemText_ItemLoad()
         {
+        }
+
+        internal ListItemText Create(Core core, string text, ref string normalisedText)
+        {
+            NormaliseListItem(text, ref normalisedText);
+
+            InsertQuery iQuery = new InsertQuery(GetTable(typeof(ListItemText)));
         }
 
         public override long Id
@@ -231,6 +320,10 @@ namespace BoxSocial.Applications.Pages
     }
 
     public class InvalidListItemException : Exception
+    {
+    }
+
+    public class InvalidListItemTextException : Exception
     {
     }
 }

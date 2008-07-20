@@ -233,7 +233,7 @@ namespace BoxSocial.Internals
 
                     SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
                     query.AddCondition("user_active", true);
-                    query.AddCondition("user_id", userId);
+                    query.AddCondition("user_keys.user_id", userId);
 
                     DataTable userSessionTable = db.Query(query);
 
@@ -275,7 +275,7 @@ namespace BoxSocial.Internals
                 enableAutologin = isLoggedIn = false;
 
                 SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
-                query.AddCondition("user_id", userId);
+                query.AddCondition("user_keys.user_id", userId);
 
                 DataTable userTable = db.Query(query);
 

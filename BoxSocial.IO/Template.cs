@@ -182,6 +182,7 @@ namespace BoxSocial.IO
 
     public class Template
     {
+        private IProse prose;
         protected VariableCollection variables = new VariableCollection();
         private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>();
 
@@ -237,6 +238,12 @@ namespace BoxSocial.IO
         {
             templateAssembly = assembly;
             templateName = fileName;
+        }
+
+        // TODO: reconsider this into the constructor
+        public void SetProse(IProse prose)
+        {
+            this.prose = prose;
         }
 
         public void Parse(string key, string value)
@@ -632,6 +639,25 @@ namespace BoxSocial.IO
                         {
                             nextOffset += variables[key].Length;
                             line = line.Insert(varMatch.Index + offset, variables[key]);
+                        }
+                    }
+                    else if (prose != null)
+                    {
+                        string fragment = null;
+
+                        if (prose.ContainsKey(key))
+                        {
+                            fragment = prose.GetString(key);
+                        }
+                        else if ((!string.IsNullOrEmpty(templateAssembly)) && prose.ContainsKey(templateAssembly, key))
+                        {
+                            fragment = prose.GetString(templateAssembly, key);
+                        }
+
+                        if (fragment != null)
+                        {
+                            nextOffset += fragment.Length;
+                            line = line.Insert(varMatch.Index + offset, fragment);
                         }
                     }
                     offset += nextOffset;

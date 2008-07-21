@@ -218,39 +218,25 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long itemId = 0;
-            long listId = 0;
-
+            long itemId = Functions.RequestLong("id", 0);
             try
             {
-                itemId = long.Parse(Request.QueryString["id"]);
-            }
-            catch
-            {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
-                return;
-            }
+                ListItem item = new ListItem(core, itemId);
+                List list = new List(core, LoggedInMember, item.ListId);
 
-            DataTable listItemTable = db.Query(string.Format("SELECT li.list_id, ul.list_path FROM list_items li INNER JOIN user_lists ul ON ul.list_id = li.list_id WHERE li.list_item_id = {0};",
-                itemId));
+                List.Remove(core, item);
 
-            if (listItemTable.Rows.Count == 1)
-            {
-                listId = (long)listItemTable.Rows[0]["list_id"];
-
-                db.BeginTransaction();
-                db.UpdateQuery(string.Format("DELETE FROM list_items WHERE list_item_id = {0} AND list_id = {1}",
-                    itemId, listId));
-
-                db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items - 1 WHERE user_id = {0} AND list_id = {1}",
-                        loggedInMember.UserId, listId));
-
-                SetRedirectUri(Linker.BuildListUri(loggedInMember, (string)listItemTable.Rows[0]["list_path"]));
+                SetRedirectUri(list.Uri);
                 Display.ShowMessage("List Updated", "You have successfully removed an item from your list.");
             }
-            else
+            catch (InvalidListItemException)
             {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
+                DisplayGenericError();
+                return;
+            }
+            catch (UnauthorisedToDeleteItemException)
+            {
+                DisplayGenericError();
                 return;
             }
         }
@@ -352,7 +338,7 @@ namespace BoxSocial.Applications.Pages
         {
             string text = Request.Form["text"];
             string slug = text; // normalised representation
-            long listId = 0;
+            long listId = Functions.FormLong("id", 0);
             bool ajax = false;
 
             try
@@ -363,76 +349,38 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                listId = long.Parse(Request.Form["id"]);
-            }
-            catch
-            {
-                Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
-                return;
-            }
-
-            // normalise slug if it has been fiddeled with
-            slug = slug.ToLower().Normalize(NormalizationForm.FormD);
-            string normalisedSlug = "";
-
-            for (int i = 0; i < slug.Length; i++)
-            {
-                if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
-                {
-                    normalisedSlug += slug[i];
-                }
-            }
-            // we want to be a little less stringent with list items to allow for some punctuation of being of importance
-            slug = Regex.Replace(normalisedSlug, @"([^\w\+\&\*\(\)\=\:\?\-\#\@\!\$]+)", "-");
-
-            // check that the list exists for the given user
-            try
-            {
                 List list = new List(core, loggedInMember, listId);
 
-                DataTable listItemTextTable = db.Query(string.Format("SELECT list_item_text_id FROM list_items_text WHERE list_item_text_normalised = '{0}';",
-                    Mysql.Escape(slug)));
-
-                if (listItemTextTable.Rows.Count == 1)
+                try
                 {
-                    // already exists
-                    db.BeginTransaction();
-                    db.UpdateQuery(string.Format("INSERT INTO list_items (list_id, list_item_text_id) VALUES ({0}, {1})",
-                        listId, (long)listItemTextTable.Rows[0]["list_item_text_id"]));
-                }
-                else // insert new
-                {
-                    db.BeginTransaction();
-                    long listItemTextId = db.UpdateQuery(string.Format("INSERT INTO list_items_text (list_item_text, list_item_text_normalised) VALUES ('{0}', '{1}');",
-                        Mysql.Escape(text), Mysql.Escape(slug)));
+                    ListItem item = list.AddNew(text, ref slug);
 
-                    db.UpdateQuery(string.Format("INSERT INTO list_items (list_id, list_item_text_id) VALUES ({0}, {1})",
-                        listId, listItemTextId));
-                }
+                    ApplicationEntry ae = new ApplicationEntry(core);
 
-                db.UpdateQuery(string.Format("UPDATE user_lists SET list_items = list_items + 1 WHERE user_id = {0} AND list_id = {1}",
-                    loggedInMember.UserId, listId));
+                    // TODO: different list types
+                    AppInfo.Entry.PublishToFeed(loggedInMember, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
 
-                ApplicationEntry ae = new ApplicationEntry(core);
-
-                // TODO: different list types
-                AppInfo.Entry.PublishToFeed(loggedInMember, string.Format("added {0} to list {1}", text, list.Title));
-
-                if (ajax)
-                {
-                    Ajax.SendRawText("posted", text);
-
-                    if (db != null)
+                    if (ajax)
                     {
-                        db.CloseConnection();
+                        Ajax.SendRawText("posted", text);
+
+                        if (db != null)
+                        {
+                            db.CloseConnection();
+                        }
+                        Response.End();
+                        return;
                     }
-                    Response.End();
-                    return;
+                    else
+                    {
+                        SetRedirectUri(Linker.BuildListUri(loggedInMember, list.Path));
+                        Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
+                    }
                 }
-                else
+                catch (UnauthorisedToCreateItemException)
                 {
-                    SetRedirectUri(Linker.BuildListUri(loggedInMember, list.Path));
-                    Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
+                    Ajax.ShowMessage(ajax, "unauthorised", "Unauthorised", "You are unauthorised to append to this list.");
+                    return;
                 }
 
             }

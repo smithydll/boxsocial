@@ -45,13 +45,13 @@ namespace BoxSocial.Internals
     /// The structure shall be
     /// /language/applicationKey/applicationKey.ISO_languageCode.resources
     /// </summary>
-    public class Prose
+    public class Prose : IProse
     {
 
-        private static string language;
-        private static Dictionary<string, ResourceManager> languageResources;
+        private string language;
+        private Dictionary<string, ResourceManager> languageResources;
 
-        public static string Language
+        public string Language
         {
             set
             {
@@ -61,7 +61,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal static void Initialise(string language)
+        internal void Initialise(string language)
         {
             Language = language;
 
@@ -70,7 +70,7 @@ namespace BoxSocial.Internals
             AddApplication("Internals");
         }
 
-        internal static void AddApplication(string key)
+        internal void AddApplication(string key)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static string GetString(string key)
+        public string GetString(string key)
         {
             try
             {
@@ -107,12 +107,12 @@ namespace BoxSocial.Internals
         /// <param name="key"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static string GetString(string key, params object[] param)
+        public string GetString(string key, params object[] param)
         {
             return string.Format(GetString(key), param);
         }
 
-        public static string GetString(string applicationKey, string languageKey)
+        public string GetString(string applicationKey, string languageKey)
         {
             try
             {
@@ -124,12 +124,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string GetString(string applicationKey, string languageKey, params object[] param)
+        public string GetString(string applicationKey, string languageKey, params object[] param)
         {
             return string.Format(GetString(applicationKey, languageKey), param);
         }
 
-        public static void Close()
+        public void Close()
         {
             if (languageResources != null)
             {
@@ -138,6 +138,37 @@ namespace BoxSocial.Internals
                     ResourceManager rm = languageResources[key];
                     rm.ReleaseAllResources();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Queries Internals
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool ContainsKey(string key)
+        {
+            try
+            {
+                languageResources["Internals"].GetString(key);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool ContainsKey(string applicationKey, string key)
+        {
+            try
+            {
+                languageResources[applicationKey].GetString(key);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

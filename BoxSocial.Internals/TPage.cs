@@ -290,7 +290,7 @@ namespace BoxSocial.Internals
                     db.CloseConnection();
                 }
 
-                Prose.Close();
+                core.prose.Close();
 
                 HttpContext.Current.Response.End();
                 //System.Threading.Thread.CurrentThread.Abort();
@@ -305,7 +305,7 @@ namespace BoxSocial.Internals
                 db.CloseConnection();
             }
 
-            Prose.Close();
+            core.prose.Close();
         }
     }
 }

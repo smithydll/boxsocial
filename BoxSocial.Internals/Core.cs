@@ -42,6 +42,7 @@ namespace BoxSocial.Internals
         public string PagePath;
         public GroupCollection PagePathParts;
         public UnixTime tz;
+        public Prose prose;
 
         internal TPage page;
 
@@ -142,6 +143,10 @@ namespace BoxSocial.Internals
             this.template = template;
 
             userProfileCache = new UsersCache(this);
+
+            prose = new Prose();
+
+            template.SetProse(prose);
         }
 
         void Core_LoadApplication(Core core, object sender)

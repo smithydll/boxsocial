@@ -286,6 +286,47 @@ namespace BoxSocial.Applications.Pages
             return false;
         }
 
+        public ListItem AddNew(string text, ref string normalisedText)
+        {
+            ListItem item = ListItem.Create(core, this, text, ref normalisedText);
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(List)));
+            uQuery.AddField("list_items", new QueryOperation("list_items", QueryOperations.Addition, 1));
+            uQuery.AddCondition("list_id", listId);
+
+            core.db.Query(uQuery);
+
+            return item;
+        }
+
+        public void Remove(long listItemId)
+        {
+            ListItem item = new ListItem(core, listItemId);
+            
+            db.BeginTransaction();
+
+            item.Delete();
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(List)));
+            uQuery.AddField("list_items", new QueryOperation("list_items", QueryOperations.Subtraction, 1));
+            uQuery.AddCondition("list_id", listId);
+
+            db.Query(uQuery);
+        }
+
+        public static void Remove(Core core, ListItem item)
+        {
+            core.db.BeginTransaction();
+
+            item.Delete();
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(List)));
+            uQuery.AddField("list_items", new QueryOperation("list_items", QueryOperations.Subtraction, 1));
+            uQuery.AddCondition("list_id", item.ListId);
+
+            core.db.Query(uQuery);
+        }
+
         public static List Create(Core core, string title, ref string slug, string listAbstract, short listType, ushort permissions)
         {
             Navigation.GenerateSlug(title, ref slug);

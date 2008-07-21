@@ -102,6 +102,7 @@ namespace BoxSocial.Applications.Pages
             if (listItemTable.Rows.Count == 1)
             {
                 loadItemInfo(listItemTable.Rows[0]);
+                lit = new ListItemText(core, listItemTable.Rows[0]);
             }
             else
             {
@@ -134,9 +135,12 @@ namespace BoxSocial.Applications.Pages
             return query;
         }
 
-        public static ListItem Create(Core core, List list, string text)
+        public static ListItem Create(Core core, List list, string text, ref string normalisedText)
         {
-            string normalisedText = text;
+            if (string.IsNullOrEmpty(normalisedText))
+            {
+                normalisedText = text;
+            }
 
             if (!list.Access.CanCreate)
             {
@@ -144,6 +148,8 @@ namespace BoxSocial.Applications.Pages
             }
 
             NormaliseListItem(text, ref normalisedText);
+
+            core.db.BeginTransaction();
 
             ListItemText lit;
 
@@ -153,11 +159,12 @@ namespace BoxSocial.Applications.Pages
             }
             catch (InvalidListItemTextException)
             {
-                lit = ListItemText.Create(core, normalisedText);
+                lit = ListItemText.Create(core, text, ref normalisedText);
             }
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ListItem)));
             iQuery.AddField("list_id", list.Id);
+            iQuery.AddField("list_item_text_id", lit.Id);
 
             long listItemId = core.db.Query(iQuery);
 
@@ -287,11 +294,17 @@ namespace BoxSocial.Applications.Pages
         {
         }
 
-        internal ListItemText Create(Core core, string text, ref string normalisedText)
+        internal static ListItemText Create(Core core, string text, ref string normalisedText)
         {
-            NormaliseListItem(text, ref normalisedText);
+            ListItem.NormaliseListItem(text, ref normalisedText);
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ListItemText)));
+            iQuery.AddField("list_item_text", text);
+            iQuery.AddField("list_item_text_normalised", normalisedText);
+
+            long listItemTextId = core.db.Query(iQuery);
+
+            return new ListItemText(core, listItemTextId);
         }
 
         public override long Id

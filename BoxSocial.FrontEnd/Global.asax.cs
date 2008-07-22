@@ -128,6 +128,10 @@ namespace BoxSocial.FrontEnd
                 patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", @"/account.aspx?module=$1" });
                 patterns.Add(new string[] { @"^/account(|/)$", @"/account.aspx" });
 
+                patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/groupaccount.aspx?gn=$1&module=$2&sub=$3" });
+                patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(|/)$", @"/groupaccount.aspx?gn=$1&module=$2" });
+                patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(|/)$", @"/groupaccount.aspx?gn=$1" });
+
                 patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
 
                 patterns.Add(new string[] { @"^/help(|/)$", @"/help.aspx" });

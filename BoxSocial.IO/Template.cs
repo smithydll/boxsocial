@@ -641,17 +641,18 @@ namespace BoxSocial.IO
                             line = line.Insert(varMatch.Index + offset, variables[key]);
                         }
                     }
-                    else if (prose != null)
+                    else if (prose != null && key.StartsWith("L_"))
                     {
+                        string proseKey = key.Substring(2).ToLower();
                         string fragment = null;
 
-                        if (prose.ContainsKey(key))
+                        if (prose.ContainsKey(proseKey))
                         {
-                            fragment = prose.GetString(key);
+                            fragment = prose.GetString(proseKey);
                         }
-                        else if ((!string.IsNullOrEmpty(templateAssembly)) && prose.ContainsKey(templateAssembly, key))
+                        else if ((!string.IsNullOrEmpty(templateAssembly)) && prose.ContainsKey(templateAssembly, proseKey))
                         {
-                            fragment = prose.GetString(templateAssembly, key);
+                            fragment = prose.GetString(templateAssembly, proseKey);
                         }
 
                         if (fragment != null)

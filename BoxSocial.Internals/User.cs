@@ -1968,6 +1968,14 @@ namespace BoxSocial.Internals
             page.ProfileOwner.ProfileViewed(core.session.LoggedInMember);
         }
 
+        public override string AccountUriStub
+        {
+            get
+            {
+                return "/account/";
+            }
+        }
+
         public override string Namespace
         {
             get

@@ -1,0 +1,31 @@
+<h3>Applications</h3>
+<p>Here you can manage installed application permissions, or remove installed applications.</p>
+
+<div id="new-stuff">
+	<span id="find-application" class="post-button"><a href="/applications">Browse Applications</a></span>
+</div>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN application_list -->
+<!-- IF application_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{application_list.NAME}</td>
+	<td><a href="{application_list.U_SETTINGS}">Settings</a></td>
+	<td>
+		<!-- IF application_list.U_UNINSTALL -->
+		<a href="{application_list.U_UNINSTALL}">Uninstall</a>
+		<!-- ELSE -->
+		<span title="Cannot uninstall this application">Uninstall</span>
+		<!-- ENDIF -->
+	</td>
+</tr>
+<!-- END application_list -->
+</table>

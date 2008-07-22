@@ -53,6 +53,14 @@ namespace BoxSocial.Internals
         private Dictionary<string, ModuleModeHandler> modes = new Dictionary<string, ModuleModeHandler>();
         private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
 
+        public Primitive SetOwner
+        {
+            set
+            {
+                Owner = value;
+            }
+        }
+
         /// <summary>
         /// We do this so we don't have to keep re-declaring the same
         /// constructor
@@ -302,7 +310,7 @@ namespace BoxSocial.Internals
         /// Builds a URI to the current sub module
         /// </summary>
         /// <returns>URI built</returns>
-        protected string BuildUri()
+        public string BuildUri()
         {
             return BuildUri(Key);
         }
@@ -313,14 +321,14 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}",
-                ModuleKey, sub));
+            return Linker.AppendSid(string.Format("{0}{1}/{2}",
+                Owner.AccountUriStub, ModuleKey, sub));
         }
 
         public string BuildUri(string sub, string mode, long id)
         {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}&id={3}",
-                ModuleKey, sub, mode, id), true);
+            return Linker.AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
+                Owner.AccountUriStub, ModuleKey, sub, mode, id), true);
         }
 
         /// <summary>
@@ -359,8 +367,8 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
-                ModuleKey, sub, argumentList));
+            return Linker.AppendSid(string.Format("{0}{1}/{2}{3}",
+                Owner.AccountUriStub, ModuleKey, sub, argumentList));
         }
 
         /// <summary>

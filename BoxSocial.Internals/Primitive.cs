@@ -47,6 +47,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string AccountUriStub
+        {
+            get;
+        }
+
         public override abstract string Namespace
         {
             get;

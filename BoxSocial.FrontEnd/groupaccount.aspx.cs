@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -38,21 +38,22 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class account : TPage
+    public partial class groupaccount : GPage
     {
 
         private List<AccountModule> accountModules = new List<AccountModule>();
         private List<AccountSubModule> accountSubModules = new List<AccountSubModule>();
         private Dictionary<string, Dictionary<string, string>> modulesList = new Dictionary<string, Dictionary<string, string>>();
 
-        public account()
+        public groupaccount()
             : base("account_master.html")
         {
+            BeginGroupPage();
         }
 
         void OnRegisterModule(object sender, EventArgs e)
         {
-            
+
         }
 
         public void AddModule(string token, Dictionary<string, string> subModules)
@@ -151,28 +152,19 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            //Response.Write(module + "::" + submodule);
-
-            loggedInMember.LoadProfileInfo();
-
-            if ((loggedInMember.Permissions & 0x1111) == 0x0000)
+            if (!thisGroup.IsGroupOperator(loggedInMember))
             {
-                template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
-            }
-
-            if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
-            {
-                template.ParseRaw("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
+                Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
             }
 
             Account accountObject = new Account(Core);
-            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, session.LoggedInMember), module);
+            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, thisGroup), module);
 
             accountObject.RegisterModule += new Account.RegisterModuleHandler(OnRegisterModule);
             accountObject.RegisterAllModules();
 
             accountModules.Sort();
- 
+
             foreach (AccountModule accountModule in accountModules)
             {
                 VariableCollection modulesVariableCollection = template.CreateChild("module_list");
@@ -180,11 +172,11 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", "/account/");
+                    modulesVariableCollection.Parse("URI", "/group/" + thisGroup.Key + "/account/");
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", "/account/" + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", "/group/" + thisGroup.Key + "/account/" + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
@@ -207,23 +199,11 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
+                        ApplicationEntry ae = new ApplicationEntry(core, thisGroup, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title  + "` at ZinZam.com", ex.ToString());
+                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
-                }
-            }
-
-            foreach (string key in modules.Keys)
-            {
-                if (!string.IsNullOrEmpty(modules[key]))
-                {
-                    VariableCollection modulesVariableCollection = template.CreateChild("account_links");
-
-                    modulesVariableCollection.Parse("TITLE", modules[key]);
-                    modulesVariableCollection.Parse("SUB", key);
-                    modulesVariableCollection.Parse("MODULE", module);
                 }
             }
 
@@ -235,20 +215,21 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
 
-                    asm.SetOwner = loggedInMember;
+                    asm.SetOwner = thisGroup;
 
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
+                    modulesVariableCollection.Parse("URI", asm.BuildUri());
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core);
+                    asm.ModuleVector(core, thisGroup);
                 }
             }
 
             EndResponse();
-        }        
+        }
     }
 }

@@ -864,6 +864,15 @@ namespace BoxSocial.Networks
             page.TheNetwork.GenerateBreadCrumbs("members");
         }
 
+        public override string AccountUriStub
+        {
+            get
+            {
+                return string.Format("/network/{0}/account/",
+                    Key);
+            }
+        }
+
         public override string Namespace
         {
             get

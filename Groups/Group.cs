@@ -1348,6 +1348,15 @@ namespace BoxSocial.Groups
             page.ThisGroup.ParseBreadCrumbs("members");
         }
 
+        public override string AccountUriStub
+        {
+            get
+            {
+                return string.Format("/group/{0}/account/",
+                    Key);
+            }
+        }
+
         public override string Namespace
         {
             get

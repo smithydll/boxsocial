@@ -78,6 +78,9 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Global.asax.cs" />
+    <Compile Include="groupaccount.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="grouppage.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

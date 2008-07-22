@@ -66,7 +66,7 @@ namespace BoxSocial.Internals
             // TODO: SetTemplate("account_applications");
             template.SetTemplate("account_applications.html");
 
-            List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, session.LoggedInMember);
+            List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, Owner);
 
             foreach (ApplicationEntry ae in applications)
             {
@@ -105,14 +105,14 @@ namespace BoxSocial.Internals
             query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
             query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
             query.AddCondition("primitive_apps.application_id", id);
-            query.AddCondition("item_id", core.LoggedInMemberId);
-            query.AddCondition("item_type", "USER");
+            query.AddCondition("item_id", Owner.Id);
+            query.AddCondition("item_type", Owner.Type);
 
             DataTable applicationTable = db.Query(query);
 
             if (applicationTable.Rows.Count == 1)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, applicationTable.Rows[0]);
+                ApplicationEntry ae = new ApplicationEntry(core, Owner, applicationTable.Rows[0]);
 
                 List<string> applicationPermissions = new List<string>();
                 applicationPermissions.Add("Can Access");
@@ -142,8 +142,8 @@ namespace BoxSocial.Internals
 
             UpdateQuery uquery = new UpdateQuery("primitive_apps");
             uquery.AddField("app_access", Functions.GetPermission());
-            uquery.AddCondition("item_id", core.LoggedInMemberId);
-            uquery.AddCondition("item_type", "USER");
+            uquery.AddCondition("item_id", Owner.Id);
+            uquery.AddCondition("item_type", Owner.Type);
             uquery.AddCondition("application_id", id);
 
             db.Query(uquery);
@@ -171,7 +171,7 @@ namespace BoxSocial.Internals
             /*try
             {*/
             ApplicationEntry ae = new ApplicationEntry(core, null, id);
-            ae.Install(core, loggedInMember);
+            ae.Install(core, Owner);
             /*}
             catch
             {
@@ -200,7 +200,7 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry ae = new ApplicationEntry(core, null, id);
-                ae.Uninstall(core, loggedInMember);
+                ae.Uninstall(core, Owner);
             }
             catch
             {

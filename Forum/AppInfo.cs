@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -101,7 +101,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return null;
+                return Properties.Resources.script;
             }
         }
 

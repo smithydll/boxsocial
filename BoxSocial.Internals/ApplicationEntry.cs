@@ -919,6 +919,15 @@ namespace BoxSocial.Internals
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));
         }
 
+        public override string AccountUriStub
+        {
+            get
+            {
+                return string.Format("/application/{0}/account/",
+                    Key);
+            }
+        }
+
         public override string Namespace
         {
             get

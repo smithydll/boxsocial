@@ -44,9 +44,40 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             int p = Functions.RequestInt("p", 1);
+            string type = Request.QueryString["type"];
+            long id = Functions.RequestLong("id", 0);
 
-            DataTable applicationsTable = db.Query(string.Format(@"SELECT {0} FROM applications ap ORDER BY application_title ASC LIMIT {1}, 10",
-                ApplicationEntry.APPLICATION_FIELDS, (p - 1) * 10));
+            AppPrimitives viewingPrimitive = AppPrimitives.Member;
+
+            if (!string.IsNullOrEmpty(type))
+            {
+                switch (type)
+                {
+                    case "USER":
+                        viewingPrimitive = AppPrimitives.Member;
+                        break;
+                    case "GROUP":
+                        viewingPrimitive = AppPrimitives.Group;
+                        break;
+                    case "NETWORK":
+                        viewingPrimitive = AppPrimitives.Network;
+                        break;
+                    case "APPLICATION":
+                        viewingPrimitive = AppPrimitives.Application;
+                        break;
+                    case "MUSIC":
+                        viewingPrimitive = AppPrimitives.Musician;
+                        break;
+                }
+            }
+
+            SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
+            query.AddCondition("application_primitives & " + (byte)viewingPrimitive, (byte)viewingPrimitive);
+            query.AddSort(SortOrder.Ascending, "application_title");
+            query.LimitStart = (p - 1) * 10;
+            query.LimitCount = 10;
+
+            DataTable applicationsTable = db.Query(query);
 
             foreach (DataRow dr in applicationsTable.Rows)
             {
@@ -55,7 +86,7 @@ namespace BoxSocial.FrontEnd
                 VariableCollection applicationVariableCollection = template.CreateChild("application_list");
 
                 applicationVariableCollection.Parse("TITLE", ae.Title);
-                applicationVariableCollection.Parse("URI", ae.Uri);
+                applicationVariableCollection.Parse("URI", ae.GetUri(type, id));
             }
 
             Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));

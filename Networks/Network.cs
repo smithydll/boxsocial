@@ -53,6 +53,7 @@ namespace BoxSocial.Networks
     /// 
     /// </summary>
     [DataTable("network_keys")]
+    [Primitive("NETWORK", NetworkLoadOptions.All, "network_id", "network_network")]
     public class Network : Primitive, ICommentableItem
     {
         public const string NETWORK_INFO_FIELDS = "`network_info`.network_id, `network_info`.network_name_display, `network_info`.network_abstract, `network_info`.network_members, `network_info`.network_comments, `network_info`.network_require_confirmation, `network_info`.network_type, `network_info`.network_gallery_items, `network_info`.network_bytes";
@@ -539,6 +540,35 @@ namespace BoxSocial.Networks
 
                 Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
+        }
+
+        public static SelectQuery GetSelectQueryStub(NetworkLoadOptions loadOptions)
+        {
+            SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
+            query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+
+            if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
+            {
+                query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
+                query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+
+                if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
+                {
+                    // TODO: Network Icon
+                    /*containsIconData = true;
+
+                    query.AddJoin(JoinTypes.Left, new DataField("network_info", "network_icon"), new DataField("gallery_items", "gallery_item_id"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));*/
+                }
+            }
+
+            return query;
+        }
+
+        public static SelectQuery Network_GetSelectQueryStub()
+        {
+            return GetSelectQueryStub(NetworkLoadOptions.All);
         }
 
         public NetworkMember Join(Core core, User member, string networkEmail)

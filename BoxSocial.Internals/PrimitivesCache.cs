@@ -27,12 +27,12 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public sealed class UsersCache
+    public sealed class PrimitivesCache
     {
         private Core core;
         private Mysql db;
 
-        public UsersCache(Core core)
+        public PrimitivesCache(Core core)
         {
             this.core = core;
             this.db = core.db;
@@ -44,7 +44,7 @@ namespace BoxSocial.Internals
         private Dictionary<long, User> userProfileCache = new Dictionary<long, User>();
 
         /// <summary>
-        /// A list of usernames cached
+        /// A list of usernames cached.
         /// </summary>
         private Dictionary<string, long> userNameCache = new Dictionary<string, long>();
 
@@ -53,12 +53,36 @@ namespace BoxSocial.Internals
         /// </summary>
         private List<long> batchedUserIds = new List<long>();
 
+        /// <summary>
+        /// A cache of primitives loaded.
+        /// </summary>
+        private Dictionary<PrimitiveId, Primitive> primitivesCached = new Dictionary<PrimitiveId, Primitive>();
+
+        /// <summary>
+        /// A cached primitive keys.
+        /// </summary>
+        private Dictionary<PrimitiveKey, PrimitiveId> primitivesKeysCached = new Dictionary<PrimitiveKey, PrimitiveId>();
+
+        /// <summary>
+        /// A list of primitive Ids for batched loading
+        /// </summary>
+        private List<PrimitiveId> batchedPrimitivesIds = new List<PrimitiveId>();
+
         public User this[long key]
         {
             get
             {
                 loadBatchedIds(key);
                 return userProfileCache[key];
+            }
+        }
+
+        public Primitive this[string type, long key]
+        {
+            get
+            {
+                loadBatchedIds(type, key);
+                return primitivesCached[new PrimitiveId(type, key)];
             }
         }
 
@@ -108,11 +132,58 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="primitiveIds"></param>
+        private void loadPrimitiveProfiles(List<PrimitiveId> primitiveIds)
+        {
+            Dictionary<string, List<long>> idList = new Dictionary<string, List<long>>();
+            foreach (PrimitiveId id in primitiveIds)
+            {
+                if (!primitivesCached.ContainsKey(id))
+                {
+                    if (!idList.ContainsKey(id.Type))
+                    {
+                        idList.Add(id.Type, new List<long>());
+                    }
+                    idList[id.Type].Add(id.Id);
+                }
+            }
+
+            foreach (String type in idList.Keys)
+            {
+                Type t = core.GetPrimitiveType(type);
+                string keysTable = Item.GetTable(t);
+                string idField = core.GetPrimitiveAttributes(type).IdField;
+
+                SelectQuery query = Item.GetSelectQueryStub(t);
+                query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[type]);
+
+                DataTable primitivesTable = db.Query(query);
+
+                foreach (DataRow primitiveRow in primitivesTable.Rows)
+                {
+                    Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(type).DefaultLoadOptions }) as Primitive;
+                    primitivesCached.Add(new PrimitiveId(type, newPrimitive.Id), newPrimitive);
+                    primitivesKeysCached.Add(new PrimitiveKey(type, newPrimitive.Key), new PrimitiveId(type, newPrimitive.Id));
+                }
+            }
+        }
+
         public void LoadUserProfile(long userId)
         {
             if (!userProfileCache.ContainsKey(userId))
             {
                 batchedUserIds.Add(userId);
+            }
+        }
+
+        public void LoadPrimitiveProfile(string type, long id)
+        {
+            if (!primitivesCached.ContainsKey(new PrimitiveId(type, id)))
+            {
+                batchedPrimitivesIds.Add(new PrimitiveId(type, id));
             }
         }
 
@@ -192,6 +263,14 @@ namespace BoxSocial.Internals
             if (batchedUserIds.Contains(requestedId))
             {
                 loadUserProfiles(batchedUserIds);
+            }
+        }
+
+        private void loadBatchedIds(string type, long requestedId)
+        {
+            if (batchedPrimitivesIds.Contains(new PrimitiveId(type, requestedId)))
+            {
+                loadPrimitiveProfiles(batchedPrimitivesIds);
             }
         }
     }

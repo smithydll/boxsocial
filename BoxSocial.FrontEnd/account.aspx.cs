@@ -215,18 +215,6 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            foreach (string key in modules.Keys)
-            {
-                if (!string.IsNullOrEmpty(modules[key]))
-                {
-                    VariableCollection modulesVariableCollection = template.CreateChild("account_links");
-
-                    modulesVariableCollection.Parse("TITLE", modules[key]);
-                    modulesVariableCollection.Parse("SUB", key);
-                    modulesVariableCollection.Parse("MODULE", module);
-                }
-            }
-
             accountSubModules.Sort();
 
             foreach (AccountSubModule asm in accountSubModules)
@@ -240,6 +228,7 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
+                    modulesVariableCollection.Parse("URI", asm.BuildUri());
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

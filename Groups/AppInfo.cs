@@ -36,6 +36,7 @@ namespace BoxSocial.Groups
         public AppInfo(Core core)
             : base(core)
         {
+            core.AddPrimitiveType(typeof(UserGroup));
         }
 
         public override string Title

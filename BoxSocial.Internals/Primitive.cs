@@ -25,6 +25,111 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public struct PrimitiveKey : IComparable
+    {
+        private string key;
+        private string type;
+
+        public string Key
+        {
+            get
+            {
+                return key;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+
+        public PrimitiveKey(string type, string key)
+        {
+            this.type = type;
+            this.key = key;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is PrimitiveKey)) return -1;
+            PrimitiveKey pk = (PrimitiveKey)obj;
+
+            if (type != pk.Type) return type.CompareTo(pk.Type);
+            return key.CompareTo(pk.Key);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PrimitiveKey)) return false;
+            PrimitiveKey pk = (PrimitiveKey)obj;
+
+            if (type != pk.Type) return false;
+            if (key != pk.Key) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+    }
+
+    public struct PrimitiveId : IComparable
+    {
+        private long id;
+        private string type;
+
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return type;
+            }
+        }
+
+        public PrimitiveId(string type, long id)
+        {
+            this.type = type;
+            this.id = id;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (!(obj is PrimitiveId)) return -1;
+            PrimitiveId pk = (PrimitiveId)obj;
+
+            if (type != pk.Type) return type.CompareTo(pk.Type);
+            return id.CompareTo(pk.Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is PrimitiveId)) return false;
+            PrimitiveId pk = (PrimitiveId)obj;
+
+            if (type != pk.Type) return false;
+            if (id != pk.Id) return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+    }
+
     public abstract class Primitive : Item
     {
 

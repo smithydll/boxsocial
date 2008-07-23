@@ -41,6 +41,7 @@ namespace BoxSocial.Groups
     }
 
     [DataTable("group_keys")]
+    [Primitive("GROUP", UserGroupLoadOptions.All, "group_id", "group_name")]
     public class UserGroup : Primitive, ICommentableItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
@@ -653,6 +654,32 @@ namespace BoxSocial.Groups
                 }
             }
             return false;
+        }
+
+        public static SelectQuery GetSelectQueryStub(UserGroupLoadOptions loadOptions)
+        {
+            SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
+            query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+
+            if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+            {
+                query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
+                query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+
+                if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                {
+                    query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                }
+            }
+
+            return query;
+        }
+
+        public static SelectQuery UserGroup_GetSelectQueryStub()
+        {
+            return GetSelectQueryStub(UserGroupLoadOptions.All);
         }
 
         public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, short groupCategory, string groupType)

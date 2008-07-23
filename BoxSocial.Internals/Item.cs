@@ -309,6 +309,23 @@ namespace BoxSocial.Internals
             return tags;
         }
 
+        protected Primitive fillOwner(long ownerId, string ownerType)
+        {
+            Primitive owner;
+
+            Type type = core.GetPrimitiveType(ownerType);
+            if (type.IsSubclassOf(typeof(Primitive)))
+            {
+                owner = System.Activator.CreateInstance(type, new object[] { core, ownerId }) as Primitive;
+
+                return owner;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// returns the field that is linked to the parent of a given type
         /// </summary>

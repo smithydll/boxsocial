@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Calendar
     }
 
     [DataTable("tasks")]
-    public class Task : Item, ICommentableItem
+    public class Task : Item, ICommentableItem, IPermissibleItem
     {
         public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
@@ -470,6 +470,47 @@ namespace BoxSocial.Applications.Calendar
         }
 
         #endregion
+
+        public Access Access
+        {
+            get
+            {
+                if (taskAccess == null)
+                {
+                    taskAccess = new Access(core, permissions, Owner);
+                }
+                return taskAccess;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.UserProfiles[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                List<string> permissions = new List<string>();
+                permissions.Add("Can Read");
+
+                return permissions;
+            }
+        }
+
     }
 
     public class InvalidTaskException : Exception

@@ -57,6 +57,7 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_keys")]
+    [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
     public class User : Primitive, ICommentableItem
     {
         public static long lastEmailId;
@@ -1130,6 +1131,11 @@ namespace BoxSocial.Internals
             }
 
             return query;
+        }
+
+        public static SelectQuery User_GetSelectQueryStub()
+        {
+            return GetSelectQueryStub(UserLoadOptions.All);
         }
 
         /// <summary>

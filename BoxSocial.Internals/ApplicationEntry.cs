@@ -527,6 +527,19 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string GetUri(string type, long id)
+        {
+            if (type == "USER")
+            {
+                return Uri;
+            }
+            else
+            {
+                return Linker.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
+                    assemblyName, type, id));
+            }
+        }
+
         public override bool CanModerateComments(User member)
         {
             return false;
@@ -897,6 +910,17 @@ namespace BoxSocial.Internals
         {
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
+
+            string type = HttpContext.Current.Request.QueryString["type"];
+            long id = Functions.RequestLong("id", 0);
+
+            Primitive viewer = core.session.LoggedInMember;
+
+            if (!string.IsNullOrEmpty(type))
+            {
+                core.UserProfiles.LoadPrimitiveProfile(type, id);
+                viewer = core.UserProfiles[type, id];
+            }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
 

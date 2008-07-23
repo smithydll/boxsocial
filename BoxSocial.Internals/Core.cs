@@ -57,6 +57,8 @@ namespace BoxSocial.Internals
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
 
+        Dictionary<string, Type> primitiveTypes = new Dictionary<string, Type>();
+        Dictionary<string, PrimitiveAttribute> primitiveAttributes = new Dictionary<string, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<string, CommentHandle> commentHandles = new Dictionary<string, CommentHandle>();
         private Dictionary<string, RatingHandler> ratingHandles = new Dictionary<string, RatingHandler>();
@@ -66,12 +68,12 @@ namespace BoxSocial.Internals
         /// </summary>
         private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>();
 
-        private UsersCache userProfileCache;
+        private PrimitivesCache userProfileCache;
 
         /// <summary>
         /// Returns a list of user profiles cached in memory.
         /// </summary>
-        public UsersCache UserProfiles
+        public PrimitivesCache UserProfiles
         {
             get
             {
@@ -142,11 +144,14 @@ namespace BoxSocial.Internals
             this.db = db;
             this.template = template;
 
-            userProfileCache = new UsersCache(this);
+            userProfileCache = new PrimitivesCache(this);
 
             prose = new Prose();
 
             template.SetProse(prose);
+
+            AddPrimitiveType(typeof(User));
+            FindAllPrimitivesLoaded();
         }
 
         void Core_LoadApplication(Core core, object sender)
@@ -319,6 +324,81 @@ namespace BoxSocial.Internals
         public void AddPageAssembly(Assembly assembly)
         {
             template.AddPageAssembly(assembly);
+        }
+
+        public void AddPrimitiveType(Type type)
+        {
+            bool typeAdded = false;
+            if (type.IsSubclassOf(typeof(Primitive)))
+            {
+                foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+                {
+                    foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                    {
+                        if (attr.GetType() == typeof(PrimitiveAttribute))
+                        {
+                            if (((PrimitiveAttribute)attr).Type != null)
+                            {
+                                if (!primitiveTypes.ContainsKey(((PrimitiveAttribute)attr).Type))
+                                {
+                                    primitiveAttributes.Add(((PrimitiveAttribute)attr).Type, (PrimitiveAttribute)attr);
+                                    primitiveTypes.Add(((PrimitiveAttribute)attr).Type, type);
+                                }
+                                typeAdded = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!typeAdded)
+                {
+                    if (!primitiveTypes.ContainsKey(type.FullName))
+                    {
+                        primitiveTypes.Add(type.FullName, type);
+                    }
+                }
+            }
+        }
+
+        internal void FindAllPrimitivesLoaded()
+        {
+            AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
+
+            foreach (AssemblyName an in assemblies)
+            {
+                Type[] types = Assembly.Load(an).GetTypes();
+                foreach (Type type in types)
+                {
+                    if (type.IsSubclassOf(typeof(Primitive)))
+                    {
+                        AddPrimitiveType(type);
+                    }
+                }
+            }
+        }
+
+        public Type GetPrimitiveType(string ownerType)
+        {
+            if (primitiveTypes.ContainsKey(ownerType))
+            {
+                return primitiveTypes[ownerType];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public PrimitiveAttribute GetPrimitiveAttributes(string ownerType)
+        {
+            if (primitiveAttributes.ContainsKey(ownerType))
+            {
+                return primitiveAttributes[ownerType];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void EndResponse()

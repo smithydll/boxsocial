@@ -121,6 +121,7 @@ namespace BoxSocial.Applications.Forum
             aii.AddSlug("forum", @"^/forum/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
 
@@ -147,6 +148,11 @@ namespace BoxSocial.Applications.Forum
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
 
+        public override AppPrimitives GetAppPrimitiveSupport()
+        {
+            return AppPrimitives.Group;
+        }
+
         [Show(@"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForums(Core core, object sender)
         {
@@ -167,6 +173,15 @@ namespace BoxSocial.Applications.Forum
             if (sender is GPage)
             {
                 Forum.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
+            }
+        }
+
+        [Show(@"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showPoster(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                Poster.Show(core, (GPage)sender);
             }
         }
 

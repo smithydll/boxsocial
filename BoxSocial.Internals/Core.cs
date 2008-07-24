@@ -331,21 +331,18 @@ namespace BoxSocial.Internals
             bool typeAdded = false;
             if (type.IsSubclassOf(typeof(Primitive)))
             {
-                foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+                foreach (object attr in type.GetCustomAttributes(false))
                 {
-                    foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                    if (attr.GetType() == typeof(PrimitiveAttribute))
                     {
-                        if (attr.GetType() == typeof(PrimitiveAttribute))
+                        if (((PrimitiveAttribute)attr).Type != null)
                         {
-                            if (((PrimitiveAttribute)attr).Type != null)
+                            if (!primitiveTypes.ContainsKey(((PrimitiveAttribute)attr).Type))
                             {
-                                if (!primitiveTypes.ContainsKey(((PrimitiveAttribute)attr).Type))
-                                {
-                                    primitiveAttributes.Add(((PrimitiveAttribute)attr).Type, (PrimitiveAttribute)attr);
-                                    primitiveTypes.Add(((PrimitiveAttribute)attr).Type, type);
-                                }
-                                typeAdded = true;
+                                primitiveAttributes.Add(((PrimitiveAttribute)attr).Type, (PrimitiveAttribute)attr);
+                                primitiveTypes.Add(((PrimitiveAttribute)attr).Type, type);
                             }
+                            typeAdded = true;
                         }
                     }
                 }

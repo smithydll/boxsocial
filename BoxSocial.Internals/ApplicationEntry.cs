@@ -929,15 +929,15 @@ namespace BoxSocial.Internals
             core.template.Parse("DESCRIPTION", page.AnApplication.Description);
             core.template.Parse("CREATOR_DISPLAY_NAME", Creator.DisplayName);
 
-            if (page.AnApplication.HasInstalled(core.session.LoggedInMember))
+            if (page.AnApplication.HasInstalled(viewer))
             {
-                core.template.Parse("U_UNINSTALL", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=uninstall&id={0}",
-                    page.AnApplication.ApplicationId), true));
+                core.template.Parse("U_UNINSTALL", Linker.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                    page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
             }
             else
             {
-                core.template.Parse("U_INSTALL", Linker.AppendSid(string.Format("/account/dashboard/applications?mode=install&id={0}",
-                    page.AnApplication.ApplicationId), true));
+                core.template.Parse("U_INSTALL", Linker.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                    page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));

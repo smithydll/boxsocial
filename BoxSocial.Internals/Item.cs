@@ -214,7 +214,7 @@ namespace BoxSocial.Internals
                 query.LimitCount = perPage;
             }
 
-            query.AddCondition(Item.GetParentField(this.GetType()), Id);
+            query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(this.GetType()), Id);
 
             DataTable itemsTable = db.Query(query);
 

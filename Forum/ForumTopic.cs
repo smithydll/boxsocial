@@ -26,6 +26,7 @@ using System.Web;
 using BoxSocial.IO;
 using BoxSocial.Internals;
 using BoxSocial.Groups;
+using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
@@ -50,6 +51,8 @@ namespace BoxSocial.Applications.Forum
         private long createdRaw;
         [DataField("topic_modified_ut")]
         private long modifiedRaw;
+        [DataField("topic_last_post_time_ut")]
+        private long lastPostTimeRaw;
         [DataField("topic_last_post_id")]
         private long lastPostId;
         [DataField("topic_first_post_id")]
@@ -81,6 +84,10 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
+                if (forum == null)
+                {
+                    forum = new Forum(core, forumId);
+                }
                 return forum;
             }
         }
@@ -216,7 +223,7 @@ namespace BoxSocial.Applications.Forum
             query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
 
-            query.AddSort(SortOrder.Descending, "topic_last_post_time");
+            query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
 
             return query;
         }
@@ -230,14 +237,14 @@ namespace BoxSocial.Applications.Forum
             return new ForumTopic(core, forum, topicId);
         }
 
-        public List<TopicPost> GetPosts(TPage page, int currentPage, int perPage)
+        public List<TopicPost> GetPosts(int currentPage, int perPage)
         {
-            List<TopicPost> posts = new List<TopicPost>();
+            return getSubItems(typeof(TopicPost), currentPage, perPage).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
+        }
 
-            SelectQuery query = new SelectQuery("posts");
-
-
-            return posts;
+        public TopicPost convertToTopicPost(Item input)
+        {
+            return (TopicPost)input;
         }
 
         public override long Id
@@ -259,6 +266,70 @@ namespace BoxSocial.Applications.Forum
         public override string Uri
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public string ReplyUri
+        {
+            get
+            {
+                if (Forum.Owner.GetType() == typeof(UserGroup))
+                {
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?f={1}&mode=reply",
+                        Forum.Owner.Key, forumId));
+                }
+                else if (Forum.Owner.GetType() == typeof(Network))
+                {
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?f={1}&mode=reply",
+                        Forum.Owner.Key, forumId));
+                }
+                else
+                {
+                    return "/";
+                }
+            }
+        }
+
+        public static void Show(Core core, GPage page, long forumId, long topicId)
+        {
+            Forum thisForum = null;
+
+            page.template.SetTemplate("Forum", "viewtopic");
+
+            try
+            {
+                thisForum = new Forum(page.Core, page.ThisGroup);
+            }
+            catch (InvalidForumException)
+            {
+                // ignore
+            }
+
+            try
+            {
+                ForumTopic thisTopic = new ForumTopic(core, topicId);
+
+                if (thisForum == null)
+                {
+                    thisForum = thisTopic.Forum;
+                }
+
+                if (!thisForum.ForumAccess.CanRead)
+                {
+                    Functions.Generate403();
+                    return;
+                }
+
+                List<TopicPost> posts = thisTopic.GetPosts(1, 10);
+
+                foreach (TopicPost post in posts)
+                {
+                    VariableCollection postVariableCollection = page.template.CreateChild("post_list");
+                }
+            }
+            catch (InvalidTopicException)
+            {
+                return;
+            }
         }
     }
 

@@ -154,19 +154,22 @@ namespace BoxSocial.Internals
             foreach (String type in idList.Keys)
             {
                 Type t = core.GetPrimitiveType(type);
-                string keysTable = Item.GetTable(t);
-                string idField = core.GetPrimitiveAttributes(type).IdField;
-
-                SelectQuery query = Item.GetSelectQueryStub(t);
-                query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[type]);
-
-                DataTable primitivesTable = db.Query(query);
-
-                foreach (DataRow primitiveRow in primitivesTable.Rows)
+                if (t != null)
                 {
-                    Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(type).DefaultLoadOptions }) as Primitive;
-                    primitivesCached.Add(new PrimitiveId(type, newPrimitive.Id), newPrimitive);
-                    primitivesKeysCached.Add(new PrimitiveKey(type, newPrimitive.Key), new PrimitiveId(type, newPrimitive.Id));
+                    string keysTable = Item.GetTable(t);
+                    string idField = core.GetPrimitiveAttributes(type).IdField;
+
+                    SelectQuery query = Item.GetSelectQueryStub(t);
+                    query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[type]);
+
+                    DataTable primitivesTable = db.Query(query);
+
+                    foreach (DataRow primitiveRow in primitivesTable.Rows)
+                    {
+                        Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(type).DefaultLoadOptions }) as Primitive;
+                        primitivesCached.Add(new PrimitiveId(type, newPrimitive.Id), newPrimitive);
+                        primitivesKeysCached.Add(new PrimitiveKey(type, newPrimitive.Key), new PrimitiveId(type, newPrimitive.Id));
+                    }
                 }
             }
         }

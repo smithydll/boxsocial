@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum")]
-    public class Forum : Item
+    public class Forum : Item, IPermissibleItem
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
@@ -41,6 +41,8 @@ namespace BoxSocial.Applications.Forum
         private string forumTitle;
         [DataField("forum_description", 1023)]
         private string forumDescription;
+        [DataField("forum_category")]
+        private bool isCategory;
         [DataField("forum_topics")]
         private long forumTopics;
         [DataField("forum_posts")]
@@ -121,6 +123,11 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
+                if (forumAccess == null)
+                {
+                    forumAccess = new Access(core, permissions, Owner);
+                    forumAccess.SetSessionViewer(core.session);
+                }
                 return forumAccess;
             }
         }
@@ -128,6 +135,9 @@ namespace BoxSocial.Applications.Forum
         public Forum(Core core, UserGroup owner)
             : base(core)
         {
+            this.owner = owner;
+            this.ownerId = owner.Id;
+            this.ownerType = owner.Type;
             forumId = 0;
         }
 
@@ -170,19 +180,6 @@ namespace BoxSocial.Applications.Forum
 
         void Forum_ItemLoad()
         {
-            if (owner.Id != ownerId)
-            {
-                if (ownerType == "GROUP")
-                {
-                    owner = new UserGroup(core, ownerId);
-                }
-                else if (ownerType == "NETWORK")
-                {
-                    owner = new Network(core, ownerId);
-                }
-            }
-
-            forumAccess = new Access(core,  permissions, owner);
         }
 
         public List<Forum> GetForums()
@@ -297,6 +294,27 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public string NewTopicUri
+        {
+            get
+            {
+                if (Owner.GetType() == typeof(UserGroup))
+                {
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?f={1}&mode=post",
+                        Owner.Key, forumId));
+                }
+                else if (Owner.GetType() == typeof(Network))
+                {
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?f={1}&mode=post",
+                        Owner.Key, forumId));
+                }
+                else
+                {
+                    return "/";
+                }
+            }
+        }
+
         public static void Show(Core core, GPage page, long forumId)
         {
             Forum thisForum = null;
@@ -375,6 +393,8 @@ namespace BoxSocial.Applications.Forum
 
             topicLastPosts = TopicPost.GetPosts(core, topicLastPostIds);
 
+            page.template.Parse("TOPICS", topics.Count.ToString());
+
             foreach (ForumTopic topic in topics)
             {
                 VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
@@ -391,6 +411,47 @@ namespace BoxSocial.Applications.Forum
                 {
                     topicVariableCollection.Parse("LAST_POST", "No posts");
                 }
+            }
+
+            if (thisForum.ForumAccess.CanCreate)
+            {
+                page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                return ForumAccess;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || (ownerId != owner.Id && ownerType != owner.Type))
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(ownerType, ownerId);
+                    owner = core.UserProfiles[ownerType, ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                List<string> permissions = new List<string>();
+                permissions.Add("Can Read");
+                permissions.Add("Can Post");
+                return permissions;
             }
         }
     }

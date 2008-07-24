@@ -1,0 +1,50 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>Post</h2>
+
+<form action="{S_POST}" method="post">
+  <fieldset>
+    <legend>Post</legend>
+    <dl>
+      <dt>
+        <label for="subject">Post Subject</label>
+      </dt>
+      <dd>
+        <input type="text" id="subject" name="subject" value="{S_SUBJECT}" style="width: 100%;" />
+      </dd>
+      <dt>
+        <label for="post">Post Text</label>
+      </dt>
+      <dd>
+        <textarea id="post" name="post" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{S_POST_TEXT}</textarea>
+        <div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+          <div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+        </div>
+      </dd>
+      <dt></dt>
+      <dd>
+        <!--input type="submit" name="save" value="Save (draft)" /-->
+        <input type="submit" name="preview" value="Preview" />
+        <input type="submit" name="submit" value="Submit" />
+      </dd>
+    </dl>
+    <!-- IF S_FORUM -->
+    <input type="hidden" name="t" value="{S_FORUM}" />
+    <!-- ENDIF -->
+    <!-- IF S_TOPIC -->
+    <input type="hidden" name="t" value="{S_TOPIC}" />
+    <!-- ENDIF -->
+    <!-- IF S_ID -->
+    <input type="hidden" name="id" value="{S_ID}" />
+    <!-- ENDIF -->
+  </fieldset>
+</form>
+
+<!-- IF PREVIEW_TOPIC -->
+<ul>
+  <!-- BEGIN post_list -->
+  <li></li>
+  <!-- END post_list -->
+</ul>
+<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

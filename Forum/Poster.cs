@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,32 +19,23 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
+using System.Text;
 using System.Web;
-using BoxSocial;
-using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Internals;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
-namespace BoxSocial.FrontEnd
+namespace BoxSocial.Applications.Forum
 {
-    public partial class applicationpage : APage
+    public static class Poster
     {
-        public applicationpage()
-            : base("1201.html")
-        {
-            BeginProfile();
-        }
 
-        protected void Page_Load(object sender, EventArgs e)
+        public static void Show(Core core, GPage page)
         {
-            Core.InvokeApplication(this);
-
-            EndResponse();
+            page.template.SetTemplate("Forum", "post");
         }
     }
 }

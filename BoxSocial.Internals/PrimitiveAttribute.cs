@@ -28,7 +28,7 @@ namespace BoxSocial.Internals
     public class PrimitiveAttribute : Attribute
     {
         private string type;
-        private byte defaultLoadOptions;
+        private object defaultLoadOptions;
         private Type loadOptionsType;
         private string idField;
         private string keyField;
@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public byte DefaultLoadOptions
+        public object DefaultLoadOptions
         {
             get
             {
@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
             if (defaultLoadOptions.GetType().IsSubclassOf(typeof(byte)))
             {
                 this.loadOptionsType = defaultLoadOptions.GetType();
-                this.defaultLoadOptions = (byte)defaultLoadOptions;
+                this.defaultLoadOptions = defaultLoadOptions;
             }
             this.idField = idField;
             this.keyField = keyField;

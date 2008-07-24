@@ -128,6 +128,20 @@ namespace BoxSocial.Internals
         {
             return base.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            if (type != null)
+            {
+                return string.Format("{0}.{1}",
+                    type, id); ;
+            }
+            else
+            {
+                return string.Format("NULL.{0}",
+                    id); ;
+            }
+        }
     }
 
     public abstract class Primitive : Item

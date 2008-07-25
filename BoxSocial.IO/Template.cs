@@ -643,7 +643,7 @@ namespace BoxSocial.IO
                     }
                     else if (prose != null && key.StartsWith("L_"))
                     {
-                        string proseKey = key.Substring(2).ToLower();
+                        string proseKey = key.Substring(2).ToUpper();
                         string fragment = null;
 
                         if (prose.ContainsKey(proseKey))

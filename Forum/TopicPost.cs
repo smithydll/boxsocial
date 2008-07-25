@@ -286,7 +286,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public static TopicPost Create(Core core, Forum forum, ForumTopic topic, string subject, string text)
+        internal static TopicPost Create(Core core, Forum forum, ForumTopic topic, string subject, string text)
         {
             if (forum == null)
             {

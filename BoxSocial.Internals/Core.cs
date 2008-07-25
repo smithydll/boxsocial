@@ -147,6 +147,7 @@ namespace BoxSocial.Internals
             userProfileCache = new PrimitivesCache(this);
 
             prose = new Prose();
+            prose.Initialise("en");
 
             template.SetProse(prose);
 

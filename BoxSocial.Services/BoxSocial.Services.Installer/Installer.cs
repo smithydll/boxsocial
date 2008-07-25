@@ -390,9 +390,11 @@ namespace BoxSocial.Services.Installer
             /*foreach (DataRow dr in compileTable.Rows)
             {
                 string file = (string)dr["Include"];
-                if (file.ToLower().EndsWith(".resx") && file.ToLower().StartsWith("Languages"))
+                if (file.ToLower().EndsWith(".resx") && file.ToLower().StartsWith("languages"))
                 {
                     //files += " \"" + Path.Combine(repoPath, file) + "\"";
+                    // "Resgen.exe" "filename.resx"
+                    // copy filename.resources
                 }
             }*/
         }

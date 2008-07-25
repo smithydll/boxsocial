@@ -473,6 +473,9 @@ namespace BoxSocial.Internals
 
                                             javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                                         }
+
+                                        /* Initialise prose class for the application */
+                                        core.prose.AddApplication(ae.Key);
                                     }
                                 }
                             }
@@ -556,6 +559,9 @@ namespace BoxSocial.Internals
 
                         javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
+
+                    /* Initialise prose class for the application */
+                    core.prose.AddApplication(ae.Key);
                 }
             }
         }

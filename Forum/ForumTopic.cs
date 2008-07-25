@@ -57,10 +57,6 @@ namespace BoxSocial.Applications.Forum
         private long lastPostId;
         [DataField("topic_first_post_id")]
         private long firstPostId;
-        [DataField("topic_item_id")]
-        private long owner_id;
-        [DataField("topic_item_type", 63)]
-        private string owner_type;
 
         private Forum forum;
 
@@ -209,10 +205,6 @@ namespace BoxSocial.Applications.Forum
 
         void Topic_ItemLoad()
         {
-            /*if (forum == null)
-            {
-                forum = new Forum(core, forumId);
-            }*/
         }
 
 
@@ -228,13 +220,74 @@ namespace BoxSocial.Applications.Forum
             return query;
         }
 
-        public static ForumTopic Create(Core core, Forum forum, string topic, string messageBody)
+        public static ForumTopic Create(Core core, Forum forum, string subject, string text)
         {
+            core.db.BeginTransaction();
+
+            if (forum == null)
+            {
+                throw new InvalidForumException();
+            }
+
+            if (!forum.ForumAccess.CanCreate)
+            {
+                // todo: throw new exception
+                throw new UnauthorisedToCreateItemException();
+            }
+
             InsertQuery iquery = new InsertQuery("forum_topics");
+            iquery.AddField("forum_id", forum.Id);
+            iquery.AddField("topic_title", subject);
+            iquery.AddField("user_id", core.LoggedInMemberId);
+            iquery.AddField("topic_posts", 0);
+            iquery.AddField("topic_views", 0);
+            iquery.AddField("topic_time_ut", UnixTime.UnixTimeStamp());
+            iquery.AddField("topic_modified_ut", UnixTime.UnixTimeStamp());
+            iquery.AddField("topic_last_post_time_ut", UnixTime.UnixTimeStamp());
 
             long topicId = core.db.Query(iquery);
 
-            return new ForumTopic(core, forum, topicId);
+            ForumTopic topic = new ForumTopic(core, forum, topicId);
+
+            TopicPost post = TopicPost.Create(core, forum, topic, subject, text);
+
+            UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
+            uQuery.AddField("topic_posts", new QueryOperation("topic_posts", QueryOperations.Addition, 1));
+            uQuery.AddField("topic_first_post_id", post.Id);
+            uQuery.AddField("topic_last_post_id", post.Id);
+            uQuery.AddField("topic_last_post_time_ut", post.TimeCreatedRaw);
+
+            long rowsUpdated = core.db.Query(uQuery);
+
+            if (rowsUpdated != 1)
+            {
+                core.db.RollBackTransaction();
+                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+            }
+
+            return topic;
+        }
+
+        public TopicPost AddReply(Core core, Forum forum, string subject, string text)
+        {
+            db.BeginTransaction();
+
+            TopicPost post = TopicPost.Create(core, forum, this, subject, text);
+
+            UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
+            uQuery.AddField("topic_posts", new QueryOperation("topic_posts", QueryOperations.Addition, 1));
+            uQuery.AddField("topic_last_post_id", post.Id);
+            uQuery.AddField("topic_last_post_time_ut", post.TimeCreatedRaw);
+
+            long rowsUpdated = db.Query(uQuery);
+
+            if (rowsUpdated != 1)
+            {
+                db.RollBackTransaction();
+                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+            }
+
+            return post;
         }
 
         public List<TopicPost> GetPosts(int currentPage, int perPage)

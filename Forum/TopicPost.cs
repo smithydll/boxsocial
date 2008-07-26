@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_post")]
-    public class TopicPost : Item
+    public class TopicPost : Item, IPermissibleItem
     {
         public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
 
@@ -58,9 +58,10 @@ namespace BoxSocial.Applications.Forum
         [DataField("post_ip", 50)]
         private string postIp;
 
-        private bool batchPostLoad;
         private User poster;
         private Forum forum;
+        private ForumTopic topic;
+        private Access postAccess;
 
         public long PostId
         {
@@ -144,13 +145,40 @@ namespace BoxSocial.Applications.Forum
             return tz.DateTimeFromMysql(modifiedRaw);
         }
 
+        public User Poster
+        {
+            get
+            {
+                return (User)Owner;
+            }
+        }
+
+        public ForumTopic Topic
+        {
+            get
+            {
+                if (topic == null)
+                {
+                    topic = new ForumTopic(core, topicId);
+                }
+                return topic;
+            }
+        }
+
         public Forum Forum
         {
             get
             {
                 if (forum == null)
                 {
-                    forum = new Forum(core, forumId);
+                    if (topic != null)
+                    {
+                        forum = topic.Forum;
+                    }
+                    else
+                    {
+                        forum = new Forum(core, forumId);
+                    }
                 }
                 return forum;
             }
@@ -159,8 +187,6 @@ namespace BoxSocial.Applications.Forum
         internal TopicPost(Core core, long postId)
             : base(core)
         {
-            this.batchPostLoad = false;
-
             ItemLoad += new ItemLoadHandler(Post_ItemLoad);
 
             try
@@ -174,14 +200,24 @@ namespace BoxSocial.Applications.Forum
         }
 
         public TopicPost(Core core, DataRow postRow)
-            : this(core, postRow, false)
-        {
-        }
-
-        private TopicPost(Core core, DataRow postRow, bool batchPostLoad)
             : base(core)
         {
-            this.batchPostLoad = batchPostLoad;
+            ItemLoad += new ItemLoadHandler(Post_ItemLoad);
+
+            try
+            {
+                loadItemInfo(postRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPostException();
+            }
+        }
+
+        public TopicPost(Core core, ForumTopic topic, DataRow postRow)
+            : base(core)
+        {
+            this.topic = topic;
 
             ItemLoad += new ItemLoadHandler(Post_ItemLoad);
 
@@ -197,20 +233,42 @@ namespace BoxSocial.Applications.Forum
 
         void Post_ItemLoad()
         {
-            if (!batchPostLoad)
-            {
-                if (poster == null || poster.Id != userId)
-                {
-                    core.LoadUserProfile(userId);
-                    poster = core.UserProfiles[userId];
-                }
-            }
         }
 
-        private void BatchLoad()
+        public static Dictionary<long, TopicPost> GetTopicLastPosts(Core core, List<ForumTopic> topics)
         {
-            this.batchPostLoad = false;
-            Post_ItemLoad();
+            Dictionary<long, TopicPost> posts = new Dictionary<long, TopicPost>();
+            Dictionary<long, ForumTopic> reverseLookup = new Dictionary<long, ForumTopic>();
+            List<long> topicLastPostIds = new List<long>();
+
+            foreach (ForumTopic topic in topics)
+            {
+                reverseLookup.Add(topic.LastPostId, topic);
+
+                topicLastPostIds.Add(topic.LastPostId);
+            }
+
+            if (topicLastPostIds.Count > 0)
+            {
+                SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
+                query.AddCondition("post_id", ConditionEquality.In, topicLastPostIds);
+
+                DataTable postsTable = core.db.Query(query);
+
+                List<long> posterIds = new List<long>();
+
+                foreach (DataRow dr in postsTable.Rows)
+                {
+                    long postId = (long)dr["post_id"];
+                    TopicPost tp = new TopicPost(core, reverseLookup[postId], dr);
+                    posterIds.Add(tp.UserId);
+                    posts.Add(tp.Id, tp);
+                }
+
+                core.LoadUserProfiles(posterIds);
+            }
+
+            return posts;
         }
 
         public static Dictionary<long, TopicPost> GetPosts(Core core, List<long> postIds)
@@ -219,7 +277,7 @@ namespace BoxSocial.Applications.Forum
 
             if (postIds.Count > 0)
             {
-                SelectQuery query = new SelectQuery("forum_post");
+                SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, postIds);
 
                 DataTable postsTable = core.db.Query(query);
@@ -228,17 +286,12 @@ namespace BoxSocial.Applications.Forum
 
                 foreach (DataRow dr in postsTable.Rows)
                 {
-                    TopicPost tp = new TopicPost(core, dr, true);
+                    TopicPost tp = new TopicPost(core, dr);
                     posterIds.Add(tp.UserId);
-                    posts.Add(tp.ForumId, tp);
+                    posts.Add(tp.Id, tp);
                 }
 
                 core.LoadUserProfiles(posterIds);
-
-                foreach (TopicPost post in posts.Values)
-                {
-                    post.BatchLoad();
-                }
             }
 
             return posts;
@@ -262,7 +315,23 @@ namespace BoxSocial.Applications.Forum
 
         public override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                if (Forum.Owner.GetType() == typeof(UserGroup))
+                {
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/topic-{1}#p{2}",
+                        Forum.Owner.Key, topicId, postId));
+                }
+                else if (Forum.Owner.GetType() == typeof(Network))
+                {
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/topic-{1}#p{2}",
+                        Forum.Owner.Key, topicId, postId));
+                }
+                else
+                {
+                    return "";
+                }
+            }
         }
 
         public string EditUri
@@ -322,6 +391,56 @@ namespace BoxSocial.Applications.Forum
             long postId = core.db.Query(iQuery);
 
             return new TopicPost(core, postId);
+        }
+
+        public ushort Permissions
+        {
+            get
+            {
+                return 0x0000;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (postAccess == null)
+                {
+                    postAccess = new Access(core, Permissions, Owner);
+                    postAccess.SetSessionViewer(core.session);
+                }
+                return postAccess;
+
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (poster == null || userId != poster.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    poster = core.UserProfiles[userId];
+                    return poster;
+                }
+                else
+                {
+                    return poster;
+                }
+
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                List<string> permissions = new List<string>();
+                return permissions;
+
+            }
         }
     }
 

@@ -165,6 +165,19 @@ namespace BoxSocial.Applications.Forum
         [Show(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showTopic(Core core, object sender)
         {
+            if (sender is GPage)
+            {
+                ForumTopic.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value), long.Parse(core.PagePathParts[2].Value));
+            }
+        }
+
+        [Show(@"^/forum/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showRootTopic(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                ForumTopic.Show(core, (GPage)sender, 0, long.Parse(core.PagePathParts[1].Value));
+            }
         }
 
         [Show(@"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]

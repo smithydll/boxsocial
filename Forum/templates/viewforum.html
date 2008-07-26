@@ -25,7 +25,8 @@
   <!-- ENDIF -->
 	
 	<!-- IF TOPICS -->
-	<ul>
+  <p>{PAGINATION}</p>
+	<ul id="topics">
     <!-- BEGIN topic_list -->
     <li>
       <dl>
@@ -39,7 +40,15 @@
     </li>
     <!-- END topic_list -->
 	</ul>
+  <p>{PAGINATION}</p>
   <!-- ELSE -->
   <p>There are no topics in this forum.</p>
 	<!-- ENDIF -->
+
+	<!-- IF U_NEW_TOPIC -->
+	<div id="new-stuff">
+		<span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+	</div>
+	<!-- ENDIF -->
+
 <!-- INCLUDE page_footer.html -->

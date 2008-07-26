@@ -60,6 +60,7 @@ namespace BoxSocial.Groups
         void AccountGroupsMembershipsManage_Load(object sender, EventArgs e)
         {
             AddModeHandler("join", new ModuleModeHandler(AccountGroupsMembershipsManage_Join));
+            AddSaveHandler("join", new EventHandler(AccountGroupsMembershipsManage_Join_Save));
             AddModeHandler("leave", new ModuleModeHandler(AccountGroupsMembershipsManage_Leave));
             AddModeHandler("make-officer", new ModuleModeHandler(AccountGroupsMembershipsManage_MakeOfficer));
             AddSaveHandler("make-officer", new EventHandler(AccountGroupsMembershipsManage_MakeOfficer_Save));
@@ -166,13 +167,48 @@ namespace BoxSocial.Groups
 
         void AccountGroupsMembershipsManage_Join(object sender, ModuleModeEventArgs e)
         {
+            long groupId = Functions.RequestLong("id", 0);
+            UserGroup thisGroup;
+
+            if (Request.QueryString["sid"] == core.session.SessionId)
+            {
+                AccountGroupsMembershipsManage_Join_Save(sender, new EventArgs());
+            }
+            else
+            {
+
+                try
+                {
+                    thisGroup = new UserGroup(core, groupId);
+                }
+                catch (InvalidGroupException)
+                {
+                    DisplayGenericError();
+                    return;
+                }
+
+                Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+                hiddenFieldList.Add("module", "groups");
+                hiddenFieldList.Add("sub", "memberships");
+                hiddenFieldList.Add("mode", "join");
+                hiddenFieldList.Add("id", groupId.ToString());
+
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                    "Confirm join group",
+                    "Do you want to join the group `" + thisGroup.DisplayName + "`?",
+                    hiddenFieldList);
+            }
+        }
+
+        void AccountGroupsMembershipsManage_Join_Save(object sender, EventArgs e)
+        {
             AuthoriseRequestSid();
 
             long groupId = 0;
 
             try
             {
-                groupId = long.Parse(Request.QueryString["id"]);
+                groupId = long.Parse(Request.Form["id"]);
             }
             catch
             {
@@ -180,73 +216,81 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            try
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
-                UserGroup thisGroup = new UserGroup(core, groupId);
-                int activated = 0;
-
-                DataTable membershipTable = db.Query(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                    thisGroup.GroupId, LoggedInMember.Id));
-
-                if (membershipTable.Rows.Count > 0)
+                try
                 {
-                    SetRedirectUri(thisGroup.Uri);
-                    Display.ShowMessage("Already a Member", "You are already a member of this group.");
-                    return;
-                }
+                    UserGroup thisGroup = new UserGroup(core, groupId);
+                    int activated = 0;
 
-                switch (thisGroup.GroupType)
-                {
-                    case "OPEN":
-                    case "PRIVATE": // assume as you've been invited that it is enough for activation
-                        activated = 1;
-                        break;
-                    case "CLOSED":
-                        activated = 0;
-                        break;
-                }
-
-                bool isInvited = thisGroup.IsGroupInvitee(LoggedInMember);
-
-                // do not need an invite unless the group is private
-                // private groups you must be invited to
-                if (thisGroup.GroupType != "PRIVATE" || (thisGroup.GroupType == "PRIVATE" && isInvited))
-                {
-                    db.BeginTransaction();
-                    db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
-                        thisGroup.GroupId, LoggedInMember.Id, activated, Mysql.Escape(session.IPAddress.ToString()), true));
-
-                    if (activated == 1)
-                    {
-                        db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
-                            thisGroup.GroupId));
-                    }
-
-                    // just do it anyway, can be invited to any type of group
-                    db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
+                    DataTable membershipTable = db.Query(string.Format("SELECT user_id FROM group_members WHERE group_id = {0} AND user_id = {1};",
                         thisGroup.GroupId, LoggedInMember.Id));
 
-                    SetRedirectUri(thisGroup.Uri);
-                    if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
+                    if (membershipTable.Rows.Count > 0)
                     {
-                        Display.ShowMessage("Joined Group", "You have joined this group.");
+                        SetRedirectUri(thisGroup.Uri);
+                        Display.ShowMessage("Already a Member", "You are already a member of this group.");
+                        return;
                     }
-                    else if (thisGroup.GroupType == "CLOSED")
+
+                    switch (thisGroup.GroupType)
                     {
-                        Display.ShowMessage("Joined Group", "You applied to join this group. A group operator must approve your membership before you will be admitted into the group.");
+                        case "OPEN":
+                        case "PRIVATE": // assume as you've been invited that it is enough for activation
+                            activated = 1;
+                            break;
+                        case "CLOSED":
+                            activated = 0;
+                            break;
                     }
-                    return;
+
+                    bool isInvited = thisGroup.IsGroupInvitee(LoggedInMember);
+
+                    // do not need an invite unless the group is private
+                    // private groups you must be invited to
+                    if (thisGroup.GroupType != "PRIVATE" || (thisGroup.GroupType == "PRIVATE" && isInvited))
+                    {
+                        db.BeginTransaction();
+                        db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
+                            thisGroup.GroupId, LoggedInMember.Id, activated, Mysql.Escape(session.IPAddress.ToString()), true));
+
+                        if (activated == 1)
+                        {
+                            db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
+                                thisGroup.GroupId));
+                        }
+
+                        // just do it anyway, can be invited to any type of group
+                        db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
+                            thisGroup.GroupId, LoggedInMember.Id));
+
+                        SetRedirectUri(thisGroup.Uri);
+                        if (thisGroup.GroupType == "OPEN" || thisGroup.GroupType == "PRIVATE")
+                        {
+                            Display.ShowMessage("Joined Group", "You have joined this group.");
+                        }
+                        else if (thisGroup.GroupType == "CLOSED")
+                        {
+                            Display.ShowMessage("Joined Group", "You applied to join this group. A group operator must approve your membership before you will be admitted into the group.");
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        Display.ShowMessage("Cannot join group", "This group is private, you must be invited to be able to join it.");
+                        return;
+                    }
                 }
-                else
+                catch
                 {
-                    Display.ShowMessage("Cannot join group", "This group is private, you must be invited to be able to join it.");
+                    Display.ShowMessage("Group does not Exist", "The group you are trying to join does not exist.");
                     return;
                 }
             }
-            catch
+            else
             {
-                Display.ShowMessage("Group does not Exist", "The group you are trying to join does not exist.");
-                return;
+                SetRedirectUri(BuildUri());
+                Display.ShowMessage("Cancelled", "You cancelled joining the group.");
             }
         }
 
@@ -612,7 +656,7 @@ namespace BoxSocial.Groups
             Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
             hiddenFieldList.Add("module", "groups");
             hiddenFieldList.Add("sub", "memberships");
-            hiddenFieldList.Add("mdoe", "resign-operator");
+            hiddenFieldList.Add("mode", "resign-operator");
             hiddenFieldList.Add("id", groupId.ToString());
 
             Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),

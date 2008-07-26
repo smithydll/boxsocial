@@ -164,6 +164,52 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner)
+        {
+            // 1. check indexes are unique
+            // 2. Build query
+            // 3. Execute query
+            // 4. Fill results
+
+            string tableName = GetTable(this.GetType());
+            List<DataFieldInfo> fields = GetFields(this.GetType());
+
+            SelectQuery query = new SelectQuery(tableName);
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.Name == ownerIdIndex || field.Name == ownerTypeIndex)
+                {
+                    if (!field.IsUnique)
+                    {
+                        throw new FieldNotUniqueIndexException();
+                    }
+                }
+
+                query.AddFields(field.Name);
+            }
+
+            query.AddCondition(ownerIdIndex, owner.Id);
+            query.AddCondition(ownerTypeIndex, owner.Type);
+
+            DataTable itemTable = Query(query);
+
+            if (itemTable.Rows.Count == 1)
+            {
+                loadItemInfo(itemTable.Rows[0]);
+
+                if (ItemLoad != null)
+                {
+                    ItemLoad();
+                }
+            }
+            else
+            {
+                // Error
+                throw new InvalidItemException();
+            }
+        }
+
         private List<Type> getSubTypes()
         {
             List<Type> types = new List<Type>();
@@ -195,6 +241,11 @@ namespace BoxSocial.Internals
 
         protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage)
         {
+            return getSubItems(typeToGet, currentPage, perPage, false);
+        }
+
+        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument)
+        {
             List<Item> items = new List<Item>();
 
             SelectQuery query;
@@ -220,7 +271,14 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in itemsTable.Rows)
             {
-                items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
+                if (feedParentArgument)
+                {
+                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, dr }) as Item);
+                }
+                else
+                {
+                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
+                }
             }
 
             return items;

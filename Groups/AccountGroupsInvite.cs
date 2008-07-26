@@ -126,7 +126,7 @@ namespace BoxSocial.Groups
 
                         if (friendsTable.Rows.Count > 0)
                         {
-                            Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "group_invitation.eml");
+                            RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "group_invitation.eml");
 
                             emailTemplate.Parse("TO_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);

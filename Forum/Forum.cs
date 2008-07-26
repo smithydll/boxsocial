@@ -41,6 +41,8 @@ namespace BoxSocial.Applications.Forum
         private string forumTitle;
         [DataField("forum_description", 1023)]
         private string forumDescription;
+        [DataField("forum_locked")]
+        private bool forumLocked;
         [DataField("forum_category")]
         private bool isCategory;
         [DataField("forum_topics")]
@@ -139,6 +141,7 @@ namespace BoxSocial.Applications.Forum
             this.ownerId = owner.Id;
             this.ownerType = owner.Type;
             forumId = 0;
+            forumLocked = false;
         }
 
         public Forum(Core core, long forumId)
@@ -203,7 +206,7 @@ namespace BoxSocial.Applications.Forum
 
         public List<ForumTopic> GetTopics(int currentPage, int perPage)
         {
-            return getSubItems(typeof(ForumTopic), currentPage, perPage).ConvertAll<ForumTopic>(new Converter<Item, ForumTopic>(convertToForumTopic));
+            return getSubItems(typeof(ForumTopic), currentPage, perPage, true).ConvertAll<ForumTopic>(new Converter<Item, ForumTopic>(convertToForumTopic));
         }
 
         public ForumTopic convertToForumTopic(Item input)
@@ -317,6 +320,7 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId)
         {
+            int p = Functions.RequestInt("p", 1);
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewforum");
@@ -365,6 +369,7 @@ namespace BoxSocial.Applications.Forum
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
 
                 forumVariableCollection.Parse("TITLE", forum.Title);
+                forumVariableCollection.Parse("URI", forum.Uri);
                 forumVariableCollection.Parse("POSTS", forum.Posts.ToString());
                 forumVariableCollection.Parse("TOPICS", forum.Topics.ToString());
 
@@ -378,20 +383,14 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            List<ForumTopic> topics = thisForum.GetTopics(1, 10);
+            List<ForumTopic> topics = thisForum.GetTopics(p, 10);
 
             page.template.Parse("TOPICS", topics.Count.ToString());
 
-            // TopicId, TopicPost
+            // PostId, TopicPost
             Dictionary<long, TopicPost> topicLastPosts;
-            List<long> topicLastPostIds = new List<long>();
 
-            foreach (ForumTopic topic in topics)
-            {
-                lastPostIds.Add(topic.LastPostId);
-            }
-
-            topicLastPosts = TopicPost.GetPosts(core, topicLastPostIds);
+            topicLastPosts = TopicPost.GetTopicLastPosts(core, topics);
 
             page.template.Parse("TOPICS", topics.Count.ToString());
 
@@ -400,12 +399,14 @@ namespace BoxSocial.Applications.Forum
                 VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
 
                 topicVariableCollection.Parse("TITLE", topic.Title);
+                topicVariableCollection.Parse("URI", topic.Uri);
                 topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
                 topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
 
-                if (topicLastPosts.ContainsKey(topic.Id))
+                if (topicLastPosts.ContainsKey(topic.LastPostId))
                 {
-                    topicVariableCollection.Parse("LAST_POST", topicLastPosts[topic.Id].Title);
+                    Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                        topicLastPosts[topic.LastPostId].Uri, topicLastPosts[topic.LastPostId].Title, core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
                 }
                 else
                 {
@@ -417,6 +418,18 @@ namespace BoxSocial.Applications.Forum
             {
                 page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
             }
+
+            Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((thisForum.Topics + 1) / 10.0));
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+
+            if (thisForum.Id > 0)
+            {
+                breadCrumbParts.Add(new string[] { thisForum.Id.ToString(), thisForum.Title });
+            }
+
+            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
         }
 
         public Access Access

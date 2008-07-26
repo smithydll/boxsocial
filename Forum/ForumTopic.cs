@@ -82,7 +82,13 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forum == null)
                 {
-                    forum = new Forum(core, forumId);
+                    if (forumId == 0)
+                    {
+                    }
+                    else
+                    {
+                        forum = new Forum(core, forumId);
+                    }
                 }
                 return forum;
             }
@@ -203,6 +209,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ForumTopic(Core core, Forum forum, DataRow topicRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Topic_ItemLoad);
+
+            this.forum = forum;
+
+            try
+            {
+                loadItemInfo(topicRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTopicException();
+            }
+        }
+
         void Topic_ItemLoad()
         {
         }
@@ -252,10 +275,10 @@ namespace BoxSocial.Applications.Forum
             TopicPost post = TopicPost.Create(core, forum, topic, subject, text);
 
             UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
-            uQuery.AddField("topic_posts", new QueryOperation("topic_posts", QueryOperations.Addition, 1));
             uQuery.AddField("topic_first_post_id", post.Id);
             uQuery.AddField("topic_last_post_id", post.Id);
             uQuery.AddField("topic_last_post_time_ut", post.TimeCreatedRaw);
+            uQuery.AddCondition("topic_id", topic.Id);
 
             long rowsUpdated = core.db.Query(uQuery);
 
@@ -278,6 +301,7 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddField("topic_posts", new QueryOperation("topic_posts", QueryOperations.Addition, 1));
             uQuery.AddField("topic_last_post_id", post.Id);
             uQuery.AddField("topic_last_post_time_ut", post.TimeCreatedRaw);
+            uQuery.AddCondition("topic_id", post.TopicId);
 
             long rowsUpdated = db.Query(uQuery);
 
@@ -292,7 +316,7 @@ namespace BoxSocial.Applications.Forum
 
         public List<TopicPost> GetPosts(int currentPage, int perPage)
         {
-            return getSubItems(typeof(TopicPost), currentPage, perPage).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
+            return getSubItems(typeof(TopicPost), currentPage, perPage, true).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
         }
 
         public TopicPost convertToTopicPost(Item input)
@@ -318,7 +342,31 @@ namespace BoxSocial.Applications.Forum
 
         public override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                if (Forum.Owner.GetType() == typeof(UserGroup))
+                {
+                    if (forumId == 0)
+                    {
+                        return Linker.AppendSid(string.Format("/group/{0}/forum/topic-{1}",
+                            Forum.Owner.Key, topicId));
+                    }
+                    else
+                    {
+                        return Linker.AppendSid(string.Format("/group/{0}/forum/{1}/topic-{2}",
+                            Forum.Owner.Key, Forum.Id, topicId));
+                    }
+                }
+                else if (Forum.Owner.GetType() == typeof(Network))
+                {
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/{1}/topic-{2}",
+                        Forum.Owner.Key, forumId, topicId));
+                }
+                else
+                {
+                    return "/";
+                }
+            }
         }
 
         public string ReplyUri
@@ -327,13 +375,13 @@ namespace BoxSocial.Applications.Forum
             {
                 if (Forum.Owner.GetType() == typeof(UserGroup))
                 {
-                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?f={1}&mode=reply",
-                        Forum.Owner.Key, forumId));
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?t={1}&mode=reply",
+                        Forum.Owner.Key, topicId));
                 }
                 else if (Forum.Owner.GetType() == typeof(Network))
                 {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?f={1}&mode=reply",
-                        Forum.Owner.Key, forumId));
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?t={1}&mode=reply",
+                        Forum.Owner.Key, topicId));
                 }
                 else
                 {
@@ -344,13 +392,21 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId, long topicId)
         {
+            int p = Functions.RequestInt("p", 1);
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewtopic");
 
             try
             {
-                thisForum = new Forum(page.Core, page.ThisGroup);
+                if (forumId == 0)
+                {
+                    thisForum = new Forum(page.Core, page.ThisGroup);
+                }
+                else
+                {
+                    thisForum = new Forum(page.Core, page.ThisGroup, forumId);
+                }
             }
             catch (InvalidForumException)
             {
@@ -359,7 +415,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                ForumTopic thisTopic = new ForumTopic(core, topicId);
+                ForumTopic thisTopic = new ForumTopic(core, thisForum, topicId);
 
                 if (thisForum == null)
                 {
@@ -372,12 +428,43 @@ namespace BoxSocial.Applications.Forum
                     return;
                 }
 
-                List<TopicPost> posts = thisTopic.GetPosts(1, 10);
+                page.template.Parse("TOPIC_TITLE", thisTopic.Title);
+
+                List<TopicPost> posts = thisTopic.GetPosts(p, 10);
+
+                page.template.Parse("POSTS", posts.Count.ToString());
 
                 foreach (TopicPost post in posts)
                 {
                     VariableCollection postVariableCollection = page.template.CreateChild("post_list");
+
+                    postVariableCollection.Parse("SUBJECT", post.Title);
+                    postVariableCollection.Parse("ID", post.Id.ToString());
+                    Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
+                    postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
+                    postVariableCollection.Parse("USER_TILE", post.Poster.UserTile);
+                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
                 }
+
+                if (thisForum.ForumAccess.CanCreate)
+                {
+                    page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                    page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
+                }
+
+                Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / 10.0));
+
+                List<string[]> breadCrumbParts = new List<string[]>();
+                breadCrumbParts.Add(new string[] { "forum", "Forum" });
+                
+                if (thisForum.Id > 0)
+                {
+                    breadCrumbParts.Add(new string[] { thisForum.Id.ToString(), thisForum.Title });
+                }
+
+                breadCrumbParts.Add(new string[] { "topic-" + thisTopic.Id.ToString(), thisTopic.Title });
+
+                page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
             }
             catch (InvalidTopicException)
             {

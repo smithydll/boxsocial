@@ -1154,7 +1154,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "edit", string.Format("id={0}", GroupId));
+                return AccountModule.BuildModuleUri("groups", "edit", false, string.Format("id={0}", GroupId));
             }
         }
 

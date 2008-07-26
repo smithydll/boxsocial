@@ -3,7 +3,44 @@
 	<p>{BREADCRUMBS}</p>
 	<!-- IF U_NEW_REPLY -->
 	<div id="new-stuff">
+    <span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 		<span id="new-reply" class="post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
 	</div>
 	<!-- ENDIF -->
+
+<p>{PAGINATION}</p>
+<!-- IF POSTS -->
+<ul>
+  <!-- BEGIN post_list -->
+  <li>
+    <dl>
+      <dt>
+        <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
+        <dl id="profile">
+          <dt>
+          <!-- IF post_list.USER_TILE -->
+          <div class="comment-disp-pic">
+            <img src="{post_list.USER_TILE}" alt="{post_list.USER_DISPLAY_NAME}" />
+          </div>
+          <!-- ENDIF -->
+          </dt>
+          <dd><strong>Joined: </strong> {post_list.USER_JOINED}</dd>
+          <!--dd><strong>Country: </strong> {post_list.USER_COUNTRY}</dd-->
+        </dl>
+      </dt>
+      <dd>{post_list.TEXT}</dd>
+    </dl>
+  </li>
+  <!-- END post_list -->
+</ul>
+<!-- ENDIF -->
+<p>{PAGINATION}</p>
+
+	<!-- IF U_NEW_REPLY -->
+	<div id="new-stuff">
+    <span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+		<span id="new-reply" class="post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
+	</div>
+	<!-- ENDIF -->
+
 <!-- INCLUDE page_footer.html -->

@@ -40,8 +40,10 @@
   <ItemGroup>
     <Compile Include="AccountForum.cs" />
     <Compile Include="AccountForumManage.cs" />
+    <Compile Include="AccountForumSettings.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Forum.cs" />
+    <Compile Include="ForumSettings.cs" />
     <Compile Include="ForumTopic.cs" />
     <Compile Include="languages\Forum.en.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -61,6 +63,7 @@
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="TopicPost.cs" />
+    <Compile Include="TopicReadStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">

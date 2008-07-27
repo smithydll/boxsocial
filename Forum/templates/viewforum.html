@@ -2,8 +2,8 @@
 	<h2>{FORUM_TITLE}</h2>
 	<p>{BREADCRUMBS}</p>
 	<!-- IF U_NEW_TOPIC -->
-	<div id="new-stuff">
-		<span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+	<div class="new-stuff">
+		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 	</div>
 	<!-- ENDIF -->
 
@@ -27,6 +27,14 @@
 	<!-- IF TOPICS -->
   <p>{PAGINATION}</p>
 	<ul id="topics">
+    <li>
+      <dl>
+        <dt>&nbsp;</dt>
+        <dd>{L_VIEWS}</dd>
+        <dd>{L_REPLIES}</dd>
+        <dd>{L_LAST_POST}</dd>
+      </dl>
+    </li>
     <!-- BEGIN topic_list -->
     <li>
       <dl>
@@ -46,8 +54,8 @@
 	<!-- ENDIF -->
 
 	<!-- IF U_NEW_TOPIC -->
-	<div id="new-stuff">
-		<span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+	<div class="new-stuff">
+		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 	</div>
 	<!-- ENDIF -->
 

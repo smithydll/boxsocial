@@ -442,7 +442,7 @@ namespace BoxSocial.Applications.Forum
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
-                    postVariableCollection.Parse("USER_TILE", post.Poster.UserTile);
+                    postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
                     postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
                 }
 

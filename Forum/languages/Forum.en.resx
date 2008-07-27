@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="LAST_POST" xml:space="preserve">
+    <value>Last Post</value>
+  </data>
   <data name="NEW_TOPIC" xml:space="preserve">
     <value>New Topic</value>
   </data>
@@ -131,5 +134,14 @@
   </data>
   <data name="POST_TEXT" xml:space="preserve">
     <value>Post Text</value>
+  </data>
+  <data name="REPLIES" xml:space="preserve">
+    <value>Replies</value>
+  </data>
+  <data name="TOP" xml:space="preserve">
+    <value>Top</value>
+  </data>
+  <data name="VIEWS" xml:space="preserve">
+    <value>Views</value>
   </data>
 </root>

@@ -2,34 +2,33 @@
 	<h2>{TOPIC_TITLE}</h2>
 	<p>{BREADCRUMBS}</p>
 	<!-- IF U_NEW_REPLY -->
-	<div id="new-stuff">
-    <span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
-		<span id="new-reply" class="post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
+	<div class="new-stuff">
+    <span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+		<span class="new-reply post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
 	</div>
 	<!-- ENDIF -->
 
 <p>{PAGINATION}</p>
 <!-- IF POSTS -->
-<ul>
+<ul id="posts">
   <!-- BEGIN post_list -->
   <li>
-    <dl>
+    <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
+      <div class="postbody"><p>{post_list.TEXT}</p></div>
+    <dl class="profile">
       <dt>
-        <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
-        <dl id="profile">
-          <dt>
-          <!-- IF post_list.USER_TILE -->
-          <div class="comment-disp-pic">
-            <img src="{post_list.USER_TILE}" alt="{post_list.USER_DISPLAY_NAME}" />
-          </div>
-          <!-- ENDIF -->
-          </dt>
-          <dd><strong>Joined: </strong> {post_list.USER_JOINED}</dd>
-          <!--dd><strong>Country: </strong> {post_list.USER_COUNTRY}</dd-->
-        </dl>
+        <!-- IF post_list.USER_TILE -->
+        <div class="comment-disp-pic">
+          <img src="{post_list.USER_TILE}" alt="{post_list.USER_DISPLAY_NAME}" />
+        </div>
+        <!-- ENDIF -->
       </dt>
-      <dd>{post_list.TEXT}</dd>
+      <dd>
+        <strong>Joined: </strong> {post_list.USER_JOINED}
+      </dd>
+      <!--dd><strong>Country: </strong> {post_list.USER_COUNTRY}</dd-->
     </dl>
+    <div class="top"><a href="#posts">{L_TOP}</a></div>
   </li>
   <!-- END post_list -->
 </ul>
@@ -37,9 +36,9 @@
 <p>{PAGINATION}</p>
 
 	<!-- IF U_NEW_REPLY -->
-	<div id="new-stuff">
-    <span id="new-topic" class="post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
-		<span id="new-reply" class="post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
+	<div class="new-stuff">
+    <span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+		<span class="new-reply post-button"><a href="{U_NEW_REPLY}">Post Reply</a></span>
 	</div>
 	<!-- ENDIF -->
 

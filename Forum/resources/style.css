@@ -8,7 +8,7 @@ ul#topics {
 ul#topics li {
 	display: block;
 	list-style-type: none;
-	height: 2em;
+	height: 2.5em;
 	border: solid 1px black;
 	margin: 0;
 }
@@ -34,4 +34,40 @@ ul#topics dl dd {
 	border-left: 1px solid black;
 	padding: 0px 0;
 	margin: 0;
+}
+
+ul#posts {
+	list-style: none;
+	margin: 0px;
+}
+
+ul#posts li {
+	border: solid 1px black;
+	list-style: none;
+	margin: 0px;
+	margin-bottom: 3px;
+}
+
+ul#posts li h3 {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1.2em;
+}
+
+.postbody {
+	float: left;
+	clear: both;
+	width: 50%;
+	margin-right: 205px;
+}
+
+ul#posts dl.profile {
+	float: right;
+	display: inline;
+	width: 200px;
+}
+
+ul#posts div.top {
+	clear: both;
+	text-align: right;
 }

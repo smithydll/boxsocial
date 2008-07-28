@@ -32,7 +32,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Networks
 {
     [DataTable("network_info")]
-    public class NetworkInfo : Item
+    public class NetworkInfo : NumberedItem
     {
         [DataField("network_id", DataFieldKeys.Primary)]
         private long networkId;

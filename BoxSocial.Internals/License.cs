@@ -34,7 +34,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("licenses")]
-    public class ContentLicense : Item
+    public class ContentLicense : NumberedItem
     {
         public const string LICENSE_FIELDS = "li.license_id, li.license_title, li.license_icon, li.license_link";
 

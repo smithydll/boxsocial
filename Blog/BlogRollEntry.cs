@@ -32,7 +32,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a blogroll entry
     /// </summary>
     [DataTable("blog_roll_entries")]
-    public class BlogRollEntry : Item
+    public class BlogRollEntry : NumberedItem
     {
         /// <summary>
         /// Blog roll entry Id

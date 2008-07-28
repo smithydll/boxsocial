@@ -144,7 +144,7 @@ namespace BoxSocial.Internals
         }
     }
 
-    public abstract class Primitive : Item
+    public abstract class Primitive : NumberedItem
     {
 
         protected Primitive(Core core) : base(core)

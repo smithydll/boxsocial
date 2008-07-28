@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_settings")]
-    public class ForumSettings : Item
+    public class ForumSettings : NumberedItem
     {
         [DataField("forum_item_id", DataFieldKeys.Unique)]
         private long ownerId;

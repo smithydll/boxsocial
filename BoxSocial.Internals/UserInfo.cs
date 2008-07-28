@@ -28,7 +28,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_info")]
-    public sealed class UserInfo : Item
+    public sealed class UserInfo : NumberedItem
     {
         [DataField("user_id", DataFieldKeys.Unique)]
         private long userId;

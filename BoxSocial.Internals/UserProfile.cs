@@ -28,7 +28,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_profile")]
-    public sealed class UserProfile : Item
+    public sealed class UserProfile : NumberedItem
     {
         private User user;
 

@@ -33,7 +33,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a trackback
     /// </summary>
     [DataTable("trackbacks")]
-    public class TrackBack : Item
+    public class TrackBack : NumberedItem
     {
         [DataField("trackback_id", DataFieldKeys.Primary)]
         private long trackBackId;

@@ -128,7 +128,7 @@ namespace BoxSocial.FrontEnd
             }
 
             SelectQuery squery = new SelectQuery("user_keys");
-            squery.AddFields(Item.GetFieldsPrefixed(typeof(BoxSocial.Internals.User)));
+            squery.AddFields(NumberedItem.GetFieldsPrefixed(typeof(BoxSocial.Internals.User)));
             squery.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
             squery.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
             squery.AddField(new DataField("gallery_items", "gallery_item_uri"));

@@ -32,7 +32,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Groups
 {
     [DataTable("group_info")]
-    public class UserGroupInfo : Item
+    public class UserGroupInfo : NumberedItem
     {
 
         [DataField("group_id", DataFieldKeys.Primary)]

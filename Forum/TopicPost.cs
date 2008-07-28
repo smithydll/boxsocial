@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_post")]
-    public class TopicPost : Item, IPermissibleItem
+    public class TopicPost : NumberedItem, IPermissibleItem
     {
         public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
 
@@ -378,7 +378,7 @@ namespace BoxSocial.Applications.Forum
                 throw new UnauthorisedToCreateItemException();
             }
 
-            InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(TopicPost)));
+            InsertQuery iQuery = new InsertQuery(NumberedItem.GetTable(typeof(TopicPost)));
             iQuery.AddField("topic_id", topic.Id);
             iQuery.AddField("forum_id", forum.Id);
             iQuery.AddField("user_id", core.LoggedInMemberId);

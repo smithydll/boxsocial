@@ -98,6 +98,7 @@
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />
+    <Compile Include="NumberedItem.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="PageHandle.cs" />
     <Compile Include="PPage.cs">

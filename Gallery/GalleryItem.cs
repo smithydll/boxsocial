@@ -42,7 +42,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a gallery photo
     /// </summary>
-    public abstract class GalleryItem : Item, ICommentableItem
+    public abstract class GalleryItem : NumberedItem, ICommentableItem
     {
         /// <summary>
         /// A list of database fields associated with a gallery photo.

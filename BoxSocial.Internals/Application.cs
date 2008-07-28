@@ -120,13 +120,13 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
-                if (type.IsSubclassOf(typeof(Item)))
+                if (type.IsSubclassOf(typeof(NumberedItem)))
                 {
-                    string table = Item.GetTable(type);
+                    string table = NumberedItem.GetTable(type);
 
                     if (!string.IsNullOrEmpty(table))
                     {
-                        List<DataFieldInfo> dataFields = Item.GetFields(type);
+                        List<DataFieldInfo> dataFields = NumberedItem.GetFields(type);
                         if (core.db.TableExists(table))
                         {
                             Dictionary<string, DataFieldInfo> columns = core.db.GetColumns(table);

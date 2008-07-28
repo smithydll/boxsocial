@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_topics")]
-    public class ForumTopic : Item
+    public class ForumTopic : NumberedItem
     {
         public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
 
@@ -233,7 +233,7 @@ namespace BoxSocial.Applications.Forum
 
         public static SelectQuery ForumTopic_GetSelectQueryStub()
         {
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ForumTopic));
 
             query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
@@ -297,6 +297,8 @@ namespace BoxSocial.Applications.Forum
 
             TopicPost post = TopicPost.Create(core, forum, this, subject, text);
 
+            topicPosts++;
+
             UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
             uQuery.AddField("topic_posts", new QueryOperation("topic_posts", QueryOperations.Addition, 1));
             uQuery.AddField("topic_last_post_id", post.Id);
@@ -312,6 +314,43 @@ namespace BoxSocial.Applications.Forum
             }
 
             return post;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="m">Page with message id#</param>
+        /// <param name="perPage"></param>
+        /// <returns></returns>
+        public List<TopicPost> GetPosts(long m, int perPage)
+        {
+            int p = 1; // currentPage
+
+            if (m > 0)
+            {
+                SelectQuery query = new SelectQuery(TopicPost.GetTable(typeof(TopicPost)));
+                query.AddFields("COUNT(*) AS total");
+                query.AddCondition("topic_id", topicId);
+                query.AddCondition("post_id", ConditionEquality.LessThanEqual, m);
+
+                query.AddSort(SortOrder.Ascending, "post_time_ut");
+
+                DataRow postsRow = db.Query(query).Rows[0];
+
+                long before = (long)postsRow["total"];
+                long after = Posts - before;
+
+                /*if (item.CommentSortOrder == SortOrder.Ascending)
+                {*/
+                    p = (int)(before / perPage + 1);
+                /*}
+                else
+                {
+                    p = (int)(after / perPage + 1);
+                }*/
+            }
+
+            return GetPosts(p, perPage);
         }
 
         public List<TopicPost> GetPosts(int currentPage, int perPage)
@@ -393,6 +432,7 @@ namespace BoxSocial.Applications.Forum
         public static void Show(Core core, GPage page, long forumId, long topicId)
         {
             int p = Functions.RequestInt("p", 1);
+            long m = Functions.RequestLong("m", 0); // post, seeing as p has been globally reserved for page and cannot be used for post, we use m for message
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewtopic");
@@ -430,7 +470,15 @@ namespace BoxSocial.Applications.Forum
 
                 page.template.Parse("TOPIC_TITLE", thisTopic.Title);
 
-                List<TopicPost> posts = thisTopic.GetPosts(p, 10);
+                List<TopicPost> posts;
+                if (m > 0)
+                {
+                    posts = thisTopic.GetPosts(m, 10);
+                }
+                else
+                {
+                    posts = thisTopic.GetPosts(p, 10);
+                }
 
                 page.template.Parse("POSTS", posts.Count.ToString());
 

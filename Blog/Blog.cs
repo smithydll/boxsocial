@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a user blog.
     /// </summary>
     [DataTable("user_blog")]
-    public class Blog : Item
+    public class Blog : NumberedItem
     {
 
         /// <summary>

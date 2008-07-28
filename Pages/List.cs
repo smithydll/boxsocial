@@ -35,7 +35,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("user_lists")]
-    public class List : Item, IPermissibleItem
+    public class List : NumberedItem, IPermissibleItem
     {
         public const string LIST_FIELDS = "ul.list_id, ul.user_id, ul.list_type, ul.list_title, ul.list_items, ul.list_abstract, ul.list_path, ul.list_access";
 

@@ -27,7 +27,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("primitive_apps")]
-    public class PrimitiveApplicationInfo : Item
+    public class PrimitiveApplicationInfo : NumberedItem
     {
         [DataField("app_id", DataFieldKeys.Primary)]
         private long appId;

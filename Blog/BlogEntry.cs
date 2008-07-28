@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a blog entry
     /// </summary>
-    public class BlogEntry : Item, ICommentableItem
+    public class BlogEntry : NumberedItem, ICommentableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.

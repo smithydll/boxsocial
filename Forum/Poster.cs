@@ -178,8 +178,8 @@ namespace BoxSocial.Applications.Forum
 
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 
+                        //page.template.Parse("REDIRECT_URI", topic.GetUri(post));
                         Display.ShowMessage("Reply Posted", "Reply has been posted");
-                        page.template.Parse("REDIRECT_URI", topic.Uri);
                         return;
                     }
                     catch (InvalidTopicException)
@@ -219,8 +219,8 @@ namespace BoxSocial.Applications.Forum
                         {*/
                         ForumTopic topic = ForumTopic.Create(core, forum, subject, text);
 
-                        Display.ShowMessage("Topic Posted", "Topic has been posted");
                         page.template.Parse("REDIRECT_URI", topic.Uri);
+                        Display.ShowMessage("Topic Posted", "Topic has been posted");
                         return;
                         /*}
                         catch

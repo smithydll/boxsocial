@@ -30,7 +30,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_emails")]
-    public sealed class UserEmail : Item
+    public sealed class UserEmail : NumberedItem
     {
         [DataField("email_id", DataFieldKeys.Primary)]
         private long emailId;

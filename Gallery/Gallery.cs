@@ -40,7 +40,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery
     /// </summary>
     [DataTable("user_galleries")]
-    public abstract class Gallery : Item
+    public abstract class Gallery : NumberedItem
     {
         /// <summary>
         /// A list of database fields associated with a user gallery.

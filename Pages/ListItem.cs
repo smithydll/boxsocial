@@ -35,7 +35,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("list_items")]
-    public class ListItem : Item
+    public class ListItem : NumberedItem
     {
         public const string LIST_ITEM_FIELDS = "li.list_item_id, li.list_id, li.list_item_text_id, lit.list_item_text, lit.list_item_text_normalised";
 
@@ -125,7 +125,7 @@ namespace BoxSocial.Applications.Pages
 
         public static SelectQuery ListItem_GetSelectQueryStub()
         {
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ListItem));
+            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ListItem));
 
             query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
             query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
@@ -219,7 +219,7 @@ namespace BoxSocial.Applications.Pages
     }
 
     [DataTable("list_items_text")]
-    public class ListItemText : Item
+    public class ListItemText : NumberedItem
     {
         [DataField("list_item_text_id", DataFieldKeys.Primary)]
         private long listItemTextId;

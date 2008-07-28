@@ -29,7 +29,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.GuestBook
 {
-    public class UserGuestBook : Item, ICommentableItem
+    public class UserGuestBook : NumberedItem, ICommentableItem
     {
         private User owner;
 

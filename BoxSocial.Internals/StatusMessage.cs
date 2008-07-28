@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class StatusMessage : Item
+    public class StatusMessage : NumberedItem
     {
         public const string STATUS_MESSAGE_FIELDS = "usm.status_id, usm.user_id, usm.status_message, usm.status_time_ut";
 

@@ -156,10 +156,10 @@ namespace BoxSocial.Internals
                 Type t = core.GetPrimitiveType(type);
                 if (t != null)
                 {
-                    string keysTable = Item.GetTable(t);
+                    string keysTable = NumberedItem.GetTable(t);
                     string idField = core.GetPrimitiveAttributes(type).IdField;
 
-                    SelectQuery query = Item.GetSelectQueryStub(t);
+                    SelectQuery query = NumberedItem.GetSelectQueryStub(t);
                     query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[type]);
 
                     DataTable primitivesTable = db.Query(query);

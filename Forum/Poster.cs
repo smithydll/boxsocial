@@ -178,7 +178,7 @@ namespace BoxSocial.Applications.Forum
 
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 
-                        //page.template.Parse("REDIRECT_URI", topic.GetUri(post));
+                        page.template.Parse("REDIRECT_URI", post.Uri);
                         Display.ShowMessage("Reply Posted", "Reply has been posted");
                         return;
                     }

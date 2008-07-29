@@ -13,6 +13,10 @@
 <ul id="posts">
   <!-- BEGIN post_list -->
   <li>
+    <!-- IF post_list.IS_READ -->
+    <!-- ELSE -->
+    *
+    <!-- ENDIF -->
     <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
       <div class="postbody"><p>{post_list.TEXT}</p></div>
     <dl class="profile">

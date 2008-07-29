@@ -30,23 +30,21 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
-    [DataTable("forum_topic_read_status")]
-    public class TopicReadStatus : Item
+    [DataTable("forum_read_status")]
+    public class ForumReadStatus : Item
     {
-        [DataField("topic_id", DataFieldKeys.Unique)]
-        private long topicId;
+        [DataField("forum_id", DataFieldKeys.Unique)]
+        private long forumId;
         [DataField("user_id", DataFieldKeys.Unique)]
         private long userId;
-        [DataField("forum_id")]
-        private long forumId;
         [DataField("read_time_ut")]
         private long readTime;
 
-        public long TopicId
+        public long ForumId
         {
             get
             {
-                return topicId;
+                return forumId;
             }
         }
 
@@ -55,14 +53,6 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 return userId;
-            }
-        }
-
-        public long ForumId
-        {
-            get
-            {
-                return forumId;
             }
         }
 
@@ -79,13 +69,13 @@ namespace BoxSocial.Applications.Forum
             return tz.DateTimeFromMysql(readTime);
         }
 
-        public TopicReadStatus(Core core, long topicId)
+        public ForumReadStatus(Core core, long forumId)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(TopicReadStatus_ItemLoad);
+            ItemLoad += new ItemLoadHandler(ForumReadStatus_ItemLoad);
 
             SelectQuery query = GetSelectQueryStub();
-            query.AddCondition("topic_id", topicId);
+            query.AddCondition("forum_id", forumId);
             query.AddCondition("user_id", core.LoggedInMemberId);
 
             DataTable itemTable = db.Query(query);
@@ -96,14 +86,14 @@ namespace BoxSocial.Applications.Forum
             }
             else
             {
-                throw new InvalidTopicReadStatusException();
+                throw new InvalidForumReadStatusException();
             }
         }
 
-        public TopicReadStatus(Core core, DataRow dr)
+        public ForumReadStatus(Core core, DataRow dr)
             : base(core)
         {
-            ItemLoad += new ItemLoadHandler(TopicReadStatus_ItemLoad);
+            ItemLoad += new ItemLoadHandler(ForumReadStatus_ItemLoad);
 
             try
             {
@@ -111,36 +101,21 @@ namespace BoxSocial.Applications.Forum
             }
             catch (InvalidItemException)
             {
-                throw new InvalidTopicReadStatusException();
+                throw new InvalidForumReadStatusException();
             }
         }
 
-        void TopicReadStatus_ItemLoad()
+        void ForumReadStatus_ItemLoad()
         {
         }
 
-        internal static void Create(Core core, ForumTopic topic, TopicPost lastVisiblePost)
+        internal static void Create(Core core, Forum forum)
         {
             if (core.LoggedInMemberId > 0)
             {
-                InsertQuery iQuery = new InsertQuery(GetTable(typeof(TopicReadStatus)));
-                iQuery.AddField("topic_id", topic.Id);
+                InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumReadStatus)));
+                iQuery.AddField("forum_id", forum.Id);
                 iQuery.AddField("user_id", core.LoggedInMemberId);
-                iQuery.AddField("forum_id", topic.ForumId);
-                iQuery.AddField("read_time_ut", lastVisiblePost.TimeCreatedRaw);
-
-                core.db.Query(iQuery);
-            }
-        }
-
-        internal static void Create(Core core, ForumTopic topic)
-        {
-            if (core.LoggedInMemberId > 0)
-            {
-                InsertQuery iQuery = new InsertQuery(GetTable(typeof(TopicReadStatus)));
-                iQuery.AddField("topic_id", topic.Id);
-                iQuery.AddField("user_id", core.LoggedInMemberId);
-                iQuery.AddField("forum_id", topic.ForumId);
                 iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp());
 
                 core.db.Query(iQuery);
@@ -164,7 +139,7 @@ namespace BoxSocial.Applications.Forum
         }
     }
 
-    public class InvalidTopicReadStatusException : Exception
+    public class InvalidForumReadStatusException : Exception
     {
     }
 }

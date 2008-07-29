@@ -199,6 +199,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        internal TopicPost(Core core, Forum forum, ForumTopic topic, long postId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Post_ItemLoad);
+            this.forum = forum;
+            this.topic = topic;
+
+            try
+            {
+                LoadItem(postId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPostException();
+            }
+        }
+
         public TopicPost(Core core, DataRow postRow)
             : base(core)
         {
@@ -319,12 +336,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (Forum.Owner.GetType() == typeof(UserGroup))
                 {
-                    return Linker.AppendSid(string.Format("/group/{0}/forum/topic-{1}#p{2}",
+                    return Linker.AppendSid(string.Format("/group/{0}/forum/topic-{1}?m={2}#p{2}",
                         Forum.Owner.Key, topicId, postId));
                 }
                 else if (Forum.Owner.GetType() == typeof(Network))
                 {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/topic-{1}#p{2}",
+                    return Linker.AppendSid(string.Format("/network/{0}/forum/topic-{1}?m={2}#p{2}",
                         Forum.Owner.Key, topicId, postId));
                 }
                 else
@@ -390,7 +407,7 @@ namespace BoxSocial.Applications.Forum
 
             long postId = core.db.Query(iQuery);
 
-            return new TopicPost(core, postId);
+            return new TopicPost(core, forum, topic, postId);
         }
 
         public ushort Permissions

@@ -35,5 +35,92 @@ namespace BoxSocial.Internals
             : base (core)
         {
         }
+
+        public abstract long Id
+        {
+            get;
+        }
+
+        protected List<Item> getSubItems(Type typeToGet)
+        {
+            return getSubItems(typeToGet, 0, 0);
+        }
+
+        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage)
+        {
+            return getSubItems(typeToGet, currentPage, perPage, false);
+        }
+
+        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument)
+        {
+            List<Item> items = new List<Item>();
+
+            SelectQuery query;
+
+            if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", new Type[] { typeof(Core) }) != null)
+            {
+                query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }); //GetSelectQueryStub(typeToGet);
+            }
+            else if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", new Type[] { }) != null)
+            {
+                query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
+            }
+            else
+            {
+                query = Item.GetSelectQueryStub(typeToGet);
+            }
+
+            if (perPage > 0)
+            {
+                query.LimitStart = (currentPage - 1) * perPage;
+                query.LimitCount = perPage;
+            }
+
+            query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(this.GetType()), Id);
+
+            DataTable itemsTable = db.Query(query);
+
+            foreach (DataRow dr in itemsTable.Rows)
+            {
+                if (feedParentArgument)
+                {
+                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, dr }) as Item);
+                }
+                else
+                {
+                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
+                }
+            }
+
+            return items;
+        }
+
+        public new long Delete()
+        {
+            if (this is IPermissibleItem)
+            {
+                if (!((IPermissibleItem)this).Access.CanDelete)
+                {
+                    throw new UnauthorisedToDeleteItemException();
+                }
+            }
+
+            AuthenticateAction(ItemChangeAction.Delete);
+
+            db.BeginTransaction();
+
+            List<Type> subTypes = getSubTypes();
+            foreach (Type subType in subTypes)
+            {
+                List<Item> subItems = getSubItems(subType);
+
+                foreach (Item item in subItems)
+                {
+                    item.Delete();
+                }
+            }
+
+            return base.Delete();
+        }
     }
 }

@@ -43,6 +43,7 @@
     <Compile Include="AccountForumSettings.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Forum.cs" />
+    <Compile Include="ForumReadStatus.cs" />
     <Compile Include="ForumSettings.cs" />
     <Compile Include="ForumTopic.cs" />
     <Compile Include="languages\Forum.en.Designer.cs">
@@ -87,6 +88,7 @@
     <Content Include="languages\Forum.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Forum.en.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

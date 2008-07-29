@@ -210,7 +210,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        private List<Type> getSubTypes()
+        protected List<Type> getSubTypes()
         {
             List<Type> types = new List<Type>();
 
@@ -232,56 +232,6 @@ namespace BoxSocial.Internals
             }
 
             return types;
-        }
-
-        protected List<Item> getSubItems(Type typeToGet)
-        {
-            return getSubItems(typeToGet, 0, 0);
-        }
-
-        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage)
-        {
-            return getSubItems(typeToGet, currentPage, perPage, false);
-        }
-
-        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument)
-        {
-            List<Item> items = new List<Item>();
-
-            SelectQuery query;
-
-            if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub") != null)
-            {
-                query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
-            }
-            else
-            {
-                query = Item.GetSelectQueryStub(typeToGet);
-            }
-
-            if (perPage > 0)
-            {
-                query.LimitStart = (currentPage - 1) * perPage;
-                query.LimitCount = perPage;
-            }
-
-            query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(this.GetType()), Id);
-
-            DataTable itemsTable = db.Query(query);
-
-            foreach (DataRow dr in itemsTable.Rows)
-            {
-                if (feedParentArgument)
-                {
-                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, dr }) as Item);
-                }
-                else
-                {
-                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
-                }
-            }
-
-            return items;
         }
 
         protected void UpdateThis()
@@ -343,11 +293,6 @@ namespace BoxSocial.Internals
         protected long Query(DeleteQuery query)
         {
             return db.Query(query);
-        }
-
-        public abstract long Id
-        {
-            get;
         }
 
         public abstract string Namespace
@@ -424,6 +369,11 @@ namespace BoxSocial.Internals
                 // TODO: Exception
                 throw new Exception("No parent of type " + parentType.Name + " found.");
             }
+        }
+
+        public SelectQuery GetSelectQueryStub()
+        {
+            return GetSelectQueryStub(this.GetType());
         }
 
         public static SelectQuery GetSelectQueryStub(Type type)
@@ -651,6 +601,14 @@ namespace BoxSocial.Internals
             return result;
         }
 
+        protected void AuthenticateAction(ItemChangeAction action)
+        {
+            if (ItemChangeAuthenticationProvider != null)
+            {
+                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(action));
+            }
+        }
+
         public long Delete()
         {
             if (this is IPermissibleItem)
@@ -661,14 +619,11 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (ItemChangeAuthenticationProvider != null)
-            {
-                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Delete));
-            }
+            AuthenticateAction(ItemChangeAction.Delete);
 
             db.BeginTransaction();
 
-            List<Type> subTypes = getSubTypes();
+            /*List<Type> subTypes = getSubTypes();
             foreach (Type subType in subTypes)
             {
                 List<Item> subItems = getSubItems(subType);
@@ -677,7 +632,7 @@ namespace BoxSocial.Internals
                 {
                     item.Delete();
                 }
-            }
+            }*/
 
             DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
 
@@ -769,6 +724,17 @@ namespace BoxSocial.Internals
                                     Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
                                 }
                             }
+                            else
+                            {
+                                if (!(fi.FieldType == typeof(string)))
+                                {
+                                    throw new InvalidItemException();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new InvalidItemException();
                         }
                     }
                 }

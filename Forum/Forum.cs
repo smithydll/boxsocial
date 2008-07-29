@@ -51,6 +51,8 @@ namespace BoxSocial.Applications.Forum
         private long forumPosts;
         [DataField("forum_access")]
         private ushort permissions;
+        [DataField("forum_last_post_time_ut")]
+        private long lastPostTimeRaw;
         [DataField("forum_last_post_id")]
         private long lastPostId;
         [DataField("forum_item_id")]
@@ -60,6 +62,69 @@ namespace BoxSocial.Applications.Forum
 
         private Primitive owner;
         private Access forumAccess;
+        private ForumReadStatus readStatus = null;
+        private bool readStatusLoaded;
+
+        public ForumReadStatus ReadStatus
+        {
+            get
+            {
+                if (readStatus == null)
+                {
+                    if (readStatusLoaded)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            readStatus = new ForumReadStatus(core, forumId);
+                            readStatusLoaded = true;
+                            return readStatus;
+                        }
+                        catch (InvalidForumReadStatusException)
+                        {
+                            readStatusLoaded = true;
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    return readStatus;
+                }
+            }
+        }
+
+        public bool IsRead
+        {
+            get
+            {
+                if (!readStatusLoaded)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (readStatus != null)
+                    {
+                        if (readStatus.ReadTimeRaw < lastPostTimeRaw)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
 
         public string Title
         {
@@ -156,13 +221,29 @@ namespace BoxSocial.Applications.Forum
 
             ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
 
-            try
+            SelectQuery query = Forum_GetSelectQueryStub(core);
+            query.AddCondition("`forum`.`forum_id`", forumId);
+
+            DataTable forumTable = db.Query(query);
+
+            if (forumTable.Rows.Count == 1)
             {
-                LoadItem(forumId);
+                loadItemInfo(forumTable.Rows[0]);
             }
-            catch (InvalidItemException)
+            else
             {
                 throw new InvalidForumException();
+            }
+
+            try
+            {
+                readStatus = new ForumReadStatus(core, forumTable.Rows[0]);
+                readStatusLoaded = true;
+            }
+            catch (InvalidForumReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
             }
         }
 
@@ -179,10 +260,38 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidForumException();
             }
+
+            try
+            {
+                readStatus = new ForumReadStatus(core, forumDataRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidForumReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
         }
 
         void Forum_ItemLoad()
         {
+        }
+
+        public static SelectQuery Forum_GetSelectQueryStub(Core core)
+        {
+            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+
+            if (core.LoggedInMemberId > 0)
+            {
+                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(ForumReadStatus)));
+                TableJoin tj1 = query.AddJoin(JoinTypes.Left, ForumReadStatus.GetTable(typeof(ForumReadStatus)), "forum_id", "forum_id");
+                tj1.AddCondition("`forum_read_status`.`user_id`", core.LoggedInMemberId);
+            }
+
+            // TODO: forum sort order
+            //query.AddSort(SortOrder.Descending, "forum_order");
+
+            return query;
         }
 
         public List<Forum> GetForums()
@@ -318,6 +427,41 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public void ReadAll()
+        {
+            ReadAll(false);
+        }
+
+        public void ReadAll(bool subForums)
+        {
+            if (!(IsRead) && core.LoggedInMemberId > 0)
+            {
+                if (readStatus != null)
+                {
+                    UpdateQuery uQuery2 = new UpdateQuery(ForumReadStatus.GetTable(typeof(ForumReadStatus)));
+                    uQuery2.AddField("read_time_ut", UnixTime.UnixTimeStamp());
+                    uQuery2.AddCondition("forum_id", forumId);
+                    uQuery2.AddCondition("user_id", core.LoggedInMemberId);
+
+                    db.Query(uQuery2);
+                }
+                else
+                {
+                    ForumReadStatus.Create(core, this);
+                }
+            }
+
+            if (subForums)
+            {
+                List<Forum> forums = GetForums();
+
+                foreach (Forum forum in forums)
+                {
+                    forum.ReadAll(true);
+                }
+            }
+        }
+
         public static void Show(Core core, GPage page, long forumId)
         {
             int p = Functions.RequestInt("p", 1);
@@ -381,6 +525,15 @@ namespace BoxSocial.Applications.Forum
                 {
                     forumVariableCollection.Parse("LAST_POST", "No posts");
                 }
+
+                if (forum.IsRead)
+                {
+                    forumVariableCollection.Parse("IS_READ", "TRUE");
+                }
+                else
+                {
+                    forumVariableCollection.Parse("IS_READ", "FALSE");
+                }
             }
 
             List<ForumTopic> topics = thisForum.GetTopics(p, 10);
@@ -411,6 +564,15 @@ namespace BoxSocial.Applications.Forum
                 else
                 {
                     topicVariableCollection.Parse("LAST_POST", "No posts");
+                }
+
+                if (topic.IsRead)
+                {
+                    topicVariableCollection.Parse("IS_READ", "TRUE");
+                }
+                else
+                {
+                    topicVariableCollection.Parse("IS_READ", "FALSE");
                 }
             }
 

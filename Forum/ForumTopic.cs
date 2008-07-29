@@ -59,6 +59,8 @@ namespace BoxSocial.Applications.Forum
         private long firstPostId;
 
         private Forum forum;
+        private TopicReadStatus readStatus = null;
+        private bool readStatusLoaded;
 
         public long TopicId
         {
@@ -91,6 +93,67 @@ namespace BoxSocial.Applications.Forum
                     }
                 }
                 return forum;
+            }
+        }
+
+        public TopicReadStatus ReadStatus
+        {
+            get
+            {
+                if (readStatus == null)
+                {
+                    if (readStatusLoaded)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            readStatus = new TopicReadStatus(core, topicId);
+                            readStatusLoaded = true;
+                            return readStatus;
+                        }
+                        catch (InvalidTopicReadStatusException)
+                        {
+                            readStatusLoaded = true;
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    return readStatus;
+                }
+            }
+        }
+
+        public bool IsRead
+        {
+            get
+            {
+                if (!readStatusLoaded)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (readStatus != null)
+                    {
+                        if (readStatus.ReadTimeRaw < lastPostTimeRaw)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
         }
 
@@ -184,13 +247,29 @@ namespace BoxSocial.Applications.Forum
 
             this.forum = forum;
 
-            try
+            SelectQuery query = ForumTopic_GetSelectQueryStub(core);
+            query.AddCondition("`forum_topics`.`topic_id`", topicId);
+
+            DataTable topicTable = db.Query(query);
+
+            if (topicTable.Rows.Count == 1)
             {
-                LoadItem(topicId);
+                loadItemInfo(topicTable.Rows[0]);
             }
-            catch (InvalidItemException)
+            else
             {
                 throw new InvalidTopicException();
+            }
+
+            try
+            {
+                readStatus = new TopicReadStatus(core, topicTable.Rows[0]);
+                readStatusLoaded = true;
+            }
+            catch (InvalidTopicReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
             }
         }
 
@@ -206,6 +285,17 @@ namespace BoxSocial.Applications.Forum
             catch (InvalidItemException)
             {
                 throw new InvalidTopicException();
+            }
+
+            try
+            {
+                readStatus = new TopicReadStatus(core, topicRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidTopicReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
             }
         }
 
@@ -224,6 +314,17 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidTopicException();
             }
+
+            try
+            {
+                readStatus = new TopicReadStatus(core, topicRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidTopicReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
         }
 
         void Topic_ItemLoad()
@@ -231,12 +332,18 @@ namespace BoxSocial.Applications.Forum
         }
 
 
-        public static SelectQuery ForumTopic_GetSelectQueryStub()
+        public static SelectQuery ForumTopic_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
 
             query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
+            if (core.LoggedInMemberId > 0)
+            {
+                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
+                tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
+            }
 
             query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
 
@@ -429,6 +536,34 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public void Read(TopicPost lastVisiblePost)
+        {
+            db.BeginTransaction();
+
+            UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
+            uQuery.AddField("topic_views", new QueryOperation("topic_views", QueryOperations.Addition, 1));
+            uQuery.AddCondition("topic_id", topicId);
+
+            db.Query(uQuery);
+
+            if ((!IsRead) && core.LoggedInMemberId > 0)
+            {
+                if (readStatus != null)
+                {
+                    UpdateQuery uQuery2 = new UpdateQuery(TopicReadStatus.GetTable(typeof(TopicReadStatus)));
+                    uQuery2.AddField("read_time_ut", lastVisiblePost.TimeCreatedRaw);
+                    uQuery2.AddCondition("topic_id", topicId);
+                    uQuery2.AddCondition("user_id", core.LoggedInMemberId);
+
+                    db.Query(uQuery2);
+                }
+                else
+                {
+                    TopicReadStatus.Create(core, this, lastVisiblePost);
+                }
+            }
+        }
+
         public static void Show(Core core, GPage page, long forumId, long topicId)
         {
             int p = Functions.RequestInt("p", 1);
@@ -492,6 +627,27 @@ namespace BoxSocial.Applications.Forum
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
                     postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
+
+                    if (thisTopic.ReadStatus == null)
+                    {
+                        postVariableCollection.Parse("IS_READ", "FALSE");
+                    }
+                    else
+                    {
+                        if (thisTopic.ReadStatus.ReadTimeRaw < post.TimeCreatedRaw)
+                        {
+                            postVariableCollection.Parse("IS_READ", "FALSE");
+                        }
+                        else
+                        {
+                            postVariableCollection.Parse("IS_READ", "TRUE");
+                        }
+                    }
+                }
+
+                if (posts.Count > 0)
+                {
+                    thisTopic.Read(posts[posts.Count - 1]);
                 }
 
                 if (thisForum.ForumAccess.CanCreate)

@@ -339,7 +339,7 @@ namespace BoxSocial.Internals
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }
@@ -365,7 +365,7 @@ namespace BoxSocial.Internals
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }
@@ -391,7 +391,7 @@ namespace BoxSocial.Internals
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }

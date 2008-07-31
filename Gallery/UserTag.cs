@@ -272,7 +272,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (tag.TaggedMember.EmailNotifications)
                 {
-                    Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "photo_tag_notification.eml");
+                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "photo_tag_notification.eml");
 
                     emailTemplate.Parse("TO_NAME", tag.TaggedMember.DisplayName);
                     emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);

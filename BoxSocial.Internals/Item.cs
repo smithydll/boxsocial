@@ -406,7 +406,15 @@ namespace BoxSocial.Internals
                     {
                         if (((DataFieldAttribute)attr).FieldName != null)
                         {
-                            DataFieldInfo dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+                            DataFieldInfo dfi;
+                            if (((DataFieldAttribute)attr).Key == null)
+                            {
+                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+                            }
+                            else
+                            {
+                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
+                            }
                             dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
                             dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 
@@ -675,6 +683,8 @@ namespace BoxSocial.Internals
         protected void loadItemInfo(Type type, DataRow itemRow)
         {
             List<string> columns = new List<string>();
+            List<string> columnsAttributed = new List<string>();
+            int columnCount = 0;
 
             foreach (DataColumn column in itemRow.Table.Columns)
             {
@@ -697,8 +707,11 @@ namespace BoxSocial.Internals
                             columnName = fi.Name;
                         }
 
+                        columnsAttributed.Add(columnName);
+
                         if (columns.Contains(columnName))
                         {
+                            columnCount++;
                             if (!(itemRow[columnName] is DBNull))
                             {
                                 try
@@ -726,19 +739,24 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                if (!(fi.FieldType == typeof(string)))
+                                // This works only when the non repeated columns are not entirely TEXT
+                                if (fi.FieldType == typeof(string))
+                                {
+                                    columnCount++;
+                                }
+                                else
                                 {
                                     throw new InvalidItemException();
                                 }
                             }
                         }
-                        else
-                        {
-                            throw new InvalidItemException();
-                        }
                     }
                 }
+            }
 
+            if (columnCount == 0)
+            {
+                throw new InvalidItemException();
             }
 
             if (ItemLoad != null)

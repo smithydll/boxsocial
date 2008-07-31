@@ -109,7 +109,14 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(ContentLicense_ItemLoad);
 
-            loadItemInfo(licenseRow);
+            try
+            {
+                loadItemInfo(licenseRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidLicenseException();
+            }
         }
 
         private void ContentLicense_ItemLoad()
@@ -159,10 +166,6 @@ namespace BoxSocial.Internals
     }
 
     public class InvalidLicenseException : Exception
-    {
-    }
-
-    public class NonexistantLicenseException : Exception
     {
     }
 }

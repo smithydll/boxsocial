@@ -644,11 +644,15 @@ namespace BoxSocial.IO
                         indexes.Append(string.Format(", PRIMARY_KEY(`{0}`)",
                             Mysql.Escape(field.Name)));
                     }
-                    else
+                    else if (field.Key != null)
                     {
                         key = " NOT NULL UNIQUE KEY";
                         indexes.Append(string.Format(", INDEX(`{0}`)",
                             Mysql.Escape(field.Name)));
+                    }
+                    else
+                    {
+                        //key = " NOT NULL UNIQUE KEY";
                     }
                 }
 
@@ -662,9 +666,41 @@ namespace BoxSocial.IO
                     Mysql.Escape(primaryKey.Name)));
             }
 
+            List<string> keys = UniqueKey.GetKeys(fields);
+
+            foreach (string key in keys)
+            {
+                List<DataFieldInfo> keyFields = UniqueKey.GetFields(key, fields);
+
+                sb.Append(string.Format(", UNIQUE INDEX `{0}` (",
+                    Mysql.Escape(key)));
+
+                bool firstKey = true;
+                foreach (DataFieldInfo keyField in keyFields)
+                {
+                    if (!firstKey)
+                    {
+                        sb.Append(", ");
+                    }
+                    else
+                    {
+                        firstKey = false;
+                    }
+
+                    sb.Append(string.Format("`{0}`",
+                        Mysql.Escape(keyField.Name)));
+                }
+
+                sb.Append(")");
+            }
+
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
             UpdateQuery(sb.ToString());
+        }
+
+        public override void UpdateTableKeys(string tableName, List<DataFieldInfo> fields)
+        {
         }
     }
 }

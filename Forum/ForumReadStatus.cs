@@ -116,7 +116,7 @@ namespace BoxSocial.Applications.Forum
                 InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumReadStatus)));
                 iQuery.AddField("forum_id", forum.Id);
                 iQuery.AddField("user_id", core.LoggedInMemberId);
-                iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp());
+                iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp()); // forum.LastPostTimeRaw
 
                 core.db.Query(iQuery);
             }

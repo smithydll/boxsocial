@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.Forum
                 iQuery.AddField("topic_id", topic.Id);
                 iQuery.AddField("user_id", core.LoggedInMemberId);
                 iQuery.AddField("forum_id", topic.ForumId);
-                iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp());
+                iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp()); // topic.LastPostTimRaw
 
                 core.db.Query(iQuery);
             }

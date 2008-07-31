@@ -83,5 +83,6 @@ namespace BoxSocial.IO
         public abstract void DeleteColumn(string tableName, string fieldName);
 
         public abstract void CreateTable(string tableName, List<DataFieldInfo> fields);
+        public abstract void UpdateTableKeys(string tableName, List<DataFieldInfo> fields);
     }
 }

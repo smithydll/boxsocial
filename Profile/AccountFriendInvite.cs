@@ -120,7 +120,7 @@ namespace BoxSocial.Applications.Profile
                         string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                         emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
-                        Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
+                        RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
 
                         if (!string.IsNullOrEmpty(friendName))
                         {
@@ -181,7 +181,7 @@ namespace BoxSocial.Applications.Profile
                             string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                             emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
-                            Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
+                            RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
 
                             emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_EMAIL", loggedInMember.AlternateEmail);
@@ -227,7 +227,7 @@ namespace BoxSocial.Applications.Profile
                                 // only send a notification if they have subscribed to them
                                 if (friendProfile.EmailNotifications)
                                 {
-                                    Template emailTemplate = new Template(Server.MapPath("./templates/emails/"), "friend_notification.eml");
+                                    RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
                                     emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
                                     emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);

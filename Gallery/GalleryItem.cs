@@ -323,7 +323,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     loadLicenseInfo(galleryItemTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }
@@ -349,7 +349,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 loadLicenseInfo(itemRow);
             }
-            catch (NonexistantLicenseException)
+            catch (InvalidLicenseException)
             {
             }
         }
@@ -369,7 +369,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 loadLicenseInfo(itemRow);
             }
-            catch (NonexistantLicenseException)
+            catch (InvalidLicenseException)
             {
             }
         }
@@ -388,7 +388,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 loadLicenseInfo(itemRow);
             }
-            catch (NonexistantLicenseException)
+            catch (InvalidLicenseException)
             {
             }
         }
@@ -415,7 +415,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     loadLicenseInfo(galleryItemTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }
@@ -445,7 +445,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     loadLicenseInfo(galleryItemTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }
@@ -489,7 +489,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     loadLicenseInfo(galleryItemTable.Rows[0]);
                 }
-                catch (NonexistantLicenseException)
+                catch (InvalidLicenseException)
                 {
                 }
             }

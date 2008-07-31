@@ -33,6 +33,7 @@ namespace BoxSocial.IO
         private long length;
         private Type parentType;
         private string parentFieldName;
+        private UniqueKey key;
 
         public DataFieldAttribute()
         {
@@ -46,6 +47,7 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
+            this.key = null;
         }
 
         public DataFieldAttribute(string fieldName, long fieldLength)
@@ -56,6 +58,7 @@ namespace BoxSocial.IO
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
+            this.key = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key)
@@ -74,6 +77,25 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
+            this.key = null;
+        }
+
+        public DataFieldAttribute(string fieldName, UniqueKey key)
+        {
+            this.fieldName = fieldName;
+            if (key != null)
+            {
+                this.isUnique = true;
+            }
+            else
+            {
+                this.isUnique = false;
+            }
+            this.isPrimaryKey = false;
+            this.length = 0;
+            this.parentFieldName = null;
+            this.parentType = null;
+            this.key = key;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, long fieldLength)
@@ -82,6 +104,25 @@ namespace BoxSocial.IO
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
+            this.key = null;
+        }
+
+        public DataFieldAttribute(string fieldName, UniqueKey key, long fieldLength)
+        {
+            this.fieldName = fieldName;
+            if (key != null)
+            {
+                this.isUnique = true;
+            }
+            else
+            {
+                this.isUnique = false;
+            }
+            this.isPrimaryKey = false;
+            this.length = fieldLength;
+            this.parentFieldName = null;
+            this.parentType = null;
+            this.key = key;
         }
 
         /// <summary>
@@ -102,6 +143,7 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
+            this.key = null;
         }
 
         public string FieldName
@@ -141,6 +183,14 @@ namespace BoxSocial.IO
                     return DataFieldKeys.Unique;
                 }
                 return DataFieldKeys.None;
+            }
+        }
+
+        public UniqueKey Key
+        {
+            get
+            {
+                return key;
             }
         }
 

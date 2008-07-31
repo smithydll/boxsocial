@@ -42,7 +42,7 @@ namespace BoxSocial.Internals
         private bool emailVerified;
         [DataField("email_time_ut")]
         private long emailTimeRaw;
-        [DataField("email_activate_code")]
+        [DataField("email_activate_code", 32)]
         private string emailActivateKey;
         [DataField("email_access")]
         private ushort permissions;
@@ -163,7 +163,7 @@ namespace BoxSocial.Internals
 
             string activateKey = User.GenerateActivationSecurityToken();
 
-            InsertQuery iquery = new InsertQuery(UserEmail.GetTable(typeof(User)));
+            InsertQuery iquery = new InsertQuery(UserEmail.GetTable(typeof(UserEmail)));
             iquery.AddField("email_user_id", owner.Id);
             iquery.AddField("email_email", email);
             if (!isRegistration)
@@ -185,7 +185,7 @@ namespace BoxSocial.Internals
                 string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
                     emailId, activateKey);
 
-                Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
+                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
 
                 emailTemplate.Parse("TO_NAME", owner.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);

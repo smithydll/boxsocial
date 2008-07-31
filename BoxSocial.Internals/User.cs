@@ -1276,7 +1276,7 @@ namespace BoxSocial.Internals
             string activateUri = string.Format("http://zinzam.com/register/?mode=activate&id={0}&key={1}",
                 userId, activateKey);
 
-            Template emailTemplate = new Template(HttpContext.Current.Server.MapPath("./templates/emails/"), "registration_welcome.eml");
+            RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "registration_welcome.eml");
 
             emailTemplate.Parse("TO_NAME", userName);
             emailTemplate.Parse("U_ACTIVATE", activateUri);
@@ -1357,11 +1357,11 @@ namespace BoxSocial.Internals
             try
             {
                 UserEmail uMail = new UserEmail(core, eMail);
-                return true;
+                return false; // not unique
             }
             catch (InvalidUserEmailException)
             {
-                return false;
+                return true; // unique
             }
 
             // TODO: register all e-mail addresses into a new table, along with privacy controls

@@ -63,6 +63,7 @@
     <Compile Include="QueryOperation.cs" />
     <Compile Include="SelectQuery.cs" />
     <Compile Include="Template.cs" />
+    <Compile Include="UniqueKey.cs" />
     <Compile Include="UpdateQuery.cs" />
   </ItemGroup>
   <ItemGroup>

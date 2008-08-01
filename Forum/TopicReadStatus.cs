@@ -33,9 +33,9 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_topic_read_status")]
     public class TopicReadStatus : Item
     {
-        [DataField("topic_id", DataFieldKeys.Unique)]
+        [DataField("topic_id", DataFieldKeys.Unique, "ftrs_key")]
         private long topicId;
-        [DataField("user_id", DataFieldKeys.Unique)]
+        [DataField("user_id", DataFieldKeys.Unique, "ftrs_key")]
         private long userId;
         [DataField("forum_id")]
         private long forumId;

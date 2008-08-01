@@ -323,6 +323,29 @@ namespace BoxSocial.IO
             return fields;
         }
 
+        public override Dictionary<UniqueKey, List<DataField>> GetIndexes(string tableName)
+        {
+            Dictionary<UniqueKey, List<DataField>> indexes = new Dictionary<UniqueKey, List<DataField>>();
+
+            DataTable fieldTable = SelectQuery(string.Format("SHOW INDEXES FROM `{0}`",
+                Mysql.Escape(tableName)));
+
+            foreach (DataRow dr in fieldTable.Rows)
+            {
+                DataField df = new DataField((string)dr["Table"], (string)dr["Column_name"]);
+                UniqueKey key = new UniqueKey((string)dr["Key_name"]);
+
+                if (!indexes.ContainsKey(key))
+                {
+                    indexes.Add(key, new List<DataField>());
+                }
+
+                indexes[key].Add(df);
+            }
+
+            return indexes;
+        }
+
         private DataFieldInfo MysqlToType(string name, string type)
         {
             type = type.ToLower();
@@ -701,6 +724,109 @@ namespace BoxSocial.IO
 
         public override void UpdateTableKeys(string tableName, List<DataFieldInfo> fields)
         {
+            Dictionary<UniqueKey, List<DataField>> indexes = GetIndexes(tableName);
+
+            List<string> keys = UniqueKey.GetKeys(fields);
+
+            foreach (UniqueKey key in indexes.Keys)
+            {
+                bool removeKey = !keys.Contains(key.Key);
+                bool fieldKey = false;
+
+                if (indexes[key].Count == 1)
+                {
+                    foreach (DataFieldInfo field in fields)
+                    {
+                        if (field.IsUnique && field.Key == null && indexes[key][0].Name == field.Name)
+                        {
+                            fieldKey = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (removeKey && (!fieldKey))
+                {
+                    // delete the key
+                    string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
+                        tableName, key.Key);
+
+                    UpdateQuery(sql);
+                }
+            }
+
+            foreach (string key in keys)
+            {
+                UniqueKey thisKey = new UniqueKey(key);
+                List<DataFieldInfo> keyFields = UniqueKey.GetFields(key, fields);
+                bool newKey = !indexes.ContainsKey(thisKey);
+
+                if (!newKey)
+                {
+                    bool keyFieldsChanged = false;
+
+                    foreach (DataFieldInfo keyField in keyFields)
+                    {
+                        if (!indexes[thisKey].Contains(new DataField(tableName, keyField.Name)))
+                        {
+                            keyFieldsChanged = true;
+                            newKey = true;
+                        }
+                    }
+
+                    foreach (DataField field in indexes[thisKey])
+                    {
+                        bool flag = false;
+
+                        foreach (DataFieldInfo keyField in keyFields)
+                        {
+                            if (keyField.Name == field.Name)
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+
+                        if (!flag)
+                        {
+                            keyFieldsChanged = true;
+                            newKey = true;
+                        }
+                    }
+
+                    if (keyFieldsChanged)
+                    {
+                        // delete the key
+                        string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
+                            tableName, key);
+
+                        UpdateQuery(sql);
+                    }
+                }
+
+                if (newKey)
+                {
+                    // create the key
+                    bool first = true;
+                    string fieldList = "";
+                    
+                    foreach (DataFieldInfo keyField in keyFields)
+                    {
+                        if (!first)
+                        {
+                            fieldList += ", ";
+                        }
+                        first = false;
+
+                        fieldList += "`" + keyField.Name + "`";
+                    }
+
+                    string sql = string.Format("ALTER TABLE `{0}` ADD UNIQUE INDEX `{1}` ({2});",
+                        tableName, key, fieldList);
+
+                    UpdateQuery(sql);
+                }
+            }
         }
     }
 }

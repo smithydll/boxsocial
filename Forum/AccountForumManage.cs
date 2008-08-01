@@ -71,12 +71,26 @@ namespace BoxSocial.Applications.Forum
 
         void AccountForumManage_New(object sender, ModuleModeEventArgs e)
         {
+            SetTemplate("account_forum_edit");
 
             switch (e.Mode)
             {
                 case "new":
                     break;
                 case "edit":
+                    long id = Functions.RequestLong("id", 0);
+
+                    try
+                    {
+                        Forum forum = new Forum(core, id);
+
+                        template.Parse("TITLE", forum.Title);
+                        template.Parse("DESCRIPTION", forum.Description);
+                    }
+                    catch (InvalidForumException)
+                    {
+                        DisplayGenericError();
+                    }
                     break;
             }
         }

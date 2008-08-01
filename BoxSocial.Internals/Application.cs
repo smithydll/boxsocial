@@ -152,6 +152,8 @@ namespace BoxSocial.Internals
                             {
                                 core.db.AddColumns(table, newFields);
                             }
+
+                            core.db.UpdateTableKeys(table, dataFields);
                         }
                         else
                         {

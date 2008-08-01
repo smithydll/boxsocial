@@ -8,8 +8,13 @@
 	<!-- ENDIF -->
 
   <!-- IF FORUMS -->
+  <!-- BEGIN forum_list -->
+  <!-- IF forum_list.IS_CATEGORY -->
+  <h3><a href="{forum_list.URI}">{forum_list.TITLE}</a></h3>
+  <!-- ENDIF -->
+  <!-- IF forum_list.IS_FIRST -->
   <ul>
-    <!-- BEGIN forum_list -->
+  <!-- ENDIF -->
     <li>
       <dl>
         <dt>
@@ -20,8 +25,10 @@
         <dd>{forum_list.LAST_POST}</dd>
       </dl>
     </li>
-    <!-- END forum_list -->
+  <!-- IF forum_list.IS_LAST -->
   </ul>
+  <!-- ENDIF -->
+  <!-- END forum_list -->
   <!-- ENDIF -->
 	
 	<!-- IF TOPICS -->
@@ -62,5 +69,9 @@
 		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 	</div>
 	<!-- ENDIF -->
+
+<!-- IF PERMISSION_BLOCK -->
+{PERMISSION_BLOCK}
+<!-- ENDIF -->
 
 <!-- INCLUDE page_footer.html -->

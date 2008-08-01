@@ -61,10 +61,47 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_forum_edit {
+            get {
+                return ResourceManager.GetString("account_forum_edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Forum Manage&lt;/h3&gt;
+        ///&lt;p&gt;Manage forums.&lt;/p&gt;.
+        /// </summary>
+        internal static string account_forum_manage {
+            get {
+                return ResourceManager.GetString("account_forum_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;h2&gt;Post&lt;/h2&gt;
         ///
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///&lt;!-- IF ERROR --&gt;
+        ///&lt;p class=&quot;error&quot;&gt;{ERROR}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;form action=&quot;{S_POST}&quot; method=&quot;post&quot;&gt;
+        ///  &lt;fieldset&gt;
+        ///    &lt;legend&gt;Post&lt;/legend&gt;
+        ///    &lt;dl&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label for=&quot;subject&quot;&gt;Post Subject&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        &lt;input type=&quot;text&quot; id=&quot;subject&quot; name=&quot;subject&quot; value=&quot;{S_SUBJECT}&quot; style=&quot;width: 100%;&quot; /&gt;
+        ///      &lt;/dd&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label for=&quot;post&quot;&gt;Post Text&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        &lt;textarea i [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post {
             get {
@@ -77,22 +114,22 @@ namespace BoxSocial.Applications.Forum {
         ///	&lt;h2&gt;{FORUM_TITLE}&lt;/h2&gt;
         ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///	&lt;!-- IF U_NEW_TOPIC --&gt;
-        ///	&lt;div id=&quot;new-stuff&quot;&gt;
-        ///		&lt;span id=&quot;new-topic&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TOPIC}&quot;&gt;New Topic&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;div class=&quot;new-stuff&quot;&gt;
+        ///		&lt;span class=&quot;new-topic post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TOPIC}&quot;&gt;{L_NEW_TOPIC}&lt;/a&gt;&lt;/span&gt;
         ///	&lt;/div&gt;
         ///	&lt;!-- ENDIF --&gt;
         ///
         ///  &lt;!-- IF FORUMS --&gt;
+        ///  &lt;!-- BEGIN forum_list --&gt;
+        ///  &lt;!-- IF forum_list.IS_CATEGORY --&gt;
+        ///  &lt;h3&gt;&lt;a href=&quot;{forum_list.URI}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;&lt;/h3&gt;
+        ///  &lt;!-- ENDIF --&gt;
+        ///  &lt;!-- IF forum_list.IS_FIRST --&gt;
         ///  &lt;ul&gt;
-        ///    &lt;!-- BEGIN forum_list --&gt;
+        ///  &lt;!-- ENDIF --&gt;
         ///    &lt;li&gt;
         ///      &lt;dl&gt;
-        ///        &lt;dt&gt;
-        ///          &lt;a href=&quot;{forum_list.URI}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;
-        ///        &lt;/dt&gt;
-        ///        &lt;dd&gt;{forum_list.POSTS}&lt;/dd&gt;
-        ///        &lt;dd&gt;{forum_list.TOPICS}&lt;/dd&gt;
-        ///        &lt;dd&gt;{fo [rest of string was truncated]&quot;;.
+        ///        &lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewforum {
             get {
@@ -105,11 +142,22 @@ namespace BoxSocial.Applications.Forum {
         ///	&lt;h2&gt;{TOPIC_TITLE}&lt;/h2&gt;
         ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///	&lt;!-- IF U_NEW_REPLY --&gt;
-        ///	&lt;div id=&quot;new-stuff&quot;&gt;
-        ///		&lt;span id=&quot;new-reply&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_REPLY}&quot;&gt;Post Reply&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;div class=&quot;new-stuff&quot;&gt;
+        ///    &lt;span class=&quot;new-topic post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TOPIC}&quot;&gt;{L_NEW_TOPIC}&lt;/a&gt;&lt;/span&gt;
+        ///		&lt;span class=&quot;new-reply post-button&quot;&gt;&lt;a href=&quot;{U_NEW_REPLY}&quot;&gt;Post Reply&lt;/a&gt;&lt;/span&gt;
         ///	&lt;/div&gt;
         ///	&lt;!-- ENDIF --&gt;
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///
+        ///&lt;p&gt;{PAGINATION}&lt;/p&gt;
+        ///&lt;!-- IF POSTS --&gt;
+        ///&lt;ul id=&quot;posts&quot;&gt;
+        ///  &lt;!-- BEGIN post_list --&gt;
+        ///  &lt;li&gt;
+        ///    &lt;!-- IF post_list.IS_READ --&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    *
+        ///    &lt;!-- ENDIF --&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewtopic {
             get {

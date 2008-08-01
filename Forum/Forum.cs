@@ -21,8 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.IO;
 using BoxSocial.Internals;
 using BoxSocial.Groups;
@@ -31,11 +34,11 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum")]
-    public class Forum : NumberedItem, IPermissibleItem
+    public class Forum : NumberedItem, IPermissibleItem, IComparable
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
-        [DataField("forum_parent_id")]
+        [DataField("forum_parent_id", typeof(Forum))]
         private long parentId;
         [DataField("forum_title", 127)]
         private string forumTitle;
@@ -59,11 +62,16 @@ namespace BoxSocial.Applications.Forum
         private long ownerId;
         [DataField("forum_item_type", 63)]
         private string ownerType;
+        [DataField("forum_order")]
+        private int forumOrder;
+        [DataField("forum_parents", MYSQL_TEXT)]
+        private string parents;
 
         private Primitive owner;
         private Access forumAccess;
         private ForumReadStatus readStatus = null;
         private bool readStatusLoaded;
+        private ParentTree parentTree;
 
         public ForumReadStatus ReadStatus
         {
@@ -186,6 +194,101 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public int Order
+        {
+            get
+            {
+                return forumOrder;
+            }
+        }
+
+        public long ParentId
+        {
+            get
+            {
+                return parentId;
+            }
+            set
+            {
+                SetProperty("parentId", value);
+
+                Forum parent;
+                if (parentId > 0)
+                {
+                    if (Owner is UserGroup)
+                    {
+                        parent = new Forum(core, (UserGroup)Owner, parentId);
+                    }
+                    else
+                    {
+                        parent = new Forum(core, parentId);
+                    }
+                }
+                else
+                {
+                    if (Owner is UserGroup)
+                    {
+                        parent = new Forum(core, (UserGroup)Owner);
+                    }
+                    else
+                    {
+                        // ignore
+                        parent = null;
+                    }
+                }
+
+                parentTree = new ParentTree();
+
+                foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                }
+
+                if (parent.Id > 0)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(parent.Title, parent.Id));
+                }
+
+                XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+                StringBuilder sb = new StringBuilder();
+                StringWriter stw = new StringWriter(sb);
+
+                xs.Serialize(stw, parentTree);
+                stw.Flush();
+                stw.Close();
+
+                parents = sb.ToString();
+            }
+        }
+
+        public ParentTree Parents
+        {
+            get
+            {
+                if (parentTree == null)
+                {
+                    XmlSerializer xs = new XmlSerializer(typeof(ParentTree));;
+                    StringReader sr = new StringReader(parents);
+
+                    parentTree = (ParentTree)xs.Deserialize(sr);
+                }
+
+                return parentTree;
+            }
+        }
+
+        public bool IsCategory
+        {
+            get
+            {
+                return isCategory;
+            }
+            set
+            {
+                SetProperty("isCategory", value);
+            }
+        }
+
         public Access ForumAccess
         {
             get
@@ -302,8 +405,27 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_item_id", ownerId);
             query.AddCondition("forum_item_type", ownerType);
             query.AddCondition("forum_parent_id", forumId);
+            query.AddSort(SortOrder.Ascending, "forum_order");
 
             DataTable forumsTable = db.Query(query);
+
+            foreach (DataRow dr in forumsTable.Rows)
+            {
+                forums.Add(new Forum(core, dr));
+            }
+
+            return forums;
+        }
+
+        public static List<Forum> GetForums(Core core, List<long> forumIds)
+        {
+            List<Forum> forums = new List<Forum>();
+
+            SelectQuery query = new SelectQuery("forum");
+            query.AddCondition("forum_id", ConditionEquality.In, forumIds);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+
+            DataTable forumsTable = core.db.Query(query);
 
             foreach (DataRow dr in forumsTable.Rows)
             {
@@ -367,6 +489,99 @@ namespace BoxSocial.Applications.Forum
             }
 
             return topics;
+        }
+
+        public static Forum Create(Core core, Forum parent, string title, string description, ushort permissions, bool isCategory)
+        {
+            string parents;
+            int order = 0;
+            core.db.BeginTransaction();
+
+            if (parent == null)
+            {
+                throw new InvalidForumException();
+            }
+
+            if (parent.Owner is UserGroup)
+            {
+                if (!((UserGroup)parent.Owner).IsGroupOperator(core.session.LoggedInMember))
+                {
+                    // todo: throw new exception
+                    throw new UnauthorisedToCreateItemException();
+                }
+            }
+
+            SelectQuery query = new SelectQuery(GetTable(typeof(Forum)));
+            query.AddFields("forum_order");
+            query.AddCondition("forum_parent_id", parent.Id);
+            query.AddSort(SortOrder.Descending, "forum_order");
+            query.LimitCount = 1;
+
+            DataTable orderTable = core.db.Query(query);
+
+            if (orderTable.Rows.Count == 1)
+            {
+                order = (int)orderTable.Rows[0]["forum_order"] + 1;
+            }
+            else
+            {
+                order = parent.Order + 1;
+
+                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
+                uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+                uQuery.AddCondition("forum_item_type", parent.Owner.Type);
+
+                core.db.Query(uQuery);
+            }
+
+            ParentTree parentTree = new ParentTree();
+
+            foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+            {
+                parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+            }
+
+            if (parent.Id > 0)
+            {
+                parentTree.Nodes.Add(new ParentTreeNode(parent.Title, parent.Id));
+            }
+
+            XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+            StringBuilder sb = new StringBuilder();
+            StringWriter stw = new StringWriter(sb);
+
+            xs.Serialize(stw, parentTree);
+            stw.Flush();
+            stw.Close();
+
+            parents = sb.ToString();
+
+            InsertQuery iquery = new InsertQuery(GetTable(typeof(Forum)));
+            iquery.AddField("forum_parent_id", parent.Id);
+            iquery.AddField("forum_title", title);
+            iquery.AddField("forum_description", description);
+            iquery.AddField("forum_access", permissions);
+            iquery.AddField("forum_order", order);
+            iquery.AddField("forum_category", isCategory);
+            iquery.AddField("forum_locked", false);
+            iquery.AddField("forum_topics", 0);
+            iquery.AddField("forum_posts", 0);
+            iquery.AddField("forum_item_id", parent.Owner.Id);
+            iquery.AddField("forum_item_type", parent.Owner.Type);
+            iquery.AddField("forum_parents", parents);
+
+            long forumId = core.db.Query(iquery);
+
+            if (parent.Owner is UserGroup)
+            {
+                return new Forum(core, (UserGroup)parent.Owner, forumId);
+            }
+            else
+            {
+                return new Forum(core, forumId);
+            }
         }
 
         public override long Id
@@ -500,14 +715,31 @@ namespace BoxSocial.Applications.Forum
             // ForumId, TopicPost
             Dictionary<long, TopicPost> lastPosts;
             List<long> lastPostIds = new List<long>();
+            List<long> subForumIds = new List<long>();
 
             foreach (Forum forum in forums)
             {
                 lastPostIds.Add(forum.LastPostId);
+
+                if (forum.IsCategory)
+                {
+                    subForumIds.Add(forum.Id);
+                }
             }
+
+            List<Forum> subForums = Forum.GetForums(core, subForumIds);
+
+            foreach (Forum forum in subForums)
+            {
+                forums.Add(forum);
+            }
+
+            forums.Sort();
 
             lastPosts = TopicPost.GetPosts(core, lastPostIds);
 
+            VariableCollection lastForumVariableCollection = null;
+            bool lastCategory = true;
             foreach (Forum forum in forums)
             {
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
@@ -534,6 +766,25 @@ namespace BoxSocial.Applications.Forum
                 {
                     forumVariableCollection.Parse("IS_READ", "FALSE");
                 }
+
+                if (forum.IsCategory)
+                {
+                    forumVariableCollection.Parse("IS_CATEGORY", "TRUE");
+                    lastCategory = true;
+                }
+                else
+                {
+                    if (lastCategory)
+                    {
+                        forumVariableCollection.Parse("IS_FIRST", "TRUE");
+                    }
+                    lastForumVariableCollection = forumVariableCollection;
+                }
+            }
+
+            if (lastForumVariableCollection != null)
+            {
+                lastForumVariableCollection.Parse("IS_LAST", "TRUE");
             }
 
             List<ForumTopic> topics = thisForum.GetTopics(p, 10);
@@ -627,6 +878,18 @@ namespace BoxSocial.Applications.Forum
                 permissions.Add("Can Read");
                 permissions.Add("Can Post");
                 return permissions;
+            }
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Forum)
+            {
+                return Order.CompareTo(((Forum)obj).Order);
+            }
+            else
+            {
+                return -1;
             }
         }
     }

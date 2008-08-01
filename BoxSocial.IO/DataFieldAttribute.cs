@@ -80,10 +80,10 @@ namespace BoxSocial.IO
             this.key = null;
         }
 
-        public DataFieldAttribute(string fieldName, UniqueKey key)
+        public DataFieldAttribute(string fieldName, DataFieldKeys key, string keyName)
         {
             this.fieldName = fieldName;
-            if (key != null)
+            if (!string.IsNullOrEmpty(keyName))
             {
                 this.isUnique = true;
             }
@@ -95,7 +95,7 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = key;
+            this.key = new UniqueKey(keyName);
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, long fieldLength)
@@ -107,10 +107,10 @@ namespace BoxSocial.IO
             this.key = null;
         }
 
-        public DataFieldAttribute(string fieldName, UniqueKey key, long fieldLength)
+        public DataFieldAttribute(string fieldName, DataFieldKeys key, string keyName, long fieldLength)
         {
             this.fieldName = fieldName;
-            if (key != null)
+            if (!string.IsNullOrEmpty(keyName))
             {
                 this.isUnique = true;
             }
@@ -122,7 +122,7 @@ namespace BoxSocial.IO
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = key;
+            this.key = new UniqueKey(keyName);
         }
 
         /// <summary>

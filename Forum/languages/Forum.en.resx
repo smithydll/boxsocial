@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CAN" xml:space="preserve">
+    <value>can</value>
+  </data>
+  <data name="CANNOT" xml:space="preserve">
+    <value>cannot</value>
+  </data>
   <data name="LAST_POST" xml:space="preserve">
     <value>Last Post</value>
   </data>
@@ -125,6 +131,14 @@
   </data>
   <data name="NO_TOPICS" xml:space="preserve">
     <value>There are no topics in this forum.</value>
+  </data>
+  <data name="PERMISSION_POST_TOPIC" xml:space="preserve">
+    <value>You [b]{0}[/b] post new topics</value>
+    <comment>You can post new topics</comment>
+  </data>
+  <data name="PERMISSION_REPLY_TOPIC" xml:space="preserve">
+    <value>You [b]{0}[/b] reply to topics</value>
+    <comment>You can reply to topics</comment>
   </data>
   <data name="POST_REPLY" xml:space="preserve">
     <value>Post Reply</value>

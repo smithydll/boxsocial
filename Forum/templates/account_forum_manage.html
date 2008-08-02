@@ -1,2 +1,31 @@
 ﻿<h3>Manage Forum</h3>
 <p>Manage forums.</p>
+
+<table style="width: 100%">
+  <tr>
+    <th>Forum/Category</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <!-- BEGIN forum_list -->
+  <!-- IF forum_list.INDEX_EVEN -->
+  <tr class="even">
+    <!-- ELSE -->
+    <tr class="odd">
+      <!-- ENDIF -->
+      <td><a href="{forum_list.U_SUB_FORUMS}">{forum_list.TITLE}</a></td>
+      <td>
+        <a href="{forum_list.U_VIEW}">View</a>
+      </td>
+      <td>
+        <a href="{forum_list.U_EDIT}">Edit</a>
+      </td>
+      <td>
+        <a href="{forum_list.U_DELETE}">Delete</a>
+      </td>
+    </tr>
+    <!-- END forum_list -->
+  </table>
+
+<a href="{U_CREATE_FORUM}">Create New Forum</a>

@@ -174,7 +174,7 @@ namespace BoxSocial.Applications.Forum
                             return;
                         }
 
-                        ForumTopic topic = new ForumTopic(core, topicId);
+                        ForumTopic topic = new ForumTopic(core, forum, topicId);
 
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 

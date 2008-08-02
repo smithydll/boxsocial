@@ -30,7 +30,7 @@ namespace BoxSocial.Internals
     [XmlRoot("parents")]
     public class ParentTree
     {
-        [XmlArray("parent")]
+        [XmlElement("parent")]
         public List<ParentTreeNode> Nodes;
 
         public ParentTree()

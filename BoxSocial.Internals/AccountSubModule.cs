@@ -265,8 +265,8 @@ namespace BoxSocial.Internals
         private void CreateTemplate()
         {
             template = new Template("1301.html");
-            template.Parse("U_ACCOUNT", Linker.AppendSid("/account", true));
-            template.Parse("S_ACCOUNT", Linker.AppendSid("/account", true));
+            template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+            template.Parse("S_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
             template.AddPageAssembly(Assembly.GetCallingAssembly());
         }
 
@@ -323,6 +323,18 @@ namespace BoxSocial.Internals
         {
             return Linker.AppendSid(string.Format("{0}{1}/{2}",
                 Owner.AccountUriStub, ModuleKey, sub));
+        }
+
+        public string BuildUri(string sub, long id)
+        {
+            return Linker.AppendSid(string.Format("{0}{1}/{2}?id={3}",
+                Owner.AccountUriStub, ModuleKey, sub, id));
+        }
+
+        public string BuildUri(string sub, string mode)
+        {
+            return Linker.AppendSid(string.Format("{0}{1}/{2}?mode={3}",
+                Owner.AccountUriStub, ModuleKey, sub, mode));
         }
 
         public string BuildUri(string sub, string mode, long id)

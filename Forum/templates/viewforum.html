@@ -13,8 +13,9 @@
   <h3><a href="{forum_list.URI}">{forum_list.TITLE}</a></h3>
   <!-- ENDIF -->
   <!-- IF forum_list.IS_FIRST -->
-  <ul>
+  <ul class="forums">
   <!-- ENDIF -->
+    <!-- IF forum_list.IS_FORUM -->
     <li>
       <dl>
         <dt>
@@ -25,6 +26,7 @@
         <dd>{forum_list.LAST_POST}</dd>
       </dl>
     </li>
+    <!-- ENDIF -->
   <!-- IF forum_list.IS_LAST -->
   </ul>
   <!-- ENDIF -->

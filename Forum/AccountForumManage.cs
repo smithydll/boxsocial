@@ -26,6 +26,7 @@ using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Forum
 {
@@ -67,25 +68,90 @@ namespace BoxSocial.Applications.Forum
             SetTemplate("account_forum_manage");
 
             long forumId = Functions.RequestLong("id", 0);
+
+            Forum thisForum;
+            if (forumId == 0)
+            {
+                if (Owner is UserGroup)
+                {
+                    thisForum = new Forum(core, (UserGroup)Owner);
+                }
+                else
+                {
+                    thisForum = null;
+                }
+            }
+            else
+            {
+                if (Owner is UserGroup)
+                {
+                    thisForum = new Forum(core, (UserGroup)Owner, forumId);
+                }
+                else
+                {
+                    thisForum = new Forum(core, forumId);
+                }
+            }
+
+            if (thisForum != null)
+            {
+                List<Forum> forums = thisForum.GetForums();
+
+                foreach (Forum forum in forums)
+                {
+                    VariableCollection forumVariableCollection = template.CreateChild("forum_list");
+
+                    forumVariableCollection.Parse("TITLE", forum.Title);
+                    forumVariableCollection.Parse("U_SUB_FORUMS", BuildUri("forum", forum.Id));
+                }
+            }
+
+            if (forumId > 0)
+            {
+                template.Parse("U_CREATE_FORUM", BuildUri("forum", "new", forumId));
+            }
+            else
+            {
+                template.Parse("U_CREATE_FORUM", BuildUri("forum", "new"));
+            }
         }
 
         void AccountForumManage_New(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_forum_edit");
 
+            long id = Functions.RequestLong("id", 0);
+
+            Dictionary<string, string> forumTypes = new Dictionary<string, string>();
+            forumTypes.Add("FORUM", "Forum");
+            forumTypes.Add("CAT", "Category");
+            //forumTypes.Add("LINK", "Link");
+
             switch (e.Mode)
             {
                 case "new":
+                    template.Parse("S_ID", id.ToString());
+
+                    Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, "FORUM");
                     break;
                 case "edit":
-                    long id = Functions.RequestLong("id", 0);
-
                     try
                     {
                         Forum forum = new Forum(core, id);
 
-                        template.Parse("TITLE", forum.Title);
-                        template.Parse("DESCRIPTION", forum.Description);
+                        string type = "FORUM";
+
+                        if (forum.IsCategory)
+                        {
+                            type = "CAT";
+                        }
+
+                        template.Parse("S_TITLE", forum.Title);
+                        template.Parse("S_DESCRIPTION", forum.Description);
+                        template.Parse("S_ID", forum.Id.ToString());
+                        Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, type);
+
+                        template.Parse("EDIT", "TRUE");
                     }
                     catch (InvalidForumException)
                     {
@@ -97,6 +163,63 @@ namespace BoxSocial.Applications.Forum
 
         void AccountForumManage_New_Save(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
+            long parentId = Functions.FormLong("id", 0);
+            string title = Request.Form["title"];
+            string description = Request.Form["description"];
+            string type = Request.Form["type"];
+            bool isCategory = (type == "CAT");
+
+            Forum parent;
+
+            if (parentId == 0)
+            {
+                if (Owner is UserGroup)
+                {
+                    parent = new Forum(core, (UserGroup)Owner);
+                }
+                else
+                {
+                    parent = null;
+                }
+            }
+            else
+            {
+                if (Owner is UserGroup)
+                {
+                    parent = new Forum(core, (UserGroup)Owner, parentId);
+                }
+                else
+                {
+                    parent = new Forum(core, parentId);
+                }
+            }
+
+            if (parent != null)
+            {
+                try
+                {
+                    Forum forum = Forum.Create(core, parent, title, description, 0x1111, isCategory);
+                    if (parentId == 0)
+                    {
+                        SetRedirectUri(BuildUri("forum"));
+                    }
+                    else
+                    {
+                        SetRedirectUri(BuildUri("forum", forum.ParentId));
+                    }
+                    Display.ShowMessage("Forum Created", "A new forum has been created");
+                }
+                catch (UnauthorisedToCreateItemException)
+                {
+                    DisplayGenericError();
+                }
+                catch (InvalidForumException)
+                {
+                    DisplayGenericError();
+                }
+            }
         }
 
         void AccountForumManage_Edit_Save(object sender, EventArgs e)

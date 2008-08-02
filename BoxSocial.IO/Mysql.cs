@@ -323,9 +323,9 @@ namespace BoxSocial.IO
             return fields;
         }
 
-        public override Dictionary<UniqueKey, List<DataField>> GetIndexes(string tableName)
+        public override Dictionary<string, List<DataField>> GetIndexes(string tableName)
         {
-            Dictionary<UniqueKey, List<DataField>> indexes = new Dictionary<UniqueKey, List<DataField>>();
+            Dictionary<string, List<DataField>> indexes = new Dictionary<string, List<DataField>>();
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW INDEXES FROM `{0}`",
                 Mysql.Escape(tableName)));
@@ -333,9 +333,9 @@ namespace BoxSocial.IO
             foreach (DataRow dr in fieldTable.Rows)
             {
                 DataField df = new DataField((string)dr["Table"], (string)dr["Column_name"]);
-                UniqueKey key = new UniqueKey((string)dr["Key_name"]);
+                string key = (string)dr["Key_name"];
 
-                if (!indexes.ContainsKey(key))
+                if (indexes.ContainsKey(key) == false)
                 {
                     indexes.Add(key, new List<DataField>());
                 }
@@ -724,13 +724,13 @@ namespace BoxSocial.IO
 
         public override void UpdateTableKeys(string tableName, List<DataFieldInfo> fields)
         {
-            Dictionary<UniqueKey, List<DataField>> indexes = GetIndexes(tableName);
+            Dictionary<string, List<DataField>> indexes = GetIndexes(tableName);
 
             List<string> keys = UniqueKey.GetKeys(fields);
 
-            foreach (UniqueKey key in indexes.Keys)
+            foreach (string key in indexes.Keys)
             {
-                bool removeKey = !keys.Contains(key.Key);
+                bool removeKey = !keys.Contains(key);
                 bool fieldKey = false;
 
                 if (indexes[key].Count == 1)
@@ -749,7 +749,7 @@ namespace BoxSocial.IO
                 {
                     // delete the key
                     string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
-                        tableName, key.Key);
+                        tableName, key);
 
                     UpdateQuery(sql);
                 }
@@ -759,7 +759,7 @@ namespace BoxSocial.IO
             {
                 UniqueKey thisKey = new UniqueKey(key);
                 List<DataFieldInfo> keyFields = UniqueKey.GetFields(key, fields);
-                bool newKey = !indexes.ContainsKey(thisKey);
+                bool newKey = !indexes.ContainsKey(key);
 
                 if (!newKey)
                 {
@@ -767,14 +767,14 @@ namespace BoxSocial.IO
 
                     foreach (DataFieldInfo keyField in keyFields)
                     {
-                        if (!indexes[thisKey].Contains(new DataField(tableName, keyField.Name)))
+                        if (!indexes[key].Contains(new DataField(tableName, keyField.Name)))
                         {
                             keyFieldsChanged = true;
                             newKey = true;
                         }
                     }
 
-                    foreach (DataField field in indexes[thisKey])
+                    foreach (DataField field in indexes[key])
                     {
                         bool flag = false;
 

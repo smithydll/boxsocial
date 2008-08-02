@@ -395,6 +395,37 @@ namespace BoxSocial.Applications.Forum
                 Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
+            if (forum.Id > 0)
+            {
+                uQuery = new UpdateQuery(Forum.GetTable(typeof(Forum)));
+                uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
+                uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Addition, 1));
+                uQuery.AddField("forum_last_post_id", post.Id);
+                uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
+                uQuery.AddCondition("forum_id", forum.Id);
+
+                rowsUpdated = core.db.Query(uQuery);
+
+                if (rowsUpdated != 1)
+                {
+                    core.db.RollBackTransaction();
+                    Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                }
+            }
+
+            uQuery = new UpdateQuery(ForumSettings.GetTable(typeof(ForumSettings)));
+            uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
+            uQuery.AddCondition("forum_item_id", forum.Owner.Id);
+            uQuery.AddCondition("forum_item_type", forum.Owner.Type);
+
+            rowsUpdated = core.db.Query(uQuery);
+
+            if (rowsUpdated != 1)
+            {
+                core.db.RollBackTransaction();
+                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+            }
+
             return topic;
         }
 
@@ -413,6 +444,36 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("topic_id", post.TopicId);
 
             long rowsUpdated = db.Query(uQuery);
+
+            if (rowsUpdated != 1)
+            {
+                db.RollBackTransaction();
+                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+            }
+
+            if (forumId > 0)
+            {
+                uQuery = new UpdateQuery(Forum.GetTable(typeof(Forum)));
+                uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
+                uQuery.AddField("forum_last_post_id", post.Id);
+                uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
+                uQuery.AddCondition("forum_id", Forum.Id);
+
+                rowsUpdated = db.Query(uQuery);
+
+                if (rowsUpdated != 1)
+                {
+                    db.RollBackTransaction();
+                    Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                }
+            }
+
+            uQuery = new UpdateQuery(ForumSettings.GetTable(typeof(ForumSettings)));
+            uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
+            uQuery.AddCondition("forum_item_id", Forum.Owner.Id);
+            uQuery.AddCondition("forum_item_type", Forum.Owner.Type);
+
+            rowsUpdated = db.Query(uQuery);
 
             if (rowsUpdated != 1)
             {
@@ -550,12 +611,15 @@ namespace BoxSocial.Applications.Forum
             {
                 if (readStatus != null)
                 {
-                    UpdateQuery uQuery2 = new UpdateQuery(TopicReadStatus.GetTable(typeof(TopicReadStatus)));
-                    uQuery2.AddField("read_time_ut", lastVisiblePost.TimeCreatedRaw);
-                    uQuery2.AddCondition("topic_id", topicId);
-                    uQuery2.AddCondition("user_id", core.LoggedInMemberId);
+                    if (readStatus.ReadTimeRaw < lastVisiblePost.TimeCreatedRaw)
+                    {
+                        UpdateQuery uQuery2 = new UpdateQuery(TopicReadStatus.GetTable(typeof(TopicReadStatus)));
+                        uQuery2.AddField("read_time_ut", lastVisiblePost.TimeCreatedRaw);
+                        uQuery2.AddCondition("topic_id", topicId);
+                        uQuery2.AddCondition("user_id", core.LoggedInMemberId);
 
-                    db.Query(uQuery2);
+                        db.Query(uQuery2);
+                    }
                 }
                 else
                 {

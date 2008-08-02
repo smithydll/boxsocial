@@ -76,7 +76,7 @@ namespace BoxSocial.IO
         public abstract bool TableExists(string tableName);
 
         public abstract Dictionary<string, DataFieldInfo> GetColumns(string tableName);
-        public abstract Dictionary<UniqueKey, List<DataField>> GetIndexes(string tableName);
+        public abstract Dictionary<string, List<DataField>> GetIndexes(string tableName);
 
         public abstract void AddColumn(string tableName, DataFieldInfo field);
         public abstract void AddColumns(string tableName, List<DataFieldInfo> fields);

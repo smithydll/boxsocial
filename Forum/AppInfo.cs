@@ -118,9 +118,9 @@ namespace BoxSocial.Applications.Forum
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
             aii.AddSlug("forum", @"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
@@ -162,7 +162,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"^/forum/([a-zA-Z0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showTopic(Core core, object sender)
         {
             if (sender is GPage)
@@ -171,7 +171,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/topic\-([0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"^/forum/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showRootTopic(Core core, object sender)
         {
             if (sender is GPage)
@@ -180,7 +180,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([a-zA-Z0-9])(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"^/forum/([a-zA-Z0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForum(Core core, object sender)
         {
             if (sender is GPage)

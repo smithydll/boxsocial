@@ -21,10 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.IO
 {
-    public class UniqueKey
+    public class UniqueKey : IComparable
     {
         private string key;
 
@@ -43,7 +44,7 @@ namespace BoxSocial.IO
 
         public override bool Equals(object obj)
         {
-            if (obj is UniqueKey)
+            if (obj.GetType() == typeof(UniqueKey))
             {
                 if (((UniqueKey)obj).key == key)
                 {
@@ -58,6 +59,16 @@ namespace BoxSocial.IO
             {
                 return false;
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return key;
         }
 
         public static List<string> GetKeys(List<DataFieldInfo> fields)
@@ -95,5 +106,18 @@ namespace BoxSocial.IO
 
             return keyFields;
         }
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() == typeof(UniqueKey))
+            {
+                return ((UniqueKey)obj).Key.CompareTo(key);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
     }
 }

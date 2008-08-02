@@ -4,3 +4,52 @@
 <!-- ELSE -->
 <h3>Create Forum</h3>
 <!-- ENDIF -->
+
+<!-- IF ERROR -->
+<p class="error">{ERROR}</p>
+<!-- ENDIF -->
+
+<form action="{S_ACCOUNT}" method="post">
+  <fieldset>
+    <!-- IF EDIT -->
+    <legend>Edit Forum</legend>
+    <!-- ELSE -->
+    <legend>Create Forum</legend>
+    <!-- ENDIF -->
+    <dl>
+      <dt>
+        <label for="type">Forum Type</label>
+      </dt>
+      <dd>
+        {S_FORUM_TYPE}
+      </dd>
+      <dt>
+        <label for="title">Forum Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" />
+      </dd>
+      <dt>
+        <label for="description">Forum Description</label>
+      </dt>
+      <dd>
+        <textarea id="description" name="description" style="margin: 0px; width: 100%; height: 100px; border: solid 1px #666666;" cols="70" rows="15">{S_DESCRIPTION}</textarea>
+        <div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+          <div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+        </div>
+      </dd>
+      <dt></dt>
+      <dd>
+        <input type="submit" name="save" value="Save" />
+      </dd>
+    </dl>
+    <input type="hidden" name="module" value="forum" />
+    <input type="hidden" name="sub" value="forum" />
+    <!-- IF EDIT -->
+    <input type="hidden" name="mode" value="edit" />
+    <!-- ELSE -->
+    <input type="hidden" name="mode" value="new" />
+    <!-- ENDIF -->
+    <input type="hidden" name="id" value="{S_ID}" />
+  </fieldset>
+</form>

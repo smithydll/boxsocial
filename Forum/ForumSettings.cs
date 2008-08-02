@@ -31,18 +31,62 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_settings")]
-    public class ForumSettings : NumberedItem
+    public class ForumSettings : Item
     {
-        [DataField("forum_item_id", DataFieldKeys.Unique)]
+        [DataField("forum_item_id", DataFieldKeys.Unique, "fs_key")]
         private long ownerId;
-        [DataField("forum_item_type", DataFieldKeys.Unique, 63)]
+        [DataField("forum_item_type", DataFieldKeys.Unique, "fs_key", 63)]
         private string ownerType;
         [DataField("forum_topics")]
         private long topics;
         [DataField("forum_posts")]
         private long posts;
+        [DataField("forum_topics_per_page")]
+        private int topicsPerPage;
+        [DataField("forum_posts_per_page")]
+        private int postsPerPage;
 
         private Primitive owner;
+
+        public long Posts
+        {
+            get
+            {
+                return posts;
+            }
+        }
+
+        public long Topics
+        {
+            get
+            {
+                return topics;
+            }
+        }
+
+        public int TopicsPerPage
+        {
+            get
+            {
+                return topicsPerPage;
+            }
+            set
+            {
+                SetProperty("topicsPerPage", value);
+            }
+        }
+
+        public int PostsPerPage
+        {
+            get
+            {
+                return postsPerPage;
+            }
+            set
+            {
+                SetProperty("postsPerPage", value);
+            }
+        }
 
         public ForumSettings(Core core, UserGroup owner)
             : base(core)
@@ -65,9 +109,23 @@ namespace BoxSocial.Applications.Forum
         {
         }
 
-        public override long Id
+        public static void Create(Core core, UserGroup thisGroup)
         {
-            get { throw new NotImplementedException(); }
+            if (!thisGroup.IsGroupOperator(core.session.LoggedInMember))
+            {
+                // todo: throw new exception
+                throw new UnauthorisedToCreateItemException();
+            }
+
+            InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumSettings)));
+            iQuery.AddField("forum_item_id", thisGroup.Id);
+            iQuery.AddField("forum_item_type", thisGroup.Type);
+            iQuery.AddField("forum_topics", 0);
+            iQuery.AddField("forum_posts", 0);
+            iQuery.AddField("forum_topics_per_page", 10);
+            iQuery.AddField("forum_posts_per_page", 10);
+
+            core.db.Query(iQuery);
         }
 
         public override string Namespace

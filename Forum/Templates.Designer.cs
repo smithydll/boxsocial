@@ -61,7 +61,12 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- IF EDIT --&gt;
+        ///&lt;h3&gt;Edit Forum&lt;/h3&gt;
+        ///&lt;p&gt;Manage forums.&lt;/p&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;h3&gt;Create Forum&lt;/h3&gt;
+        ///&lt;!-- ENDIF --&gt;.
         /// </summary>
         internal static string account_forum_edit {
             get {
@@ -70,12 +75,41 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Forum Manage&lt;/h3&gt;
-        ///&lt;p&gt;Manage forums.&lt;/p&gt;.
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Forum&lt;/h3&gt;
+        ///&lt;p&gt;Manage forums.&lt;/p&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///  &lt;tr&gt;
+        ///    &lt;th&gt;Forum/Category&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///  &lt;/tr&gt;
+        ///  &lt;!-- BEGIN forum_list --&gt;
+        ///  &lt;!-- IF forum_list.INDEX_EVEN --&gt;
+        ///  &lt;tr class=&quot;even&quot;&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    &lt;tr class=&quot;odd&quot;&gt;
+        ///      &lt;!-- ENDIF --&gt;
+        ///      &lt;td&gt;&lt;a href=&quot;{forum_list.U_SUB_FORUMS}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;&lt;/td&gt;
+        ///      &lt;td&gt;
+        ///        &lt;a href=&quot;{forum_list.U_VIEW}&quot;&gt;View&lt;/a&gt;
+        ///      &lt;/td&gt;
+        ///      &lt;td&gt;
+        ///        &lt;a href=&quot;{forum_list.U_EDI [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_manage {
             get {
                 return ResourceManager.GetString("account_forum_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_forum_settings {
+            get {
+                return ResourceManager.GetString("account_forum_settings", resourceCulture);
             }
         }
         

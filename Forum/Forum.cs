@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Forum
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
-        [DataField("forum_parent_id", typeof(Forum))]
+        [DataField("forum_parent_id")]
         private long parentId;
         [DataField("forum_title", 127)]
         private string forumTitle;
@@ -267,10 +267,17 @@ namespace BoxSocial.Applications.Forum
             {
                 if (parentTree == null)
                 {
-                    XmlSerializer xs = new XmlSerializer(typeof(ParentTree));;
-                    StringReader sr = new StringReader(parents);
+                    if (string.IsNullOrEmpty(parents))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        XmlSerializer xs = new XmlSerializer(typeof(ParentTree)); ;
+                        StringReader sr = new StringReader(parents);
 
-                    parentTree = (ParentTree)xs.Deserialize(sr);
+                        parentTree = (ParentTree)xs.Deserialize(sr);
+                    }
                 }
 
                 return parentTree;
@@ -376,6 +383,34 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public Forum(Core core, UserGroup owner, DataRow forumDataRow)
+            : base(core)
+        {
+            this.owner = owner;
+
+            ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
+
+            try
+            {
+                loadItemInfo(forumDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumException();
+            }
+
+            try
+            {
+                readStatus = new ForumReadStatus(core, forumDataRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidForumReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
+        }
+
         void Forum_ItemLoad()
         {
         }
@@ -401,7 +436,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = new SelectQuery("forum");
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_item_id", ownerId);
             query.AddCondition("forum_item_type", ownerType);
             query.AddCondition("forum_parent_id", forumId);
@@ -411,17 +446,24 @@ namespace BoxSocial.Applications.Forum
 
             foreach (DataRow dr in forumsTable.Rows)
             {
-                forums.Add(new Forum(core, dr));
+                if (Owner is UserGroup)
+                {
+                    forums.Add(new Forum(core, (UserGroup)Owner, dr));
+                }
+                else
+                {
+                    forums.Add(new Forum(core, dr));
+                }
             }
 
             return forums;
         }
 
-        public static List<Forum> GetForums(Core core, List<long> forumIds)
+        public static List<Forum> GetForums(Core core, Primitive owner, List<long> forumIds)
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = new SelectQuery("forum");
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
@@ -429,7 +471,39 @@ namespace BoxSocial.Applications.Forum
 
             foreach (DataRow dr in forumsTable.Rows)
             {
-                forums.Add(new Forum(core, dr));
+                if (owner is UserGroup)
+                {
+                    forums.Add(new Forum(core, (UserGroup)owner, dr));
+                }
+                else
+                {
+                    forums.Add(new Forum(core, dr));
+                }
+            }
+
+            return forums;
+        }
+
+        public static List<Forum> GetSubForums(Core core, Primitive owner, List<long> forumIds)
+        {
+            List<Forum> forums = new List<Forum>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            query.AddCondition("forum_parent_id", ConditionEquality.In, forumIds);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+
+            DataTable forumsTable = core.db.Query(query);
+
+            foreach (DataRow dr in forumsTable.Rows)
+            {
+                if (owner is UserGroup)
+                {
+                    forums.Add(new Forum(core, (UserGroup)owner, dr));
+                }
+                else
+                {
+                    forums.Add(new Forum(core, dr));
+                }
             }
 
             return forums;
@@ -538,9 +612,12 @@ namespace BoxSocial.Applications.Forum
 
             ParentTree parentTree = new ParentTree();
 
-            foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+            if (parent.Parents != null)
             {
-                parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                }
             }
 
             if (parent.Id > 0)
@@ -548,7 +625,7 @@ namespace BoxSocial.Applications.Forum
                 parentTree.Nodes.Add(new ParentTreeNode(parent.Title, parent.Id));
             }
 
-            XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+            XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
             StringBuilder sb = new StringBuilder();
             StringWriter stw = new StringWriter(sb);
 
@@ -604,15 +681,15 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (owner.GetType() == typeof(UserGroup))
+                if (Owner.GetType() == typeof(UserGroup))
                 {
                     return Linker.AppendSid(string.Format("/group/{0}/forum/{1}/",
-                        owner.Key, forumId));
+                        Owner.Key, forumId));
                 }
-                else if (owner.GetType() == typeof(Network))
+                else if (Owner.GetType() == typeof(Network))
                 {
                     return Linker.AppendSid(string.Format("/network/{0}/forum/{1}/",
-                        owner.Key, forumId));
+                        Owner.Key, forumId));
                 }
                 else
                 {
@@ -727,14 +804,19 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            List<Forum> subForums = Forum.GetForums(core, subForumIds);
-
-            foreach (Forum forum in subForums)
+            if (subForumIds.Count > 0)
             {
-                forums.Add(forum);
-            }
+                List<Forum> subForums = Forum.GetSubForums(core, page.ThisGroup, subForumIds);
 
-            forums.Sort();
+                foreach (Forum forum in subForums)
+                {
+                    forums.Add(forum);
+
+                    lastPostIds.Add(forum.LastPostId);
+                }
+
+                forums.Sort();
+            }
 
             lastPosts = TopicPost.GetPosts(core, lastPostIds);
 
@@ -770,15 +852,21 @@ namespace BoxSocial.Applications.Forum
                 if (forum.IsCategory)
                 {
                     forumVariableCollection.Parse("IS_CATEGORY", "TRUE");
+                    if (lastForumVariableCollection != null)
+                    {
+                        lastForumVariableCollection.Parse("IS_LAST", "TRUE");
+                    }
                     lastCategory = true;
                 }
                 else
                 {
+                    forumVariableCollection.Parse("IS_FORUM", "TRUE");
                     if (lastCategory)
                     {
                         forumVariableCollection.Parse("IS_FIRST", "TRUE");
                     }
                     lastForumVariableCollection = forumVariableCollection;
+                    lastCategory = false;
                 }
             }
 
@@ -837,6 +925,14 @@ namespace BoxSocial.Applications.Forum
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });
 
+            if (thisForum.Parents != null)
+            {
+                foreach (ParentTreeNode ptn in thisForum.Parents.Nodes)
+                {
+                    breadCrumbParts.Add(new string[] { "*" + ptn.ParentId.ToString(), ptn.ParentTitle });
+                }
+            }
+
             if (thisForum.Id > 0)
             {
                 breadCrumbParts.Add(new string[] { thisForum.Id.ToString(), thisForum.Title });
@@ -883,7 +979,7 @@ namespace BoxSocial.Applications.Forum
 
         public int CompareTo(object obj)
         {
-            if (obj is Forum)
+            if (obj.GetType() == typeof(Forum))
             {
                 return Order.CompareTo(((Forum)obj).Order);
             }

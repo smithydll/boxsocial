@@ -652,24 +652,39 @@ namespace BoxSocial.IO
                 string type = TypeToMysql(field);
                 string notNull = "";
                 string key = "";
+                string defaultValue = "";
 
                 if (type == "text" || type == "mediumtext" || type == "longtext")
                 {
                     notNull = " NOT NULL";
                 }
 
-                if (field.IsUnique)
+                if (type.ToLower().Contains("int("))
                 {
                     if (field.IsPrimaryKey)
                     {
+                        notNull = " NOT NULL";
+                        defaultValue = " DEFAULT NULL";
+                    }
+                    else
+                    {
+                        defaultValue = " DEFAULT 0";
+                    }
+                }
+
+                if (field.IsUnique)
+                {
+                    notNull = " NOT NULL";
+                    if (field.IsPrimaryKey)
+                    {
                         primaryKey = field;
-                        key = " NOT NULL AUTO_INCREMENT";
+                        key = " AUTO_INCREMENT";
                         indexes.Append(string.Format(", PRIMARY_KEY(`{0}`)",
                             Mysql.Escape(field.Name)));
                     }
                     else if (field.Key != null)
                     {
-                        key = " NOT NULL UNIQUE KEY";
+                        key = " UNIQUE KEY";
                         indexes.Append(string.Format(", INDEX(`{0}`)",
                             Mysql.Escape(field.Name)));
                     }
@@ -679,8 +694,8 @@ namespace BoxSocial.IO
                     }
                 }
 
-                sb.Append(string.Format("`{0}` {1}{2}{3}",
-                    Mysql.Escape(field.Name), type, notNull, key));
+                sb.Append(string.Format("`{0}` {1}{2}{3}{4}",
+                    Mysql.Escape(field.Name), type, notNull, defaultValue, key));
             }
 
             if (primaryKey != null)

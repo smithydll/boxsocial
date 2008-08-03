@@ -1,6 +1,12 @@
 ﻿<h3>Manage Forum</h3>
 <p>Manage forums.</p>
 
+<div id="new-stuff">
+	<!-- IF U_CREATE_FORUM -->
+	<span id="new-forum" class="post-button"><a href="{U_CREATE_FORUM}">Create New Forum</a></span>
+	<!-- ENDIF -->
+</div>
+
 <table style="width: 100%">
   <tr>
     <th>Forum/Category</th>
@@ -22,10 +28,8 @@
         <a href="{forum_list.U_EDIT}">Edit</a>
       </td>
       <td>
-        <a href="{forum_list.U_DELETE}">Delete</a>
+        <!--a href="{forum_list.U_DELETE}">Delete</a-->
       </td>
     </tr>
     <!-- END forum_list -->
   </table>
-
-<a href="{U_CREATE_FORUM}">Create New Forum</a>

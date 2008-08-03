@@ -82,7 +82,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    UserGalleryItem photo = new UserGalleryItem(core, loggedInMember, photoId);
+                    UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
 
                     System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
 
@@ -103,7 +103,7 @@ namespace BoxSocial.Applications.Gallery
 
                     photo.Rotate(core, rotation);
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, photo.ParentPath, photo.Path));
+                    SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, photo.ParentPath, photo.Path));
                     Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
                     return;
                 }

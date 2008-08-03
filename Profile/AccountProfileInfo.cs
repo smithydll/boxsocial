@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Profile
             template.SetTemplate("account_profile.html");
 
             string selected = " checked=\"checked\"";
-            switch (loggedInMember.GenderRaw)
+            switch (LoggedInMember.GenderRaw)
             {
                 case "UNDEF":
                     template.Parse("S_GENDER_UNDEF", selected);
@@ -107,11 +107,11 @@ namespace BoxSocial.Applications.Profile
                 countries.Add((string)countryRow["country_iso"], (string)countryRow["country_name"]);
             }
 
-            Display.ParseSelectBox(template, "S_DOB_YEAR", "dob-year", dobYears, loggedInMember.DateOfBirth.Year.ToString());
-            Display.ParseSelectBox(template, "S_DOB_MONTH", "dob-month", dobMonths, loggedInMember.DateOfBirth.Month.ToString());
-            Display.ParseSelectBox(template, "S_DOB_DAY", "dob-day", dobDays, loggedInMember.DateOfBirth.Day.ToString());
-            Display.ParseSelectBox(template, "S_COUNTRY", "country", countries, loggedInMember.CountryIso);
-            template.Parse("S_AUTO_BIOGRAPHY", loggedInMember.Autobiography);
+            Display.ParseSelectBox(template, "S_DOB_YEAR", "dob-year", dobYears, LoggedInMember.DateOfBirth.Year.ToString());
+            Display.ParseSelectBox(template, "S_DOB_MONTH", "dob-month", dobMonths, LoggedInMember.DateOfBirth.Month.ToString());
+            Display.ParseSelectBox(template, "S_DOB_DAY", "dob-day", dobDays, LoggedInMember.DateOfBirth.Day.ToString());
+            Display.ParseSelectBox(template, "S_COUNTRY", "country", countries, LoggedInMember.CountryIso);
+            template.Parse("S_AUTO_BIOGRAPHY", LoggedInMember.Autobiography);
 
             Save(new EventHandler(AccountProfileInfo_Save));
         }
@@ -123,12 +123,12 @@ namespace BoxSocial.Applications.Profile
             string dob = string.Format("{0:0000}-{1:00}-{2:00}",
                 Request.Form["dob-year"], Request.Form["dob-month"], Request.Form["dob-day"]);
 
-            loggedInMember.Profile.DateOfBirth = DateTime.Parse(dob);
-            loggedInMember.Profile.CountryIso = Request.Form["country"];
-            loggedInMember.Profile.GenderRaw = Request.Form["gender"];
-            loggedInMember.Profile.Autobiography = Request.Form["auto-biography"];
+            LoggedInMember.Profile.DateOfBirth = DateTime.Parse(dob);
+            LoggedInMember.Profile.CountryIso = Request.Form["country"];
+            LoggedInMember.Profile.GenderRaw = Request.Form["gender"];
+            LoggedInMember.Profile.Autobiography = Request.Form["auto-biography"];
 
-            loggedInMember.Profile.Update();
+            LoggedInMember.Profile.Update();
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Information Saved", "Your information has been saved in the database.");

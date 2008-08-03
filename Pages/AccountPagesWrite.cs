@@ -136,7 +136,7 @@ namespace BoxSocial.Applications.Pages
             }
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
@@ -275,9 +275,9 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                Page page = new Page(core, loggedInMember, pageId);
+                Page page = new Page(core, LoggedInMember, pageId);
 
-                if (page.Delete(core, loggedInMember))
+                if (page.Delete(core, LoggedInMember))
                 {
                     SetRedirectUri(BuildUri("mange"));
                     Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");

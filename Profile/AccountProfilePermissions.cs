@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Profile
             permissions.Add("Can Read");
             permissions.Add("Can Comment");
 
-            Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", loggedInMember.Permissions, permissions);
+            Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", LoggedInMember.Permissions, permissions);
 
             Save(new EventHandler(AccountProfilePermissions_Save));
         }
@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Profile
             ushort permission = Functions.GetPermission();
 
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
-                loggedInMember.UserId, permission));
+                LoggedInMember.UserId, permission));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Permissions Saved", "Your profile permissions have been saved in the database.");

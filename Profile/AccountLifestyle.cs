@@ -91,15 +91,15 @@ namespace BoxSocial.Applications.Profile
             sexualities.Add("BISEXUAL", "Bisexual");
             sexualities.Add("TRANSEXUAL", "Transexual");
 
-            Display.ParseSelectBox(template, "S_MARITIAL_STATUS", "maritial-status", maritialStatuses, loggedInMember.MaritialStatusRaw);
-            Display.ParseSelectBox(template, "S_RELIGION", "religion", religions, loggedInMember.ReligionRaw.ToString());
-            Display.ParseSelectBox(template, "S_SEXUALITY", "sexuality", sexualities, loggedInMember.SexualityRaw);
+            Display.ParseSelectBox(template, "S_MARITIAL_STATUS", "maritial-status", maritialStatuses, LoggedInMember.MaritialStatusRaw);
+            Display.ParseSelectBox(template, "S_RELIGION", "religion", religions, LoggedInMember.ReligionRaw.ToString());
+            Display.ParseSelectBox(template, "S_SEXUALITY", "sexuality", sexualities, LoggedInMember.SexualityRaw);
 
-            if (loggedInMember.Profile.MaritialWithConfirmed && loggedInMember.Profile.MaritialWithId > 0)
+            if (LoggedInMember.Profile.MaritialWithConfirmed && LoggedInMember.Profile.MaritialWithId > 0)
             {
-                core.LoadUserProfile(loggedInMember.Profile.MaritialWithId);
+                core.LoadUserProfile(LoggedInMember.Profile.MaritialWithId);
 
-                template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[loggedInMember.Profile.MaritialWithId].UserName);
+                template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[LoggedInMember.Profile.MaritialWithId].UserName);
             }
 
             Save(new EventHandler(AccountLifestyle_Save));
@@ -118,27 +118,27 @@ namespace BoxSocial.Applications.Profile
                 relation = core.UserProfiles[key];
             }
 
-            string existingMaritialStatus = loggedInMember.Profile.MaritialStatusRaw;
-            long existingMaritialWith = loggedInMember.Profile.MaritialWithId;
+            string existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
+            long existingMaritialWith = LoggedInMember.Profile.MaritialWithId;
 
-            loggedInMember.Profile.ReligionId = short.Parse(Request.Form["religion"]);
-            loggedInMember.Profile.SexualityRaw = Request.Form["sexuality"];
-            loggedInMember.Profile.MaritialStatusRaw = Request.Form["maritial-status"];
+            LoggedInMember.Profile.ReligionId = short.Parse(Request.Form["religion"]);
+            LoggedInMember.Profile.SexualityRaw = Request.Form["sexuality"];
+            LoggedInMember.Profile.MaritialStatusRaw = Request.Form["maritial-status"];
 
             if (relation != null)
             {
-                if (loggedInMember.Id != relation.Id)
+                if (LoggedInMember.Id != relation.Id)
                 {
-                    loggedInMember.Profile.MaritialWithId = relation.Id;
+                    LoggedInMember.Profile.MaritialWithId = relation.Id;
                 }
                 else
                 {
-                    loggedInMember.Profile.MaritialWithId = 0;
+                    LoggedInMember.Profile.MaritialWithId = 0;
                 }
             }
             else
             {
-                loggedInMember.Profile.MaritialWithId = 0;
+                LoggedInMember.Profile.MaritialWithId = 0;
             }
 
             switch (Request.Form["maritial-status"])
@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.Profile
                 case "MARRIED":
                     if (relation != null && relation.Id != existingMaritialWith)
                     {
-                        ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
+                        ApplicationEntry ae = new ApplicationEntry(core, LoggedInMember, "Profile");
 
                         RawTemplate atpl = new RawTemplate("emails/user_relationship_notification.eml");
 
@@ -193,8 +193,8 @@ namespace BoxSocial.Applications.Profile
                                 core.LoadUserProfile(existingMaritialWith);
                                 relation = core.UserProfiles[existingMaritialWith];
 
-                                loggedInMember.Profile.MaritialWithId = 0;
-                                loggedInMember.Profile.MaritialWithConfirmed = false;
+                                LoggedInMember.Profile.MaritialWithId = 0;
+                                LoggedInMember.Profile.MaritialWithConfirmed = false;
 
                                 relation.Profile.MaritialWithId = 0;
                                 relation.Profile.MaritialWithConfirmed = false;
@@ -210,7 +210,7 @@ namespace BoxSocial.Applications.Profile
                     break;
             }
 
-            loggedInMember.Profile.Update();
+            LoggedInMember.Profile.Update();
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.");
@@ -262,11 +262,11 @@ namespace BoxSocial.Applications.Profile
 
                 relation.Profile.Update();
 
-                loggedInMember.Profile.MaritialStatusRaw = relation.Profile.MaritialStatusRaw;
-                loggedInMember.Profile.MaritialWithId = relation.Id;
-                loggedInMember.Profile.MaritialWithConfirmed = true;
+                LoggedInMember.Profile.MaritialStatusRaw = relation.Profile.MaritialStatusRaw;
+                LoggedInMember.Profile.MaritialWithId = relation.Id;
+                LoggedInMember.Profile.MaritialWithConfirmed = true;
 
-                loggedInMember.Profile.Update();
+                LoggedInMember.Profile.Update();
 
                 SetRedirectUri(AccountModule.BuildModuleUri("dashboard"));
                 Display.ShowMessage("Maritial Status updated", "You have successfully updated your maritial status.");

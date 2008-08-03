@@ -5,6 +5,10 @@
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
 
+<!-- IF PREVIEW -->
+<p>{PREVIEW}</p>
+<!-- ENDIF -->
+
 <form action="{S_POST}" method="post">
   <fieldset>
     <legend>Post</legend>
@@ -27,6 +31,14 @@
       <!-- TODO: enable smilies -->
       <!-- TODO: enable bbcode -->
       <!-- TODO: moderation stuffs -->
+      <!-- IF S_TOPIC_STATE -->
+      <dt>
+        <label for="topic-state">Topic State</label>
+      </dt>
+      <dd>
+        {S_TOPIC_STATE}
+      </dd>
+      <!-- ENDIF -->
       <dt></dt>
       <dd>
         <!--input type="submit" name="save" value="Save (draft)" /-->

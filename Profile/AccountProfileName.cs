@@ -60,17 +60,17 @@ namespace BoxSocial.Applications.Profile
         void AccountProfileName_Show(object sender, EventArgs e)
         {
             template.SetTemplate("account_name.html");
-            
-            loggedInMember.LoadProfileInfo();
 
-            template.Parse("DISPLAY_NAME", loggedInMember.DisplayName);
-            template.Parse("FIRST_NAME", loggedInMember.FirstName);
-            template.Parse("MIDDLE_NAME", loggedInMember.MiddleName);
-            template.Parse("LAST_NAME", loggedInMember.LastName);
-            template.Parse("SUFFIX", loggedInMember.Suffix);
+            LoggedInMember.LoadProfileInfo();
+
+            template.Parse("DISPLAY_NAME", LoggedInMember.DisplayName);
+            template.Parse("FIRST_NAME", LoggedInMember.FirstName);
+            template.Parse("MIDDLE_NAME", LoggedInMember.MiddleName);
+            template.Parse("LAST_NAME", LoggedInMember.LastName);
+            template.Parse("SUFFIX", LoggedInMember.Suffix);
 
             string selected = " selected=\"selected\"";
-            switch (loggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
+            switch (LoggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
             {
                 default:
                     template.Parse("TITLE_NONE", selected);
@@ -111,17 +111,17 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            loggedInMember.Info.DisplayName = Request.Form["display"];
+            LoggedInMember.Info.DisplayName = Request.Form["display"];
 
-            loggedInMember.Info.Update();
+            LoggedInMember.Info.Update();
 
-            loggedInMember.Profile.Title = Request.Form["title"];
-            loggedInMember.Profile.FirstName = Request.Form["firstname"];
-            loggedInMember.Profile.MiddleName = Request.Form["middlename"];
-            loggedInMember.Profile.LastName = Request.Form["lastname"];
-            loggedInMember.Profile.Suffix = Request.Form["suffix"];
+            LoggedInMember.Profile.Title = Request.Form["title"];
+            LoggedInMember.Profile.FirstName = Request.Form["firstname"];
+            LoggedInMember.Profile.MiddleName = Request.Form["middlename"];
+            LoggedInMember.Profile.LastName = Request.Form["lastname"];
+            LoggedInMember.Profile.Suffix = Request.Form["suffix"];
 
-            loggedInMember.Profile.Update();
+            LoggedInMember.Profile.Update();
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Name Saved", "Your name has been saved in the database.");

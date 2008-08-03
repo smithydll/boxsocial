@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Profile
             SetTemplate("account_blocklist_manage");
 
             DataTable blockTable = db.Query(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'BLOCKED' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             for (int i = 0; i < blockTable.Rows.Count; i++)
             {
@@ -98,7 +98,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             // cannot befriend yourself
-            if (blockId == loggedInMember.UserId)
+            if (blockId == LoggedInMember.UserId)
             {
                 Display.ShowMessage("Cannot block person", "You cannot block yourself.");
                 return;
@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Profile
 
             // check existing friend-foe status
             DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
-                loggedInMember.UserId, blockId));
+                LoggedInMember.UserId, blockId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
             {
@@ -130,10 +130,10 @@ namespace BoxSocial.Applications.Profile
                             // remove from friends
                             db.BeginTransaction();
                             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND';",
-                                loggedInMember.UserId, blockId));
+                                LoggedInMember.UserId, blockId));
 
                             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - 1 WHERE ui.user_id = {0};",
-                                loggedInMember.UserId));
+                                LoggedInMember.UserId));
                             break;
                         case ConfirmBoxResult.No:
                             // don't do anything
@@ -149,12 +149,12 @@ namespace BoxSocial.Applications.Profile
 
             db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'BLOCKED');",
-                loggedInMember.UserId, blockId));
+                LoggedInMember.UserId, blockId));
 
             // do not notify
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Blocked Person", "You have blocked a person.");
@@ -179,7 +179,7 @@ namespace BoxSocial.Applications.Profile
 
             // check existing friend-foe status
             DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
-                loggedInMember.UserId, blockId));
+                LoggedInMember.UserId, blockId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
             {
@@ -196,12 +196,12 @@ namespace BoxSocial.Applications.Profile
 
             db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'BLOCKED';",
-                    loggedInMember.UserId, blockId));
+                    LoggedInMember.UserId, blockId));
 
             // do not notify
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block - 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Unblocked Person", "You have unblocked a person.");

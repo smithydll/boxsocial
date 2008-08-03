@@ -88,7 +88,7 @@ namespace BoxSocial.Applications.Gallery
             // check the image is owned by the user trying to set it as their display picture
             try
             {
-                UserGalleryItem ugi = new UserGalleryItem(core, loggedInMember, pictureId);
+                UserGalleryItem ugi = new UserGalleryItem(core, LoggedInMember, pictureId);
 
                 ushort galleryItemAccess = ugi.Permissions;
                 string galleryFullPath = ugi.ParentPath;
@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 DataTable galleryTable = db.Query(string.Format("SELECT gallery_id, gallery_access FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
-                    loggedInMember.UserId, Mysql.Escape(galleryPath), Mysql.Escape(galleryParentPath)));
+                    LoggedInMember.UserId, Mysql.Escape(galleryPath), Mysql.Escape(galleryParentPath)));
 
                 if (galleryTable.Rows.Count == 1)
                 {
@@ -120,9 +120,9 @@ namespace BoxSocial.Applications.Gallery
                         long galleryId = (long)galleryTable.Rows[0]["gallery_id"];
 
                         db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_highlight_id = {0} WHERE user_id = {1} AND gallery_id = {2}",
-                            pictureId, loggedInMember.UserId, galleryId));
+                            pictureId, LoggedInMember.UserId, galleryId));
 
-                        SetRedirectUri(Gallery.BuildGalleryUri(loggedInMember, galleryFullPath));
+                        SetRedirectUri(Gallery.BuildGalleryUri(LoggedInMember, galleryFullPath));
                         Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
                         return;
                     }

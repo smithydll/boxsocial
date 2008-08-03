@@ -1153,14 +1153,6 @@ namespace BoxSocial.Groups
             }
         }
 
-        public string EditUri
-        {
-            get
-            {
-                return AccountModule.BuildModuleUri("groups", "edit", false, string.Format("id={0}", GroupId));
-            }
-        }
-
         public string DeleteUri
         {
             get
@@ -1241,6 +1233,7 @@ namespace BoxSocial.Groups
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
+                page.template.Parse("U_ACCOUNT", Linker.AppendSid(page.ThisGroup.AccountUriStub));
             }
 
             if (core.session.IsLoggedIn)

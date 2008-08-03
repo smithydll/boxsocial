@@ -88,15 +88,15 @@ namespace BoxSocial.Applications.Gallery
             // check the image is owned by the user trying to set it as their display picture
             try
             {
-                UserGalleryItem ugi = new UserGalleryItem(core, loggedInMember, pictureId);
+                UserGalleryItem ugi = new UserGalleryItem(core, LoggedInMember, pictureId);
 
                 // check for public view permissions on the image
                 ushort photoAccess = ugi.Permissions;
                 if ((photoAccess & 0x1111) == 0x1111)
                 {
 
-                    loggedInMember.Info.DisplayPictureId = pictureId;
-                    loggedInMember.Info.Update();
+                    LoggedInMember.Info.DisplayPictureId = pictureId;
+                    LoggedInMember.Info.Update();
 
                     Display.ShowMessage("Display Picture Changed", "You have successfully changed your display picture.");
                     return;

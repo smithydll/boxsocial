@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Gallery
             template.SetTemplate("Gallery", "account_galleries_photo_edit");
 
             DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
-                loggedInMember.UserId, photoId));
+                LoggedInMember.UserId, photoId));
 
             if (photoTable.Rows.Count == 1)
             {
@@ -142,10 +142,10 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem galleryItem = new UserGalleryItem(core, loggedInMember, photoId);
+                UserGalleryItem galleryItem = new UserGalleryItem(core, LoggedInMember, photoId);
                 galleryItem.Update(title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, galleryItem.ParentPath, galleryItem.Path));
+                SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
                 Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
                 return;
             }

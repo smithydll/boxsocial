@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.Pages
             ushort listPermissions = 0x1111;
 
             DataTable listsTable = db.Query(string.Format("SELECT list_id, list_title, list_items, list_type_title, list_path FROM user_lists INNER JOIN list_types ON list_type_id = list_type WHERE user_id = {0}",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             for (int i = 0; i < listsTable.Rows.Count; i++)
             {
@@ -82,7 +82,7 @@ namespace BoxSocial.Applications.Pages
                 listVariableCollection.Parse("TYPE", (string)listsTable.Rows[i]["list_type_title"]);
                 listVariableCollection.Parse("ITEMS", ((uint)listsTable.Rows[i]["list_items"]).ToString());
 
-                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(loggedInMember, (string)listsTable.Rows[i]["list_path"]));
+                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(LoggedInMember, (string)listsTable.Rows[i]["list_path"]));
                 listVariableCollection.Parse("U_DELETE", Linker.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"]));
                 listVariableCollection.Parse("U_EDIT", Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"]));
             }
@@ -349,7 +349,7 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                List list = new List(core, loggedInMember, listId);
+                List list = new List(core, LoggedInMember, listId);
 
                 try
                 {
@@ -358,7 +358,7 @@ namespace BoxSocial.Applications.Pages
                     ApplicationEntry ae = new ApplicationEntry(core);
 
                     // TODO: different list types
-                    AppInfo.Entry.PublishToFeed(loggedInMember, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
+                    AppInfo.Entry.PublishToFeed(LoggedInMember, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
 
                     if (ajax)
                     {
@@ -373,7 +373,7 @@ namespace BoxSocial.Applications.Pages
                     }
                     else
                     {
-                        SetRedirectUri(Linker.BuildListUri(loggedInMember, list.Path));
+                        SetRedirectUri(Linker.BuildListUri(LoggedInMember, list.Path));
                         Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
                     }
                 }

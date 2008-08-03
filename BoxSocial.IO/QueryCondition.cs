@@ -20,6 +20,7 @@ namespace BoxSocial.IO
         GreaterThanEqual,
         LessThanEqual,
         In,
+        NotIn,
         Like,
     }
 
@@ -164,6 +165,8 @@ namespace BoxSocial.IO
                     return "<>";
                 case ConditionEquality.In:
                     return "IN";
+                case ConditionEquality.NotIn:
+                    return "NOT IN";
                 case ConditionEquality.Like:
                     return "LIKE";
             }

@@ -38,7 +38,7 @@ namespace BoxSocial.Internals
         protected Template template;
         protected SessionState session;
         protected UnixTime tz;
-        protected User loggedInMember;
+        //protected User loggedInMember;
         /// <summary>
         /// Account panel owner
         /// </summary>
@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
             this.db = core.db;
             this.session = core.session;
             this.tz = core.tz;
-            this.loggedInMember = session.LoggedInMember;
+            //this.loggedInMember = session.LoggedInMember;
             this.Owner = owner;
             this.LoggedInMember = session.LoggedInMember;
             this.Request = HttpContext.Current.Request;
@@ -196,6 +196,28 @@ namespace BoxSocial.Internals
 
                 // null key, should not happen!!!
                 return false;
+            }
+        }
+
+        public AppPrimitives Primitives
+        {
+            get
+            {
+                Type type = this.GetType();
+
+                foreach (Attribute attr in type.GetCustomAttributes(typeof(AccountSubModuleAttribute), false))
+                {
+                    if (attr != null)
+                    {
+                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        {
+                            return ((AccountSubModuleAttribute)attr).Primitives;
+                        }
+                    }
+                }
+
+                // null key, should not happen!!!
+                return AppPrimitives.None;
             }
         }
 

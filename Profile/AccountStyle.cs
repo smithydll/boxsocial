@@ -65,11 +65,11 @@ namespace BoxSocial.Applications.Profile
             string mode = Request["mode"];
 
             CascadingStyleSheet css = new CascadingStyleSheet();
-            css.Parse(loggedInMember.GetUserStyle());
+            css.Parse(LoggedInMember.GetUserStyle());
 
             StyleGenerator editor = css.Generator;
 
-            if (string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
+            if (string.IsNullOrEmpty(LoggedInMember.GetUserStyle()))
             {
                 editor = StyleGenerator.Theme;
             }
@@ -431,15 +431,15 @@ namespace BoxSocial.Applications.Profile
             }
 
             if (db.Query(string.Format("SELECT user_id FROM user_style WHERE user_id = {0}",
-                loggedInMember.UserId)).Rows.Count == 0)
+                LoggedInMember.UserId)).Rows.Count == 0)
             {
                 db.UpdateQuery(string.Format("INSERT INTO user_style (user_id, style_css) VALUES ({0}, '{1}');",
-                    loggedInMember.UserId, Mysql.Escape(css.ToString())));
+                    LoggedInMember.UserId, Mysql.Escape(css.ToString())));
             }
             else
             {
                 db.UpdateQuery(string.Format("UPDATE user_style SET style_css = '{1}' WHERE user_id = {0};",
-                    loggedInMember.UserId, Mysql.Escape(css.ToString())));
+                    LoggedInMember.UserId, Mysql.Escape(css.ToString())));
             }
 
             SetRedirectUri(BuildUri());

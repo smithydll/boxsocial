@@ -83,7 +83,7 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
                 groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_EDIT", thisGroup.EditUri);
+                groupVariableCollection.Parse("U_EDIT", AccountModule.BuildModuleUri(thisGroup, "groups", "edit"));
                 groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
 
                 switch (thisGroup.GroupType)

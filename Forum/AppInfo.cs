@@ -117,10 +117,12 @@ namespace BoxSocial.Applications.Forum
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
+            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group);
+
             aii.AddSlug("forum", @"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([a-zA-Z0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
@@ -162,7 +164,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([a-zA-Z0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"^/forum/([0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showTopic(Core core, object sender)
         {
             if (sender is GPage)
@@ -180,7 +182,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([a-zA-Z0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"^/forum/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForum(Core core, object sender)
         {
             if (sender is GPage)
@@ -200,6 +202,20 @@ namespace BoxSocial.Applications.Forum
 
         void core_PageHooks(HookEventArgs e)
         {
+            if (e.PageType == AppPrimitives.Group)
+            {
+                ShowGroupForum(e);
+            }
+        }
+
+        public void ShowGroupForum(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileforum");
+
+            Forum forum = new Forum(core, (UserGroup)e.Owner);
+            template.Parse("U_FORUM", forum.Uri);
+
+            e.core.AddMainPanel(template);
         }
     }
 }

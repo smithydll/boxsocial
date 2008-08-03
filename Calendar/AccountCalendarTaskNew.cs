@@ -137,7 +137,7 @@ namespace BoxSocial.Applications.Calendar
 
                 try
                 {
-                    Task calendarTask = new Task(core, loggedInMember, id);
+                    Task calendarTask = new Task(core, Owner, id);
 
                     template.Parse("EDIT", "TRUE");
                     template.Parse("ID", calendarTask.TaskId.ToString());
@@ -244,7 +244,7 @@ namespace BoxSocial.Applications.Calendar
                     status = TaskStatus.Completed;
                 }
 
-                Task calendarTask = Task.Create(core, loggedInMember, loggedInMember, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
+                Task calendarTask = Task.Create(core, LoggedInMember, Owner, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage("Task Created", "You have successfully created a new task.");
@@ -266,12 +266,12 @@ namespace BoxSocial.Applications.Calendar
                 query.AddField("task_percent_complete", percentComplete);
                 query.AddField("task_status", (byte)status);
                 query.AddField("task_priority", (byte)priority);
-                query.AddCondition("user_id", loggedInMember.UserId);
+                query.AddCondition("user_id", LoggedInMember.UserId);
                 query.AddCondition("task_id", taskId);
 
                 db.Query(query);
 
-                Task calendarTask = new Task(core, loggedInMember, taskId);
+                Task calendarTask = new Task(core, Owner, taskId);
 
                 SetRedirectUri(Task.BuildTaskUri(calendarTask));
                 Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");

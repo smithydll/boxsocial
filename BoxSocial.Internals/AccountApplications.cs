@@ -28,7 +28,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [AccountSubModule("dashboard", "applications")]
+    [AccountSubModule(AppPrimitives.Any, "dashboard", "applications")]
     public class AccountApplications : AccountSubModule
     {
         public override string Title
@@ -85,6 +85,16 @@ namespace BoxSocial.Internals
                     args.Add("id", ae.ApplicationId.ToString());
                     applicationsVariableCollection.Parse("U_UNINSTALL", BuildUri(args));
                 }
+            }
+
+            if (Owner == LoggedInMember)
+            {
+                template.Parse("U_APPLICATIONS", Linker.AppendSid("/applications"));
+            }
+            else
+            {
+                template.Parse("U_APPLICATIONS", Linker.AppendSid(string.Format("/applications?type={0}&id={1}",
+                    Owner.Type, Owner.Id)));
             }
         }
 

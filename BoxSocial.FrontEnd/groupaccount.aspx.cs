@@ -129,7 +129,7 @@ namespace BoxSocial.FrontEnd
 
                     if (newModule != null)
                     {
-                        if (newModule.ModuleKey == module)
+                        if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Group) == AppPrimitives.Group)
                         {
                             accountSubModules.Add(newModule);
                         }
@@ -156,6 +156,8 @@ namespace BoxSocial.FrontEnd
             {
                 Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
             }
+
+            template.Parse("ACCOUNT_TITLE", "Group Control Panel :: " + thisGroup.DisplayName);
 
             Account accountObject = new Account(Core);
             loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, thisGroup), module);

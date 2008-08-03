@@ -133,6 +133,9 @@
   <data name="viewforum" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewforum.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="viewprofileforum" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\viewprofileforum.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="viewtopic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewtopic.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

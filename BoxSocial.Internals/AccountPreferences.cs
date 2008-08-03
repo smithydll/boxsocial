@@ -64,7 +64,7 @@ namespace BoxSocial.Internals
 
             string radioChecked = " checked=\"checked\"";
 
-            if (loggedInMember.EmailNotifications)
+            if (LoggedInMember.EmailNotifications)
             {
                 template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
             }
@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
             }
 
-            if (loggedInMember.ShowCustomStyles)
+            if (LoggedInMember.ShowCustomStyles)
             {
                 template.Parse("S_SHOW_STYLES_YES", radioChecked);
             }
@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_SHOW_STYLES_NO", radioChecked);
             }
 
-            if (loggedInMember.BbcodeShowImages)
+            if (LoggedInMember.BbcodeShowImages)
             {
                 template.Parse("S_DISPLAY_IMAGES_YES", radioChecked);
             }
@@ -91,7 +91,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_IMAGES_NO", radioChecked);
             }
 
-            if (loggedInMember.BbcodeShowFlash)
+            if (LoggedInMember.BbcodeShowFlash)
             {
                 template.Parse("S_DISPLAY_FLASH_YES", radioChecked);
             }
@@ -100,7 +100,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_FLASH_NO", radioChecked);
             }
 
-            if (loggedInMember.BbcodeShowVideos)
+            if (LoggedInMember.BbcodeShowVideos)
             {
                 template.Parse("S_DISPLAY_VIDEOS_YES", radioChecked);
             }
@@ -110,7 +110,7 @@ namespace BoxSocial.Internals
             }
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
@@ -129,8 +129,8 @@ namespace BoxSocial.Internals
                 }
             }
 
-            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, loggedInMember.ProfileHomepage.ToString());
-            Display.ParseTimeZoneBox(template, "S_TIMEZONE", loggedInMember.TimeZoneCode.ToString());
+            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, LoggedInMember.ProfileHomepage.ToString());
+            Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
 
             Save(new EventHandler(AccountPreferences_Save));
         }
@@ -169,7 +169,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    Page thisPage = new Page(core, (User)loggedInMember, homepage.TrimStart(new char[] { '/' }));
+                    Page thisPage = new Page(core, LoggedInMember, homepage.TrimStart(new char[] { '/' }));
                 }
                 catch (PageNotFoundException)
                 {
@@ -194,13 +194,13 @@ namespace BoxSocial.Internals
                 showBbcode |= BbcodeOptions.ShowAudio;
             }
 
-            loggedInMember.Info.ShowCustomStyles = showCustomStyles;
-            loggedInMember.Info.EmailNotifications = emailNotifications;
-            loggedInMember.Info.SetUserBbcodeOptions = showBbcode;
-            loggedInMember.Info.ProfileHomepage = homepage;
-            loggedInMember.Info.TimeZoneCode = timeZoneCode;
+            LoggedInMember.Info.ShowCustomStyles = showCustomStyles;
+            LoggedInMember.Info.EmailNotifications = emailNotifications;
+            LoggedInMember.Info.SetUserBbcodeOptions = showBbcode;
+            LoggedInMember.Info.ProfileHomepage = homepage;
+            LoggedInMember.Info.TimeZoneCode = timeZoneCode;
 
-            loggedInMember.Info.Update();
+            LoggedInMember.Info.Update();
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");

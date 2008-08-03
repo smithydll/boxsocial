@@ -80,6 +80,25 @@ namespace BoxSocial.IO
                     return "0";
                 }
             }
+            else if (value is byte[])
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (byte item in (byte[])value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
             else if (value is string[])
             {
                 StringBuilder temp = new StringBuilder();

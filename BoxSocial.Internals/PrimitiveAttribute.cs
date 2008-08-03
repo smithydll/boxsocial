@@ -74,7 +74,7 @@ namespace BoxSocial.Internals
         public PrimitiveAttribute(string type, object defaultLoadOptions, string idField, string keyField)
         {
             this.type = type;
-            if (defaultLoadOptions.GetType().IsSubclassOf(typeof(byte)))
+            if (defaultLoadOptions.GetType().IsEnum)
             {
                 this.loadOptionsType = defaultLoadOptions.GetType();
                 this.defaultLoadOptions = defaultLoadOptions;

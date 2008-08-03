@@ -68,16 +68,34 @@ namespace BoxSocial.Applications.Forum
             string subject = HttpContext.Current.Request.Form["subject"];
             string text = HttpContext.Current.Request.Form["post"];
             string mode = HttpContext.Current.Request.QueryString["mode"];
+            string topicState = HttpContext.Current.Request.Form["topic-state"];
 
             if (string.IsNullOrEmpty(mode))
             {
                 mode = HttpContext.Current.Request.Form["mode"];
             }
 
+            if (string.IsNullOrEmpty(topicState))
+            {
+                topicState = TopicStates.Normal.ToString();
+            }
+
             if (page is GPage)
             {
                 page.template.Parse("S_POST", string.Format("/group/{0}/forum/post",
                     ((GPage)page).ThisGroup.Key));
+
+                if (((GPage)page).ThisGroup.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
+                {
+                    
+                    List<SelectBoxItem> sbis = new List<SelectBoxItem>();
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Normal).ToString(), "Topic"));
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Sticky).ToString(), "Sticky"));
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
+                    // TODO: Global, remember to update columns to 4
+
+                    Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", 3, sbis, topicState);
+                }
             }
             page.template.Parse("S_MODE", mode);
 
@@ -127,6 +145,11 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("ERROR", "Post too short, must be at least three characters long");
                     return;
                 }
+            }
+
+            if (submitMode == "preview")
+            {
+                Display.ParseBbcode("PREVIEW", text);
             }
 
             if (submitMode == "draft" || submitMode == "post")
@@ -217,7 +240,7 @@ namespace BoxSocial.Applications.Forum
 
                         /*try
                         {*/
-                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text);
+                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text, (TopicStates)Functions.FormByte("topic-state", (byte)TopicStates.Normal));
 
                         page.template.Parse("REDIRECT_URI", topic.Uri);
                         Display.ShowMessage("Topic Posted", "Topic has been posted");

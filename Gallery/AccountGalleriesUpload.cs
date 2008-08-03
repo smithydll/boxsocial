@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGallery gallery = new UserGallery(core, loggedInMember, galleryId);
+                UserGallery gallery = new UserGallery(core, LoggedInMember, galleryId);
 
                 ushort galleryAccess = gallery.Permissions;
 
@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGallery parent = new UserGallery(core, loggedInMember, galleryId);
+                UserGallery parent = new UserGallery(core, LoggedInMember, galleryId);
 
                 string slug = Request.Files["photo-file"].FileName;
 
@@ -119,9 +119,9 @@ namespace BoxSocial.Applications.Gallery
                         Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    UserGalleryItem.Create(core, loggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    UserGalleryItem.Create(core, LoggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(loggedInMember, parent.FullPath, slug));
+                    SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, parent.FullPath, slug));
                     Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                     return;
                 }

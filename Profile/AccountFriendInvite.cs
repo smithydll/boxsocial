@@ -127,15 +127,15 @@ namespace BoxSocial.Applications.Profile
                             emailTemplate.Parse("TO_NAME", " " + friendName);
                         }
 
-                        emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", loggedInMember.AlternateEmail);
-                        emailTemplate.Parse("FROM_NAMES", loggedInMember.DisplayNameOwnership);
+                        emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
+                        emailTemplate.Parse("FROM_EMAIL", LoggedInMember.AlternateEmail);
+                        emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
-                        emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
+                        emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(LoggedInMember));
                         emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                         Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
-                            loggedInMember.DisplayName),
+                            LoggedInMember.DisplayName),
                             emailTemplate.ToString());
 
                         db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_time_ut) VALUES ('{0}', 1, '{1}', {2});",
@@ -183,15 +183,15 @@ namespace BoxSocial.Applications.Profile
 
                             RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
 
-                            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
-                            emailTemplate.Parse("FROM_EMAIL", loggedInMember.AlternateEmail);
-                            emailTemplate.Parse("FROM_NAMES", loggedInMember.DisplayNameOwnership);
+                            emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
+                            emailTemplate.Parse("FROM_EMAIL", LoggedInMember.AlternateEmail);
+                            emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                             emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
-                            emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(loggedInMember));
+                            emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(LoggedInMember));
                             emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                             Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
-                                loggedInMember.DisplayName),
+                                LoggedInMember.DisplayName),
                                 emailTemplate.ToString());
 
                             db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
@@ -201,7 +201,7 @@ namespace BoxSocial.Applications.Profile
                     else
                     {
                         // ignore already a member, plough on
-                        if (friendEmail.ToLower() != loggedInMember.AlternateEmail.ToLower())
+                        if (friendEmail.ToLower() != LoggedInMember.AlternateEmail.ToLower())
                         {
                             SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                             query.AddCondition("LCASE(user_alternate_email)", Mysql.Escape(friendEmail.ToLower()));
@@ -215,13 +215,13 @@ namespace BoxSocial.Applications.Profile
 
                                 db.BeginTransaction();
                                 long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
-                                    loggedInMember.UserId, friendId));
+                                    LoggedInMember.UserId, friendId));
 
                                 db.UpdateQuery(string.Format("INSERT INTO friend_notifications (relation_id, notification_time_ut, notification_read) VALUES ({0}, UNIX_TIMESTAMP(), 0)",
                                     relationId));
 
                                 db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
-                                    loggedInMember.UserId));
+                                    LoggedInMember.UserId));
 
                                 // send e-mail notification
                                 // only send a notification if they have subscribed to them
@@ -230,11 +230,11 @@ namespace BoxSocial.Applications.Profile
                                     RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
                                     emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
-                                    emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
-                                    emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
+                                    emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
+                                    emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
                                     Email.SendEmail(friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
-                                        loggedInMember.DisplayName),
+                                        LoggedInMember.DisplayName),
                                         emailTemplate.ToString());
                                 }
                             }

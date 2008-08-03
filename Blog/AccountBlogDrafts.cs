@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_blog_manage");
 
-            Blog myBlog = new Blog(core, loggedInMember);
+            Blog myBlog = new Blog(core, LoggedInMember);
             ushort readAccessLevel = 0x0000;
             List<BlogEntry> blogEntries = myBlog.GetDrafts(null, -1, -1, -1, 1, 50, ref readAccessLevel);
 
@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("TITLE", be.Title);
                 blogVariableCollection.Parse("POSTED", tz.DateTimeToString(postedTime));
 
-                blogVariableCollection.Parse("U_VIEW", Linker.BuildBlogPostUri(loggedInMember, postedTime.Year, postedTime.Month, be.Id));
+                blogVariableCollection.Parse("U_VIEW", Linker.BuildBlogPostUri(LoggedInMember, postedTime.Year, postedTime.Month, be.Id));
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));

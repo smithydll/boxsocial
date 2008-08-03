@@ -30,7 +30,7 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Forum
 {
-    [AccountSubModule("forum", "forum", true)]
+    [AccountSubModule(AppPrimitives.Group, "forum", "forum", true)]
     public class AccountForumManage : AccountSubModule
     {
         public override string Title
@@ -103,6 +103,8 @@ namespace BoxSocial.Applications.Forum
 
                     forumVariableCollection.Parse("TITLE", forum.Title);
                     forumVariableCollection.Parse("U_SUB_FORUMS", BuildUri("forum", forum.Id));
+                    forumVariableCollection.Parse("U_VIEW", forum.Uri);
+                    forumVariableCollection.Parse("U_EDIT", BuildUri("forum", "edit", forum.Id));
                 }
             }
 
@@ -149,7 +151,13 @@ namespace BoxSocial.Applications.Forum
                         template.Parse("S_TITLE", forum.Title);
                         template.Parse("S_DESCRIPTION", forum.Description);
                         template.Parse("S_ID", forum.Id.ToString());
-                        Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, type);
+
+                        List<string> disabledItems = new List<string>();
+                        disabledItems.Add("FORUM");
+                        disabledItems.Add("CAT");
+                        disabledItems.Add("LINK");
+
+                        Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, type, disabledItems);
 
                         template.Parse("EDIT", "TRUE");
                     }
@@ -224,6 +232,54 @@ namespace BoxSocial.Applications.Forum
 
         void AccountForumManage_Edit_Save(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
+            long forumId = Functions.FormLong("id", 0);
+            string title = Request.Form["title"];
+            string description = Request.Form["description"];
+            string type = Request.Form["type"];
+
+            Forum forum;
+
+            try
+            {
+                if (Owner is UserGroup)
+                {
+                    forum = new Forum(core, (UserGroup)Owner, forumId);
+                }
+                else
+                {
+                    forum = new Forum(core, forumId);
+                }
+            }
+            catch (InvalidForumException)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            forum.Title = title;
+            forum.Description = description;
+
+            try
+            {
+                forum.Update();
+            }
+            catch (UnauthorisedToUpdateItemException)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            if (forum.ParentId == 0)
+            {
+                SetRedirectUri(BuildUri("forum"));
+            }
+            else
+            {
+                SetRedirectUri(BuildUri("forum", forum.ParentId));
+            }
+            Display.ShowMessage("Forum updated", "You have updated the forum");
         }
     }
 }

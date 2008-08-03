@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Profile
             SetTemplate("account_family_manage");
 
             DataTable familyTable = db.Query(string.Format("SELECT ur.relation_order, uk.user_name, uk.user_id FROM user_relations ur INNER JOIN user_keys uk ON uk.user_id = ur.relation_you WHERE ur.relation_type = 'FAMILY' AND ur.relation_me = {0} ORDER BY uk.user_name ASC",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             for (int i = 0; i < familyTable.Rows.Count; i++)
             {
@@ -99,7 +99,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             // cannot befriend yourself
-            if (friendId == loggedInMember.UserId)
+            if (friendId == LoggedInMember.UserId)
             {
                 Display.ShowMessage("Cannot add yourself", "You cannot add yourself as a family member.");
                 return;
@@ -107,7 +107,7 @@ namespace BoxSocial.Applications.Profile
 
             // check existing friend-foe status
             DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
             {
@@ -125,14 +125,14 @@ namespace BoxSocial.Applications.Profile
 
             bool isFriend = false;
             if (db.Query(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FAMILY';",
-                loggedInMember.UserId, friendId)).Rows.Count == 1)
+                LoggedInMember.UserId, friendId)).Rows.Count == 1)
             {
                 isFriend = true;
             }
 
             db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FAMILY');",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             if (!isFriend)
             {
@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Added family member", "You have added person to your family.");
@@ -166,10 +166,10 @@ namespace BoxSocial.Applications.Profile
 
             db.BeginTransaction();
             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FAMILY'",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_family = ui.user_family - {1} WHERE ui.user_id = {0};",
-                loggedInMember.UserId, deletedRows));
+                LoggedInMember.UserId, deletedRows));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Deleted family member", "You have deleted a family member.");

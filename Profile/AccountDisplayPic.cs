@@ -63,13 +63,13 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_display_picture");
 
-            loggedInMember.LoadProfileInfo();
+            LoggedInMember.LoadProfileInfo();
 
             template.Parse("S_DISPLAY_PICTURE", Linker.AppendSid("/account", true));
 
-            if (!string.IsNullOrEmpty(loggedInMember.UserThumbnail))
+            if (!string.IsNullOrEmpty(LoggedInMember.UserThumbnail))
             {
-                template.Parse("I_DISPLAY_PICTURE", loggedInMember.UserThumbnail);
+                template.Parse("I_DISPLAY_PICTURE", LoggedInMember.UserThumbnail);
             }
 
             Save(new EventHandler(AccountDisplayPic_Save));
@@ -84,11 +84,11 @@ namespace BoxSocial.Applications.Profile
             UserGallery profileGallery;
             try
             {
-                profileGallery = new UserGallery(core, loggedInMember, meSlug);
+                profileGallery = new UserGallery(core, LoggedInMember, meSlug);
             }
             catch (InvalidGalleryException)
             {
-                UserGallery root = new UserGallery(core, loggedInMember);
+                UserGallery root = new UserGallery(core, LoggedInMember);
                 profileGallery = UserGallery.Create(core, root, "Display Pictures", ref meSlug, "All my uploaded display pictures", 0);
             }
 
@@ -117,10 +117,10 @@ namespace BoxSocial.Applications.Profile
                         Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    GalleryItem galleryItem = UserGalleryItem.Create(core, loggedInMember, profileGallery, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, 0x3331, 0, Classifications.Everyone);
+                    GalleryItem galleryItem = UserGalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, 0x3331, 0, Classifications.Everyone);
 
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
-                        galleryItem.Id, loggedInMember.UserId));
+                        galleryItem.Id, LoggedInMember.UserId));
 
                     SetRedirectUri(BuildUri());
                     Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");

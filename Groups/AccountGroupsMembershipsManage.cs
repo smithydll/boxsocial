@@ -347,7 +347,7 @@ namespace BoxSocial.Groups
                     else if (isGroupMemberPending)
                     {
                         db.UpdateQuery(string.Format("DELETE FROM group_members WHERE group_id = {0} AND user_id = {1};",
-                            thisGroup.GroupId, loggedInMember.UserId));
+                            thisGroup.GroupId, LoggedInMember.UserId));
 
                         SetRedirectUri(thisGroup.Uri);
                         Display.ShowMessage("Left Group", "You are no longer pending membership of the group.");
@@ -391,7 +391,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     try
                     {
@@ -471,7 +471,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     try
                     {
@@ -548,7 +548,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     db.BeginTransaction();
                     long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1} AND officer_title = '{2}'",
@@ -599,7 +599,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     try
                     {
@@ -681,13 +681,13 @@ namespace BoxSocial.Groups
 
             if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     if (thisGroup.Operators > 1)
                     {
                         db.BeginTransaction();
                         long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_operators WHERE group_id = {0} AND user_id = {1}",
-                            thisGroup.GroupId, loggedInMember.UserId));
+                            thisGroup.GroupId, LoggedInMember.UserId));
 
                         db.UpdateQuery(string.Format("UPDATE group_info SET group_operators = group_operators - {1} WHERE group_id = {0}",
                             thisGroup.GroupId, deletedRows));
@@ -737,7 +737,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(loggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
                     try
                     {
@@ -844,7 +844,7 @@ namespace BoxSocial.Groups
                 {
                     UserGroup group = new UserGroup(core, groupId);
 
-                    if (group.IsGroupOperator(loggedInMember))
+                    if (group.IsGroupOperator(LoggedInMember))
                     {
                         try
                         {

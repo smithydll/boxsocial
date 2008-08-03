@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Forum
 {
-    [AccountSubModule("forum", "settings")]
+    [AccountSubModule(AppPrimitives.Group, "forum", "settings")]
     public class AccountForumSettings : AccountSubModule
     {
         public override string Title
@@ -61,6 +61,24 @@ namespace BoxSocial.Applications.Forum
         void AccountForumSettings_Show(object sender, EventArgs e)
         {
             SetTemplate("account_forum_settings");
+
+            ForumSettings settings = new ForumSettings(core, Owner);
+
+            template.Parse("S_TOPICS_PER_PAGE", settings.TopicsPerPage.ToString());
+            template.Parse("S_POSTS_PER_PAGE", settings.PostsPerPage.ToString());
+
+            Save(new EventHandler(AccountForumSettings_Save));
+        }
+
+        void AccountForumSettings_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            ForumSettings settings = new ForumSettings(core, Owner);
+            settings.TopicsPerPage = Functions.FormInt("topics-per-page", 10);
+            settings.PostsPerPage = Functions.FormInt("posts-per-page", 10);
+
+            settings.Update();
         }
     }
 }

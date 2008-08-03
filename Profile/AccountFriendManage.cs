@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.Profile
 
             int p = Functions.RequestInt("p", 1);
 
-            List<UserRelation> friends = loggedInMember.GetFriends(p, 50);
+            List<UserRelation> friends = LoggedInMember.GetFriends(p, 50);
 
             foreach (UserRelation friend in friends)
             {
@@ -90,7 +90,7 @@ namespace BoxSocial.Applications.Profile
                 friendsVariableCollection.Parse("U_DEMOTE", Linker.BuildDemoteFriendUri(friend.Id));
             }
 
-            Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(loggedInMember.Friends / 50.0));
+            Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.Friends / 50.0));
         }
 
         void AccountFriendManage_Add(object sender, EventArgs e)
@@ -112,7 +112,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             // cannot befriend yourself
-            if (friendId == loggedInMember.UserId)
+            if (friendId == LoggedInMember.UserId)
             {
                 SetRedirectUri(BuildUri());
                 Display.ShowMessage("Cannot add friend", "You cannot add yourself as a friend.");
@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Profile
 
             // check existing friend-foe status
             DataTable relationsTable = db.Query(string.Format("SELECT relation_type FROM user_relations WHERE relation_me = {0} AND relation_you = {1}",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             for (int i = 0; i < relationsTable.Rows.Count; i++)
             {
@@ -143,7 +143,7 @@ namespace BoxSocial.Applications.Profile
 
             db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             //
             // send e-mail notifications
@@ -154,20 +154,20 @@ namespace BoxSocial.Applications.Profile
             RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_notification.eml");
 
             emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
-            emailTemplate.Parse("FROM_NAME", loggedInMember.DisplayName);
-            emailTemplate.Parse("FROM_USERNAME", loggedInMember.UserName);
+            emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
+            emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
             if (!isFriend)
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", loggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", Linker.BuildAddFriendUri(loggedInMember.Id, false), loggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", Linker.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
             }
             else
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] accepted your friendship.", loggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", loggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] accepted your friendship.", LoggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", LoggedInMember.Id), emailTemplate);
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
-                loggedInMember.UserId));
+                LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Added friend", "You have added a friend.");
@@ -193,10 +193,10 @@ namespace BoxSocial.Applications.Profile
 
             db.BeginTransaction();
             long deletedRows = db.UpdateQuery(string.Format("DELETE FROM user_relations WHERE relation_me = {0} and relation_you = {1} AND relation_type = 'FRIEND'",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends - {1} WHERE ui.user_id = {0};",
-                loggedInMember.UserId, deletedRows));
+                LoggedInMember.UserId, deletedRows));
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Deleted friend", "You have deleted a friend.");
@@ -221,7 +221,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             DataTable friendTable = db.Query(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             if (friendTable.Rows.Count == 1)
             {
@@ -240,10 +240,10 @@ namespace BoxSocial.Applications.Profile
                     // switch places
                     db.BeginTransaction();
                     db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order + 1 WHERE relation_me = {0} AND relation_order = {1} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId, relationOrder - 1));
+                        LoggedInMember.UserId, relationOrder - 1));
 
                     db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order - 1 WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId, friendId));
+                        LoggedInMember.UserId, friendId));
                 }
                 else
                 {
@@ -251,7 +251,7 @@ namespace BoxSocial.Applications.Profile
 
                     // select the maximum order
                     int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId)).Rows[0]["max_order"];
+                        LoggedInMember.UserId)).Rows[0]["max_order"];
 
                     // switch places
                     if (maxOrder > 0)
@@ -260,22 +260,22 @@ namespace BoxSocial.Applications.Profile
                         {
                             db.BeginTransaction();
                             db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = 0 WHERE relation_me = {0} AND relation_order = 255",
-                                loggedInMember.UserId));
+                                LoggedInMember.UserId));
 
                             db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = {2} WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, friendId, maxOrder));
+                            LoggedInMember.UserId, friendId, maxOrder));
                         }
                         else
                         {
                             db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = {2} WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                                loggedInMember.UserId, friendId, maxOrder + 1));
+                                LoggedInMember.UserId, friendId, maxOrder + 1));
                         }
 
                     }
                     else
                     {
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = {2} WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, friendId, 1));
+                            LoggedInMember.UserId, friendId, 1));
                     }
                 }
 
@@ -309,7 +309,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             DataTable friendTable = db.Query(string.Format("SELECT relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                loggedInMember.UserId, friendId));
+                LoggedInMember.UserId, friendId));
 
             if (friendTable.Rows.Count == 1)
             {
@@ -322,27 +322,27 @@ namespace BoxSocial.Applications.Profile
                 else if (relationOrder == 255)
                 {
                     db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = 0 WHERE relation_me = {0} AND relation_you = {1}",
-                        loggedInMember.UserId, friendId));
+                        LoggedInMember.UserId, friendId));
                 }
                 else if (relationOrder < 255)
                 {
                     int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
-                        loggedInMember.UserId)).Rows[0]["max_order"];
+                        LoggedInMember.UserId)).Rows[0]["max_order"];
 
                     if (relationOrder == maxOrder)
                     {
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = 0 WHERE relation_me = {0} AND relation_you = {1}",
-                            loggedInMember.UserId, friendId));
+                            LoggedInMember.UserId, friendId));
                     }
                     else
                     {
                         // switch places
                         db.BeginTransaction();
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order - 1 WHERE relation_me = {0} AND relation_order = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, relationOrder + 1));
+                            LoggedInMember.UserId, relationOrder + 1));
 
                         db.UpdateQuery(string.Format("UPDATE user_relations SET relation_order = relation_order + 1 WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND'",
-                            loggedInMember.UserId, friendId));
+                            LoggedInMember.UserId, friendId));
                     }
                 }
 

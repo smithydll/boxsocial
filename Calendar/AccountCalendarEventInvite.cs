@@ -100,8 +100,9 @@ namespace BoxSocial.Applications.Calendar
                         return;
                 }
 
+                // TODO: look into this
                 uQuery.AddCondition("event_id", eventId);
-                uQuery.AddCondition("item_id", loggedInMember.Id);
+                uQuery.AddCondition("item_id", LoggedInMember.Id);
                 uQuery.AddCondition("item_type", "USER");
 
                 db.BeginTransaction();

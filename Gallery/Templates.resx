@@ -124,6 +124,9 @@
   <data name="account_galleries_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_galleries_add.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="account_galleries_group" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_galleries_group.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="account_galleries_photo_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_galleries_photo_edit.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

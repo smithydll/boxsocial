@@ -66,7 +66,27 @@ namespace BoxSocial.Applications.Forum {
         ///&lt;p&gt;Manage forums.&lt;/p&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;h3&gt;Create Forum&lt;/h3&gt;
-        ///&lt;!-- ENDIF --&gt;.
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- IF ERROR --&gt;
+        ///&lt;p class=&quot;error&quot;&gt;{ERROR}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///  &lt;fieldset&gt;
+        ///    &lt;!-- IF EDIT --&gt;
+        ///    &lt;legend&gt;Edit Forum&lt;/legend&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    &lt;legend&gt;Create Forum&lt;/legend&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///    &lt;dl&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label for=&quot;type&quot;&gt;Forum Type&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        {S_FORUM_TYPE}
+        ///      &lt;/dd&gt;
+        ///      &lt;dt&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_edit {
             get {
@@ -77,6 +97,12 @@ namespace BoxSocial.Applications.Forum {
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Forum&lt;/h3&gt;
         ///&lt;p&gt;Manage forums.&lt;/p&gt;
+        ///
+        ///&lt;div id=&quot;new-stuff&quot;&gt;
+        ///	&lt;!-- IF U_CREATE_FORUM --&gt;
+        ///	&lt;span id=&quot;new-forum&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_CREATE_FORUM}&quot;&gt;Create New Forum&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///&lt;/div&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///  &lt;tr&gt;
@@ -91,12 +117,7 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;!-- ELSE --&gt;
         ///    &lt;tr class=&quot;odd&quot;&gt;
         ///      &lt;!-- ENDIF --&gt;
-        ///      &lt;td&gt;&lt;a href=&quot;{forum_list.U_SUB_FORUMS}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;&lt;/td&gt;
-        ///      &lt;td&gt;
-        ///        &lt;a href=&quot;{forum_list.U_VIEW}&quot;&gt;View&lt;/a&gt;
-        ///      &lt;/td&gt;
-        ///      &lt;td&gt;
-        ///        &lt;a href=&quot;{forum_list.U_EDI [rest of string was truncated]&quot;;.
+        ///      &lt;td&gt;&lt;a href= [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_manage {
             get {
@@ -105,7 +126,18 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Forum Settings&lt;/h3&gt;
+        ///
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Settings&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;topics-per-page&quot;&gt;Topics Per Page&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;topics-per-page&quot; name=&quot;topics-per-page&quot; value=&quot;{S_TOPICS_PER_PAGE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;posts-per-page&quot;&gt;Posts Per Page&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;posts-per-page&quot; name=&quot;posts-per-page&quot; value=&quot;{S_POSTS_PER_PAGE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
+        ///			&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_settings {
             get {
@@ -121,6 +153,10 @@ namespace BoxSocial.Applications.Forum {
         ///&lt;p class=&quot;error&quot;&gt;{ERROR}&lt;/p&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
+        ///&lt;!-- IF PREVIEW --&gt;
+        ///&lt;p&gt;{PREVIEW}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
         ///&lt;form action=&quot;{S_POST}&quot; method=&quot;post&quot;&gt;
         ///  &lt;fieldset&gt;
         ///    &lt;legend&gt;Post&lt;/legend&gt;
@@ -132,10 +168,7 @@ namespace BoxSocial.Applications.Forum {
         ///        &lt;input type=&quot;text&quot; id=&quot;subject&quot; name=&quot;subject&quot; value=&quot;{S_SUBJECT}&quot; style=&quot;width: 100%;&quot; /&gt;
         ///      &lt;/dd&gt;
         ///      &lt;dt&gt;
-        ///        &lt;label for=&quot;post&quot;&gt;Post Text&lt;/label&gt;
-        ///      &lt;/dt&gt;
-        ///      &lt;dd&gt;
-        ///        &lt;textarea i [rest of string was truncated]&quot;;.
+        ///        &lt;label for=&quot;post&quot;&gt;Post T [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string post {
             get {
@@ -159,15 +192,22 @@ namespace BoxSocial.Applications.Forum {
         ///  &lt;h3&gt;&lt;a href=&quot;{forum_list.URI}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;&lt;/h3&gt;
         ///  &lt;!-- ENDIF --&gt;
         ///  &lt;!-- IF forum_list.IS_FIRST --&gt;
-        ///  &lt;ul&gt;
+        ///  &lt;ul class=&quot;forums&quot;&gt;
         ///  &lt;!-- ENDIF --&gt;
-        ///    &lt;li&gt;
-        ///      &lt;dl&gt;
-        ///        &lt; [rest of string was truncated]&quot;;.
+        ///    &lt;!-- IF foru [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewforum {
             get {
                 return ResourceManager.GetString("viewforum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;a href=&quot;{U_FORUM}&quot;&gt;Go to forum&lt;/a&gt;.
+        /// </summary>
+        internal static string viewprofileforum {
+            get {
+                return ResourceManager.GetString("viewprofileforum", resourceCulture);
             }
         }
         

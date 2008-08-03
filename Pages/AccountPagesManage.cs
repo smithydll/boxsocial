@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Pages
         {
             SetTemplate("account_pages_manage");
 
-            Pages myPages = new Pages(core, loggedInMember);
+            Pages myPages = new Pages(core, LoggedInMember);
 
             List<Page> pages = myPages.GetPages(false);
 

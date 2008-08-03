@@ -680,5 +680,12 @@ namespace BoxSocial.Internals
             this.text = text;
             this.icon = icon;
         }
+
+        public SelectBoxItem(string key, string text)
+        {
+            this.key = key;
+            this.text = text;
+            this.icon = null;
+        }
     }
 }

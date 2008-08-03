@@ -54,7 +54,7 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (!(obj is PrimitiveKey)) return -1;
+            if (obj.GetType() != typeof(PrimitiveKey)) return -1;
             PrimitiveKey pk = (PrimitiveKey)obj;
 
             if (type != pk.Type) return type.CompareTo(pk.Type);
@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (!(obj is PrimitiveKey)) return false;
+            if (obj.GetType() != typeof(PrimitiveKey)) return false;
             PrimitiveKey pk = (PrimitiveKey)obj;
 
             if (type != pk.Type) return false;
@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return type.GetHashCode() ^ key.GetHashCode();
         }
 
     }
@@ -107,7 +107,7 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (!(obj is PrimitiveId)) return -1;
+            if (obj.GetType() != typeof(PrimitiveId)) return -1;
             PrimitiveId pk = (PrimitiveId)obj;
 
             if (type != pk.Type) return type.CompareTo(pk.Type);
@@ -116,7 +116,7 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (!(obj is PrimitiveId)) return false;
+            if (obj.GetType() != typeof(PrimitiveId)) return false;
             PrimitiveId pk = (PrimitiveId)obj;
 
             if (type != pk.Type) return false;
@@ -126,7 +126,7 @@ namespace BoxSocial.Internals
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return type.GetHashCode() ^ id.GetHashCode();
         }
 
         public override string ToString()

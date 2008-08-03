@@ -30,6 +30,7 @@ namespace BoxSocial.Internals
         private string moduleName;
         private string subModuleName;
         private bool isDefault;
+        private AppPrimitives primitives;
 
         public string ModuleName
         {
@@ -55,16 +56,35 @@ namespace BoxSocial.Internals
             }
         }
 
+        public AppPrimitives Primitives
+        {
+            get
+            {
+                return primitives;
+            }
+        }
+
         public AccountSubModuleAttribute(string moduleName, string subModuleName)
             : this(moduleName, subModuleName, false)
         {
         }
 
+        public AccountSubModuleAttribute(AppPrimitives primitives, string moduleName, string subModuleName)
+            : this(primitives, moduleName, subModuleName, false)
+        {
+        }
+
         public AccountSubModuleAttribute(string moduleName, string subModuleName, bool isDefault)
+            : this (AppPrimitives.Member, moduleName, subModuleName, isDefault)
+        {
+        }
+
+        public AccountSubModuleAttribute(AppPrimitives primitives, string moduleName, string subModuleName, bool isDefault)
         {
             this.moduleName = moduleName;
             this.subModuleName = subModuleName;
             this.isDefault = isDefault;
+            this.primitives = primitives;
         }
     }
 }

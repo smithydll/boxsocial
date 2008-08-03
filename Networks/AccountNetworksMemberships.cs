@@ -73,7 +73,7 @@ namespace BoxSocial.Networks
             query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
             query.AddJoin(JoinTypes.Inner, "network_keys", "network_id", "network_id");
             query.AddJoin(JoinTypes.Inner, "network_info", "network_id", "network_id");
-            query.AddCondition("user_id", loggedInMember.Id);
+            query.AddCondition("user_id", LoggedInMember.Id);
 
             DataTable networksTable = db.Query(query);
 
@@ -120,7 +120,7 @@ namespace BoxSocial.Networks
             {
                 Network theNetwork = new Network(core, networkId);
 
-                if (theNetwork.IsNetworkMember(loggedInMember))
+                if (theNetwork.IsNetworkMember(LoggedInMember))
                 {
                     SetRedirectUri(theNetwork.Uri);
                     Display.ShowMessage("Already a member", "You are already a member of this network");
@@ -134,7 +134,7 @@ namespace BoxSocial.Networks
                 else
                 {
                     // just join the network
-                    if (theNetwork.Join(core, loggedInMember, "") != null)
+                    if (theNetwork.Join(core, LoggedInMember, "") != null)
                     {
                         SetRedirectUri(theNetwork.Uri);
                         Display.ShowMessage("Joined Network", "You have successfully joined the network.");
@@ -182,7 +182,7 @@ namespace BoxSocial.Networks
 
             if (!NetworkMember.CheckNetworkEmailUnique(db, networkEmail))
             {
-                NetworkMember member = new NetworkMember(core, theNetwork.Id, loggedInMember.Id);
+                NetworkMember member = new NetworkMember(core, theNetwork.Id, LoggedInMember.Id);
                 if (!member.IsMemberActive)
                 {
                     theNetwork.ResendConfirmationKey(core, member);
@@ -196,7 +196,7 @@ namespace BoxSocial.Networks
                     return;
                 }
             }
-            else if (theNetwork.Join(core, loggedInMember, networkEmail) != null)
+            else if (theNetwork.Join(core, LoggedInMember, networkEmail) != null)
             {
                 if (theNetwork.RequireConfirmation)
                 {
@@ -251,11 +251,11 @@ namespace BoxSocial.Networks
                 {
                     Network theNetwork = new Network(core, networkId);
 
-                    if (theNetwork.IsNetworkMember(loggedInMember))
+                    if (theNetwork.IsNetworkMember(LoggedInMember))
                     {
                         db.BeginTransaction();
                         db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1};",
-                            theNetwork.Id, loggedInMember.UserId));
+                            theNetwork.Id, LoggedInMember.UserId));
 
                         db.UpdateQuery(string.Format("UPDATE network_info SET network_members = network_members - 1 WHERE network_id = {0}",
                             theNetwork.Id));

@@ -286,6 +286,12 @@ namespace BoxSocial.Internals
                 module, sub));
         }
 
+        public static string BuildModuleUri(Primitive owner, string module, string sub)
+        {
+            return Linker.AppendSid(string.Format("{0}{1}/{2}",
+                owner.AccountUriStub, module, sub));
+        }
+
         /// <summary>
         /// Builds a URI to the sub module key given of a module key given,
         /// appending a mode query argument

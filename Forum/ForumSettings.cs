@@ -45,6 +45,8 @@ namespace BoxSocial.Applications.Forum
         private int topicsPerPage;
         [DataField("forum_posts_per_page")]
         private int postsPerPage;
+        [DataField("forum_allow_topics_root")]
+        private bool allowTopicsAtRoot;
 
         private Primitive owner;
 
@@ -88,7 +90,19 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public ForumSettings(Core core, UserGroup owner)
+        public bool AllowTopicsAtRoot
+        {
+            get
+            {
+                return allowTopicsAtRoot;
+            }
+            set
+            {
+                SetProperty("allowTopicsAtRoot", value);
+            }
+        }
+
+        public ForumSettings(Core core, Primitive owner)
             : base(core)
         {
             this.owner = owner;
@@ -124,8 +138,31 @@ namespace BoxSocial.Applications.Forum
             iQuery.AddField("forum_posts", 0);
             iQuery.AddField("forum_topics_per_page", 10);
             iQuery.AddField("forum_posts_per_page", 10);
+            iQuery.AddField("forum_allow_topics_root", true);
 
             core.db.Query(iQuery);
+        }
+
+        public new long Update()
+        {
+            if (owner is UserGroup)
+            {
+                if (!((UserGroup)owner).IsGroupOperator(core.session.LoggedInMember))
+                {
+                    // todo: throw new exception
+                    throw new UnauthorisedToCreateItemException();
+                }
+            }
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(ForumSettings)));
+            uQuery.AddField("forum_topics_per_page", topicsPerPage);
+            uQuery.AddField("forum_posts_per_page", postsPerPage);
+            uQuery.AddField("forum_allow_topics_root", allowTopicsAtRoot);
+
+            uQuery.AddCondition("forum_item_id", ownerId);
+            uQuery.AddCondition("forum_item_type", ownerType);
+
+            return core.db.Query(uQuery);
         }
 
         public override string Namespace

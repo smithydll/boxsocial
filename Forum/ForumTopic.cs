@@ -30,6 +30,14 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
+    public enum TopicStates : byte
+    {
+        Normal = 0,
+        Sticky = 1,
+        Announcement = 2,
+        Global = 3,
+    }
+
     [DataTable("forum_topics")]
     public class ForumTopic : NumberedItem
     {
@@ -57,6 +65,10 @@ namespace BoxSocial.Applications.Forum
         private long lastPostId;
         [DataField("topic_first_post_id")]
         private long firstPostId;
+        [DataField("topic_status")]
+        private byte topicStatus;
+        [DataField("topic_locked")]
+        private bool topicLocked;
 
         private Forum forum;
         private TopicReadStatus readStatus = null;
@@ -82,14 +94,28 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (forum == null)
+                if (forum == null || forum.Id != forumId)
                 {
                     if (forumId == 0)
                     {
                     }
                     else
                     {
-                        forum = new Forum(core, forumId);
+                        if (forum != null)
+                        {
+                            if (forum.Owner is UserGroup)
+                            {
+                                forum = new Forum(core, (UserGroup)forum.Owner, forumId);
+                            }
+                            else
+                            {
+                                forum = new Forum(core, forumId);
+                            }
+                        }
+                        else
+                        {
+                            forum = new Forum(core, forumId);
+                        }
                     }
                 }
                 return forum;
@@ -225,6 +251,30 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public TopicStates Status
+        {
+            get
+            {
+                return (TopicStates)topicStatus;
+            }
+            set
+            {
+                SetProperty("topicStatus", (byte)value);
+            }
+        }
+
+        public bool IsLocked
+        {
+            get
+            {
+                return topicLocked;
+            }
+            set
+            {
+                SetProperty("topicLocked", value);
+            }
+        }
+
         public DateTime GetCreatedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(createdRaw);
@@ -350,7 +400,7 @@ namespace BoxSocial.Applications.Forum
             return query;
         }
 
-        public static ForumTopic Create(Core core, Forum forum, string subject, string text)
+        public static ForumTopic Create(Core core, Forum forum, string subject, string text, TopicStates status)
         {
             core.db.BeginTransaction();
 
@@ -365,7 +415,22 @@ namespace BoxSocial.Applications.Forum
                 throw new UnauthorisedToCreateItemException();
             }
 
-            InsertQuery iquery = new InsertQuery("forum_topics");
+            if (forum.Owner is UserGroup)
+            {
+                ForumSettings settings = new ForumSettings(core, (UserGroup)forum.Owner);
+
+                if (forum.Id == 0 && (!settings.AllowTopicsAtRoot))
+                {
+                    throw new UnauthorisedToCreateItemException();
+                }
+
+                if (!((UserGroup)forum.Owner).IsGroupOperator(core.session.LoggedInMember))
+                {
+                    status = TopicStates.Normal;
+                }
+            }
+
+            InsertQuery iquery = new InsertQuery(ForumTopic.GetTable(typeof(ForumTopic)));
             iquery.AddField("forum_id", forum.Id);
             iquery.AddField("topic_title", subject);
             iquery.AddField("user_id", core.LoggedInMemberId);
@@ -374,6 +439,10 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("topic_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("topic_modified_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("topic_last_post_time_ut", UnixTime.UnixTimeStamp());
+            iquery.AddField("topic_status", (byte)status);
+            iquery.AddField("topic_locked", false);
+            iquery.AddField("topic_last_post_id", 0);
+            iquery.AddField("topic_first_post_id", 0);
 
             long topicId = core.db.Query(iquery);
 
@@ -397,16 +466,27 @@ namespace BoxSocial.Applications.Forum
 
             if (forum.Id > 0)
             {
+                List<long> parentForumIds = new List<long>();
+                parentForumIds.Add(forum.Id);
+
+                if (forum.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in forum.Parents.Nodes)
+                    {
+                        parentForumIds.Add(ptn.ParentId);
+                    }
+                }
+
                 uQuery = new UpdateQuery(Forum.GetTable(typeof(Forum)));
                 uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
                 uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Addition, 1));
                 uQuery.AddField("forum_last_post_id", post.Id);
                 uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
-                uQuery.AddCondition("forum_id", forum.Id);
+                uQuery.AddCondition("forum_id", ConditionEquality.In, parentForumIds);
 
                 rowsUpdated = core.db.Query(uQuery);
 
-                if (rowsUpdated != 1)
+                if (rowsUpdated < 1)
                 {
                     core.db.RollBackTransaction();
                     Display.ShowMessage("ERROR", "Error, rolling back transaction");
@@ -453,15 +533,26 @@ namespace BoxSocial.Applications.Forum
 
             if (forumId > 0)
             {
+                List<long> parentForumIds = new List<long>();
+                parentForumIds.Add(Forum.Id);
+
+                if (Forum.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in Forum.Parents.Nodes)
+                    {
+                        parentForumIds.Add(ptn.ParentId);
+                    }
+                }
+
                 uQuery = new UpdateQuery(Forum.GetTable(typeof(Forum)));
                 uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
                 uQuery.AddField("forum_last_post_id", post.Id);
                 uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
-                uQuery.AddCondition("forum_id", Forum.Id);
+                uQuery.AddCondition("forum_id", ConditionEquality.In, parentForumIds);
 
                 rowsUpdated = db.Query(uQuery);
 
-                if (rowsUpdated != 1)
+                if (rowsUpdated < 1)
                 {
                     db.RollBackTransaction();
                     Display.ShowMessage("ERROR", "Error, rolling back transaction");
@@ -724,6 +815,14 @@ namespace BoxSocial.Applications.Forum
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "forum", "Forum" });
+
+                if (thisForum.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in thisForum.Parents.Nodes)
+                    {
+                        breadCrumbParts.Add(new string[] { "*" + ptn.ParentId.ToString(), ptn.ParentTitle });
+                    }
+                }
                 
                 if (thisForum.Id > 0)
                 {

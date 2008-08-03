@@ -32,14 +32,14 @@ namespace BoxSocial.Groups
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule("groups", "edit")]
+    [AccountSubModule(AppPrimitives.Group, "groups", "edit", true)]
     public class AccountGroupsEdit : AccountSubModule
     {
         public override string Title
         {
             get
             {
-                return null;
+                return "Group Preferences";
             }
         }
 
@@ -47,7 +47,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return -1;
+                return 1;
             }
         }
 
@@ -65,15 +65,13 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_edit");
 
-            long groupId = Functions.RequestLong("id", 0);
-
-            if (groupId == 0)
+            if (Owner.GetType() != typeof(UserGroup))
             {
                 DisplayGenericError();
                 return;
             }
 
-            UserGroup thisGroup = new UserGroup(core, groupId);
+            UserGroup thisGroup = (UserGroup)Owner;
 
             if (!thisGroup.IsGroupOperator(LoggedInMember))
             {

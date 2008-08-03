@@ -128,7 +128,7 @@ namespace BoxSocial.FrontEnd
 
                     if (newModule != null)
                     {
-                        if (newModule.ModuleKey == module)
+                        if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Member) == AppPrimitives.Member)
                         {
                             accountSubModules.Add(newModule);
                         }
@@ -154,6 +154,8 @@ namespace BoxSocial.FrontEnd
             //Response.Write(module + "::" + submodule);
 
             loggedInMember.LoadProfileInfo();
+
+            template.Parse("ACCOUNT_TITLE", "My Account");
 
             if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {

@@ -378,8 +378,17 @@ namespace BoxSocial.Internals
 
         public static SelectQuery GetSelectQueryStub(Type type)
         {
-            SelectQuery query = new SelectQuery(GetTable(type));
-            query.AddFields(GetFieldsPrefixed(type));
+            SelectQuery query;
+
+            if (type.GetMethod(type.Name + "_GetSelectQueryStub", new Type[] { }) != null)
+            {
+                query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
+            }
+            else
+            {
+                query = new SelectQuery(GetTable(type));
+                query.AddFields(GetFieldsPrefixed(type));
+            }
 
             return query;
         }

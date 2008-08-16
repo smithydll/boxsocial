@@ -46,7 +46,7 @@ namespace BoxSocial.Internals
         public static void SendEmail(string toAddress, string subject, string message)
         {
             SmtpClient mailClient = new SmtpClient(WebConfigurationManager.AppSettings["smtp-server"]);
-            Type t = Type.GetType ("Mono.Runtime");
+            Type t = Type.GetType("Mono.Runtime");
             if (t == null)
             {
                 // Not needed for mono
@@ -78,8 +78,9 @@ namespace BoxSocial.Internals
             {
                 mailClient.Send(newMessage);
             }
-            catch
+            catch (Exception ex)
             {
+                Display.ShowMessage("Error sending e-mail", ex.ToString());
             }
             /*mailClient.SendAsync(newMessage, null);
             mailClient.SendCompleted += new SendCompletedEventHandler(mailClient_SendCompleted);*/

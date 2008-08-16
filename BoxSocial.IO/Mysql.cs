@@ -237,7 +237,14 @@ namespace BoxSocial.IO
             CommitTransaction();
             if (sqlTransaction != null)
             {
-                sqlTransaction.Dispose();
+                try
+                {
+                    sqlTransaction.Dispose();
+                }
+                catch (InvalidOperationException)
+                {
+                    // ignore, mono bug?
+                }
             }
             if (sqlCommand != null)
             {

@@ -79,8 +79,6 @@ namespace BoxSocial.Internals
         /// <param name="owner">Owner</param>
         public void ModuleVector(Core core, Primitive owner)
         {
-            CreateTemplate();
-
             this.core = core;
             this.db = core.db;
             this.session = core.session;
@@ -91,6 +89,8 @@ namespace BoxSocial.Internals
             this.Request = HttpContext.Current.Request;
             this.Response = HttpContext.Current.Response;
             this.Server = HttpContext.Current.Server;
+
+            CreateTemplate();
 
             string mode = HttpContext.Current.Request["mode"];
 
@@ -287,8 +287,11 @@ namespace BoxSocial.Internals
         private void CreateTemplate()
         {
             template = new Template("1301.html");
-            template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
-            template.Parse("S_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+            if (Owner != null)
+            {
+                template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+                template.Parse("S_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+            }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
         }
 

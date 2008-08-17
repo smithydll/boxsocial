@@ -350,6 +350,11 @@ namespace BoxSocial.Applications.Calendar
         {
             page.template.SetTemplate("Calendar", "viewcalendarmonth");
 
+            if (month < 1 || month > 12)
+            {
+                Functions.Generate404();
+            }
+
             page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
             page.template.Parse("CURRENT_YEAR", year.ToString());
             page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
@@ -456,6 +461,16 @@ namespace BoxSocial.Applications.Calendar
         public static void Show(Core core, TPage page, Primitive owner, int year, int month, int day)
         {
             page.template.SetTemplate("Calendar", "viewcalendarday");
+
+            if (month < 1 || month > 12)
+            {
+                Functions.Generate404();
+            }
+
+            if (day < 1 || day > DateTime.DaysInMonth(year, month))
+            {
+                Functions.Generate404();
+            }
 
             page.template.Parse("CURRENT_DAY", day.ToString());
             page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));

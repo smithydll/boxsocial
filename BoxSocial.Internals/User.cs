@@ -1690,6 +1690,22 @@ namespace BoxSocial.Internals
             return User.HashPassword(captchaString).Substring((int)(rand.NextDouble() * 20), 32);
         }
 
+        public static string GenerateRandomPassword()
+        {
+            Random rand = new Random();
+            string captchaString = "";
+
+            char[] chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
+            for (int i = 0; i < 10; i++)
+            {
+                int j = (int)(rand.NextDouble() * chars.Length);
+                captchaString += chars[j].ToString();
+            }
+
+            return captchaString;
+        }
+
         public override bool CanModerateComments(User member)
         {
             if (member.userId == userId)

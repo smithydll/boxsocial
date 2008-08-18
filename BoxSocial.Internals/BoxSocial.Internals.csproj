@@ -84,6 +84,7 @@
     <Compile Include="CommentHandle.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Display.cs" />
+    <Compile Include="DnsRecord.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="Functions.cs" />

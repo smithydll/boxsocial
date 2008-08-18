@@ -120,6 +120,38 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
             }
+            else if (Request.QueryString["mode"] == "activate-password")
+            {
+                long userId = 0;
+                string activateKey = (string)Request.QueryString["key"];
+
+                try
+                {
+                    userId = long.Parse(Request.QueryString["id"]);
+                }
+                catch
+                {
+                    Display.ShowMessage("Error", "Error activating new password.");
+                    return;
+                }
+
+                DataTable userTable = db.Query(string.Format("SELECT user_id, user_new_password FROM user_info WHERE user_id = {0} AND user_activate_code = '{1}';",
+                    userId, Mysql.Escape(activateKey)));
+
+                if (userTable.Rows.Count == 1)
+                {
+                    db.UpdateQuery(string.Format("UPDATE user_info SET user_password = '{2}', user_new_password = '' WHERE user_id = {0} AND user_activate_code = '{1}';",
+                        userId, Mysql.Escape(activateKey), Mysql.Escape(BoxSocial.Internals.User.HashPassword((string)userTable.Rows[0]["user_new_password"]))));
+
+                    Display.ShowMessage("Success", "You have successfully activated your new password. You may now <a href=\"/sign-in/\">sign in</a>.");
+                    return;
+                }
+                else
+                {
+                    Display.ShowMessage("Error", "Error activating new password.");
+                    return;
+                }
+            }
             else if (Request.Form["submit"] == null)
             {
                 prepareNewCaptcha();

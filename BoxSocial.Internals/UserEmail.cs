@@ -66,6 +66,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsActivated
+        {
+            get
+            {
+                return emailVerified;
+            }
+        }
+
         public Access EmailAccess
         {
             get

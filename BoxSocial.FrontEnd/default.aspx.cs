@@ -119,6 +119,8 @@ namespace BoxSocial.FrontEnd
                     template.Parse("U_WRITE_BLOG", Linker.AppendSid("/account/?module=blog&sub=write"));
                 }
 
+                template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));
+
                 // new_points
 
                 /*DataTable newUsers = db.Query(string.Format("SELECT {0}, {1}, {2} FROM user_info ui INNER JOIN user_profile up ON ui.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE up.profile_access & 4369 = 4369 AND gi.gallery_item_uri IS NOT NULL ORDER BY user_reg_date_ut DESC LIMIT 3",

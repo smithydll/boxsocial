@@ -29,6 +29,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -70,7 +72,7 @@ namespace BoxSocial.Internals
         [DataField("page_parent_path", MYSQL_TEXT)]
         private string parentPath;
         [DataField("page_order")]
-        private ushort order;
+        private int order;
         [DataField("page_parent_id")]
         private long parentId;
         [DataField("page_list_only")]
@@ -92,6 +94,7 @@ namespace BoxSocial.Internals
         private Access pageAccess;
         private ContentLicense license;
         private Classifications classification;
+        private ParentTree parentTree;
 
         public long PageId
         {
@@ -270,10 +273,64 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("parentId", value);
+
+                if (parentId > 0)
+                {
+                    Page parent = new Page(core, owner, parentId);
+
+                    parentTree = new ParentTree();
+
+                    foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                    }
+
+                    if (parent.Id > 0)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(parent.Title, parent.Slug, parent.Id));
+                    }
+
+                    XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+                    StringBuilder sb = new StringBuilder();
+                    StringWriter stw = new StringWriter(sb);
+
+                    xs.Serialize(stw, parentTree);
+                    stw.Flush();
+                    stw.Close();
+
+                    SetProperty("hierarchy", sb.ToString());
+                }
+                else
+                {
+                    SetProperty("hierarchy", "");
+                }
             }
         }
 
-        public ushort Order
+        public ParentTree Parents
+        {
+            get
+            {
+                if (parentTree == null)
+                {
+                    if (string.IsNullOrEmpty(hierarchy))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        XmlSerializer xs = new XmlSerializer(typeof(ParentTree)); ;
+                        StringReader sr = new StringReader(hierarchy);
+
+                        parentTree = (ParentTree)xs.Deserialize(sr);
+                    }
+                }
+
+                return parentTree;
+            }
+        }
+
+        public int Order
         {
             get
             {
@@ -430,13 +487,17 @@ namespace BoxSocial.Internals
             status = (string)pageRow["page_status"];
             ipRaw = (string)pageRow["page_ip"];
             parentPath = (string)pageRow["page_parent_path"];
-            order = (ushort)pageRow["page_order"];
+            order = (int)pageRow["page_order"];
             parentId = (long)pageRow["page_parent_id"];
             // TODO: hierarchy
             createdRaw = (long)pageRow["page_date_ut"];
             modifiedRaw = (long)pageRow["page_modified_ut"];
             classification = (Classifications)(byte)pageRow["page_classification"];
             listOnly = ((byte)pageRow["page_list_only"] > 0) ? true : false;
+            if (!(pageRow["page_hierarchy"] is DBNull))
+            {
+                hierarchy = (string)pageRow["page_hierarchy"];
+            }
 
             pageAccess = new Access(core, permissions, owner);
         }
@@ -481,9 +542,10 @@ namespace BoxSocial.Internals
 
         public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
         {
+            string parents = "";
             string parentPath = "";
             long pageId = 0;
-            ushort order = 0;
+            int order = 0;
             bool pageListOnly = (status == PageStatus.PageList);
 
             if (!pageListOnly)
@@ -557,7 +619,7 @@ namespace BoxSocial.Internals
 
             if (orderTable.Rows.Count == 1)
             {
-                order = (ushort)orderTable.Rows[0]["page_order"];
+                order = (int)orderTable.Rows[0]["page_order"];
             }
             else if (parent > 0 && parentPage != null)
             {
@@ -574,11 +636,11 @@ namespace BoxSocial.Internals
 
                 if (orderTable2.Rows.Count == 1)
                 {
-                    order = (ushort)orderTable2.Rows[0]["page_order"];
+                    order = (int)orderTable2.Rows[0]["page_order"];
                 }
                 else
                 {
-                    order = (ushort)(parentPage.Order + 1);
+                    order = (int)(parentPage.Order + 1);
                 }
             }
             else
@@ -594,7 +656,7 @@ namespace BoxSocial.Internals
                 {
                     if (!(orderTable.Rows[0]["max_order"] is DBNull))
                     {
-                        order = (ushort)(ulong)orderTable.Rows[0]["max_order"];
+                        order = (int)(long)orderTable.Rows[0]["max_order"];
                     }
                 }
             }
@@ -608,6 +670,34 @@ namespace BoxSocial.Internals
             uquery.AddField("page_order", new QueryOperation("page_order", QueryOperations.Addition, 1));
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("user_id", owner.Id);
+
+            if (parentPage != null)
+            {
+                ParentTree parentTree = new ParentTree();
+
+                if (parentPage.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in parentPage.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                    }
+                }
+
+                if (parentPage.Id > 0)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(parentPage.Title, parentPage.Slug, parentPage.Id));
+                }
+
+                XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
+                StringBuilder sb = new StringBuilder();
+                StringWriter stw = new StringWriter(sb);
+
+                xs.Serialize(stw, parentTree);
+                stw.Flush();
+                stw.Close();
+
+                parents = sb.ToString();
+            }
 
             core.db.BeginTransaction();
             core.db.Query(uquery);
@@ -628,6 +718,7 @@ namespace BoxSocial.Internals
             iquery.AddField("page_status", PageStatusToString(status));
             iquery.AddField("page_classification", (byte)classification);
             iquery.AddField("page_list_only", ((pageListOnly) ? 1 : 0));
+            iquery.AddField("page_hierarchy", parents);
             if (application != null)
             {
                 if (application.HasIcon)
@@ -649,13 +740,57 @@ namespace BoxSocial.Internals
 
         public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
         {
+            string parents = "";
             string parentPath = "";
             long pageId = this.pageId;
-            ushort order = 0;
-            ushort oldOrder = 0;
+            int order = 0;
+            int oldOrder = 0;
             bool pageListOnly = (status == PageStatus.PageList);
             bool parentChanged = false;
             bool titleChanged = false;
+
+            Page parentPage = null;
+            try
+            {
+                parentPage = new Page(core, (User)owner, parent);
+
+                parentPath = parentPage.FullPath;
+                parent = parentPage.PageId;
+            }
+            catch (PageNotFoundException)
+            {
+                // we couldn't find a parent so set to zero
+                parentPath = "";
+                parent = 0;
+            }
+
+            if (parentPage != null)
+            {
+                ParentTree parentTree = new ParentTree();
+
+                if (parentPage.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in parentPage.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                    }
+                }
+
+                if (parentPage.Id > 0)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(parentPage.Title, parentPage.Slug, parentPage.Id));
+                }
+
+                XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
+                StringBuilder sb = new StringBuilder();
+                StringWriter stw = new StringWriter(sb);
+
+                xs.Serialize(stw, parentTree);
+                stw.Flush();
+                stw.Close();
+
+                parents = sb.ToString();
+            }
 
             if (this.parentPath != parentPath)
             {
@@ -717,21 +852,6 @@ namespace BoxSocial.Internals
 
             if ((parentChanged || titleChanged))
             {
-                Page parentPage = null;
-                try
-                {
-                    parentPage = new Page(core, (User)owner, parent);
-
-                    parentPath = parentPage.FullPath;
-                    parent = parentPage.PageId;
-                }
-                catch (PageNotFoundException)
-                {
-                    // we couldn't find a parent so set to zero
-                    parentPath = "";
-                    parent = 0;
-                }
-
                 squery = new SelectQuery("user_pages");
                 squery.AddFields("page_id", "page_order");
                 squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
@@ -745,7 +865,7 @@ namespace BoxSocial.Internals
 
                 if (orderTable.Rows.Count == 1)
                 {
-                    order = (ushort)orderTable.Rows[0]["page_order"];
+                    order = (int)orderTable.Rows[0]["page_order"];
 
                     if (order == oldOrder + 1 && pageId > 0)
                     {
@@ -767,7 +887,7 @@ namespace BoxSocial.Internals
 
                     if (orderTable2.Rows.Count == 1)
                     {
-                        order = (ushort)orderTable2.Rows[0]["page_order"];
+                        order = (int)orderTable2.Rows[0]["page_order"];
 
                         if (order == oldOrder + 1 && pageId > 0)
                         {
@@ -776,7 +896,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        order = (ushort)(parentPage.Order + 1);
+                        order = (int)(parentPage.Order + 1);
                     }
                 }
                 else
@@ -792,15 +912,15 @@ namespace BoxSocial.Internals
                     {
                         if (!(orderTable.Rows[0]["max_order"] is DBNull))
                         {
-                            order = (ushort)(ulong)orderTable.Rows[0]["max_order"];
+                            order = (int)(long)orderTable.Rows[0]["max_order"];
                         }
                     }
                 }
             }
 
+            db.BeginTransaction();
             if (order != oldOrder)
             {
-                db.BeginTransaction();
                 db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND user_id = {1}",
                         oldOrder, owner.Id));
 
@@ -813,11 +933,10 @@ namespace BoxSocial.Internals
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("user_id", owner.Id);
 
-            core.db.BeginTransaction();
-            core.db.Query(uquery);
+            db.Query(uquery);
 
             uquery = new UpdateQuery("user_pages");
-            uquery.AddField("user_id", owner.Id);
+            //uquery.AddField("user_id", owner.Id);
             uquery.AddField("page_slug", slug);
             if (parentChanged)
             {
@@ -840,10 +959,11 @@ namespace BoxSocial.Internals
             uquery.AddField("page_status", PageStatusToString(status));
             uquery.AddField("page_list_only", ((pageListOnly) ? 1 : 0));
             uquery.AddField("page_classification", (byte)classification);
+            uquery.AddField("page_hierarchy", parents);
             uquery.AddCondition("page_id", this.PageId);
             uquery.AddCondition("user_id", owner.Id);
 
-            core.db.Query(uquery);
+            db.Query(uquery);
         }
 
         public bool Delete(Core core, Primitive owner)
@@ -974,7 +1094,22 @@ namespace BoxSocial.Internals
             page.template.Parse("PAGE_VIEWS", thePage.Views.ToString());
 
             //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, thePage.FullPath));
-            page.ProfileOwner.ParseBreadCrumbs(thePage.FullPath);
+            //page.ProfileOwner.ParseBreadCrumbs(thePage.FullPath);
+            List<string[]> breadCrumbParts = new List<string[]>();
+            if (thePage.Parents != null)
+            {
+                foreach (ParentTreeNode ptn in thePage.Parents.Nodes)
+                {
+                    breadCrumbParts.Add(new string[] { ptn.ParentSlug.ToString(), ptn.ParentTitle });
+                }
+            }
+
+            if (thePage.Id > 0)
+            {
+                breadCrumbParts.Add(new string[] { thePage.slug, thePage.Title });
+            }
+
+            page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
 
             page.template.Parse("U_PROFILE", (Linker.BuildProfileUri(page.ProfileOwner)));
             page.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));

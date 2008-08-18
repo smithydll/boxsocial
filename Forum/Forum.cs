@@ -257,7 +257,7 @@ namespace BoxSocial.Applications.Forum
                 stw.Flush();
                 stw.Close();
 
-                parents = sb.ToString();
+                SetProperty("parents", sb.ToString());
             }
         }
 

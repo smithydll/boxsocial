@@ -86,6 +86,8 @@ namespace BoxSocial.Internals
         private long lastVisitDateRaw;
         [DataField("user_status_messages")]
         private long userStatusMessages;
+        [DataField("user_new_password", 63)]
+        private string userNewPassword;
 
         private string userNameOwnership;
         private UnixTime timeZone;

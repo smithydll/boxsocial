@@ -56,41 +56,108 @@ namespace BoxSocial.FrontEnd
             }
             if (Request.Form["submit"] != null)
             {
-                string userName = Request.Form["username"];
-                string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
-
-                 DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}' AND ui.user_password = '{1}'",
-                    userName, password));
-
-                if (userTable.Rows.Count == 1)
+                if (Request.QueryString["mode"] == "reset-password")
                 {
-                    DataRow userRow = userTable.Rows[0];
-                    if (Request.Form["remember"] == "true")
+                    string email = Request.Form["email"];
+
+                    if (string.IsNullOrEmpty(email))
                     {
-                        session.SessionBegin((long)userRow["user_id"], false, true);
+                        Display.ShowMessage("Error", "An error occured");
+                        return;
                     }
                     else
                     {
-                        session.SessionBegin((long)userRow["user_id"], false, false);
-                    }
-                    if (!string.IsNullOrEmpty(redirect))
-                    {
-                        if (redirect.StartsWith("/account"))
+                        try
                         {
-                            redirect = Linker.AppendSid(Linker.StripSid(redirect), true);
+                            UserEmail userEmail = new UserEmail(core, email);
+
+                            if (userEmail.IsActivated)
+                            {
+                                string newPassword = BoxSocial.Internals.User.GenerateRandomPassword();
+                                string activateCode = BoxSocial.Internals.User.GenerateActivationSecurityToken();
+
+                                db.UpdateQuery(string.Format("UPDATE user_info SET user_new_password = '{0}', user_activate_code = '{1}' WHERE user_id = {2}",
+                                    Mysql.Escape(newPassword), Mysql.Escape(activateCode), userEmail.Owner.Id));
+
+                                string activateUri = string.Format("http://zinzam.com/register/?mode=activate-password&id={0}&key={1}",
+                                    userEmail.Owner.Id, activateCode);
+
+                                // send the e-mail
+
+                                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "new_password.eml");
+                                emailTemplate.Parse("TO_NAME", userEmail.Owner.DisplayName);
+                                emailTemplate.Parse("U_ACTIVATE", activateUri);
+                                emailTemplate.Parse("USERNAME", userEmail.Owner.UserName);
+                                emailTemplate.Parse("PASSWORD", newPassword);
+
+                                Email.SendEmail(userEmail.Email, "Password Reset", emailTemplate.ToString());
+
+                                Display.ShowMessage("Password reset", "You have been sent an e-mail to the address you entered with your new password. You will need to click the confirmation link before you can sign in");
+                                return;
+                            }
+                            else
+                            {
+                                Display.ShowMessage("E-mail not verified", "The e-mail you have entered has not been verified, you need to enter an e-mail address you have verified to reset your password.");
+                                return;
+                            }
                         }
-                        Response.Redirect(redirect, true);
+                        catch (InvalidUserEmailException)
+                        {
+                            Display.ShowMessage("No e-mail registered", "The e-mail you have entered is not associated with a user account.");
+                            return;
+                        }
                     }
-                    else
-                    {
-                        Response.Redirect("/", true);
-                    }
-                    return; /* stop processing the display of this page */
                 }
                 else
                 {
-                    template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
+                    string userName = Request.Form["username"];
+                    string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
+
+                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}' AND ui.user_password = '{1}'",
+                       userName, password));
+
+                    if (userTable.Rows.Count == 1)
+                    {
+                        DataRow userRow = userTable.Rows[0];
+                        if (Request.Form["remember"] == "true")
+                        {
+                            session.SessionBegin((long)userRow["user_id"], false, true);
+                        }
+                        else
+                        {
+                            session.SessionBegin((long)userRow["user_id"], false, false);
+                        }
+                        if (!string.IsNullOrEmpty(redirect))
+                        {
+                            if (redirect.StartsWith("/account"))
+                            {
+                                redirect = Linker.AppendSid(Linker.StripSid(redirect), true);
+                            }
+                            Response.Redirect(redirect, true);
+                        }
+                        else
+                        {
+                            Response.Redirect("/", true);
+                        }
+                        return; /* stop processing the display of this page */
+                    }
+                    else
+                    {
+                        template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
+                    }
                 }
+            }
+
+            if (Request.QueryString["mode"] == "reset-password")
+            {
+                template.SetTemplate("password_reset.html");
+
+                EndResponse();
+                return;
+            }
+            else
+            {
+                template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));
             }
 
             template.Parse("REDIRECT", redirect);

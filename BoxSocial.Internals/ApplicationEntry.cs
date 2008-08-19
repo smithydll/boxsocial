@@ -65,6 +65,10 @@ namespace BoxSocial.Internals
         private bool hasStyleSheet;
         [DataField("application_script")]
         private bool hasJavaScript;
+        [DataField("application_locked")]
+        private bool isLocked;
+        [DataField("application_update")]
+        private bool updateQueued;
 
         //TODO: USER_APPLICATION_FIELDS
         private ushort permissions;
@@ -211,6 +215,30 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("isPrimitive", value);
+            }
+        }
+
+        public bool IsLocked
+        {
+            get
+            {
+                return isLocked;
+            }
+            set
+            {
+                SetProperty("isLocked", value);
+            }
+        }
+
+        public bool UpdateQueued
+        {
+            get
+            {
+                return updateQueued;
+            }
+            set
+            {
+                SetProperty("updateQueued", value);
             }
         }
 

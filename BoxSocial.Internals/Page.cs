@@ -282,7 +282,7 @@ namespace BoxSocial.Internals
 
                     foreach (ParentTreeNode ptn in parent.Parents.Nodes)
                     {
-                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
                     }
 
                     if (parent.Id > 0)
@@ -679,7 +679,7 @@ namespace BoxSocial.Internals
                 {
                     foreach (ParentTreeNode ptn in parentPage.Parents.Nodes)
                     {
-                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
                     }
                 }
 
@@ -743,8 +743,8 @@ namespace BoxSocial.Internals
             string parents = "";
             string parentPath = "";
             long pageId = this.pageId;
-            int order = 0;
-            int oldOrder = 0;
+            int order = this.order;
+            int oldOrder = this.order;
             bool pageListOnly = (status == PageStatus.PageList);
             bool parentChanged = false;
             bool titleChanged = false;
@@ -772,7 +772,7 @@ namespace BoxSocial.Internals
                 {
                     foreach (ParentTreeNode ptn in parentPage.Parents.Nodes)
                     {
-                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
                     }
                 }
 
@@ -850,6 +850,7 @@ namespace BoxSocial.Internals
                 throw new PageSlugNotUniqueException();
             }
 
+            // has the title or parent been changed
             if ((parentChanged || titleChanged))
             {
                 squery = new SelectQuery("user_pages");
@@ -1118,7 +1119,7 @@ namespace BoxSocial.Internals
 
             if (page.ProfileOwner.UserId == core.LoggedInMemberId)
             {
-                page.template.Parse("U_EDIT", AccountModule.BuildModuleUri("pages", "write", "action=edit", string.Format("id={0}", thePage.PageId)));
+                page.template.Parse("U_EDIT", AccountModule.BuildModuleUri("pages", "write", "mode=edit", string.Format("id={0}", thePage.PageId)));
             }
         }
 

@@ -647,12 +647,14 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
+            // 2 MiB
             if (bytes > (ulong)2 * 1024 * 1024)
             {
                 throw new GalleryItemTooLargeException();
             }
 
-            if (core.session.LoggedInMember.BytesUsed + bytes > (ulong)150 * 1024 * 1024)
+            // 512 MiB
+            if (core.session.LoggedInMember.BytesUsed + bytes > (ulong)512 * 1024 * 1024)
             {
                 throw new GalleryQuotaExceededException();
             }

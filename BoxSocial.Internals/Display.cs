@@ -40,6 +40,13 @@ namespace BoxSocial.Internals
         No,
     }
 
+    public enum ShowMessageOptions
+    {
+        Unprocessed,
+        Bbcode,
+        Stripped,
+    }
+
     public static class Display
     {
         internal static TPage page;
@@ -225,9 +232,26 @@ namespace BoxSocial.Internals
 
         public static void ShowMessage(string title, string message)
         {
+            ShowMessage(title, message, ShowMessageOptions.Unprocessed);
+        }
+
+        public static void ShowMessage(string title, string message, ShowMessageOptions options)
+        {
             core.template.SetTemplate("std.message.html");
             core.template.Parse("MESSAGE_TITLE", title);
-            core.template.Parse("MESSAGE_BODY", message);
+            switch (options)
+            {
+                case ShowMessageOptions.Unprocessed:
+                    core.template.Parse("MESSAGE_BODY", message);
+                    break;
+                case ShowMessageOptions.Bbcode:
+                    Display.ParseBbcode("MESSAGE_BODY", message);
+                    break;
+                case ShowMessageOptions.Stripped:
+                    // TODO: stripped bbcode parse
+                    core.template.Parse("MESSAGE_BODY", Bbcode.Strip(message));
+                    break;
+            }
 
             /* Something wrong here, .net likes to end the page TWICE! */
             /* Fixed by adding a flag to EndResponse to only execute once. */

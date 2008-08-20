@@ -338,9 +338,9 @@ namespace BoxSocial.Applications.Gallery
                         Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                         return;
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x04)");
+                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x04) " + ex.ToString());
                         return;
                     }
                 }

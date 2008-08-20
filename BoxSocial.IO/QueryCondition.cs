@@ -53,6 +53,11 @@ namespace BoxSocial.IO
             this.value = value;
         }
 
+        public QueryCondition AddCondition(QueryOperation field, object value)
+        {
+            return AddCondition(field.ToString(), value);
+        }
+
         public QueryCondition AddCondition(string field, object value)
         {
             if (conditions.Count == 0 && string.IsNullOrEmpty(field))
@@ -63,6 +68,11 @@ namespace BoxSocial.IO
             {
                 return AddCondition(ConditionRelations.And, field, ConditionEquality.Equal, value);
             }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, QueryOperation field, object value)
+        {
+            return AddCondition(relation, field.ToString(), value);
         }
 
         public QueryCondition AddCondition(ConditionRelations relation, string field, object value)
@@ -77,6 +87,11 @@ namespace BoxSocial.IO
             }
         }
 
+        public QueryCondition AddCondition(QueryOperation field, ConditionEquality equality, object value)
+        {
+            return AddCondition(field.ToString(), equality, value);
+        }
+
         public QueryCondition AddCondition(string field, ConditionEquality equality, object value)
         {
             if (conditions.Count == 0 && string.IsNullOrEmpty(field))
@@ -87,6 +102,11 @@ namespace BoxSocial.IO
             {
                 return AddCondition(ConditionRelations.And, field, equality, value);
             }
+        }
+
+        public QueryCondition AddCondition(ConditionRelations relation, QueryOperation field, ConditionEquality equality, object value)
+        {
+            return AddCondition(relation, field.ToString(), equality, value);
         }
 
         public QueryCondition AddCondition(ConditionRelations relation, string field, ConditionEquality equality, object value)

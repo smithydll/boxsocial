@@ -29,6 +29,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -146,6 +148,17 @@ namespace BoxSocial.Applications.Gallery
         protected ushort permissions;
 
         /// <summary>
+        /// Hierarchy
+        /// </summary>
+        [DataField("gallery_hierarchy", MYSQL_TEXT)]
+        private string hierarchy;
+
+        /// <summary>
+        /// Parent Tree
+        /// </summary>
+        private ParentTree parentTree;
+
+        /// <summary>
         /// Gets the gallery Id
         /// </summary>
         public long GalleryId
@@ -164,6 +177,67 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return parentId;
+            }
+            set
+            {
+                SetProperty("parentId", value);
+
+                if (parentId > 0 && this.GetType() == typeof(UserGallery))
+                {
+                    Gallery parent = new UserGallery(core, (User)owner, parentId);
+
+                    parentTree = new ParentTree();
+
+                    foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
+                    }
+
+                    if (parent.Id > 0)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(parent.GalleryTitle, parent.Path, parent.Id));
+                    }
+
+                    XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+                    StringBuilder sb = new StringBuilder();
+                    StringWriter stw = new StringWriter(sb);
+
+                    xs.Serialize(stw, parentTree);
+                    stw.Flush();
+                    stw.Close();
+
+                    SetProperty("hierarchy", sb.ToString());
+                }
+                else
+                {
+                    SetProperty("hierarchy", "");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the parents
+        /// </summary>
+        public ParentTree Parents
+        {
+            get
+            {
+                if (parentTree == null)
+                {
+                    if (string.IsNullOrEmpty(hierarchy))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        XmlSerializer xs = new XmlSerializer(typeof(ParentTree)); ;
+                        StringReader sr = new StringReader(hierarchy);
+
+                        parentTree = (ParentTree)xs.Deserialize(sr);
+                    }
+                }
+
+                return parentTree;
             }
         }
 
@@ -233,6 +307,10 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return parentPath;
+            }
+            set
+            {
+                SetProperty("parentPath", value);
             }
         }
 
@@ -534,10 +612,18 @@ namespace BoxSocial.Applications.Gallery
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
-            DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
-                ((User)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));
+            SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
+            query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
+            query.AddJoin(JoinTypes.Left, new DataField(GalleryItem.GetTable(typeof(Gallery)), "gallery_highlight_id"), new DataField(GalleryItem.GetTable(typeof(GalleryItem)), "gallery_item_id"));
+            query.AddCondition("gallery_parent_id", Id);
+            QueryCondition qc1 = query.AddCondition(new QueryOperation("gallery_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
+            qc1.AddCondition(ConditionRelations.Or, "`user_galleries`.`user_id`", loggedIdUid);
+            query.AddCondition("`user_galleries`.`user_id`", ((User)owner).UserId);
+            // TODO: permissions
 
-            return galleriesTable.Rows;
+            /*DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
+                ((User)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));*/
+            return core.db.Query(query).Rows;
         }
 
         /// <summary>
@@ -664,18 +750,48 @@ namespace BoxSocial.Applications.Gallery
         {
             if (owner is User)
             {
-                DataTable galleriesTable = db.Query(string.Format("SELECT gallery_id, gallery_path, gallery_parent_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}'",
-                    ((User)owner).UserId, oldPath));
+                List<Gallery> galleries = ((UserGallery)this).GetGalleries(core);
 
-                for (int i = 0; i < galleriesTable.Rows.Count; i++)
+                foreach (Gallery gallery in galleries)
                 {
-                    string oldPath2 = oldPath + "/" + (string)galleriesTable.Rows[i]["gallery_path"];
-                    string newPath2 = newPath + "/" + (string)galleriesTable.Rows[i]["gallery_path"];
-                    updateParentPathChildren(oldPath2, newPath2);
+                    ParentTree parentTree = new ParentTree();
+
+                    if (this.Parents != null)
+                    {
+                        foreach (ParentTreeNode ptn in this.Parents.Nodes)
+                        {
+                            parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
+                        }
+                    }
+
+                    if (this.Id > 0)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(this.GalleryTitle, this.Path, this.Id));
+                    }
+
+                    XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
+                    StringBuilder sb = new StringBuilder();
+                    StringWriter stw = new StringWriter(sb);
+
+                    xs.Serialize(stw, parentTree);
+                    stw.Flush();
+                    stw.Close();
 
                     db.BeginTransaction();
-                    db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_parent_path = '{2}' WHERE user_id = {0} AND gallery_id = {1};",
-                        ((User)owner).UserId, (long)galleriesTable.Rows[i]["gallery_id"], Mysql.Escape(newPath)));
+                    UpdateQuery uQuery = new UpdateQuery("user_galleries");
+                    uQuery.AddField("gallery_hierarchy", sb.ToString());
+                    uQuery.AddField("gallery_parent_path", newPath);
+                    uQuery.AddCondition("gallery_id", gallery.Id);
+
+                    db.Query(uQuery);
+
+                    gallery.updateParentPathChildren(gallery.FullPath, newPath + "/" + gallery.Path);
+                }
+
+                List<GalleryItem> galleryItems = ((UserGallery)this).GetItems(core);
+
+                foreach (GalleryItem galleryItem in galleryItems)
+                {
                 }
             }
             else
@@ -696,6 +812,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>An instance of the newly created gallery</returns>
         protected static long create(Core core, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
+            string parents = "";
             // ensure we have generated a valid slug
             slug = Gallery.GetSlugFromTitle(title, slug);
 
@@ -709,6 +826,34 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotUniqueException();
             }
 
+            if (parent != null)
+            {
+                ParentTree parentTree = new ParentTree();
+
+                if (parent.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentSlug, ptn.ParentId));
+                    }
+                }
+
+                if (parent.Id > 0)
+                {
+                    parentTree.Nodes.Add(new ParentTreeNode(parent.GalleryTitle, parent.Path, parent.Id));
+                }
+
+                XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
+                StringBuilder sb = new StringBuilder();
+                StringWriter stw = new StringWriter(sb);
+
+                xs.Serialize(stw, parentTree);
+                stw.Flush();
+                stw.Close();
+
+                parents = sb.ToString();
+            }
+
             InsertQuery iQuery = new InsertQuery("user_galleries");
             iQuery.AddField("gallery_title", title);
             iQuery.AddField("gallery_abstract", description);
@@ -720,6 +865,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_bytes", 0);
             iQuery.AddField("gallery_items", 0);
             iQuery.AddField("gallery_visits", 0);
+            iQuery.AddField("gallery_hierarchy", parents);
 
             long galleryId = core.db.Query(iQuery);
 
@@ -1204,7 +1350,6 @@ namespace BoxSocial.Applications.Gallery
 
                     //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0)));
                     Display.ParsePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
-                    page.ProfileOwner.ParseBreadCrumbs("gallery/" + gallery.FullPath);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1215,10 +1360,27 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 gallery = new UserGallery(core, page.ProfileOwner);
-                //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery"));
                 page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
-                page.ProfileOwner.ParseBreadCrumbs("gallery");
             }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+
+            breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+
+            if (gallery.Parents != null)
+            {
+                foreach (ParentTreeNode ptn in gallery.Parents.Nodes)
+                {
+                    breadCrumbParts.Add(new string[] { ptn.ParentSlug.ToString(), ptn.ParentTitle });
+                }
+            }
+
+            if (gallery.Id > 0)
+            {
+                breadCrumbParts.Add(new string[] { gallery.Path, gallery.GalleryTitle });
+            }
+
+            page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
 
             List<Gallery> galleries = gallery.GetGalleries(core);
 
@@ -1231,7 +1393,6 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
                 galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(page.ProfileOwner, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
-                //galleryVariableCollection.ParseRaw("ABSTRACT", Bbcode.Parse(HttpUtility.HtmlEncode(galleryGallery.GalleryAbstract), core.session.LoggedInMember));
                 Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                 long items = galleryGallery.Items;

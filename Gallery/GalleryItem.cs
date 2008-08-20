@@ -42,6 +42,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a gallery photo
     /// </summary>
+    [DataTable("gallery_items")]
     public abstract class GalleryItem : NumberedItem, ICommentableItem
     {
         /// <summary>
@@ -77,6 +78,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo path (slug)
         /// </summary>
+        [DataField("gallery_item_uri", 31)]
         protected string path;
 
         /// <summary>

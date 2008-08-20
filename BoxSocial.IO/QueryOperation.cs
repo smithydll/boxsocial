@@ -31,6 +31,8 @@ namespace BoxSocial.IO
         Subtraction,
         Multiplication,
         Division,
+        BinaryAnd,
+        BinaryOr,
     }
 
     public class QueryOperation
@@ -63,6 +65,10 @@ namespace BoxSocial.IO
                     return "*";
                 case QueryOperations.Division:
                     return "/";
+                case QueryOperations.BinaryAnd:
+                    return "&";
+                case QueryOperations.BinaryOr:
+                    return "|";
             }
             return "!";
         }

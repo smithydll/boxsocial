@@ -788,10 +788,13 @@ namespace BoxSocial.Applications.Gallery
                     gallery.updateParentPathChildren(gallery.FullPath, newPath + "/" + gallery.Path);
                 }
 
-                List<GalleryItem> galleryItems = ((UserGallery)this).GetItems(core);
-
-                foreach (GalleryItem galleryItem in galleryItems)
                 {
+                    UpdateQuery uQuery = new UpdateQuery("gallery_items");
+                    uQuery.AddField("gallery_item_parent_path", newPath);
+                    uQuery.AddCondition("gallery_id", Id);
+                    uQuery.AddCondition("user_id", owner.Id);
+
+                    db.Query(uQuery);
                 }
             }
             else

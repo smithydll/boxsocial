@@ -58,21 +58,25 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Owner of the photo's user Id
         /// </summary>
+        [DataField("user_id")]
         protected long userId;
 
         /// <summary>
         /// Gallery photo Id
         /// </summary>
+        [DataField("gallery_item_id", DataFieldKeys.Primary)]
         protected long itemId;
 
         /// <summary>
         /// Gallery photo title
         /// </summary>
+        [DataField("gallery_item_title", 31)]
         protected string itemTitle;
 
         /// <summary>
         /// Gallery photo parent path
         /// </summary>
+        [DataField("gallery_item_parent_path", MYSQL_TEXT)]
         protected string parentPath;
 
         /// <summary>
@@ -84,26 +88,31 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo (parent) gallery Id
         /// </summary>
+        [DataField("gallery_id")]
         protected long parentId;
 
         /// <summary>
         /// Gallery photo comments
         /// </summary>
+        [DataField("gallery_item_comments")]
         protected long itemComments;
 
         /// <summary>
         /// Gallery photo views
         /// </summary>
+        [DataField("gallery_item_views")]
         protected long itemViews;
 
         /// <summary>
         /// Gallery photo rating
         /// </summary>
+        [DataField("gallery_item_rating")]
         protected float itemRating;
 
         /// <summary>
         /// Gallery photo permission mask
         /// </summary>
+        [DataField("gallery_item_access")]
         protected ushort permissions;
 
         /// <summary>
@@ -114,6 +123,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo content (MIME) type
         /// </summary>
+        [DataField("gallery_item_content_type", 31)]
         protected string contentType;
 
         /// <summary>
@@ -123,11 +133,13 @@ namespace BoxSocial.Applications.Gallery
         /// The storage file name for a photo is the hash of the photo file
         /// without a file extension.
         /// </remarks>
+        [DataField("gallery_item_storage_path", 128)]
         protected string storagePath;
 
         /// <summary>
         /// Gallery photo abstract (description)
         /// </summary>
+        [DataField("gallery_item_abstract", MYSQL_TEXT)]
         protected string itemAbstract;
 
         /// <summary>

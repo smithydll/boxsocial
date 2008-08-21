@@ -33,12 +33,14 @@ namespace BoxSocial.Internals
     [DataTable("dns_records")]
     public class DnsRecord : Item
     {
-        [DataField("dns_domain", DataFieldKeys.Unique)]
+        [DataField("dns_domain", DataFieldKeys.Unique, "dns_domain", 63)]
         private string domain;
         [DataField("dns_owner_id", DataFieldKeys.Unique, "dns_owner")]
         private long ownerId;
         [DataField("dns_owner_type", DataFieldKeys.Unique, "dns_owner", 15)]
         private string ownerType;
+        [DataField("dns_owner_key", 31)]
+        private string ownerKey;
 
         private Primitive owner;
 

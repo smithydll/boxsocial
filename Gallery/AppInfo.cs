@@ -356,11 +356,9 @@ namespace BoxSocial.Applications.Gallery
                     VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(thisGroup, galleryItem.Path));
+                    galleryVariableCollection.Parse("PHOTO_URI", galleryItem.Uri);
 
-                    string thumbUri = string.Format("/group/{0}/images/_tiny/{1}",
-                        thisGroup.Slug, galleryItem.Path);
-                    galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
+                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
                 }
 
                 template.Parse("U_GROUP_GALLERY", Gallery.BuildGalleryUri(thisGroup));

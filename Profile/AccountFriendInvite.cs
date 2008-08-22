@@ -131,7 +131,7 @@ namespace BoxSocial.Applications.Profile
                         emailTemplate.Parse("FROM_EMAIL", LoggedInMember.AlternateEmail);
                         emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
-                        emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(LoggedInMember));
+                        emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
                         emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                         Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
@@ -187,7 +187,7 @@ namespace BoxSocial.Applications.Profile
                             emailTemplate.Parse("FROM_EMAIL", LoggedInMember.AlternateEmail);
                             emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                             emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
-                            emailTemplate.Parse("U_PROFILE", "http://zinzam.com" + Linker.BuildProfileUri(LoggedInMember));
+                            emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
                             emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
                             Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",

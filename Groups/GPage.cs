@@ -73,7 +73,10 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
+            if (string.IsNullOrEmpty(thisGroup.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
+            {
+                core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
+            }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = "/profile";

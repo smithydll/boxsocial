@@ -66,6 +66,8 @@ namespace BoxSocial.Internals
         protected long userId;
         [DataField("user_name", DataFieldKeys.Unique, 64)]
         private string userName;
+        [DataField("user_domain", DataFieldKeys.Unique, 63)]
+        private string domain;
 
         private string userIconUri;
 
@@ -344,8 +346,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return string.Format("/{0}/",
-                    userName);
+                return Uri;
             }
         }
 
@@ -355,8 +356,8 @@ namespace BoxSocial.Internals
             {
                 if (userIconUri != null)
                 {
-                    return string.Format("/{0}/images/_thumb{1}",
-                        userName, userIconUri);
+                    return string.Format("{0}images/_thumb{1}",
+                        UriStub, userIconUri);
                 }
                 else
                 {
@@ -374,8 +375,8 @@ namespace BoxSocial.Internals
             {
                 if (userIconUri != null)
                 {
-                    return string.Format("/{0}/images/_icon{1}",
-                        userName, userIconUri);
+                    return string.Format("{0}images/_icon{1}",
+                        UriStub, userIconUri);
                 }
                 else
                 {
@@ -393,8 +394,8 @@ namespace BoxSocial.Internals
             {
                 if (userIconUri != null)
                 {
-                    return string.Format("/{0}/images/_tile{1}",
-                        userName, userIconUri);
+                    return string.Format("{0}images/_tile{1}",
+                        UriStub, userIconUri);
                 }
                 else
                 {
@@ -1862,12 +1863,42 @@ namespace BoxSocial.Internals
             return output;
         }
 
+        public override string UriStub
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(domain))
+                {
+                    if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                    {
+                        return Linker.Uri + UserName + "/";
+                    }
+                    else
+                    {
+                        return Linker.AppendSid(string.Format("/{0}/",
+                            UserName));
+                    }
+                }
+                else
+                {
+                    if (domain == HttpContext.Current.Request.Url.Host.ToLower())
+                    {
+                        return "/";
+                    }
+                    else
+                    {
+                        return string.Format("http://{0}/",
+                            domain);
+                    }
+                }
+            }
+        }
+
         public override string Uri
         {
             get
             {
-                return Linker.AppendSid(string.Format("/{0}",
-                    UserName));
+                return UriStub;
             }
         }
 
@@ -1922,10 +1953,10 @@ namespace BoxSocial.Internals
             core.template.Parse("USER_COUNTRY", page.ProfileOwner.Country);
             core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
 
-            core.template.Parse("U_PROFILE", Linker.BuildProfileUri(page.ProfileOwner));
-            core.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));
-            core.template.Parse("U_GALLERY", (Linker.BuildGalleryUri(page.ProfileOwner)));
-            core.template.Parse("U_FRIENDS", (Linker.BuildFriendsUri(page.ProfileOwner)));
+            core.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
+            core.template.Parse("U_BLOG", Linker.BuildBlogUri(page.ProfileOwner));
+            core.template.Parse("U_GALLERY", Linker.BuildGalleryUri(page.ProfileOwner));
+            core.template.Parse("U_FRIENDS", Linker.BuildFriendsUri(page.ProfileOwner));
 
             core.template.Parse("IS_PROFILE", "TRUE");
 
@@ -1961,7 +1992,7 @@ namespace BoxSocial.Internals
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
 
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
-                friendVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(friend));
+                friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 

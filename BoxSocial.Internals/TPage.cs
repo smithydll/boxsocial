@@ -226,7 +226,14 @@ namespace BoxSocial.Internals
             }
             else
             {
-                Core.PagePath = httpContext.Request.RawUrl;
+                if (httpContext.Request.Url.Host.ToLower() == Linker.Domain)
+                {
+                    Core.PagePath = httpContext.Request.RawUrl;
+                }
+                else
+                {
+                    Core.PagePath = "/";
+                }
             }
 
             core.session = session;

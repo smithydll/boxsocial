@@ -55,7 +55,7 @@ namespace BoxSocial.FrontEnd
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
-                friendVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(friend));
+                friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 

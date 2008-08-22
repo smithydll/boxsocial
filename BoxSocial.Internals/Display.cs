@@ -625,7 +625,7 @@ namespace BoxSocial.Internals
                     template.Parse("LOGGED_IN", "TRUE");
                     template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
-                    template.Parse("U_USER_PROFILE", Linker.BuildHomepageUri(session.LoggedInMember));
+                    template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                 }
             }
         }

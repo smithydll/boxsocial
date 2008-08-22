@@ -111,5 +111,14 @@ namespace BoxSocial.Applications.Gallery
                 return BuildUri();
             }
         }
+
+        public override string ThumbUri
+        {
+            get
+            {
+                return Linker.AppendSid(string.Format("{0}images/_tiny/{1}",
+                owner.UriStub, path));
+            }
+        }
     }
 }

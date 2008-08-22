@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -46,6 +47,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string Domain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
+            }
+        }
+
+        public static string Uri
+        {
+            get
+            {
+                return string.Format("http://{0}/", Domain);
+            }
+        }
+
         public static string BuildMarkGalleryCoverUri(long pictureId)
         {
             return AppendSid(string.Format("/account/galleries/gallery-cover?id={0}",
@@ -56,33 +73,6 @@ namespace BoxSocial.Internals
         {
             return AppendSid(string.Format("/account/galleries/display-pic?id={0}",
                 pictureId), true);
-        }
-
-        public static string BuildHomepageUri(User member)
-        {
-            return AppendSid(string.Format("/{0}",
-                member.UserName.ToLower()));
-        }
-
-        public static string BuildProfileUri(User member)
-        {
-            if (member != null && member.UserName != null)
-            {
-                if (member.ProfileHomepage == "/profile")
-                {
-                    return AppendSid(string.Format("/{0}",
-                        member.UserName.ToLower()));
-                }
-                else
-                {
-                    return AppendSid(string.Format("/{0}/profile",
-                        member.UserName.ToLower()));
-                }
-            }
-            else
-            {
-                return "";
-            }
         }
 
         public static string BuildGuestBookUri(User member)

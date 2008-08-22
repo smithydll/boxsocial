@@ -779,12 +779,27 @@ namespace BoxSocial.Networks
             return output;
         }
 
+        public override string UriStub
+        {
+            get
+            {
+                if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                {
+                    return Linker.Uri + "network/" + NetworkNetwork + "/";
+                }
+                else
+                {
+                    return string.Format("/network/{0}/",
+                        NetworkNetwork);
+                }
+            }
+        }
+
         public override string Uri
         {
             get
             {
-                return Linker.AppendSid(string.Format("/network/{0}",
-                    NetworkNetwork));
+                return Linker.AppendSid(UriStub);
             }
         }
 
@@ -792,8 +807,8 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return Linker.AppendSid(string.Format("/network/{0}/members",
-                    NetworkNetwork));
+                return Linker.AppendSid(string.Format("{0}members",
+                    UriStub));
             }
         }
 
@@ -849,7 +864,7 @@ namespace BoxSocial.Networks
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
-                membersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                membersVariableCollection.Parse("U_PROFILE", member.Uri);
                 membersVariableCollection.Parse("ICON", member.UserIcon);
 
             }
@@ -888,7 +903,7 @@ namespace BoxSocial.Networks
                 memberVariableCollection.Parse("USER_COUNTRY", member.Country);
                 memberVariableCollection.Parse("USER_CAPTION", "");
 
-                memberVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 memberVariableCollection.Parse("ICON", member.UserIcon);
             }
 

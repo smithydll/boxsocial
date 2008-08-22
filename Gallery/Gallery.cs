@@ -1601,14 +1601,14 @@ namespace BoxSocial.Applications.Gallery
                     VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(page.ThisGroup, galleryItem.Path));
+                    galleryVariableCollection.Parse("PHOTO_URI", galleryItem.Uri);
                     galleryVariableCollection.Parse("COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
                     galleryVariableCollection.Parse("VIEWS", Functions.LargeIntegerToString(galleryItem.ItemViews));
                     galleryVariableCollection.Parse("INDEX", i.ToString());
                     galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
 
-                    string thumbUri = string.Format("/group/{0}/images/_thumb/{1}",
-                        page.ThisGroup.Slug, galleryItem.Path);
+                    string thumbUri = string.Format("{0}images/_thumb/{1}",
+                        page.ThisGroup.UriStub, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
                     Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemId, "PHOTO");

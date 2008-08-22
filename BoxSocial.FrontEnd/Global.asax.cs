@@ -73,49 +73,38 @@ namespace BoxSocial.FrontEnd
             string[] redir = httpContext.Request.RawUrl.Split(';');
             string host = httpContext.Request.Url.Host.ToLower();
 
+            if (host == "www." + Linker.Domain)
+            {
+                Response.Redirect(Linker.Uri);
+                return;
+            }
+
+            string currentURI = null;
+            Uri cUri = null;
+            if (redir.Length > 1)
+            {
+                currentURI = redir[1];
+                cUri = new Uri(currentURI);
+                currentURI = cUri.AbsolutePath;
+            }
+
             if (!httpContext.Request.RawUrl.Contains("404.aspx"))
             {
-                if (host == "zinzam.com" || host == "slifer")
+                if (host == Linker.Domain)
                 {
                     return;
                 }
-            }
-            /*for (int i = 0; i < httpContext.Request.Headers.Count; i++)
-            {
-                HttpContext.Current.Response.Write(httpContext.Request.Headers[i] + "<br />");
-            }*/
-            /*HttpContext.Current.Response.Write(httpContext.Request.RawUrl + "<br />");
-            HttpContext.Current.Response.End();/**/
-#if Local
-            if (redir[0] == "/styles/zinzam.css") return;
-            if (redir.Length > 1 || !File.Exists(Path.Combine(Server.MapPath("."), redir[0].Replace("/", Path.DirectorySeparatorChar.ToString()))))
-            {
-                string currentURI;
-                Uri cUri;
-                if (redir.Length == 1)
-                {
-                    currentURI = redir[0];
-                    cUri = new Uri("http://localhost" + currentURI);
-                    currentURI = cUri.AbsolutePath;
-                }
                 else
                 {
-                    currentURI = redir[1];
-                    cUri = new Uri(currentURI);
-                    currentURI = cUri.AbsolutePath;
+                    cUri = httpContext.Request.Url;
+                    currentURI = "/";
                 }
-#else
-            if (redir.Length > 1)
-            {
-                string currentURI = redir[1];
-                Uri cUri = new Uri(currentURI);
-                currentURI = cUri.AbsolutePath;
-#endif
-                /*HttpContext.Current.Response.Write(currentURI + "<br />");
-                HttpContext.Current.Response.End();*/
+            }
 
+            if (currentURI != null)
+            {
                 List<string[]> patterns = new List<string[]>();
-                if (host != "zinzam.com" && host != "slifer")
+                if (host != Linker.Domain)
                 {
                     SelectQuery query = new SelectQuery("dns_records");
                     query.AddFields("dns_domain", "dns_owner_id", "dns_owner_type", "dns_owner_key");

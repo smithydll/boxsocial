@@ -94,7 +94,10 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            core.PagePath = core.PagePath.Substring(profileOwner.UserName.Length + 1);
+            if (core.PagePath.StartsWith("/" + profileOwner.UserName))
+            {
+                core.PagePath = core.PagePath.Substring(profileOwner.UserName.Length + 1);
+            }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = profileOwner.ProfileHomepage;

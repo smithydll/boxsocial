@@ -140,8 +140,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public override string BuildUri()
         {
-            return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
-                ((User)owner).UserName, parentPath, path));
+            return Linker.AppendSid(string.Format("{0}gallery/{1}/{2}",
+                ((User)owner).UriStub, parentPath, path));
         }
 
         /// <summary>
@@ -161,6 +161,15 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return BuildUri();
+            }
+        }
+
+        public override string ThumbUri
+        {
+            get
+            {
+                return Linker.AppendSid(string.Format("{0}images/_tiny/{1}",
+                owner.UriStub, path));
             }
         }
     }

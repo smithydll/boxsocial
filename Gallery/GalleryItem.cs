@@ -1076,8 +1076,8 @@ namespace BoxSocial.Applications.Gallery
 
                 galleryItem.Viewed(core.session.LoggedInMember);
 
-                string displayUri = string.Format("/group/{0}/images/_display/{1}",
-                        page.ThisGroup.Slug, galleryItem.Path);
+                string displayUri = string.Format("{0}images/_display/{1}",
+                        page.ThisGroup.UriStub, galleryItem.Path);
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
                 page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
@@ -1779,6 +1779,11 @@ namespace BoxSocial.Applications.Gallery
         /// Returns gallery item Uri
         /// </summary>
         public abstract override string Uri
+        {
+            get;
+        }
+
+        public abstract string ThumbUri
         {
             get;
         }

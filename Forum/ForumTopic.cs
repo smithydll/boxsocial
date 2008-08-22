@@ -642,28 +642,18 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (Forum.Owner.GetType() == typeof(UserGroup))
+
+                if (forumId == 0)
                 {
-                    if (forumId == 0)
-                    {
-                        return Linker.AppendSid(string.Format("/group/{0}/forum/topic-{1}",
-                            Forum.Owner.Key, topicId));
-                    }
-                    else
-                    {
-                        return Linker.AppendSid(string.Format("/group/{0}/forum/{1}/topic-{2}",
-                            Forum.Owner.Key, Forum.Id, topicId));
-                    }
-                }
-                else if (Forum.Owner.GetType() == typeof(Network))
-                {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/{1}/topic-{2}",
-                        Forum.Owner.Key, forumId, topicId));
+                    return Linker.AppendSid(string.Format("{0}forum/topic-{1}",
+                        Forum.Owner.UriStub, topicId));
                 }
                 else
                 {
-                    return "/";
+                    return Linker.AppendSid(string.Format("{0}forum/{1}/topic-{2}",
+                        Forum.Owner.UriStub, Forum.Id, topicId));
                 }
+
             }
         }
 
@@ -671,20 +661,8 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (Forum.Owner.GetType() == typeof(UserGroup))
-                {
-                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?t={1}&mode=reply",
-                        Forum.Owner.Key, topicId));
-                }
-                else if (Forum.Owner.GetType() == typeof(Network))
-                {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?t={1}&mode=reply",
-                        Forum.Owner.Key, topicId));
-                }
-                else
-                {
-                    return "/";
-                }
+                return Linker.AppendSid(string.Format("{0}forum/post?t={1}&mode=reply",
+                    Forum.Owner.UriStub, topicId));
             }
         }
 

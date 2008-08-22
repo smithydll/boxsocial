@@ -546,12 +546,27 @@ namespace BoxSocial.Internals
             throw new NotImplementedException();
         }
 
+        public override string UriStub
+        {
+            get
+            {
+                if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                {
+                    return Linker.Uri + "application/" + assemblyName + "/";
+                }
+                else
+                {
+                    return string.Format("/application/{0}/",
+                        assemblyName);
+                }
+            }
+        }
+
         public override string Uri
         {
             get
             {
-                return Linker.AppendSid(string.Format("/application/{0}",
-                    assemblyName));
+                return Linker.AppendSid(UriStub);
             }
         }
 

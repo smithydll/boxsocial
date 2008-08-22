@@ -538,10 +538,10 @@ namespace BoxSocial.Applications.Blog
             {
                 //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
                 Display.ParsePageList(page.ProfileOwner, true);
-                page.template.Parse("U_PROFILE", (Linker.BuildProfileUri(page.ProfileOwner)));
-                page.template.Parse("U_BLOG", (Linker.BuildBlogUri(page.ProfileOwner)));
-                page.template.Parse("U_GALLERY", (Linker.BuildGalleryUri(page.ProfileOwner)));
-                page.template.Parse("U_FRIENDS", (Linker.BuildFriendsUri(page.ProfileOwner)));
+                page.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
+                page.template.Parse("U_BLOG", Linker.BuildBlogUri(page.ProfileOwner));
+                page.template.Parse("U_GALLERY", Linker.BuildGalleryUri(page.ProfileOwner));
+                page.template.Parse("U_FRIENDS", Linker.BuildFriendsUri(page.ProfileOwner));
 
                 if (page.ProfileOwner.UserId == core.LoggedInMemberId)
                 {

@@ -181,6 +181,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string UriStub
+        {
+            get;
+        }
+
         public override abstract string Uri
         {
             get;

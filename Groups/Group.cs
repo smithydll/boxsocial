@@ -50,6 +50,8 @@ namespace BoxSocial.Groups
         private long groupId;
         [DataField("group_name", DataFieldKeys.Unique, 64)]
         private string slug;
+        [DataField("group_domain", DataFieldKeys.Unique, 63)]
+        private string domain;
 
         private UserGroupInfo groupInfo;
 
@@ -64,6 +66,14 @@ namespace BoxSocial.Groups
             get
             {
                 return groupId;
+            }
+        }
+
+        public string Domain
+        {
+            get
+            {
+                return domain;
             }
         }
 
@@ -1115,7 +1125,7 @@ namespace BoxSocial.Groups
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = "";
-            string path = string.Format("/group/{0}", Slug);
+            string path = this.UriStub;
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     DisplayName, path);
 
@@ -1124,10 +1134,10 @@ namespace BoxSocial.Groups
                 if (parts[i][0] != "")
                 {
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path + "/" + parts[i][0].TrimStart(new char[] { '*' }));
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
                     if (!parts[i][0].StartsWith("*"))
                     {
-                        path += "/" + parts[i][0];
+                        path += parts[i][0] + "/";
                     }
                 }
             }
@@ -1135,12 +1145,42 @@ namespace BoxSocial.Groups
             return output;
         }
 
+        public override string UriStub
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(domain))
+                {
+                    if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                    {
+                        return Linker.Uri + "group/" + Slug + "/";
+                    }
+                    else
+                    {
+                        return Linker.AppendSid(string.Format("/group/{0}/",
+                            Slug));
+                    }
+                }
+                else
+                {
+                    if (domain == HttpContext.Current.Request.Url.Host.ToLower())
+                    {
+                        return "/";
+                    }
+                    else
+                    {
+                        return string.Format("http://{0}/",
+                            domain);
+                    }
+                }
+            }
+        }
+
         public override string Uri
         {
             get
             {
-                return Linker.AppendSid(string.Format("/group/{0}",
-                    Slug));
+                return Linker.AppendSid(UriStub);
             }
         }
 
@@ -1148,8 +1188,8 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.AppendSid(string.Format("/group/{0}/members",
-                    Slug));
+                return Linker.AppendSid(string.Format("{0}members",
+                    UriStub));
             }
         }
 
@@ -1197,8 +1237,10 @@ namespace BoxSocial.Groups
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            DataTable groupsTable = core.db.Query(string.Format("SELECT {1} FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE gm.user_id = {0} ORDER BY group_name_display ASC;",
-                member.UserId, UserGroup.GROUP_INFO_FIELDS));
+            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            query.AddJoin(JoinTypes.Left, GetTable(typeof(GroupMember)), "group_id", "group_id");
+            query.AddCondition("user_id", member.Id);
+            DataTable groupsTable = core.db.Query(query);
 
             foreach (DataRow dr in groupsTable.Rows)
             {
@@ -1270,7 +1312,7 @@ namespace BoxSocial.Groups
                 VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
-                membersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                membersVariableCollection.Parse("U_PROFILE", member.Uri);
                 membersVariableCollection.Parse("ICON", member.UserIcon);
             }
 
@@ -1281,7 +1323,7 @@ namespace BoxSocial.Groups
                 VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
 
                 operatorsVariableCollection.Parse("USER_DISPLAY_NAME", groupOperator.DisplayName);
-                operatorsVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(groupOperator));
+                operatorsVariableCollection.Parse("U_PROFILE", groupOperator.Uri);
                 if (core.session.LoggedInMember != null)
                 {
                     if (groupOperator.UserId == core.session.LoggedInMember.UserId)
@@ -1298,7 +1340,7 @@ namespace BoxSocial.Groups
                 VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
 
                 officersVariableCollection.Parse("USER_DISPLAY_NAME", groupOfficer.DisplayName);
-                officersVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(groupOfficer));
+                officersVariableCollection.Parse("U_PROFILE", groupOfficer.Uri);
                 officersVariableCollection.Parse("OFFICER_TITLE", groupOfficer.OfficeTitle);
                 officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
             }
@@ -1338,7 +1380,7 @@ namespace BoxSocial.Groups
                     VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
 
                     approvalVariableCollection.Parse("USER_DISPLAY_NAME", approvalMember.DisplayName);
-                    approvalVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(approvalMember));
+                    approvalVariableCollection.Parse("U_PROFILE", approvalMember.Uri);
                     approvalVariableCollection.Parse("U_APPROVE", approvalMember.ApproveMemberUri);
                 }
 
@@ -1355,7 +1397,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("USER_COUNTRY", member.Country);
                 memberVariableCollection.Parse("USER_CAPTION", "");
 
-                memberVariableCollection.Parse("U_PROFILE", Linker.BuildProfileUri(member));
+                memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 if (!member.IsOperator)
                 {
                     // let's say you can't ban an operator, show ban link if not an operator

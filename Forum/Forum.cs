@@ -742,19 +742,15 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (Owner.GetType() == typeof(UserGroup))
+                if (forumId == 0)
                 {
-                    return Linker.AppendSid(string.Format("/group/{0}/forum/{1}/",
-                        Owner.Key, forumId));
-                }
-                else if (Owner.GetType() == typeof(Network))
-                {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/{1}/",
-                        Owner.Key, forumId));
+                    return Linker.AppendSid(string.Format("{0}forum/",
+                        Owner.UriStub));
                 }
                 else
                 {
-                    return "/";
+                    return Linker.AppendSid(string.Format("{0}forum/{1}/",
+                        Owner.UriStub, forumId));
                 }
             }
         }
@@ -763,20 +759,8 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (Owner.GetType() == typeof(UserGroup))
-                {
-                    return Linker.AppendSid(string.Format("/group/{0}/forum/post?f={1}&mode=post",
-                        Owner.Key, forumId));
-                }
-                else if (Owner.GetType() == typeof(Network))
-                {
-                    return Linker.AppendSid(string.Format("/network/{0}/forum/post?f={1}&mode=post",
-                        Owner.Key, forumId));
-                }
-                else
-                {
-                    return "/";
-                }
+                return Linker.AppendSid(string.Format("{0}forum/post?f={1}&mode=post",
+                    Owner.UriStub, forumId));
             }
         }
 

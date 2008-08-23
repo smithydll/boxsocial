@@ -82,8 +82,8 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                page.template.Parse("S_POST", string.Format("/group/{0}/forum/post",
-                    ((GPage)page).ThisGroup.Key));
+                page.template.Parse("S_POST", string.Format("{0}forum/post",
+                    ((GPage)page).ThisGroup.UriStub));
 
                 if (((GPage)page).ThisGroup.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
                 {

@@ -795,6 +795,14 @@ namespace BoxSocial.Networks
             }
         }
 
+        public override string UriStubAbsolute
+        {
+            get
+            {
+                return Linker.AppendAbsoluteSid(UriStub);
+            }
+        }
+
         public override string Uri
         {
             get

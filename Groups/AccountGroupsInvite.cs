@@ -132,8 +132,8 @@ namespace BoxSocial.Groups
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
                             emailTemplate.Parse("GROUP_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("U_GROUP", "http://zinzam.com" + "/group/" + thisGroup.Slug);
-                            emailTemplate.Parse("U_JOIN", "http://zinzam.com" + Linker.StripSid(thisGroup.JoinUri));
+                            emailTemplate.Parse("U_GROUP", Linker.StripSid(thisGroup.UriStubAbsolute));
+                            emailTemplate.Parse("U_JOIN", Linker.StripSid(Linker.AppendAbsoluteSid(thisGroup.JoinUri)));
 
                             ApplicationEntry ae = Application.GetExecutingApplication(core, LoggedInMember);
                             ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), "{TODO}", emailTemplate);

@@ -1187,8 +1187,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(User member, string galleryPath, string photoPath)
         {
-            return Linker.AppendSid(string.Format("/{0}/gallery/{1}/{2}",
-                member.UserName, galleryPath, photoPath));
+            return Linker.AppendSid(string.Format("{0}gallery/{1}/{2}",
+                member.UriStub, galleryPath, photoPath));
         }
 
         /// <summary>
@@ -1199,8 +1199,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(UserGroup thisGroup, string photoPath)
         {
-            return Linker.AppendSid(string.Format("/group/{0}/gallery/{1}",
-                thisGroup.Slug, photoPath));
+            return Linker.AppendSid(string.Format("{0}gallery/{1}",
+                thisGroup.UriStub, photoPath));
         }
 
         /// <summary>
@@ -1222,8 +1222,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("/group/gallery/{0}/?mode=upload",
-                thisGroup.Slug));
+            return Linker.AppendSid(string.Format("{0}?mode=upload",
+                thisGroup.UriStub));
         }
 
         /// <summary>
@@ -1244,8 +1244,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(User member)
         {
-            return Linker.AppendSid(string.Format("/{0}/gallery",
-                member.UserName.ToLower()));
+            return Linker.AppendSid(string.Format("{0}gallery",
+                member.UriStub));
         }
 
         /// <summary>
@@ -1262,8 +1262,8 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                return Linker.AppendSid(string.Format("/{0}/gallery/{1}",
-                    member.UserName.ToLower(), path));
+                return Linker.AppendSid(string.Format("{0}gallery/{1}",
+                    member.UriStub, path));
             }
         }
 
@@ -1274,8 +1274,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("/group/{0}/gallery",
-                thisGroup.Slug));
+            return Linker.AppendSid(string.Format("{0}gallery",
+                thisGroup.UriStub));
         }
 
         /// <summary>
@@ -1617,10 +1617,8 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                /*page.template.Parse("PAGINATION", Display.GeneratePagination(string.Format("/group/{0}/gallery",
-                    page.ThisGroup.Slug), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0)));*/
-                Display.ParsePagination(string.Format("/group/{0}/gallery",
-                    page.ThisGroup.Slug), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0));
+                Display.ParsePagination(string.Format("{0}gallery",
+                    page.ThisGroup.UriStub), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0));
 
             }
         }

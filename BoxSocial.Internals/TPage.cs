@@ -209,11 +209,7 @@ namespace BoxSocial.Internals
             Display.Core = core;
             Email.Core = core;
             Ajax.Core = core;
-
-            session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
-            loggedInMember = session.LoggedInMember;
-            tz = new UnixTime(UnixTime.UTC_CODE);
-            Display.page = this;
+            Linker.Core = core;
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -235,6 +231,11 @@ namespace BoxSocial.Internals
                     Core.PagePath = "/";
                 }
             }
+
+            session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
+            loggedInMember = session.LoggedInMember;
+            tz = new UnixTime(UnixTime.UTC_CODE);
+            Display.page = this;
 
             core.session = session;
             core.CoreDomain = AppDomain.CurrentDomain;

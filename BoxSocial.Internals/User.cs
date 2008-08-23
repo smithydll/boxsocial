@@ -1843,7 +1843,7 @@ namespace BoxSocial.Internals
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = "";
-            string path = string.Format("/{0}", UserName);
+            string path = this.UriStub;
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     DisplayName, path);
 
@@ -1852,10 +1852,10 @@ namespace BoxSocial.Internals
                 if (parts[i][0] != "")
                 {
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path + "/" + parts[i][0].TrimStart(new char[] { '*' }));
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
                     if (!parts[i][0].StartsWith("*"))
                     {
-                        path += "/" + parts[i][0];
+                        path += parts[i][0] + "/";
                     }
                 }
             }
@@ -1871,12 +1871,12 @@ namespace BoxSocial.Internals
                 {
                     if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
                     {
-                        return Linker.Uri + UserName + "/";
+                        return Linker.Uri + UserName.ToLower() + "/";
                     }
                     else
                     {
-                        return Linker.AppendSid(string.Format("/{0}/",
-                            UserName));
+                        return string.Format("/{0}/", 
+                            UserName.ToLower());
                     }
                 }
                 else
@@ -1894,11 +1894,27 @@ namespace BoxSocial.Internals
             }
         }
 
+        public override string UriStubAbsolute
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(domain))
+                {
+                    return Linker.AppendAbsoluteSid(UriStub);
+                }
+                else
+                {
+                    return Linker.AppendAbsoluteSid(string.Format("http://{0}/",
+                            domain));
+                }
+            }
+        }
+
         public override string Uri
         {
             get
             {
-                return UriStub;
+                return Linker.AppendSid(UriStub);
             }
         }
 

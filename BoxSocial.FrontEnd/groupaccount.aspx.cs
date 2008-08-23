@@ -174,11 +174,11 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", "/group/" + thisGroup.Key + "/account/");
+                    modulesVariableCollection.Parse("URI", thisGroup.UriStub + "account/");
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", "/group/" + thisGroup.Key + "/account/" + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", thisGroup.UriStub + "account/" + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)

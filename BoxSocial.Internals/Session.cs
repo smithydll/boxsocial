@@ -439,6 +439,18 @@ namespace BoxSocial.Internals
                     sessionId = (string)Request.QueryString["sid"];
                 }
 
+                if ((Linker.Domain != Linker.CurrentDomain) && (sessionId != (string)Request.QueryString["sid"]) && (!string.IsNullOrEmpty((string)Request.QueryString["sid"])))
+                {
+                    sessionData = new SessionCookie();
+                    sessionId = (string)Request.QueryString["sid"];
+                }
+
+                if ((Linker.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
+                {
+                    HttpContext.Current.Response.Redirect(Linker.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                }
+
                 sessionMethod = SessionMethods.Cookie;
             }
             else
@@ -551,8 +563,6 @@ namespace BoxSocial.Internals
                         newSessionSidCookie.Secure = false; // TODO: secure cookies
                         Response.Cookies.Add(newSessionSidCookie);
 
-
-
                         // Add the session_key to the userdata array if it is set
 
                         return;
@@ -573,10 +583,8 @@ namespace BoxSocial.Internals
 
             long userId = (sessionData != null && sessionData.userId > 0) ? sessionData.userId : 0;
 
-            if (HttpContext.Current.Request.Url.Host != Linker.Domain)
+            if ((Linker.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
             {
-                HttpContext.Current.Response.Redirect(Linker.Uri + string.Format("session.aspx?domain={0}&path={1}",
-                    HttpContext.Current.Request.Url.Host, ""));
             }
             else
             {
@@ -585,6 +593,11 @@ namespace BoxSocial.Internals
         }
 
         public void SessionEnd(string sessionId, long userId)
+        {
+            SessionEnd(sessionId, userId, null);
+        }
+
+        public void SessionEnd(string sessionId, long userId, DnsRecord record)
         {
             string cookieName = "hailToTheChef";
             //XmlSerializer xs;
@@ -617,27 +630,29 @@ namespace BoxSocial.Internals
             // but just in case it isn't, reset $userdata to the details for a guest
             //
 
-            SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
-            query.AddCondition("user_keys.user_id", 0);
-
-            DataTable userTable = db.Query(query);
-
-            if (userTable.Rows.Count == 1)
+            if (record == null)
             {
-                loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
+                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                query.AddCondition("user_keys.user_id", 0);
+
+                DataTable userTable = db.Query(query);
+
+                if (userTable.Rows.Count == 1)
+                {
+                    loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
+                }
+                HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
+                newSessionDataCookie.Value = "";
+                newSessionDataCookie.Expires = DateTime.Now.AddYears(-1);
+                newSessionDataCookie.Secure = false; // TODO: secure cookies
+                Response.Cookies.Add(newSessionDataCookie);
+
+                HttpCookie newSessionSidCookie = new HttpCookie(cookieName + "_sid");
+                newSessionSidCookie.Value = "";
+                newSessionSidCookie.Expires = DateTime.Now.AddYears(-1);
+                newSessionSidCookie.Secure = false; // TODO: secure cookies
+                Response.Cookies.Add(newSessionSidCookie);
             }
-
-            HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
-            newSessionDataCookie.Value = "";
-            newSessionDataCookie.Expires = DateTime.Now.AddYears(-1);
-            newSessionDataCookie.Secure = false; // TODO: secure cookies
-            Response.Cookies.Add(newSessionDataCookie);
-
-            HttpCookie newSessionSidCookie = new HttpCookie(cookieName + "_sid");
-            newSessionSidCookie.Value = "";
-            newSessionSidCookie.Expires = DateTime.Now.AddYears(-1);
-            newSessionSidCookie.Secure = false; // TODO: secure cookies
-            Response.Cookies.Add(newSessionSidCookie);
 
             return;
         }

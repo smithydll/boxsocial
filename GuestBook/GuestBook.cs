@@ -35,26 +35,26 @@ namespace BoxSocial.Applications.GuestBook
 
         public static string Uri(User member)
         {
-            return Linker.AppendSid(string.Format("/{0}/profile/comments",
-                member.UserName.ToLower()));
+            return Linker.AppendSid(string.Format("{0}profile/comments",
+                member.UriStub));
         }
 
         public static string Uri(UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("/group/{0}/comments",
-                thisGroup.Slug));
+            return Linker.AppendSid(string.Format("{0}comments",
+                thisGroup.UriStub));
         }
 
         public static string Uri(Network theNetwork)
         {
-            return Linker.AppendSid(string.Format("/network/{0}/comments",
-                theNetwork.NetworkNetwork));
+            return Linker.AppendSid(string.Format("{0}comments",
+                theNetwork.UriStub));
         }
 
         public static string Uri(ApplicationEntry anApplication)
         {
-            return Linker.AppendSid(string.Format("/application/{0}/comments",
-                anApplication.AssemblyName));
+            return Linker.AppendSid(string.Format("{0}comments",
+                anApplication.UriStub));
         }
 
         public static void Show(Core core, PPage page)
@@ -87,8 +87,6 @@ namespace BoxSocial.Applications.GuestBook
             breadCrumbParts.Add(new string[] { "comments", "Comments" });
 
             Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, UserGuestBookHook);
-            //page.template.Parse("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0)));
-            //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.Parse("L_GUESTBOOK", page.ProfileOwner.DisplayNameOwnership + " Guest Book");
             Display.ParsePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0));
             page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);

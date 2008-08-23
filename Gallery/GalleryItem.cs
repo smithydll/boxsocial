@@ -1139,10 +1139,8 @@ namespace BoxSocial.Applications.Gallery
                 }
                 Display.DisplayComments(page.template, page.ThisGroup, galleryItem);
 
-                string pageUri = string.Format("/group/{0}/gallery/{1}",
-                    HttpUtility.HtmlEncode(page.ThisGroup.Slug), photoName);
-                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
-                //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
+                string pageUri = string.Format("{0}gallery/{1}",
+                    HttpUtility.HtmlEncode(page.ThisGroup.UriStub), photoName);
                 Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
                 page.ThisGroup.ParseBreadCrumbs("gallery/" + galleryItem.Path);
 

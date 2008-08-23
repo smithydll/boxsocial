@@ -1153,12 +1153,12 @@ namespace BoxSocial.Groups
                 {
                     if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
                     {
-                        return Linker.Uri + "group/" + Slug + "/";
+                        return Linker.Uri + "group/" + Slug.ToLower() + "/";
                     }
                     else
                     {
-                        return Linker.AppendSid(string.Format("/group/{0}/",
-                            Slug));
+                        return string.Format("/group/{0}/",
+                            Slug.ToLower());
                     }
                 }
                 else
@@ -1172,6 +1172,22 @@ namespace BoxSocial.Groups
                         return string.Format("http://{0}/",
                             domain);
                     }
+                }
+            }
+        }
+
+        public override string UriStubAbsolute
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(domain))
+                {
+                    return Linker.AppendAbsoluteSid(UriStub);
+                }
+                else
+                {
+                    return Linker.AppendAbsoluteSid(string.Format("http://{0}/",
+                            domain));
                 }
             }
         }
@@ -1275,7 +1291,7 @@ namespace BoxSocial.Groups
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
-                page.template.Parse("U_ACCOUNT", Linker.AppendSid(page.ThisGroup.AccountUriStub));
+                page.template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(page.ThisGroup.AccountUriStub));
             }
 
             if (core.session.IsLoggedIn)
@@ -1417,8 +1433,8 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return string.Format("/group/{0}/account/",
-                    Key);
+                return string.Format("{0}account/",
+                    UriStub, Key);
             }
         }
 

@@ -122,6 +122,10 @@ namespace BoxSocial.FrontEnd
                         switch ((string)dnsTable.Rows[0]["dns_owner_type"])
                         {
                             case "GROUP":
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account(|/)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+
                                 patterns.Add(new string[] { @"^(|/)$", string.Format(@"/grouppage.aspx?gn={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;

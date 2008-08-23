@@ -562,6 +562,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public override string UriStubAbsolute
+        {
+            get
+            {
+                return Linker.AppendAbsoluteSid(UriStub);
+            }
+        }
+
         public override string Uri
         {
             get

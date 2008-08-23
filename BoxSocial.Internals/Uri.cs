@@ -35,9 +35,18 @@ namespace BoxSocial.Internals
 {
     public class Linker
     {
+        private static Core core;
         public static bool SecureUrls = false;
         public static bool SidUrls = false;
         private static string sid = "";
+
+        public static Core Core
+        {
+            set
+            {
+                core = value;
+            }
+        }
 
         public static string Sid
         {
@@ -52,6 +61,14 @@ namespace BoxSocial.Internals
             get
             {
                 return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
+            }
+        }
+
+        public static string CurrentDomain
+        {
+            get
+            {
+                return HttpContext.Current.Request.Url.Host.ToLower();
             }
         }
 
@@ -262,12 +279,26 @@ namespace BoxSocial.Internals
 
         public static string BuildLogoutUri()
         {
-            return AppendSid("/sign-in/?mode=sign-out", true);
+            if (Domain != CurrentDomain)
+            {
+                return AppendCoreSid(string.Format("/sign-in/?mode=sign-out&domain={0}", CurrentDomain), true);
+            }
+            else
+            {
+                return AppendCoreSid("/sign-in/?mode=sign-out", true);
+            }
         }
 
         public static string BuildLoginUri()
         {
-            return AppendSid("/sign-in/", true);
+            if (Domain != CurrentDomain)
+            {
+                return AppendCoreSid(string.Format("/sign-in/?domain={0}&redirect={1}", CurrentDomain, core.PagePath), true);
+            }
+            else
+            {
+                return AppendCoreSid("/sign-in/", true);
+            }
         }
 
         public static string BuildBlogPostUri(User member, int year, int month, long postId)
@@ -387,6 +418,40 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string AppendCoreSid(string uri)
+        {
+            return AppendCoreSid(uri, false);
+        }
+
+        public static string AppendCoreSid(string uri, bool forceSid)
+        {
+            if (Domain != CurrentDomain)
+            {
+                return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
+            }
+            else
+            {
+                return AppendSid(uri, forceSid);
+            }
+        }
+
+        public static string AppendAbsoluteSid(string uri)
+        {
+            return AppendAbsoluteSid(uri, false);
+        }
+
+        public static string AppendAbsoluteSid(string uri, bool forceSid)
+        {
+            if (!uri.StartsWith("http://"))
+            {
+                return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
+            }
+            else
+            {
+                return AppendSid(uri, forceSid);
+            }
+        }
+
         public static string StripSid(string uri)
         {
             int indexOfSid = uri.IndexOf("?sid");
@@ -406,52 +471,52 @@ namespace BoxSocial.Internals
 
         public static string BuildHomeUri()
         {
-            return AppendSid("/");
+            return AppendCoreSid("/");
         }
 
         public static string BuildAboutUri()
         {
-            return AppendSid("/about");
+            return AppendCoreSid("/about");
         }
 
         public static string BuildSafetyUri()
         {
-            return AppendSid("/safety");
+            return AppendCoreSid("/safety");
         }
 
         public static string BuildPrivacyUri()
         {
-            return AppendSid("/privacy");
+            return AppendCoreSid("/privacy");
         }
 
         public static string BuildTermsOfServiceUri()
         {
-            return AppendSid("/terms-of-service");
+            return AppendCoreSid("/terms-of-service");
         }
 
         public static string BuildRegisterUri()
         {
-            return AppendSid("/register");
+            return AppendCoreSid("/register");
         }
 
         public static string BuildHelpUri()
         {
-            return AppendSid("/help");
+            return AppendCoreSid("/help");
         }
 
         public static string BuildSitemapUri()
         {
-            return AppendSid("/site-map");
+            return AppendCoreSid("/site-map");
         }
 
         public static string BuildCopyrightUri()
         {
-            return AppendSid("/copyright");
+            return AppendCoreSid("/copyright");
         }
 
         public static string BuildAccountUri()
         {
-            return AppendSid("/account");
+            return AppendCoreSid("/account");
         }
     }
 }

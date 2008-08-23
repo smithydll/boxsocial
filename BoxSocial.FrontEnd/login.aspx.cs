@@ -39,12 +39,59 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             string redirect = (Request.Form["redirect"] != null) ? Request.Form["redirect"] : Request.QueryString["redirect"];
+            string domain = (Request.Form["domain"] != null) ? Request.Form["domain"] : Request.QueryString["domain"];
+            DnsRecord record = null;
+
+            if (!string.IsNullOrEmpty(domain))
+            {
+                try
+                {
+                    record = new DnsRecord(core, domain);
+                    if (Request.QueryString["mode"] == "sign-out")
+                    {
+                        session.SessionEnd(Request.QueryString["sid"], loggedInMember.UserId, record);
+
+                        if (!string.IsNullOrEmpty(redirect))
+                        {
+                            Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                        }
+                        else
+                        {
+                            Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/", true));
+                        }
+                    }
+                    else if (core.LoggedInMemberId > 0)
+                    {
+                        string sessionId = Request.QueryString["sid"];
+
+                        if (!string.IsNullOrEmpty(sessionId))
+                        {
+                            core.session.SessionEnd(sessionId, 0, record);
+                        }
+
+                        sessionId = core.session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
+
+                        Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                    }
+                }
+                catch (InvalidDnsRecordException)
+                {
+                    Display.ShowMessage("Error", "Error starting remote session");
+                    return;
+                }
+            }
 
             if (Request.QueryString["mode"] == "sign-out")
             {
                 //FormsAuthentication.SignOut();
                 // TODO: make better
-                session.SessionEnd(Request.QueryString["sid"], loggedInMember.UserId);
+                string sessionId = Request.QueryString["sid"];
+
+                if (!string.IsNullOrEmpty(sessionId))
+                {
+                    core.session.SessionEnd(sessionId, loggedInMember.UserId);
+                }
+
                 if (!string.IsNullOrEmpty(redirect))
                 {
                     Response.Redirect(redirect, true);
@@ -53,6 +100,7 @@ namespace BoxSocial.FrontEnd
                 {
                     Response.Redirect("/", true);
                 }
+                return;
             }
             if (Request.Form["submit"] != null)
             {
@@ -79,7 +127,7 @@ namespace BoxSocial.FrontEnd
                                 db.UpdateQuery(string.Format("UPDATE user_info SET user_new_password = '{0}', user_activate_code = '{1}' WHERE user_id = {2}",
                                     Mysql.Escape(newPassword), Mysql.Escape(activateCode), userEmail.Owner.Id));
 
-                                string activateUri = string.Format("http://zinzam.com/register/?mode=activate-password&id={0}&key={1}",
+                                string activateUri = string.Format(Linker.Uri + "register/?mode=activate-password&id={0}&key={1}",
                                     userEmail.Owner.Id, activateCode);
 
                                 // send the e-mail
@@ -127,6 +175,21 @@ namespace BoxSocial.FrontEnd
                         {
                             session.SessionBegin((long)userRow["user_id"], false, false);
                         }
+                        if ((!string.IsNullOrEmpty(domain)) && (record != null))
+                        {
+                            string sessionId = core.session.SessionBegin((long)userRow["user_id"], false, false, false, record);
+
+                            Linker.Sid = sessionId;
+                            if (!string.IsNullOrEmpty(redirect))
+                            {
+                                Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                            }
+                            else
+                            {
+                                Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/", true));
+                            }
+                            return;
+                        }
                         if (!string.IsNullOrEmpty(redirect))
                         {
                             if (redirect.StartsWith("/account"))
@@ -160,6 +223,7 @@ namespace BoxSocial.FrontEnd
                 template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));
             }
 
+            template.Parse("DOMAIN", domain);
             template.Parse("REDIRECT", redirect);
 
             EndResponse();

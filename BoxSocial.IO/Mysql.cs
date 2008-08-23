@@ -416,6 +416,8 @@ namespace BoxSocial.IO
                             return new DataFieldInfo(name, typeof(sbyte), length);
                         }
                     }
+                case "float":
+                    return new DataFieldInfo(name, typeof(float), 0);
                 case "varchar":
                     return new DataFieldInfo(name, typeof(string), length);
                 case "text":
@@ -471,6 +473,10 @@ namespace BoxSocial.IO
             {
                 return "tinyint(1) unsigned";
             }
+            else if (type.Type == typeof(float))
+            {
+                return "float";
+            }
             else if (type.Type == typeof(string))
             {
                 if (type.Length < 256)
@@ -525,6 +531,10 @@ namespace BoxSocial.IO
                     defaultValue = " DEFAULT 0";
                 }
             }
+            if (type.ToLower() == "float")
+            {
+                defaultValue = " DEFAULT 0";
+            }
 
             string query = string.Format(@"ALTER TABLE `{0}` ADD COLUMN `{1}` {2}{3}{4};",
                 Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull, defaultValue);
@@ -563,6 +573,10 @@ namespace BoxSocial.IO
                     {
                         defaultValue = " DEFAULT 0";
                     }
+                }
+                if (type.ToLower() == "float")
+                {
+                    defaultValue = " DEFAULT 0";
                 }
 
                 if (first)
@@ -677,6 +691,10 @@ namespace BoxSocial.IO
                     {
                         defaultValue = " DEFAULT 0";
                     }
+                }
+                if (type.ToLower() == "float")
+                {
+                    defaultValue = " DEFAULT 0";
                 }
 
                 if (field.IsUnique)

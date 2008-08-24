@@ -241,20 +241,19 @@ namespace BoxSocial.Internals
             core.CoreDomain = AppDomain.CurrentDomain;
 
             // Ensure that core applications are loaded
+            Stopwatch load = new Stopwatch();
+            load.Start();
             try
             {
                 System.Reflection.Assembly.Load("Profile");
                 System.Reflection.Assembly.Load("Groups");
                 System.Reflection.Assembly.Load("Networks");
-                /*System.Reflection.Assembly.Load("Calendar");
-                System.Reflection.Assembly.Load("GuestBook");
-                System.Reflection.Assembly.Load("Gallery");
-                System.Reflection.Assembly.Load("Blog");
-                System.Reflection.Assembly.Load("Pages");*/
             }
             catch
             {
             }
+            load.Stop();
+            //HttpContext.Current.Response.Write((load.ElapsedTicks / 10000000.0) .ToString() + " TPage()<br />");
 
             if (loggedInMember != null)
             {
@@ -284,8 +283,8 @@ namespace BoxSocial.Internals
                 HttpContext.Current.Response.Write(template.ToString());
                 timer.Stop();
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
-                /*Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries</p>", seconds, db.GetQueryCount()));
-                Response.Write(db.QueryList.Replace("\n", "<br />"));*/
+                //Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime()));
+                //Response.Write(db.QueryList.Replace("\n", "<br />"));
                 if (seconds < 0.5)
                 {
                     StreamWriter sw = new StreamWriter(Path.Combine(Path.Combine(Server.MapPath("."), "storage"), "time.log"), true);

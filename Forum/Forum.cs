@@ -722,6 +722,67 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public void MoveUp()
+        {
+            long parentOrder = 0;
+
+            if (parentId > 0)
+            {
+                Forum parent;
+
+                if (Owner is UserGroup)
+                {
+                    parent = new Forum(core, (UserGroup)Owner, ParentId);
+                }
+                else
+                {
+                    parent = new Forum(core, ParentId);
+                }
+                parentOrder = parent.Order;
+            }
+
+            if (parentOrder + 1 != Order)
+            {
+                core.db.BeginTransaction();
+
+                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+                uQuery.AddCondition("forum_order", ConditionEquality.LessThanEqual, Order);
+                uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+
+                core.db.Query(uQuery);
+
+                SetProperty("forumOrder", forumOrder - 1);
+                Update();
+            }
+        }
+
+        public void MoveDown()
+        {
+            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+            query.AddCondition("forum_parent_id", ParentId);
+            query.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+            query.AddSort(SortOrder.Descending, "forum_order");
+            query.LimitCount = 1;
+
+            DataTable forum = core.db.Query(query);
+
+            if (forum.Rows.Count == 1)
+            {
+                core.db.BeginTransaction();
+
+                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, Order);
+                uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+
+                core.db.Query(uQuery);
+
+                SetProperty("forumOrder", forumOrder + 1);
+                Update();
+            }
+        }
+
         public override long Id
         {
             get

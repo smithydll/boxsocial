@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -430,6 +431,8 @@ namespace BoxSocial.Internals
 
         public static void LoadApplications(Core core, AppPrimitives primitive, string uri, List<ApplicationEntry> applicationsList)
         {
+            Stopwatch load = new Stopwatch();
+            load.Start();
             foreach (ApplicationEntry ae in applicationsList)
             {
                 if (ae.SlugMatch(uri))
@@ -489,6 +492,8 @@ namespace BoxSocial.Internals
                     }
                 }
             }
+            load.Stop();
+            //HttpContext.Current.Response.Write((load.ElapsedTicks / 10000000.0).ToString() + " LoadApplications()<br />");
         }
 
         public static Application GetApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)

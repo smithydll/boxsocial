@@ -31,10 +31,12 @@ namespace BoxSocial.IO
     {
         protected string connectionString;
         protected int queryCount;
+        protected long queryTime;
 
         public Database()
         {
             queryCount = 0;
+            queryTime = 0;
         }
 
         public Database(string connectionString)
@@ -71,6 +73,11 @@ namespace BoxSocial.IO
         public int GetQueryCount()
         {
             return queryCount;
+        }
+
+        public double GetQueryTime()
+        {
+            return queryTime / 10000000.0;
         }
 
         public abstract bool TableExists(string tableName);

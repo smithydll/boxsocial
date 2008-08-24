@@ -61,6 +61,8 @@ namespace BoxSocial.Applications.Forum
             AddModeHandler("edit", new ModuleModeHandler(AccountForumManage_New));
             AddSaveHandler("new", new EventHandler(AccountForumManage_New_Save));
             AddSaveHandler("edit", new EventHandler(AccountForumManage_Edit_Save));
+            AddModeHandler("move-up", new ModuleModeHandler(AccountForumManage_Move));
+            AddModeHandler("move-down", new ModuleModeHandler(AccountForumManage_Move));
         }
 
         void AccountForumManage_Show(object sender, EventArgs e)
@@ -105,6 +107,8 @@ namespace BoxSocial.Applications.Forum
                     forumVariableCollection.Parse("U_SUB_FORUMS", BuildUri("forum", forum.Id));
                     forumVariableCollection.Parse("U_VIEW", forum.Uri);
                     forumVariableCollection.Parse("U_EDIT", BuildUri("forum", "edit", forum.Id));
+                    forumVariableCollection.Parse("U_MOVE_UP", BuildUri("forum", "move-up", forum.Id));
+                    forumVariableCollection.Parse("U_MOVE_DOWN", BuildUri("forum", "move-down", forum.Id));
                 }
             }
 
@@ -280,6 +284,44 @@ namespace BoxSocial.Applications.Forum
                 SetRedirectUri(BuildUri("forum", forum.ParentId));
             }
             Display.ShowMessage("Forum updated", "You have updated the forum");
+        }
+
+        void AccountForumManage_Move(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long forumId = Functions.RequestLong("id", 0);
+
+            Forum forum;
+
+            try
+            {
+                if (Owner is UserGroup)
+                {
+                    forum = new Forum(core, (UserGroup)Owner, forumId);
+                }
+                else
+                {
+                    forum = new Forum(core, forumId);
+                }
+            }
+            catch (InvalidForumException)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            switch (e.Mode)
+            {
+                case "move-up":
+                    forum.MoveUp();
+                    Display.ShowMessage("Forum moved up", "You have moved the forum up in the list.");
+                    break;
+                case "move-down":
+                    forum.MoveDown();
+                    Display.ShowMessage("Forum moved down", "You have moved the forum down in the list.");
+                    break;
+            }
         }
     }
 }

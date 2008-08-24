@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Text;
 using System.Web;
 using MySql.Data;
@@ -82,6 +83,9 @@ namespace BoxSocial.IO
 
         private DataTable SelectQuery(string sqlquery)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
             QueryList += sqlquery + "\n";
@@ -96,6 +100,10 @@ namespace BoxSocial.IO
                 dataAdapter.Fill(resultSet);
 
                 resultTable = resultSet.Tables[0];
+
+                timer.Stop();
+                queryTime += timer.ElapsedTicks;
+
                 return resultTable;
             }
             catch (System.Exception ex)
@@ -127,6 +135,9 @@ namespace BoxSocial.IO
         /// <returns></returns>
         public override long UpdateQuery(string sqlquery)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             int rowsAffected = 0;
             queryCount++;
             QueryList += sqlquery + "\n";
@@ -165,6 +176,9 @@ namespace BoxSocial.IO
                 }
                 return TRANSACTION_ROLLBACK; // rollback
             }
+
+            timer.Stop();
+            queryTime += timer.ElapsedTicks;
 
             if (sqlquery.StartsWith("INSERT INTO"))
             {

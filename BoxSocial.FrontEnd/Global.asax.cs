@@ -36,7 +36,6 @@ namespace BoxSocial.FrontEnd
 {
     public partial class Global : System.Web.HttpApplication
     {
-
         protected void Application_Start(object sender, EventArgs e)
         {
             AppDomainSetup ads = AppDomain.CurrentDomain.SetupInformation;
@@ -54,6 +53,8 @@ namespace BoxSocial.FrontEnd
             }
 
             AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
+
+
         }
 
         protected void Application_End(object sender, EventArgs e)

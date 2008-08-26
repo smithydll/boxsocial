@@ -123,6 +123,8 @@ namespace BoxSocial.FrontEnd
                         switch ((string)dnsTable.Rows[0]["dns_owner_type"])
                         {
                             case "GROUP":
+                                patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
+
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/account(|/)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
@@ -131,6 +133,13 @@ namespace BoxSocial.FrontEnd
                                 patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;
                             case "USER":
+                                patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
+
+                                patterns.Add(new string[] { string.Format(@"^/styles/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+
+                                patterns.Add(new string[] { @"^/friends(|/)$", @"/viewfriends.aspx?un=$1" });
+                                patterns.Add(new string[] { @"^/friends/([0-9]+)(|/)$", @"/viewfriends.aspx?un=$1&page=$2" });
+
                                 patterns.Add(new string[] { @"^(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;

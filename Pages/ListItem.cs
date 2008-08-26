@@ -125,7 +125,7 @@ namespace BoxSocial.Applications.Pages
 
         public static SelectQuery ListItem_GetSelectQueryStub()
         {
-            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ListItem));
+            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ListItem), false);
 
             query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
             query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");

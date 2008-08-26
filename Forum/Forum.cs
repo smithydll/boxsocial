@@ -743,17 +743,28 @@ namespace BoxSocial.Applications.Forum
 
             if (parentOrder + 1 != Order)
             {
-                core.db.BeginTransaction();
+                SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+                query.AddCondition("forum_parent_id", ParentId);
+                query.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+                query.AddSort(SortOrder.Descending, "forum_order");
+                query.LimitCount = 1;
 
-                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
-                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
-                uQuery.AddCondition("forum_order", ConditionEquality.LessThanEqual, Order);
-                uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+                DataTable forum = core.db.Query(query);
 
-                core.db.Query(uQuery);
+                if (forum.Rows.Count == 1)
+                {
+                    core.db.BeginTransaction();
 
-                SetProperty("forumOrder", forumOrder - 1);
-                Update();
+                    UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
+                    uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+                    uQuery.AddCondition("forum_order", ConditionEquality.Equal, Order - 1);
+                    uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+
+                    core.db.Query(uQuery);
+
+                    SetProperty("forumOrder", forumOrder - 1);
+                    Update();
+                }
             }
         }
 
@@ -773,7 +784,7 @@ namespace BoxSocial.Applications.Forum
 
                 UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
                 uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, 1));
-                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, Order);
+                uQuery.AddCondition("forum_order", ConditionEquality.Equal, Order + 1);
                 uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
 
                 core.db.Query(uQuery);

@@ -713,12 +713,13 @@ namespace BoxSocial.Internals
                     output.Append("<li>");
                 }
                 output.Append("<a href=\"");
-                output.Append("/" + owner.UserName);
+                output.Append(owner.UriStub);
                 if ((string)pagesTable.Rows[i]["page_parent_path"] != "")
                 {
-                    output.Append("/" + (string)pagesTable.Rows[i]["page_parent_path"]);
+                    output.Append((string)pagesTable.Rows[i]["page_parent_path"]);
+                    output.Append("/");
                 }
-                output.Append("/" + (string)pagesTable.Rows[i]["page_slug"]);
+                output.Append((string)pagesTable.Rows[i]["page_slug"]);
                 output.Append("\">");
                 output.Append((string)pagesTable.Rows[i]["page_title"]);
                 output.Append("</a>");

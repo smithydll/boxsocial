@@ -1113,7 +1113,6 @@ namespace BoxSocial.Internals
             page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
 
             page.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
-            page.template.Parse("U_BLOG", Linker.BuildBlogUri(page.ProfileOwner));
             page.template.Parse("U_GALLERY", Linker.BuildGalleryUri(page.ProfileOwner));
             page.template.Parse("U_FRIENDS", Linker.BuildFriendsUri(page.ProfileOwner));
 

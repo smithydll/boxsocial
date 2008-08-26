@@ -1970,7 +1970,6 @@ namespace BoxSocial.Internals
             core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
 
             core.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
-            core.template.Parse("U_BLOG", Linker.BuildBlogUri(page.ProfileOwner));
             core.template.Parse("U_GALLERY", Linker.BuildGalleryUri(page.ProfileOwner));
             core.template.Parse("U_FRIENDS", Linker.BuildFriendsUri(page.ProfileOwner));
 

@@ -195,7 +195,7 @@ namespace BoxSocial.Applications.Blog
                     if (userId > 0)
                     {
                         core.LoadUserProfile(userId);
-                        Linker.BuildBlogUri(core.UserProfiles[userId]);
+                        Blog.BuildUri(core.UserProfiles[userId]);
                     }
                 }
                 else

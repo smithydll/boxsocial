@@ -452,9 +452,7 @@ namespace BoxSocial.Networks
                     break;
             }
 
-            SelectQuery query = Network.GetSelectQueryStub(typeof(Network));
-            query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
-            query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
+            SelectQuery query = Network.GetSelectQueryStub(NetworkLoadOptions.All);
             query.AddCondition("network_type", typeString);
 
             DataTable networksTable = core.db.Query(query);
@@ -822,12 +820,12 @@ namespace BoxSocial.Networks
 
         public string BuildJoinUri()
         {
-            return AccountModule.BuildModuleUri("networks", "memberships", "join", NetworkId);
+            return Linker.BuildAccountSubModuleUri("networks", "memberships", "join", NetworkId);
         }
 
         public string BuildLeaveUri()
         {
-            return AccountModule.BuildModuleUri("networks", "memberships", "leave", NetworkId);
+            return Linker.BuildAccountSubModuleUri("networks", "memberships", "leave", NetworkId);
         }
 
         public string BuildMemberListUri()

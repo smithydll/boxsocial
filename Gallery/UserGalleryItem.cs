@@ -150,7 +150,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public string BuildDeleteUri()
         {
-            return AccountModule.BuildModuleUri("galleries", "delete", true, string.Format("id={0}", Id));
+            return Linker.BuildAccountSubModuleUri("galleries", "delete", Id, true);
         }
 
         /// <summary>

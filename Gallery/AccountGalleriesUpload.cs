@@ -77,7 +77,6 @@ namespace BoxSocial.Applications.Gallery
                 Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
 
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
-                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
 
                 Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }

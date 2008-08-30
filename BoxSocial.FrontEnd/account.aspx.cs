@@ -159,12 +159,12 @@ namespace BoxSocial.FrontEnd
 
             if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {
-                template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/?module=profile&amp;sub=permissions\">Profile Permissions</a> panel.");
+                template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/profile/permissions\">Profile Permissions</a> panel.");
             }
 
             if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
             {
-                template.ParseRaw("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/?module=&amp;sub=preferences\">preferences</a>.");
+                template.ParseRaw("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/dashboard/preferences\">preferences</a>.");
             }
 
             Account accountObject = new Account(Core);
@@ -182,15 +182,16 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", "/account/");
+                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub);
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", "/account/" + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
                 {
+                    accountModule.SetOwner = loggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
                     try

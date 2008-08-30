@@ -362,7 +362,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1))));
@@ -478,7 +478,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", day)));

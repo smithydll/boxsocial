@@ -357,11 +357,11 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                     emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
-                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
+                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(core, this)));
+                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(core, this)));
 
                     AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
-                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
+                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                 }
                 else
@@ -408,11 +408,11 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                         emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(this)));
-                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(this)));
+                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(core, this)));
+                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(core, this)));
 
                         AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
-                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(this)), emailTemplate);
+                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                     }
                     else
@@ -507,14 +507,14 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.owner.Uri, calendarEvent.EventId));
         }
 
-        public static string BuildEventAcceptUri(Event calendarEvent)
+        public static string BuildEventAcceptUri(Core core, Event calendarEvent)
         {
-            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("mode={0}", "accept")), true);
+            return Linker.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
         }
 
-        public static string BuildEventRejectUri(Event calendarEvent)
+        public static string BuildEventRejectUri(Core core, Event calendarEvent)
         {
-            return Linker.AppendSid(AccountModule.BuildModuleUri("calendar", "invite-event", string.Format("id={0}", calendarEvent.EventId), string.Format("mode={0}", "reject")), true);
+            return Linker.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)
@@ -526,15 +526,12 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
-                page.template.Parse("U_EDIT_EVENT", AccountModule.BuildModuleUri("calendar", "new-event", true,
-                    "mode=edit",
-                    string.Format("id={0}", eventId)));
-                page.template.Parse("U_DELETE_EVENT", AccountModule.BuildModuleUri("calendar", "delete-event", true,
-                    string.Format("id={0}", eventId)));
+                page.template.Parse("U_EDIT_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", "edit", eventId, true));
+                page.template.Parse("U_DELETE_EVENT", Linker.BuildAccountSubModuleUri("calendar", "delete-event", eventId, true));
             }
 
             try

@@ -89,7 +89,7 @@ namespace BoxSocial.Applications.Gallery
                 return;
             }
 
-            template.SetTemplate("Gallery", "account_galleries_photo_edit");
+            SetTemplate("account_galleries_photo_edit");
 
             DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
                 LoggedInMember.UserId, photoId));

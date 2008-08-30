@@ -123,8 +123,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("NAME", ug.GalleryTitle);
                 galleryVariableCollection.Parse("ITEMS", Functions.LargeIntegerToString(ug.Items));
 
-                galleryVariableCollection.Parse("U_MANAGE", string.Format("/account/galleries/galleries?id={0}",
-                    ug.Id));
+                galleryVariableCollection.Parse("U_MANAGE", Linker.BuildAccountSubModuleUri(ModuleKey, "galleries", ug.Id));
                 galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(LoggedInMember, ug.FullPath));
                 galleryVariableCollection.Parse("U_EDIT", Linker.BuildGalleryEditUri(ug.Id));
                 galleryVariableCollection.Parse("U_DELETE", Linker.BuildGalleryDeleteUri(ug.Id));
@@ -217,7 +216,7 @@ namespace BoxSocial.Applications.Gallery
                 UserGallery gallery = new UserGallery(core, LoggedInMember, galleryId);
                 Gallery.Delete(core, gallery);
 
-                SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
+                SetRedirectUri(BuildUri("galleries", "galleries"));
                 Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");
             }
             catch
@@ -271,8 +270,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (UserGallery.Create(core, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
-                            SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
-                                string.Format("id={0}", parent.GalleryId)));
+                            SetRedirectUri(Linker.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
                             Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
@@ -317,8 +315,7 @@ namespace BoxSocial.Applications.Gallery
                         {
                             gallery.Update(core, title, slug, description, Functions.GetPermission());
 
-                            SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries",
-                                string.Format("id={0}", gallery.ParentId)));
+                            SetRedirectUri(Linker.BuildAccountSubModuleUri("galleries", "galleries", gallery.ParentId));
                             Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }

@@ -193,7 +193,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("mode", "join");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
                     "Confirm join group",
                     "Do you want to join the group `" + thisGroup.DisplayName + "`?",
                     hiddenFieldList);
@@ -401,7 +401,6 @@ namespace BoxSocial.Groups
                         {
                             // all ok, don't really need to do much, so let's do it
                             template.Parse("S_ID", string.Format("{0},{1}", groupId, userId));
-                            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
                             template.Parse("S_USERNAME", member.UserName);
                         }
                         else
@@ -659,7 +658,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("mode", "resign-operator");
             hiddenFieldList.Add("id", groupId.ToString());
 
-            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
                 "Are you sure you want to resign as operator from this group?",
                 "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
                 hiddenFieldList);

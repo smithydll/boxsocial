@@ -82,10 +82,8 @@ namespace BoxSocial.Applications.Pages
                 pagesVariableCollection.Parse("TITLE", levelString + page.Title);
                 pagesVariableCollection.Parse("UPDATED", tz.DateTimeToString(page.GetModifiedDate(tz)));
                 pagesVariableCollection.Parse("U_VIEW", page.Uri);
-                pagesVariableCollection.Parse("U_EDIT", string.Format("/account/pages/write?mode=edit&id={0}",
-                    page.Id));
-                pagesVariableCollection.Parse("U_DELETE", string.Format("/account/pages/write?mode=delete&id={0}",
-                    page.Id));
+                pagesVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(ModuleKey, "write", "edit", page.Id));
+                pagesVariableCollection.Parse("U_DELETE", Linker.BuildAccountSubModuleUri(ModuleKey, "write", "delete", page.Id));
 
                 if (i % 2 == 0)
                 {

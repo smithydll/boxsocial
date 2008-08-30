@@ -86,7 +86,6 @@ namespace BoxSocial.Groups
                         break;
                 }
 
-                template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
                 template.Parse("S_ID", groupId.ToString());
             }
             catch (InvalidGroupException)

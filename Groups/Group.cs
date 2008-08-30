@@ -1213,7 +1213,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "groups", "delete", GroupId);
+                return Linker.BuildAccountSubModuleUri("groups", "groups", "delete", GroupId, true);
             }
         }
 
@@ -1221,7 +1221,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "memberships", "join", GroupId);
+                return Linker.BuildAccountSubModuleUri("groups", "memberships", "join", GroupId, true);
             }
         }
 
@@ -1229,7 +1229,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "memberships", "leave", GroupId);
+                return Linker.BuildAccountSubModuleUri("groups", "memberships", "leave", GroupId, true);
             }
         }
 
@@ -1237,7 +1237,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "invite", true, string.Format("id={0}", GroupId));
+                return Linker.BuildAccountSubModuleUri("groups", "invite", GroupId, true);
             }
         }
 
@@ -1245,7 +1245,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return AccountModule.BuildModuleUri("groups", "resign-operator", true, string.Format("id={0}", GroupId));
+                return Linker.BuildAccountSubModuleUri("groups", "resign-operator", GroupId, true);
             }
         }
 

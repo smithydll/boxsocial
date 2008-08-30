@@ -448,6 +448,7 @@ namespace BoxSocial.Applications.Gallery
             galleryId = 0;
             path = "";
             parentPath = "";
+            userId = owner.Id;
         }
 
         /// <summary>
@@ -463,6 +464,11 @@ namespace BoxSocial.Applications.Gallery
             galleryId = 0;
             path = "";
             parentPath = "";
+
+            if (owner is User)
+            {
+                userId = owner.Id;
+            }
         }
 
         /// <summary>
@@ -494,6 +500,7 @@ namespace BoxSocial.Applications.Gallery
                 this.galleryId = 0;
                 this.path = "";
                 this.parentPath = "";
+                this.userId = owner.Id;
             }
         }
 
@@ -577,6 +584,7 @@ namespace BoxSocial.Applications.Gallery
             visits = (long)galleryRow["gallery_visits"];
             path = (string)galleryRow["gallery_path"];
             parentPath = (string)galleryRow["gallery_parent_path"];
+            userId = (long)galleryRow["user_id"];
         }
 
         /// <summary>
@@ -1321,11 +1329,7 @@ namespace BoxSocial.Applications.Gallery
 
             page.ProfileOwner.LoadProfileInfo();
 
-            long loggedIdUid = 0;
-            if (core.session.LoggedInMember != null)
-            {
-                loggedIdUid = core.session.LoggedInMember.UserId;
-            }
+            long loggedIdUid = core.LoggedInMemberId;
 
             UserGallery gallery;
             if (galleryPath != "")
@@ -1342,16 +1346,15 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    /*List<string[]> breadCrumbParts = new List<string[]>();
-                    breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+                    if (gallery.GalleryAccess.CanCreate)
+                    {
+                        page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(gallery.GalleryId));
+                    }
+                    if (gallery.Owner.Id == core.LoggedInMemberId)
+                    {
+                        page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(gallery.GalleryId));
+                    }
 
-                    page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));*/
-
-                    //page.template.ParseRaw("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + gallery.FullPath));
-                    page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(gallery.GalleryId));
-                    page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(gallery.GalleryId));
-
-                    //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0)));
                     Display.ParsePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
                 }
                 catch (InvalidGalleryException)
@@ -1363,7 +1366,20 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 gallery = new UserGallery(core, page.ProfileOwner);
-                page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
+
+                if (gallery.Owner.Id == core.LoggedInMemberId)
+                {
+                    page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
+                }
+            }
+
+            if (gallery.Id == 0)
+            {
+                page.template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
+            }
+            else
+            {
+                page.template.Parse("GALLERY_TITLE", gallery.GalleryTitle);
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
@@ -1415,7 +1431,6 @@ namespace BoxSocial.Applications.Gallery
             page.template.Parse("PHOTOS", galleryItems.Count.ToString());
 
             long galleryComments = 0;
-            /*for (int i = 0; i < photoTable.Rows.Count; i++)*/
             int i = 0;
             foreach (GalleryItem galleryItem in galleryItems)
             {
@@ -1550,7 +1565,6 @@ namespace BoxSocial.Applications.Gallery
                     licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
                 }
 
-                //page.template.Parse("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
                 Display.ParseSelectBox("S_GALLERY_LICENSE", "license", licenses, "0");
             }
             else
@@ -1725,7 +1739,6 @@ namespace BoxSocial.Applications.Gallery
                     licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
                 }
 
-                //page.template.Parse("S_GALLERY_LICENSE", Functions.BuildSelectBox("license", licenses, "0"));
                 Display.ParseSelectBox("S_GALLERY_LICENSE", "license", licenses, "0");
             }
             else
@@ -1795,8 +1808,6 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                /*page.template.Parse("PAGINATION", Display.GeneratePagination(string.Format("/network/{0}/gallery",
-                    page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0)));*/
                 Display.ParsePagination(string.Format("/network/{0}/gallery",
                     page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0));
 

@@ -346,7 +346,7 @@ namespace BoxSocial.Applications.Profile
                     }
                 }
 
-                template.Parse("REDIRECT_URI", "/account/?module=friends&sub=friends");
+                SetRedirectUri(BuildUri());
                 Display.ShowMessage("Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
                 return;
             }

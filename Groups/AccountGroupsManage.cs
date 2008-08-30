@@ -83,7 +83,7 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
                 groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_EDIT", AccountModule.BuildModuleUri(thisGroup, "groups", "edit"));
+                groupVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(thisGroup, "groups", "edit"));
                 groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
 
                 switch (thisGroup.GroupType)
@@ -113,7 +113,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("mode", "delete");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
                     "Are you sure you want to delete this group?",
                     "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
                     hiddenFieldList);

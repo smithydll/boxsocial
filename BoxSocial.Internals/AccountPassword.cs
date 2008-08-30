@@ -61,8 +61,6 @@ namespace BoxSocial.Internals
         {
             template.SetTemplate("account_password.html");
 
-            template.Parse("S_CHANGE_PASSWORD", Linker.AppendSid("/account", true));
-
             Save(new EventHandler(AccountPassword_Save));
         }
 

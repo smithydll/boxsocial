@@ -1,80 +1,119 @@
 <!-- INCLUDE page_header.html -->
-	<h2>{PHOTO_TITLE}</h2>
-	<p>{BREADCRUMBS}</p>
-	<!-- IF U_UPLOAD_PHOTO -->
-	<div id="new-stuff">
-		<span id="new-photo" class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
-	</div>
-	<!-- ENDIF -->
-	<div id="view-photo">
-	<script type="text/javascript">
-	<!--
+<div id="overview-profile" class="pane">
+  <h2>{PHOTO_TITLE}</h2>
+  <p>{BREADCRUMBS}</p>
+  <!-- IF U_UPLOAD_PHOTO -->
+  <div id="new-stuff">
+    <span id="new-photo" class="post-button">
+      <a href="{U_UPLOAD_PHOTO}">Upload Photo</a>
+    </span>
+  </div>
+  <!-- ENDIF -->
+  <div id="view-photo">
+    <script type="text/javascript">
+      <!--
 		var user_tags = new Array();
 	<!-- BEGIN user_tags -->
-		user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
-	<!-- END user_tags -->
-	-->
-	</script>
-	<dl>
-		<dt style="text-align: center;">
-			<span style="display: block; margin: auto; height: 0px; width: 640px; overflow:visible; text-align: left;">
-				<!-- BEGIN user_tags -->
-				<span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
-				<span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
-				<!-- END user_tags -->
-			</span>
-				<img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);"
+      user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
+      <!-- END user_tags -->
+      -->
+    </script>
+    <dl>
+      <dt style="text-align: center;">
+        <span style="display: block; margin: auto; height: 0px; width: 640px; overflow:visible; text-align: left;">
+          <!-- BEGIN user_tags -->
+          <span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
+          <span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
+          <!-- END user_tags -->
+        </span>
+        <img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);"
 					<!-- IF OWNER -->
-					onmousedown="CreateUserTagNearPointer({ID}, event);"
-					<!-- ENDIF -->
-				 />
-		</dt>
-		<!-- IF HAS_USER_TAGS -->
-		<dd>Tags: 
-			<ul>
-				<!-- BEGIN user_tags -->
-				<li onmouseover="ShowUserTag({user_tags.TAG_ID});" onmouseout="HideUserTag({user_tags.TAG_ID});">
-					<a href="{user_tags.U_MEMBER}">{user_tags.DISPLAY_NAME}</a>
-				</li>
-				<!-- END user_tags -->
-			</ul>
-		</dd>
-		<!-- ENDIF -->
-		<dd>
-			<div class="ratebar">
-				<p class="ratebar" style="margin: 0;"><a onmouseover="StarOver(1,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(1,{ID},'PHOTO')"><img src="{STAR_ONE}" alt="Rate this item as 1 star" id="rate-1s-1-PHOTO" class="{STAR_ONE_CLASS}" /></a><a onmouseover="StarOver(2,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(2,{ID},'PHOTO')"><img src="{STAR_TWO}" alt="Rate this item as 1 star" id="rate-2s-1-PHOTO" class="{STAR_TWO_CLASS}" /></a><a onmouseover="StarOver(3,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(3,{ID},'PHOTO')"><img src="{STAR_THREE}" alt="Rate this item as 1 star" id="rate-3s-1-PHOTO" class="{STAR_THREE_CLASS}" /></a><a onmouseover="StarOver(4,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(4,{ID},'PHOTO')"><img src="{STAR_FOUR}" alt="Rate this item as 1 star" id="rate-4s-1-PHOTO" class="{STAR_FOUR_CLASS}" /></a><a onmouseover="StarOver(5,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(5,{ID},'PHOTO')"><img src="{STAR_FIVE}" alt="Rate this item as 1 star" id="rate-5s-1-PHOTO" class="{STAR_FIVE_CLASS}" /></a>
-				{RATE_RATING}</p>
-			</div>
-		</dd>
-		<!-- IF PHOTO_DESCRIPTION -->
-		<dd><p>{PHOTO_DESCRIPTION}</p></dd>
-		<!-- ENDIF -->
-		<dd>{PHOTO_COMMENTS} comments.</dd>
-	</dl>
-	<!-- IF OWNER -->
-	<div id="x-stuff">
-		<span id="edit-photo" class="post-button"><a href="{U_EDIT}">Edit Details</a></span>
-		<span id="make-display-pic" class="post-button"><a href="{U_MARK_DISPLAY_PIC}">Make my Display Picture</a></span>
-		<span id="make-gallery-cover" class="post-button"><a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a></span>
-		<span id="rotate-left" class="img-button"><a href="{U_ROTATE_LEFT}"><img src="/images/rotate_left.png" alt="Rotate Left" /></a></span>
-		<span id="rotate-right" class="img-button"><a href="{U_ROTATE_RIGHT}"><img src="/images/rotate_right.png" alt="Rotate Right" /></a></span>
-    <span id="delete" class="img-button"><a href="{U_DELETE}"><img src="/images/delete.png" alt="Delete" /></a></span>
-	</div>
-	<!-- ENDIF -->
-	<div class="comment-pane" style="margin: 0 auto; width: 640px;">
-		<!-- INCLUDE pane.comments.html -->
-	</div>
-	<!-- IF PAGE_LICENSE -->
-	<p>
-	<!-- IF I_PAGE_LICENSE -->
-		<a href="{U_PAGE_LICENSE}"><img src="/images/{I_PAGE_LICENSE}" title="{PAGE_LICENSE}" alt="{PAGE_LICENSE}" /></a>
-	<!-- ELSE -->
-		<a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a>
-	<!-- ENDIF -->
-	<!-- IF I_PAGE_CLASSIFICATION -->
-		<img src="/images/{I_PAGE_CLASSIFICATION}" title="{PAGE_CLASSIFICATION}" alt="{PAGE_CLASSIFICATION}" />
-	<!-- ENDIF -->
-	</p>
-	<!-- ENDIF -->
-	</div>
+        onmousedown="CreateUserTagNearPointer({ID}, event);"
+        <!-- ENDIF -->
+        />
+      </dt>
+      <!-- IF HAS_USER_TAGS -->
+      <dd>
+        Tags:
+        <ul>
+          <!-- BEGIN user_tags -->
+          <li onmouseover="ShowUserTag({user_tags.TAG_ID});" onmouseout="HideUserTag({user_tags.TAG_ID});">
+            <a href="{user_tags.U_MEMBER}">{user_tags.DISPLAY_NAME}</a>
+          </li>
+          <!-- END user_tags -->
+        </ul>
+      </dd>
+      <!-- ENDIF -->
+      <dd>
+        <div class="ratebar">
+          <p class="ratebar" style="margin: 0;">
+            <a onmouseover="StarOver(1,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(1,{ID},'PHOTO')">
+              <img src="{STAR_ONE}" alt="Rate this item as 1 star" id="rate-1s-1-PHOTO" class="{STAR_ONE_CLASS}" />
+            </a><a onmouseover="StarOver(2,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(2,{ID},'PHOTO')">
+              <img src="{STAR_TWO}" alt="Rate this item as 1 star" id="rate-2s-1-PHOTO" class="{STAR_TWO_CLASS}" />
+            </a><a onmouseover="StarOver(3,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(3,{ID},'PHOTO')">
+              <img src="{STAR_THREE}" alt="Rate this item as 1 star" id="rate-3s-1-PHOTO" class="{STAR_THREE_CLASS}" />
+            </a><a onmouseover="StarOver(4,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(4,{ID},'PHOTO')">
+              <img src="{STAR_FOUR}" alt="Rate this item as 1 star" id="rate-4s-1-PHOTO" class="{STAR_FOUR_CLASS}" />
+            </a><a onmouseover="StarOver(5,1,'PHOTO')" onmouseout="StarOver(0,1,'PHOTO')" onclick="SubmitRating(5,{ID},'PHOTO')">
+              <img src="{STAR_FIVE}" alt="Rate this item as 1 star" id="rate-5s-1-PHOTO" class="{STAR_FIVE_CLASS}" />
+            </a>
+            {RATE_RATING}
+          </p>
+        </div>
+      </dd>
+      <!-- IF PHOTO_DESCRIPTION -->
+      <dd>
+        <p>{PHOTO_DESCRIPTION}</p>
+      </dd>
+      <!-- ENDIF -->
+      <dd>{PHOTO_COMMENTS} comments.</dd>
+    </dl>
+    <!-- IF OWNER -->
+    <div id="x-stuff">
+      <span id="edit-photo" class="post-button">
+        <a href="{U_EDIT}">Edit Details</a>
+      </span>
+      <span id="make-display-pic" class="post-button">
+        <a href="{U_MARK_DISPLAY_PIC}">Make my Display Picture</a>
+      </span>
+      <span id="make-gallery-cover" class="post-button">
+        <a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a>
+      </span>
+      <span id="rotate-left" class="img-button">
+        <a href="{U_ROTATE_LEFT}">
+          <img src="/images/rotate_left.png" alt="Rotate Left" />
+        </a>
+      </span>
+      <span id="rotate-right" class="img-button">
+        <a href="{U_ROTATE_RIGHT}">
+          <img src="/images/rotate_right.png" alt="Rotate Right" />
+        </a>
+      </span>
+      <span id="delete" class="img-button">
+        <a href="{U_DELETE}">
+          <img src="/images/delete.png" alt="Delete" />
+        </a>
+      </span>
+    </div>
+    <!-- ENDIF -->
+    <div class="comment-pane" style="margin: 0 auto; width: 640px;">
+      <!-- INCLUDE pane.comments.html -->
+    </div>
+    <!-- IF PAGE_LICENSE -->
+    <p>
+      <!-- IF I_PAGE_LICENSE -->
+      <a href="{U_PAGE_LICENSE}">
+        <img src="/images/{I_PAGE_LICENSE}" title="{PAGE_LICENSE}" alt="{PAGE_LICENSE}" />
+      </a>
+      <!-- ELSE -->
+      <a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a>
+      <!-- ENDIF -->
+      <!-- IF I_PAGE_CLASSIFICATION -->
+      <img src="/images/{I_PAGE_CLASSIFICATION}" title="{PAGE_CLASSIFICATION}" alt="{PAGE_CLASSIFICATION}" />
+      <!-- ENDIF -->
+    </p>
+    <!-- ENDIF -->
+  </div>
+</div>
 <!-- INCLUDE page_footer.html -->

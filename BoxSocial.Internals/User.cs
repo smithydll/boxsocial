@@ -2050,7 +2050,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "/account/";
+                if (Linker.Domain == Linker.CurrentDomain)
+                {
+                    return "/account/";
+                }
+                else
+                {
+                    return Linker.Uri + "account/";
+                }
             }
         }
 

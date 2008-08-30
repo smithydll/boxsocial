@@ -88,7 +88,6 @@ namespace BoxSocial.Groups
                 categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
             }
 
-            template.Parse("S_EDIT_GROUP", Linker.AppendSid("/account/", true));
             Display.ParseSelectBox(template, "S_CATEGORIES", "category", categories, category.ToString());
             template.Parse("S_GROUP_ID", thisGroup.GroupId.ToString());
             template.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);

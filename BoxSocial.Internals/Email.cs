@@ -80,7 +80,8 @@ namespace BoxSocial.Internals
             }
             catch (Exception ex)
             {
-                Display.ShowMessage("Error sending e-mail", ex.ToString());
+                // Do not show e-mail errors
+                //Display.ShowMessage("Error sending e-mail", ex.ToString());
             }
             /*mailClient.SendAsync(newMessage, null);
             mailClient.SendCompleted += new SendCompletedEventHandler(mailClient_SendCompleted);*/

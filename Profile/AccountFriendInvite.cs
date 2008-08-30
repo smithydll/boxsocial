@@ -64,8 +64,6 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_friend_invite");
 
-            template.Parse("S_INVITE_FRIEND", Linker.AppendSid("/account/", true));
-
             Save(new EventHandler(AccountFriendInvite_Send));
         }
 

@@ -79,7 +79,7 @@ namespace BoxSocial.Applications.Blog
             List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
 
             template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
-            template.Parse("U_NEW_BLOG_ROLL", AccountModule.BuildModuleUri(ModuleKey, Key, "new"));
+            template.Parse("U_NEW_BLOG_ROLL", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "new"));
 
             foreach (BlogRollEntry bre in blogRollEntries)
             {
@@ -95,8 +95,8 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 breVariableCollection.Parse("URI", bre.Uri);
-                breVariableCollection.Parse("U_EDIT", AccountModule.BuildModuleUri(ModuleKey, Key, "edit", bre.Id));
-                breVariableCollection.Parse("U_DELETE", AccountModule.BuildModuleUri(ModuleKey, Key, "delete", bre.Id));
+                breVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "edit", bre.Id));
+                breVariableCollection.Parse("U_DELETE", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "delete", bre.Id));
             }
         }
 
@@ -216,7 +216,7 @@ namespace BoxSocial.Applications.Blog
             hiddenFieldList.Add("mode", "delete");
             hiddenFieldList.Add("id", bre.Id.ToString());
 
-            Display.ShowConfirmBox(Linker.AppendSid("/account", true),
+            Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true),
                 "Confirm",
                 "Do you really want to delete this blog roll entry?",
                 hiddenFieldList);

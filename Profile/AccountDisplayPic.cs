@@ -65,8 +65,6 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.LoadProfileInfo();
 
-            template.Parse("S_DISPLAY_PICTURE", Linker.AppendSid("/account", true));
-
             if (!string.IsNullOrEmpty(LoggedInMember.UserThumbnail))
             {
                 template.Parse("I_DISPLAY_PICTURE", LoggedInMember.UserThumbnail);

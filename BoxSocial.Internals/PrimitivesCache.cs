@@ -124,7 +124,7 @@ namespace BoxSocial.Internals
         public void LoadUserProfile(long userId)
         {
             PrimitiveId key = new PrimitiveId("USER", userId);
-            if (!primitivesCached.ContainsKey(key))
+            if ((!primitivesCached.ContainsKey(key)) && (!batchedPrimitivesIds.Contains(key)))
             {
                 batchedPrimitivesIds.Add(key);
             }

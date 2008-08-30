@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
     {
         [DataField("user_id", DataFieldKeys.Unique)]
         private long userId;
-        [DataField("user_name", 64)]
+        [DataField("user_name", DataFieldKeys.Unique, 64)]
         private string userName;
         [DataField("user_reg_ip", 50)]
         private string registrationIp;

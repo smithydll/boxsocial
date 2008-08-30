@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Pages
                 {
                     List newList = List.Create(core, title, ref slug, listAbstract, type, Functions.GetPermission());
 
-                    SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
+                    SetRedirectUri(BuildUri("lists"));
                     Display.ShowMessage("List Created", "You have created a new list");
                     return;
                 }
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Pages
                             Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
 
-                        SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
+                        SetRedirectUri(Linker.BuildAccountSubModuleUri(ModuleKey, "lists"));
                         Display.ShowMessage("List Saved", "You have saved the list");
                         return;
                     }
@@ -275,7 +275,7 @@ namespace BoxSocial.Applications.Pages
                     // Can ignore
                 }
 
-                SetRedirectUri(AccountModule.BuildModuleUri("pages", "lists"));
+                SetRedirectUri(Linker.BuildAccountSubModuleUri(ModuleKey, "lists"));
                 Display.ShowMessage("List Deleted", "You have deleted a list.");
                 return;
             }

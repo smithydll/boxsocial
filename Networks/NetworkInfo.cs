@@ -36,7 +36,7 @@ namespace BoxSocial.Networks
     {
         [DataField("network_id", DataFieldKeys.Primary)]
         private long networkId;
-        [DataField("network_network", 24)]
+        [DataField("network_network", DataFieldKeys.Unique, 24)]
         private string networkNetwork;
         [DataField("network_name_display", 45)]
         private string displayName;

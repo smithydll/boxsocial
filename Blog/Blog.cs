@@ -544,7 +544,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (page.ProfileOwner.UserId == core.LoggedInMemberId)
                 {
-                    page.template.Parse("U_POST", AccountModule.BuildModuleUri("blog", "write"));
+                    page.template.Parse("U_POST", Linker.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
                 }
             }
 

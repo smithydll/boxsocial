@@ -102,7 +102,6 @@ namespace BoxSocial.Networks
         void AccountNetworksMemberships_Join(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_network_join");
-            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
 
             AuthoriseRequestSid();
 
@@ -232,7 +231,7 @@ namespace BoxSocial.Networks
                 hiddenFieldList.Add("sub", "leave");
                 hiddenFieldList.Add("id", networkId.ToString());
 
-                Display.ShowConfirmBox(Linker.AppendSid("/account", true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
+                Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
             }
             else
             {

@@ -115,8 +115,8 @@ namespace BoxSocial.FrontEnd
 
                 if (loggedInMember != null)
                 {
-                    template.Parse("U_INVITE", Linker.AppendSid("/account/?module=friends&sub=invite"));
-                    template.Parse("U_WRITE_BLOG", Linker.AppendSid("/account/?module=blog&sub=write"));
+                    template.Parse("U_INVITE", Linker.BuildAccountSubModuleUri("friends", "invite"));
+                    template.Parse("U_WRITE_BLOG", Linker.BuildAccountSubModuleUri("blog", "write"));
                 }
 
                 template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));

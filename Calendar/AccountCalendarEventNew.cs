@@ -216,8 +216,6 @@ namespace BoxSocial.Applications.Calendar
             template.Parse("S_LOCATION", location);
             template.Parse("S_DESCRIPTION", description);
 
-            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
-
             StringBuilder outputInvitees = null;
             StringBuilder outputInviteesIds = null;
 

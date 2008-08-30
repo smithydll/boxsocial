@@ -437,8 +437,24 @@ namespace BoxSocial.Internals
         {
             if (Request.QueryString["sid"] != session.SessionId)
             {
-                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
-                return;
+                if (string.IsNullOrEmpty(Request.QueryString["sid"]))
+                {
+                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    return;
+                }
+
+                SelectQuery query = new SelectQuery("user_sessions");
+                query.AddFields("user_id");
+                query.AddCondition("session_string", Request.QueryString["sid"]);
+                query.AddCondition("user_id", session.LoggedInMember.Id);
+                query.AddCondition("session_signed_in", true);
+                query.AddCondition("session_ip", session.IPAddress.ToString());
+
+                if (db.Query(query).Rows.Count == 0)
+                {
+                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    return;
+                }
             }
         }
 

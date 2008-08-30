@@ -91,7 +91,7 @@ namespace BoxSocial.Applications.Gallery
                 hiddenFieldList.Add("mode", "confirm");
                 hiddenFieldList.Add("id", ugi.Id.ToString());
 
-                Display.ShowConfirmBox(Linker.AppendSid("/account", true),
+                Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true),
                     "Confirm Delete Photo",
                     string.Format("Are you sure you want to delete the photo `{0}`",
                     ugi.Path), hiddenFieldList);
@@ -123,7 +123,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         photo.Delete(core);
 
-                        SetRedirectUri(AccountModule.BuildModuleUri("galleries", "galleries"));
+                        SetRedirectUri(BuildUri("galleries", "galleries"));
                         Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
                     }
                     // TODO: not photo owner exception

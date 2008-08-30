@@ -577,27 +577,6 @@ namespace BoxSocial.Internals
             template.Parse("SITE_TITLE", WebConfigurationManager.AppSettings["boxsocial-title"]);
             template.Parse("YEAR", DateTime.Now.Year.ToString());
 
-            /*string bgColour = "";
-
-            if (page.tz == null)
-            {
-                page.tz = new UnixTime(UnixTime.UTC_CODE);
-            }
-            double hour = page.tz.Now.Hour + page.tz.Now.Minute / 60.0;
-
-            if (hour > 12)
-            {
-                hour = 24 - hour;
-            }
-            float lum = (float)(Math.Sin(hour / 12.0 * Math.PI - Math.PI / 2) / 3.0 + 2 / 3.0);
-            int newhue = (int)(page.tz.Now.DayOfYear * (360.0 / 366.0)) % 360;
-            Color headColour = Display.HlsToRgb(newhue, 0.3F, lum);
-
-            bgColour = string.Format("{0:x2}{1:x2}{2:x2}", headColour.R, headColour.G, headColour.B);
-
-            template.Parse("HEAD_COLOUR", bgColour);
-            template.Parse("HEAD_FORE_COLOUR", ((lum < 0.5) ? "white" : "black"));*/
-
             template.Parse("HEAD_COLOUR", "ffffff");
             template.Parse("HEAD_FORE_COLOUR", "black");
 
@@ -615,7 +594,8 @@ namespace BoxSocial.Internals
             template.Parse("U_HELP", Linker.BuildHelpUri());
             template.Parse("U_SITEMAP", Linker.BuildSitemapUri());
             template.Parse("U_COPYRIGHT", Linker.BuildCopyrightUri());
-            template.Parse("U_ACCOUNT", Linker.BuildAccountUri());
+            template.Parse("U_SEARCH", Linker.BuildSearchUri());
+            template.Parse("S_SEARCH", Linker.BuildSearchUri());
 
             if (session != null)
             {
@@ -626,6 +606,7 @@ namespace BoxSocial.Internals
                     template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
+                    template.Parse("U_ACCOUNT", Linker.BuildAccountUri());
                 }
             }
         }

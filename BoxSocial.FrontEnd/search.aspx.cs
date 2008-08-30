@@ -76,9 +76,14 @@ namespace BoxSocial.FrontEnd
             string lastName = null;
             string userName = null;
 
-            Match match = Regex.Match(query, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
+            Match match = null;
 
-            if (match.Success)
+            if (!string.IsNullOrEmpty(query))
+            {
+                match = Regex.Match(query, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
+            }
+
+            if ((match != null) && match.Success)
             {
                 email = match.Value;
             }

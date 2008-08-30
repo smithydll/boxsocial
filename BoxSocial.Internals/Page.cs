@@ -1118,7 +1118,7 @@ namespace BoxSocial.Internals
 
             if (page.ProfileOwner.UserId == core.LoggedInMemberId)
             {
-                page.template.Parse("U_EDIT", AccountModule.BuildModuleUri("pages", "write", "mode=edit", string.Format("id={0}", thePage.PageId)));
+                page.template.Parse("U_EDIT", Linker.BuildAccountSubModuleUri("pages", "write", "edit", thePage.PageId, true));
             }
         }
 

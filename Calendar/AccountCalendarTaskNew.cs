@@ -183,8 +183,6 @@ namespace BoxSocial.Applications.Calendar
             ParseSelectBox("S_PERCENT_COMPLETE", "percent-complete", percentages, percentComplete.ToString());
             ParseSelectBox("S_PRIORITY", "priority", priorities, ((byte)priority).ToString());
 
-            template.Parse("S_FORM_ACTION", Linker.AppendSid("/account/", true));
-
             Save(new EventHandler(AccountCalendarTaskNew_Save));
         }
 

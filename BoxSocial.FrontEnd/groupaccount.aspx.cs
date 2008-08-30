@@ -174,15 +174,16 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", thisGroup.UriStub + "account/");
+                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub);
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", thisGroup.UriStub + "account/" + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
                 {
+                    accountModule.SetOwner = loggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
                     try

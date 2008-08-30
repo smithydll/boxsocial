@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Profile
                             hiddenFieldList.Add("mode", "block");
                             hiddenFieldList.Add("id", blockId.ToString());
 
-                            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid("/account/", true)),
+                            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
                                 "Delete as friend?",
                                 "Do you also want to delete this person from your friends list?",
                                 hiddenFieldList);

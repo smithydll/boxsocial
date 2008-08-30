@@ -49,6 +49,7 @@ namespace BoxSocial.Internals
         protected Core core;
         protected TPage page;
         protected Mysql db;
+        protected Primitive Owner;
         protected User loggedInMember;
         protected Template template;
         protected UnixTime tz;
@@ -56,6 +57,14 @@ namespace BoxSocial.Internals
         protected HttpResponse Response;
         protected HttpServerUtility Server;
         protected SessionState session;
+
+        public Primitive SetOwner
+        {
+            set
+            {
+                Owner = value;
+            }
+        }
 
         /// <summary>
         /// The assembly associated with the account module
@@ -109,7 +118,7 @@ namespace BoxSocial.Internals
         public void CreateTemplate()
         {
             template = new Template("1301.html");
-            template.Parse("U_ACCOUNT", Linker.AppendSid("/account", true));
+            template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
@@ -222,8 +231,23 @@ namespace BoxSocial.Internals
         {
             if (Request.QueryString["sid"] != session.SessionId)
             {
-                Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
-                return;
+                if (string.IsNullOrEmpty(Request.QueryString["sid"]))
+                {
+                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    return;
+                }
+
+                SelectQuery query = new SelectQuery("user_sessions");
+                query.AddCondition("session_string", Request.QueryString["sid"]);
+                query.AddCondition("user_id", session.LoggedInMember.Id);
+                query.AddCondition("session_signed_in", true);
+                query.AddCondition("session_ip", session.IPAddress.ToString());
+
+                if (db.Query(query).Rows.Count == 0)
+                {
+                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    return;
+                }
             }
         }
 
@@ -248,19 +272,8 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri()
         {
-            return Linker.AppendSid(string.Format("/account/{0}",
-                Key));
-        }
-
-        /// <summary>
-        /// Builds a URI to the module key given.
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module)
-        {
-            return Linker.AppendSid(string.Format("/account/{0}",
-                module));
+            return Linker.AppendSid(string.Format("{0}{1}",
+                Owner.AccountUriStub, Key));
         }
 
         /// <summary>
@@ -270,109 +283,18 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}",
-                Key, sub));
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given.
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub)
-        {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}",
-                module, sub));
-        }
-
-        public static string BuildModuleUri(Primitive owner, string module, string sub)
-        {
             return Linker.AppendSid(string.Format("{0}{1}/{2}",
-                owner.AccountUriStub, module, sub));
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending a mode query argument
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="mode">Mode query argument</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, string mode)
-        {
-            return BuildModuleUri(module, sub, mode, false);
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending a mode query argument
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="mode">Mode query argument</param>
-        /// <param name="appendSid">True if force appending SID, otherwise false</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, string mode, bool appendSid)
-        {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}",
-                module, sub, mode), appendSid);
+                Owner.AccountUriStub, Key, sub));
         }
 
         public string BuildModuleUri(string sub, string mode, bool appendSid)
         {
-            return BuildModuleUri(Key, sub, mode, appendSid);
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending a mode query argument, and an Id.
-        /// </summary>
-        /// <remarks>Always with the SID appended</remarks>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="mode">Mode query argument</param>
-        /// <param name="id">Id</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, string mode, long id)
-        {
-            return Linker.AppendSid(string.Format("/account/{0}/{1}?mode={2}&id={3}",
-                module, sub, mode, id), true);
+            return Linker.BuildAccountSubModuleUri(Owner, Key, sub, mode, appendSid);
         }
 
         public string BuildModuleUri(string sub, string mode, long id)
         {
-            return BuildModuleUri(Key, sub, mode, id);
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending additional query string arguments given.
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="arguments">Additional query string arguments</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, Dictionary<string, string> arguments)
-        {
-            string argumentList = "";
-            foreach (string key in arguments.Keys)
-            {
-                if (argumentList == "")
-                {
-                    argumentList = string.Format("?{0}={1}",
-                        key, arguments[key]);
-                }
-                else
-                {
-                    argumentList = string.Format("{0}&{1}={2}",
-                        argumentList, key, arguments[key]);
-                }
-            }
-
-            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
-                module, sub, argumentList));
+            return Linker.BuildAccountSubModuleUri(Owner, Key, sub, mode, id);
         }
 
         /// <summary>
@@ -399,52 +321,13 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
-                Key, sub, argumentList));
+            return Linker.AppendSid(string.Format("{0}{1}/{2}{3}",
+                Owner.AccountUriStub, Key, sub, argumentList));
         }
 
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending additional query string arguments given.
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="arguments">Additional query string arguments</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, params string[] arguments)
+        public string BuildUri(string module, string sub, params string[] arguments)
         {
-            return BuildModuleUri(module, sub, false, arguments);
-        }
-
-        /// <summary>
-        /// Builds a URI to the sub module key given of a module key given,
-        /// appending additional query string arguments given.
-        /// </summary>
-        /// <param name="module">Module key</param>
-        /// <param name="sub">Sub module key</param>
-        /// <param name="appendSid">True if force appending SID, otherwise false</param>
-        /// <param name="arguments">Additional query string arguments</param>
-        /// <returns>URI built</returns>
-        public static string BuildModuleUri(string module, string sub, bool appendSid, params string[] arguments)
-        {
-            string argumentList = "";
-
-            foreach (string argument in arguments)
-            {
-                if (argumentList == "")
-                {
-                    argumentList = string.Format("?{0}",
-                        argument);
-                }
-                else
-                {
-                    argumentList = string.Format("{0}&{1}",
-                        argumentList, argument);
-                }
-            }
-
-            return Linker.AppendSid(string.Format("/account/{0}/{1}{2}",
-                module, sub, argumentList), appendSid);
+            return Linker.BuildAccountSubModuleUri(Owner, module, sub, false, arguments);
         }
 
         /// <summary>

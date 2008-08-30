@@ -251,11 +251,14 @@ namespace BoxSocial.Internals
                 Type thisType = this.GetType();
                 FieldInfo fi = thisType.GetField(key, BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
-                if (fi.GetValue(this) != value)
+                if (!fi.GetValue(this).Equals(value))
                 {
                     fi.SetValue(this, value);
 
-                    updatedItems.Add(key);
+                    if (!updatedItems.Contains(key))
+                    {
+                        updatedItems.Add(key);
+                    }
                 }
             }
             catch
@@ -529,6 +532,11 @@ namespace BoxSocial.Internals
                 ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Edit));
             }
 
+            if (updatedItems.Count == 0)
+            {
+                return 0;
+            }
+
             SelectQuery sQuery = new SelectQuery(Item.GetTable(this.GetType()));
             UpdateQuery uQuery = new UpdateQuery(Item.GetTable(this.GetType()));
 
@@ -610,7 +618,7 @@ namespace BoxSocial.Internals
             {
                 long uniqueness = db.Query(sQuery).Rows.Count;
 
-                if (uniqueness != 0)
+                if (uniqueness != 1)
                 {
                     throw new RecordNotUniqueException();
                 }

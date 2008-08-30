@@ -292,7 +292,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", AccountModule.BuildModuleUri("calendar", "new-task", true,
+                page.template.Parse("U_NEW_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
@@ -371,13 +371,11 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", AccountModule.BuildModuleUri("calendar", "new-task", true,
+                page.template.Parse("U_NEW_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
-                page.template.Parse("U_EDIT_TASK", AccountModule.BuildModuleUri("calendar", "new-task", true,
-                    "mode=edit",
-                    string.Format("id={0}", taskId)));
+                page.template.Parse("U_EDIT_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
             }
 
             try
@@ -427,19 +425,19 @@ namespace BoxSocial.Applications.Calendar
 
         public static string BuildTaskUri(Task calendarTask)
         {
-            return Linker.AppendSid(string.Format("{0}/calendar/task/{1}",
-                calendarTask.owner.Uri, calendarTask.TaskId));
+            return Linker.AppendSid(string.Format("{0}calendar/task/{1}",
+                calendarTask.owner.UriStub, calendarTask.TaskId));
         }
 
         public static string BuildTasksUri(Primitive owner)
         {
-            return Linker.AppendSid(string.Format("{0}/calendar/tasks",
-                owner.Uri));
+            return Linker.AppendSid(string.Format("{0}calendar/tasks",
+                owner.UriStub));
         }
 
         public static string BuildTaskMarkCompleteUri(Task calendarTask)
         {
-            return AccountModule.BuildModuleUri("calendar", "mark-complete", true, string.Format("id={0}", calendarTask.Id));
+            return Linker.BuildAccountSubModuleUri("calendar", "mark-complete", calendarTask.Id, true);
         }
 
         public override string Uri

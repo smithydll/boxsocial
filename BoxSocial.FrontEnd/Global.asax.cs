@@ -97,8 +97,11 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    cUri = httpContext.Request.Url;
-                    currentURI = "/";
+                    if (httpContext.Request.RawUrl.Contains("default.aspx"))
+                    {
+                        cUri = httpContext.Request.Url;
+                        currentURI = "/";
+                    }
                 }
             }
 
@@ -137,8 +140,8 @@ namespace BoxSocial.FrontEnd
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^/friends(|/)$", @"/viewfriends.aspx?un=$1" });
-                                patterns.Add(new string[] { @"^/friends/([0-9]+)(|/)$", @"/viewfriends.aspx?un=$1&page=$2" });
+                                patterns.Add(new string[] { @"^/friends(|/)$", string.Format(@"/viewfriends.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/friends/([0-9]+)(|/)$", string.Format(@"/viewfriends.aspx?un={0}&page=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
                                 patterns.Add(new string[] { @"^(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });

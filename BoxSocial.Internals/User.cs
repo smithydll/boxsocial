@@ -685,7 +685,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    LoadItem("user_name", userName);
+                    LoadItem("user_name", userName, true);
                 }
                 catch (InvalidItemException)
                 {

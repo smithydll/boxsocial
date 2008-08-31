@@ -674,13 +674,16 @@ namespace BoxSocial.Applications.Gallery
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
-            DataTable photoTable = db.Query(string.Format(
-                @"SELECT {2}, {8}
-                    FROM gallery_items gi
-                    LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license
-                    WHERE (gi.gallery_item_access & {3:0} OR gi.user_id = {1}) AND gi.gallery_id = {0} AND gi.gallery_item_item_id = {6} AND gi.gallery_item_item_type = '{7}'
-                    LIMIT {4}, {5};",
-                galleryId, loggedIdUid, GalleryItem.GALLERY_ITEM_INFO_FIELDS, readAccessLevel, (currentPage - 1) * perPage, perPage, owner.Id, Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_id", galleryId);
+            query.AddCondition("gallery_item_item_id", owner.Id);
+            QueryCondition qc1 = query.AddCondition("gallery_item_item_type", owner.Type);
+            QueryCondition qc2 = qc1.AddCondition(new QueryOperation("gallery_item_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
+            qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            query.LimitStart = (currentPage - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable photoTable = db.Query(query);
 
             return photoTable.Rows;
         }

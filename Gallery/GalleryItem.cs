@@ -46,16 +46,6 @@ namespace BoxSocial.Applications.Gallery
     public abstract class GalleryItem : NumberedItem, ICommentableItem
     {
         /// <summary>
-        /// A list of database fields associated with a gallery photo.
-        /// </summary>
-        public const string GALLERY_ITEM_INFO_FIELDS = "gi.gallery_item_id, gi.gallery_item_title, gi.gallery_item_parent_path, gi.gallery_item_uri, gi.gallery_item_comments, gi.gallery_item_views, gi.gallery_item_rating, gi.user_id, gi.gallery_id, gi.gallery_item_item_id, gi.gallery_item_item_type, gi.gallery_item_access, gi.gallery_item_storage_path, gi.gallery_item_content_type, gi.gallery_item_abstract, gi.gallery_item_classification";
-
-        /// <summary>
-        /// Owner of the photo
-        /// </summary>
-        protected Primitive owner;
-
-        /// <summary>
         /// Owner of the photo's user Id
         /// </summary>
         [DataField("user_id")]
@@ -143,14 +133,38 @@ namespace BoxSocial.Applications.Gallery
         protected string itemAbstract;
 
         /// <summary>
-        /// Gallery photo license
+        /// 
         /// </summary>
-        private ContentLicense license;
+        [DataField("gallery_item_item_id")]
+        protected long itemItemId;
 
         /// <summary>
-        /// Gallery photo classification
+        /// 
         /// </summary>
-        private Classifications classification;
+        [DataField("gallery_item_item_type", 15)]
+        protected string itemItemType;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_classification")]
+        protected byte classification;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_license")]
+        protected byte license;
+
+        /// <summary>
+        /// Owner of the photo
+        /// </summary>
+        protected Primitive owner;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected ContentLicense licenseInfo;
 
         /// <summary>
         /// Gets the gallery photo Id
@@ -247,6 +261,10 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                if (itemAccess == null)
+                {
+                    itemAccess = new Access(core, permissions, Owner);
+                }
                 return itemAccess;
             }
         }
@@ -302,7 +320,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return license;
+                return licenseInfo;
             }
         }
 
@@ -313,7 +331,24 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return classification;
+                return (Classifications)classification;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || itemItemId != owner.Id || itemItemType != owner.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(itemItemType, itemItemId);
+                    owner = core.UserProfiles[itemItemType, itemItemId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -323,19 +358,27 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="path">Gallery item path</param>
-        protected GalleryItem(Core core, Primitive owner, string path) : base(core)
+        protected GalleryItem(Core core, Primitive owner, string path)
+            : base(core)
         {
             this.owner = owner;
 
-            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {5} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = '{3}' AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{4}';",
-                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(Gallery.GetParentPath(path)), Mysql.Escape(Gallery.GetNameFromPath(path)), Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
+            ItemLoad += new ItemLoadHandler(GalleryItem_ItemLoad);
+
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_item_parent_path", Gallery.GetParentPath(path));
+            query.AddCondition("gallery_item_uri", Gallery.GetNameFromPath(path));
+            query.AddCondition("gallery_item_item_id", owner.Id);
+            query.AddCondition("gallery_item_item_type", owner.Type);
+
+            DataTable galleryItemTable = db.Query(query);
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
+                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
                 try
                 {
-                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                    licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
                 }
                 catch (InvalidLicenseException)
                 {
@@ -353,15 +396,16 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        public GalleryItem(Core core, User owner, DataRow itemRow) : base(core)
+        public GalleryItem(Core core, User owner, DataRow itemRow)
+            : base(core)
         {
             this.db = db;
             this.owner = owner;
 
-            loadItemInfo(itemRow);
+            loadItemInfo(typeof(GalleryItem), itemRow);
             try
             {
-                loadLicenseInfo(itemRow);
+                licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
@@ -374,14 +418,15 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        protected GalleryItem(Core core, Primitive owner, DataRow itemRow) : base(core)
+        protected GalleryItem(Core core, Primitive owner, DataRow itemRow)
+            : base(core)
         {
             this.owner = owner;
 
-            loadItemInfo(itemRow);
+            loadItemInfo(typeof(GalleryItem), itemRow);
             try
             {
-                loadLicenseInfo(itemRow);
+                licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
@@ -393,14 +438,15 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        public GalleryItem(Core core, DataRow itemRow) : base(core)
+        public GalleryItem(Core core, DataRow itemRow)
+            : base(core)
         {
             // TODO: owner not set, no big worry
 
-            loadItemInfo(itemRow);
+            loadItemInfo(typeof(GalleryItem), itemRow);
             try
             {
-                loadLicenseInfo(itemRow);
+                licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
@@ -414,20 +460,27 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Gallery item owner</param>
         /// <param name="parent">Gallery item parent</param>
         /// <param name="path">Gallery item path</param>
-        public GalleryItem(Core core, User owner, Gallery parent, string path) : base(core)
+        public GalleryItem(Core core, User owner, Gallery parent, string path)
+            : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
-            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_parent_path = '{2}' AND gi.gallery_item_uri = {3} AND gi.user_id = {0}",
-                owner.UserId, GalleryItem.GALLERY_ITEM_INFO_FIELDS, Mysql.Escape(parent.FullPath), Mysql.Escape(path), ContentLicense.LICENSE_FIELDS));
+            ItemLoad += new ItemLoadHandler(GalleryItem_ItemLoad);
+
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_item_parent_path", Gallery.GetParentPath(path));
+            query.AddCondition("gallery_item_uri", Gallery.GetNameFromPath(path));
+            query.AddCondition("gallery_item_item_id", owner.Id);
+            query.AddCondition("gallery_item_item_type", owner.Type);
+
+            DataTable galleryItemTable = db.Query(query);
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
+                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
                 try
                 {
-                    loadLicenseInfo(galleryItemTable.Rows[0]);
+                    licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
                 }
                 catch (InvalidLicenseException)
                 {
@@ -445,27 +498,31 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemId">Gallery item Id</param>
-        protected GalleryItem(Core core, Primitive owner, long itemId) : base(core)
+        protected GalleryItem(Core core, Primitive owner, long itemId)
+            : base(core)
         {
             this.owner = owner;
 
-            DataTable galleryItemTable = db.Query(string.Format("SELECT {1}, {4} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {2} AND gi.gallery_item_item_id = {0} AND gi.gallery_item_item_type = '{3}'",
-                owner.Id, GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, Mysql.Escape(owner.Type), ContentLicense.LICENSE_FIELDS));
+            ItemLoad += new ItemLoadHandler(GalleryItem_ItemLoad);
 
-            if (galleryItemTable.Rows.Count == 1)
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_item_id", itemId);
+            query.AddCondition("gallery_item_item_id", owner.Id);
+            query.AddCondition("gallery_item_item_type", owner.Type);
+
+            DataTable galleryItemTable = db.Query(query);
+
+            try
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
-                try
-                {
-                    loadLicenseInfo(galleryItemTable.Rows[0]);
-                }
-                catch (InvalidLicenseException)
-                {
-                }
+                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new GalleryItemNotFoundException();
+            }
+            catch (InvalidLicenseException)
+            {
             }
         }
 
@@ -489,62 +546,41 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="itemId">Gallery item Id</param>
-        public GalleryItem(Core core, long itemId) : base(core)
+        public GalleryItem(Core core, long itemId)
+            : base(core)
         {
-            // TODO: owner not set, no big worry
+            ItemLoad += new ItemLoadHandler(GalleryItem_ItemLoad);
 
-            DataTable galleryItemTable = db.Query(string.Format("SELECT {0}, {2} FROM gallery_items gi LEFT JOIN licenses li ON li.license_id = gi.gallery_item_license WHERE gi.gallery_item_id = {1};",
-                GalleryItem.GALLERY_ITEM_INFO_FIELDS, itemId, ContentLicense.LICENSE_FIELDS));
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_item_id", itemId);
 
-            if (galleryItemTable.Rows.Count == 1)
+            DataTable galleryItemTable = db.Query(query);
+
+            try
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
-                try
-                {
-                    loadLicenseInfo(galleryItemTable.Rows[0]);
-                }
-                catch (InvalidLicenseException)
-                {
-                }
+                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new GalleryItemNotFoundException();
             }
-        }
-
-        /// <summary>
-        /// Loads the database information into the GalleryItem class object.
-        /// </summary>
-        /// <param name="itemRow"></param>
-        protected void loadItemInfo(DataRow itemRow)
-        {
-            itemId = (long)itemRow["gallery_item_id"];
-            itemTitle = (string)itemRow["gallery_item_title"];
-            parentPath = (string)itemRow["gallery_item_parent_path"];
-            path = (string)itemRow["gallery_item_uri"];
-            itemComments = (long)itemRow["gallery_item_comments"];
-            itemViews = (long)itemRow["gallery_item_views"];
-            itemRating = (float)itemRow["gallery_item_rating"];
-            permissions = (ushort)itemRow["gallery_item_access"];
-            itemAccess = new Access(core, permissions, owner);
-            contentType = (string)itemRow["gallery_item_content_type"];
-            storagePath = (string)itemRow["gallery_item_storage_path"];
-            if (!(itemRow["gallery_item_abstract"] is System.DBNull))
+            catch (InvalidLicenseException)
             {
-                itemAbstract = (string)itemRow["gallery_item_abstract"];
             }
-            parentId = (long)itemRow["gallery_id"];
-            classification = (Classifications)(byte)itemRow["gallery_item_classification"];
         }
 
-        /// <summary>
-        /// Loads the licensing information into the GalleryItem class object.
-        /// </summary>
-        /// <param name="itemRow"></param>
-        private void loadLicenseInfo(DataRow itemRow)
+        void GalleryItem_ItemLoad()
         {
-            license = new ContentLicense(core, itemRow);
+        }
+
+        public static SelectQuery GalleryItem_GetSelectQueryStub()
+        {
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
+            query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(ContentLicense)));
+            query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(ContentLicense)), "gallery_item_license", "license_id");
+
+            return query;
         }
 
         /// <summary>
@@ -919,6 +955,9 @@ namespace BoxSocial.Applications.Gallery
             {
                 UserGalleryItem photo = new UserGalleryItem(core, page.ProfileOwner, photoPath + "/" + photoName);
 
+                HttpContext.Current.Response.Write(photo.itemItemId);
+                HttpContext.Current.Response.Write(photo.userId);
+
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
                 if (!photo.ItemAccess.CanRead)
@@ -934,7 +973,11 @@ namespace BoxSocial.Applications.Gallery
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
                 page.template.Parse("PHOTO_TITLE", photo.ItemTitle);
                 page.template.Parse("PHOTO_ID", photo.ItemId.ToString());
-                page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(photo.ParentId));
+
+                if (page.ProfileOwner.Id == core.LoggedInMemberId)
+                {
+                    page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(photo.ParentId));
+                }
 
                 if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
@@ -951,12 +994,15 @@ namespace BoxSocial.Applications.Gallery
                 Display.RatingBlock(photo.ItemRating, page.template, photo.ItemId, "PHOTO");
 
                 page.template.Parse("ID", photo.ItemId.ToString());
-                page.template.Parse("U_MARK_DISPLAY_PIC", Linker.BuildMarkDisplayPictureUri(photo.ItemId));
-                page.template.Parse("U_MARK_GALLERY_COVER", Linker.BuildMarkGalleryCoverUri(photo.ItemId));
-                page.template.Parse("U_EDIT", Linker.BuildPhotoEditUri(photo.ItemId));
-                page.template.Parse("U_ROTATE_LEFT", Linker.BuildPhotoRotateLeftUri(photo.ItemId));
-                page.template.Parse("U_ROTATE_RIGHT", Linker.BuildPhotoRotateRightUri(photo.ItemId));
-                page.template.Parse("U_DELETE", photo.BuildDeleteUri());
+                if (page.ProfileOwner.Id == core.LoggedInMemberId)
+                {
+                    page.template.Parse("U_MARK_DISPLAY_PIC", Linker.BuildMarkDisplayPictureUri(photo.ItemId));
+                    page.template.Parse("U_MARK_GALLERY_COVER", Linker.BuildMarkGalleryCoverUri(photo.ItemId));
+                    page.template.Parse("U_EDIT", Linker.BuildPhotoEditUri(photo.ItemId));
+                    page.template.Parse("U_ROTATE_LEFT", Linker.BuildPhotoRotateLeftUri(photo.ItemId));
+                    page.template.Parse("U_ROTATE_RIGHT", Linker.BuildPhotoRotateRightUri(photo.ItemId));
+                    page.template.Parse("U_DELETE", photo.BuildDeleteUri());
+                }
 
                 switch (photo.Classification)
                 {

@@ -116,6 +116,11 @@ namespace BoxSocial.Internals
 
         protected void LoadItem(string uniqueIndex, object value)
         {
+            LoadItem(uniqueIndex, value, false);
+        }
+
+        protected void LoadItem(string uniqueIndex, object value, bool caseInsensitive)
+        {
             // 1. check index is unique
             // 2. Build query
             // 3. Execute query
@@ -144,7 +149,14 @@ namespace BoxSocial.Internals
                 query.AddFields(field.Name);
             }
 
-            query.AddCondition(keyField, value);
+            if (value is string && caseInsensitive)
+            {
+                query.AddCondition(new QueryFunction(keyField, QueryFunctions.ToLowerCase), ((string)value).ToLower());
+            }
+            else
+            {
+                query.AddCondition(keyField, value);
+            }
 
             DataTable itemTable = Query(query);
 

@@ -443,7 +443,10 @@ namespace BoxSocial.Applications.Pages
                     listVariableCollection.Parse("TITLE", listItem.Text);
                     listVariableCollection.Parse("URI", "FALSE");
 
-                    listVariableCollection.Parse("U_DELETE", Linker.BuildRemoveFromListUri(listItem.ListItemId));
+                    if (list.Owner.Id == core.LoggedInMemberId)
+                    {
+                        listVariableCollection.Parse("U_DELETE", Linker.BuildRemoveFromListUri(listItem.ListItemId));
+                    }
                 }
             }
             catch (InvalidListException)

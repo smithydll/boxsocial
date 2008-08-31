@@ -1209,8 +1209,9 @@ namespace BoxSocial.Internals
             query.AddField("user_last_visit_ut", 0);
             query.AddField("user_show_bbcode", 0x07);
             query.AddField("user_show_custom_styles", true);
+            query.AddField("user_new_password", "");
+            query.AddField("user_last_visit_ut", -30610224000L);
 
-            db.BeginTransaction();
             if (db.Query(query) < 0)
             {
                 HttpContext.Current.Response.Write(query.ToString());
@@ -1221,7 +1222,7 @@ namespace BoxSocial.Internals
 
             query = new InsertQuery("user_profile");
             query.AddField("user_id", userId);
-            query.AddField("profile_date_of_birth_ut", UnixTime.UnixTimeStamp(new DateTime(1000, 1, 1)));
+            query.AddField("profile_date_of_birth_ut", -30610224000L);
             query.AddField("profile_access", 0x3331);
 
             db.Query(query);
@@ -1284,8 +1285,8 @@ namespace BoxSocial.Internals
             {
             }
 
-            string activateUri = string.Format("http://zinzam.com/register/?mode=activate&id={0}&key={1}",
-                userId, activateKey);
+            string activateUri = string.Format("{0}register/?mode=activate&id={1}&key={2}",
+                Linker.Uri, userId, activateKey);
 
             RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "registration_welcome.eml");
 
@@ -1294,7 +1295,7 @@ namespace BoxSocial.Internals
             emailTemplate.Parse("USERNAME", userName);
             emailTemplate.Parse("PASSWORD", passwordClearText);
 
-            Email.SendEmail(eMail, "Welcome to ZinZam", emailTemplate.ToString());
+            Email.SendEmail(eMail, "Welcome to ZinZam (Account Activation E-mail)", emailTemplate.ToString());
 
             return newUser;
         }
@@ -1958,7 +1959,6 @@ namespace BoxSocial.Internals
 
             core.template.Parse("USER_SEXUALITY", page.ProfileOwner.Sexuality);
             core.template.Parse("USER_GENDER", page.ProfileOwner.Gender);
-            //core.template.ParseRaw("USER_AUTOBIOGRAPHY", Bbcode.Parse(HttpUtility.HtmlEncode(page.ProfileOwner.Autobiography), core.session.LoggedInMember));
             Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
             Display.ParseBbcode("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
             core.template.Parse("USER_AGE", age);
@@ -1967,6 +1967,7 @@ namespace BoxSocial.Internals
             core.template.Parse("USER_PROFILE_VIEWS", Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews));
             core.template.Parse("USER_SUBSCRIPTIONS", Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions));
             core.template.Parse("USER_COUNTRY", page.ProfileOwner.Country);
+            core.template.Parse("USER_RELIGION", page.ProfileOwner.Profile.Religion);
             core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
 
             core.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
@@ -2029,7 +2030,6 @@ namespace BoxSocial.Internals
             core.template.Parse("LISTS", listTable.Rows.Count.ToString());
 
             /* pages */
-            //core.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
             Display.ParsePageList(page.ProfileOwner, true);
 
             /* status */

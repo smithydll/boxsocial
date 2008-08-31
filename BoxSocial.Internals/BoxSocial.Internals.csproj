@@ -83,6 +83,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Country.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="DnsRecord.cs" />
     <Compile Include="Email.cs" />
@@ -114,12 +115,14 @@
     <Compile Include="Prose.cs" />
     <Compile Include="Rating.cs" />
     <Compile Include="RelationInfo.cs" />
+    <Compile Include="Religion.cs" />
     <Compile Include="RssDocument.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="ShowAttribute.cs" />
     <Compile Include="StatusFeed.cs" />
     <Compile Include="StatusMessage.cs" />
+    <Compile Include="ActionItem.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TPage.cs">
       <SubType>ASPXCodeBehind</SubType>

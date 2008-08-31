@@ -29,15 +29,21 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    [DataTable("user_status_messages")]
     public class StatusMessage : NumberedItem
     {
-        public const string STATUS_MESSAGE_FIELDS = "usm.status_id, usm.user_id, usm.status_message, usm.status_time_ut";
+        //public const string STATUS_MESSAGE_FIELDS = "usm.status_id, usm.user_id, usm.status_message, usm.status_time_ut";
 
+        [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
-        private User owner;
+        [DataField("user_id")]
         private long ownerId;
+        [DataField("status_message", 255)]
         private string statusMessage;
+        [DataField("status_time_ut")]
         private long timeRaw;
+
+        private User owner;
 
         public long StatusId
         {
@@ -76,14 +82,17 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        public StatusMessage(Core core, User owner, DataRow statusRow) : base(core)
+        public StatusMessage(Core core, User owner, DataRow statusRow)
+            : base(core)
         {
             this.owner = owner;
+            ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
 
-            loadStatusInfo(statusRow);
+            loadItemInfo(statusRow);
         }
 
-        private StatusMessage(Core core, User owner, long statusId, string statusMessage) : base(core)
+        private StatusMessage(Core core, User owner, long statusId, string statusMessage)
+            : base(core)
         {
             this.owner = owner;
             this.ownerId = owner.Id;
@@ -91,12 +100,8 @@ namespace BoxSocial.Internals
             this.statusMessage = statusMessage;
         }
 
-        private void loadStatusInfo(DataRow statusRow)
+        private void StatusMessage_ItemLoad()
         {
-            statusId = (long)statusRow["status_id"];
-            statusMessage = (string)statusRow["status_message"];
-            ownerId = (long)statusRow["user_id"];
-            timeRaw = (long)statusRow["status_time_ut"];
         }
 
         public static StatusMessage Create(Core core, User creator, string message)

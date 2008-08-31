@@ -28,19 +28,25 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Action
+    [DataTable("actions")]
+    public class Action : NumberedItem
     {
-        public const string FEED_FIELDS = "at.action_id, at.action_application, at.action_primitive_id, at.action_primitive_type, at.action_title, at.action_body, at.action_time_ut";
-
-        private Mysql db;
-
+        [DataField("action_id", DataFieldKeys.Primary)]
         private long actionId;
+        [DataField("action_title", 63)]
         private string title;
+        [DataField("action_body", 511)]
         private string body;
-        private int applicationId;
-        private Primitive owner;
+        [DataField("action_application")]
+        private long applicationId;
+        [DataField("action_primitive_id")]
         private long primitiveId;
+        [DataField("action_primitive_type", 15)]
+        private string primitiveType;
+        [DataField("action_time_ut")]
         private long timeRaw;
+
+        private Primitive owner;
 
         public long ActionId
         {
@@ -82,12 +88,34 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Action (Mysql db, Primitive owner, DataRow actionRow)
+        public Primitive Owner
         {
-            this.db = db;
-            this.owner = owner;
+            get
+            {
+                if (owner == null || primitiveId != owner.Id || primitiveType != owner.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(primitiveType, primitiveId);
+                    owner = core.UserProfiles[primitiveType, primitiveId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
 
-            loadActionRow(actionRow);
+        public Action(Core core, Primitive owner, DataRow actionRow)
+            : base(core)
+        {
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Action_ItemLoad);
+
+            loadItemInfo(actionRow);
+        }
+
+        private void Action_ItemLoad()
+        {
         }
 
         public DateTime GetTime(UnixTime tz)
@@ -95,14 +123,59 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        private void loadActionRow(DataRow actionRow)
+        public List<ActionItem> GetActionItems()
         {
-            actionId = (long)actionRow["action_id"];
-            applicationId = (int)actionRow["action_application"];
-            title = (string)actionRow["action_title"];
-            body = (string)actionRow["action_body"];
-            primitiveId = (long)actionRow["action_primitive_id"];
-            timeRaw = (long)actionRow["action_time_ut"];
+            return getSubItems(typeof(ActionItem)).ConvertAll<ActionItem>(new Converter<Item, ActionItem>(convertToActionItem));
+        }
+
+        public static List<Action> GetActions(Core core, User user, long itemId, string itemType)
+        {
+            List<Action> actions = new List<Action>();
+
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            query.AddJoin(JoinTypes.Inner, ActionItem.GetTable(typeof(ActionItem)), "action_id", "action_id");
+            query.AddCondition("user_id", user.Id);
+            query.AddCondition("item_id", itemId);
+            query.AddCondition("item_type", itemType);
+            query.AddSort(SortOrder.Descending, "status_time_ut");
+
+            DataTable actionsTable = core.db.Query(query);
+
+            foreach (DataRow dr in actionsTable.Rows)
+            {
+                actions.Add(new Action(core, user, dr));
+            }
+
+            return actions;
+        }
+
+        public ActionItem convertToActionItem(Item input)
+        {
+            return (ActionItem)input;
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return actionId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

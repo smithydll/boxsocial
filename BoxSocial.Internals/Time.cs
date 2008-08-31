@@ -505,13 +505,14 @@ namespace BoxSocial.Internals
         public DateTime DateTimeFromMysql(object p)
         {
             long timeStamp = (long)p;
-            long localTimeStamp = timeStamp + UnixTime.GetUtcOffset(timeZoneCode);
-            int hours = (int)(localTimeStamp / 60 / 60);
-            int minutes = (int)(localTimeStamp - hours * 60 * 60) / 60;
-            int seconds = (int)(localTimeStamp - hours * 60 * 60 - minutes * 60);
+            long localTimeStamp = timeStamp + (long)UnixTime.GetUtcOffset(timeZoneCode);
+            int days = (int)(localTimeStamp / 60L / 60L / 24L);
+            int hours = (int)((localTimeStamp - days * 60L * 60L * 24L) / 60 / 60);
+            int minutes = (int)((localTimeStamp - days * 60L * 60L * 24L - hours * 60L * 60L) / 60);
+            int seconds = (int)(localTimeStamp - days * 60L * 60L * 24L - hours * 60L * 60L - minutes * 60L);
 
             DateTime returnTime = new DateTime(1970, 1, 1, 0, 0, 0);
-            returnTime = returnTime.Add(new TimeSpan(hours, minutes, seconds));
+            returnTime = returnTime.Add(new TimeSpan(days, hours, minutes, seconds));
 
             return returnTime;
         }
@@ -526,7 +527,7 @@ namespace BoxSocial.Internals
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0);
             TimeSpan ts = input.Subtract(epoch);
 
-            return ts.Seconds + ts.Minutes * 60 + ts.Hours * 60 * 60 + ts.Days * 60 * 60 * 24 - UnixTime.GetUtcOffset(timeZoneCode);
+            return (long)ts.Seconds + ts.Minutes * 60L + ts.Hours * 60L * 60L + ts.Days * 60L * 60L * 24L - UnixTime.GetUtcOffset(timeZoneCode);
         }
 
         /// <summary>
@@ -539,7 +540,7 @@ namespace BoxSocial.Internals
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0);
             TimeSpan ts = input.Subtract(epoch);
 
-            return ts.Seconds + ts.Minutes * 60 + ts.Hours * 60 * 60 + ts.Days * 60 * 60 * 24;
+            return (long)ts.Seconds + ts.Minutes * 60L + ts.Hours * 60L * 60L + ts.Days * 60L * 60L * 24L;
         }
 
         /// <summary>

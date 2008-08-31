@@ -146,6 +146,52 @@ namespace BoxSocial.IO
             this.key = null;
         }
 
+        public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName)
+            : this(fieldName, parentType, fieldName, key, keyName)
+        {
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, DataFieldKeys key, string keyName)
+        {
+            this.fieldName = fieldName;
+            if (!string.IsNullOrEmpty(keyName))
+            {
+                this.isUnique = true;
+            }
+            else
+            {
+                this.isUnique = false;
+            }
+            this.isPrimaryKey = false;
+            this.length = 0;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
+            this.key = new UniqueKey(keyName);
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName, long fieldLength)
+            : this(fieldName, parentType, fieldName, key, keyName)
+        {
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, DataFieldKeys key, string keyName, long fieldLength)
+        {
+            this.fieldName = fieldName;
+            if (!string.IsNullOrEmpty(keyName))
+            {
+                this.isUnique = true;
+            }
+            else
+            {
+                this.isUnique = false;
+            }
+            this.isPrimaryKey = false;
+            this.length = fieldLength;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
+            this.key = new UniqueKey(keyName);
+        }
+
         public string FieldName
         {
             get

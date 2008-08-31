@@ -35,9 +35,8 @@ namespace BoxSocial.Internals
         {
             List<Action> feedItems = new List<Action>();
 
-            SelectQuery query = new SelectQuery("actions at");
-            query.AddFields(Action.FEED_FIELDS);
-            query.AddSort(SortOrder.Descending, "at.action_time_ut");
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 64;
 
             List<long> friendIds = owner.GetFriendIds(16);
@@ -53,7 +52,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow dr in feedTable.Rows)
                 {
-                    feedItems.Add(new Action(core.db, owner, dr));
+                    feedItems.Add(new Action(core, owner, dr));
                 }
             }
 

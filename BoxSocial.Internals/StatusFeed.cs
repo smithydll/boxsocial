@@ -40,9 +40,8 @@ namespace BoxSocial.Internals
         {
             List<StatusMessage> feedItems = new List<StatusMessage>();
 
-            SelectQuery query = new SelectQuery("user_status_messages usm");
-            query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
-            query.AddSort(SortOrder.Descending, "usm.status_time_ut");
+            SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+            query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 50;
             query.LimitStart = (page - 1) * 50;
@@ -74,9 +73,8 @@ namespace BoxSocial.Internals
 
             if (friendIds.Count > 0)
             {
-                SelectQuery query = new SelectQuery("user_status_messages usm");
-                query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
-                query.AddSort(SortOrder.Descending, "usm.status_time_ut");
+                SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+                query.AddSort(SortOrder.Descending, "status_time_ut");
                 query.AddCondition("user_id", ConditionEquality.In, friendIds);
                 query.LimitCount = limit;
                 query.LimitStart = (page - 1) * limit;
@@ -102,9 +100,8 @@ namespace BoxSocial.Internals
 
         public static StatusMessage GetLatest(Core core, User owner)
         {
-            SelectQuery query = new SelectQuery("user_status_messages usm");
-            query.AddFields(StatusMessage.STATUS_MESSAGE_FIELDS);
-            query.AddSort(SortOrder.Descending, "usm.status_time_ut");
+            SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+            query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 1;
 
@@ -145,8 +142,6 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(item.GetTime(core.tz)));
             }
 
-            //core.template.ParseRaw("PAGINATION", Display.GeneratePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0)));
-            //core.template.ParseRaw("BREADCRUMBS", Functions.GenerateBreadCrumbs(owner.UserName, "profile/status"));
             Display.ParsePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0));
             owner.ParseBreadCrumbs("profile/status");
         }

@@ -937,19 +937,18 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public Action GetMostRecentFeedAction(User owner)
         {
-            SelectQuery query = new SelectQuery("actions at");
-            query.AddFields(Action.FEED_FIELDS);
-            query.AddSort(SortOrder.Descending, "at.action_time_ut");
-            query.AddCondition("at.action_application", Id);
-            query.AddCondition("at.action_primitive_id", owner.Id);
-            query.AddCondition("at.action_primitive_type", owner.Type);
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            query.AddSort(SortOrder.Descending, "action_time_ut");
+            query.AddCondition("action_application", Id);
+            query.AddCondition("action_primitive_id", owner.Id);
+            query.AddCondition("action_primitive_type", owner.Type);
             query.LimitCount = 1;
 
             DataTable feedTable = db.Query(query);
 
             if (feedTable.Rows.Count == 1)
             {
-                return new Action(db, owner, feedTable.Rows[0]);
+                return new Action(core, owner, feedTable.Rows[0]);
             }
             else
             {

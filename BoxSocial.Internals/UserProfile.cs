@@ -82,6 +82,7 @@ namespace BoxSocial.Internals
         private byte dateofBirthDayRaw;
 
         private string countryName;
+        private string religionTitle;
 
         private Access profileAccess;
 
@@ -368,6 +369,20 @@ namespace BoxSocial.Internals
                 return profileComments;
             }
         }
+        public string Religion
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(religionTitle))
+                {
+                    return religionTitle;
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
 
         public short ReligionId
         {
@@ -401,7 +416,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (countryName != "")
+                if (!string.IsNullOrEmpty(countryName))
                 {
                     return countryName;
                 }
@@ -496,6 +511,18 @@ namespace BoxSocial.Internals
         void UserProfile_ItemLoad()
         {
             profileAccess = new Access(core, permissions, user);
+
+            if (!string.IsNullOrEmpty(CountryIso))
+            {
+                Country c = new Country(core, CountryIso);
+                countryName = c.Name;
+            }
+
+            if (ReligionId > 0)
+            {
+                Religion r = new Religion(core, ReligionId);
+                religionTitle = r.Title;
+            }
         }
 
         void UserProfile_ItemUpdated(object sender, EventArgs e)

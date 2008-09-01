@@ -643,6 +643,11 @@ namespace BoxSocial.IO
                 }
             }
 
+            if (type.ToLower() == "float")
+            {
+                defaultValue = " DEFAULT 0";
+            }
+
             string query = string.Format(@"ALTER TABLE `{0}` MODIFY COLUMN `{1}` {2}{3}{4};",
                 Mysql.Escape(tableName), Mysql.Escape(field.Name), type, notNull, defaultValue);
 

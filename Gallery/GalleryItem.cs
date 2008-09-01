@@ -60,7 +60,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo title
         /// </summary>
-        [DataField("gallery_item_title", 31)]
+        [DataField("gallery_item_title", 63)]
         protected string itemTitle;
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo path (slug)
         /// </summary>
-        [DataField("gallery_item_uri", 31)]
+        [DataField("gallery_item_uri", 63)]
         protected string path;
 
         /// <summary>
@@ -720,7 +720,10 @@ namespace BoxSocial.Applications.Gallery
                     throw new InvalidGalleryItemTypeException();
             }
 
+            title = Functions.TrimStringToWord(title);
+
             slug = GalleryItem.GetSlugFromFileName(fileName, slug);
+            slug = Functions.TrimStringWithExtension(slug);
 
             GalleryItem.EnsureGallerySlugUnique(core, parent, owner, ref slug);
 

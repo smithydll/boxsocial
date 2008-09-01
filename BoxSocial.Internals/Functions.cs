@@ -619,6 +619,11 @@ namespace BoxSocial.Internals
             return LargeIntegerToString((long)num);
         }
 
+        public static string TrimStringToWord(string input)
+        {
+            return TrimStringToWord(input, 60);
+        }
+
         public static string TrimStringToWord(string input, int max)
         {
             char[] spacers = { ' ', '.', '-', '!', '?', ')', ',', '#' };
@@ -640,6 +645,47 @@ namespace BoxSocial.Internals
             }
 
             return input;
+        }
+
+        public static string TrimStringWithExtension(string input)
+        {
+            return TrimStringWithExtension(input, 60);
+        }
+
+        public static string TrimStringWithExtension(string input, int max)
+        {
+            if (input.Length < max)
+            {
+                return input;
+            }
+
+            int posn = input.LastIndexOf('.');
+
+            if (posn > 0 && (input.Length - posn) <= 4)
+            {
+                return input = input.Substring(0, max - (input.Length - posn)) + input.Substring(posn);
+            }
+            else
+            {
+                return TrimString(input, max);
+            }
+        }
+
+        public static string TrimString(string input)
+        {
+            return TrimString(input, 60);
+        }
+
+        public static string TrimString(string input, int max)
+        {
+            if (input.Length < max)
+            {
+                return input;
+            }
+            else
+            {
+                return input.Substring(0, max);
+            }
         }
 
     }

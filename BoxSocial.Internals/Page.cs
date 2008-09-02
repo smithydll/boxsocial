@@ -548,10 +548,14 @@ namespace BoxSocial.Internals
             int order = 0;
             bool pageListOnly = (status == PageStatus.PageList);
 
+            title = Functions.TrimStringToWord(title);
+
             if (!pageListOnly)
             {
                 Navigation.GenerateSlug(title, ref slug);
             }
+
+            slug = Functions.TrimStringToWord(slug);
 
             // validate title;
 

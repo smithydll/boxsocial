@@ -1994,8 +1994,11 @@ namespace BoxSocial.Internals
                 core.template.Parse("HAS_PROFILE_INFO", "TRUE");
             }
 
-            core.template.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(page.ProfileOwner.UserId));
-            core.template.Parse("U_BLOCK_USER", Linker.BuildBlockUserUri(page.ProfileOwner.UserId));
+            if (core.LoggedInMemberId > 0)
+            {
+                core.template.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(page.ProfileOwner.UserId));
+                core.template.Parse("U_BLOCK_USER", Linker.BuildBlockUserUri(page.ProfileOwner.UserId));
+            }
 
             string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
 

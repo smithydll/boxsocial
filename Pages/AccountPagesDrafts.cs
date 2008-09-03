@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    [AccountSubModule("pages", "drafts")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "pages", "drafts")]
     public class AccountPagesDrafts : AccountSubModule
     {
         public override string Title
@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Pages
         {
             SetTemplate("account_pages_manage");
 
-            Pages myPages = new Pages(core, LoggedInMember);
+            Pages myPages = new Pages(core, Owner);
 
             List<Page> pages = myPages.GetPages(true);
 
@@ -82,8 +82,8 @@ namespace BoxSocial.Applications.Pages
                 pagesVariableCollection.Parse("TITLE", levelString + page.Title);
                 pagesVariableCollection.Parse("UPDATED", tz.DateTimeToString(page.GetModifiedDate(tz)));
                 pagesVariableCollection.Parse("U_VIEW", page.Uri);
-                pagesVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(ModuleKey, "write", "edit", page.Id));
-                pagesVariableCollection.Parse("U_DELETE", Linker.BuildAccountSubModuleUri(ModuleKey, "write", "delete", page.Id));
+                pagesVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", page.Id));
+                pagesVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", page.Id));
 
                 if (i % 2 == 0)
                 {

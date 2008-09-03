@@ -31,11 +31,11 @@ namespace BoxSocial.Applications.Pages
 {
     public class Pages
     {
-        private User owner;
+        private Primitive owner;
         private Core core;
         private Mysql db;
 
-        public Pages(Core core, User owner)
+        public Pages(Core core, Primitive owner)
         {
             this.owner = owner;
             this.core = core;
@@ -44,12 +44,20 @@ namespace BoxSocial.Applications.Pages
 
         public List<Page> GetPages(bool draft)
         {
+            return GetPages(draft, false);
+        }
+
+        public List<Page> GetPages(bool draft, bool all)
+        {
             List<Page> pages = new List<Page>();
 
-            SelectQuery query = new SelectQuery("user_pages");
-            query.AddFields(Page.GetFieldsPrefixed(typeof(Page)));
-            query.AddCondition("user_id", owner.Id);
-            query.AddCondition("page_list_only", false);
+            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            query.AddCondition("page_item_id", owner.Id);
+            query.AddCondition("page_item_type", owner.Type);
+            if (!all)
+            {
+                query.AddCondition("page_list_only", false);
+            }
             if (draft)
             {
                 query.AddCondition("page_status", "DRAFT");

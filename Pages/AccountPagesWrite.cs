@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    [AccountSubModule("pages", "write")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "pages", "write")]
     public class AccountPagesWrite : AccountSubModule
     {
         public override string Title
@@ -108,56 +108,42 @@ namespace BoxSocial.Applications.Pages
             {
                 if (Request.QueryString["mode"] == "edit")
                 {
-                    DataTable pageTable = db.Query(string.Format("SELECT upg.page_id, upg.page_text, upg.page_license, upg.page_access, upg.page_title, upg.page_slug, upg.page_parent_path, upg.page_parent_id, upg.page_classification FROM user_pages upg WHERE upg.page_id = {0};",
-                        pageId));
-
-                    if (pageTable.Rows.Count == 1)
+                    try
                     {
-                        pageParentId = (long)pageTable.Rows[0]["page_parent_id"];
-                        pageTitle = (string)pageTable.Rows[0]["page_title"];
-                        pageSlug = (string)pageTable.Rows[0]["page_slug"];
-                        pagePermissions = (ushort)pageTable.Rows[0]["page_access"];
-                        licenseId = (byte)pageTable.Rows[0]["page_license"];
+                        Page page = new Page(core, Owner, pageId);
 
-                        pageText = (string)pageTable.Rows[0]["page_text"];
-
-                        if (string.IsNullOrEmpty((string)pageTable.Rows[0]["page_parent_path"]))
-                        {
-                            pagePath = string.Format("{0}/", pageSlug);
-                        }
-                        else
-                        {
-                            pagePath = string.Format("{0}/{1}/", (string)pageTable.Rows[0]["page_parent_path"], pageSlug);
-                        }
-
-                        pageClassification = (Classifications)(byte)pageTable.Rows[0]["page_classification"];
+                        pageParentId = page.ParentId;
+                        pageTitle = page.Title;
+                        pageSlug = page.Slug;
+                        pagePermissions = page.Permissions;
+                        licenseId = page.LicenseId;
+                        pageText = page.Body;
+                        pagePath = page.FullPath;
+                        pageClassification = page.Classification;
+                    }
+                    catch (PageNotFoundException)
+                    {
+                        DisplayGenericError();
                     }
                 }
             }
 
-            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
-                LoggedInMember.UserId));
+            Pages myPages = new Pages(core, Owner);
+            List<Page> pagesList = myPages.GetPages(false, true);
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
             pages.Add("0", "/");
 
-            foreach (DataRow pageRow in pagesTable.Rows)
+            foreach (Page page in pagesList)
             {
-                if (string.IsNullOrEmpty((string)pageRow["page_parent_path"]))
-                {
-                    pages.Add(((long)pageRow["page_id"]).ToString(), (string)pageRow["page_slug"] + "/");
-                }
-                else
-                {
-                    pages.Add(((long)pageRow["page_id"]).ToString(), (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"] + "/");
-                }
+                pages.Add(page.Id.ToString(), page.FullPath);
 
                 if (pageId > 0)
                 {
-                    if (((string)pageRow["page_parent_path"] + "/").StartsWith(pagePath))
+                    if (page.FullPath.StartsWith(pagePath))
                     {
-                        disabledItems.Add(((long)pageRow["page_id"]).ToString());
+                        disabledItems.Add(page.Id.ToString());
                     }
                 }
             }
@@ -218,7 +204,7 @@ namespace BoxSocial.Applications.Pages
                     {
                         Page page = new Page(core, core.session.LoggedInMember, pageId);
 
-                        page.Update(core, core.session.LoggedInMember, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                        page.Update(core, Owner, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                     }
                     catch (PageNotFoundException)
                     {
@@ -226,7 +212,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    Page.Create(core, core.session.LoggedInMember, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    Page.Create(core, Owner, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                 }
             }
             catch (PageTitleNotValidException)
@@ -275,9 +261,9 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                Page page = new Page(core, LoggedInMember, pageId);
+                Page page = new Page(core, Owner, pageId);
 
-                if (page.Delete(core, LoggedInMember))
+                if (page.Delete(core, Owner))
                 {
                     SetRedirectUri(BuildUri("mange"));
                     Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");

@@ -41,10 +41,6 @@ namespace BoxSocial.Applications.Pages
         public AccountPages(Account account)
             : base(account)
         {
-            //RegisterSubModule += new RegisterSubModuleHandler(ManagePages);
-            //RegisterSubModule += new RegisterSubModuleHandler(WritePage);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageDrafts);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageLists);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)

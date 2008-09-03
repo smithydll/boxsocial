@@ -206,12 +206,6 @@ namespace BoxSocial.Internals
             return BuildAccountSubModuleUri("galleries", "galleries", "delete", galleryId, true);
         }
 
-        public static string BuildPageUri(User member, string pageSlug)
-        {
-            return AppendSid(string.Format("{0}{1}",
-                member.UriStub, pageSlug));
-        }
-
         public static string BuildPhotoUploadUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "upload", galleryId, true);

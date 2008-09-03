@@ -611,30 +611,30 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void ParsePageList(User owner, bool fragment)
+        public static void ParsePageList(Primitive owner, bool fragment)
         {
             ParsePageList(core.template, "PAGE_LIST", owner, fragment);
         }
 
-        public static void ParsePageList(string templateVar, User owner, bool fragment)
+        public static void ParsePageList(string templateVar, Primitive owner, bool fragment)
         {
             ParsePageList(core.template, templateVar, owner, fragment);
         }
 
-        public static void ParsePageList(Template template, string templateVar, User owner, bool fragment)
+        public static void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment)
         {
             template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment));
         }
 
-        public static string GeneratePageList(User owner, User loggedInMember, bool fragment)
+        public static string GeneratePageList(Primitive owner, User loggedInMember, bool fragment)
         {
             Database db = core.db;
 
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = User.GetMemberId(loggedInMember);
 
-            DataTable pagesTable = db.Query(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_icon FROM user_pages upg WHERE upg.user_id = {0} AND upg.page_status = 'PUBLISH' AND (page_access & {1:0} = {1:0} OR user_id = {2}) ORDER BY upg.page_order",
-                owner.UserId, readAccessLevel, loggedIdUid));
+            DataTable pagesTable = db.Query(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_icon FROM user_pages upg WHERE upg.page_item_id = {0} AND upg.page_item_type = '{1}' AND upg.page_status = 'PUBLISH' AND (page_access & {2:0} = {2:0} OR user_id = {3}) ORDER BY upg.page_order",
+                owner.Id, owner.Type, readAccessLevel, loggedIdUid));
             StringBuilder output = new StringBuilder();
 
             if (!fragment)

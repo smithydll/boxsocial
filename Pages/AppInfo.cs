@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Pages
 {
@@ -115,7 +116,7 @@ namespace BoxSocial.Applications.Pages
 
             aii.AddSlug("lists", @"^/lists(|/)$", AppPrimitives.Member);
             aii.AddSlug("lists", @"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
-            aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member);
+            aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group);
 
             aii.AddModule("pages");
 
@@ -143,7 +144,11 @@ namespace BoxSocial.Applications.Pages
         {
             if (sender is PPage)
             {
-                Page.Show(core, (PPage)sender, core.PagePathParts[1].Value);
+                Page.Show(core, ((PPage)sender).ProfileOwner, core.PagePathParts[1].Value);
+            }
+            else if (sender is GPage)
+            {
+                Page.Show(core, ((GPage)sender).ThisGroup, core.PagePathParts[1].Value);
             }
         }
 
@@ -165,7 +170,7 @@ namespace BoxSocial.Applications.Pages
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member;
+            return AppPrimitives.Member | AppPrimitives.Group;
         }
 
         void core_PageHooks(HookEventArgs eventArgs)

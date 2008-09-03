@@ -202,12 +202,13 @@ namespace BoxSocial.Applications.Pages
                 {
                     try
                     {
-                        Page page = new Page(core, core.session.LoggedInMember, pageId);
+                        Page page = new Page(core, Owner, pageId);
 
                         page.Update(core, Owner, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
                     }
                     catch (PageNotFoundException)
                     {
+                        DisplayGenericError();
                     }
                 }
                 else

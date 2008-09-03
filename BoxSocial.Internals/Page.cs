@@ -822,7 +822,7 @@ namespace BoxSocial.Internals
             Page parentPage = null;
             try
             {
-                parentPage = new Page(core, (User)owner, parent);
+                parentPage = new Page(core, owner, parent);
 
                 parentPath = parentPage.FullPath;
                 parent = parentPage.PageId;

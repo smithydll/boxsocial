@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountListsManage.cs" />
+    <Compile Include="AccountNavigationTabs.cs" />
     <Compile Include="AccountPages.cs" />
     <Compile Include="AccountPagesDrafts.cs" />
     <Compile Include="AccountPagesManage.cs" />
@@ -82,6 +83,7 @@
   <ItemGroup>
     <Content Include="templates\account_lists.html" />
     <Content Include="templates\account_list_edit.html" />
+    <Content Include="templates\account_navigation_tabs.html" />
     <Content Include="templates\account_pages_manage.html" />
     <Content Include="templates\account_write.html" />
     <Content Include="templates\viewpage.html" />

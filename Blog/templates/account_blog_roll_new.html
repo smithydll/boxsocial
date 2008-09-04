@@ -1,0 +1,34 @@
+﻿<h3>Blog Roll</h3>
+
+<p>You can add a blog to your blog roll that exists outside of ZinZam.</p>
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Add to Blog Roll</legend>
+    <dl>
+      <dt>
+        <label for="title">Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" />
+      </dd>
+      <dt>
+        <label for="uri">Uri</label>
+      </dt>
+      <dd>
+        <input type="text" id="uri" name="uri" value="{S_URI}" style="width: 100%;" />
+      </dd>
+      <dt></dt>
+      <dd>
+        <input type="submit" name="save" value="Save" />
+      </dd>
+    </dl>
+    <input type="hidden" name="module" value="blog" />
+    <input type="hidden" name="sub" value="blogroll" />
+    <!-- IF EDIT -->
+    <input type="hidden" name="id" value="{S_ID}" />
+    <input type="hidden" name="mode" value="edit" />
+    <!-- ELSE -->
+    <input type="hidden" name="mode" value="new" />
+    <!-- ENDIF -->
+  </fieldset>
+</form>

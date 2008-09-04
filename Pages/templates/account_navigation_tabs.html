@@ -1,0 +1,24 @@
+﻿<h3>Navigation Tabs</h3>
+
+<p>Note: Tab title is the same as the page title.</p>
+
+<table style="width: 100%">
+<tr>
+	<th>Tab Title</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN tab_list -->
+<!-- IF tab_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{tab_list.TITLE}</td>
+  <td><a href="{tab_list.U_MOVE_UP}">Move Up</a></td>
+	<td><a href="{tab_list.U_MOVE_DOWN}">Move Down</a></td>
+	<td><a href="{tab_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END tab_list -->
+</table>

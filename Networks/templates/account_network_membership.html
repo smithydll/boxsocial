@@ -1,0 +1,42 @@
+﻿<h3>Manage Network Memberships</h3>
+<p>Manage the memberships to networks you are a member of.</p>
+<span id="join-network" class="post-button"><a href="/networks">Join a Network</a></span>
+<!-- IF NETWORK_MEMBERSHIPS -->
+<table style="width: 100%">
+  <tr>
+    <th>Title</th>
+    <th>Type</th>
+    <th>Members</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <!-- BEGIN network_list -->
+  <!-- IF network_list.INDEX_EVEN -->
+  <tr class="even">
+    <!-- ELSE -->
+    <tr class="odd">
+      <!-- ENDIF -->
+      <td>{network_list.NETWORK_DISPLAY_NAME}</td>
+      <td>{network_list.NETWORK_TYPE}</td>
+      <td>
+        <a href="{network_list.U_MEMBERLIST}">{network_list.MEMBERS}</a>
+      </td>
+      <td>
+        <a href="{network_list.U_VIEW}">View</a>
+      </td>
+      <td>
+        <!-- IF network_list.U_LEAVE -->
+        <a href="{network_list.U_LEAVE}">Leave</a>
+        <!-- ELSE -->
+        <span title="Cannot Leave this Network">Leave</span>
+        <!-- ENDIF -->
+      </td>
+    </tr>
+    <!-- END network_list -->
+  </table>
+    <!-- ELSE -->
+    <p>
+      Not a member of any networks <a href="/networks">join a network now</a>.
+    </p>
+    <!-- ENDIF -->
+    

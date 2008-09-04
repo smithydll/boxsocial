@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Pages {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Edit List&lt;/h3&gt;
-        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Edit List&lt;/legend&gt;
         ///		&lt;dl&gt;
@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.Pages {
         ///			&lt;dd&gt;{S_LIST_TYPES}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;abstract&quot;&gt;List Abstract&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;
-        ///				&lt;textarea id=&quot;abstract&quot; name=&quot;abstract&quot; style=&quot;margin: 0px; width: 100%; height: 50px; border: solid 1px #666666;&quot; cols= [rest of string was truncated]&quot;;.
+        ///				&lt;textarea id=&quot;abstract&quot; name=&quot;abstract&quot; style=&quot;margin: 0px; width: 100%; height: 50px; border: solid 1px #666666;&quot; col [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_list_edit {
             get {
@@ -111,6 +111,15 @@ namespace BoxSocial.Applications.Pages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Navigation Tabs&lt;/h3&gt;.
+        /// </summary>
+        internal static string account_navigation_tabs {
+            get {
+                return ResourceManager.GetString("account_navigation_tabs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Pages&lt;/h3&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
@@ -144,7 +153,7 @@ namespace BoxSocial.Applications.Pages {
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Write Page&lt;/h3&gt;
         ///
-        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Write Page&lt;/legend&gt;
         ///		&lt;dl&gt;
@@ -152,7 +161,7 @@ namespace BoxSocial.Applications.Pages {
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; onchange=&quot;UpdateSlug();&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;slug&quot;&gt;Page Slug&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;label&gt;Parent: {S_PAGE_PARENT}&lt;/label&gt; &lt;label&gt;Slug: &lt;input type=&quot;text&quot; id=&quot;slug&quot; name=&quot;slug&quot; value=&quot;{S_SLUG}&quot; /&gt;&lt;/label&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;post&quot;&gt;Page Text&lt;/label&gt;&lt;/ [rest of string was truncated]&quot;;.
+        ///			&lt;dt&gt;&lt;label for=&quot;post&quot;&gt;Page Text&lt;/label&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_write {
             get {

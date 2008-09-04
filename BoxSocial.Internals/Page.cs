@@ -1049,13 +1049,13 @@ namespace BoxSocial.Internals
             if (this.owner == owner)
             {
                 UpdateQuery uquery = new UpdateQuery("user_pages");
-                uquery.AddField("page_order", new QueryField("page_order - 1"));
+                uquery.AddField("page_order", new QueryOperation("page_order", QueryOperations.Subtraction, 1));
                 uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
                 uquery.AddCondition("page_item_id", owner.Id);
                 uquery.AddCondition("page_item_type", owner.Type);
 
                 db.BeginTransaction();
-                if (db.Query(uquery) > 0)
+                if (db.Query(uquery) >= 0)
                 {
                     DeleteQuery dquery = new DeleteQuery("user_pages");
                     dquery.AddCondition("page_id", pageId);

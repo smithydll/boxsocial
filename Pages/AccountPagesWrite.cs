@@ -266,7 +266,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (page.Delete(core, Owner))
                 {
-                    SetRedirectUri(BuildUri("mange"));
+                    SetRedirectUri(BuildUri("manage"));
                     Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");
                     return;
                 }

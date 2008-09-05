@@ -107,6 +107,7 @@ namespace BoxSocial.Groups
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -127,6 +128,7 @@ namespace BoxSocial.Groups
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
+                //slugs.Add("profile", "Profile");
                 return slugs;
             }
         }
@@ -163,6 +165,24 @@ namespace BoxSocial.Groups
             if (e.PageType == AppPrimitives.Member)
             {
                 ShowMemberGroups(e);
+            }
+        }
+
+        void core_FootHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Group)
+            {
+                Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
+
+                if (e.Owner.Type == "GROUP")
+                {
+                    if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
+                    {
+                        template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
+                    }
+                }
+
+                e.core.AddFootPanel(template);
             }
         }
 

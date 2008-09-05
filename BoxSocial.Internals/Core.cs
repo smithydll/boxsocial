@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
 
+        public event HookHandler HeadHooks;
+        public event HookHandler FootHooks;
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
 
@@ -138,6 +140,8 @@ namespace BoxSocial.Internals
 
         public Core(Mysql db, Template template)
         {
+            HeadHooks += new HookHandler(Core_HeadHooks);
+            FootHooks +=new HookHandler(Core_FootHooks);
             PageHooks += new HookHandler(Core_Hooks);
             LoadApplication += new LoadHandler(Core_LoadApplication);
 
@@ -160,9 +164,29 @@ namespace BoxSocial.Internals
             
         }
 
+        void Core_HeadHooks(HookEventArgs eventArgs)
+        {
+
+        }
+
+        void Core_FootHooks(HookEventArgs eventArgs)
+        {
+
+        }
+
         void Core_Hooks(HookEventArgs eventArgs)
         {
             
+        }
+
+        public void InvokeHeadHooks(HookEventArgs eventArgs)
+        {
+            HeadHooks(eventArgs);
+        }
+
+        public void InvokeFootHooks(HookEventArgs eventArgs)
+        {
+            FootHooks(eventArgs);
         }
 
         public void InvokeHooks(HookEventArgs eventArgs)
@@ -298,6 +322,16 @@ namespace BoxSocial.Internals
             ratingHandles.Add(token, itemRated);
         }
 
+        private VariableCollection createHeadPanel()
+        {
+            return template.CreateChild("head_hook");
+        }
+
+        private VariableCollection createFootPanel()
+        {
+            return template.CreateChild("foot_hook");
+        }
+
         private VariableCollection createMainPanel()
         {
             return template.CreateChild("app_panel");
@@ -306,6 +340,20 @@ namespace BoxSocial.Internals
         private VariableCollection createSidePanel()
         {
             return template.CreateChild("app_panel_side");
+        }
+
+        public void AddHeadPanel(Template t)
+        {
+            VariableCollection panelVariableCollection = createHeadPanel();
+
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
+        }
+
+        public void AddFootPanel(Template t)
+        {
+            VariableCollection panelVariableCollection = createFootPanel();
+
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
         }
 
         public void AddMainPanel(Template t)

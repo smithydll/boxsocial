@@ -73,17 +73,48 @@ namespace BoxSocial.Applications.Pages
             {
                 VariableCollection tabVariableCollection = template.CreateChild("tab_list");
 
+                tabVariableCollection.Parse("TITLE", tab.Page.Title);
+
                 tabVariableCollection.Parse("U_MOVE_UP", BuildUri(Key, "move-up", tab.Id));
                 tabVariableCollection.Parse("U_MOVE_DOWN", BuildUri(Key, "move-down", tab.Id));
                 tabVariableCollection.Parse("U_DELETE", BuildUri(Key, "delete", tab.Id));
             }
+
+            template.Parse("U_NEW_TAB", BuildUri(Key, "add"));
         }
 
         void AccountNavigationTabs_Delete(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
 
-            long tabId = Functions.RequestLong("id", 0);
+            long tabId = Functions.RequestLong("id", Functions.FormLong("id", 0));
+
+            Dictionary<string, string> hiddenFields = new Dictionary<string, string>();
+            hiddenFields.Add("key", ModuleKey);
+            hiddenFields.Add("sub", Key);
+            hiddenFields.Add("mode", "delete");
+
+            if (Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true), "Delete?", "Are you sure you want to delete this tab?", hiddenFields) == ConfirmBoxResult.Yes)
+            {
+                try
+                {
+                    NagivationTab tab = new NagivationTab(core, tabId);
+
+                    tab.Delete();
+
+                    SetRedirectUri(BuildUri());
+                    Display.ShowMessage("Tab Deleted", "You have successfully deleted the navigation tab.");
+                }
+                catch (InvalidNavigationTabException)
+                {
+                    DisplayGenericError();
+                }
+            }
+            else
+            {
+                SetRedirectUri(BuildUri());
+                Display.ShowMessage("Tab Not Deleted", "You have aborted deleting the navigation tab.");
+            }
         }
 
         void AccountNavigationTabs_Move(object sender, ModuleModeEventArgs e)
@@ -91,14 +122,74 @@ namespace BoxSocial.Applications.Pages
             AuthoriseRequestSid();
 
             long tabId = Functions.RequestLong("id", 0);
+
+            try
+            {
+                NagivationTab tab = new NagivationTab(core, tabId);
+
+                switch (e.Mode)
+                {
+                    case "move-up":
+                        tab.MoveUp();
+
+                        SetRedirectUri(BuildUri());
+                        Display.ShowMessage("Tab Moved", "You have successfully moved the tab up one place.");
+                        break;
+                    case "move-down":
+                        tab.MoveDown();
+
+                        SetRedirectUri(BuildUri());
+                        Display.ShowMessage("Tab Moved", "You have successfully moved the tab down one place.");
+                        break;
+                }
+            }
+            catch (InvalidNavigationTabException)
+            {
+                DisplayGenericError();
+            }
         }
 
         void AccountNavigationTabs_Add(object sender, ModuleModeEventArgs e)
         {
+            SetTemplate("account_navigation_tab_add");
+
+            Pages myPages = new Pages(core, Owner);
+            List<Page> pagesList = myPages.GetPages(false, true);
+
+            Dictionary<string, string> pages = new Dictionary<string, string>();
+            List<string> disabledItems = new List<string>();
+
+            foreach (Page page in pagesList)
+            {
+                pages.Add(page.Id.ToString(), page.FullPath);
+            }
+
+            ParseSelectBox("S_PAGE_LIST", "page-id", pages, "");
         }
 
         void AccountNavigationTabs_Add_Save(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
+            long pageId = Functions.FormLong("page-id", 0);
+
+            try
+            {
+                Page thePage = new Page(core, Owner, pageId);
+
+                NagivationTab tab = NagivationTab.Create(core, thePage);
+
+                SetRedirectUri(BuildUri());
+                Display.ShowMessage("Tab Created", "You have successfully created a navigation tab.");
+            }
+            catch (InvalidNavigationTabException)
+            {
+                DisplayGenericError();
+            }
+            catch (PageNotFoundException)
+            {
+                DisplayGenericError();
+            }
         }
     }
 }

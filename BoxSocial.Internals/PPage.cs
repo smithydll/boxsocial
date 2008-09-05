@@ -105,6 +105,9 @@ namespace BoxSocial.Internals
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, profileOwner));
 
+            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Member, profileOwner);
+            core.InvokeHeadHooks(e);
+
             PageTitle = profileOwner.DisplayName;
 
             if (loggedInMember != null)

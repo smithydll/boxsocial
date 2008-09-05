@@ -109,8 +109,8 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_VIDEOS_NO", radioChecked);
             }
 
-            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE user_id = {0} ORDER BY page_order ASC;",
-                LoggedInMember.UserId));
+            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type = '{1}' ORDER BY page_order ASC;",
+                LoggedInMember.UserId, Mysql.Escape(LoggedInMember.Type)));
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
@@ -121,11 +121,11 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty((string)pageRow["page_parent_path"]))
                 {
-                    pages.Add((string)pageRow["page_slug"], (string)pageRow["page_slug"] + "/");
+                    pages.Add("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"]);
                 }
                 else
                 {
-                    pages.Add((string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"] + "/");
+                    pages.Add("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"]);
                 }
             }
 

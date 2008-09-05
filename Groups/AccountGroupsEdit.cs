@@ -107,6 +107,27 @@ namespace BoxSocial.Groups
                     break;
             }
 
+            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type = '{1}' ORDER BY page_order ASC;",
+                thisGroup.Id, thisGroup.Type));
+
+            Dictionary<string, string> pages = new Dictionary<string, string>();
+            List<string> disabledItems = new List<string>();
+            pages.Add("/profile", "Group Profile");
+
+            foreach (DataRow pageRow in pagesTable.Rows)
+            {
+                if (string.IsNullOrEmpty((string)pageRow["page_parent_path"]))
+                {
+                    pages.Add("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"] + "/");
+                }
+                else
+                {
+                    pages.Add("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"] + "/");
+                }
+            }
+
+            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, thisGroup.Info.GroupHomepage.ToString());
+
             Save(new EventHandler(AccountGroupsEdit_Save));
         }
 
@@ -119,6 +140,7 @@ namespace BoxSocial.Groups
             string title;
             string description;
             string type;
+            string homepage = "/profile";
 
             try
             {
@@ -127,6 +149,7 @@ namespace BoxSocial.Groups
                 title = Request.Form["title"];
                 description = Request.Form["description"];
                 type = Request.Form["type"];
+                homepage = Request.Form["homepage"];
             }
             catch
             {
@@ -173,9 +196,21 @@ namespace BoxSocial.Groups
                         category));
                 }
 
+                if (homepage != "/profile" && homepage != "/blog")
+                {
+                    try
+                    {
+                        Page thisPage = new Page(core, thisGroup, homepage.TrimStart(new char[] { '/' }));
+                    }
+                    catch (PageNotFoundException)
+                    {
+                        homepage = "/profile";
+                    }
+                }
+
                 // save the edits to the group
-                db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}' WHERE group_id = {0}",
-                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type)));
+                db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}', group_home_page = '{5}' WHERE group_id = {0}",
+                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type), Mysql.Escape(homepage)));
 
                 SetRedirectUri(thisGroup.Uri);
                 Display.ShowMessage("Group Saved", "You have successfully edited the group.");

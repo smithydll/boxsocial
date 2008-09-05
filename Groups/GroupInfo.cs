@@ -59,6 +59,8 @@ namespace BoxSocial.Groups
         private long comments;
         [DataField("group_gallery_items")]
         private long galleryItems;
+        [DataField("group_home_page", MYSQL_TEXT)]
+        private string groupHomepage;
 
         private string displayNameOwnership;
         private string category;
@@ -177,6 +179,18 @@ namespace BoxSocial.Groups
             get
             {
                 return galleryItems;
+            }
+        }
+
+        public string GroupHomepage
+        {
+            get
+            {
+                return groupHomepage;
+            }
+            set
+            {
+                SetProperty("groupHomepage", value);
             }
         }
 

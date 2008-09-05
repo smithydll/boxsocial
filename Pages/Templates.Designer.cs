@@ -111,7 +111,55 @@ namespace BoxSocial.Applications.Pages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Navigation Tabs&lt;/h3&gt;.
+        ///   Looks up a localized string similar to &lt;h3&gt;New Navigation Tab&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Write Page&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;page&quot;&gt;Page&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_PAGE_LIST}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Add&quot; /&gt;
+        ///			&lt;/dd&gt;
+        ///		&lt;/dl&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;pages&quot; /&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;sub&quot; value=&quot;nav&quot; /&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;mode&quot; value=&quot;add&quot; /&gt;
+        ///	&lt;/fieldset&gt;
+        ///&lt;/form&gt;.
+        /// </summary>
+        internal static string account_navigation_tab_add {
+            get {
+                return ResourceManager.GetString("account_navigation_tab_add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Navigation Tabs&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;Note: Tab title is the same as the page title.&lt;/p&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Tab Title&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN tab_list --&gt;
+        ///&lt;!-- IF tab_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{tab_list.TITLE}&lt;/td&gt;
+        ///  &lt;td&gt;&lt;a href=&quot;{tab_list.U_MOVE_UP}&quot;&gt;Move Up&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{tab_list.U_MOVE_DOWN}&quot;&gt;Move Down&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{tab_list.U_DELETE}&quot;&gt;Delete&lt;/a&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;! [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_navigation_tabs {
             get {
@@ -166,6 +214,15 @@ namespace BoxSocial.Applications.Pages {
         internal static string account_write {
             get {
                 return ResourceManager.GetString("account_write", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string header_navigation_tabs {
+            get {
+                return ResourceManager.GetString("header_navigation_tabs", resourceCulture);
             }
         }
         

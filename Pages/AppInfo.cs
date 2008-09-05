@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -92,7 +93,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -107,6 +108,7 @@ namespace BoxSocial.Applications.Pages
         public override void Initialise(Core core)
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.HeadHooks +=new Core.HookHandler(core_HeadHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -173,9 +175,35 @@ namespace BoxSocial.Applications.Pages
             return AppPrimitives.Member | AppPrimitives.Group;
         }
 
-        void core_PageHooks(HookEventArgs eventArgs)
+        void core_PageHooks(HookEventArgs e)
         {
+        }
 
+        void core_HeadHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Group)
+            {
+            }
+            Template template = new Template(Assembly.GetExecutingAssembly(), "header_navigation_tabs");
+
+            List<NagivationTab> tabs = NagivationTab.GetTabs(core, e.Owner);
+
+            {
+                VariableCollection tabVariableCollection = template.CreateChild("tab_list");
+
+                tabVariableCollection.Parse("TITLE", "Home");
+                tabVariableCollection.Parse("U_TAB", e.Owner.Uri);
+            }
+
+            foreach (NagivationTab tab in tabs)
+            {
+                VariableCollection tabVariableCollection = template.CreateChild("tab_list");
+
+                tabVariableCollection.Parse("TITLE", tab.Page.Title);
+                tabVariableCollection.Parse("U_TAB", tab.Page.Uri);
+            }
+
+            e.core.AddHeadPanel(template);
         }
     }
 }

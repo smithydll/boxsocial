@@ -85,6 +85,7 @@
     <Content Include="templates\account_group_invite.html" />
     <Content Include="templates\account_group_manage.html" />
     <Content Include="templates\account_group_membership.html" />
+    <Content Include="templates\group_footer.html" />
     <Content Include="templates\viewgroup.html" />
     <Content Include="templates\viewgroupmemberlist.html" />
     <Content Include="templates\viewprofilegroups.htm" />

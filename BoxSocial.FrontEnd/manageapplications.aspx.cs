@@ -46,23 +46,34 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                List<User> members = new List<User>();
+                //List<Primitive> members = new List<Primitive>();
 
-                SelectQuery query = new SelectQuery("primitive_apps pa");
+                SelectQuery query = new SelectQuery("primitive_apps");
+                query.AddFields(ApplicationEntry.GetFieldsPrefixed(typeof(ApplicationEntry)));
+                query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
+                query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
+                query.AddCondition("applications.application_assembly_name", assemblyName);
+
+                /*SelectQuery query = new SelectQuery("primitive_apps pa");
                 query.AddFields(ApplicationEntry.APPLICATION_FIELDS);
                 query.AddFields(ApplicationEntry.USER_APPLICATION_FIELDS);
                 query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
                 query.AddJoin(JoinTypes.Inner, "applications ap", "ap.application_id", "pa.application_id");
                 query.AddJoin(JoinTypes.Inner, "user_info ui", "pa.item_id", "ui.user_id");
-                query.AddCondition("pa.item_type", "USER");
+                query.AddCondition("pa.item_type", "USER");*/
 
                 DataTable userInfoTable = db.Query(query);
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
                     dr["user_id"] = dr["item_id"];
-                    User member = new User(core, dr, UserLoadOptions.Info);
-                    members.Add(member);
+                    core.UserProfiles.LoadPrimitiveProfile((string)dr["item_type"], (long)dr["item_id"]);
+                }
+
+                foreach (DataRow dr in userInfoTable.Rows)
+                {
+                    Primitive member = core.UserProfiles[(string)dr["item_type"], (long)dr["item_id"]];
+                    //members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);
 

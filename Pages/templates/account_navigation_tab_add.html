@@ -1,0 +1,18 @@
+﻿<h3>New Navigation Tab</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Write Page</legend>
+		<dl>
+			<dt><label for="page-id">Page</label></dt>
+			<dd>{S_PAGE_LIST}</dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="Add" />
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="pages" />
+		<input type="hidden" name="sub" value="nav" />
+		<input type="hidden" name="mode" value="add" />
+	</fieldset>
+</form>

@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Pages
         private byte order;
 
         private Primitive owner;
-        private string tabTitle;
+        private Page page;
 
         public long TabId
         {
@@ -69,11 +69,11 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public string Title
+        public Page Page
         {
             get
             {
-                return tabTitle;
+                return page;
             }
         }
 
@@ -117,7 +117,14 @@ namespace BoxSocial.Applications.Pages
             try
             {
                 loadItemInfo(tabRow);
-                tabTitle = (string)tabRow["page_title"];
+                try
+                {
+                    page = new Page(core, Owner, tabRow);
+                }
+                catch
+                {
+                    // ignore
+                }
             }
             catch (InvalidItemException)
             {
@@ -129,10 +136,65 @@ namespace BoxSocial.Applications.Pages
         {
         }
 
+        public void MoveUp()
+        {
+            this.AuthenticateAction(ItemChangeAction.Edit);
+
+            if (order != 0)
+            {
+                UpdateQuery uQuery = new UpdateQuery(Item.GetTable(typeof(NagivationTab)));
+                uQuery.AddField("tab_order", new QueryOperation("tab_order", QueryOperations.Addition, 1));
+                uQuery.AddCondition("tab_item_id", ownerId);
+                uQuery.AddCondition("tab_item_type", ownerType);
+                uQuery.AddCondition("tab_order", ConditionEquality.Equal, order - 1);
+
+                db.Query(uQuery);
+
+                SetProperty("order", (byte)(order - 1));
+
+                Update();
+            }
+        }
+
+        public void MoveDown()
+        {
+            this.AuthenticateAction(ItemChangeAction.Edit);
+
+            byte maxOrder = 0;
+
+            SelectQuery query = GetSelectQueryStub(typeof(NagivationTab), false);
+            query.AddCondition("tab_item_id", ownerId);
+            query.AddCondition("tab_item_type", ownerType);
+            query.AddSort(SortOrder.Descending, "tab_order");
+            query.LimitCount = 1;
+
+            DataTable tabTable = db.Query(query);
+
+            if (tabTable.Rows.Count == 1)
+            {
+                maxOrder = (byte)tabTable.Rows[0]["tab_order"];
+            }
+
+            if (order < maxOrder)
+            {
+                UpdateQuery uQuery = new UpdateQuery(Item.GetTable(typeof(NagivationTab)));
+                uQuery.AddField("tab_order", new QueryOperation("tab_order", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("tab_item_id", ownerId);
+                uQuery.AddCondition("tab_item_type", ownerType);
+                uQuery.AddCondition("tab_order", ConditionEquality.Equal, order + 1);
+
+                db.Query(uQuery);
+
+                SetProperty("order", (byte)(order + 1));
+
+                Update();
+            }
+        }
+
         public static SelectQuery NagivationTab_GetSelectQueryStub()
         {
             SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab), false);
-            query.AddFields(string.Format("`{0}`.`page_title`", Page.GetTable(typeof(Page))));
+            query.AddFields(Page.GetFieldsPrefixed(typeof(Page)));
             query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(Page)), "tab_page_id", "page_id");
 
             return query;

@@ -667,20 +667,23 @@ namespace BoxSocial.Internals
         {
             if (!HasInstalled(viewer))
             {
-                if (viewer is User)
+                Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                foreach (string slug in slugs.Keys)
                 {
-                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
-
-                    Dictionary<string, string> slugs = newApplication.PageSlugs;
-
-                    foreach (string slug in slugs.Keys)
-                    {
-                        string tSlug = slug;
-                        Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
-                    }
+                    string tSlug = slug;
+                    Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                 }
-                if (db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                    applicationId, viewer.Id, Mysql.Escape(viewer.Type), 0x1111)) > 0)
+
+                InsertQuery iQuery = new InsertQuery("primitive_apps");
+                iQuery.AddField("application_id", applicationId);
+                iQuery.AddField("item_id", viewer.Id);
+                iQuery.AddField("item_type", viewer.Type);
+                iQuery.AddField("app_access", 0x1111);
+
+                if (db.Query(iQuery) > 0)
                 {
                     return true;
                 }
@@ -698,47 +701,45 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (viewer is User)
+                Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                foreach (string slug in slugs.Keys)
                 {
-                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+                    SelectQuery query = new SelectQuery("user_pages");
+                    query.AddFields("page_id");
+                    query.AddCondition("page_item_id", viewer.Id);
+                    query.AddCondition("page_item_type", viewer.Type);
+                    query.AddCondition("page_title", slugs[slug]);
+                    query.AddCondition("page_slug", slug);
+                    query.AddCondition("page_parent_path", "");
 
-                    Dictionary<string, string> slugs = newApplication.PageSlugs;
-
-                    foreach (string slug in slugs.Keys)
+                    if (db.Query(query).Rows.Count == 0)
                     {
-                        SelectQuery query = new SelectQuery("user_pages");
-                        query.AddFields("page_id");
-                        query.AddCondition("user_id", ((User)viewer).UserId);
-                        query.AddCondition("page_title", slugs[slug]);
-                        query.AddCondition("page_slug", slug);
-                        query.AddCondition("page_parent_path", "");
+                        string tSlug = slug;
+                        Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Page myPage = new Page(core, viewer, slug, "");
 
-                        if (db.Query(query).Rows.Count == 0)
+                            if (myPage.ListOnly)
+                            {
+                                if (!string.IsNullOrEmpty(Icon))
+                                {
+                                    myPage.Icon = Icon;
+                                }
+
+                                myPage.Update();
+                            }
+                        }
+                        catch (PageNotFoundException)
                         {
                             string tSlug = slug;
-                            Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
-                        }
-                        else
-                        {
-                            try
-                            {
-                                Page myPage = new Page(core, (User)viewer, slug, "");
-
-                                if (myPage.ListOnly)
-                                {
-                                    if (!string.IsNullOrEmpty(Icon))
-                                    {
-                                        myPage.Icon = Icon;
-                                    }
-
-                                    myPage.Update();
-                                }
-                            }
-                            catch (PageNotFoundException)
-                            {
-                                string tSlug = slug;
-                                Page.Create(core, (User)viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
-                            }
+                            Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
                     }
                 }
@@ -775,19 +776,21 @@ namespace BoxSocial.Internals
 
             if (HasInstalled(viewer))
             {
-                if (viewer is User)
+                Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+
+                Dictionary<string, string> slugs = newApplication.PageSlugs;
+
+                foreach (string slug in slugs.Keys)
                 {
-                    Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
-
-                    Dictionary<string, string> slugs = newApplication.PageSlugs;
-
-                    foreach (string slug in slugs.Keys)
-                    {
-                        Page page = new Page(core, (User)viewer, slug, "");
-                    }
+                    Page page = new Page(core, viewer, slug, "");
                 }
-                if (db.UpdateQuery(string.Format(@"DELETE FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}';",
-                    applicationId, viewer.Id, Mysql.Escape(viewer.Type))) > 0)
+
+                DeleteQuery dQuery = new DeleteQuery("primitive_apps");
+                dQuery.AddCondition("application_id", applicationId);
+                dQuery.AddCondition("item_id", viewer.Id);
+                dQuery.AddCondition("item_type", viewer.Type);
+
+                if (db.Query(dQuery) > 0)
                 {
                     return true;
                 }

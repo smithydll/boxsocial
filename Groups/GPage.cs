@@ -79,6 +79,10 @@ namespace BoxSocial.Groups
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
+                core.PagePath = ThisGroup.Info.GroupHomepage;
+            }
+            if (core.PagePath.Trim(new char[] { '/' }) == "")
+            {
                 core.PagePath = "/profile";
             }
 
@@ -95,6 +99,10 @@ namespace BoxSocial.Groups
             }
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+
+            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
+            core.InvokeHeadHooks(e);
+            core.InvokeFootHooks(e);
 
             PageTitle = thisGroup.DisplayName;
         }

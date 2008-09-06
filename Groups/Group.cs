@@ -1358,7 +1358,13 @@ namespace BoxSocial.Groups
                 officersVariableCollection.Parse("USER_DISPLAY_NAME", groupOfficer.DisplayName);
                 officersVariableCollection.Parse("U_PROFILE", groupOfficer.Uri);
                 officersVariableCollection.Parse("OFFICER_TITLE", groupOfficer.OfficeTitle);
-                officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
+                if (core.LoggedInMemberId > 0)
+                {
+                    if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
+                    {
+                        officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
+                    }
+                }
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Group, page.ThisGroup));
@@ -1414,13 +1420,20 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("USER_CAPTION", "");
 
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
-                if (!member.IsOperator)
+                if (core.LoggedInMemberId > 0)
                 {
-                    // let's say you can't ban an operator, show ban link if not an operator
-                    memberVariableCollection.Parse("U_BAN", member.BanUri);
-                    memberVariableCollection.Parse("U_MAKE_OPERATOR", member.MakeOperatorUri);
+                    if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
+                    {
+                        if (!member.IsOperator)
+                        {
+                            // let's say you can't ban an operator, show ban link if not an operator
+                            memberVariableCollection.Parse("U_BAN", member.BanUri);
+                            memberVariableCollection.Parse("U_MAKE_OPERATOR", member.MakeOperatorUri);
+                        }
+
+                        memberVariableCollection.Parse("U_MAKE_OFFICER", member.MakeOfficerUri);
+                    }
                 }
-                memberVariableCollection.Parse("U_MAKE_OFFICER", member.MakeOfficerUri);
                 memberVariableCollection.Parse("ICON", member.UserIcon);
             }
 

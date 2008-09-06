@@ -183,27 +183,30 @@ namespace BoxSocial.Applications.Pages
         {
             if (e.PageType == AppPrimitives.Group)
             {
+                Template template = new Template(Assembly.GetExecutingAssembly(), "header_navigation_tabs");
+
+                List<NagivationTab> tabs = NagivationTab.GetTabs(core, e.Owner);
+
+                {
+                    VariableCollection tabVariableCollection = template.CreateChild("tab_list");
+
+                    tabVariableCollection.Parse("TITLE", "Home");
+                    tabVariableCollection.Parse("U_TAB", e.Owner.Uri);
+                }
+
+                foreach (NagivationTab tab in tabs)
+                {
+                    VariableCollection tabVariableCollection = template.CreateChild("tab_list");
+
+                    tabVariableCollection.Parse("TITLE", tab.Page.Title);
+                    tabVariableCollection.Parse("U_TAB", tab.Page.Uri);
+                }
+
+                if (tabs.Count > 0)
+                {
+                    e.core.AddHeadPanel(template);
+                }
             }
-            Template template = new Template(Assembly.GetExecutingAssembly(), "header_navigation_tabs");
-
-            List<NagivationTab> tabs = NagivationTab.GetTabs(core, e.Owner);
-
-            {
-                VariableCollection tabVariableCollection = template.CreateChild("tab_list");
-
-                tabVariableCollection.Parse("TITLE", "Home");
-                tabVariableCollection.Parse("U_TAB", e.Owner.Uri);
-            }
-
-            foreach (NagivationTab tab in tabs)
-            {
-                VariableCollection tabVariableCollection = template.CreateChild("tab_list");
-
-                tabVariableCollection.Parse("TITLE", tab.Page.Title);
-                tabVariableCollection.Parse("U_TAB", tab.Page.Uri);
-            }
-
-            e.core.AddHeadPanel(template);
         }
     }
 }

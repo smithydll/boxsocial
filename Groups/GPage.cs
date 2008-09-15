@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
 using System.Web;
 using System.Xml;
 using System.Xml.Schema;
@@ -100,11 +101,30 @@ namespace BoxSocial.Groups
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
 
+            core.FootHooks += new Core.HookHandler(core_FootHooks);
             HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
             core.InvokeHeadHooks(e);
             core.InvokeFootHooks(e);
 
             PageTitle = thisGroup.DisplayName;
+        }
+
+        void core_FootHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Group)
+            {
+                Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
+
+                if (e.Owner.Type == "GROUP")
+                {
+                    if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
+                    {
+                        template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
+                    }
+                }
+
+                e.core.AddFootPanel(template);
+            }
         }
     }
 }

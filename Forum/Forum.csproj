@@ -120,4 +120,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Forum.en.resx"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

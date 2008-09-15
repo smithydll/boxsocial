@@ -1186,12 +1186,14 @@ namespace BoxSocial.Internals
 
             InsertQuery query = new InsertQuery("user_keys");
             query.AddField("user_name", userName);
+            query.AddField("user_domain", "");
 
             db.BeginTransaction();
             long userId = db.Query(query);
 
             if (userId < 0)
             {
+                db.RollBackTransaction();
                 throw new InvalidUserException();
             }
 

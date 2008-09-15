@@ -355,4 +355,64 @@ namespace BoxSocial.Internals
         {
         }
     }
+
+    [DataTable("account_modules")]
+    public class AccountModuleRegister : NumberedItem
+    {
+        [DataField("module_id", DataFieldKeys.Primary)]
+        private long moduleId;
+        [DataField("module_module", 63)]
+        private string moduleKey;
+        [DataField("application_id")]
+        private int applicationId;
+        [DataField("module_updated_ut")]
+        private long updated;
+
+        public AccountModuleRegister(Core core, long moduleId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(AccountModuleRegister_ItemLoad);
+
+            try
+            {
+                LoadItem(moduleId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidAccountModuleException();
+            }
+        }
+
+        private void AccountModuleRegister_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return moduleId;
+            }
+        }
+
+        public override string Namespace
+        {
+            get
+            {
+                return this.GetType().FullName;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    public class InvalidAccountModuleException : Exception
+    {
+    }
 }

@@ -339,29 +339,21 @@ namespace BoxSocial.Internals
 
             if (userApplicationsTable.Rows.Count > 0)
             {
-                string applicationIds = "";
+                List<long> applicationIds = new List<long>();
                 foreach (DataRow applicationRow in userApplicationsTable.Rows)
                 {
                     ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
-                    if (applicationIds == "")
-                    {
-                        applicationIds = ae.ApplicationId.ToString();
-                    }
-                    else
-                    {
-                        applicationIds = string.Format("{0}, {1}",
-                            applicationIds, ae.ApplicationId);
-                    }
+                    applicationIds.Add(ae.Id);
                 }
 
-                DataTable modulesTable = core.db.Query(string.Format(@"SELECT am.module_module, am.application_id
-                    FROM account_modules am
-                    WHERE am.application_id IN ({0})
-                    ORDER BY application_id;",
-                    applicationIds));
+                SelectQuery query = AccountModuleRegister.GetSelectQueryStub(typeof(AccountModuleRegister));
+                query.AddCondition("application_id", ConditionEquality.In, applicationIds);
+                query.AddSort(SortOrder.Ascending, "application_id");
+
+                DataTable modulesTable = core.db.Query(query);
 
                 foreach (DataRow moduleRow in modulesTable.Rows)
                 {

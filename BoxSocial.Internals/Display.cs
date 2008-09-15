@@ -600,7 +600,7 @@ namespace BoxSocial.Internals
             if (session != null)
             {
                 template.Parse("SID", session.SessionId);
-                if (session.IsLoggedIn)
+                if (session.IsLoggedIn && session.LoggedInMember != null)
                 {
                     template.Parse("LOGGED_IN", "TRUE");
                     template.Parse("L_GREETING", "G'day");

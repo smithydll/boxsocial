@@ -885,7 +885,7 @@ namespace BoxSocial.Internals
             }
 
             SelectQuery query = new SelectQuery("actions");
-            query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour")); //"COUNT(action_id) as twentyfour");
+            query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
             query.AddCondition("action_primitive_id", owner.Id);
             query.AddCondition("action_primitive_type", owner.Type);
             query.AddCondition("action_application", applicationId);

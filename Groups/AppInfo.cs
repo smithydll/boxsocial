@@ -170,20 +170,6 @@ namespace BoxSocial.Groups
 
         void core_FootHooks(HookEventArgs e)
         {
-            if (e.PageType == AppPrimitives.Group)
-            {
-                Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
-
-                if (e.Owner.Type == "GROUP")
-                {
-                    if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
-                    {
-                        template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
-                    }
-                }
-
-                e.core.AddFootPanel(template);
-            }
         }
 
         public void ShowMemberGroups(HookEventArgs e)

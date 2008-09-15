@@ -123,6 +123,15 @@
   <data name="CANNOT" xml:space="preserve">
     <value>cannot</value>
   </data>
+  <data name="EDIT_FORUM" xml:space="preserve">
+    <value>Edit Forum</value>
+  </data>
+  <data name="FORUM_TYPE" xml:space="preserve">
+    <value>Forum Type</value>
+  </data>
+  <data name="JOINED" xml:space="preserve">
+    <value>Joined</value>
+  </data>
   <data name="LAST_POST" xml:space="preserve">
     <value>Last Post</value>
   </data>

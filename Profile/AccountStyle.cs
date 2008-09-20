@@ -64,12 +64,11 @@ namespace BoxSocial.Applications.Profile
 
             string mode = Request["mode"];
 
-            CascadingStyleSheet css = new CascadingStyleSheet();
-            css.Parse(LoggedInMember.GetUserStyle());
+            CascadingStyleSheet css = LoggedInMember.Style.StyleSheet;
 
             StyleGenerator editor = css.Generator;
 
-            if (string.IsNullOrEmpty(LoggedInMember.GetUserStyle()))
+            if (string.IsNullOrEmpty(LoggedInMember.Style.RawCss))
             {
                 editor = StyleGenerator.Theme;
             }
@@ -430,17 +429,8 @@ namespace BoxSocial.Applications.Profile
                     break;
             }
 
-            if (db.Query(string.Format("SELECT user_id FROM user_style WHERE user_id = {0}",
-                LoggedInMember.UserId)).Rows.Count == 0)
-            {
-                db.UpdateQuery(string.Format("INSERT INTO user_style (user_id, style_css) VALUES ({0}, '{1}');",
-                    LoggedInMember.UserId, Mysql.Escape(css.ToString())));
-            }
-            else
-            {
-                db.UpdateQuery(string.Format("UPDATE user_style SET style_css = '{1}' WHERE user_id = {0};",
-                    LoggedInMember.UserId, Mysql.Escape(css.ToString())));
-            }
+            LoggedInMember.Style.RawCss = css.ToString();
+            LoggedInMember.Style.Update();
 
             SetRedirectUri(BuildUri());
             Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.");

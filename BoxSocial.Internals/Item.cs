@@ -55,6 +55,8 @@ namespace BoxSocial.Internals
 
         public event ItemLoadHandler ItemLoad;
         public event ItemChangeAuthenticationProviderHandler ItemChangeAuthenticationProvider;
+        public event EventHandler OnUpdate;
+        public event EventHandler OnDelete;
         public event EventHandler ItemUpdated;
         public event EventHandler ItemDeleted;
 
@@ -543,6 +545,11 @@ namespace BoxSocial.Internals
             if (ItemChangeAuthenticationProvider != null)
             {
                 ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Edit));
+            }
+
+            if (OnUpdate != null)
+            {
+                OnUpdate(this, new EventArgs());
             }
 
             if (updatedItems.Count == 0)

@@ -61,6 +61,8 @@ namespace BoxSocial.Groups
         private long galleryItems;
         [DataField("group_home_page", MYSQL_TEXT)]
         private string groupHomepage;
+        [DataField("group_style", MYSQL_MEDIUM_TEXT)]
+        private string groupStyle;
 
         private string displayNameOwnership;
         private string category;
@@ -191,6 +193,18 @@ namespace BoxSocial.Groups
             set
             {
                 SetProperty("groupHomepage", value);
+            }
+        }
+
+        public string Style
+        {
+            get
+            {
+                return groupStyle;
+            }
+            set
+            {
+                SetProperty("groupStyle", value);
             }
         }
 

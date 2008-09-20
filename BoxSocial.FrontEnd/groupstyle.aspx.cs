@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -27,20 +27,21 @@ using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
+using BoxSocial.Groups;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class userstyle : TPage
+    public partial class groupstyle : TPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string profileUserName = Request.QueryString["un"];
-            User profileOwner;
+            string groupName = Request.QueryString["gn"];
+            UserGroup profileOwner;
 
             try
             {
 
-                profileOwner = new User(core, profileUserName);
+                profileOwner = new UserGroup(core, groupName);
             }
             catch
             {
@@ -52,7 +53,7 @@ namespace BoxSocial.FrontEnd
             Response.Clear();
 
             // don't allow to load up external stylesheets
-            Response.Write(Regex.Replace(profileOwner.Style.RawCss, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
+            Response.Write(Regex.Replace(profileOwner.Info.Style, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
 
             if (db != null)
             {

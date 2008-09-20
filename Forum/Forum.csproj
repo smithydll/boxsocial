@@ -107,6 +107,7 @@
     <Content Include="templates\account_forum_edit.html" />
     <Content Include="templates\account_forum_manage.html" />
     <Content Include="templates\account_forum_settings.html" />
+    <Content Include="templates\forum_header.html" />
     <Content Include="templates\post.html" />
     <Content Include="templates\viewforum.html" />
     <Content Include="templates\viewprofileforum.html" />

@@ -127,6 +127,9 @@
   <data name="account_forum_settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_forum_settings.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="forum_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\forum_header.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="post" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\post.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

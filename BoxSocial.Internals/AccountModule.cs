@@ -122,6 +122,7 @@ namespace BoxSocial.Internals
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
+                template.SetProse(core.prose);
             }
         }
 

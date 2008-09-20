@@ -255,6 +255,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string BuildLoginUri(string redirectUri)
+        {
+            return AppendCoreSid(string.Format("/sign-in/?redirect={1}", redirectUri), true);
+        }
+
         public static string BuildBlogPostUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
@@ -495,8 +500,16 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountModuleUri(Primitive owner, string key, bool appendSid)
         {
-            return AppendSid(string.Format("{0}{1}",
-                owner.AccountUriStub, key), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}",
+                    owner.AccountUriStub, key), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}",
+                    "/account/", key), appendSid);
+            }
         }
 
         #endregion
@@ -520,8 +533,16 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid)
         {
-            return AppendSid(string.Format("{0}{1}/{2}",
-                owner.AccountUriStub, key, sub), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}/{2}",
+                    owner.AccountUriStub, key, sub), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}/{2}",
+                    "/account/", key, sub), appendSid);
+            }
         }
 
         public static string BuildAccountSubModuleUri(string key, string sub, string mode)
@@ -541,8 +562,16 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, bool appendSid)
         {
-            return AppendSid(string.Format("{0}{1}/{2}?mode={3}",
-                owner.AccountUriStub, key, sub, mode), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?mode={3}",
+                    owner.AccountUriStub, key, sub, mode), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?mode={3}",
+                    "/account/", key, sub, mode), appendSid);
+            }
         }
 
         public static string BuildAccountSubModuleUri(string key, string sub, string mode, long id)
@@ -562,8 +591,16 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id, bool appendSid)
         {
-            return AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
-                owner.AccountUriStub, key, sub, mode, id), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
+                    owner.AccountUriStub, key, sub, mode, id), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
+                    "/account/", key, sub, mode, id), appendSid);
+            }
         }
 
         public static string BuildAccountSubModuleUri(string key, string sub, long id)
@@ -583,8 +620,16 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id, bool appendSid)
         {
-            return AppendSid(string.Format("{0}{1}/{2}?id={3}",
-                owner.AccountUriStub, key, sub, id), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?id={3}",
+                    owner.AccountUriStub, key, sub, id), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}/{2}?id={3}",
+                    "/account/", key, sub, id), appendSid);
+            }
         }
 
         public static string BuildAccountSubModuleUri(string key, string sub, params string[] arguments)
@@ -597,12 +642,12 @@ namespace BoxSocial.Internals
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, appendSid, arguments);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive Owner, string key, string sub, params string[] arguments)
+        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, params string[] arguments)
         {
-            return BuildAccountSubModuleUri(Owner, key, sub, false, arguments);
+            return BuildAccountSubModuleUri(owner, key, sub, false, arguments);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive Owner, string key, string sub, bool appendSid, params string[] arguments)
+        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid, params string[] arguments)
         {
             string argumentList = "";
 
@@ -620,8 +665,16 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return AppendSid(string.Format("{0}{1}/{2}{3}",
-                Owner.AccountUriStub, key, sub, argumentList), appendSid);
+            if (owner != null)
+            {
+                return AppendSid(string.Format("{0}{1}/{2}{3}",
+                    owner.AccountUriStub, key, sub, argumentList), appendSid);
+            }
+            else
+            {
+                return AppendSid(string.Format("{0}{1}/{2}{3}",
+                    "/account/", key, sub, argumentList), appendSid);
+            }
         }
 
         #endregion

@@ -76,6 +76,7 @@ namespace BoxSocial.Internals
 
         protected UserInfo userInfo;
         protected UserProfile userProfile;
+        protected UserStyle userStyle;
         
         protected bool iconLoaded = false;
 
@@ -113,6 +114,25 @@ namespace BoxSocial.Internals
                     userProfile = new UserProfile(core, this);
                 }
                 return userProfile;
+            }
+        }
+
+        public UserStyle Style
+        {
+            get
+            {
+                if (userStyle == null)
+                {
+                    try
+                    {
+                        userStyle = new UserStyle(core, userId);
+                    }
+                    catch
+                    {
+                        userStyle = UserStyle.Create(core, this, "");
+                    }
+                }
+                return userStyle;
             }
         }
 
@@ -842,21 +862,6 @@ namespace BoxSocial.Internals
             this.userProfile = member.userProfile;
 
             this.userIconUri = member.userIconUri;
-        }
-
-        public string GetUserStyle()
-        {
-            DataTable userStyleTable = db.Query(string.Format("SELECT us.* FROM user_keys uk INNER JOIN user_style us ON uk.user_id = us.user_id WHERE uk.user_id = {0}",
-                userId));
-
-            if (userStyleTable.Rows.Count == 1)
-            {
-                return (string)userStyleTable.Rows[0]["style_css"];
-            }
-            else
-            {
-                return "";
-            }
         }
 
         public List<long> GetFriendIds()

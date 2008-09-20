@@ -280,13 +280,11 @@ namespace BoxSocial.IO
             return variables.CreateChild(name);
         }
 
-        /// <summary>
-        /// ONLY PUT A SINGLE IF STATEMENT ON A SINGLE LINE OF xHTML
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        public string LoadTemplateFile(string templateName)
         {
-            if (templateAssembly != null)
+            string template;
+
+            if (templateAssembly != null && (!templateName.EndsWith(".html")))
             {
                 try
                 {
@@ -342,6 +340,18 @@ namespace BoxSocial.IO
                         templateName);
                 }
             }
+
+            return template;
+        }
+
+        /// <summary>
+        /// ONLY PUT A SINGLE IF STATEMENT ON A SINGLE LINE OF xHTML
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            template = LoadTemplateFile(templateName);
+
             StringBuilder output = new StringBuilder();
             string[] lines = template.Replace("\r", "").Split('\n');
             int lineAdjust = 0;
@@ -620,7 +630,8 @@ namespace BoxSocial.IO
                 foreach (Match ma in mc)
                 {
                     StringBuilder includeOutput = new StringBuilder();
-                    string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
+                    //string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
+                    string[] includeLines = LoadTemplateFile(ma.Groups[1].Value).Replace("\r", "").Split('\n');
                     ProcessLines(includeLines, includeOutput, variables);
                     line = line.Replace(string.Format("<!-- INCLUDE {0} -->", ma.Groups[1].Value), includeOutput.ToString());
                 }

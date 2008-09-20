@@ -123,6 +123,7 @@
     <Compile Include="StatusFeed.cs" />
     <Compile Include="StatusMessage.cs" />
     <Compile Include="ActionItem.cs" />
+    <Compile Include="Tag.cs" />
     <Compile Include="Time.cs" />
     <Compile Include="TPage.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -133,6 +134,7 @@
     <Compile Include="UserInfo.cs" />
     <Compile Include="UserProfile.cs" />
     <Compile Include="UserRelation.cs" />
+    <Compile Include="UserStyle.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">

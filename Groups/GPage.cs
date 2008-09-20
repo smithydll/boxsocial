@@ -99,12 +99,27 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+            if (loggedInMember != null)
+            {
+                if (loggedInMember.ShowCustomStyles)
+                {
+                    template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                }
+            }
+            else
+            {
+                template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+            }
 
-            core.FootHooks += new Core.HookHandler(core_FootHooks);
-            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
-            core.InvokeHeadHooks(e);
-            core.InvokeFootHooks(e);
+            if (!core.PagePath.StartsWith("/account"))
+            {
+                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+
+                core.FootHooks += new Core.HookHandler(core_FootHooks);
+                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
+                core.InvokeHeadHooks(e);
+                core.InvokeFootHooks(e);
+            }
 
             PageTitle = thisGroup.DisplayName;
         }

@@ -128,6 +128,8 @@ namespace BoxSocial.FrontEnd
                             case "GROUP":
                                 patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
 
+                                patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/groupstyle.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/account(|/)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
@@ -182,6 +184,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(|/)$", @"/groupaccount.aspx?gn=$1" });
 
                     patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
+                    patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_]+).css$", @"/groupstyle.aspx?gn=$1" });
 
                     patterns.Add(new string[] { @"^/help(|/)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(|/)$", @"/help.aspx?topic=$1" });

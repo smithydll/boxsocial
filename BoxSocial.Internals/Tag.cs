@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -20,31 +20,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using System.Web;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [DataTable("item_tags")]
-    public class ItemTag : NumberedItem
+    [DataTable("tags")]
+    public class Tag : NumberedItem
     {
-        [DataField("item_tag_id", DataFieldKeys.Primary)]
-        private long itemTagId;
-        [DataField("item_id")]
-        private long itemId;
-        [DataField("item_type", 63)]
-        private string itemType;
-        [DataField("tag_id")]
+        [DataField("tag_id", DataFieldKeys.Primary)]
         private long tagId;
+        [DataField("tag_text", 31)]
+        private string text;
+        [DataField("tag_text_normalised", DataFieldKeys.Unique, 31)]
+        private string textNormalised;
+        [DataField("tag_items")]
+        private long tagItems;
 
-        private Tag tag;
-
-        public ItemTag(Core core, long itemTagId)
+        public Tag(Core core, long tagId)
             : base(core)
         {
         }
 
-        private void ItemTag_ItemLoad()
+        private void Tag_ItemLoad()
         {
         }
 
@@ -52,7 +52,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemTagId;
+                return tagId;
             }
         }
 

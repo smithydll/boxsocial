@@ -293,6 +293,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
             }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
+            template.SetProse(core.prose);
         }
 
         /// <summary>
@@ -329,6 +330,8 @@ namespace BoxSocial.Internals
         {
             template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetTemplate(Assembly.GetCallingAssembly().GetName().Name, templateName);
+
+            core.prose.AddApplication(Assembly.GetCallingAssembly().GetName().Name);
         }
 
         /// <summary>

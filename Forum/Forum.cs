@@ -904,6 +904,12 @@ namespace BoxSocial.Applications.Forum
             {
                 return;
             }
+
+            if (core.LoggedInMemberId > 0 && (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember)))
+            {
+                page.template.Parse("U_JOIN", page.ThisGroup.JoinUri);
+            }
+
             topicsCount = thisForum.Topics;
 
             thisForum.ForumAccess.SetSessionViewer(core.session);

@@ -996,10 +996,10 @@ namespace BoxSocial.Internals
             db.BeginTransaction();
             if (order != oldOrder)
             {
-                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND page_item_id = {1} AND page_item_type = `{2}`",
+                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order - 1 WHERE page_order >= {0} AND page_item_id = {1} AND page_item_type = '{2}'",
                         oldOrder, owner.Id, owner.Type));
 
-                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND page_item_id = {1} AND page_item_type = `{2}`",
+                db.UpdateQuery(string.Format("UPDATE user_pages SET page_order = page_order + 1 WHERE page_order >= {0} AND page_item_id = {1} AND page_item_type = '{2}'",
                     order, owner.Id, owner.Type));
             }
 

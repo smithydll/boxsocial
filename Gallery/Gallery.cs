@@ -1233,7 +1233,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("{0}?mode=upload",
+            return Linker.AppendSid(string.Format("{0}gallery/?mode=upload",
                 thisGroup.UriStub));
         }
 
@@ -1569,6 +1569,8 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 Display.ParseSelectBox("S_GALLERY_LICENSE", "license", licenses, "0");
+
+                Display.ParseClassification("S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
             else
             {

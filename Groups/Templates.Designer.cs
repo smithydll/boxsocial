@@ -176,7 +176,27 @@ namespace BoxSocial.Groups {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Style&lt;/h3&gt;
+        ///&lt;p&gt;Create a custom group style. To see your style change to the group, you must first turn on &apos;Show Custom Styles&apos; in your account preferences.&lt;/p&gt;
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Style&lt;/legend&gt;
+        ///			&lt;div id=&quot;advanced-style&quot;&gt;
+        ///				&lt;textarea id=&quot;css-style&quot; name=&quot;css-style&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{STYLE}&lt;/textarea&gt;
+        ///			&lt;/div&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;mode&quot; value=&quot;advanced&quot; /&gt;
+        ///			&lt;p&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_group_style {
+            get {
+                return ResourceManager.GetString("account_group_style", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- IF U_GROUP_ACCOUNT --&gt;
+        ///&lt;a href=&quot;{U_GROUP_ACCOUNT}&quot;&gt;Group Administration Panel&lt;/a&gt;
+        ///&lt;!-- ENDIF --&gt;.
         /// </summary>
         internal static string group_footer {
             get {

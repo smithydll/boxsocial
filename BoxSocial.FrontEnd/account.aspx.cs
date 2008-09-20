@@ -148,10 +148,8 @@ namespace BoxSocial.FrontEnd
 
             if (!session.IsLoggedIn)
             {
-                SessionState.RedirectAuthenticate();
+                HttpContext.Current.Response.Redirect(Linker.BuildLoginUri(Linker.StripSid(Linker.BuildAccountSubModuleUri((Primitive)null, module, submodule))));
             }
-
-            //Response.Write(module + "::" + submodule);
 
             loggedInMember.LoadProfileInfo();
 
@@ -162,7 +160,7 @@ namespace BoxSocial.FrontEnd
                 template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/profile/permissions\">Profile Permissions</a> panel.");
             }
 
-            if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.GetUserStyle()))
+            if (!loggedInMember.ShowCustomStyles && !string.IsNullOrEmpty(loggedInMember.Style.RawCss))
             {
                 template.ParseRaw("NO_CUSTOM_STYLE", "You have set a custom style for your site, yet you cannot view it as you have disabled custom styles. To view your custom style you must enable custom styles in your account <a href=\"/account/dashboard/preferences\">preferences</a>.");
             }

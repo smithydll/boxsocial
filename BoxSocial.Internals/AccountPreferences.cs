@@ -114,8 +114,6 @@ namespace BoxSocial.Internals
 
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
-            pages.Add("/profile", "My Profile");
-            pages.Add("/blog", "My Blog");
 
             foreach (DataRow pageRow in pagesTable.Rows)
             {

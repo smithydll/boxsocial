@@ -149,7 +149,7 @@ namespace BoxSocial.Internals
 
             //int i = 0;
             //while (i < strLength)
-            input.PadRight(1);
+            input = input + "\n ";
             for (int i = 0; i < input.Length - 1; i++)
             {
                 previous = current;
@@ -330,7 +330,7 @@ namespace BoxSocial.Internals
 
             //int i = 0;
             //while (i < strLength)
-            input.PadRight(1);
+            input = input + "\n ";
             for (int i = 0; i < input.Length - 1; i++)
             {
                 previous = current;

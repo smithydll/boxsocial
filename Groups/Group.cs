@@ -1245,7 +1245,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "resign-operator", GroupId, true);
+                return Linker.BuildAccountSubModuleUri("groups", "memberships", "resign-operator", GroupId, true);
             }
         }
 

@@ -47,6 +47,7 @@
     <Compile Include="AccountGroupsInvite.cs" />
     <Compile Include="AccountGroupsManage.cs" />
     <Compile Include="AccountGroupsMembershipsManage.cs" />
+    <Compile Include="AccountGroupStyle.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="GPage.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -85,6 +86,7 @@
     <Content Include="templates\account_group_invite.html" />
     <Content Include="templates\account_group_manage.html" />
     <Content Include="templates\account_group_membership.html" />
+    <Content Include="templates\account_group_style.html" />
     <Content Include="templates\group_footer.html" />
     <Content Include="templates\viewgroup.html" />
     <Content Include="templates\viewgroupmemberlist.html" />

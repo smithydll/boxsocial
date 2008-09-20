@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Forum {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- IF EDIT --&gt;
-        ///&lt;h3&gt;Edit Forum&lt;/h3&gt;
+        ///&lt;h3&gt;{L_EDIT_FORUM}&lt;/h3&gt;
         ///&lt;p&gt;Manage forums.&lt;/p&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;h3&gt;Create Forum&lt;/h3&gt;
@@ -75,18 +75,17 @@ namespace BoxSocial.Applications.Forum {
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///  &lt;fieldset&gt;
         ///    &lt;!-- IF EDIT --&gt;
-        ///    &lt;legend&gt;Edit Forum&lt;/legend&gt;
+        ///    &lt;legend&gt;{L_EDIT_FORUM}&lt;/legend&gt;
         ///    &lt;!-- ELSE --&gt;
         ///    &lt;legend&gt;Create Forum&lt;/legend&gt;
         ///    &lt;!-- ENDIF --&gt;
         ///    &lt;dl&gt;
         ///      &lt;dt&gt;
-        ///        &lt;label for=&quot;type&quot;&gt;Forum Type&lt;/label&gt;
+        ///        &lt;label for=&quot;type&quot;&gt;{L_FORUM_TYPE}&lt;/label&gt;
         ///      &lt;/dt&gt;
         ///      &lt;dd&gt;
         ///        {S_FORUM_TYPE}
-        ///      &lt;/dd&gt;
-        ///      &lt;dt&gt;        /// [rest of string was truncated]&quot;;.
+        ///      &lt;/dd&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_edit {
             get {
@@ -110,14 +109,15 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;th&gt;&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
+        ///    &lt;th&gt;&lt;/th&gt;
         ///  &lt;/tr&gt;
         ///  &lt;!-- BEGIN forum_list --&gt;
         ///  &lt;!-- IF forum_list.INDEX_EVEN --&gt;
         ///  &lt;tr class=&quot;even&quot;&gt;
         ///    &lt;!-- ELSE --&gt;
         ///    &lt;tr class=&quot;odd&quot;&gt;
-        ///      &lt;!-- ENDIF --&gt;
-        ///      &lt;td&gt;&lt;a href= [rest of string was truncated]&quot;;.
+        ///      &lt;!-- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_manage {
             get {
@@ -142,6 +142,15 @@ namespace BoxSocial.Applications.Forum {
         internal static string account_forum_settings {
             get {
                 return ResourceManager.GetString("account_forum_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string forum_header {
+            get {
+                return ResourceManager.GetString("forum_header", resourceCulture);
             }
         }
         
@@ -178,6 +187,7 @@ namespace BoxSocial.Applications.Forum {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///&lt;!-- INCLUDE forum_header.html --&gt;
         ///	&lt;h2&gt;{FORUM_TITLE}&lt;/h2&gt;
         ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///	&lt;!-- IF U_NEW_TOPIC --&gt;
@@ -192,9 +202,7 @@ namespace BoxSocial.Applications.Forum {
         ///  &lt;h3&gt;&lt;a href=&quot;{forum_list.URI}&quot;&gt;{forum_list.TITLE}&lt;/a&gt;&lt;/h3&gt;
         ///  &lt;!-- ENDIF --&gt;
         ///  &lt;!-- IF forum_list.IS_FIRST --&gt;
-        ///  &lt;ul class=&quot;forums&quot;&gt;
-        ///  &lt;!-- ENDIF --&gt;
-        ///    &lt;!-- IF foru [rest of string was truncated]&quot;;.
+        ///  &lt;ul class=&quot;forums&quot;&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewforum {
             get {
@@ -203,7 +211,10 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;a href=&quot;{U_FORUM}&quot;&gt;Go to forum&lt;/a&gt;.
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;profile-forum-pane&quot; class=&quot;pane&quot;&gt;
+        ///		&lt;h3&gt;Forum&lt;/h3&gt;
+        ///		&lt;a href=&quot;{U_FORUM}&quot;&gt;Go to forum&lt;/a&gt;
+        ///	&lt;/div&gt;.
         /// </summary>
         internal static string viewprofileforum {
             get {
@@ -218,7 +229,7 @@ namespace BoxSocial.Applications.Forum {
         ///	&lt;!-- IF U_NEW_REPLY --&gt;
         ///	&lt;div class=&quot;new-stuff&quot;&gt;
         ///    &lt;span class=&quot;new-topic post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TOPIC}&quot;&gt;{L_NEW_TOPIC}&lt;/a&gt;&lt;/span&gt;
-        ///		&lt;span class=&quot;new-reply post-button&quot;&gt;&lt;a href=&quot;{U_NEW_REPLY}&quot;&gt;Post Reply&lt;/a&gt;&lt;/span&gt;
+        ///		&lt;span class=&quot;new-reply post-button&quot;&gt;&lt;a href=&quot;{U_NEW_REPLY}&quot;&gt;{L_POST_REPLY}&lt;/a&gt;&lt;/span&gt;
         ///	&lt;/div&gt;
         ///	&lt;!-- ENDIF --&gt;
         ///
@@ -230,8 +241,7 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;!-- IF post_list.IS_READ --&gt;
         ///    &lt;!-- ELSE --&gt;
         ///    *
-        ///    &lt;!-- ENDIF --&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///    &lt;!-- ENDIF - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewtopic {
             get {

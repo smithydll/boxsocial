@@ -1,0 +1,14 @@
+﻿<h3>Style</h3>
+<p>Create a custom group style. To see your style change to the group, you must first turn on 'Show Custom Styles' in your account preferences.</p>
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Style</legend>
+			<div id="advanced-style">
+				<textarea id="css-style" name="css-style" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{STYLE}</textarea>
+			</div>
+		<input type="hidden" name="mode" value="advanced" />
+			<p><input type="submit" name="save" value="Save" /></p>
+		<input type="hidden" name="module" value="groups" />
+		<input type="hidden" name="sub" value="style" />
+	</fieldset>
+</form>

@@ -11,7 +11,16 @@
   <!-- IF FORUMS -->
   <!-- BEGIN forum_list -->
   <!-- IF forum_list.IS_CATEGORY -->
-  <h3><a href="{forum_list.URI}">{forum_list.TITLE}</a></h3>
+  <div class="forums">
+    <dl>
+      <dt>
+        <a href="{forum_list.URI}">{forum_list.TITLE}</a>
+      </dt>
+      <dd>{L_POSTS}</dd>
+      <dd>{L_TOPICS}</dd>
+      <dd>{L_LAST_POST}</dd>
+    </dl>
+  </div>
   <!-- ENDIF -->
   <!-- IF forum_list.IS_FIRST -->
   <ul class="forums">
@@ -20,6 +29,11 @@
     <li>
       <dl>
         <dt>
+          <!-- IF forum_list.IS_READ -->
+          <img src="/images/posticon_read_med.png" alt="Read" />
+          <!-- ELSE -->
+          <img src="/images/posticon_unread_med.png" alt="New" />
+          <!-- ENDIF -->
           <a href="{forum_list.URI}">{forum_list.TITLE}</a>
         </dt>
         <dd>{forum_list.POSTS}</dd>
@@ -37,7 +51,7 @@
 	<!-- IF TOPICS -->
   <p>{PAGINATION}</p>
 	<ul id="topics">
-    <li>
+    <li id="topic-head">
       <dl>
         <dt>&nbsp;</dt>
         <dd>{L_VIEWS}</dd>
@@ -50,8 +64,9 @@
       <dl>
         <dt>
           <!-- IF topic_list.IS_READ -->
+          <img src="/images/posticon_read_med.png" alt="Read" />
           <!-- ELSE -->
-          *
+          <img src="/images/posticon_unread_med.png" alt="New" />
           <!-- ENDIF -->
           <a href="{topic_list.URI}">{topic_list.TITLE}</a>
         </dt>

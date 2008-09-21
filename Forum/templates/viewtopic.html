@@ -15,8 +15,9 @@
   <!-- BEGIN post_list -->
   <li>
     <!-- IF post_list.IS_READ -->
+    <img src="/images/posticon_read_sml.png" alt="Read" />
     <!-- ELSE -->
-    *
+    <img src="/images/posticon_unread_sml.png" alt="New" />
     <!-- ENDIF -->
     <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
       <div class="postbody"><p>{post_list.TEXT}</p></div>

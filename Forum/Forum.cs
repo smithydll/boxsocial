@@ -724,73 +724,83 @@ namespace BoxSocial.Applications.Forum
 
         public void MoveUp()
         {
-            long parentOrder = 0;
-
-            if (parentId > 0)
-            {
-                Forum parent;
-
-                if (Owner is UserGroup)
-                {
-                    parent = new Forum(core, (UserGroup)Owner, ParentId);
-                }
-                else
-                {
-                    parent = new Forum(core, ParentId);
-                }
-                parentOrder = parent.Order;
-            }
-
-            if (parentOrder + 1 != Order)
-            {
-                SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
-                query.AddCondition("forum_parent_id", ParentId);
-                query.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
-                query.AddSort(SortOrder.Descending, "forum_order");
-                query.LimitCount = 1;
-
-                DataTable forum = core.db.Query(query);
-
-                if (forum.Rows.Count == 1)
-                {
-                    core.db.BeginTransaction();
-
-                    UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
-                    uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
-                    uQuery.AddCondition("forum_order", ConditionEquality.Equal, Order - 1);
-                    uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
-
-                    core.db.Query(uQuery);
-
-                    SetProperty("forumOrder", forumOrder - 1);
-                    Update();
-                }
-            }
         }
 
         public void MoveDown()
         {
+            /*Forum parent = null;
+
+            if (ParentId > 0)
+            {
+                parent = new Forum(core, ParentId);
+            }*/
+
             SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
-            query.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
-            query.AddSort(SortOrder.Descending, "forum_order");
-            query.LimitCount = 1;
+            query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+            query.LimitCount = 2;
 
-            DataTable forum = core.db.Query(query);
+            DataTable levelForumsDataTable = core.db.Query(query);
 
-            if (forum.Rows.Count == 1)
+            Forum record0 = null;
+            Forum record1 = null;
+            int difference = 0;
+            int differenceBelow = 0;
+
+            if (levelForumsDataTable.Rows.Count == 0)
             {
-                core.db.BeginTransaction();
+                /* Cannot move down */
+                return;
+            }
+            if (levelForumsDataTable.Rows.Count >= 1)
+            {
+                record0 = new Forum(core, levelForumsDataTable.Rows[0]);
+                difference = record0.Order - Order;
+            }
+            if (levelForumsDataTable.Rows.Count >= 2)
+            {
+                record1 = new Forum(core, levelForumsDataTable.Rows[1]);
+                differenceBelow = record1.Order - record0.Order;
+            }
 
-                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
-                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, 1));
-                uQuery.AddCondition("forum_order", ConditionEquality.Equal, Order + 1);
-                uQuery.AddCondition("forum_id", ConditionEquality.NotEqual, Id);
+            query = Forum.GetSelectQueryStub(typeof(Forum));
+            query.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, Order);
+            if (record0 != null)
+            {
+                query.AddCondition("forum_order", ConditionEquality.LessThan, record0.Order);
+            }
 
-                core.db.Query(uQuery);
+            List<long> updateIds = new List<long>();
 
-                SetProperty("forumOrder", forumOrder + 1);
-                Update();
+            foreach (DataRow dr in db.Query(query).Rows)
+            {
+                updateIds.Add((long)dr["forum_id"]);
+            }
+
+            db.BeginTransaction();
+            UpdateQuery uQuery;
+
+            if (record0 != null)
+            {
+                uQuery = new UpdateQuery(Item.GetTable(typeof(Forum)));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, difference));
+                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, record0.Order);
+                if (record1 != null)
+                {
+                    uQuery.AddCondition("forum_order", ConditionEquality.LessThan, record1.Order);
+                }
+
+                db.Query(uQuery);
+            }
+
+            if (updateIds.Count > 0)
+            {
+                uQuery = new UpdateQuery(Item.GetTable(typeof(Forum)));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, differenceBelow));
+                uQuery.AddCondition("forum_id", ConditionEquality.In, updateIds);
+
+                db.Query(uQuery);
             }
         }
 
@@ -958,14 +968,21 @@ namespace BoxSocial.Applications.Forum
             VariableCollection lastForumVariableCollection = null;
             bool lastCategory = true;
             bool first = true;
+            long lastCategoryId = 0;
             foreach (Forum forum in forums)
             {
-                if (first && (!forum.IsCategory))
+                if ((first && (!forum.IsCategory)) || (lastCategoryId != forum.ParentId && (!forum.IsCategory)))
                 {
                     VariableCollection defaultVariableCollection = page.template.CreateChild("forum_list");
                     defaultVariableCollection.Parse("TITLE", "Forum");
                     defaultVariableCollection.Parse("IS_CATEGORY", "TRUE");
+                    if (lastForumVariableCollection != null)
+                    {
+                        lastForumVariableCollection.Parse("IS_LAST", "TRUE");
+                    }
                     first = false;
+                    lastCategoryId = forum.ParentId;
+                    lastCategory = true;
                 }
 
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
@@ -1001,6 +1018,7 @@ namespace BoxSocial.Applications.Forum
                     {
                         lastForumVariableCollection.Parse("IS_LAST", "TRUE");
                     }
+                    lastCategoryId = forum.Id;
                     lastCategory = true;
                 }
                 else

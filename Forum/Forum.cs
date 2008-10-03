@@ -728,13 +728,6 @@ namespace BoxSocial.Applications.Forum
 
         public void MoveDown()
         {
-            /*Forum parent = null;
-
-            if (ParentId > 0)
-            {
-                parent = new Forum(core, ParentId);
-            }*/
-
             SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
             query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
@@ -770,6 +763,25 @@ namespace BoxSocial.Applications.Forum
             {
                 query.AddCondition("forum_order", ConditionEquality.LessThan, record0.Order);
             }
+            else
+            {
+                /* TODO: test */
+                query = Forum.GetSelectQueryStub(typeof(Forum));
+                query.AddCondition("forum_parent_id", ParentId); /* or any level below */
+                query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
+                query.AddSort(SortOrder.Descending, "forum_order");
+                query.LimitCount = 1;
+
+                levelForumsDataTable = core.db.Query(query);
+
+                Forum record = null;
+                if (levelForumsDataTable.Rows.Count == 1)
+                {
+                    record = new Forum(core, levelForumsDataTable.Rows[0]);
+
+                    query.AddCondition("forum_order", ConditionEquality.LessThanEqual, record.Order);
+                }
+            }
 
             List<long> updateIds = new List<long>();
 
@@ -789,6 +801,25 @@ namespace BoxSocial.Applications.Forum
                 if (record1 != null)
                 {
                     uQuery.AddCondition("forum_order", ConditionEquality.LessThan, record1.Order);
+                }
+                else
+                {
+                    /* TODO: test */
+                    query = Forum.GetSelectQueryStub(typeof(Forum));
+                    query.AddCondition("forum_parent_id", ParentId); /* or any level below */
+                    query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
+                    query.AddSort(SortOrder.Descending, "forum_order");
+                    query.LimitCount = 1;
+
+                    levelForumsDataTable = core.db.Query(query);
+
+                    Forum record = null;
+                    if (levelForumsDataTable.Rows.Count == 1)
+                    {
+                        record = new Forum(core, levelForumsDataTable.Rows[0]);
+
+                        query.AddCondition("forum_order", ConditionEquality.LessThanEqual, record.Order);
+                    }
                 }
 
                 db.Query(uQuery);
@@ -995,7 +1026,7 @@ namespace BoxSocial.Applications.Forum
                 if (lastPosts.ContainsKey(forum.LastPostId))
                 {
                     Display.ParseBbcode(forumVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                        lastPosts[forum.LastPostId].Uri, lastPosts[forum.LastPostId].Title, core.tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.tz))));
+                        lastPosts[forum.LastPostId].Uri, Functions.TrimStringToWord(lastPosts[forum.LastPostId].Title, 20), core.tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.tz))));
                 }
                 else
                 {
@@ -1072,7 +1103,7 @@ namespace BoxSocial.Applications.Forum
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {
                         Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                            topicLastPosts[topic.LastPostId].Uri, topicLastPosts[topic.LastPostId].Title, core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
+                            topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
                     }
                     else
                     {

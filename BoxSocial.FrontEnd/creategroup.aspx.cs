@@ -52,14 +52,12 @@ namespace BoxSocial.FrontEnd
 
             // delete all existing for this session
             // captcha is a use once thing, destroy all for this session
-            db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 2 AND session_id = '{0}'",
-                Mysql.Escape(session.SessionId)));
+            Confirmation.ClearStale(core, session.SessionId, 2);
 
             // create a new confimation code
-            long confirmId = db.UpdateQuery(string.Format("INSERT INTO confirm (session_id, confirm_code, confirm_type) VALUES ('{0}', '{1}', '{2}')",
-                Mysql.Escape(session.SessionId), Mysql.Escape(captchaString), 2));
+            Confirmation confirm = Confirmation.Create(core, session.SessionId, captchaString, 2);
 
-            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirmId.ToString(), true));
+            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)

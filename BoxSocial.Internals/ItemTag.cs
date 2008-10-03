@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using BoxSocial.IO;
 
@@ -39,13 +40,73 @@ namespace BoxSocial.Internals
 
         private Tag tag;
 
+        public long ItemTagId
+        {
+            get
+            {
+                return itemTagId;
+            }
+        }
+
+        public long ItemId
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        public string ItemType
+        {
+            get
+            {
+                return itemType;
+            }
+        }
+
+        public long TagId
+        {
+            get
+            {
+                return tagId;
+            }
+        }
+
         public ItemTag(Core core, long itemTagId)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(ItemTag_ItemLoad);
+
+            SelectQuery query = ItemTag_GetSelectQueryStub();
+            query.AddCondition("item_tag_id", itemTagId);
+
+            DataTable itemTagTable = db.Query(query);
+
+            if (itemTagTable.Rows.Count == 1)
+            {
+                loadItemInfo(itemTagTable.Rows[0]);
+                tag = new Tag(core, itemTagTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidItemTagException();
+            }
         }
 
         private void ItemTag_ItemLoad()
         {
+        }
+
+        public static SelectQuery ItemTag_GetSelectQueryStub()
+        {
+            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemTag), false);
+
+            query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
+            query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "tag_id", "tag_id");
+
+            query.AddSort(SortOrder.Ascending, "tag_text_normalised");
+
+            return query;
         }
 
         public override long Id
@@ -71,5 +132,9 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+    }
+
+    public class InvalidItemTagException : Exception
+    {
     }
 }

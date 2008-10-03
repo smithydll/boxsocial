@@ -42,6 +42,39 @@ namespace BoxSocial.Internals
         public Tag(Core core, long tagId)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(Tag_ItemLoad);
+
+            try
+            {
+                LoadItem(tagId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTagException();
+            }
+        }
+
+        public Tag(Core core, string textNormalised)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Tag_ItemLoad);
+
+            try
+            {
+                LoadItem("tag_text_normalised", textNormalised);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTagException();
+            }
+        }
+
+        public Tag(Core core, DataRow tagRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Tag_ItemLoad);
+
+            loadItemInfo(tagRow);
         }
 
         private void Tag_ItemLoad()
@@ -71,5 +104,9 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+    }
+
+    public class InvalidTagException : Exception
+    {
     }
 }

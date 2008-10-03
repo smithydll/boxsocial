@@ -626,14 +626,14 @@ namespace BoxSocial.Internals
 
         public static string TrimStringToWord(string input, int max)
         {
-            char[] spacers = { ' ', '.', '-', '!', '?', ')', ',', '#' };
+            char[] spacers = { ' ', '.', '-', '!', '?', '(', ')', '[', ']', '{', '}', ',', '#' };
 
             if (input.Length < max)
             {
                 return input;
             }
 
-            int posn = input.LastIndexOfAny(spacers,0, max);
+            int posn = input.LastIndexOfAny(spacers, max - 1, max);
 
             if (posn >= 0)
             {

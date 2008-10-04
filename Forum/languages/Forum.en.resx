@@ -123,11 +123,23 @@
   <data name="CANNOT" xml:space="preserve">
     <value>cannot</value>
   </data>
+  <data name="CREATE_NEW_FORUM" xml:space="preserve">
+    <value>Create New Forum</value>
+  </data>
   <data name="EDIT_FORUM" xml:space="preserve">
     <value>Edit Forum</value>
   </data>
+  <data name="FORUM_CATEGORY" xml:space="preserve">
+    <value>Forum/Category</value>
+  </data>
+  <data name="FORUM_SETTINGS" xml:space="preserve">
+    <value>Forum Settings</value>
+  </data>
   <data name="FORUM_TYPE" xml:space="preserve">
     <value>Forum Type</value>
+  </data>
+  <data name="GO_TO_FORUM" xml:space="preserve">
+    <value>Go to forum</value>
   </data>
   <data name="JOINED" xml:space="preserve">
     <value>Joined</value>
@@ -135,10 +147,19 @@
   <data name="LAST_POST" xml:space="preserve">
     <value>Last Post</value>
   </data>
+  <data name="MANAGE_FORUMS" xml:space="preserve">
+    <value>Manage Forum</value>
+  </data>
+  <data name="MANAGE_FORUMS_PROSE" xml:space="preserve">
+    <value>Here you can manage the categories, forums, and sub forums in your group's forum.</value>
+  </data>
   <data name="NEW_TOPIC" xml:space="preserve">
     <value>New Topic</value>
   </data>
   <data name="NO_TOPICS" xml:space="preserve">
+    <value>There are no topics in this forum.</value>
+  </data>
+  <data name="NO_TOPICS_FORUM" xml:space="preserve">
     <value>There are no topics in this forum.</value>
   </data>
   <data name="PERMISSION_POST_TOPIC" xml:space="preserve">
@@ -149,8 +170,14 @@
     <value>You [b]{0}[/b] reply to topics</value>
     <comment>You can reply to topics</comment>
   </data>
+  <data name="POST" xml:space="preserve">
+    <value>Post</value>
+  </data>
   <data name="POSTS" xml:space="preserve">
     <value>Posts</value>
+  </data>
+  <data name="POSTS_PER_PAGE" xml:space="preserve">
+    <value>Posts Per Page</value>
   </data>
   <data name="POST_REPLY" xml:space="preserve">
     <value>Post Reply</value>
@@ -169,6 +196,12 @@
   </data>
   <data name="TOPICS" xml:space="preserve">
     <value>Topics</value>
+  </data>
+  <data name="TOPICS_PER_PAGE" xml:space="preserve">
+    <value>Topics Per Page</value>
+  </data>
+  <data name="TOPIC_STATE" xml:space="preserve">
+    <value>Topic State</value>
   </data>
   <data name="VIEWS" xml:space="preserve">
     <value>Views</value>

@@ -232,13 +232,14 @@ namespace BoxSocial.FrontEnd
 
                                     if (aii.ApplicationSlugs != null)
                                     {
-                                        foreach (ApplicationSlug slug in aii.ApplicationSlugs)
+                                        foreach (ApplicationSlugInfo slug in aii.ApplicationSlugs)
                                         {
                                             if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
                                                 (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId)) != 1)
                                             {
-                                                db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
-                                                    Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));
+                                                /*db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
+                                                    Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));*/
+                                                ApplicationSlug.Create(core, applicationId, slug);
                                             }
                                         }
                                     }

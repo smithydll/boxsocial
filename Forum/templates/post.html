@@ -12,16 +12,16 @@
 
 <form action="{S_POST}" method="post">
   <fieldset>
-    <legend>Post</legend>
+    <legend>{L_POST}</legend>
     <dl>
       <dt>
-        <label for="subject">Post Subject</label>
+        <label for="subject">{L_POST_SUBJECT}</label>
       </dt>
       <dd>
         <input type="text" id="subject" name="subject" value="{S_SUBJECT}" style="width: 100%;" />
       </dd>
       <dt>
-        <label for="post">Post Text</label>
+        <label for="post">{L_POST_TEXT}</label>
       </dt>
       <dd>
         <textarea id="post" name="post" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{S_POST_TEXT}</textarea>
@@ -34,7 +34,7 @@
       <!-- TODO: moderation stuffs -->
       <!-- IF S_TOPIC_STATE -->
       <dt>
-        <label for="topic-state">Topic State</label>
+        <label for="topic-state">{L_TOPIC_STATE}</label>
       </dt>
       <dd>
         {S_TOPIC_STATE}

@@ -1213,7 +1213,6 @@ namespace BoxSocial.Internals
             query.AddField("user_home_page", "/profile");
             query.AddField("user_bytes", 0);
             query.AddField("user_status_messages", 0);
-            query.AddField("user_last_visit_ut", 0);
             query.AddField("user_show_bbcode", 0x07);
             query.AddField("user_show_custom_styles", true);
             query.AddField("user_new_password", "");

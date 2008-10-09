@@ -400,7 +400,7 @@ namespace BoxSocial.Internals
 
                 foreach (DataRow slugRow in applicationSlugsTable.Rows)
                 {
-                    applicationsDictionary[(int)slugRow["application_id"]].LoadSlugEx((string)slugRow["slug_slug_ex"]);
+                    applicationsDictionary[(long)slugRow["application_id"]].LoadSlugEx((string)slugRow["slug_slug_ex"]);
                 }
             }
 

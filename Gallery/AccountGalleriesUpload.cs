@@ -29,9 +29,16 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
+    /// <summary>
+    /// Account sub module for uploading photos.
+    /// </summary>
     [AccountSubModule("galleries", "upload")]
     public class AccountGalleriesUpload : AccountSubModule
     {
+
+        /// <summary>
+        /// Sub module title.
+        /// </summary>
         public override string Title
         {
             get
@@ -40,6 +47,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Sub module order.
+        /// </summary>
         public override int Order
         {
             get
@@ -47,16 +57,30 @@ namespace BoxSocial.Applications.Gallery
                 return -1;
             }
         }
+
+        /// <summary>
+        /// Constructor for the Account sub module
+        /// </summary>
         public AccountGalleriesUpload()
         {
             this.Load += new EventHandler(AccountGalleriesUpload_Load);
             this.Show += new EventHandler(AccountGalleriesUpload_Show);
         }
 
+        /// <summary>
+        /// Load procedure for account sub module.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountGalleriesUpload_Load(object sender, EventArgs e)
         {
         }
 
+        /// <summary>
+        /// Default show procedure for account sub module.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountGalleriesUpload_Show(object sender, EventArgs e)
         {
             SetTemplate("account_galleries_upload");
@@ -89,6 +113,11 @@ namespace BoxSocial.Applications.Gallery
             Save(new EventHandler(AccountGalleriesUpload_Save));
         }
 
+        /// <summary>
+        /// Save procedure for uploading photos.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountGalleriesUpload_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();

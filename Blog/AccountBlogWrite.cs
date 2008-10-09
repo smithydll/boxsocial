@@ -29,9 +29,17 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+
+    /// <summary>
+    /// Account sub module for writing blog entries.
+    /// </summary>
     [AccountSubModule("blog", "write")]
     public class AccountBlogWrite : AccountSubModule
     {
+
+        /// <summary>
+        /// Sub module title.
+        /// </summary>
         public override string Title
         {
             get
@@ -40,6 +48,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Sub module order.
+        /// </summary>
         public override int Order
         {
             get
@@ -48,17 +59,30 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Constructor for the Account sub module
+        /// </summary>
         public AccountBlogWrite()
         {
             this.Load += new EventHandler(AccountBlogWrite_Load);
             this.Show += new EventHandler(AccountBlogWrite_Show);
         }
 
+        /// <summary>
+        /// Load procedure for account sub module.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountBlogWrite_Load(object sender, EventArgs e)
         {
             AddModeHandler("delete", new ModuleModeHandler(AccountBlogWrite_Delete));
         }
 
+        /// <summary>
+        /// Default show procedure for account sub module.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountBlogWrite_Show(object sender, EventArgs e)
         {
             SetTemplate("account_post");
@@ -161,6 +185,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Save procedure for a blog entry.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountBlogWrite_Save(object sender, EventArgs e)
         {
             string title = Request.Form["title"];
@@ -306,6 +335,11 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Delete procedure for a blog entry.
+        /// </summary>
+        /// <param name="sender">Object calling load event</param>
+        /// <param name="e">Load EventArgs</param>
         void AccountBlogWrite_Delete(object sender, EventArgs e)
         {
             AuthoriseRequestSid();

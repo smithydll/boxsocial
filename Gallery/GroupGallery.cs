@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
-        /// <param name="page">Page calling</param>
+        /// <param name="core">Page calling</param>
         /// <returns>A list of sub-galleries</returns>
         public override List<Gallery> GetGalleries(Core core)
         {

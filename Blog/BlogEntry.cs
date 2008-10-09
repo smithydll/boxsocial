@@ -400,6 +400,9 @@ namespace BoxSocial.Applications.Blog
         }
     }
 
+    /// <summary>
+    /// The exception that is thrown when a blog entry has not been found.
+    /// </summary>
     public class InvalidBlogEntryException : Exception
     {
     }

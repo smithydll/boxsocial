@@ -335,6 +335,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the gallery item owner
+        /// </summary>
         public Primitive Owner
         {
             get
@@ -574,6 +577,11 @@ namespace BoxSocial.Applications.Gallery
         {
         }
 
+        /// <summary>
+        /// Generates a query stub for generating more complex queries for the
+        /// gallery item data type.
+        /// </summary>
+        /// <returns>A query stub for the gallery item data type</returns>
         public static SelectQuery GalleryItem_GetSelectQueryStub()
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
@@ -1823,13 +1831,16 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns gallery item Uri
+        /// Returns gallery item uri
         /// </summary>
         public abstract override string Uri
         {
             get;
         }
 
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
         public abstract string ThumbUri
         {
             get;

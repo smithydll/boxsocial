@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns user gallery item URI
+        /// Returns group gallery item uri
         /// </summary>
         /// <returns></returns>
         public override string BuildUri()
@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns user gallery item URI
+        /// Returns group gallery item uri
         /// </summary>
         public override string Uri
         {
@@ -112,6 +112,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the group gallery item thumbnail uri
+        /// </summary>
         public override string ThumbUri
         {
             get

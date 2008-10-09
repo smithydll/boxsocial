@@ -32,14 +32,25 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
+
+    /// <summary>
+    /// Application constructor class for the Gallery application
+    /// </summary>
     public class AppInfo : Application
     {
 
+        /// <summary>
+        /// Constructor for the Gallery application
+        /// </summary>
+        /// <param name="core"></param>
         public AppInfo(Core core)
             : base(core)
         {
         }
 
+        /// <summary>
+        /// Application title
+        /// </summary>
         public override string Title
         {
             get
@@ -48,6 +59,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Default stub
+        /// </summary>
         public override string Stub
         {
             get
@@ -56,6 +70,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// A description of the application
+        /// </summary>
         public override string Description
         {
             get
@@ -64,6 +81,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating if the application implements a comment
+        /// handler.
+        /// </summary>
         public override bool UsesComments
         {
             get
@@ -72,6 +93,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating if the application implements a ratings
+        /// handler.
+        /// </summary>
         public override bool UsesRatings
         {
             get
@@ -80,6 +105,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the application icon for the Gallery application.
+        /// </summary>
         public override System.Drawing.Image Icon
         {
             get
@@ -88,6 +116,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the application stylesheet for the Blog application.
+        /// </summary>
         public override string StyleSheet
         {
             get
@@ -96,6 +127,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the application javascript for the Blog application.
+        /// </summary>
         public override string JavaScript
         {
             get
@@ -104,6 +138,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Initialises the application
+        /// </summary>
+        /// <param name="core">Core token</param>
         public override void Initialise(Core core)
         {
             this.core = core;
@@ -115,6 +153,10 @@ namespace BoxSocial.Applications.Gallery
             core.RegisterRatingHandle("PHOTO", photoRated);
         }
 
+        /// <summary>
+        /// Builds installation info for the application.
+        /// </summary>
+        /// <returns>Installation information for the application</returns>
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
@@ -135,6 +177,9 @@ namespace BoxSocial.Applications.Gallery
             return aii;
         }
 
+        /// <summary>
+        /// Builds a list of page slugs stubs the application handles.
+        /// </summary>
         public override Dictionary<string, string> PageSlugs
         {
             get
@@ -145,6 +190,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Handles the application load event.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that caused the application to load</param>
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
@@ -157,6 +207,10 @@ namespace BoxSocial.Applications.Gallery
             core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
         }
 
+        /// <summary>
+        /// Callback on a gallery item being rated.
+        /// </summary>
+        /// <param name="e">An EventArgs that contains the event data</param>
         private void photoRated(ItemRatedEventArgs e)
         {
             /*UpdateQuery uQuery = new UpdateQuery("gallery_items");
@@ -166,10 +220,20 @@ namespace BoxSocial.Applications.Gallery
                 e.Rating, e.ItemId));
         }
 
+        /// <summary>
+        /// Callback on a comment being posted to a gallery item.
+        /// </summary>
+        /// <param name="e">An EventArgs that contains the event data</param>
         private void photoCommentPosted(CommentPostedEventArgs e)
         {
         }
 
+        /// <summary>
+        /// Determines if a user can post a comment to a gallery item.
+        /// </summary>
+        /// <param name="itemId">Gallery item id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool photoCanPostComment(long itemId, User member)
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
@@ -211,6 +275,12 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Determines if a user can delete a comment from a gallery item
+        /// </summary>
+        /// <param name="itemId">Gallery item id</param>
+        /// <param name="member">User to interrogate</param>
+        /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool photoCanDeleteComment(long itemId, User member)
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
@@ -253,12 +323,22 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Adjusts the comment count for the gallery item.
+        /// </summary>
+        /// <param name="itemId">Gallery item id</param>
+        /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void photoAdjustCommentCount(long itemId, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
                 itemId, adjustment));
         }
 
+        /// <summary>
+        /// Show a gallery
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showGallery(Core core, object sender)
         {
             if (sender is PPage)
@@ -275,6 +355,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Show a sub gallery
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showSubGallery(Core core, object sender)
         {
             if (sender is PPage)
@@ -283,6 +368,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Show a user's gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showUserPhoto(Core core, object sender)
         {
             if (sender is PPage)
@@ -291,6 +381,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Show a group or network gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showPhoto(Core core, object sender)
         {
             if (sender is GPage)
@@ -305,6 +400,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Show an image file
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="sender">Object that called the page</param>
         private void showImage(Core core, object sender)
         {
             if (sender is PPage)
@@ -323,11 +423,19 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Provides a list of primitives the application supports.
+        /// </summary>
+        /// <returns>List of primitives given support of</returns>
         public override AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
         }
 
+        /// <summary>
+        /// Hook interface for any application hooks provided by a page.
+        /// </summary>
+        /// <param name="e">An EventArgs that contains the event data</param>
         void core_PageHooks(HookEventArgs e)
         {
             if (e.PageType == AppPrimitives.Group)
@@ -340,6 +448,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Hook showing gallery items on a group profile.
+        /// </summary>
+        /// <param name="e">Hook event arguments</param>
         public void ShowGroupGallery(HookEventArgs e)
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
@@ -371,6 +483,10 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Hook showing gallery items on a network profile.
+        /// </summary>
+        /// <param name="e">Hook event arguments</param>
         public void ShowNetworkGallery(HookEventArgs e)
         {
             Network theNetwork = (Network)e.Owner;

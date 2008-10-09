@@ -164,6 +164,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the user gallery item thumbnail uri
+        /// </summary>
         public override string ThumbUri
         {
             get

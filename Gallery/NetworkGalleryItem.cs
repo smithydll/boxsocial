@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// 
+        /// Returns network gallery item uri
         /// </summary>
         public override string Uri
         {
@@ -112,6 +112,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Returns the network gallery item thumbnail uri
+        /// </summary>
         public override string ThumbUri
         {
             get

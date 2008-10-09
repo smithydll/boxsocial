@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Blog
     {
 
         /// <summary>
-        /// Constructor for Blog Application
+        /// Constructor for the Blog application
         /// </summary>
         /// <param name="core"></param>
         public AppInfo(Core core)
@@ -105,7 +105,7 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Gets the application icon for Blog Application.
+        /// Gets the application icon for the Blog application.
         /// </summary>
         public override System.Drawing.Image Icon
         {
@@ -116,6 +116,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the application stylesheet for the Blog application.
+        /// </summary>
         public override string StyleSheet
         {
             get
@@ -124,6 +127,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the application javascript for the Blog application.
+        /// </summary>
         public override string JavaScript
         {
             get
@@ -258,7 +264,7 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Adjusts the comment count for the blog post
+        /// Adjusts the comment count for the blog post.
         /// </summary>
         /// <param name="itemId">Blog post id</param>
         /// <param name="adjustment">Amount to adjust the comment count by</param>

@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -95,23 +96,29 @@ namespace BoxSocial.Applications.Blog
             string postText = "";
             DateTime postTime = DateTime.Now;
 
-            Dictionary<string, string> postYears = new Dictionary<string, string>();
+            SelectBox postYearsSelectBox = new SelectBox("post-year");
             for (int i = DateTime.Now.AddYears(-7).Year; i <= DateTime.Now.Year; i++)
             {
-                postYears.Add(i.ToString(), i.ToString());
+                postYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            Dictionary<string, string> postMonths = new Dictionary<string, string>();
+            postYearsSelectBox.SelectedKey = postTime.Year.ToString();
+
+            SelectBox postMonthsSelectBox = new SelectBox("post-month");
             for (int i = 1; i < 13; i++)
             {
-                postMonths.Add(i.ToString(), Functions.IntToMonth(i));
+                postMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
             }
 
-            Dictionary<string, string> postDays = new Dictionary<string, string>();
+            postMonthsSelectBox.SelectedKey = postTime.Month.ToString();
+
+            SelectBox postDaysSelectBox = new SelectBox("post-day");
             for (int i = 1; i < 32; i++)
             {
-                postDays.Add(i.ToString(), i.ToString());
+                postDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
+
+            postDaysSelectBox.SelectedKey = postTime.Day.ToString();
 
             if (postId > 0)
             {
@@ -143,10 +150,9 @@ namespace BoxSocial.Applications.Blog
                 }
             }
 
-            Display.ParseSelectBox(template, "S_POST_YEAR", "post-year", postYears, postTime.Year.ToString());
-            Display.ParseSelectBox(template, "S_POST_MONTH", "post-month", postMonths, postTime.Month.ToString());
-            Display.ParseSelectBox(template, "S_POST_DAY", "post-day", postDays, postTime.Day.ToString());
-
+            template.Parse("S_POST_YEAR", postYearsSelectBox);
+            template.Parse("S_POST_MONTH", postMonthsSelectBox);
+            template.Parse("S_POST_DAY", postDaysSelectBox);
             template.Parse("S_POST_HOUR", postTime.Hour.ToString());
             template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
 
@@ -154,24 +160,29 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Read");
             permissions.Add("Can Comment");
 
-            Dictionary<string, string> licenses = new Dictionary<string, string>();
+            SelectBox licensesSelectBox = new SelectBox("license");
             DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
-            licenses.Add("0", "Default ZinZam License");
+            licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
             foreach (DataRow licenseRow in licensesTable.Rows)
             {
-                licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
+                licensesSelectBox.Add(new SelectBoxItem(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]));
             }
 
-            Dictionary<string, string> categories = new Dictionary<string, string>();
+            licensesSelectBox.SelectedKey = licenseId.ToString();
+
+            SelectBox categoriesSelectBox = new SelectBox("category");
             DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
+                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
             }
 
-            Display.ParseSelectBox(template, "S_BLOG_LICENSE", "license", licenses, licenseId.ToString());
-            Display.ParseSelectBox(template, "S_BLOG_CATEGORY", "category", categories, categoryId.ToString());
+            categoriesSelectBox.SelectedKey = categoryId.ToString();
+
+            template.Parse("S_BLOG_LICENSE", licensesSelectBox);
+            template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
             Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
 
             template.Parse("S_TITLE", postTitle);

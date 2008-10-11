@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{201B6661-4497-45B1-AE71-5D84F107B2CD}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BoxSocial.Services.Installer</RootNamespace>
-    <AssemblyName>BoxSocial.Services.Installer</AssemblyName>
+    <RootNamespace>BoxSocial.Forms</RootNamespace>
+    <AssemblyName>BoxSocial.Forms</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>BoxSocial.Services.Installer.Installer</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>649 169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,26 +29,20 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>649 169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.XML.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Installer.cs" />
+    <Compile Include="FormField.cs" />
+    <Compile Include="SelectBox.cs" />
+    <Compile Include="SelectBoxItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\BoxSocial.Forms\BoxSocial.Forms.csproj">
-      <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
-      <Name>BoxSocial.Forms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BoxSocial.IO\BoxSocial.IO.csproj">
-      <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
-      <Name>BoxSocial.IO</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

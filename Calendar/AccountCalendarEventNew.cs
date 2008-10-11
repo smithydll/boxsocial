@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -125,36 +126,66 @@ namespace BoxSocial.Applications.Calendar
             string location = "";
             string description = "";
 
-            Dictionary<string, string> years = new Dictionary<string, string>();
+            SelectBox yearsStartSelectBox = new SelectBox("start-year");
+            SelectBox yearsEndSelectBox = new SelectBox("end-year");
+
             for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(110).Year; i++)
             {
-                years.Add(i.ToString(), i.ToString());
+                yearsStartSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+                yearsEndSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            Dictionary<string, string> months = new Dictionary<string, string>();
+            yearsStartSelectBox.SelectedKey = startDate.Year.ToString();
+            yearsEndSelectBox.SelectedKey = endDate.Year.ToString();
+
+            SelectBox monthsStartSelectBox = new SelectBox("start-month");
+            SelectBox monthsEndSelectBox = new SelectBox("end-month");
+
             for (int i = 1; i < 13; i++)
             {
-                months.Add(i.ToString(), Functions.IntToMonth(i));
+                monthsStartSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
+                monthsEndSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
             }
 
-            Dictionary<string, string> days = new Dictionary<string, string>();
+            monthsStartSelectBox.SelectedKey = startDate.Month.ToString();
+            monthsEndSelectBox.SelectedKey = endDate.Month.ToString();
+
+            SelectBox daysStartSelectBox = new SelectBox("start-day");
+            SelectBox daysEndSelectBox = new SelectBox("end-day");
+
             for (int i = 1; i < 32; i++)
             {
-                days.Add(i.ToString(), i.ToString());
+                daysStartSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+                daysEndSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            Dictionary<string, string> hours = new Dictionary<string, string>();
+            daysStartSelectBox.SelectedKey = startDate.Day.ToString();
+            daysEndSelectBox.SelectedKey = endDate.Day.ToString();
+
+            SelectBox hoursStartSelectBox = new SelectBox("start-hour");
+            SelectBox hoursEndSelectBox = new SelectBox("end-hour");
+
             for (int i = 0; i < 24; i++)
             {
                 DateTime hourTime = new DateTime(year, month, day, i, 0, 0);
-                hours.Add(i.ToString(), hourTime.ToString("h tt").ToLower());
+                hoursStartSelectBox.Add(new SelectBoxItem(i.ToString(), hourTime.ToString("h tt").ToLower()));
+                hoursEndSelectBox.Add(new SelectBoxItem(i.ToString(), hourTime.ToString("h tt").ToLower()));
             }
 
-            Dictionary<string, string> minutes = new Dictionary<string, string>();
+            hoursStartSelectBox.SelectedKey = startDate.Hour.ToString();
+            hoursEndSelectBox.SelectedKey = endDate.Hour.ToString();
+
+            SelectBox minutesStartSelectBox = new SelectBox("start-minute");
+            SelectBox minutesEndSelectBox = new SelectBox("end-minute");
+
             for (int i = 0; i < 60; i++)
             {
-                minutes.Add(i.ToString(), string.Format("{0:00}", i));
+                minutesStartSelectBox.Add(new SelectBoxItem(i.ToString(), string.Format("{0:00}", i)));
+                minutesEndSelectBox.Add(new SelectBoxItem(i.ToString(), string.Format("{0:00}", i)));
             }
+
+            minutesStartSelectBox.SelectedKey = startDate.Minute.ToString();
+            minutesEndSelectBox.SelectedKey = endDate.Minute.ToString();
 
             if (edit)
             {
@@ -192,20 +223,21 @@ namespace BoxSocial.Applications.Calendar
             template.Parse("S_MONTH", month.ToString());
             template.Parse("S_DAY", day.ToString());
 
-            Display.ParseSelectBox(template, "S_START_YEAR", "start-year", years, startDate.Year.ToString());
-            Display.ParseSelectBox(template, "S_END_YEAR", "end-year", years, endDate.Year.ToString());
 
-            Display.ParseSelectBox(template, "S_START_MONTH", "start-month", months, startDate.Month.ToString());
-            Display.ParseSelectBox(template, "S_END_MONTH", "end-month", months, endDate.Month.ToString());
+            template.Parse("S_START_YEAR", yearsStartSelectBox);
+            template.Parse("S_END_YEAR", yearsEndSelectBox);
 
-            Display.ParseSelectBox(template, "S_START_DAY", "start-day", days, startDate.Day.ToString());
-            Display.ParseSelectBox(template, "S_END_DAY", "end-day", days, endDate.Day.ToString());
+            template.Parse("S_START_MONTH", monthsStartSelectBox);
+            template.Parse("S_END_MONTH", monthsEndSelectBox);
 
-            Display.ParseSelectBox(template, "S_START_HOUR", "start-hour", hours, startDate.Hour.ToString());
-            Display.ParseSelectBox(template, "S_END_HOUR", "end-hour", hours, endDate.Hour.ToString());
+            template.Parse("S_START_DAY", daysStartSelectBox);
+            template.Parse("S_END_DAY", daysEndSelectBox);
 
-            Display.ParseSelectBox(template, "S_START_MINUTE", "start-minute", minutes, startDate.Minute.ToString());
-            Display.ParseSelectBox(template, "S_END_MINUTE", "end-minute", minutes, endDate.Minute.ToString());
+            template.Parse("S_START_HOUR", hoursStartSelectBox);
+            template.Parse("S_END_HOUR", hoursEndSelectBox);
+
+            template.Parse("S_START_MINUTE", minutesStartSelectBox);
+            template.Parse("S_END_MINUTE", minutesEndSelectBox);
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");

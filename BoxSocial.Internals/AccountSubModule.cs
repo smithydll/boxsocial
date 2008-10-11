@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web;
 using BoxSocial;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 

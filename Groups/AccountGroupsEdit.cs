@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -81,14 +82,15 @@ namespace BoxSocial.Groups
 
             short category = thisGroup.RawCategory;
 
-            Dictionary<string, string> categories = new Dictionary<string, string>();
+            SelectBox categoriesSelectBox = new SelectBox("category");
             DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
+                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
             }
 
-            Display.ParseSelectBox(template, "S_CATEGORIES", "category", categories, category.ToString());
+            categoriesSelectBox.SelectedKey = category.ToString();
+            template.Parse("S_CATEGORIES", categoriesSelectBox);
             template.Parse("S_GROUP_ID", thisGroup.GroupId.ToString());
             template.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
             template.Parse("GROUP_DESCRIPTION", thisGroup.Description);
@@ -110,6 +112,7 @@ namespace BoxSocial.Groups
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type = '{1}' ORDER BY page_order ASC;",
                 thisGroup.Id, thisGroup.Type));
 
+            SelectBox pagesSelectBox = new SelectBox("homepage");
             Dictionary<string, string> pages = new Dictionary<string, string>();
             List<string> disabledItems = new List<string>();
             pages.Add("/profile", "Group Profile");
@@ -118,15 +121,16 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty((string)pageRow["page_parent_path"]))
                 {
-                    pages.Add("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"] + "/");
+                    pagesSelectBox.Add(new SelectBoxItem("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"] + "/"));
                 }
                 else
                 {
-                    pages.Add("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"] + "/");
+                    pagesSelectBox.Add(new SelectBoxItem("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"] + "/"));
                 }
             }
 
-            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, thisGroup.Info.GroupHomepage.ToString());
+            pagesSelectBox.SelectedKey = thisGroup.Info.GroupHomepage.ToString();
+            template.Parse("S_HOMEPAGE", pagesSelectBox);
 
             Save(new EventHandler(AccountGroupsEdit_Save));
         }

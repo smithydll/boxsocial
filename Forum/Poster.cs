@@ -24,6 +24,7 @@ using System.Data;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.Groups;
 using BoxSocial.Networks;

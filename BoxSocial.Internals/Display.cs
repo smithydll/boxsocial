@@ -29,6 +29,7 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Services;
 using System.Web.Services.Protocols;
+using BoxSocial.Forms;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -834,6 +835,7 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
         }
 
+        /* TODO: comment this section out */
         public static void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem)
         {
             ParseSelectBox(core.template, templateVar, name, items, selectedItem);
@@ -852,7 +854,7 @@ namespace BoxSocial.Internals
         public static void ParseSelectBox(Template template, string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
         {
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
-        }
+        }/**/
 
         public static void ParseLicensingBox(string templateVar, byte selectedLicense)
         {

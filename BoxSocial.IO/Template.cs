@@ -27,6 +27,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
+using BoxSocial.Forms;
 
 namespace BoxSocial.IO
 {
@@ -69,6 +70,17 @@ namespace BoxSocial.IO
             if (!variables.ContainsKey(key))
             {
                 variables.Add(key, HttpUtility.HtmlEncode(value));
+            }
+        }
+
+        public void Parse(string key, FormField formField)
+        {
+            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms")
+            {
+                if (!variables.ContainsKey(key))
+                {
+                    variables.Add(key, formField.ToString());
+                }
             }
         }
 
@@ -249,6 +261,14 @@ namespace BoxSocial.IO
         public void Parse(string key, string value)
         {
             variables.Parse(key, value);
+        }
+
+        public void Parse(string key, FormField formField)
+        {
+            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms")
+            {
+                variables.Parse(key, formField);
+            }
         }
 
         /// <summary>

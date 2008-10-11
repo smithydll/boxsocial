@@ -31,6 +31,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -1559,16 +1560,17 @@ namespace BoxSocial.Applications.Gallery
                     return;
                 }
 
-                Dictionary<string, string> licenses = new Dictionary<string, string>();
+                SelectBox licensesSelectBox = new SelectBox("license");
                 DataTable licensesTable = core.db.Query("SELECT license_id, license_title FROM licenses");
 
-                licenses.Add("0", "Default ZinZam License");
+                licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
                 foreach (DataRow licenseRow in licensesTable.Rows)
                 {
-                    licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
+                    licensesSelectBox.Add(new SelectBoxItem(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]));
                 }
 
-                Display.ParseSelectBox("S_GALLERY_LICENSE", "license", licenses, "0");
+                licensesSelectBox.SelectedKey = "0";
+                page.template.Parse("S_GALLERY_LICENSE", licensesSelectBox);
 
                 Display.ParseClassification("S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
@@ -1735,16 +1737,17 @@ namespace BoxSocial.Applications.Gallery
                     return;
                 }
 
-                Dictionary<string, string> licenses = new Dictionary<string, string>();
+                SelectBox licensesSelectBox = new SelectBox("license");
                 DataTable licensesTable = core.db.Query("SELECT license_id, license_title FROM licenses");
 
-                licenses.Add("0", "Default ZinZam License");
+                licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
                 foreach (DataRow licenseRow in licensesTable.Rows)
                 {
-                    licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
+                    licensesSelectBox.Add(new SelectBoxItem(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]));
                 }
 
-                Display.ParseSelectBox("S_GALLERY_LICENSE", "license", licenses, "0");
+                licensesSelectBox.SelectedKey = "0";
+                page.template.Parse("S_GALLERY_LICENSE", licensesSelectBox);
             }
             else
             {

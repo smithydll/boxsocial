@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -112,22 +113,22 @@ namespace BoxSocial.Internals
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type = '{1}' ORDER BY page_order ASC;",
                 LoggedInMember.UserId, Mysql.Escape(LoggedInMember.Type)));
 
-            Dictionary<string, string> pages = new Dictionary<string, string>();
-            List<string> disabledItems = new List<string>();
+            SelectBox pagesSelectBox = new SelectBox("homepage");
 
             foreach (DataRow pageRow in pagesTable.Rows)
             {
                 if (string.IsNullOrEmpty((string)pageRow["page_parent_path"]))
                 {
-                    pages.Add("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"]);
+                    pagesSelectBox.Add(new SelectBoxItem("/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_slug"]));
                 }
                 else
                 {
-                    pages.Add("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"]);
+                    pagesSelectBox.Add(new SelectBoxItem("/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"], "/" + (string)pageRow["page_parent_path"] + "/" + (string)pageRow["page_slug"]));
                 }
             }
 
-            Display.ParseSelectBox(template, "S_HOMEPAGE", "homepage", pages, LoggedInMember.ProfileHomepage.ToString());
+            pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage.ToString();
+            template.Parse("S_HOMEPAGE", pagesSelectBox);
             Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
 
             Save(new EventHandler(AccountPreferences_Save));

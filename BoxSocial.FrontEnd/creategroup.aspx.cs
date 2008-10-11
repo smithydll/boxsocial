@@ -32,6 +32,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using BoxSocial;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -107,17 +108,19 @@ namespace BoxSocial.FrontEnd
                 slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");
             }
 
-            Dictionary<string, string> categories = new Dictionary<string, string>();
+            SelectBox categoriesSelectBox = new SelectBox("category");
             DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categories.Add(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]);
+                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
 
                 if (category == (short)categoryRow["category_id"])
                 {
                     categoryFound = true;
                 }
             }
+
+            categoriesSelectBox.SelectedKey = category.ToString();
 
             if (!categoryFound)
             {
@@ -127,8 +130,8 @@ namespace BoxSocial.FrontEnd
             if (Request.Form["submit"] == null)
             {
                 prepareNewCaptcha();
-                //template.Parse("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
-                Display.ParseSelectBox("S_CATEGORIES", "category", categories, category.ToString());
+                
+                template.Parse("S_CATEGORIES", categoriesSelectBox);
                 template.Parse("S_OPEN_CHECKED", selected);
             }
             else
@@ -137,8 +140,7 @@ namespace BoxSocial.FrontEnd
                 template.Parse("GROUP_TITLE", (string)Request.Form["title"]);
                 template.Parse("GROUP_NAME_SLUG", slug);
                 template.Parse("GROUP_DESCRIPTION", (string)Request.Form["description"]);
-                //template.ParseRaw("S_CATEGORIES", Functions.BuildSelectBox("category", categories, category.ToString()));
-                Display.ParseSelectBox("S_CATEGORIES", "category", categories, category.ToString());
+                template.Parse("S_CATEGORIES", categoriesSelectBox);
 
                 switch ((string)Request.Form["type"])
                 {

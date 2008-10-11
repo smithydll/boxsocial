@@ -54,6 +54,10 @@
     <Compile Include="UserGuestBook.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
+      <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
+      <Name>BoxSocial.Forms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">
       <Project>{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}</Project>
       <Name>BoxSocial.Internals</Name>

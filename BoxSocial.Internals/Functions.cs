@@ -28,6 +28,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -688,50 +689,5 @@ namespace BoxSocial.Internals
             }
         }
 
-    }
-
-    public class SelectBoxItem
-    {
-        private string key;
-        private string text;
-        private string icon;
-
-        public string Key
-        {
-            get
-            {
-                return key;
-            }
-        }
-
-        public string Text
-        {
-            get
-            {
-                return text;
-            }
-        }
-
-        public string Icon
-        {
-            get
-            {
-                return icon;
-            }
-        }
-
-        public SelectBoxItem(string key, string text, string icon)
-        {
-            this.key = key;
-            this.text = text;
-            this.icon = icon;
-        }
-
-        public SelectBoxItem(string key, string text)
-        {
-            this.key = key;
-            this.text = text;
-            this.icon = null;
-        }
     }
 }

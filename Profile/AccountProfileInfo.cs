@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -75,25 +76,34 @@ namespace BoxSocial.Applications.Profile
                     break;
             }
 
-            Dictionary<string, string> dobYears = new Dictionary<string, string>();
+            SelectBox dobYearsSelectBox = new SelectBox("dob-year");
+
             for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(-13).Year; i++)
             {
-                dobYears.Add(i.ToString(), i.ToString());
+                dobYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            Dictionary<string, string> dobMonths = new Dictionary<string, string>();
+            dobYearsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Year.ToString();
+
+            SelectBox dobMonthsSelectBox = new SelectBox("dob-month");
+
             for (int i = 1; i < 13; i++)
             {
-                dobMonths.Add(i.ToString(), Functions.IntToMonth(i));
+                dobMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
             }
 
-            Dictionary<string, string> dobDays = new Dictionary<string, string>();
+            dobMonthsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Month.ToString();
+
+            SelectBox dobDaysSelectBox = new SelectBox("dob-day");
+
             for (int i = 1; i < 32; i++)
             {
-                dobDays.Add(i.ToString(), i.ToString());
+                dobDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            Dictionary<string, string> countries = new Dictionary<string, string>();
+            dobDaysSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Day.ToString();
+
+            SelectBox countriesSelectBox = new SelectBox("country");
 
             SelectQuery query = new SelectQuery("countries");
             query.AddFields("*");
@@ -101,16 +111,19 @@ namespace BoxSocial.Applications.Profile
 
             DataTable countriesTable = db.Query(query);
 
-            countries.Add("", "Unspecified");
+            countriesSelectBox.Add(new SelectBoxItem("", "Unspecified"));
             foreach (DataRow countryRow in countriesTable.Rows)
             {
-                countries.Add((string)countryRow["country_iso"], (string)countryRow["country_name"]);
+                countriesSelectBox.Add(new SelectBoxItem((string)countryRow["country_iso"], (string)countryRow["country_name"]));
             }
 
-            Display.ParseSelectBox(template, "S_DOB_YEAR", "dob-year", dobYears, LoggedInMember.DateOfBirth.Year.ToString());
-            Display.ParseSelectBox(template, "S_DOB_MONTH", "dob-month", dobMonths, LoggedInMember.DateOfBirth.Month.ToString());
-            Display.ParseSelectBox(template, "S_DOB_DAY", "dob-day", dobDays, LoggedInMember.DateOfBirth.Day.ToString());
-            Display.ParseSelectBox(template, "S_COUNTRY", "country", countries, LoggedInMember.CountryIso);
+            countriesSelectBox.SelectedKey = LoggedInMember.CountryIso;
+
+            template.Parse("S_DOB_YEAR", dobYearsSelectBox);
+            template.Parse("S_DOB_MONTH", dobMonthsSelectBox);
+            template.Parse("S_DOB_DAY", dobDaysSelectBox);
+            template.Parse("S_COUNTRY", countriesSelectBox);
+
             template.Parse("S_AUTO_BIOGRAPHY", LoggedInMember.Autobiography);
 
             Save(new EventHandler(AccountProfileInfo_Save));

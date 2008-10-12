@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -128,17 +129,19 @@ namespace BoxSocial.Applications.Forum
 
             long id = Functions.RequestLong("id", 0);
 
+            SelectBox forumTypesSelectBox = new SelectBox("type");
             Dictionary<string, string> forumTypes = new Dictionary<string, string>();
-            forumTypes.Add("FORUM", "Forum");
-            forumTypes.Add("CAT", "Category");
+            forumTypesSelectBox.Add(new SelectBoxItem("FORUM", "Forum"));
+            forumTypesSelectBox.Add(new SelectBoxItem("CAT", "Category"));
             //forumTypes.Add("LINK", "Link");
 
             switch (e.Mode)
             {
                 case "new":
-                    template.Parse("S_ID", id.ToString());
+                    forumTypesSelectBox.SelectedKey = "FORUM";
 
-                    Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, "FORUM");
+                    template.Parse("S_ID", id.ToString());
+                    template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
                     break;
                 case "edit":
                     try
@@ -157,11 +160,13 @@ namespace BoxSocial.Applications.Forum
                         template.Parse("S_ID", forum.Id.ToString());
 
                         List<string> disabledItems = new List<string>();
-                        disabledItems.Add("FORUM");
-                        disabledItems.Add("CAT");
-                        disabledItems.Add("LINK");
+                        forumTypesSelectBox["FORUM"].Selectable = false;
+                        forumTypesSelectBox["CAT"].Selectable = false;
+                        forumTypesSelectBox["LINK"].Selectable = false;
 
-                        Display.ParseSelectBox(template, "S_FORUM_TYPE", "type", forumTypes, type, disabledItems);
+                        forumTypesSelectBox.SelectedKey = type;
+
+                        template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
 
                         template.Parse("EDIT", "TRUE");
                     }

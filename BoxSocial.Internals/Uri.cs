@@ -257,7 +257,7 @@ namespace BoxSocial.Internals
 
         public static string BuildLoginUri(string redirectUri)
         {
-            return AppendCoreSid(string.Format("/sign-in/?redirect={1}", redirectUri), true);
+            return AppendCoreSid(string.Format("/sign-in/?redirect={0}", redirectUri), true);
         }
 
         public static string BuildBlogPostUri(User member, int year, int month, long postId)

@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -131,19 +132,19 @@ namespace BoxSocial.Applications.Pages
             Pages myPages = new Pages(core, Owner);
             List<Page> pagesList = myPages.GetPages(false, true);
 
-            Dictionary<string, string> pages = new Dictionary<string, string>();
-            List<string> disabledItems = new List<string>();
-            pages.Add("0", "/");
+            SelectBox pagesSelectBox = new SelectBox("page-parent");
+            pagesSelectBox.Add(new SelectBoxItem("0", "/"));
 
             foreach (Page page in pagesList)
             {
-                pages.Add(page.Id.ToString(), page.FullPath);
+                SelectBoxItem item = new SelectBoxItem(page.Id.ToString(), page.FullPath);
+                pagesSelectBox.Add(item);
 
                 if (pageId > 0)
                 {
                     if (page.FullPath.StartsWith(pagePath))
                     {
-                        disabledItems.Add(page.Id.ToString());
+                        item.Selectable = false;
                     }
                 }
             }
@@ -153,12 +154,14 @@ namespace BoxSocial.Applications.Pages
 
             if (pageId > 0)
             {
-                disabledItems.Add(pageId.ToString());
+                pagesSelectBox[pageId.ToString()].Selectable = false;
             }
+
+            pagesSelectBox.SelectedKey = pageParentId.ToString();
 
             Display.ParseLicensingBox(template, "S_PAGE_LICENSE", licenseId);
             Display.ParseClassification(template, "S_PAGE_CLASSIFICATION", pageClassification);
-            Display.ParseSelectBox(template, "S_PAGE_PARENT", "page-parent", pages, pageParentId.ToString(), disabledItems);
+            template.Parse("S_PAGE_PARENT", pagesSelectBox);
 
             Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
 

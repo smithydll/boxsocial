@@ -835,27 +835,6 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
         }
 
-        /* TODO: comment this section out */
-        public static void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem)
-        {
-            ParseSelectBox(core.template, templateVar, name, items, selectedItem);
-        }
-
-        public static void ParseSelectBox(Template template, string templateVar, string name, Dictionary<string, string> items, string selectedItem)
-        {
-            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
-        }
-
-        public static void ParseSelectBox(string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
-        {
-            ParseSelectBox(core.template, templateVar, name, items, selectedItem, disabledItems);
-        }
-
-        public static void ParseSelectBox(Template template, string templateVar, string name, Dictionary<string, string> items, string selectedItem, List<string> disabledItems)
-        {
-            template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
-        }/**/
-
         public static void ParseLicensingBox(string templateVar, byte selectedLicense)
         {
             ParseLicensingBox(core.template, templateVar, selectedLicense);

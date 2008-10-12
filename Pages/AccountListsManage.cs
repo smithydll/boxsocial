@@ -27,6 +27,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -89,18 +90,20 @@ namespace BoxSocial.Applications.Pages
 
             DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
 
-            Dictionary<string, string> listTypes = new Dictionary<string, string>();
+            SelectBox listTypesSelectBox = new SelectBox("type");
 
             for (int i = 0; i < listTypesTable.Rows.Count; i++)
             {
-                listTypes.Add(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
-                    (string)listTypesTable.Rows[i]["list_type_title"]);
+                listTypesSelectBox.Add(new SelectBoxItem(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
+                    (string)listTypesTable.Rows[i]["list_type_title"]));
             }
+
+            listTypesSelectBox.SelectedKey = "1";
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, "1");
+            template.Parse("S_LIST_TYPES", listTypesSelectBox);
             Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
 
             Save(new EventHandler(AccountListsManage_Save));
@@ -307,15 +310,17 @@ namespace BoxSocial.Applications.Pages
 
                 DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
 
-                Dictionary<string, string> listTypes = new Dictionary<string, string>();
+                SelectBox listTypesSelectBox = new SelectBox("type");
 
                 for (int i = 0; i < listTypesTable.Rows.Count; i++)
                 {
-                    listTypes.Add(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
-                        (string)listTypesTable.Rows[i]["list_type_title"]);
+                    listTypesSelectBox.Add(new SelectBoxItem(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
+                        (string)listTypesTable.Rows[i]["list_type_title"]));
                 }
 
-                Display.ParseSelectBox(template, "S_LIST_TYPES", "type", listTypes, list.Type.ToString());
+                listTypesSelectBox.SelectedKey = list.Type.ToString();
+
+                template.Parse("S_LIST_TYPES", listTypesSelectBox);
                 Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
 
                 template.Parse("S_LIST_TITLE", list.Title);

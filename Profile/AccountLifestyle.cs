@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -64,36 +65,42 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_lifestyle");
 
-            Dictionary<string, string> maritialStatuses = new Dictionary<string, string>();
-            maritialStatuses.Add("UNDEF", "No Answer");
-            maritialStatuses.Add("SINGLE", "Single");
-            maritialStatuses.Add("RELATIONSHIP", "In a Relationship");
-            maritialStatuses.Add("MARRIED", "Married");
-            maritialStatuses.Add("SWINGER", "Swinger");
-            maritialStatuses.Add("DIVORCED", "Divorced");
-            maritialStatuses.Add("WIDOWED", "Widowed");
+            SelectBox maritialStatusesSelectBox = new SelectBox("maritial-status");
+            maritialStatusesSelectBox.Add(new SelectBoxItem("UNDEF", "No Answer"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("SINGLE", "Single"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("RELATIONSHIP", "In a Relationship"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("MARRIED", "Married"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("SWINGER", "Swinger"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("DIVORCED", "Divorced"));
+            maritialStatusesSelectBox.Add(new SelectBoxItem("WIDOWED", "Widowed"));
 
-            Dictionary<string, string> religions = new Dictionary<string, string>();
-            religions.Add("0", "No Answer");
+            maritialStatusesSelectBox.SelectedKey = LoggedInMember.MaritialStatusRaw;
+
+            SelectBox religionsSelectBox = new SelectBox("religion");
+            religionsSelectBox.Add(new SelectBoxItem("0", "No Answer"));
 
             DataTable religionsTable = db.Query("SELECT * FROM religions ORDER BY religion_title ASC");
 
             foreach (DataRow religionRow in religionsTable.Rows)
             {
-                religions.Add(((short)religionRow["religion_id"]).ToString(), (string)religionRow["religion_title"]);
+                religionsSelectBox.Add(new SelectBoxItem(((short)religionRow["religion_id"]).ToString(), (string)religionRow["religion_title"]));
             }
 
-            Dictionary<string, string> sexualities = new Dictionary<string, string>();
-            sexualities.Add("UNDEF", "No Answer");
-            sexualities.Add("UNSURE", "Unsure");
-            sexualities.Add("STRAIGHT", "Straight");
-            sexualities.Add("HOMOSEXUAL", "Homosexual");
-            sexualities.Add("BISEXUAL", "Bisexual");
-            sexualities.Add("TRANSEXUAL", "Transexual");
+            religionsSelectBox.SelectedKey = LoggedInMember.ReligionRaw.ToString();
 
-            Display.ParseSelectBox(template, "S_MARITIAL_STATUS", "maritial-status", maritialStatuses, LoggedInMember.MaritialStatusRaw);
-            Display.ParseSelectBox(template, "S_RELIGION", "religion", religions, LoggedInMember.ReligionRaw.ToString());
-            Display.ParseSelectBox(template, "S_SEXUALITY", "sexuality", sexualities, LoggedInMember.SexualityRaw);
+            SelectBox sexualitiesSelectBox = new SelectBox("sexuality");
+            sexualitiesSelectBox.Add(new SelectBoxItem("UNDEF", "No Answer"));
+            sexualitiesSelectBox.Add(new SelectBoxItem("UNSURE", "Unsure"));
+            sexualitiesSelectBox.Add(new SelectBoxItem("STRAIGHT", "Straight"));
+            sexualitiesSelectBox.Add(new SelectBoxItem("HOMOSEXUAL", "Homosexual"));
+            sexualitiesSelectBox.Add(new SelectBoxItem("BISEXUAL", "Bisexual"));
+            sexualitiesSelectBox.Add(new SelectBoxItem("TRANSEXUAL", "Transexual"));
+
+            sexualitiesSelectBox.SelectedKey = LoggedInMember.SexualityRaw;
+
+            template.Parse("S_MARITIAL_STATUS", maritialStatusesSelectBox);
+            template.Parse("S_RELIGION", religionsSelectBox);
+            template.Parse("S_SEXUALITY", sexualitiesSelectBox);
 
             if (LoggedInMember.Profile.MaritialWithConfirmed && LoggedInMember.Profile.MaritialWithId > 0)
             {

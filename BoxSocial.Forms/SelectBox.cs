@@ -74,6 +74,19 @@ namespace BoxSocial.Forms
         }
 
         /// <summary>
+        /// Get a select box item
+        /// </summary>
+        /// <param name="key">Item key</param>
+        /// <returns>The select box item with the key</returns>
+        public SelectBoxItem this[string key]
+        {
+            get
+            {
+                return itemKeys[key];
+            }
+        }
+
+        /// <summary>
         /// Add a select box item to the select box.
         /// </summary>
         /// <param name="item"></param>

@@ -83,7 +83,14 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (UserRelation friend in friends)
                 {
-                    events.Add(new BirthdayEvent(core, user, friend, core.tz.DateTimeFromMysql(startTimeRaw).Year));
+                    try
+                    {
+                        events.Add(new BirthdayEvent(core, user, friend, core.tz.DateTimeFromMysql(startTimeRaw).Year));
+                    }
+                    catch (InvalidEventException)
+                    {
+                        // Not a reciprocol friend, ignore
+                    }
                 }
             }
 

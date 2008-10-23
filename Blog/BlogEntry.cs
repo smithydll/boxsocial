@@ -38,6 +38,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a blog entry
     /// </summary>
+    [DataTable("blog_postings")]
     public class BlogEntry : NumberedItem, ICommentableItem
     {
         /// <summary>
@@ -48,23 +49,39 @@ namespace BoxSocial.Applications.Blog
         /// </remarks>
         public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
 
+        [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
+        [DataField("user_id")]
         private long ownerId;
-        private Primitive owner;
+        [DataField("post_title", 127)]
         private string title;
+        [DataField("post_text", MYSQL_MEDIUM_TEXT)]
         private string body;
-        private uint views;
-        private uint trackbacks;
-        private uint comments;
+        [DataField("post_views")]
+        private long views;
+        [DataField("post_trackbacks")]
+        private long trackbacks;
+        [DataField("post_comments")]
+        private long comments;
+        [DataField("post_access")]
         private ushort access;
-        private Access blogEntryAccess;
+        [DataField("post_status", 15)]
         private string status;
+        [DataField("post_license")]
         private byte license;
+        [DataField("post_category")]
         private short category;
+        [DataField("post_guid", 255)]
         private string guid;
+        [DataField("post_ip", 50)]
         private string ip;
+        [DataField("post_time_ut")]
         private long createdRaw;
+        [DataField("post_modified_ut")]
         private long modifiedRaw;
+
+        private Primitive owner;
+        private Access blogEntryAccess;
 
         /// <summary>
         /// Gets the blog entry id
@@ -127,7 +144,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of views for the blog entry.
         /// </summary>
-        public uint Views
+        public long Views
         {
             get
             {
@@ -138,7 +155,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of trackbacks for the blog entry.
         /// </summary>
-        public uint Trackbacks
+        public long Trackbacks
         {
             get
             {
@@ -153,7 +170,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return (long)comments;
+                return comments;
             }
         }
 
@@ -251,7 +268,8 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core Token</param>
         /// <param name="postId">Post Id to retrieve</param>
-        public BlogEntry(Core core, long postId) : base(core)
+        public BlogEntry(Core core, long postId)
+            : base(core)
         {
             DataTable postEntryDataTable = db.Query(string.Format("SELECT {0} FROM blog_postings be WHERE be.post_id = {1}",
                 BlogEntry.BLOG_ENTRY_FIELDS, postId));

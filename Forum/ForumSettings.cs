@@ -128,7 +128,8 @@ namespace BoxSocial.Applications.Forum
             if (!thisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 // todo: throw new exception
-                throw new UnauthorisedToCreateItemException();
+                // commented out due to errors on live site
+                //throw new UnauthorisedToCreateItemException();
             }
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumSettings)));

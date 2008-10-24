@@ -387,8 +387,8 @@ namespace BoxSocial.Applications.Blog
 
             string status = (drafts) ? "DRAFT" : "PUBLISH";
 
-            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings be {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = '{8}' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
-                Owner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, BlogEntry.BLOG_ENTRY_FIELDS, status));
+            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = '{8}' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
+                Owner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, Item.GetFieldsPrefixed(typeof(BlogEntry)), status));
 
             foreach (DataRow dr in blogEntriesTable.Rows)
             {

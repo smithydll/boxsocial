@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Blog
         /// <remarks>
         /// A blog entry uses the table prefix be.
         /// </remarks>
-        public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
+        //public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
 
         [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
@@ -112,7 +112,17 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return owner;
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.UserProfiles[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+
             }
         }
 
@@ -203,7 +213,13 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
+                if (blogEntryAccess == null)
+                {
+                    blogEntryAccess = new Access(core, Permissions, Owner);
+                    blogEntryAccess.SetSessionViewer(core.session);
+                }
                 return blogEntryAccess;
+
             }
         }
 
@@ -271,16 +287,13 @@ namespace BoxSocial.Applications.Blog
         public BlogEntry(Core core, long postId)
             : base(core)
         {
-            DataTable postEntryDataTable = db.Query(string.Format("SELECT {0} FROM blog_postings be WHERE be.post_id = {1}",
-                BlogEntry.BLOG_ENTRY_FIELDS, postId));
+            ItemLoad += new ItemLoadHandler(BlogEntry_ItemLoad);
 
-            if (postEntryDataTable.Rows.Count == 1)
+            try
             {
-                loadBlogEntryInfo(postEntryDataTable.Rows[0]);
-
-                this.owner = new User(core, ownerId, UserLoadOptions.All);
+                LoadItem(postId);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidBlogEntryException();
             }
@@ -294,9 +307,14 @@ namespace BoxSocial.Applications.Blog
         /// <param name="postEntryRow">Raw data row of blog entry</param>
         public BlogEntry(Core core, Primitive owner, DataRow postEntryRow) : base(core)
         {
+            ItemLoad += new ItemLoadHandler(BlogEntry_ItemLoad);
             this.owner = owner;
 
-            loadBlogEntryInfo(postEntryRow);
+            loadItemInfo(postEntryRow);
+        }
+
+        void BlogEntry_ItemLoad()
+        {
         }
 
         /// <summary>

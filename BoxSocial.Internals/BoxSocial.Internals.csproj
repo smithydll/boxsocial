@@ -82,6 +82,7 @@
     <Compile Include="Bbcode.cs" />
     <Compile Include="Captcha.cs" />
     <Compile Include="CascadingStyleSheet.cs" />
+    <Compile Include="Category.cs" />
     <Compile Include="Classification.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />

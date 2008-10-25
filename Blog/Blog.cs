@@ -341,42 +341,29 @@ namespace BoxSocial.Applications.Blog
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             readAccessLevel = Owner.GetAccessLevel(core.session.LoggedInMember);
 
-            string sqlWhere = "";
-            string sqlInnerJoin = "";
+            SelectQuery query = Item.GetSelectQueryStub(typeof(BlogEntry));
 
             if (string.IsNullOrEmpty(category))
             {
                 if (post > 0)
                 {
-                    sqlWhere = string.Format("{0} AND post_id = {1}",
-                        sqlWhere, post);
+                    query.AddCondition("post_id", post);
                 }
 
                 if (year > 0)
                 {
-                    sqlWhere = string.Format("{0} AND YEAR(FROM_UNIXTIME(post_time_ut)) = {1}",
-                        sqlWhere, year);
+                    query.AddCondition("YEAR(FROM_UNIXTIME(post_time_ut))", year);
                 }
 
                 if (month > 0)
                 {
-                    sqlWhere = string.Format("{0} AND MONTH(FROM_UNIXTIME(post_time_ut)) = {1}",
-                        sqlWhere, month);
+                    query.AddCondition("MONTH(FROM_UNIXTIME(post_time_ut))", month);
                 }
             }
             else
             {
-                sqlWhere = string.Format("{0} AND category_path = '{1}'",
-                        sqlWhere, Mysql.Escape(category));
-
-                sqlInnerJoin = string.Format("{0} global_categories ON post_category = category_id",
-                    sqlInnerJoin);
-            }
-
-            if (!string.IsNullOrEmpty(sqlInnerJoin))
-            {
-                sqlInnerJoin = string.Format("INNER JOIN {0}",
-                    sqlInnerJoin);
+                query.AddCondition("category_path", category);
+                query.AddJoin(JoinTypes.Inner, "global_categories", "post_category", "category_id");
             }
 
             int bpage = currentPage;
@@ -387,8 +374,16 @@ namespace BoxSocial.Applications.Blog
 
             string status = (drafts) ? "DRAFT" : "PUBLISH";
 
-            DataTable blogEntriesTable = db.Query(string.Format("SELECT {7} FROM blog_postings {4} WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = '{8}' {3} ORDER BY post_time_ut DESC LIMIT {5}, {6};",
-                Owner.UserId, loggedIdUid, readAccessLevel, sqlWhere, sqlInnerJoin, (bpage - 1) * 10, 10, Item.GetFieldsPrefixed(typeof(BlogEntry)), status));
+            query.AddCondition("post_status", status);
+            QueryCondition qc1 = query.AddCondition("user_id", Owner.Id);
+            QueryCondition qc2 = qc1.AddCondition(new QueryOperation("post_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
+            qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+
+            query.AddSort(SortOrder.Descending, "post_time_ut");
+            query.LimitStart = (bpage - 1) * 10;
+            query.LimitCount = 10;
+
+            DataTable blogEntriesTable = db.Query(query);
 
             foreach (DataRow dr in blogEntriesTable.Rows)
             {
@@ -735,7 +730,8 @@ namespace BoxSocial.Applications.Blog
 
                 if (!string.IsNullOrEmpty(category))
                 {
-                    breadCrumbParts.Add(new string[] { "categories/" + category, year.ToString() });
+                    Category cat = new Category(core, category);
+                    breadCrumbParts.Add(new string[] { "categories/" + category, cat.Title });
                     pageUri = Blog.BuildUri(page.ProfileOwner, category);
                 }
                 else

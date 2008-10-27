@@ -30,7 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [DataTable("applications")]
+    [DataTable("applications", "APPLICATION")]
     public class ApplicationEntry : Primitive, ICommentableItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
@@ -1002,14 +1002,6 @@ namespace BoxSocial.Internals
             {
                 return string.Format("/application/{0}/account/",
                     Key);
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return Type;
             }
         }
 

@@ -171,11 +171,6 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public override abstract string Namespace
-        {
-            get;
-        }
-
         public abstract AppPrimitives AppPrimitive
         {
             get;

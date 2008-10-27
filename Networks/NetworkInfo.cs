@@ -219,14 +219,6 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public override string Uri
         {
             get

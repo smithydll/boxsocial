@@ -415,14 +415,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public static string BuildTaskUri(Task calendarTask)
         {
             return Linker.AppendSid(string.Format("{0}calendar/task/{1}",

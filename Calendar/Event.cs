@@ -615,14 +615,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get

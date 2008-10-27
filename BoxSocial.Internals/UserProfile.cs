@@ -27,7 +27,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [DataTable("user_profile")]
+    [DataTable("user_profile", "USER")]
     public sealed class UserProfile : NumberedItem
     {
         private User user;
@@ -621,14 +621,6 @@ namespace BoxSocial.Internals
             get
             {
                 return userId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return "USER";
             }
         }
 

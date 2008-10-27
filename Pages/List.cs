@@ -463,14 +463,6 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get

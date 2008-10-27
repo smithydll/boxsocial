@@ -140,11 +140,6 @@ namespace BoxSocial.Internals
             get { throw new NotImplementedException(); }
         }
 
-        public override string Namespace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public override string Uri
         {
             get { throw new NotImplementedException(); }

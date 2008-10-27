@@ -40,7 +40,7 @@ namespace BoxSocial.Groups
         All = Key | Info | Icon,
     }
 
-    [DataTable("group_keys")]
+    [DataTable("group_keys", "GROUP")]
     [Primitive("GROUP", UserGroupLoadOptions.All, "group_id", "group_name")]
     public class UserGroup : Primitive, ICommentableItem
     {
@@ -1448,14 +1448,6 @@ namespace BoxSocial.Groups
             {
                 return string.Format("{0}account/",
                     UriStub, Key);
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return Type;
             }
         }
 

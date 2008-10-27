@@ -52,7 +52,7 @@ namespace BoxSocial.Networks
     /// <summary>
     /// 
     /// </summary>
-    [DataTable("network_keys")]
+    [DataTable("network_keys", "NETWORK")]
     [Primitive("NETWORK", NetworkLoadOptions.All, "network_id", "network_network")]
     public class Network : Primitive, ICommentableItem
     {
@@ -924,14 +924,6 @@ namespace BoxSocial.Networks
             {
                 return string.Format("/network/{0}/account/",
                     Key);
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return Type;
             }
         }
 

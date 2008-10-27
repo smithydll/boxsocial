@@ -99,14 +99,6 @@ namespace BoxSocial.Internals
             core.db.Query(iquery);
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get

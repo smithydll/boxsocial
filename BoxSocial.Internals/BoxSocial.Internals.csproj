@@ -95,7 +95,9 @@
     <Compile Include="Feed.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="HookEventArgs.cs" />
+    <Compile Include="IActionableItem.cs" />
     <Compile Include="IAppInfo.cs" />
+    <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
     <Compile Include="IPermissibleItem.cs" />
     <Compile Include="IRateableItem.cs" />

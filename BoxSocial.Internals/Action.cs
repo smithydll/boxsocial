@@ -149,6 +149,18 @@ namespace BoxSocial.Internals
             return actions;
         }
 
+        public DataTable GetItemsData(Type type)
+        {
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ActionItem));
+            query.AddFields(Item.GetFieldsPrefixed(type));
+            query.AddCondition("item_type", Item.GetNamespace(type));
+            query.AddJoin(JoinTypes.Inner, Item.GetTable(type), "item_id", "gallery_item_id");
+
+            DataTable itemsTable = db.Query(query);
+
+            return itemsTable;
+        }
+
         public ActionItem convertToActionItem(Item input)
         {
             return (ActionItem)input;
@@ -159,14 +171,6 @@ namespace BoxSocial.Internals
             get
             {
                 return actionId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
             }
         }
 

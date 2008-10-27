@@ -1834,14 +1834,6 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns gallery namespace
-        /// </summary>
-        public override string Namespace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        /// <summary>
         /// Returns gallery URI
         /// </summary>
         public override string Uri

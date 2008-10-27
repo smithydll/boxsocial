@@ -42,8 +42,8 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a gallery photo
     /// </summary>
-    [DataTable("gallery_items")]
-    public abstract class GalleryItem : NumberedItem, ICommentableItem
+    [DataTable("gallery_items", "PHOTO")]
+    public abstract class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
     {
         /// <summary>
         /// Owner of the photo's user Id
@@ -1820,17 +1820,6 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns gallery item namespace
-        /// </summary>
-        public override string Namespace
-        {
-            get
-            {
-                return "PHOTO";
-            }
-        }
-
-        /// <summary>
         /// Returns gallery item uri
         /// </summary>
         public abstract override string Uri
@@ -1879,6 +1868,25 @@ namespace BoxSocial.Applications.Gallery
             {
                 return 10;
             }
+        }
+
+        #endregion
+
+        #region IActionableItem Members
+
+        /// <summary>
+        /// Returns Feed Action body
+        /// </summary>
+        /// <returns></returns>
+        public string GetActionBody()
+        {
+            return string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
+                BuildUri(), ParentPath, Path);
+        }
+
+        public string RebuildAction(Action action)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

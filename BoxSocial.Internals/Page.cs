@@ -42,7 +42,7 @@ namespace BoxSocial.Internals
         Draft,
     }
 
-    [DataTable("user_pages")]
+    [DataTable("user_pages", "PAGE")]
     public class Page : NumberedItem
     {
         public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
@@ -1211,14 +1211,6 @@ namespace BoxSocial.Internals
             get
             {
                 return pageId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return "PAGE";
             }
         }
 

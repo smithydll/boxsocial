@@ -31,7 +31,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
-    [DataTable("group_info")]
+    [DataTable("group_info", "GROUP")]
     public class UserGroupInfo : NumberedItem
     {
 
@@ -252,14 +252,6 @@ namespace BoxSocial.Groups
             get
             {
                 return groupId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return "GROUP";
             }
         }
 

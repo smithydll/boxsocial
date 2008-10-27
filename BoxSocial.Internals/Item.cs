@@ -313,9 +313,12 @@ namespace BoxSocial.Internals
             return db.Query(query);
         }
 
-        public abstract string Namespace
+        public string Namespace
         {
-            get;
+            get
+            {
+                return GetNamespace(this.GetType());
+            }
         }
 
         public abstract string Uri
@@ -530,6 +533,22 @@ namespace BoxSocial.Internals
             {
                 return null;
             }
+        }
+
+        internal protected static string GetNamespace(Type type)
+        {
+            foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
+            {
+                if (attr != null)
+                {
+                    if (((DataTableAttribute)attr).Namespace != null)
+                    {
+                        return ((DataTableAttribute)attr).Namespace;
+                    }
+                }
+            }
+
+            return type.FullName;
         }
 
         public long Update()

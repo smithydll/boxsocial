@@ -166,14 +166,6 @@ namespace BoxSocial.Applications.Forum
             return core.db.Query(uQuery);
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get { throw new NotImplementedException(); }

@@ -28,10 +28,18 @@ namespace BoxSocial.IO
     public class DataTableAttribute : Attribute
     {
         private string tableName;
+        private string tableNamespace;
 
         public DataTableAttribute(string tableName)
         {
             this.tableName = tableName;
+            this.tableNamespace = null;
+        }
+
+        public DataTableAttribute(string tableName, string tableNamespace)
+        {
+            this.tableName = tableName;
+            this.tableNamespace = tableNamespace;
         }
 
         public string TableName
@@ -39,6 +47,14 @@ namespace BoxSocial.IO
             get
             {
                 return tableName;
+            }
+        }
+
+        public string Namespace
+        {
+            get
+            {
+                return tableNamespace;
             }
         }
     }

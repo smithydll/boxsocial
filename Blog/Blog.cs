@@ -40,7 +40,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a user blog.
     /// </summary>
-    [DataTable("user_blog")]
+    [DataTable("user_blog", "BLOG")]
     public class Blog : NumberedItem
     {
 
@@ -788,14 +788,6 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return userId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return "BLOG";
             }
         }
 

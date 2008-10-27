@@ -27,7 +27,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [DataTable("user_style")]
+    [DataTable("user_style", "USER")]
     public class UserStyle : NumberedItem
     {
         [DataField("user_id", DataFieldKeys.Unique)]
@@ -138,14 +138,6 @@ namespace BoxSocial.Internals
             get
             {
                 return userId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return "USER";
             }
         }
 

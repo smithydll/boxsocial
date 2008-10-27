@@ -56,7 +56,7 @@ namespace BoxSocial.Internals
         All = Key | Info | Profile | Icon | Country | Religion,
     }
 
-    [DataTable("user_keys")]
+    [DataTable("user_keys", "USER")]
     [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
     public class User : Primitive, ICommentableItem
     {
@@ -2024,20 +2024,6 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = page.ProfileOwner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
-            /* Show a list of lists */
-            DataTable listTable = core.db.Query(string.Format("SELECT ul.list_path, ul.list_title FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {0} AND (list_access & {2:0} OR ul.user_id = {1})",
-                page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
-
-            for (int i = 0; i < listTable.Rows.Count; i++)
-            {
-                VariableCollection listVariableCollection = core.template.CreateChild("list_list");
-
-                listVariableCollection.Parse("TITLE", (string)listTable.Rows[i]["list_title"]);
-                listVariableCollection.Parse("URI", "/" + page.ProfileOwner.UserName + "/lists/" + Linker.AppendSid((string)listTable.Rows[i]["list_path"]));
-            }
-
-            core.template.Parse("LISTS", listTable.Rows.Count.ToString());
-
             /* pages */
             Display.ParsePageList(page.ProfileOwner, true);
 
@@ -2067,14 +2053,6 @@ namespace BoxSocial.Internals
                 {
                     return Linker.Uri + "account/";
                 }
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return Type;
             }
         }
 

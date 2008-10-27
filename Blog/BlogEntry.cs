@@ -38,7 +38,7 @@ namespace BoxSocial.Applications.Blog
     /// <summary>
     /// Represents a blog entry
     /// </summary>
-    [DataTable("blog_postings")]
+    [DataTable("blog_postings", "BLOGPOST")]
     public class BlogEntry : NumberedItem, ICommentableItem
     {
         /// <summary>
@@ -387,17 +387,6 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return postId;
-            }
-        }
-
-        /// <summary>
-        /// Gets the BlogPost class namespace.
-        /// </summary>
-        public override string Namespace
-        {
-            get
-            {
-                return "BLOGPOST";
             }
         }
 

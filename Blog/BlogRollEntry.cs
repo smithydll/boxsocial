@@ -178,14 +178,6 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get

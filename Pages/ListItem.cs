@@ -201,14 +201,6 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public override string Uri
         {
             get
@@ -312,14 +304,6 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 return listItemTextId;
-            }
-        }
-
-        public override string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
             }
         }
 

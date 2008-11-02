@@ -826,7 +826,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.EmailNotifications)
                 {
-                    Email.SendEmail(receiver.AlternateEmail, subject, emailBody.ToString());
+                    Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
                 }
             }
         }

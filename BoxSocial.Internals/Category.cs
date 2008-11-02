@@ -94,6 +94,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Category(Core core, DataRow categoryRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Category_ItemLoad);
+
+            loadItemInfo(categoryRow);
+        }
+
         void Category_ItemLoad()
         {
         }

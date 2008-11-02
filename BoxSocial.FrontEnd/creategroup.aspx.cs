@@ -71,7 +71,7 @@ namespace BoxSocial.FrontEnd
             }
 
             string selected = "checked=\"checked\" ";
-            short category = 1;
+            long category = 1;
             bool categoryError = false;
             bool typeError = false;
             bool categoryFound = true;
@@ -109,12 +109,18 @@ namespace BoxSocial.FrontEnd
             }
 
             SelectBox categoriesSelectBox = new SelectBox("category");
-            DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+
+            SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
+            query.AddSort(SortOrder.Ascending, "category_title");
+
+            DataTable categoriesTable = db.Query(query);
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
+                Category cat = new Category(core, categoryRow);
 
-                if (category == (short)categoryRow["category_id"])
+                categoriesSelectBox.Add(new SelectBoxItem(cat.Id.ToString(), cat.Title));
+
+                if (category == cat.Id)
                 {
                     categoryFound = true;
                 }

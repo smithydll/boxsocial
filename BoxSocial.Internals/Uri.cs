@@ -414,7 +414,7 @@ namespace BoxSocial.Internals
             int indexOfSid = uri.IndexOf("?sid");
             if (indexOfSid < 0)
             {
-                uri.IndexOf("&sid");
+                indexOfSid = uri.IndexOf("&sid");
             }
             if (indexOfSid >= 0)
             {

@@ -692,7 +692,7 @@ namespace BoxSocial.Groups
             return GetSelectQueryStub(UserGroupLoadOptions.All);
         }
 
-        public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, short groupCategory, string groupType)
+        public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, long groupCategory, string groupType)
         {
             Mysql db = core.db;
             SessionState session = core.session;
@@ -723,14 +723,34 @@ namespace BoxSocial.Groups
             }
 
             db.BeginTransaction();
-            long groupId = db.UpdateQuery(string.Format("INSERT INTO group_keys (group_name) VALUES ('{0}')",
-                Mysql.Escape(groupSlug)));
+            InsertQuery iQuery = new InsertQuery(UserGroup.GetTable(typeof(UserGroup)));
+            iQuery.AddField("group_name", groupSlug);
+            iQuery.AddField("group_domain", "NULL");
 
-            /*
-             * DONE: change zinzam.com DB to make group_id on group_info UNIQUE and not PRIMARY
-             */
-            db.UpdateQuery(string.Format("INSERT INTO group_info (group_id, group_name, group_name_display, group_type, group_reg_date_ut, group_category, group_reg_ip, group_abstract, group_operators, group_members) VALUES ({0}, '{1}', '{2}', '{3}', UNIX_TIMESTAMP(), {4}, '{5}', '{6}', 1, 1);",
-                groupId, Mysql.Escape(groupSlug), Mysql.Escape(groupTitle), Mysql.Escape(groupType), groupCategory, Mysql.Escape(session.IPAddress.ToString()), Mysql.Escape(groupDescription)));
+            long groupId = db.Query(iQuery);
+
+            iQuery = new InsertQuery(UserGroupInfo.GetTable(typeof(UserGroupInfo)));
+            iQuery.AddField("group_id", groupId);
+            iQuery.AddField("group_name", groupSlug);
+            iQuery.AddField("group_name_display", groupTitle);
+            iQuery.AddField("group_type", groupType);
+            iQuery.AddField("group_abstract", groupDescription);
+            iQuery.AddField("group_reg_date_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("group_operators", 1);
+            iQuery.AddField("group_officers", 0);
+            iQuery.AddField("group_members", 1);
+            iQuery.AddField("group_category", groupCategory);
+            iQuery.AddField("group_comments", 0);
+            iQuery.AddField("group_gallery_items", 0);
+            iQuery.AddField("group_home_page", "/profile");
+            iQuery.AddField("group_style", "");
+
+            iQuery.AddField("group_reg_ip", session.IPAddress.ToString());
+            iQuery.AddField("group_icon", 0);
+            iQuery.AddField("group_bytes", 0);
+            iQuery.AddField("group_views", 0);
+
+            db.Query(iQuery);
 
             if (groupType != "PRIVATE")
             {

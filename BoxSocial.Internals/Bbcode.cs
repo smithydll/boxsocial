@@ -1486,6 +1486,16 @@ namespace BoxSocial.Internals
         {
             return Parse(input, null, null, true);
         }
+
+        public static string Strip(string input, User viewer)
+        {
+            return Parse(input, viewer, null, true);
+        }
+
+        public static string Strip(string input, User viewer, User postOwner)
+        {
+            return Parse(input, viewer, postOwner, true);
+        }
     }
 
     public class BbcodeAttributes

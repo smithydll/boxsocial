@@ -70,11 +70,11 @@ namespace BoxSocial.FrontEnd
                 if (categoryTable.Rows.Count > 0)
                 {
                     template.Parse("CATEGORY_TITLE", (string)categoryTable.Rows[0]["category_title"]);
-                    template.Parse("U_CREATE_GROUP_C", Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString()));
-                    template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create?category=" + ((short)categoryTable.Rows[0]["category_id"]).ToString()));
+                    template.Parse("U_CREATE_GROUP_C", Linker.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
+                    template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
 
                     DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_info gi WHERE gi.group_category = {0} AND gi.group_type <> 'PRIVATE'",
-                        (short)categoryTable.Rows[0]["category_id"], UserGroup.GROUP_INFO_FIELDS));
+                        (long)categoryTable.Rows[0]["category_id"], UserGroup.GROUP_INFO_FIELDS));
 
                     template.Parse("GROUPS", groupsTable.Rows.Count.ToString());
 

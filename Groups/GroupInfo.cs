@@ -35,9 +35,9 @@ namespace BoxSocial.Groups
     public class UserGroupInfo : NumberedItem
     {
 
-        [DataField("group_id", DataFieldKeys.Primary)]
+        [DataField("group_id", DataFieldKeys.Unique)]
         private long groupId;
-        [DataField("group_name", 64)]
+        [DataField("group_name", DataFieldKeys.Unique, 64)]
         private string groupSlug;
         [DataField("group_name_display", 64)]
         private string displayName;
@@ -63,6 +63,12 @@ namespace BoxSocial.Groups
         private string groupHomepage;
         [DataField("group_style", MYSQL_MEDIUM_TEXT)]
         private string groupStyle;
+        [DataField("group_icon")]
+        private long groupIcon;
+        [DataField("group_bytes")]
+        private ulong groupBytes;
+        [DataField("group_views")]
+        private long groupViews;
 
         private string displayNameOwnership;
         private string category;

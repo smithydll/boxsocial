@@ -86,7 +86,7 @@ namespace BoxSocial.Groups
             DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
+                categoriesSelectBox.Add(new SelectBoxItem(((long)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
             }
 
             categoriesSelectBox.SelectedKey = category.ToString();

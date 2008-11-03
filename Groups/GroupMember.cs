@@ -74,7 +74,7 @@ namespace BoxSocial.Groups
             this.db = db;
 
             SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
-            query.AddCondition("user_id", userId);
+            query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("group_members.group_id", group.GroupId);
 
             DataTable memberTable = db.Query(query);
@@ -95,6 +95,23 @@ namespace BoxSocial.Groups
             : base(core, memberRow, loadOptions)
         {
             loadItemInfo(typeof(GroupMember), memberRow);
+
+            try
+            {
+                if (memberRow["user_id_go"] is DBNull)
+                {
+                    isOperator = false;
+                }
+                else
+                {
+                    isOperator = true;
+                }
+            }
+            catch
+            {
+                // TODO: is there a better way?
+                isOperator = false;
+            }
         }
 
         public GroupMember(Core core, DataRow memberRow)
@@ -103,6 +120,23 @@ namespace BoxSocial.Groups
             loadItemInfo(typeof(GroupMember), memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.UserProfiles[userId]);
+
+            try
+            {
+                if (memberRow["user_id_go"] is DBNull)
+                {
+                    isOperator = false;
+                }
+                else
+                {
+                    isOperator = true;
+                }
+            }
+            catch
+            {
+                // TODO: is there a better way?
+                isOperator = false;
+            }
         }
 
         private void loadMemberInfo(DataRow memberRow)
@@ -190,8 +224,10 @@ namespace BoxSocial.Groups
         {
             SelectQuery query = GetSelectQueryStub(typeof(GroupMember));
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
-            query.AddJoin(JoinTypes.Left, "group_operators", "user_id", "user_id");
+            TableJoin tj1 = query.AddJoin(JoinTypes.Left, "group_operators", "user_id", "user_id");
+            tj1.AddCondition("group_operators.group_id", new DataField(GroupMember.GetTable(typeof(GroupMember)), "group_id"));
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
                 query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));

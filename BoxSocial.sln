@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musician", "Musician\Musici
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Forms", "BoxSocial.Forms\BoxSocial.Forms.csproj", "{D073D777-367E-4DF6-B53E-B90DE1FD47CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Install", "BoxSocial.Install\BoxSocial.Install.csproj", "{DEEDF491-9FA0-456D-B51F-1E772693C379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{D073D777-367E-4DF6-B53E-B90DE1FD47CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D073D777-367E-4DF6-B53E-B90DE1FD47CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D073D777-367E-4DF6-B53E-B90DE1FD47CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEEDF491-9FA0-456D-B51F-1E772693C379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEEDF491-9FA0-456D-B51F-1E772693C379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEEDF491-9FA0-456D-B51F-1E772693C379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEEDF491-9FA0-456D-B51F-1E772693C379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

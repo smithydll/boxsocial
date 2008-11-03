@@ -77,91 +77,85 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_membership");
 
-            SelectQuery query = new SelectQuery("group_members");
-            query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
-            query.AddJoin(JoinTypes.Inner, "group_keys", "group_id", "group_id");
-            query.AddJoin(JoinTypes.Inner, "group_info", "group_id", "group_id");
-            query.AddCondition("user_id", LoggedInMember.Id);
-            query.AddCondition("group_member_approved", 0);
+            SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.Common);
+            query.AddCondition("user_keys.user_id", LoggedInMember.Id);
 
-            DataTable pendingGroupsTable = db.Query(query);
+            DataTable membershipGroupsTable = db.Query(query);
 
-            if (pendingGroupsTable.Rows.Count > 0)
+            List<long> groupIds = new List<long>();
+            for (int i = 0; i < membershipGroupsTable.Rows.Count; i++)
+            {
+                long groupId = (long)membershipGroupsTable.Rows[i]["group_id"];
+                core.UserProfiles.LoadPrimitiveProfile("GROUP", groupId);
+                groupIds.Add(groupId);
+            }
+
+            int pending = 0;
+            int approved = 0;
+            for (int i = 0; i < membershipGroupsTable.Rows.Count; i++)
+            {
+                VariableCollection groupVariableCollection = null;
+                UserGroup thisGroup = null;
+
+                try
+                {
+                    thisGroup = (UserGroup)core.UserProfiles["GROUP", (long)membershipGroupsTable.Rows[i]["group_id"]];
+                }
+                catch
+                {
+                    continue;
+                }
+
+                if ((byte)membershipGroupsTable.Rows[i]["group_member_approved"] == 0)
+                {
+                    groupVariableCollection = template.CreateChild("pending_list");
+                    pending++;
+
+                    groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
+                }
+                else if ((byte)membershipGroupsTable.Rows[i]["group_member_approved"] == 1)
+                {
+                    groupVariableCollection = template.CreateChild("group_list");
+                    approved++;
+
+                    GroupMember gm = new GroupMember(core, membershipGroupsTable.Rows[i], UserLoadOptions.Common);
+
+                    if (!gm.IsOperator)
+                    {
+                        groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
+                    }
+
+                    groupVariableCollection.Parse("U_INVITE", thisGroup.InviteUri);
+                }
+
+                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
+                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
+
+                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
+                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
+
+                switch (thisGroup.GroupType)
+                {
+                    case "OPEN":
+                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
+                        break;
+                    case "CLOSED":
+                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
+                        break;
+                    case "PRIVATE":
+                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
+                        break;
+                }
+            }
+
+            if (pending > 0)
             {
                 template.Parse("PENDING_MEMBERSHIPS", "TRUE");
             }
 
-            for (int i = 0; i < pendingGroupsTable.Rows.Count; i++)
-            {
-                VariableCollection groupVariableCollection = template.CreateChild("pending_list");
-
-                UserGroup thisGroup = new UserGroup(core, pendingGroupsTable.Rows[i], UserGroupLoadOptions.Common);
-
-                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
-                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
-
-                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
-                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
-
-                switch (thisGroup.GroupType)
-                {
-                    case "OPEN":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
-                        break;
-                    case "CLOSED":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
-                        break;
-                    case "PRIVATE":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
-                        break;
-                }
-            }
-
-            DataTable groupsTable = db.Query(string.Format("SELECT {1}, go.user_id as user_id_go FROM group_members gm INNER JOIN group_keys gk ON gm.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id LEFT JOIN group_operators go ON gm.user_id = go.user_id AND gm.group_id = go.group_id WHERE gm.user_id = {0} AND gm.group_member_approved = 1",
-                LoggedInMember.Id, UserGroup.GROUP_INFO_FIELDS));
-
-            if (groupsTable.Rows.Count > 0)
+            if (approved > 0)
             {
                 template.Parse("GROUP_MEMBERSHIPS", "TRUE");
-            }
-
-            for (int i = 0; i < groupsTable.Rows.Count; i++)
-            {
-                VariableCollection groupVariableCollection = template.CreateChild("group_list");
-
-                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i], UserGroupLoadOptions.Common);
-
-                groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
-                groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());
-
-                groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
-                groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                if (!(groupsTable.Rows[i]["user_id_go"] is DBNull))
-                {
-                    if ((int)groupsTable.Rows[i]["user_id_go"] != LoggedInMember.Id)
-                    {
-                        groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
-                    }
-                }
-                else
-                {
-                    groupVariableCollection.Parse("U_LEAVE", thisGroup.LeaveUri);
-                }
-                groupVariableCollection.Parse("U_INVITE", thisGroup.InviteUri);
-
-                switch (thisGroup.GroupType)
-                {
-                    case "OPEN":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Open");
-                        break;
-                    case "CLOSED":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Closed");
-                        break;
-                    case "PRIVATE":
-                        groupVariableCollection.Parse("GROUP_TYPE", "Private");
-                        break;
-                }
             }
         }
 
@@ -204,19 +198,15 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = 0;
+            long groupId = Functions.FormLong("id", Functions.RequestLong("id", 0));
 
-            try
-            {
-                groupId = long.Parse(Request.Form["id"]);
-            }
-            catch
+            if (groupId == 0)
             {
                 Display.ShowMessage("Error", "Unable to complete action, missing data. Go back and try again.");
                 return;
             }
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes || Functions.RequestLong("id", 0) == groupId)
             {
                 try
                 {

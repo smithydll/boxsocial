@@ -146,9 +146,19 @@ namespace BoxSocial.FrontEnd
             module = (module == "") ? "dashboard" : module;
             submodule = (submodule == null) ? "" : submodule;
 
+            List<string> args = new List<string>();
+
             if (!session.IsLoggedIn)
             {
-                HttpContext.Current.Response.Redirect(Linker.BuildLoginUri(Linker.StripSid(Linker.BuildAccountSubModuleUri((Primitive)null, module, submodule))));
+                foreach (string key in Request.QueryString.Keys)
+                {
+                    if (key.ToLower() != "sid" && key.ToLower() != "module" && key.ToLower() != "sub")
+                    {
+                        args.Add(string.Format("{0}={1}", key, Request.QueryString[key]));
+                    }
+                }
+
+                HttpContext.Current.Response.Redirect(Linker.BuildLoginUri(Linker.StripSid(Linker.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
             }
 
             loggedInMember.LoadProfileInfo();

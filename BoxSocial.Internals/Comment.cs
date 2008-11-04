@@ -31,22 +31,26 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public sealed class Comment
-    {
-        public const string COMMENT_INFO_FIELDS = "c.comment_id, c.user_id, c.comment_item_id, c.comment_item_type, c.comment_spam_score, c.comment_time_ut, c.comment_text";
 
+    [DataTable("comments")]
+    public sealed class Comment : NumberedItem
+    {
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 511;
 
-        private Core core;
-        private Mysql db;
-
+        [DataField("comment_id", DataFieldKeys.Primary)]
         private long commentId;
+        [DataField("user_id")]
         private long userId;
+        [DataField("comment_item_id")]
         private long itemId;
+        [DataField("comment_item_type", NAMESPACE)]
         private string itemType;
+        [DataField("comment_spam_score")]
         private byte spamScore;
+        [DataField("comment_time_ut")]
         private long timeRaw;
+        [DataField("comment_text", COMMENT_MAX_LENGTH)]
         private string body;
 
         public long CommentId
@@ -103,43 +107,37 @@ namespace BoxSocial.Internals
         }
 
         public Comment(Core core, long commentId)
+            : base(core)
         {
-            this.core = core;
-            this.db = core.db;
+            ItemLoad += new ItemLoadHandler(Comment_ItemLoad);
 
-            DataTable commentsTable = db.Query(string.Format("SELECT {1} FROM comments c WHERE c.comment_id = {0};",
-                commentId, Comment.COMMENT_INFO_FIELDS));
-
-            if (commentsTable.Rows.Count == 1)
+            try
             {
-                loadCommentInfo(commentsTable.Rows[0]);
+                LoadItem(commentId);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidCommentException();
             }
         }
 
         public Comment(Core core, DataRow commentRow)
+            : base(core)
         {
-            this.core = core;
-            this.db = core.db;
+            ItemLoad += new ItemLoadHandler(Comment_ItemLoad);
 
-            loadCommentInfo(commentRow);
+            try
+            {
+                loadItemInfo(commentRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidCommentException();
+            }
         }
 
-        private void loadCommentInfo(DataRow commentRow)
+        void Comment_ItemLoad()
         {
-            commentId = (long)commentRow["comment_id"];
-            userId = (long)(int)commentRow["user_id"];
-            itemId = (long)commentRow["comment_item_id"];
-            itemType = (string)commentRow["comment_item_type"];
-            spamScore = (byte)commentRow["comment_spam_score"];
-            timeRaw = (long)commentRow["comment_time_ut"];
-            if (!(commentRow["comment_text"] is DBNull))
-            {
-                body = (string)commentRow["comment_text"];
-            }
         }
 
         public static Comment Create(Core core, string itemType, long itemId, string comment)
@@ -191,7 +189,7 @@ namespace BoxSocial.Internals
                 itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));*/
 
             SelectQuery query = new SelectQuery("comments c");
-            query.AddFields(Comment.COMMENT_INFO_FIELDS);
+            query.AddFields(Comment.GetFieldsPrefixed(typeof(Comment)));
             query.AddCondition("c.comment_deleted", false);
             query.AddSort(commentSortOrder, "c.comment_time_ut");
             query.LimitStart = (currentPage - 1) * perPage;
@@ -397,7 +395,7 @@ namespace BoxSocial.Internals
             return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
 
-        public long Id
+        public override long Id
         {
             get
             {
@@ -405,18 +403,18 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Namespace
-        {
-            get
-            {
-                return this.GetType().FullName;
-            }
-        }
-
         public string BuildUri(ICommentableItem item)
         {
             return Linker.AppendSid(string.Format("{0}?c={2}&#c{1}",
                     Linker.StripSid(item.Uri), commentId, commentId));
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 

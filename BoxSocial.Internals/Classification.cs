@@ -63,7 +63,8 @@ namespace BoxSocial.Internals
 
         public static Classifications RequestClassification()
         {
-            return (Classifications)byte.Parse(HttpContext.Current.Request.Form["classification"]);
+			byte a = byte.Parse(HttpContext.Current.Request.Form["classification"]);
+            return (Classifications)a;
         }
 
         public static void ApplyRestrictions(Core core, Classifications classification)

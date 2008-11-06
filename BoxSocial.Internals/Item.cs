@@ -510,6 +510,22 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
+        protected string Table
+        {
+            get
+            {
+                return GetTable(this.GetType());
+            }
+        }
+
+        protected string[] FieldsPrefixed
+        {
+            get
+            {
+                return GetFieldsPrefixed(this.GetType());
+            }
+        }
+
         internal protected static string GetTable(Type type)
         {
             bool attributeFound = false;

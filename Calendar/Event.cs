@@ -29,14 +29,6 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    public enum EventAttendance : byte
-    {
-        Unknown = 0,
-        Yes = 1,
-        Maybe = 2,
-        No = 3,
-    }
-
     [DataTable("events")]
     public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable
     {

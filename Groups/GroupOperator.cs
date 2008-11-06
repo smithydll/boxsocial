@@ -29,37 +29,18 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
-    [DataTable("group_officers")]
-    public class GroupOfficer : GroupMember
+    [DataTable("group_operators")]
+    public class GroupOperator : GroupMember
     {
         [DataField("group_id", DataFieldKeys.Primary, "ternary")]
         private long groupId;
         [DataField("user_id", DataFieldKeys.Primary, "ternary")]
         private new long userId;
-        [DataField("officer_title", DataFieldKeys.Primary, "ternary", 31)]
-        private string title;
 
-        public string OfficeTitle
+        internal GroupOperator(Core core, DataRow operatorRow)
+            : base(core, operatorRow)
         {
-            get
-            {
-                return title;
-            }
-            set
-            {
-                SetProperty("title", value);
-            }
-        }
-
-        internal GroupOfficer(Core core, DataRow officerRow)
-            : base(core, officerRow)
-        {
-            loadItemInfo(officerRow);
-        }
-
-        public string BuildRemoveOfficerUri()
-        {
-            return RemoveOfficerUri(title);
+            loadItemInfo(operatorRow);
         }
     }
 }

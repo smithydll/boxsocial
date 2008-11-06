@@ -36,7 +36,7 @@ namespace BoxSocial.Internals
     public sealed class Comment : NumberedItem
     {
         // TODO: 1023 max length
-        public const int COMMENT_MAX_LENGTH = 511;
+        public const int COMMENT_MAX_LENGTH = 1023;
 
         [DataField("comment_id", DataFieldKeys.Primary)]
         private long commentId;
@@ -185,13 +185,9 @@ namespace BoxSocial.Internals
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
 
-            /*DataTable commentsTable = db.Query(string.Format("SELECT {2} FROM comments c WHERE c.comment_item_type = '{1}' AND c.comment_item_id = {0} AND comment_deleted = FALSE ORDER BY c.comment_time_ut {5} LIMIT {3}, {4};",
-                itemId, Mysql.Escape(itemType), Comment.COMMENT_INFO_FIELDS, (currentPage - 1) * perPage, perPage, sort));*/
-
-            SelectQuery query = new SelectQuery("comments c");
-            query.AddFields(Comment.GetFieldsPrefixed(typeof(Comment)));
-            query.AddCondition("c.comment_deleted", false);
-            query.AddSort(commentSortOrder, "c.comment_time_ut");
+            SelectQuery query = Comment.GetSelectQueryStub(typeof(Comment));
+            query.AddCondition("comment_deleted", false);
+            query.AddSort(commentSortOrder, "comment_time_ut");
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;
 
@@ -199,42 +195,32 @@ namespace BoxSocial.Internals
             {
                 if (commenters.Count == 2)
                 {
-                    /*List<long> commentersIds = new List<long>();
-
-                    foreach (Member commenter in commenters)
-                    {
-                        commentersIds.Add(commenter.Id);
-                    }*/
-
                     if (itemType == "USER")
                     {
-                        /*query.AddCondition("c.comment_item_id", ConditionEquality.In, commentersIds);
-                        query.AddCondition("user_id", ConditionEquality.In, commentersIds);*/
-
-                        QueryCondition qc1 = query.AddCondition("c.comment_item_id", commenters[0].Id);
+                        QueryCondition qc1 = query.AddCondition("comment_item_id", commenters[0].Id);
                         qc1.AddCondition("user_id", commenters[1].Id);
 
-                        QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "c.comment_item_id", commenters[1].Id);
+                        QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "comment_item_id", commenters[1].Id);
                         qc2.AddCondition("user_id", commenters[0].Id);
 
-                        query.AddCondition("c.comment_item_type", itemType);
+                        query.AddCondition("comment_item_type", itemType);
                     }
                     else
                     {
-                        query.AddCondition("c.comment_item_id", itemId);
-                        query.AddCondition("c.comment_item_type", itemType);
+                        query.AddCondition("comment_item_id", itemId);
+                        query.AddCondition("comment_item_type", itemType);
                     }
                 }
                 else
                 {
-                    query.AddCondition("c.comment_item_id", itemId);
-                    query.AddCondition("c.comment_item_type", itemType);
+                    query.AddCondition("comment_item_id", itemId);
+                    query.AddCondition("comment_item_type", itemType);
                 }
             }
             else
             {
-                query.AddCondition("c.comment_item_id", itemId);
-                query.AddCondition("c.comment_item_type", itemType);
+                query.AddCondition("comment_item_id", itemId);
+                query.AddCondition("comment_item_type", itemType);
             }
 
             DataTable commentsTable = db.Query(query);

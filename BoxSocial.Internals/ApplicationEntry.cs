@@ -822,7 +822,7 @@ namespace BoxSocial.Internals
         {
             if (canNotify(receiver))
             {
-                Notification.Create(this, receiver, subject, body);
+                Notification.Create(core, this, receiver, subject, body);
 
                 if (receiver.EmailNotifications)
                 {
@@ -835,7 +835,7 @@ namespace BoxSocial.Internals
         {
             if (canNotify(receiver))
             {
-                Notification.Create(this, receiver, subject, body);
+                Notification.Create(core, this, receiver, subject, body);
 
                 if (receiver.EmailNotifications)
                 {

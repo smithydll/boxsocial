@@ -19,54 +19,54 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
+using BoxSocial.Networks;
 
-namespace BoxSocial.Groups
+namespace BoxSocial.Applications.GuestBook
 {
-    [DataTable("group_officers")]
-    public class GroupOfficer : GroupMember
+    [DataTable("guestbook_comment_counts")]
+    public class GuestBookCommentCount : Item
     {
-        [DataField("group_id", DataFieldKeys.Primary, "ternary")]
-        private long groupId;
-        [DataField("user_id", DataFieldKeys.Primary, "ternary")]
-        private new long userId;
-        [DataField("officer_title", DataFieldKeys.Primary, "ternary", 31)]
-        private string title;
+        [DataField("owner_id", DataFieldKeys.Unique, "ternary")]
+        private long ownerId;
+        [DataField("user_id", DataFieldKeys.Unique, "ternary")]
+        private long userId;
+        [DataField("comment_comments")]
+        private long commentCount;
 
-        public string OfficeTitle
+        public long Count
         {
             get
             {
-                return title;
-            }
-            set
-            {
-                SetProperty("title", value);
+                return commentCount;
             }
         }
 
-        internal GroupOfficer(Core core, DataRow officerRow)
-            : base(core, officerRow)
+        public GuestBookCommentCount(Core core, DataRow countRow)
+            : base(core)
         {
-            ItemLoad += new ItemLoadHandler(GroupOfficer_ItemLoad);
+            ItemLoad += new ItemLoadHandler(GuestBookCommentCount_ItemLoad);
 
-            loadItemInfo(officerRow);
+            loadItemInfo(countRow);
         }
 
-        void GroupOfficer_ItemLoad()
+        void GuestBookCommentCount_ItemLoad()
         {
             
         }
 
-        public string BuildRemoveOfficerUri()
+        public override string Uri
         {
-            return RemoveOfficerUri(title);
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

@@ -35,6 +35,210 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    [DataTable("user_sessions", DataTableTypes.Volatile)]
+    public class Session : NumberedItem
+    {
+        [DataField("session_id", DataFieldKeys.Primary)]
+        private long sessionId;
+        [DataField("user_id")]
+        private long userId;
+        [DataField("session_string", DataFieldKeys.Unique, 32)]
+        private string sessionString;
+        [DataField("session_start_ut")]
+        private long sessionStartRaw;
+        [DataField("session_time_ut")]
+        private long sessionTimeRaw;
+        [DataField("session_signed_in")]
+        private bool sessionSignedIn;
+        [DataField("session_ip")]
+        private string sessionIp;
+
+        private User user;
+
+        internal long SessionId
+        {
+            get
+            {
+                return sessionId;
+            }
+        }
+
+        internal long UserId
+        {
+            get
+            {
+                return userId;
+            }
+        }
+
+        internal User User
+        {
+            get
+            {
+                if (user == null || userId != user.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    user = core.UserProfiles[userId];
+                    return user;
+                }
+                else
+                {
+                    return user;
+                }
+            }
+        }
+
+        internal string SessionString
+        {
+            get
+            {
+                return sessionString;
+            }
+        }
+
+        internal long StartRaw
+        {
+            get
+            {
+                return sessionStartRaw;
+            }
+        }
+
+        internal long TimeRaw
+        {
+            get
+            {
+                return sessionTimeRaw;
+            }
+        }
+
+        internal bool SignedIn
+        {
+            get
+            {
+                return sessionSignedIn;
+            }
+        }
+
+        internal string Ip
+        {
+            get
+            {
+                return sessionIp;
+            }
+        }
+
+        public DateTime GetStart(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(sessionStartRaw);
+        }
+
+        public DateTime GetTime(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(sessionTimeRaw);
+        }
+
+        internal Session(Core core, DataRow sessionRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Session_ItemLoad);
+
+            loadItemInfo(sessionRow);
+        }
+
+        void Session_ItemLoad()
+        {
+            
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return sessionId;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    [DataTable("session_keys", DataTableTypes.NonVolatile)]
+    internal class SessionKey : Item
+    {
+        [DataField("key_id", DataFieldKeys.Primary, "ternary", 32)]
+        private string keyId;
+        [DataField("user_id", DataFieldKeys.Primary, "ternary")]
+        private long userId;
+        [DataField("key_last_ip", IP)]
+        private string lastIp;
+        [DataField("key_last_visit_ut")]
+        private long lastVisitRaw;
+
+        internal string KeyId
+        {
+            get
+            {
+                return keyId;
+            }
+        }
+
+        internal long UserId
+        {
+            get
+            {
+                return userId;
+            }
+        }
+
+        internal string Ip
+        {
+            get
+            {
+                return lastIp;
+            }
+        }
+
+        internal long VisitRaw
+        {
+            get
+            {
+                return lastVisitRaw;
+            }
+        }
+
+        public DateTime GetVisit(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(lastVisitRaw);
+        }
+
+        internal SessionKey(Core core, DataRow keyRow)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(SessionKey_ItemLoad);
+
+            loadItemInfo(keyRow);
+        }
+
+        void SessionKey_ItemLoad()
+        {
+            
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
     /// <summary>
     /// Summary description for Session
     /// </summary>
@@ -755,5 +959,9 @@ namespace BoxSocial.Internals
         /// 
         /// </summary>
         Get
+    }
+
+    public class InvalidSessionException : Exception
+    {
     }
 }

@@ -19,35 +19,45 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
-using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Groups
+namespace BoxSocial.Internals
 {
-    [DataTable("group_operators")]
-    public class GroupOperator : GroupMember
+    [DataTable("invite_keys")]
+    public class InviteKey : Item
     {
-        [DataField("group_id", DataFieldKeys.Primary, "ternary")]
-        private long groupId;
-        [DataField("user_id", DataFieldKeys.Primary, "ternary")]
-        private new long userId;
+        [DataField("email_hash", 128)]
+        private string emailHash;
+        [DataField("email_key", 32)]
+        private string emailKey;
+        [DataField("invite_allow")]
+        private bool allowInvite;
+        [DataField("invite_time_ut")]
+        private long inviteTimeRaw;
 
-        internal GroupOperator(Core core, DataRow operatorRow)
-            : base(core, operatorRow)
+        public InviteKey(Core core, DataRow inviteRow)
+            : base(core)
         {
-            ItemLoad += new ItemLoadHandler(GroupOperator_ItemLoad);
+            ItemLoad += new ItemLoadHandler(InviteKey_ItemLoad);
 
-            loadItemInfo(operatorRow);
+            loadItemInfo(inviteRow);
         }
 
-        void GroupOperator_ItemLoad()
+        void InviteKey_ItemLoad()
         {
-            
+
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

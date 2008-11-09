@@ -35,6 +35,7 @@ namespace BoxSocial.Internals
         public const long MYSQL_MEDIUM_TEXT = 16777215L;
         public const long MYSQL_LONG_TEXT = 4294967295L;
         public const long NAMESPACE = 31L;
+        public const long IP = 50L;
 
         /// <summary>
         /// Database object

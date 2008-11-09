@@ -28,6 +28,26 @@ namespace BoxSocial.Install
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Box Social will only install into the root directory of a domain. Everything in the root directory will be deleted. Do you want to continue? (y/n)");
+            if (Console.ReadLine().ToLower().StartsWith("y"))
+            {
+                Console.WriteLine("If you do not provide the root directory of a domain, Box Social will not install properly.");
+                Console.WriteLine("Please enter the root directory of the domain you want to use:");
+                string root = Console.ReadLine();
+
+                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
+                string domain = Console.ReadLine();
+
+                // install
+
+                Console.WriteLine("Box Social installed successfully.");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Installation of Box Social aborted.");
+                return;
+            }
         }
     }
 }

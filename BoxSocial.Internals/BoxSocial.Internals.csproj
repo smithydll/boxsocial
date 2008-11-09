@@ -99,6 +99,7 @@
     <Compile Include="IAppInfo.cs" />
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
+    <Compile Include="InviteKey.cs" />
     <Compile Include="IPermissibleItem.cs" />
     <Compile Include="IRateableItem.cs" />
     <Compile Include="ITagableItem.cs" />

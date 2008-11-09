@@ -28,22 +28,31 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Notification
+    [DataTable("notifications")]
+    public class Notification : NumberedItem
     {
-        public const string NOTIFICATION_FIELDS = "nt.notification_id, nt.notification_application, nt.notification_primitive_id, nt.notification_primitive_type, nt.notification_title, nt.notification_body, nt.notification_time_ut, nt.notification_read, nt.notification_seen";
         public const int NOTIFICATION_MAX_BODY = 511;
 
-        private Mysql db;
-
+        [DataField("notification_id", DataFieldKeys.Primary)]
         private long notificationId;
+        [DataField("notification_title", 63)]
         private string title;
+        [DataField("notification_body", NOTIFICATION_MAX_BODY)]
         private string body;
-        private int applicationId;
-        private Primitive owner;
+        [DataField("notification_application", typeof(ApplicationEntry))]
+        private long applicationId;
+        [DataField("notification_primitive_id")]
         private long primitiveId;
+        [DataField("notification_primitive_type", NAMESPACE)]
+        private string primitiveType;
+        [DataField("notification_time_ut")]
         private long timeRaw;
+        [DataField("notification_read")]
         private bool read;
+        [DataField("notification_seen")]
         private bool seen;
+
+        private Primitive owner;
 
         public long NotificationId
         {
@@ -85,15 +94,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Notification(Mysql db, Primitive owner, DataRow notificationRow)
+        public Notification(Core core, Primitive owner, DataRow notificationRow)
+            : base(core)
         {
-            this.db = db;
             this.owner = owner;
 
-            loadNotificationRow(notificationRow);
+            loadItemInfo(notificationRow);
         }
 
-        private Notification(Mysql db, Primitive owner, long notificationId, string subject, string body, long timeRaw, int applicationId)
+        private Notification(Core core, Primitive owner, long notificationId, string subject, string body, long timeRaw, int applicationId)
+            : base(core)
         {
             this.db = db;
             this.owner = owner;
@@ -113,29 +123,17 @@ namespace BoxSocial.Internals
             return tz.DateTimeFromMysql(timeRaw);
         }
 
-        private void loadNotificationRow(DataRow notificationRow)
-        {
-            notificationId = (long)notificationRow["notification_id"];
-            applicationId = (int)notificationRow["notification_application"];
-            title = (string)notificationRow["notification_title"];
-            body = (string)notificationRow["notification_body"];
-            primitiveId = (long)notificationRow["notification_primitive_id"];
-            timeRaw = (long)notificationRow["notification_time_ut"];
-            read = ((byte)notificationRow["notification_read"] > 0) ? true : false;
-            seen = ((byte)notificationRow["notification_seen"] > 0) ? true : false;
-        }
-
         public void SetRead()
         {
             UpdateQuery uquery = new UpdateQuery("notifications");
         }
 
-        internal static Notification Create(User receiver, string subject, string body)
+        internal static Notification Create(Core core, User receiver, string subject, string body)
         {
-            return Create(null, receiver, subject, body);
+            return Create(core, null, receiver, subject, body);
         }
 
-        public static Notification Create(ApplicationEntry application, User receiver, string subject, string body)
+        public static Notification Create(Core core, ApplicationEntry application, User receiver, string subject, string body)
         {
             int applicationId = 0;
 
@@ -155,29 +153,28 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_seen", false);
             iQuery.AddField("notification_application", applicationId);
 
-            long notificationId = Core.DB.Query(iQuery);
+            long notificationId = core.db.Query(iQuery);
 
-            return new Notification(Core.DB, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
+            return new Notification(core, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
         }
 
         public static List<Notification> GetRecentNotifications(Core core)
         {
             List<Notification> notificationItems = new List<Notification>();
 
-            SelectQuery query = new SelectQuery("notifications nt");
-            query.AddFields(Notification.NOTIFICATION_FIELDS);
-            query.AddCondition("nt.notification_read", false);
-            query.AddCondition("nt.notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("nt.notification_primitive_type", "USER");
-            query.AddCondition("nt.notification_time_ut", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp(DateTime.UtcNow.AddDays(-7)));
-            query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
+            SelectQuery query = Notification.GetSelectQueryStub(typeof(Notification));
+            query.AddCondition("notification_read", false);
+            query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
+            query.AddCondition("notification_primitive_type", "USER");
+            query.AddCondition("notification_time_ut", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp(DateTime.UtcNow.AddDays(-7)));
+            query.AddSort(SortOrder.Descending, "notification_time_ut");
             query.LimitCount = 128;
 
             DataTable notificationsTable = core.db.Query(query);
 
             foreach (DataRow dr in notificationsTable.Rows)
             {
-                notificationItems.Add(new Notification(core.db, core.session.LoggedInMember, dr));
+                notificationItems.Add(new Notification(core, core.session.LoggedInMember, dr));
             }
 
             return notificationItems;
@@ -187,7 +184,7 @@ namespace BoxSocial.Internals
         {
             List<Notification> notificationItems = new List<Notification>();
 
-            SelectQuery query = new SelectQuery("notifications nt");
+            SelectQuery query = new SelectQuery(GetTable(typeof(Notification)));
             query.AddFields("COUNT(*) as total");
             query.AddCondition("nt.notification_read", false);
             query.AddCondition("nt.notification_seen", false);
@@ -198,6 +195,22 @@ namespace BoxSocial.Internals
             DataTable notificationsTable = core.db.Query(query);
 
             return (long)notificationsTable.Rows[0]["total"];
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return notificationId;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

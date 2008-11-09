@@ -52,6 +52,7 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="List.cs" />
     <Compile Include="ListItem.cs" />
+    <Compile Include="ListType.cs" />
     <Compile Include="NagivationTab.cs" />
     <Compile Include="Pages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -43,8 +43,8 @@ namespace BoxSocial.Applications.Pages
         private long listId;
         [DataField("user_id", DataFieldKeys.Unique)]
         private long ownerId;
-        [DataField("list_type")]
-        private short type;
+        [DataField("list_type", typeof(ListType))]
+        private long type;
         [DataField("list_title", 31)]
         private string title;
         [DataField("list_items")]
@@ -67,7 +67,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public short Type
+        public long Type
         {
             get
             {

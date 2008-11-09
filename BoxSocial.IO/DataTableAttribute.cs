@@ -24,22 +24,38 @@ using System.Text;
 
 namespace BoxSocial.IO
 {
+    public enum DataTableTypes
+    {
+        NonVolatile = 0x00,
+        Volatile = 0x01,
+    }
+
     [AttributeUsage(AttributeTargets.Class)]
     public class DataTableAttribute : Attribute
     {
         private string tableName;
         private string tableNamespace;
+        private DataTableTypes tableType;
 
         public DataTableAttribute(string tableName)
         {
             this.tableName = tableName;
             this.tableNamespace = null;
+            this.tableType = DataTableTypes.NonVolatile;
+        }
+
+        public DataTableAttribute(string tableName, DataTableTypes tableType)
+        {
+            this.tableName = tableName;
+            this.tableNamespace = null;
+            this.tableType = tableType;
         }
 
         public DataTableAttribute(string tableName, string tableNamespace)
         {
             this.tableName = tableName;
             this.tableNamespace = tableNamespace;
+            this.tableType = DataTableTypes.NonVolatile;
         }
 
         public string TableName

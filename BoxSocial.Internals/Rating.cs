@@ -31,19 +31,21 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Rating
+    [DataTable("ratings")]
+    public class Rating : Item
     {
-        public const string RATING_INFO_FIELDS = "r.rate_item_id, r.rate_item_type, r.user_id, r.rate_time_ut, r.rate_rating, r.rate_ip";
-
-        private Core core;
-        private Mysql db;
-
+        [DataField("rate_item_id")]
         private long itemId;
+        [DataField("rate_item_type", NAMESPACE)]
         private string itemType;
+        [DataField("user_id")]
         private long ownerId;
-        private User owner;
+        [DataField("rate_time_ut")]
         private long timeRaw;
+        [DataField("rate_ip", 55)]
         private string ip;
+
+        private User owner;
 
         public long ItemId
         {
@@ -83,11 +85,21 @@ namespace BoxSocial.Internals
         }
 
         private Rating(Core core, DataRow ratingRow)
+            : base(core)
         {
+            ItemLoad += new ItemLoadHandler(Rating_ItemLoad);
+
             //
             // Because this class does not have an ID, only it should
             // be able to construct itself from raw data.
             //
+
+            loadItemInfo(ratingRow);
+        }
+
+        void Rating_ItemLoad()
+        {
+            
         }
 
         /// <summary>
@@ -142,6 +154,14 @@ namespace BoxSocial.Internals
             core.db.Query(iQuery);
 
             return;
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 

@@ -397,7 +397,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                UnixTime tz = new UnixTime(((User)owner).TimeZoneCode);
+                UnixTime tz = new UnixTime(core, ((User)owner).TimeZoneCode);
                 return Linker.BuildBlogPostUri((User)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
             }
         }

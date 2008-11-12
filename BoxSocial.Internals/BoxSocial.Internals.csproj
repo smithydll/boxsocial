@@ -128,6 +128,7 @@
     <Compile Include="Search.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="ShowAttribute.cs" />
+    <Compile Include="SpamReport.cs" />
     <Compile Include="StatusFeed.cs" />
     <Compile Include="StatusMessage.cs" />
     <Compile Include="ActionItem.cs" />

@@ -32,20 +32,29 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a tag on a photo of a user in the photo.
     /// </summary>
-    public sealed class UserTag
+    [DataTable("user_tags")]
+    public sealed class UserTag : NumberedItem
     {
-        private static string TAG_INFO_FIELDS = "ut.tag_id, ut.tag_user_id, ut.gallery_item_id, ut.tag_x, ut.tag_y, ut.user_id, ut.tag_approved";
+        //private static string TAG_INFO_FIELDS = "ut.tag_id, ut.tag_user_id, ut.gallery_item_id, ut.tag_x, ut.tag_y, ut.user_id, ut.tag_approved";
 
-        private Core core;
+        [DataField("tag_id", DataFieldKeys.Primary)]
+        private long tagId;
+        [DataField("tag_user_id", typeof(User))]
+        private long userId;
+        [DataField("gallery_item_id", typeof(GalleryItem))]
+        private long galleryItemId;
+        [DataField("user_id")]
+        private long ownerId; // person who submitted the tag
+        [DataField("tag_approved")]
+        private bool tagApproved;
+        [DataField("tag_x")]
+        private int tagX;
+        [DataField("tag_y")]
+        private int tagY;
 
+        private Point tagLocation;
         private User taggedMember;
         private GalleryItem taggedGalleryItem;
-        private long galleryItemId;
-        private long userId;
-        private long ownerId; // person who submitted the tag
-        private long tagId;
-        private Point tagLocation;
-        private bool tagApproved;
 
         /// <summary>
         /// Gets the user tag entry id
@@ -65,7 +74,16 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return taggedMember;
+                if (taggedMember == null || userId != taggedMember.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    taggedMember = core.UserProfiles[userId];
+                    return taggedMember;
+                }
+                else
+                {
+                    return taggedMember;
+                }
             }
         }
 
@@ -87,6 +105,10 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                if (tagLocation == null)
+                {
+                    tagLocation = new Point(tagX, tagY);
+                }
                 return tagLocation;
             }
         }
@@ -98,23 +120,17 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryItem">The gallery item tagged</param>
         /// <param name="tagId">Tag Id to retrieve</param>
         public UserTag(Core core, GalleryItem galleryItem, long tagId)
+            : base(core)
         {
-            this.core = core;
+            ItemLoad += new ItemLoadHandler(UserTag_ItemLoad);
 
             taggedGalleryItem = galleryItem;
 
-            SelectQuery query = new SelectQuery("user_tags ut");
-            query.AddFields(TAG_INFO_FIELDS);
-            query.AddCondition("tag_id", tagId);
-            query.AddCondition("gallery_item_id", galleryItem.ItemId);
-
-            DataTable tagDataTable = core.db.Query(query);
-
-            if (tagDataTable.Rows.Count > 0)
+            try
             {
-                loadTagInfo(tagDataTable.Rows[0]);
+                LoadItem(tagId);
             }
-            else
+            catch (InvalidItemException)
             {
                 throw new InvalidUserTagException();
             }
@@ -127,25 +143,19 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryItem">Gallery item</param>
         /// <param name="tagRow">Raw data row of user tag</param>
         private UserTag(Core core, GalleryItem galleryItem, DataRow tagRow)
+            : base(core)
         {
-            this.core = core;
+            ItemLoad += new ItemLoadHandler(UserTag_ItemLoad);
 
             taggedGalleryItem = galleryItem;
-            loadTagInfo(tagRow);
+
+            loadItemInfo(tagRow);
         }
 
-        /// <summary>
-        /// Loads the database information into the UserTag class object.
-        /// </summary>
-        /// <param name="tagRow">Raw data row of user tag</param>
-        private void loadTagInfo(DataRow tagRow)
+        void UserTag_ItemLoad()
         {
-            tagId = (long)tagRow["tag_id"];
-            userId = (long)tagRow["tag_user_id"];
-            taggedMember = core.UserProfiles[userId];
-            tagLocation = new Point((int)tagRow["tag_x"], (int)tagRow["tag_y"]);
-            galleryItemId = (long)tagRow["gallery_item_id"];
-            tagApproved = ((byte)tagRow["tag_approved"] > 0) ? true : false;
+            tagLocation = new Point(tagX, tagY);
+            core.UserProfiles.LoadUserProfile(userId);
         }
 
         /// <summary>
@@ -158,8 +168,7 @@ namespace BoxSocial.Applications.Gallery
         {
             List<UserTag> tags = new List<UserTag>();
 
-            SelectQuery query = new SelectQuery("user_tags ut");
-            query.AddFields(TAG_INFO_FIELDS);
+            SelectQuery query = UserTag.GetSelectQueryStub(typeof(UserTag));
             query.AddCondition("gallery_item_id", galleryItem.ItemId);
 
             DataTable tagDataTable = core.db.Query(query);
@@ -283,6 +292,22 @@ namespace BoxSocial.Applications.Gallery
                         core.session.LoggedInMember.DisplayName),
                         emailTemplate.ToString());
                 }
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
     }

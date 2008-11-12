@@ -116,7 +116,9 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Galleries&lt;/h3&gt;
+        ///
+        ///&lt;p&gt;Gallery management for a group gallery is performed through the gallery provided, not through the group account panel.&lt;/p&gt;.
         /// </summary>
         internal static string account_galleries_group {
             get {
@@ -145,9 +147,18 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_galleries_photo_tag {
+            get {
+                return ResourceManager.GetString("account_galleries_photo_tag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Upload Photo&lt;/h3&gt;
         ///
-        ///&lt;form action=&quot;{S_FORM_ACTION}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Upload Photo&lt;/legend&gt;
         ///		&lt;dl&gt;
@@ -157,7 +168,7 @@ namespace BoxSocial.Applications.Gallery {
         ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-file&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;description&quot;&gt;Description&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;
-        ///				&lt;textarea id=&quot;d [rest of string was truncated]&quot;;.
+        ///				&lt;textarea id=&quot;descr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_galleries_upload {
             get {
@@ -188,20 +199,24 @@ namespace BoxSocial.Applications.Gallery {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///	&lt;h2&gt;{USER_DISPLAY_NAME_OWNERSHIP} Gallery&lt;/h2&gt;
-        ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
-        ///	&lt;div id=&quot;new-stuff&quot;&gt;
-        ///		&lt;!-- IF U_UPLOAD_PHOTO --&gt;
-        ///		&lt;span id=&quot;new-photo&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_UPLOAD_PHOTO}&quot;&gt;Upload Photo&lt;/a&gt;&lt;/span&gt;
-        ///		&lt;!-- ENDIF --&gt;
-        ///		&lt;span id=&quot;new-gallery&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_GALLERY}&quot;&gt;New Gallery&lt;/a&gt;&lt;/span&gt;
-        ///	&lt;/div&gt;
-        ///	&lt;!-- IF GALLERIES --&gt;
-        ///	&lt;ul id=&quot;gallery-list&quot;&gt;
-        ///		&lt;!-- BEGIN gallery_list --&gt;
-        ///		&lt;li&gt;
-        ///			&lt;dl&gt;
-        ///				&lt;!-- IF gallery_list.THUMBNAIL --&gt; [rest of string was truncated]&quot;;.
+        ///&lt;div&gt;
+        ///  &lt;h2&gt;{GALLERY_TITLE}&lt;/h2&gt;
+        ///  &lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///  &lt;div id=&quot;new-stuff&quot;&gt;
+        ///    &lt;!-- IF U_UPLOAD_PHOTO --&gt;
+        ///    &lt;span id=&quot;new-photo&quot; class=&quot;post-button&quot;&gt;
+        ///      &lt;a href=&quot;{U_UPLOAD_PHOTO}&quot;&gt;Upload Photo&lt;/a&gt;
+        ///    &lt;/span&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///    &lt;!-- IF U_NEW_GALLERY --&gt;
+        ///    &lt;span id=&quot;new-gallery&quot; class=&quot;post-button&quot;&gt;
+        ///      &lt;a href=&quot;{U_NEW_GALLERY}&quot;&gt;New Gallery&lt;/a&gt;
+        ///    &lt;/span&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///  &lt;/div&gt;
+        ///  &lt;!-- IF GALLERIES --&gt;
+        ///  &lt;ul id=&quot;gallery-list&quot;&gt;
+        ///    &lt;!-- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewgallery {
             get {
@@ -236,21 +251,22 @@ namespace BoxSocial.Applications.Gallery {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///	&lt;h2&gt;{PHOTO_TITLE}&lt;/h2&gt;
-        ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
-        ///	&lt;!-- IF U_UPLOAD_PHOTO --&gt;
-        ///	&lt;div id=&quot;new-stuff&quot;&gt;
-        ///		&lt;span id=&quot;new-photo&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_UPLOAD_PHOTO}&quot;&gt;Upload Photo&lt;/a&gt;&lt;/span&gt;
-        ///	&lt;/div&gt;
-        ///	&lt;!-- ENDIF --&gt;
-        ///	&lt;div id=&quot;view-photo&quot;&gt;
-        ///	&lt;script type=&quot;text/javascript&quot;&gt;
-        ///	&lt;!--
+        ///&lt;div&gt;
+        ///  &lt;h2&gt;{PHOTO_TITLE}&lt;/h2&gt;
+        ///  &lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///  &lt;!-- IF U_UPLOAD_PHOTO --&gt;
+        ///  &lt;div id=&quot;new-stuff&quot;&gt;
+        ///    &lt;span id=&quot;new-photo&quot; class=&quot;post-button&quot;&gt;
+        ///      &lt;a href=&quot;{U_UPLOAD_PHOTO}&quot;&gt;Upload Photo&lt;/a&gt;
+        ///    &lt;/span&gt;
+        ///  &lt;/div&gt;
+        ///  &lt;!-- ENDIF --&gt;
+        ///  &lt;div id=&quot;view-photo&quot;&gt;
+        ///    &lt;script type=&quot;text/javascript&quot;&gt;
+        ///      &lt;!--
         ///		var user_tags = new Array();
         ///	&lt;!-- BEGIN user_tags --&gt;
-        ///		user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
-        ///	&lt;!-- END user_tags --&gt;
-        ///	--&gt; [rest of string was truncated]&quot;;.
+        ///      user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_ta [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewphoto {
             get {

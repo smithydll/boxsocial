@@ -186,11 +186,11 @@ namespace BoxSocial.Internals
 
             SelectQuery query = new SelectQuery(GetTable(typeof(Notification)));
             query.AddFields("COUNT(*) as total");
-            query.AddCondition("nt.notification_read", false);
-            query.AddCondition("nt.notification_seen", false);
-            query.AddCondition("nt.notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("nt.notification_primitive_type", "USER");
-            query.AddSort(SortOrder.Descending, "nt.notification_time_ut");
+            query.AddCondition("notification_read", false);
+            query.AddCondition("notification_seen", false);
+            query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
+            query.AddCondition("notification_primitive_type", "USER");
+            query.AddSort(SortOrder.Descending, "notification_time_ut");
 
             DataTable notificationsTable = core.db.Query(query);
 

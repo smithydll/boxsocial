@@ -32,6 +32,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a user gallery item
     /// </summary>
+    [DataTable(null, "PHOTO")]
     public class UserGalleryItem : GalleryItem
     {
 
@@ -151,6 +152,15 @@ namespace BoxSocial.Applications.Gallery
         public string BuildDeleteUri()
         {
             return Linker.BuildAccountSubModuleUri("galleries", "delete", Id, true);
+        }
+
+        /// <summary>
+        /// Returns user gallery tag item URI
+        /// </summary>
+        /// <returns></returns>
+        public string BuildTagUri()
+        {
+            return Linker.BuildAccountSubModuleUri("galleries", "tag", Id, true);
         }
 
         /// <summary>

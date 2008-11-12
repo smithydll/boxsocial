@@ -1,0 +1,23 @@
+﻿<h3>Tag Photo</h3>
+
+<form action="{S_FORM_ACTION}" method="post" enctype="multipart/form-data">
+	<fieldset>
+		<legend>Tag Photo</legend>
+		<dl>
+			<dt><label for="title">{S_PHOTO_TITLE}</label></dt>
+			<dd><img id="photo-640" name="photo-640" src="{S_PHOTO_DISPLAY}" alt="Photo" /></dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="Save" />
+			</dd>
+		</dl>
+    <!-- BEGIN user_tags -->
+    <input type="hidden" name="tag[{user_tags.INDEX}]" value="{user_tags.TAG_X},{user_tags.TAG_Y},{user_tags.TAG_TITLE},{user_tags.TAG_USER_ID}" />
+    <!-- END tag_list -->
+    <input type="hidden" name="tags" value="{TAG_COUNT}" />
+		<input type="hidden" name="module" value="galleries" />
+		<input type="hidden" name="sub" value="edit-photo" />
+		<input type="hidden" name="id" value="{S_PHOTO_ID}" />
+		<input type="hidden" name="mode" value="edit" />
+	</fieldset>
+</form>

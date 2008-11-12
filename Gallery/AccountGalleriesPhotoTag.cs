@@ -74,6 +74,76 @@ namespace BoxSocial.Applications.Gallery
 
         void AccountGalleriesPhotoTag_Show(object sender, EventArgs e)
         {
+            Save(new EventHandler(AccountGalleriesPhotoTag_Save));
+
+            AuthoriseRequestSid();
+
+            SetTemplate("account_galleries_photo_tag");
+
+            try
+            {
+                long photoId = Functions.RequestLong("id", 0);
+
+                UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
+
+                /* TODO: change to building path in photo class */
+                string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
+                    Owner.Key, photo.ParentPath, photo.Path);
+                template.Parse("S_PHOTO_TITLE", photo.ItemTitle);
+                template.Parse("S_PHOTO_DISPLAY", displayUri);
+
+                List<UserTag> tags = UserTag.GetTags(core, photo);
+
+                template.Parse("TAG_COUNT", tags.Count.ToString());
+
+                int i = 0;
+                foreach (UserTag tag in tags)
+                {
+                    VariableCollection tagsVariableCollection = template.CreateChild("user_tags");
+
+                    tagsVariableCollection.Parse("INDEX", i.ToString());
+                    tagsVariableCollection.Parse("TAG_ID", tag.TagId.ToString());
+                    tagsVariableCollection.Parse("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("TAG_TITLE", tag.TaggedMember.DisplayName);
+                    tagsVariableCollection.Parse("TAG_USER_ID", tag.TaggedMember.Id.ToString());
+
+                    i++;
+                }
+            }
+            catch (GalleryItemNotFoundException)
+            {
+                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
+        }
+
+        void AccountGalleriesPhotoTag_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            try
+            {
+                long photoId = Functions.RequestLong("id", 0);
+
+                UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
+
+                long tagCount = Functions.FormLong("tags", 0);
+
+                List<UserTag> tags = UserTag.GetTags(core, photo);
+
+                List<string> tagInfo = new List<string>();
+
+                for (int i = 0; i < tagCount; i++)
+                {
+                    tagInfo.Add(Request.Form["tag[" + i + "]"]);
+                }
+            }
+            catch (GalleryItemNotFoundException)
+            {
+                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
+                return;
+            }
         }
     }
 }

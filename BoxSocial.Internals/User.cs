@@ -951,7 +951,7 @@ namespace BoxSocial.Internals
             foreach (DataRow dr in friendsTable.Rows)
             {
                 UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
-                UnixTime tz = new UnixTime(friend.TimeZoneCode);
+                UnixTime tz = new UnixTime(core, friend.TimeZoneCode);
                 DateTime dob = new DateTime(st.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
                 long dobUt = tz.GetUnixTimeStamp(dob);
 

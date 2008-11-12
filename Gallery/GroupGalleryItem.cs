@@ -31,6 +31,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a group gallery item
     /// </summary>
+    [DataTable(null, "PHOTO")]
     public class GroupGalleryItem : GalleryItem
     {
 

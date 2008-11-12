@@ -713,7 +713,7 @@ namespace BoxSocial.Internals
                     // we will use complete matches on ZinZam
                     if ((string)userSessionRow["session_ip"] == userIp)
                     {
-                        UnixTime tzz = new UnixTime(UnixTime.UTC_CODE); // UTC
+                        UnixTime tzz = new UnixTime(core, UnixTime.UTC_CODE); // UTC
                         TimeSpan tss = DateTime.UtcNow - tzz.DateTimeFromMysql(userSessionRow["session_time_ut"]);
 
                         //

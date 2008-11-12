@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Web;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -113,22 +114,43 @@ namespace BoxSocial.Internals
     /// 82 +12:00 Fiji, Kamchatka, Marshall Is.
     /// 83 +13:00 Nuku'alofa
     /// </summary>
-    public class UnixTime
+    [DataTable("timezones")]
+    public class UnixTime : NumberedItem
     {
         /// <summary>
         /// The Time Zone Code for UTC.
         /// </summary>
         public const ushort UTC_CODE = 30;
 
-        ushort timeZoneCode;
+        [DataField("timezone_id", DataFieldKeys.Primary)]
+        private long timezoneId;
+        [DataField("timezone_utc")]
+        private ushort timeZoneCode;
+        [DataField("timezone_title")]
+        private string title;
+        [DataField("timezone_autumn_day")]
+        private byte autumnDay;
+        [DataField("timezone_autumn_month")]
+        private byte autumnMonth;
+        [DataField("timezone_spring_day")]
+        private byte springDay;
+        [DataField("timezone_spring_month")]
+        private byte springMonth;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="timeZoneCode"></param>
-        public UnixTime(ushort timeZoneCode)
+        public UnixTime(Core core, ushort timeZoneCode)
+            : base(core)
         {
+            ItemLoad += new ItemLoadHandler(UnixTime_ItemLoad);
+
             this.timeZoneCode = timeZoneCode;
+        }
+
+        void UnixTime_ItemLoad()
+        {
         }
 
         /// <summary>
@@ -647,6 +669,22 @@ namespace BoxSocial.Internals
                 {
                     return dt.ToString("MMMM dd, yyyy");
                 }
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
     }

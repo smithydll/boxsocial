@@ -966,9 +966,6 @@ namespace BoxSocial.Applications.Gallery
             {
                 UserGalleryItem photo = new UserGalleryItem(core, page.ProfileOwner, photoPath + "/" + photoName);
 
-                HttpContext.Current.Response.Write(photo.itemItemId);
-                HttpContext.Current.Response.Write(photo.userId);
-
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
                 if (!photo.ItemAccess.CanRead)
@@ -979,6 +976,7 @@ namespace BoxSocial.Applications.Gallery
 
                 photo.Viewed(core.session.LoggedInMember);
 
+                /* TODO: change to building path in photo class */
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
                     page.ProfileOwner.UserName, photoPath, photo.Path);
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
@@ -992,7 +990,6 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!string.IsNullOrEmpty(photo.ItemAbstract))
                 {
-                    //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(photo.ItemAbstract), core.session.LoggedInMember));
                     Display.ParseBbcode("PHOTO_DESCRIPTION", photo.ItemAbstract);
                 }
                 else
@@ -1013,6 +1010,7 @@ namespace BoxSocial.Applications.Gallery
                     page.template.Parse("U_ROTATE_LEFT", Linker.BuildPhotoRotateLeftUri(photo.ItemId));
                     page.template.Parse("U_ROTATE_RIGHT", Linker.BuildPhotoRotateRightUri(photo.ItemId));
                     page.template.Parse("U_DELETE", photo.BuildDeleteUri());
+                    page.template.Parse("U_TAG", photo.BuildTagUri());
                 }
 
                 switch (photo.Classification)

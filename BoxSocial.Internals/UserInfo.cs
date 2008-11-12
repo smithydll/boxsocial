@@ -412,7 +412,7 @@ namespace BoxSocial.Internals
 
         void UserInfo_ItemLoad()
         {
-            timeZone = new UnixTime(timeZoneCode);
+            timeZone = new UnixTime(core, timeZoneCode);
         }
 
         public override long Id

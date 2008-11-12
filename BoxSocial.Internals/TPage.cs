@@ -234,7 +234,7 @@ namespace BoxSocial.Internals
 
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
-            tz = new UnixTime(UnixTime.UTC_CODE);
+            tz = new UnixTime(core, UnixTime.UTC_CODE);
             Display.page = this;
 
             core.session = session;

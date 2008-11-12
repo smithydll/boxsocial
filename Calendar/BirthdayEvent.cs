@@ -53,7 +53,7 @@ namespace BoxSocial.Applications.Calendar
                 throw new InvalidEventException();
             }
 
-            UnixTime tz = new UnixTime(user.TimeZoneCode);
+            UnixTime tz = new UnixTime(core, user.TimeZoneCode);
 
             this.eventId = ~user.Id;
             this.subject = user.TitleNameOwnership + " birthday";

@@ -39,6 +39,7 @@ namespace BoxSocial.Install
                 string domain = Console.ReadLine();
 
                 // install
+                PerformInstall();
 
                 Console.WriteLine("Box Social installed successfully.");
                 return;
@@ -48,6 +49,19 @@ namespace BoxSocial.Install
                 Console.WriteLine("Installation of Box Social aborted.");
                 return;
             }
+        }
+
+        static void PerformInstall()
+        {
+            DownloadRepository(@"BoxSocial.FrontEnd");
+        }
+
+        static void DownloadRepository(string repo)
+        {
+        }
+
+        static void CompileRepository(string repo)
+        {
         }
     }
 }

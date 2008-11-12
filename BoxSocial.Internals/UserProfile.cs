@@ -451,7 +451,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        UnixTime tz = new UnixTime(0);
+                        UnixTime tz = new UnixTime(core, 0);
                         return tz.DateTimeFromMysql(dateofBirthRaw);
                     }
                 }

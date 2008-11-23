@@ -725,7 +725,7 @@ namespace BoxSocial.Groups
             db.BeginTransaction();
             InsertQuery iQuery = new InsertQuery(UserGroup.GetTable(typeof(UserGroup)));
             iQuery.AddField("group_name", groupSlug);
-            iQuery.AddField("group_domain", "NULL");
+            iQuery.AddField("group_domain", "");
 
             long groupId = db.Query(iQuery);
 

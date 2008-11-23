@@ -10,7 +10,20 @@ function CreateUserTagNearPointer(id, event)
 	newTag[1] = photoy;
 	newTag[2] = FindFriendId();
 	
-	PostToAccount(UserTagCreated, "gallery", "tag", id, null);
+	//PostToAccount(UserTagCreated, "gallery", "tag", id, null);
+	
+	var tags = ge("user-tags");
+	
+	var nli = document.createElement('li');
+	
+	apc("user-tags", nli);
+	
+	nli.innerHTML = "New";
+	
+	try
+	{
+		hide("no-tags");
+	} catch (e) {};
 }
 
 function UserTagCreated(texts)

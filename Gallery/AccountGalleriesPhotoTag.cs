@@ -91,8 +91,14 @@ namespace BoxSocial.Applications.Gallery
                     Owner.Key, photo.ParentPath, photo.Path);
                 template.Parse("S_PHOTO_TITLE", photo.ItemTitle);
                 template.Parse("S_PHOTO_DISPLAY", displayUri);
+                template.Parse("ID", photo.Id.ToString());
 
                 List<UserTag> tags = UserTag.GetTags(core, photo);
+
+                if (tags.Count > 0)
+                {
+                    template.Parse("HAS_USER_TAGS", "TRUE");
+                }
 
                 template.Parse("TAG_COUNT", tags.Count.ToString());
 

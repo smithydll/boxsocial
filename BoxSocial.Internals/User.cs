@@ -129,7 +129,10 @@ namespace BoxSocial.Internals
                     }
                     catch
                     {
-                        userStyle = UserStyle.Create(core, this, "");
+                        if (core.LoggedInMemberId == Id)
+                        {
+                            userStyle = UserStyle.Create(core, this, "");
+                        }
                     }
                 }
                 return userStyle;

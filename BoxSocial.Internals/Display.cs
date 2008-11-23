@@ -634,8 +634,16 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = User.GetMemberId(loggedInMember);
 
-            DataTable pagesTable = db.Query(string.Format("SELECT upg.page_parent_path, upg.page_slug, upg.page_title, upg.page_icon FROM user_pages upg WHERE upg.page_item_id = {0} AND upg.page_item_type = '{1}' AND upg.page_status = 'PUBLISH' AND (page_access & {2:0} = {2:0} OR user_id = {3}) ORDER BY upg.page_order",
-                owner.Id, owner.Type, readAccessLevel, loggedIdUid));
+            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            query.AddCondition("page_item_id", owner.Id);
+            query.AddCondition("page_item_type", owner.Type);
+            query.AddCondition("page_status", "PUBLISH");
+            QueryCondition qc1 = query.AddCondition(new QueryOperation("page_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
+            qc1.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            query.AddSort(SortOrder.Ascending, "page_order");
+
+            DataTable pagesTable = db.Query(query);
+            
             StringBuilder output = new StringBuilder();
 
             if (!fragment)
@@ -653,18 +661,27 @@ namespace BoxSocial.Internals
             int parents = 0;
             int nextParents = 0;
 
+            List<Page> pages = new List<Page>();
+
             for (int i = 0; i < pagesTable.Rows.Count; i++)
             {
+                Page page = new Page(core, owner, pagesTable.Rows[i]);
+
+                pages.Add(page);
+            }
+
+            for (int i = 0; i < pages.Count; i++)
+            {
                 bool hasChildren = false;
-                if (i + 1 < pagesTable.Rows.Count)
+                if (i + 1 < pages.Count)
                 {
-                    if ((string)pagesTable.Rows[i + 1]["page_parent_path"] == "")
+                    if (pages[i + 1].ParentId == 0)
                     {
                         nextParents = 0;
                     }
                     else
                     {
-                        nextParents = ((string)pagesTable.Rows[i + 1]["page_parent_path"]).Split('/').Length;
+                        nextParents = pages[i + 1].ParentPath.Split('/').Length;
                     }
                 }
                 else
@@ -672,13 +689,13 @@ namespace BoxSocial.Internals
                     nextParents = 0;
                 }
 
-                if ((string)pagesTable.Rows[i]["page_parent_path"] == "")
+                if (pages[i].ParentId == 0)
                 {
                     parents = 0;
                 }
                 else
                 {
-                    parents = ((string)pagesTable.Rows[i]["page_parent_path"]).Split('/').Length;
+                    parents = pages[i].ParentPath.Split('/').Length;
                 }
 
                 if (nextParents > parents)
@@ -686,24 +703,18 @@ namespace BoxSocial.Internals
                     hasChildren = true;
                 }
 
-                if ((string)pagesTable.Rows[i]["page_icon"] != "")
+                if (!string.IsNullOrEmpty(pages[i].Icon))
                 {
-                    output.Append("<li style=\"list-style-image: url('" + (string)pagesTable.Rows[i]["page_icon"] + "');\"> ");
+                    output.Append("<li style=\"list-style-image: url('" + HttpUtility.HtmlEncode(pages[i].Icon) + "');\"> ");
                 }
                 else
                 {
                     output.Append("<li>");
                 }
                 output.Append("<a href=\"");
-                output.Append(owner.UriStub);
-                if ((string)pagesTable.Rows[i]["page_parent_path"] != "")
-                {
-                    output.Append((string)pagesTable.Rows[i]["page_parent_path"]);
-                    output.Append("/");
-                }
-                output.Append((string)pagesTable.Rows[i]["page_slug"]);
+                output.Append(HttpUtility.HtmlEncode(pages[i].Uri));
                 output.Append("\">");
-                output.Append((string)pagesTable.Rows[i]["page_title"]);
+                output.Append(HttpUtility.HtmlEncode(pages[i].Title));
                 output.Append("</a>");
 
                 if (!hasChildren)

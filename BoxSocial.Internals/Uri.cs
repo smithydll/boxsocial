@@ -473,7 +473,14 @@ namespace BoxSocial.Internals
 
         public static string BuildAccountUri()
         {
-            return AppendCoreSid(core.session.LoggedInMember.AccountUriStub);
+            if (core.session.LoggedInMember != null)
+            {
+                return AppendCoreSid(core.session.LoggedInMember.AccountUriStub);
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public static string BuildSearchUri()

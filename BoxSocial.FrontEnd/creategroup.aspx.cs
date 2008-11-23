@@ -205,6 +205,7 @@ namespace BoxSocial.FrontEnd
                 else
                 {
                     UserGroup newGroup = UserGroup.Create(core, Request.Form["title"], slug, Request.Form["description"], category, Request.Form["type"]);
+
                     if (newGroup == null)
                     {
                         template.Parse("ERROR", "Bad registration details");

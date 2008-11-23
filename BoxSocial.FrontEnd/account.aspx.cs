@@ -199,6 +199,12 @@ namespace BoxSocial.FrontEnd
 
                 if (module == accountModule.Key)
                 {
+                    ApplicationEntry ae = null;
+                    if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
+                    {
+                        ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
+                    }
+
                     accountModule.SetOwner = loggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
@@ -218,10 +224,15 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
-
                         core.LoadUserProfile(ae.CreatorId);
                         Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title  + "` at ZinZam.com", ex.ToString());
+                    }
+
+                    if (ae != null && ae.HasJavascript)
+                    {
+                        VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+
+                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
                 }
             }

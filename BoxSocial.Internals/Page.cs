@@ -364,6 +364,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string ParentPath
+        {
+            get
+            {
+                return parentPath;
+            }
+        }
+
         public string FullPath
         {
             get

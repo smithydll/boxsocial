@@ -538,6 +538,11 @@ namespace BoxSocial.Internals
                     {
                         return ((DataTableAttribute)attr).TableName;
                     }
+                    else
+                    {
+                        // A null table is a table by proxy (false table)
+                        return null;
+                    }
                     attributeFound = true;
                 }
             }

@@ -109,7 +109,7 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_active = 1 WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey)));
 
-                    Display.ShowMessage("Success", "You have successfully activated your account. You may now <a href=\"/sign-in/\">sign in</a>.");
+                    Display.ShowMessage("Success", "You have successfully activated your account. You may now [url=\"/sign-in/\"]sign in[/url].");
                     return;
                 }
                 else
@@ -141,7 +141,7 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_password = '{2}', user_new_password = '' WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey), Mysql.Escape(BoxSocial.Internals.User.HashPassword((string)userTable.Rows[0]["user_new_password"]))));
 
-                    Display.ShowMessage("Success", "You have successfully activated your new password. You may now <a href=\"/sign-in/\">sign in</a>.");
+                    Display.ShowMessage("Success", "You have successfully activated your new password. You may now [url=\"/sign-in/\"]sign in[/url].");
                     return;
                 }
                 else

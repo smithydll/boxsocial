@@ -50,7 +50,7 @@ namespace BoxSocial.Internals
         private long sessionTimeRaw;
         [DataField("session_signed_in")]
         private bool sessionSignedIn;
-        [DataField("session_ip")]
+        [DataField("session_ip", IP)]
         private string sessionIp;
 
         private User user;

@@ -209,13 +209,13 @@ namespace BoxSocial.FrontEnd
             {
                 friends = loggedInMember.SearchFriendNames(needle, 1, 10);
 
-                string[] friendNames = new string[friends.Count];
+                Dictionary<long, string> friendNames = new Dictionary<long, string>();
                 for (int i = 0; i < friends.Count; i++)
                 {
-                    friendNames[i] = friends[i].DisplayName;
+                    friendNames.Add(friends[i].Id, friends[i].DisplayName);
                 }
 
-                Ajax.SendArray("friends", friendNames);
+                Ajax.SendDictionary("friends", friendNames);
             }
             else
             {

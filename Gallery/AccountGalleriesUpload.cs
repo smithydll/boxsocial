@@ -87,6 +87,13 @@ namespace BoxSocial.Applications.Gallery
 
             long galleryId = Functions.RequestLong("id", 0);
 
+            if (galleryId == 0)
+            {
+                // Invalid gallery
+                DisplayGenericError();
+                return;
+            }
+
             try
             {
                 UserGallery gallery = new UserGallery(core, LoggedInMember, galleryId);

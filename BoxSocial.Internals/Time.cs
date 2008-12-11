@@ -126,7 +126,7 @@ namespace BoxSocial.Internals
         private long timezoneId;
         [DataField("timezone_utc")]
         private ushort timeZoneCode;
-        [DataField("timezone_title")]
+        [DataField("timezone_title", 31)]
         private string title;
         [DataField("timezone_autumn_day")]
         private byte autumnDay;

@@ -83,7 +83,10 @@ namespace BoxSocial.Applications.Profile
                 dobYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            dobYearsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Year.ToString();
+            if (LoggedInMember.DateOfBirth != null)
+            {
+                dobYearsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Year.ToString();
+            }
 
             SelectBox dobMonthsSelectBox = new SelectBox("dob-month");
 
@@ -92,7 +95,10 @@ namespace BoxSocial.Applications.Profile
                 dobMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
             }
 
-            dobMonthsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Month.ToString();
+            if (LoggedInMember.DateOfBirth != null)
+            {
+                dobMonthsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Month.ToString();
+            }
 
             SelectBox dobDaysSelectBox = new SelectBox("dob-day");
 
@@ -101,7 +107,10 @@ namespace BoxSocial.Applications.Profile
                 dobDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            dobDaysSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Day.ToString();
+            if (LoggedInMember.DateOfBirth != null)
+            {
+                dobDaysSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Day.ToString();
+            }
 
             SelectBox countriesSelectBox = new SelectBox("country");
 

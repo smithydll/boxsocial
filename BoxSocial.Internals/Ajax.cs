@@ -184,6 +184,33 @@ namespace BoxSocial.Internals
 
             HttpContext.Current.Response.End();
         }
+
+        public static void SendDictionary(string ajaxCode, Dictionary<long, string> arrayItems)
+        {
+            XmlSerializer xs;
+            StringWriter stw;
+
+            AjaxDictionary am = new AjaxDictionary();
+            am.ResponseCode = ajaxCode;
+            am.ResponseDictionary = arrayItems;
+
+            xs = new XmlSerializer(typeof(AjaxDictionary));
+            stw = new StringWriter();
+
+            xs.Serialize(stw, am);
+
+            HttpContext.Current.Response.ContentType = "text/xml";
+            HttpContext.Current.Response.Clear();
+            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
+            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+
+            if (core.db != null)
+            {
+                core.db.CloseConnection();
+            }
+
+            HttpContext.Current.Response.End();
+        }
     }
 
     [XmlRoot("ajax")]
@@ -236,5 +263,18 @@ namespace BoxSocial.Internals
 
         [XmlElement("array")]
         public string[] ResponseArray;
+    }
+
+    [XmlRoot("ajax")]
+    public class AjaxDictionary
+    {
+        [XmlElement("type")]
+        public string AjaxType = "Array";
+
+        [XmlElement("code")]
+        public string ResponseCode;
+
+        [XmlElement("array")]
+        public Dictionary<long, string> ResponseDictionary;
     }
 }

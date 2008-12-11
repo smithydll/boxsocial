@@ -159,6 +159,7 @@ namespace BoxSocial.FrontEnd
                 }
 
                 HttpContext.Current.Response.Redirect(Linker.BuildLoginUri(Linker.StripSid(Linker.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
+                return;
             }
 
             loggedInMember.LoadProfileInfo();

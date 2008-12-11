@@ -468,7 +468,7 @@ namespace BoxSocial.Groups
 
             foreach (DataRow dr in membersTable.Rows)
             {
-                memberIds.Add((long)(int)dr["user_id"]);
+                memberIds.Add((long)dr["user_id"]);
             }
 
             core.LoadUserProfiles(memberIds);

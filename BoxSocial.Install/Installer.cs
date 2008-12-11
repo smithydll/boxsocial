@@ -20,23 +20,39 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace BoxSocial.Install
 {
     public static class Installer
     {
+
+        private static bool binary;
+        private static string root;
+        private static string domain;
+
         static void Main(string[] args)
         {
+            List<string> argsList = new List<string>(args);
+            if (argsList.Contains("-b"))
+            {
+                binary = true;
+            }
+            else
+            {
+                binary = false;
+            }
+
             Console.WriteLine("Box Social will only install into the root directory of a domain. Everything in the root directory will be deleted. Do you want to continue? (y/n)");
             if (Console.ReadLine().ToLower().StartsWith("y"))
             {
                 Console.WriteLine("If you do not provide the root directory of a domain, Box Social will not install properly.");
                 Console.WriteLine("Please enter the root directory of the domain you want to use:");
-                string root = Console.ReadLine();
+                root = Console.ReadLine();
 
                 Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
-                string domain = Console.ReadLine();
+                domain = Console.ReadLine();
 
                 // install
                 PerformInstall();
@@ -53,15 +69,25 @@ namespace BoxSocial.Install
 
         static void PerformInstall()
         {
-            DownloadRepository(@"BoxSocial.FrontEnd");
+            if (!binary)
+            {
+                DownloadRepository(@"BoxSocial.Forms");
+                CompileRepository(@"BoxSocial.Forms");
+            }
+            InstallRepository(@"BoxSocial.Forms");
         }
 
-        static void DownloadRepository(string repo)
+        private static void DownloadRepository(string repo)
         {
         }
 
-        static void CompileRepository(string repo)
+        private static void CompileRepository(string repo)
         {
+        }
+
+        private static void InstallRepository(string repo)
+        {
+            File.Copy(Path.Combine(repo, repo + ".dll"), Path.Combine(root, repo + ".dll"));
         }
     }
 }

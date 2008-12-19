@@ -209,7 +209,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        private List(Core core, User owner, DataRow listRow)
+        internal List(Core core, User owner, DataRow listRow)
             : base(core)
         {
             this.owner = owner;

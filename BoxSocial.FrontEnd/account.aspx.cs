@@ -102,17 +102,24 @@ namespace BoxSocial.FrontEnd
             {
                 if (type.IsSubclassOf(typeof(AccountModule)))
                 {
-                    AccountModule newModule = System.Activator.CreateInstance(type, accountObject) as AccountModule;
+					try
+					{
+	                    AccountModule newModule = System.Activator.CreateInstance(type, accountObject) as AccountModule;
 
-                    if (newModule != null)
-                    {
-                        newModule.assembly = assembly;
-                        accountModules.Add(newModule);
-                        if (newModule.Key == module)
-                        {
-                            core.AddPageAssembly(assembly);
-                        }
-                    }
+	                    if (newModule != null)
+	                    {
+	                        newModule.assembly = assembly;
+	                        accountModules.Add(newModule);
+	                        if (newModule.Key == module)
+	                        {
+	                            core.AddPageAssembly(assembly);
+	                        }
+	                    }
+					}
+					catch (TargetInvocationException)
+					{
+						continue;
+					}
                 }
             }
         }

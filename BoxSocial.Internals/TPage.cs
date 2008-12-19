@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -60,7 +60,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public abstract class TPage : System.Web.UI.Page
     {
-        private string pageTitle = "ZinZam • Your point in user space";
+        private string pageTitle = "!ZinZam â€¢ Your point in user space";
 
         public Template template;
         public Mysql db;
@@ -91,7 +91,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                pageTitle = "ZinZam • " + HttpUtility.HtmlEncode(value);
+                pageTitle = "!ZinZam â€¢ " + HttpUtility.HtmlEncode(value);
             }
         }
 

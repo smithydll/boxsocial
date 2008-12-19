@@ -72,20 +72,22 @@ namespace BoxSocial.Applications.Pages
 
             ushort listPermissions = 0x1111;
 
-            DataTable listsTable = db.Query(string.Format("SELECT list_id, list_title, list_items, list_type_title, list_path FROM user_lists INNER JOIN list_types ON list_type_id = list_type WHERE user_id = {0}",
-                LoggedInMember.UserId));
+			SelectQuery query = List.GetSelectQueryStub(typeof(List));
+			query.AddCondition("user_id", Owner.Id); 
+            DataTable listsTable = db.Query(query);
 
             for (int i = 0; i < listsTable.Rows.Count; i++)
             {
+				List l = new List(core, (User)Owner, listsTable.Rows[i]);
                 VariableCollection listVariableCollection = template.CreateChild("list_list");
 
-                listVariableCollection.Parse("TITLE", (string)listsTable.Rows[i]["list_title"]);
-                listVariableCollection.Parse("TYPE", (string)listsTable.Rows[i]["list_type_title"]);
-                listVariableCollection.Parse("ITEMS", ((uint)listsTable.Rows[i]["list_items"]).ToString());
+                listVariableCollection.Parse("TITLE", l.Title);
+                listVariableCollection.Parse("TYPE", l.Type.ToString());
+                listVariableCollection.Parse("ITEMS", Functions.LargeIntegerToString(l.Items));
 
-                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(LoggedInMember, (string)listsTable.Rows[i]["list_path"]));
-                listVariableCollection.Parse("U_DELETE", Linker.BuildDeleteListUri((long)listsTable.Rows[i]["list_id"]));
-                listVariableCollection.Parse("U_EDIT", Linker.BuildEditListUri((long)listsTable.Rows[i]["list_id"]));
+                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(LoggedInMember, l.Path));
+                listVariableCollection.Parse("U_DELETE", Linker.BuildDeleteListUri(l.Id));
+                listVariableCollection.Parse("U_EDIT", Linker.BuildEditListUri(l.Id));
             }
 
             DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");

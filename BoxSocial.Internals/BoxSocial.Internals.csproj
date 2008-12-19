@@ -40,6 +40,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.Internals</AssemblyName>
+    <RootNamespace>BoxSocial.Internals</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +54,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.Internals</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.Internals</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -154,9 +165,6 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

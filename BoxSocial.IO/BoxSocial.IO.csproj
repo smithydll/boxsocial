@@ -25,6 +25,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.IO</AssemblyName>
+    <RootNamespace>BoxSocial.IO</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,9 +39,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.IO</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.IO</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=5.1.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=5.0.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <HintPath>..\BoxSocial\bin\MySql.Data.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
@@ -67,9 +78,6 @@
     <Compile Include="Template.cs" />
     <Compile Include="UniqueKey.cs" />
     <Compile Include="UpdateQuery.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

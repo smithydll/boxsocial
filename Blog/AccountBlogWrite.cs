@@ -87,11 +87,11 @@ namespace BoxSocial.Applications.Blog
         void AccountBlogWrite_Show(object sender, EventArgs e)
         {
             SetTemplate("account_post");
-
+			
             long postId = Functions.RequestLong("id", 0);
-            ushort blogPermissions = 0x3333;
-            byte licenseId = 0;
-            short categoryId = 1;
+            ushort blogPermissions = (ushort)0x3333;
+            byte licenseId = (byte)0;
+            short categoryId = (short)1;
             string postTitle = "";
             string postText = "";
             DateTime postTime = DateTime.Now;
@@ -161,22 +161,27 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Comment");
 
             SelectBox licensesSelectBox = new SelectBox("license");
-            DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
+            DataTable licensesTable = db.Query(ContentLicense.GetSelectQueryStub(typeof(ContentLicense)));
 
             licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
             foreach (DataRow licenseRow in licensesTable.Rows)
             {
-                licensesSelectBox.Add(new SelectBoxItem(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]));
+				ContentLicense li = new ContentLicense(core, licenseRow);
+                licensesSelectBox.Add(new SelectBoxItem(li.Id.ToString(), li.Title));
             }
 
             licensesSelectBox.SelectedKey = licenseId.ToString();
 
             SelectBox categoriesSelectBox = new SelectBox("category");
-            DataTable categoriesTable = db.Query("SELECT category_id, category_title FROM global_categories ORDER BY category_title ASC;");
+			SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
+			query.AddSort(SortOrder.Ascending, "category_title");
+			
+            DataTable categoriesTable = db.Query(query);
 
             foreach (DataRow categoryRow in categoriesTable.Rows)
             {
-                categoriesSelectBox.Add(new SelectBoxItem(((short)categoryRow["category_id"]).ToString(), (string)categoryRow["category_title"]));
+				Category cat = new Category(core, categoryRow);
+                categoriesSelectBox.Add(new SelectBoxItem(cat.Id.ToString(), cat.Title));
             }
 
             categoriesSelectBox.SelectedKey = categoryId.ToString();

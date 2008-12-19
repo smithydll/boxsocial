@@ -659,15 +659,16 @@ namespace BoxSocial.Applications.Forum
             else
             {
                 order = parent.Order + 1;
-
-                UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
-                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
-                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
-                uQuery.AddCondition("forum_item_id", parent.Owner.Id);
-                uQuery.AddCondition("forum_item_type", parent.Owner.Type);
-
-                core.db.Query(uQuery);
             }
+			
+			// increment all items below in the order
+			UpdateQuery uQuery = new UpdateQuery(GetTable(typeof(Forum)));
+            uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+            uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
+            uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+            uQuery.AddCondition("forum_item_type", parent.Owner.Type);
+
+            core.db.Query(uQuery);
 
             ParentTree parentTree = new ParentTree();
 

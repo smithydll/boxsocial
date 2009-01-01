@@ -46,10 +46,20 @@ namespace BoxSocial.FrontEnd
             {
                 try
                 {
-                    record = new DnsRecord(core, domain);
+					if (domain != Linker.Domain)
+					{
+						record = new DnsRecord(core, domain);
+					}
                     if (Request.QueryString["mode"] == "sign-out")
                     {
-                        session.SessionEnd(Request.QueryString["sid"], loggedInMember.UserId, record);
+						if (record != null)
+						{
+							session.SessionEnd(Request.QueryString["sid"], loggedInMember.UserId, record);
+						}
+						else
+						{
+							session.SessionEnd(Request.QueryString["sid"], loggedInMember.UserId);
+						}
 
                         if (!string.IsNullOrEmpty(redirect))
                         {
@@ -83,8 +93,6 @@ namespace BoxSocial.FrontEnd
 
             if (Request.QueryString["mode"] == "sign-out")
             {
-                //FormsAuthentication.SignOut();
-                // TODO: make better
                 string sessionId = Request.QueryString["sid"];
 
                 if (!string.IsNullOrEmpty(sessionId))

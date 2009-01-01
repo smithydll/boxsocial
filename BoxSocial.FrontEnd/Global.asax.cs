@@ -54,7 +54,6 @@ namespace BoxSocial.FrontEnd
 
             AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
-
         }
 
         protected void Application_End(object sender, EventArgs e)

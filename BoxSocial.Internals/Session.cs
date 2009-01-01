@@ -425,7 +425,9 @@ namespace BoxSocial.Internals
                         core.template.Parse("REDIRECT_URI", "/");
 
                         if (record == null)
-                        {
+						{
+							Response.Cookies.Clear();
+							
                             HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");
                             sessionDataCookie.Value = "";
                             sessionDataCookie.Expires = DateTime.MinValue;
@@ -580,6 +582,8 @@ namespace BoxSocial.Internals
 
             if (record == null)
             {
+				Response.Cookies.Clear();
+				
                 xs = new XmlSerializer(typeof(SessionCookie));
                 StringBuilder sb = new StringBuilder();
                 stw = new StringWriter(sb);
@@ -747,6 +751,8 @@ namespace BoxSocial.Internals
 
                             SessionClean(sessionId);
                         }
+						
+						Response.Cookies.Clear();
 
                         xs = new XmlSerializer(typeof(SessionCookie));
                         StringBuilder sb = new StringBuilder();
@@ -786,7 +792,11 @@ namespace BoxSocial.Internals
             //
 
             long userId = (sessionData != null && sessionData.userId > 0) ? sessionData.userId : 0;
+			
+			//HttpContext.Current.Response.Write(Linker.CurrentDomain +  ", " + Linker.Domain);
+			//HttpContext.Current.Response.End();
 
+			// If the current domain is not the root domain, and the session is empty
             if ((Linker.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
             {
             }
@@ -836,13 +846,17 @@ namespace BoxSocial.Internals
 
             if (record == null)
             {
+				Response.Cookies.Clear();
+				
                 SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                 query.AddCondition("user_keys.user_id", 0);
 
                 DataTable userTable = db.Query(query);
+				
+				Response.Cookies.Clear();
 
                 if (userTable.Rows.Count == 1)
-                {
+				{
                     loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
                 }
                 HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
@@ -857,6 +871,9 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Secure = false; // TODO: secure cookies
                 Response.Cookies.Add(newSessionSidCookie);
             }
+			
+			// HttpContext.Current.Response.Write("Here");
+			//HttpContext.Current.Response.End();
 
             return;
         }

@@ -592,6 +592,10 @@ namespace BoxSocial.Internals
                 xs.Serialize(stw, sessionData);
                 stw.Flush();
                 stw.Close();
+				
+				//HttpContext.Current.Response.Write(sb.ToString());
+				//HttpContext.Current.Response.End();
+				
                 newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                 newSessionDataCookie.Secure = false; // TODO: secure cookies

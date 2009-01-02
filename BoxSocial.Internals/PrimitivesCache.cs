@@ -171,9 +171,22 @@ namespace BoxSocial.Internals
                 foreach (DataRow userRow in usersTable.Rows)
                 {
                     User newUser = new User(core, userRow, UserLoadOptions.All);
-                    primitivesCached.Add(new PrimitiveId("USER", newUser.Id), newUser);
-                    primitivesKeysCached.Add(new PrimitiveKey("USER", newUser.UserName), new PrimitiveId("USER", newUser.Id));
-                    userIds.Add(newUser.Id);
+					
+					PrimitiveId pid = new PrimitiveId("USER", newUser.Id);
+					PrimitiveKey kid = new PrimitiveKey("USER", newUser.UserName);
+					
+					if (!primitivesCached.ContainsKey(pid))
+					{
+						primitivesCached.Add(pid, newUser);
+					}
+					if (!primitivesKeysCached.ContainsKey(kid))
+					{
+						primitivesKeysCached.Add(kid, new PrimitiveId("USER", newUser.Id));
+					}
+					if (!userIds.Contains(newUser.Id))
+					{
+						userIds.Add(newUser.Id);
+					}
                 }
             }
 

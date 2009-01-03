@@ -392,13 +392,22 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.Permissions = Functions.GetPermission();
                 
                 calendarEvent.Update();
+				
+				List<long> alreadyInvited = calendarEvent.GetInvitees();
+				
+				List<long> idsToBeInvited = new List<long>();
+				
+				foreach (long inviteeId in inviteeIds)
+				{
+					if (!alreadyInvited.Contains(inviteeId))
+					{
+						idsToBeInvited.Add(inviteeId);
+					}
+				}
 
-                /*db.UpdateQuery(string.Format("UPDATE events SET event_subject = '{2}', event_location = '{3}', event_description = '{4}', event_time_start_ut = {5}, event_time_end_ut = {6}, event_access = {7} WHERE user_id = {0} AND event_id = {1};",
-                    LoggedInMember.UserId, eventId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission()));*/
+                core.LoadUserProfiles(idsToBeInvited);
 
-                core.LoadUserProfiles(inviteeIds);
-
-                foreach (long inviteeId in inviteeIds)
+                foreach (long inviteeId in idsToBeInvited)
                 {
                     calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
                 }

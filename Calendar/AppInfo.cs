@@ -110,7 +110,7 @@ namespace BoxSocial.Applications.Calendar
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
-            core.RegisterCommentHandle("BoxSocial.Applications.Calendar.Event", eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
+            core.RegisterCommentHandle("EVENT", eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -127,7 +127,7 @@ namespace BoxSocial.Applications.Calendar
 
             aii.AddModule("calendar");
 
-            aii.AddCommentType("BoxSocial.Applications.Calendar.Event");
+            aii.AddCommentType("EVENT");
 
             return aii;
         }

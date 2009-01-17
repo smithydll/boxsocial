@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    [DataTable("events")]
+    [DataTable("events", "EVENT")]
     public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable
     {
         public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
@@ -495,7 +495,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static string BuildEventUri(Event calendarEvent)
         {
-            return Linker.AppendSid(string.Format("{0}/calendar/event/{1}",
+            return Linker.AppendSid(string.Format("{0}calendar/event/{1}",
                 calendarEvent.owner.Uri, calendarEvent.EventId));
         }
 

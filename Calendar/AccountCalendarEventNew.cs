@@ -125,6 +125,38 @@ namespace BoxSocial.Applications.Calendar
             string subject = "";
             string location = "";
             string description = "";
+			
+			if (edit)
+            {
+                int id = Functions.RequestInt("id", -1);
+
+                if (id < 1)
+                {
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                }
+
+                try
+                {
+                    Event calendarEvent = new Event(core, Owner, id);
+                    inviteeIds.AddRange(calendarEvent.GetInvitees());
+
+                    template.Parse("EDIT", "TRUE");
+                    template.Parse("ID", calendarEvent.EventId.ToString());
+
+                    startDate = calendarEvent.GetStartTime(core.tz);
+                    endDate = calendarEvent.GetEndTime(core.tz);
+
+                    eventAccess = calendarEvent.Permissions;
+
+                    subject = calendarEvent.Subject;
+                    location = calendarEvent.Location;
+                    description = calendarEvent.Description;
+                }
+                catch (InvalidEventException)
+                {
+                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                }
+            }
 
             SelectBox yearsStartSelectBox = new SelectBox("start-year");
             SelectBox yearsEndSelectBox = new SelectBox("end-year");
@@ -186,38 +218,6 @@ namespace BoxSocial.Applications.Calendar
 
             minutesStartSelectBox.SelectedKey = startDate.Minute.ToString();
             minutesEndSelectBox.SelectedKey = endDate.Minute.ToString();
-
-            if (edit)
-            {
-                int id = Functions.RequestInt("id", -1);
-
-                if (id < 1)
-                {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
-                }
-
-                try
-                {
-                    Event calendarEvent = new Event(core, Owner, id);
-                    inviteeIds.AddRange(calendarEvent.GetInvitees());
-
-                    template.Parse("EDIT", "TRUE");
-                    template.Parse("ID", calendarEvent.EventId.ToString());
-
-                    startDate = calendarEvent.GetStartTime(core.tz);
-                    endDate = calendarEvent.GetEndTime(core.tz);
-
-                    eventAccess = calendarEvent.Permissions;
-
-                    subject = calendarEvent.Subject;
-                    location = calendarEvent.Location;
-                    description = calendarEvent.Description;
-                }
-                catch (InvalidEventException)
-                {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
-                }
-            }
 
             template.Parse("S_YEAR", year.ToString());
             template.Parse("S_MONTH", month.ToString());

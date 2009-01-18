@@ -147,7 +147,7 @@ namespace BoxSocial.Internals
                 PrimitiveKey key = new PrimitiveKey("USER", username);
                 if (!primitivesKeysCached.ContainsKey(key))
                 {
-                    usernameList.Add(username);
+                    usernameList.Add(username.ToLower());
                 }
             }
 
@@ -164,7 +164,7 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
-                query.AddCondition("`user_keys`.`user_name`", ConditionEquality.In, usernameList);
+                query.AddCondition("LCASE(`user_keys`.`user_name`)", ConditionEquality.In, usernameList);
 
                 DataTable usersTable = db.Query(query);
 

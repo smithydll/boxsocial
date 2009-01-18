@@ -375,7 +375,13 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (long inviteeId in inviteeIds)
                 {
-                    calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+					try
+					{
+						calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+					}
+					catch (CouldNotInviteEventException)
+					{
+					}
                 }
 
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));
@@ -409,7 +415,13 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (long inviteeId in idsToBeInvited)
                 {
-                    calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+					try
+					{
+						calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+					}
+					catch (CouldNotInviteEventException)
+					{
+					}
                 }
 
                 SetRedirectUri(Event.BuildEventUri(calendarEvent));

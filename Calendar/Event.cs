@@ -358,12 +358,12 @@ namespace BoxSocial.Applications.Calendar
                 }
                 else
                 {
-                    throw new Exception();
+                    throw new CouldNotInviteEventException();
                 }
             }
             else
             {
-                throw new Exception();
+                throw new CouldNotInviteEventException();
             }
         }
 
@@ -421,7 +421,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                throw new Exception();
+                throw new CouldNotInviteEventException();
             }
         }
 
@@ -671,4 +671,8 @@ namespace BoxSocial.Applications.Calendar
     public class InvalidEventException : Exception
     {
     }
+	
+	public class CouldNotInviteEventException : Exception
+	{
+	}
 }

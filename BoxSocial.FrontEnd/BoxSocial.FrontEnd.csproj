@@ -23,6 +23,10 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>649</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.FrontEnd</AssemblyName>
+    <RootNamespace>BoxSocial.FrontEnd</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +37,11 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>649</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>BoxSocial.FrontEnd</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.FrontEnd</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -187,5 +196,7 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+    <ProjectGuid>{24606021-8412-4668-8404-5BF5CB1D7E7C}</ProjectGuid>
+    <RootNamespace>BoxSocial.FrontEnd</RootNamespace>
   </PropertyGroup>
 </Project>

@@ -25,6 +25,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Networks</AssemblyName>
+    <RootNamespace>BoxSocial.Networks</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +39,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Networks</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.Networks</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

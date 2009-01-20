@@ -26,6 +26,11 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\docs\api\xml\Gallery.xml</DocumentationFile>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Gallery</AssemblyName>
+    <RootNamespace>BoxSocial.Applications.Gallery</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,6 +41,12 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\docs\api\xml\Gallery.xml</DocumentationFile>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Gallery</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.Applications.Gallery</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

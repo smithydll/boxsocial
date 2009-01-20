@@ -155,6 +155,7 @@
     <Compile Include="UserProfile.cs" />
     <Compile Include="UserRelation.cs" />
     <Compile Include="UserStyle.cs" />
+    <Compile Include="INestableItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

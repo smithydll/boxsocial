@@ -34,7 +34,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum")]
-    public class Forum : NumberedItem, IPermissibleItem, IComparable
+    public class Forum : NumberedItem, IPermissibleItem, IComparable, INestableItem
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
@@ -64,6 +64,8 @@ namespace BoxSocial.Applications.Forum
         private string ownerType;
         [DataField("forum_order")]
         private int forumOrder;
+		[DataField("forum_level")]
+        private int forumLevel;
         [DataField("forum_parents", MYSQL_TEXT)]
         private string parents;
 
@@ -201,6 +203,14 @@ namespace BoxSocial.Applications.Forum
                 return forumOrder;
             }
         }
+		
+		public int Level
+		{
+			get
+			{
+				return forumLevel;
+			}
+		}
 
         public long ParentId
         {
@@ -260,6 +270,11 @@ namespace BoxSocial.Applications.Forum
                 SetProperty("parents", sb.ToString());
             }
         }
+		
+		public ParentTree GetParents()
+		{
+			return Parents;
+		}
 
         public ParentTree Parents
         {
@@ -431,6 +446,18 @@ namespace BoxSocial.Applications.Forum
 
             return query;
         }
+		
+		public List<Item> GetChildren()
+		{
+			List<Item> ret = new List<Item>();
+			
+			foreach (Item i in GetForums())
+			{
+				ret.Add(i);
+			}
+			
+			return ret;
+		}
 
         public List<Forum> GetForums()
         {

@@ -22,6 +22,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Forum</AssemblyName>
+    <RootNamespace>BoxSocial.Applications.Forum</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +36,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Forum</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.Applications.Forum</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -129,5 +140,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Forum.en.resx"</PostBuildEvent>
+    <ProjectGuid>{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}</ProjectGuid>
+    <RootNamespace>BoxSocial.Applications.Forum</RootNamespace>
   </PropertyGroup>
 </Project>

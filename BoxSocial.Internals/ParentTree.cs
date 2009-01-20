@@ -36,7 +36,7 @@ namespace BoxSocial.Internals
         public ParentTree()
         {
             Nodes = new List<ParentTreeNode>();
-        }
+		}
     }
 
     public class ParentTreeNode

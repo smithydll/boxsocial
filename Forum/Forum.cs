@@ -655,12 +655,15 @@ namespace BoxSocial.Applications.Forum
         {
             string parents;
             int order = 0;
+			int level = 0;
             core.db.BeginTransaction();
 
             if (parent == null)
             {
                 throw new InvalidForumException();
             }
+			
+			level = parent.Level + 1;
 
             if (parent.Owner is UserGroup)
             {
@@ -728,6 +731,7 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("forum_description", description);
             iquery.AddField("forum_access", permissions);
             iquery.AddField("forum_order", order);
+			iquery.AddField("forum_level", level);
             iquery.AddField("forum_category", isCategory);
             iquery.AddField("forum_locked", false);
             iquery.AddField("forum_topics", 0);

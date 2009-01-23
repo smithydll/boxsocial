@@ -78,6 +78,7 @@
     <Compile Include="Template.cs" />
     <Compile Include="UniqueKey.cs" />
     <Compile Include="UpdateQuery.cs" />
+    <Compile Include="FieldValuePair.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

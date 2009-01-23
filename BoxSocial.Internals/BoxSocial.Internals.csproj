@@ -156,6 +156,9 @@
     <Compile Include="UserRelation.cs" />
     <Compile Include="UserStyle.cs" />
     <Compile Include="INestableItem.cs" />
+    <Compile Include="AccessControlPermission.cs" />
+    <Compile Include="AccessControlGrant.cs" />
+    <Compile Include="ItemType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

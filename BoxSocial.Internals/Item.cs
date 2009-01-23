@@ -706,6 +706,31 @@ namespace BoxSocial.Internals
                 ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(action));
             }
         }
+		
+		public static Item Create(Core core, Type type, params FieldValuePair[] fields)
+		{
+            core.db.BeginTransaction();
+			
+			InsertQuery iQuery = new InsertQuery(GetTable(type));
+			
+			foreach (FieldValuePair field in fields)
+			{
+				iQuery.AddField(field.Field, field.Value);
+			}
+			
+			long id = core.db.Query(iQuery);
+			
+			if (id > 0)
+			{
+				Item newItem = System.Activator.CreateInstance(type, new object[] { core, id }) as Item;
+				
+				return newItem;
+			}
+			else
+			{
+				throw new InvalidItemException();
+			}
+		}
 
         public long Delete()
         {
@@ -861,6 +886,7 @@ namespace BoxSocial.Internals
     {
         Edit,
         Delete,
+		Create,
     }
 
     public class ItemChangeAuthenticationProviderEventArgs : EventArgs

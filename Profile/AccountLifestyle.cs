@@ -74,7 +74,10 @@ namespace BoxSocial.Applications.Profile
             maritialStatusesSelectBox.Add(new SelectBoxItem("DIVORCED", "Divorced"));
             maritialStatusesSelectBox.Add(new SelectBoxItem("WIDOWED", "Widowed"));
 
-            maritialStatusesSelectBox.SelectedKey = LoggedInMember.MaritialStatusRaw;
+			if (LoggedInMember.MaritialStatusRaw != null)
+			{
+				maritialStatusesSelectBox.SelectedKey = LoggedInMember.MaritialStatusRaw;
+			}
 
             SelectBox religionsSelectBox = new SelectBox("religion");
             religionsSelectBox.Add(new SelectBoxItem("0", "No Answer"));
@@ -86,7 +89,10 @@ namespace BoxSocial.Applications.Profile
                 religionsSelectBox.Add(new SelectBoxItem(((short)religionRow["religion_id"]).ToString(), (string)religionRow["religion_title"]));
             }
 
-            religionsSelectBox.SelectedKey = LoggedInMember.ReligionRaw.ToString();
+			if (LoggedInMember.ReligionRaw != null)
+			{
+				religionsSelectBox.SelectedKey = LoggedInMember.ReligionRaw.ToString();
+			}
 
             SelectBox sexualitiesSelectBox = new SelectBox("sexuality");
             sexualitiesSelectBox.Add(new SelectBoxItem("UNDEF", "No Answer"));
@@ -96,7 +102,10 @@ namespace BoxSocial.Applications.Profile
             sexualitiesSelectBox.Add(new SelectBoxItem("BISEXUAL", "Bisexual"));
             sexualitiesSelectBox.Add(new SelectBoxItem("TRANSEXUAL", "Transexual"));
 
-            sexualitiesSelectBox.SelectedKey = LoggedInMember.SexualityRaw;
+			if (LoggedInMember.SexualityRaw != null)
+			{
+				sexualitiesSelectBox.SelectedKey = LoggedInMember.SexualityRaw;
+			}
 
             template.Parse("S_MARITIAL_STATUS", maritialStatusesSelectBox);
             template.Parse("S_RELIGION", religionsSelectBox);

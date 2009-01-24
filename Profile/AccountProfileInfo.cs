@@ -126,7 +126,10 @@ namespace BoxSocial.Applications.Profile
                 countriesSelectBox.Add(new SelectBoxItem((string)countryRow["country_iso"], (string)countryRow["country_name"]));
             }
 
-            countriesSelectBox.SelectedKey = LoggedInMember.CountryIso;
+			if (LoggedInMember.CountryIso != null)
+			{
+				countriesSelectBox.SelectedKey = LoggedInMember.CountryIso;
+			}
 
             template.Parse("S_DOB_YEAR", dobYearsSelectBox);
             template.Parse("S_DOB_MONTH", dobMonthsSelectBox);

@@ -60,6 +60,8 @@ namespace BoxSocial.Internals
 
         void AccountPreferences_Show(object sender, EventArgs e)
         {
+			Save(new EventHandler(AccountPreferences_Save));
+			
             //User loggedInMember = (User)loggedInMember;
             template.SetTemplate("account_preferences.html");
 
@@ -130,8 +132,6 @@ namespace BoxSocial.Internals
             pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage.ToString();
             template.Parse("S_HOMEPAGE", pagesSelectBox);
             Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
-
-            Save(new EventHandler(AccountPreferences_Save));
         }
 
         void AccountPreferences_Save(object sender, EventArgs e)
@@ -201,8 +201,9 @@ namespace BoxSocial.Internals
 
             LoggedInMember.Info.Update();
 
-            SetRedirectUri(BuildUri());
-            Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");
+            //SetRedirectUri(BuildUri());
+            //Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");
+			SetInformation("Your preferences have been saved in the database.");
         }
     }
 }

@@ -420,6 +420,14 @@ p.error {
 	font-weight: bold;
 }
 
+p.information {
+	color: #0000EE;
+	background-color: #EEEEFF;
+	border: solid 2px #0000CC;
+	padding: 5px;
+	font-weight: bold;
+}
+
 p.no-permissions {
 	color: #996600;
 	background-color: #FFEECC;

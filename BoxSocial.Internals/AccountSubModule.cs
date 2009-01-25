@@ -427,11 +427,23 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Sets an error in posting.
         /// </summary>
-        /// <param name="errorString">String of error to be posted</param>
+        /// <param name="errorString">Error string to be displayed</param>
         protected void SetError(string errorString)
         {
             core.template.Parse("ERROR", errorString);
         }
+		
+		/// <summary>
+		/// Set an information display.
+		/// </summary>
+		/// <remarks>
+		/// Can be used for displaying a success in saving information on a page.
+		/// </remarks>
+		/// <param name="informationString">Information string to be displayed</param>
+		protected void SetInformation(string informationString)
+		{
+			core.template.Parse("INFO", informationString);
+		}
 
         /// <summary>
         /// Authorises a request ensuring the SID is present in the URL to

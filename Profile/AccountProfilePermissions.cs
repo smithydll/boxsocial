@@ -60,6 +60,8 @@ namespace BoxSocial.Applications.Profile
 
         void AccountProfilePermissions_Show(object sender, EventArgs e)
         {
+			Save(new EventHandler(AccountProfilePermissions_Save));
+			
             template.SetTemplate("account_permissions.html");
 
             List<string> permissions = new List<string>();
@@ -67,8 +69,6 @@ namespace BoxSocial.Applications.Profile
             permissions.Add("Can Comment");
 
             Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", LoggedInMember.Permissions, permissions);
-
-            Save(new EventHandler(AccountProfilePermissions_Save));
         }
 
         void AccountProfilePermissions_Save(object sender, EventArgs e)
@@ -78,8 +78,9 @@ namespace BoxSocial.Applications.Profile
             db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
                 LoggedInMember.UserId, permission));
 
-            SetRedirectUri(BuildUri());
-            Display.ShowMessage("Permissions Saved", "Your profile permissions have been saved in the database.");
+			SetInformation("Your profile permissions have been saved in the database.");
+            //SetRedirectUri(BuildUri());
+            //Display.ShowMessage("Permissions Saved", "Your profile permissions have been saved in the database.");
         }
     }
 }

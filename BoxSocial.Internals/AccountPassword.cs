@@ -103,8 +103,9 @@ namespace BoxSocial.Internals
 
             if (rowsChanged == 1)
             {
-                SetRedirectUri(BuildUri());
-                Display.ShowMessage("Changed Password", "Have successfully changed your password. Keep your password safe and do not share it with anyone.");
+				SetInformation("You have successfully changed your password. Keep your password safe and do not share it with anyone.");
+                //SetRedirectUri(BuildUri());
+                //Display.ShowMessage("Changed Password", "You have successfully changed your password. Keep your password safe and do not share it with anyone.");
             }
             else
             {

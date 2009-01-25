@@ -282,18 +282,21 @@ namespace BoxSocial.Applications.Gallery
                     }
                     else
                     {
-                        Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
+						SetError("The gallery path you have given is too long. Try using a shorter name or less nesting.");
+                        //Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
                         return;
                     }
                 }
                 catch (GallerySlugNotUniqueException)
                 {
-                    Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
+					SetError("You have tried to create a gallery with the same name of one that already exits. Please give the gallery a unique name.");
+                    //Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
                     return;
                 }
                 catch (GallerySlugNotValidException)
                 {
-                    Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
+					SetError("The name of the gallery you have created is invalid, please choose another name.");
+                    //Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                     return;
                 }
                 catch (Exception ex)

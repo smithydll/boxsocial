@@ -59,6 +59,8 @@ namespace BoxSocial.Applications.Profile
 
         void AccountProfileName_Show(object sender, EventArgs e)
         {
+			Save(new EventHandler(AccountProfileName_Save));
+			
             template.SetTemplate("account_name.html");
 
             LoggedInMember.LoadProfileInfo();
@@ -103,8 +105,6 @@ namespace BoxSocial.Applications.Profile
                     template.Parse("TITLE_LORD", selected);
                     break;
             }
-
-            Save(new EventHandler(AccountProfileName_Save));
         }
 
         void AccountProfileName_Save(object sender, EventArgs e)
@@ -123,8 +123,9 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.Profile.Update();
 
-            SetRedirectUri(BuildUri());
-            Display.ShowMessage("Name Saved", "Your name has been saved in the database.");
+			SetInformation("Your name has been saved in the database.");
+            //SetRedirectUri(BuildUri());
+            //Display.ShowMessage("Name Saved", "Your name has been saved in the database.");
         }
     }
 }

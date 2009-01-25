@@ -63,6 +63,8 @@ namespace BoxSocial.Applications.Profile
 
         void AccountLifestyle_Show(object sender, EventArgs e)
         {
+			Save(new EventHandler(AccountLifestyle_Save));
+			
             SetTemplate("account_lifestyle");
 
             SelectBox maritialStatusesSelectBox = new SelectBox("maritial-status");
@@ -117,8 +119,6 @@ namespace BoxSocial.Applications.Profile
 
                 template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[LoggedInMember.Profile.MaritialWithId].UserName);
             }
-
-            Save(new EventHandler(AccountLifestyle_Save));
         }
 
         void AccountLifestyle_Save(object sender, EventArgs e)
@@ -228,8 +228,9 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.Profile.Update();
 
-            SetRedirectUri(BuildUri());
-            Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.");
+			SetInformation("Your lifestyle has been saved in the database.");
+            //SetRedirectUri(BuildUri());
+            //Display.ShowMessage("Lifestyle Saved", "Your lifestyle has been saved in the database.");
         }
 
         void AccountLifestyle_ConfirmRelationship(object sender, EventArgs e)

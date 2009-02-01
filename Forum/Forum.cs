@@ -756,6 +756,21 @@ namespace BoxSocial.Applications.Forum
 
         public void MoveUp()
         {
+            if (Order == 0)
+            {
+                return;
+            }
+
+            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+            query.AddCondition("forum_parent_id", ParentId);
+            query.AddCondition("forum_order", ConditionEquality.LessThan, Order);
+            query.AddSort(SortOrder.Descending, "forum_order");
+            query.LimitCount = 2;
+
+            DataTable levelForumsDataTable = db.Query(query);
+
+            Forum record0 = null;
+            Forum record1 = null;
         }
 
         public void MoveDown()
@@ -766,7 +781,7 @@ namespace BoxSocial.Applications.Forum
             query.AddSort(SortOrder.Ascending, "forum_order");
             query.LimitCount = 2;
 
-            DataTable levelForumsDataTable = core.db.Query(query);
+            DataTable levelForumsDataTable = db.Query(query);
 
             Forum record0 = null;
             Forum record1 = null;

@@ -102,11 +102,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="languages\Forum.en.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Forum.en.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -115,6 +110,11 @@
     <EmbeddedResource Include="Templates.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Templates.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="languages\Forum.en.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Forum.en.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

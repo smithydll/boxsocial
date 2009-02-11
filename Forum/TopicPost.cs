@@ -184,7 +184,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        internal TopicPost(Core core, long postId)
+        public TopicPost(Core core, long postId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(Post_ItemLoad);
@@ -357,11 +357,11 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            if (!forum.ForumAccess.CanCreate)
+            /*if (!forum.ForumAccess.CanCreate)
             {
                 // todo: throw new exception
                 throw new UnauthorisedToCreateItemException();
-            }
+            }*/
 
             InsertQuery iQuery = new InsertQuery(NumberedItem.GetTable(typeof(TopicPost)));
             iQuery.AddField("topic_id", topic.Id);

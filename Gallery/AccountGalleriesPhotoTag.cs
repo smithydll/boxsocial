@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -140,10 +141,53 @@ namespace BoxSocial.Applications.Gallery
 
                 List<string> tagInfo = new List<string>();
 
+				/*
+				 * Tag info of the format x,y,title,uid
+				 */
                 for (int i = 0; i < tagCount; i++)
                 {
                     tagInfo.Add(Request.Form["tag[" + i + "]"]);
                 }
+				
+				Dictionary<long, Point> newTags = new Dictionary<long, Point>();
+				
+				foreach (string ti in tagInfo)
+				{
+					bool tagExists = false;
+					string[] parts = ti.Split(',');
+					
+					if (parts.Length != 4)
+					{
+						continue;
+					}
+					
+					int x, y;
+					string title = parts[2];
+					long uid;
+					
+					if ((!int.TryParse(parts[0], out x)) || (!int.TryParse(parts[1], out y)) || (!long.TryParse(parts[3], out uid)))
+					{
+						continue;
+					}
+					
+					foreach (UserTag tag in tags)
+					{
+						if (tag.TaggedMember.Id == uid)
+						{
+							continue;
+						}
+						else
+						{
+							core.LoadUserProfile(uid);
+							newTags.Add(uid, new Point(x, y));
+						}
+					}
+				}
+				
+				foreach (long uid in newTags.Keys)
+				{
+					UserTag ut = UserTag.Create(core, photo, core.session.LoggedInMember, core.UserProfiles[uid], newTags[uid]);
+				}
             }
             catch (GalleryItemNotFoundException)
             {

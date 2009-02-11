@@ -354,5 +354,11 @@ function ShowSpamComment(id)
 
 function FindFriendId()
 {
+	var res = array();
+	
+	res[0] = 0;
+	res[1] = 'Anonymous';
+	
+	return res;
 }
 

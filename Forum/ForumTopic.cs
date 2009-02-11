@@ -409,11 +409,11 @@ namespace BoxSocial.Applications.Forum
                 throw new InvalidForumException();
             }
 
-            if (!forum.ForumAccess.CanCreate)
+            /*if (!forum.ForumAccess.CanCreate)
             {
                 // todo: throw new exception
                 throw new UnauthorisedToCreateItemException();
-            }
+            }*/
 
             if (forum.Owner is UserGroup)
             {
@@ -457,6 +457,10 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("topic_id", topic.Id);
 
             long rowsUpdated = core.db.Query(uQuery);
+			
+			topic.firstPostId = post.Id;
+			topic.lastPostId = post.Id;
+			topic.lastPostTimeRaw = post.TimeCreatedRaw;
 
             if (rowsUpdated != 1)
             {
@@ -660,7 +664,7 @@ namespace BoxSocial.Applications.Forum
 
         public void Read(TopicPost lastVisiblePost)
         {
-            db.BeginTransaction();
+            //db.BeginTransaction();
 
             UpdateQuery uQuery = new UpdateQuery(ForumTopic.GetTable(typeof(ForumTopic)));
             uQuery.AddField("topic_views", new QueryOperation("topic_views", QueryOperations.Addition, 1));
@@ -696,6 +700,8 @@ namespace BoxSocial.Applications.Forum
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewtopic");
+			
+			ForumSettings settings = new ForumSettings(core, page.ThisGroup);
 
             try
             {
@@ -738,11 +744,11 @@ namespace BoxSocial.Applications.Forum
                 List<TopicPost> posts;
                 if (m > 0)
                 {
-                    posts = thisTopic.GetPosts(m, 10);
+                    posts = thisTopic.GetPosts(m, settings.PostsPerPage);
                 }
                 else
                 {
-                    posts = thisTopic.GetPosts(p, 10);
+                    posts = thisTopic.GetPosts(p, settings.PostsPerPage);
                 }
 
                 page.template.Parse("POSTS", posts.Count.ToString());
@@ -752,8 +758,11 @@ namespace BoxSocial.Applications.Forum
                     VariableCollection postVariableCollection = page.template.CreateChild("post_list");
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
+					postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
+					//postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
+					postVariableCollection.Parse("U_USER", post.Poster.Uri);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
                     postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
@@ -786,7 +795,7 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 
-                Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / 10.0));
+                Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "forum", "Forum" });

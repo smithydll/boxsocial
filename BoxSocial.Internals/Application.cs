@@ -495,11 +495,25 @@ namespace BoxSocial.Internals
                 string assemblyPath;
                 if (ae.IsPrimitive)
                 {
-                    assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+					if (HttpContext.Current != null)
+					{
+						assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+					}
+					else
+					{
+						assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+					}
                 }
                 else
                 {
-                    assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+					if (HttpContext.Current != null)
+					{
+						assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+					}
+					else
+					{
+						assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+					}
                 }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
@@ -519,7 +533,14 @@ namespace BoxSocial.Internals
             }
             catch (Exception ex)
             {
-                HttpContext.Current.Response.Write(ex.ToString());
+				if (HttpContext.Current != null)
+				{
+					HttpContext.Current.Response.Write(ex.ToString());
+				}
+				else
+				{
+					Console.WriteLine(ex.ToString());
+				}
             }
             return null;
         }

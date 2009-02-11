@@ -9,7 +9,7 @@ ul.forums {
 ul.forums li {
 	display: block;
 	list-style-type: none;
-	height: 3.5em;
+	height: 6.5em;
 	border: solid 1px black;
 	border-top: none;
 	margin: 0;
@@ -47,7 +47,7 @@ div.forums {
 	border-left: 1px solid black;
 	padding: 0px 0;
 	margin: 0;
-	height: 3.5em;
+	height: 6.5em;
 }
 
 div.forums dl dd {
@@ -136,4 +136,13 @@ ul#posts dl.profile {
 ul#posts div.top {
 	clear: both;
 	text-align: right;
+}
+
+div#forum-rules {
+	color: #CC0000;
+	background-color: #FFEEEE;
+	border: solid 2px #CC0000;
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 10px;
 }

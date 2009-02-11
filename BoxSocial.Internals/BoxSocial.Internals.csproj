@@ -159,6 +159,7 @@
     <Compile Include="AccessControlPermission.cs" />
     <Compile Include="AccessControlGrant.cs" />
     <Compile Include="ItemType.cs" />
+    <Compile Include="Contact.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

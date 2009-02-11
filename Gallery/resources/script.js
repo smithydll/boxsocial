@@ -20,6 +20,13 @@ function CreateUserTagNearPointer(id, event)
 	
 	nli.innerHTML = "New";
 	
+	var nih = document.createElement('input');
+	nih.type = 'hidden';
+	nih.name = 'tag[' + tags + ']';
+	nih.value = photox + ',' + photoy + ',' + newTag[2][1] + ',' + newTag[2][0];
+	
+	apc("fieldlist", nih);
+	
 	try
 	{
 		hide("no-tags");

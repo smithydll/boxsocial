@@ -295,6 +295,15 @@ namespace BoxSocial.Internals
             return;
             
         }
+		
+		public SessionState(Core core, User user)
+		{
+			this.core = core;
+			this.db = core.db;
+			isLoggedIn = true;
+			loggedInMember = user;
+			ipAddress = new IPAddress(0);
+		}
 
         //
         // The following session algorithm was borrowed from phpBB2.0.22,

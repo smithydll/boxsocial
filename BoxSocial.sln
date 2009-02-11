@@ -23,13 +23,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Internals", "BoxS
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum", "Forum\Forum.csproj", "{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pages", "Pages\Pages.csproj", "{1985F418-4B69-4296-AB99-F6B8DDC580EC}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum", "Forum\Forum.csproj", "{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Forms", "BoxSocial.Forms\BoxSocial.Forms.csproj", "{D073D777-367E-4DF6-B53E-B90DE1FD47CA}"
 EndProject
@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gallery", "Gallery\Gallery.
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportPhpbb", "ImportPhpbb\ImportPhpbb.csproj", "{1A10B77B-E757-4F8E-822D-376CF890B74C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Debug|Any CPU.ActiveCfg = Debug
+		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Debug|Any CPU.Build.0 = Debug
+		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Release|Any CPU.ActiveCfg = Debug
+		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Release|Any CPU.Build.0 = Debug
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU

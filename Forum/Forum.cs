@@ -44,6 +44,8 @@ namespace BoxSocial.Applications.Forum
         private string forumTitle;
         [DataField("forum_description", 1023)]
         private string forumDescription;
+		[DataField("forum_rules", 1023)]
+        private string forumRules;
         [DataField("forum_locked")]
         private bool forumLocked;
         [DataField("forum_category")]
@@ -159,6 +161,18 @@ namespace BoxSocial.Applications.Forum
                 SetProperty("forumDescription", value);
             }
         }
+		
+		public string Rules
+		{
+			get
+			{
+				return forumRules;
+			}
+			set
+			{
+				SetProperty("forumRules", value);
+			}
+		}
 
         public long Topics
         {
@@ -999,6 +1013,11 @@ namespace BoxSocial.Applications.Forum
                 Functions.Generate403();
                 return;
             }
+			
+			if (!string.IsNullOrEmpty(thisForum.Rules))
+			{
+				Display.ParseBbcode(page.template, "RULES", thisForum.Rules);
+			}
 
             List<Forum> forums = thisForum.GetForums();
 
@@ -1058,6 +1077,7 @@ namespace BoxSocial.Applications.Forum
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
 
                 forumVariableCollection.Parse("TITLE", forum.Title);
+				Display.ParseBbcode(forumVariableCollection, "DESCRIPTION", forum.Description);
                 forumVariableCollection.Parse("URI", forum.Uri);
                 forumVariableCollection.Parse("POSTS", forum.Posts.ToString());
                 forumVariableCollection.Parse("TOPICS", forum.Topics.ToString());
@@ -1165,7 +1185,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / 10.0));
+            Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });

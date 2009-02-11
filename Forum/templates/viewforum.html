@@ -2,6 +2,14 @@
 <!-- INCLUDE forum_header -->
 	<h2>{FORUM_TITLE}</h2>
 	<p>{BREADCRUMBS}</p>
+	
+	<!-- IF RULES -->
+	<div id="forum-rules">
+		<p><strong>Forum Rules</strong></p>
+		<p>{RULES}</p>
+	</div>
+	<!-- ENDIF -->
+	
 	<!-- IF U_NEW_TOPIC -->
 	<div class="new-stuff">
 		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
@@ -35,6 +43,7 @@
           <img src="/images/posticon_unread_med.png" alt="New" />
           <!-- ENDIF -->
           <a href="{forum_list.URI}">{forum_list.TITLE}</a>
+          <p>{forum_list.DESCRIPTION}</p>
         </dt>
         <dd>{forum_list.POSTS}</dd>
         <dd>{forum_list.TOPICS}</dd>

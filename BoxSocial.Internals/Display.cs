@@ -114,6 +114,7 @@ namespace BoxSocial.Internals
         {
             StringBuilder pagination = new StringBuilder();
             bool comma = false;
+			bool skipped = false;
             bool baseAmp = baseUri.Contains("?");
 
             if (isBlog)
@@ -176,23 +177,45 @@ namespace BoxSocial.Internals
 
                 for (int i = 1; i <= maxPages; i++)
                 {
-                    if (comma)
-                    {
-                        pagination.Append(", ");
-                    }
-                    else
-                    {
-                        comma = true;
-                    }
                     if (i != currentPage)
                     {
                         if (i == 1)
                         {
+							if (comma)
+		                    {
+		                        pagination.Append(", ");
+		                    }
+		                    else
+		                    {
+		                        comma = true;
+		                    }
+							
                             pagination.Append(string.Format("<a href=\"{0}\">{1}</a>",
                                 HttpUtility.HtmlEncode(baseUri), i));
                         }
                         else
                         {
+							if ((i > 3 && i < currentPage - 2) || (i < maxPages - 2 && i > currentPage + 2))
+							{
+								skipped = true;
+								continue;
+							}
+							
+							if (comma)
+		                    {
+		                        pagination.Append(", ");
+		                    }
+		                    else
+		                    {
+		                        comma = true;
+		                    }
+							
+							if (skipped)
+							{
+								pagination.Append("... ");
+								skipped = false;
+							}
+							
                             if (baseAmp)
                             {
                                 pagination.Append(string.Format("<a href=\"{0}p={1}\">{1}</a>",
@@ -205,8 +228,17 @@ namespace BoxSocial.Internals
                             }
                         }
                     }
-                    else
+                    else // current page
                     {
+						if (comma)
+	                    {
+	                        pagination.Append(", ");
+	                    }
+	                    else
+	                    {
+	                        comma = true;
+	                    }
+						
                         pagination.Append(string.Format("<strong>{0}</strong>",
                             i));
                     }

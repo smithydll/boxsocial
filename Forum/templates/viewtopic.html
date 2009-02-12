@@ -14,14 +14,14 @@
 <ul id="posts">
   <!-- BEGIN post_list -->
   <li>
-  	<h3 id="p{post_list.ID}">
+  	<h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
+  	<p>
     <!-- IF post_list.IS_READ -->
     <img src="/images/posticon_read_sml.png" alt="Read" />
     <!-- ELSE -->
     <img src="/images/posticon_unread_sml.png" alt="New" />
     <!-- ENDIF -->
-    <a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
-    <p>{post_list.POST_TIME}</p>
+    by <strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong> on {post_list.POST_TIME}</p>
       <div class="postbody"><p>{post_list.TEXT}</p></div>
     <dl class="profile">
       <dt>
@@ -35,7 +35,9 @@
       <dd>
         <strong>{L_JOINED}: </strong> {post_list.USER_JOINED}
       </dd>
-      <!--dd><strong>Country: </strong> {post_list.USER_COUNTRY}</dd-->
+      <!-- IF post_list.USER_COUNTRY -->
+      <dd><strong>Location: </strong> {post_list.USER_COUNTRY}</dd>
+      <!-- ENDIF -->
     </dl>
     <div class="top"><a href="#posts">{L_TOP}</a></div>
   </li>

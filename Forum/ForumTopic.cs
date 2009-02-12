@@ -766,6 +766,7 @@ namespace BoxSocial.Applications.Forum
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
                     postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
+					postVariableCollection.Parse("USER_COUNTRY", post.Poster.Country);
 
                     if (thisTopic.ReadStatus == null)
                     {

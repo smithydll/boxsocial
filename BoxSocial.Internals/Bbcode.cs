@@ -1011,13 +1011,13 @@ namespace BoxSocial.Internals
                 try
                 {
                     int fontSize = int.Parse(e.Attributes.GetAttribute("default"));
-                    if (fontSize > 22 || fontSize < 8) e.AbortParse();
+                    if (fontSize > 300 || fontSize < 25) e.AbortParse();
                 }
                 catch
                 {
                     e.AbortParse();
                 }
-                e.PrefixText = "<span style=\"font-size: " + e.Attributes.GetAttribute("default") + "pt\">";
+                e.PrefixText = "<span style=\"font-size: " + e.Attributes.GetAttribute("default") + "%\">";
                 e.SuffixText = "</span>";
             }
         }

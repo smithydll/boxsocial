@@ -29,20 +29,115 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Mail
 {
-    [DataTable("events", "EVENT")]
+    [DataTable("mail_messages")]
     public class Message : NumberedItem
     {
+		[DataField("message_id", DataFieldKeys.Primary)] 
+		private long messageId;
+		[DataField("sender_id")]
+		private long senderId;
+		[DataField("message_subject", 127)]
+		private string subject;
+		[DataField("message_text", MYSQL_MEDIUM_TEXT)]
+		private string text;
+		[DataField("message_time_ut")]
+		private long messageTime;
+		[DataField("message_ip", 50)]
+        private string messageIp;
+		
+		public long MessageId
+		{
+			get
+			{
+				return messageId;
+			}
+		}
+		
+		public long SenderId
+		{
+			get
+			{
+				return senderId;
+			}
+		}
+		
+		public string Subject
+		{
+			get
+			{
+				return subject;
+			}
+			set
+			{
+				SetProperty("subject", value);
+			}
+		}
+		
+		public string Text
+		{
+			get
+			{
+				return text;
+			}
+			set
+			{
+				SetProperty("text", value);
+			}
+		}
+		
+		public long MessageTimeRaw
+		{
+			get
+			{
+				return messageTime;
+			}
+		}
+		
+		public DateTime GetMessageTime(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(messageTime);
+        }
 
         public Message(Core core, long messageId)
             : base(core)
         {
+			ItemLoad += new ItemLoadHandler(Message_ItemLoad);
+
+            try
+            {
+                LoadItem(messageId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMessageException();
+            }
         }
+		
+		void Message_ItemLoad()
+		{
+		}
+		
+		public static Message Create(Core core, string subject, string text, Dictionary<User, RecipientType> recipients)
+		{
+			Item newItem = Item.Create(core, typeof(Message),
+			                           new FieldValuePair("message_subject", subject),
+			                           new FieldValuePair("message_text", text),
+			                           new FieldValuePair("message_time_ut", UnixTime.UnixTimeStamp()),
+			                           new FieldValuePair("message_ip", core.session.IPAddress.ToString()));
+			
+			foreach (User user in recipients.Keys)
+			{
+				MessageRecipient.Create(core, (Message)newItem, user, recipients[user], true);
+			}
+			
+			return (Message)newItem;
+		}
 
         public override long Id
         {
             get
             {
-                throw new NotImplementedException();
+                return messageId;
             }
         }
 
@@ -50,8 +145,12 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                throw new NotImplementedException();
+				return Linker.BuildAccountSubModuleUri("mail", "read", messageId);
             }
         }
     }
+	
+	public class InvalidMessageException : Exception
+	{
+	}
 }

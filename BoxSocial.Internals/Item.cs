@@ -709,6 +709,11 @@ namespace BoxSocial.Internals
 		
 		public static Item Create(Core core, Type type, params FieldValuePair[] fields)
 		{
+			return Create(core,  type, false, fields);
+		}
+		
+		public static Item Create(Core core, Type type, bool suppress, params FieldValuePair[] fields)
+		{
             core.db.BeginTransaction();
 			
 			InsertQuery iQuery = new InsertQuery(GetTable(type));
@@ -722,9 +727,16 @@ namespace BoxSocial.Internals
 			
 			if (id > 0)
 			{
-				Item newItem = System.Activator.CreateInstance(type, new object[] { core, id }) as Item;
-				
-				return newItem;
+				if (!suppress)
+				{
+					Item newItem = System.Activator.CreateInstance(type, new object[] { core, id }) as Item;
+					
+					return newItem;
+				}
+				else
+				{
+					return null;
+				}
 			}
 			else
 			{

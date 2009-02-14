@@ -69,6 +69,8 @@ namespace BoxSocial.Applications.Forum
         private byte topicStatus;
         [DataField("topic_locked")]
         private bool topicLocked;
+		[DataField("topic_moved")]
+		private bool topicMoved;
 
         private Forum forum;
         private TopicReadStatus readStatus = null;

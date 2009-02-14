@@ -346,6 +346,7 @@ namespace BoxSocial.Applications.Forum
             this.ownerType = owner.Type;
             forumId = 0;
             forumLocked = false;
+			forumLevel = 0;
         }
 
         public Forum(Core core, long forumId)
@@ -670,7 +671,8 @@ namespace BoxSocial.Applications.Forum
             string parents;
             int order = 0;
 			int level = 0;
-            core.db.BeginTransaction();
+			
+            //core.db.BeginTransaction();
 
             if (parent == null)
             {
@@ -691,6 +693,8 @@ namespace BoxSocial.Applications.Forum
             SelectQuery query = new SelectQuery(GetTable(typeof(Forum)));
             query.AddFields("forum_order");
             query.AddCondition("forum_parent_id", parent.Id);
+			query.AddCondition("forum_item_id", parent.Owner.Id);
+            query.AddCondition("forum_item_type", parent.Owner.Type);
             query.AddSort(SortOrder.Descending, "forum_order");
             query.LimitCount = 1;
 
@@ -791,6 +795,8 @@ namespace BoxSocial.Applications.Forum
         {
             SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
+			query.AddCondition("forum_item_id", Owner.Id);
+			query.AddCondition("forum_item_type", Owner.Type);
             query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
             query.AddSort(SortOrder.Ascending, "forum_order");
             query.LimitCount = 2;
@@ -829,6 +835,8 @@ namespace BoxSocial.Applications.Forum
                 /* TODO: test */
                 query = Forum.GetSelectQueryStub(typeof(Forum));
                 query.AddCondition("forum_parent_id", ParentId); /* or any level below */
+				query.AddCondition("forum_item_id", Owner.Id);
+				query.AddCondition("forum_item_type", Owner.Type);
                 query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
                 query.AddSort(SortOrder.Descending, "forum_order");
                 query.LimitCount = 1;
@@ -868,6 +876,8 @@ namespace BoxSocial.Applications.Forum
                     /* TODO: test */
                     query = Forum.GetSelectQueryStub(typeof(Forum));
                     query.AddCondition("forum_parent_id", ParentId); /* or any level below */
+					query.AddCondition("forum_item_id", Owner.Id);
+					query.AddCondition("forum_item_type", Owner.Type);
                     query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
                     query.AddSort(SortOrder.Descending, "forum_order");
                     query.LimitCount = 1;

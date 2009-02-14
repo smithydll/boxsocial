@@ -27,7 +27,7 @@ namespace BoxSocial.IO
 	public class FieldValuePair
 	{
 		private string field;
-		private string fieldValue;
+		private object fieldValue;
 		
 		public string Field
 		{
@@ -37,7 +37,7 @@ namespace BoxSocial.IO
 			}
 		}
 		
-		public string Value
+		public object Value
 		{
 			get
 			{
@@ -45,7 +45,7 @@ namespace BoxSocial.IO
 			}
 		}
 		
-		public FieldValuePair(string field, string fieldValue)
+		public FieldValuePair(string field, object fieldValue)
 		{
 			this.field = field;
 			this.fieldValue = fieldValue;

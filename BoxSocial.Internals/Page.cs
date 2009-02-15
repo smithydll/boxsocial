@@ -69,7 +69,7 @@ namespace BoxSocial.Internals
         private string ipRaw;
         [DataField("page_ip_proxy", 50)]
         private string ipProxyRaw;
-        [DataField("page_parent_path", MYSQL_TEXT)]
+        [DataField("page_parent_path", 1023)]
         private string parentPath;
         [DataField("page_order")]
         private int order;
@@ -594,13 +594,23 @@ namespace BoxSocial.Internals
                     return PageStatus.Publish;
             }
         }
-
-        public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+		
+		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
         {
-            return Create(core, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+            return Create(core, false, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
         }
 
-        public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+        {
+            return Create(core, suppress, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+        }
+		
+		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+        {
+			return Create(core, false, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+		}
+
+        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
         {
             string parents = "";
             string parentPath = "";

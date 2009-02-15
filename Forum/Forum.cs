@@ -569,6 +569,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             query.AddCondition("`forum_topics`.`forum_id`", forumId);
+			/*query.AddCondition("`forum_topics`.`topic_item_id`", Owner.Id);
+			query.AddCondition("`forum_topics`.`topic_item_type`", Owner.Type);*/
             query.AddCondition("topic_status", ConditionEquality.NotIn, new byte[] { (byte)TopicStates.Global, (byte)TopicStates.Announcement });
             query.AddSort(SortOrder.Descending, "topic_status");
             query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
@@ -1178,15 +1180,85 @@ namespace BoxSocial.Applications.Forum
                     {
                         topicVariableCollection.Parse("LAST_POST", "No posts");
                     }
+					
+					switch (topic.Status)
+					{
+						case TopicStates.Normal:
+							if (topic.IsRead)
+		                    {
+								if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_NORMAL_READ_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_NORMAL_READ_UNLOCKED", "TRUE");
+								}
+		                    }
+		                    else
+		                    {
+		                        if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_NORMAL_UNREAD_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_NORMAL_UNREAD_UNLOCKED", "TRUE");
+								}
+		                    }
+							break;
+						case TopicStates.Sticky:
+							if (topic.IsRead)
+		                    {
+								if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_STICKY_READ_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_STICKY_READ_UNLOCKED", "TRUE");
+								}
+		                    }
+		                    else
+		                    {
+		                        if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_STICKY_UNREAD_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_STICKY_UNREAD_UNLOCKED", "TRUE");
+								}
+		                    }
 
-                    if (topic.IsRead)
-                    {
-                        topicVariableCollection.Parse("IS_READ", "TRUE");
-                    }
-                    else
-                    {
-                        topicVariableCollection.Parse("IS_READ", "FALSE");
-                    }
+							break;
+						case TopicStates.Announcement:
+						case TopicStates.Global:
+							if (topic.IsRead)
+		                    {
+								if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_UNLOCKED", "TRUE");
+								}
+		                    }
+		                    else
+		                    {
+		                        if (topic.IsLocked)
+								{
+									topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_LOCKED", "TRUE");
+								}
+								else
+								{
+									topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_UNLOCKED", "TRUE");
+								}
+		                    }
+
+							break;
+					}
                 }
 
                 if (thisForum.ForumAccess.CanCreate)

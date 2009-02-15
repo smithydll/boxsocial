@@ -674,7 +674,7 @@ namespace BoxSocial.Internals
                 foreach (string slug in slugs.Keys)
                 {
                     string tSlug = slug;
-                    Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                    Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                 }
 
                 InsertQuery iQuery = new InsertQuery("primitive_apps");
@@ -718,7 +718,7 @@ namespace BoxSocial.Internals
                     if (db.Query(query).Rows.Count == 0)
                     {
                         string tSlug = slug;
-                        Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                     }
                     else
                     {
@@ -739,7 +739,7 @@ namespace BoxSocial.Internals
                         catch (PageNotFoundException)
                         {
                             string tSlug = slug;
-                            Page.Create(core, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
                     }
                 }

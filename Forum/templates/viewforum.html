@@ -37,11 +37,11 @@
     <li>
       <dl>
         <dt>
-          <!-- IF forum_list.IS_READ -->
-          <img src="/images/posticon_read_med.png" alt="Read" />
-          <!-- ELSE -->
-          <img src="/images/posticon_unread_med.png" alt="New" />
-          <!-- ENDIF -->
+	      <!-- IF forum_list.IS_READ -->
+	      <img src="/images/posticon_read_med.png" alt="Read" />
+	      <!-- ELSE -->
+	      <img src="/images/posticon_unread_med.png" alt="New" />
+	      <!-- ENDIF -->
           <a href="{forum_list.URI}">{forum_list.TITLE}</a>
           <p>{forum_list.DESCRIPTION}</p>
         </dt>
@@ -72,10 +72,41 @@
     <li>
       <dl>
         <dt>
-          <!-- IF topic_list.IS_READ -->
+          <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
           <img src="/images/posticon_read_med.png" alt="Read" />
-          <!-- ELSE -->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
           <img src="/images/posticon_unread_med.png" alt="New" />
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
+          NRL<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
+          NUL<!--img src="/images/posticon_unread_med.png" alt="New" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
+          SRU<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
+          SUU<!--img src="/images/posticon_unread_med.png" alt="New" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
+          SRL<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
+          SUL<!--img src="/images/posticon_unread_med.png" alt="New" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
+          ARU<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
+          AUU<!--img src="/images/posticon_unread_med.png" alt="New" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
+          ARL<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
+          <!-- ENDIF -->
+          <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
+          AUL<!--img src="/images/posticon_unread_med.png" alt="New" /-->
           <!-- ENDIF -->
           <a href="{topic_list.URI}">{topic_list.TITLE}</a>
         </dt>

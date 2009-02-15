@@ -60,7 +60,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
+				if (WebConfigurationManager.AppSettings != null &&  WebConfigurationManager.AppSettings.HasKeys())
+				{
+					return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
+				}
+				else
+				{
+					return "zinzam.com";
+				}
             }
         }
 
@@ -68,7 +75,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return HttpContext.Current.Request.Url.Host.ToLower();
+				if (HttpContext.Current != null && HttpContext.Current.Request != null && HttpContext.Current.Request.Url != null)
+				{
+					return HttpContext.Current.Request.Url.Host.ToLower();
+				}
+				else
+				{
+					return "localhost";
+				}
             }
         }
 

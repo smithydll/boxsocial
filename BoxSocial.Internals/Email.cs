@@ -45,6 +45,11 @@ namespace BoxSocial.Internals
 
         public static void SendEmail(string toAddress, string subject, string message)
         {
+			if (WebConfigurationManager.AppSettings == null || (!WebConfigurationManager.AppSettings.HasKeys()) || WebConfigurationManager.AppSettings["smtp-server"] == null)
+			{
+				return;
+			}
+			
             SmtpClient mailClient = new SmtpClient(WebConfigurationManager.AppSettings["smtp-server"]);
             Type t = Type.GetType("Mono.Runtime");
             if (t == null)

@@ -66,6 +66,8 @@ namespace BoxSocial.Internals
         protected long userId;
         [DataField("user_name", DataFieldKeys.Unique, 64)]
         private string userName;
+		[DataField("user_name_lower", DataFieldKeys.Unique, 64)]
+        private string userNameLower;
         [DataField("user_domain", DataFieldKeys.Unique, 63)]
         private string domain;
 
@@ -1194,6 +1196,7 @@ namespace BoxSocial.Internals
 
             InsertQuery query = new InsertQuery("user_keys");
             query.AddField("user_name", userName);
+			query.AddField("user_name_lower", userName.ToLower());
             query.AddField("user_domain", "");
 
             db.BeginTransaction();
@@ -1657,7 +1660,7 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public static bool CheckUserNameUnique(Mysql db, string userName)
         {
-            if (db.Query(string.Format("SELECT user_name FROM user_keys WHERE LCASE(user_name) = '{0}';",
+            if (db.Query(string.Format("SELECT user_name FROM user_keys WHERE user_name_lower = '{0}';",
                 Mysql.Escape(userName.ToLower()))).Rows.Count > 0)
             {
                 return false;

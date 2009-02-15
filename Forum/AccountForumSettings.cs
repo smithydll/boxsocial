@@ -61,13 +61,13 @@ namespace BoxSocial.Applications.Forum
         void AccountForumSettings_Show(object sender, EventArgs e)
         {
             SetTemplate("account_forum_settings");
+			
+			Save(new EventHandler(AccountForumSettings_Save));
 
             ForumSettings settings = new ForumSettings(core, Owner);
 
             template.Parse("S_TOPICS_PER_PAGE", settings.TopicsPerPage.ToString());
             template.Parse("S_POSTS_PER_PAGE", settings.PostsPerPage.ToString());
-
-            Save(new EventHandler(AccountForumSettings_Save));
         }
 
         void AccountForumSettings_Save(object sender, EventArgs e)
@@ -79,6 +79,8 @@ namespace BoxSocial.Applications.Forum
             settings.PostsPerPage = Functions.FormInt("posts-per-page", 10);
 
             settings.Update();
+			
+			this.SetInformation("Forum Settings Saved");
         }
     }
 }

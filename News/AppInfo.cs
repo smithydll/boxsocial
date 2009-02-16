@@ -27,8 +27,10 @@ using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
+using BoxSocial.Networks;
 
-namespace BoxSocial.Applications.Mail
+namespace BoxSocial.Applications.News
 {
     public class AppInfo : Application
     {
@@ -42,7 +44,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Mail";
+                return "News";
             }
         }
 
@@ -50,7 +52,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "mail";
+                return "news";
             }
         }
 
@@ -58,7 +60,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Internal Mail Application";
+                return "";
             }
         }
 
@@ -92,7 +94,7 @@ namespace BoxSocial.Applications.Mail
             get
             {
                 //return Properties.Resources.style;
-				return null;
+                return null;
             }
         }
 
@@ -101,7 +103,7 @@ namespace BoxSocial.Applications.Mail
             get
             {
                 //return Properties.Resources.script;
-				return null;
+                return null;
             }
         }
 
@@ -117,7 +119,10 @@ namespace BoxSocial.Applications.Mail
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
-            aii.AddModule("mail");
+            aii.AddSlug("news", @"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("news", @"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+
+            aii.AddModule("news");
 
             return aii;
         }
@@ -127,6 +132,7 @@ namespace BoxSocial.Applications.Mail
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
+                slugs.Add("news", "News");
                 return slugs;
             }
         }
@@ -134,15 +140,52 @@ namespace BoxSocial.Applications.Mail
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
+
+            /*core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
+            core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
+            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
+            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member;
+            return AppPrimitives.Group;
         }
-		
-		void core_PageHooks(HookEventArgs e)
+
+        [Show(@"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showNews(Core core, object sender)
         {
+            if (sender is GPage)
+            {
+                //Forum.Show(core, (GPage)sender, 0);
+            }
+        }
+
+        [Show(@"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showNewsPost(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                //Forum.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
+            }
+        }
+
+        void core_PageHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Group)
+            {
+                ShowGroupNews(e);
+            }
+        }
+
+        public void ShowGroupNews(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilenews");
+
+            /*Forum forum = new Forum(core, (UserGroup)e.Owner);
+            template.Parse("U_NEWS", forum.Uri);*/
+
+            e.core.AddMainPanel(template);
         }
     }
 }

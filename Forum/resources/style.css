@@ -67,10 +67,14 @@ ul#topics {
 ul#topics li {
 	display: block;
 	list-style-type: none;
-	height: 2.5em;
+	height: 3.5em;
 	border: solid 1px black;
 	border-top: none;
 	margin: 0;
+}
+
+ul#topic li dt img.topic-icon {
+	float: left;
 }
 
 ul#topics li#topic-head {
@@ -87,8 +91,13 @@ ul#topics dl dt {
 	display: block;
 	float: left;
 	width: 50%;
-	padding: 0px 0;
+	padding: 0 0 0 0;
 	margin: 0;
+}
+
+ul#topics dl dt span {
+	padding-left: 20px;
+	display: block;
 }
 
 ul#topics dl dd {
@@ -99,7 +108,7 @@ ul#topics dl dd {
 	border-left: 1px solid black;
 	padding: 0px 0;
 	margin: 0;
-	height: 2.5em;
+	height: 3.5em;
 }
 
 ul#posts {

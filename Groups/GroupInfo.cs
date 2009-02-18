@@ -69,6 +69,8 @@ namespace BoxSocial.Groups
         private ulong groupBytes;
         [DataField("group_views")]
         private long groupViews;
+		[DataField("group_news_articles")]
+        private long groupNewsArticles;
 
         private string displayNameOwnership;
         private string category;
@@ -189,6 +191,14 @@ namespace BoxSocial.Groups
                 return galleryItems;
             }
         }
+		
+		public long NewsArticles
+		{
+			get
+			{
+				return groupNewsArticles;
+			}
+		}
 
         public string GroupHomepage
         {

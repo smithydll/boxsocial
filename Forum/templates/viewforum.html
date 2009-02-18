@@ -73,10 +73,10 @@
       <dl>
         <dt>
           <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
-          <img src="/images/posticon_read_med.png" alt="Read" />
+          <img class="topic-icon" src="/images/posticon_read_med.png" alt="Read" />
           <!-- ENDIF -->
           <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
-          <img src="/images/posticon_unread_med.png" alt="New" />
+          <img class="topic-icon" src="/images/posticon_unread_med.png" alt="New" />
           <!-- ENDIF -->
           <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
           NRL<!-- img src="/images/posticon_read_med.png" alt="Read" /-->
@@ -108,7 +108,8 @@
           <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
           AUL<!--img src="/images/posticon_unread_med.png" alt="New" /-->
           <!-- ENDIF -->
-          <a href="{topic_list.URI}">{topic_list.TITLE}</a>
+          <span><a href="{topic_list.URI}">{topic_list.TITLE}</a><br />
+          by<a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE}</span>
         </dt>
         <dd>{topic_list.VIEWS}</dd>
         <dd>{topic_list.REPLIES}</dd>

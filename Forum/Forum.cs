@@ -1161,6 +1161,11 @@ namespace BoxSocial.Applications.Forum
                 topicLastPosts = TopicPost.GetTopicLastPosts(core, allTopics);
 
                 page.template.Parse("TOPICS", allTopics.Count.ToString());
+				
+				foreach (ForumTopic topic in allTopics)
+                {
+					core.LoadUserProfile(topic.PosterId);
+				}
 
                 foreach (ForumTopic topic in allTopics)
                 {
@@ -1170,6 +1175,9 @@ namespace BoxSocial.Applications.Forum
                     topicVariableCollection.Parse("URI", topic.Uri);
                     topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
                     topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
+					topicVariableCollection.Parse("DATE", core.tz.DateTimeToString(topic.GetCreatedDate(core.tz)));
+					topicVariableCollection.Parse("USERNAME", core.UserProfiles[topic.PosterId].DisplayName);
+					topicVariableCollection.Parse("U_POSTER", core.UserProfiles[topic.PosterId].Uri);
 
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {

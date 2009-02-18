@@ -29,11 +29,33 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.News
 {
-    [DataTable("news_article")]
-    public class Article : NumberedItem
+    [DataTable("news_article", "ARTICLE")]
+    public class Article : NumberedItem, ICommentableItem
     {
         [DataField("article_id", DataFieldKeys.Primary)]
         private long articleId;
+		[DataField("user_id")]
+        private long userId;
+		[DataField("article_item_id")]
+        private long ownerId;
+		[DataField("article_item_type", NAMESPACE)]
+        private string ownerType;
+		[DataField("article_time_ut")]
+        private long articleTime;
+		[DataField("article_subject", 127)]
+        private string articleSubject;
+		[DataField("article_body", MYSQL_TEXT)]
+        private long articleBody;
+		[DataField("article_comments")]
+        private long articleComments;
+		
+		public long ArticleId
+		{
+			get
+			{
+				return articleId;
+			}
+		}
 
         public Article(Core core, long articleId)
             : base(core)
@@ -49,6 +71,21 @@ namespace BoxSocial.Applications.News
                 throw new InvalidArticleException();
             }
         }
+		
+		public Article(Core core, DataRow articleDataRow)
+			: base(core)
+		{
+			ItemLoad += new ItemLoadHandler(Article_ItemLoad);
+			
+			try
+			{
+				loadItemInfo(articleDataRow);
+			}
+		    catch (InvalidItemException)
+			{
+				throw new InvalidArticleException();
+			}
+		}
 
         void Article_ItemLoad()
 		{
@@ -67,6 +104,30 @@ namespace BoxSocial.Applications.News
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+		
+        public long Comments
+        {
+            get
+            {
+                return articleComments;
+            }
+        }
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
     }

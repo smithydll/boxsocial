@@ -113,6 +113,91 @@ namespace BoxSocial.Applications.News
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+			
+			core.RegisterCommentHandle("ARTICLE", articleCanPostComment, articleCanDeleteComment, articleAdjustCommentCount, articleCommentPosted);
+        }
+		
+        private void articleCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private bool articleCanPostComment(long itemId, User member)
+        {
+            SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
+            query.AddCondition("article_id", itemId);
+
+            DataTable articleTable = core.db.Query(query);
+
+            if (articleTable.Rows.Count == 1)
+            {
+                Primitive owner = null;
+                switch ((string)articleTable.Rows[0]["article_item_type"])
+                {
+                    case "GROUP":
+                        owner = new UserGroup(core, (long)articleTable.Rows[0]["article_item_id"]);
+                        break;
+                    case "NETWORK":
+                        owner = new Network(core, (long)articleTable.Rows[0]["article_item_id"]);
+                        break;
+                }
+
+				/* TODO */
+                /*Access articleAccess = owner.Access;
+                articleAccess.SetViewer(member);
+
+                if (articleAccess.CanComment)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }*/
+				return true;
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private bool articleCanDeleteComment(long itemId, User member)
+        {
+            SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
+            query.AddCondition("article_id", itemId);
+
+            DataTable articleTable = core.db.Query(query);
+
+            if (articleTable.Rows.Count == 1)
+            {
+                switch ((string)articleTable.Rows[0]["article_item_type"])
+                {
+                    case "GROUP":
+                        UserGroup group = new UserGroup(core, (long)articleTable.Rows[0]["article_item_id"]);
+                        if (group.IsGroupOperator(member))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    case "NETWORK":
+                        return false;
+                    default:
+                        return false;
+                }
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private void articleAdjustCommentCount(long itemId, int adjustment)
+        {
+            core.db.UpdateQuery(string.Format("UPDATE articles SET article_comments = article_comments + {1} WHERE article_id = {0};",
+                itemId, adjustment));
         }
 
         public override ApplicationInstallationInfo Install()
@@ -157,7 +242,7 @@ namespace BoxSocial.Applications.News
         {
             if (sender is GPage)
             {
-                //Forum.Show(core, (GPage)sender, 0);
+                News.Show(core, (GPage)sender);
             }
         }
 

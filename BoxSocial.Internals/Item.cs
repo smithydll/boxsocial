@@ -448,19 +448,51 @@ namespace BoxSocial.Internals
                     {
                         if (((DataFieldAttribute)attr).FieldName != null)
                         {
-                            DataFieldInfo dfi;
-                            if (((DataFieldAttribute)attr).Key == null)
-                            {
-                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
-                            }
-                            else
-                            {
-                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
-                            }
-                            dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
-                            dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+							if (fi.FieldType == typeof(ItemKey))
+							{
+								DataFieldInfo dfiId;
+								//DataFieldInfo dfiType;
+								DataFieldInfo dfiTypeId;
+								
+								if (((DataFieldAttribute)attr).Key == null)
+	                            {
+									dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+									dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+								}
+								else
+								{
+									dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
+									dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
+								}
+								
+								dfiId.ParentType = ((DataFieldAttribute)attr).ParentType;
+	                            dfiId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+								//dfiType.ParentType = ((DataFieldAttribute)attr).ParentType;
+	                            //dfiType.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+								dfiTypeId.ParentType = ((DataFieldAttribute)attr).ParentType;
+	                            dfiTypeId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+								
+								returnValue.Add(dfiId);
+								//returnValue.Add(dfiType);
+								returnValue.Add(dfiTypeId);
+							}
+							else
+							{
+	                            DataFieldInfo dfi;
+	                            if (((DataFieldAttribute)attr).Key == null)
+	                            {
+	                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
+	                            }
+	                            else
+	                            {
+									//HttpContext.Current.Response.Write(fi.DeclaringType.Name + " " + fi.FieldType.Name + " " + fi.ReflectedType.Name + " " + ((DataFieldAttribute)attr).FieldName + "<br />");
+	                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
+	                            }
+	                            dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
+	                            dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 
-                            returnValue.Add(dfi);
+	                            returnValue.Add(dfi);
+							}
                         }
                         else
                         {
@@ -825,59 +857,80 @@ namespace BoxSocial.Internals
                 {
                     if (attr.GetType() == typeof(DataFieldAttribute))
                     {
-                        string columnName;
-                        if (((DataFieldAttribute)attr).FieldName != null)
-                        {
-                            columnName = ((DataFieldAttribute)attr).FieldName;
-                        }
-                        else
-                        {
-                            columnName = fi.Name;
-                        }
+						if (fi.FieldType == typeof(ItemKey))
+						{
+							string columnPrefix;
+							if (((DataFieldAttribute)attr).FieldName != null)
+	                        {
+	                            columnPrefix = ((DataFieldAttribute)attr).FieldName;
+	                        }
+	                        else
+	                        {
+	                            columnPrefix = fi.Name;
+	                        }
+							
+							columnsAttributed.Add(columnPrefix);
+							columnsAttributed.Add(columnPrefix + "_id");
+							columnsAttributed.Add(columnPrefix + "_type_id");
+							
+							fi.SetValue(this, new ItemKey((long)itemRow[columnPrefix + "_id"], (long)itemRow[columnPrefix + "_type_id"])); 
+						}
+						else
+						{
+	                        string columnName;
+	                        if (((DataFieldAttribute)attr).FieldName != null)
+	                        {
+	                            columnName = ((DataFieldAttribute)attr).FieldName;
+	                        }
+	                        else
+	                        {
+	                            columnName = fi.Name;
+	                        }
 
-                        columnsAttributed.Add(columnName);
+	                        columnsAttributed.Add(columnName);
 
-                        if (columns.Contains(columnName))
-                        {
-                            columnCount++;
-                            if (!(itemRow[columnName] is DBNull))
-                            {
-                                try
-                                {
-                                    if (fi.FieldType == typeof(bool) && !(itemRow[columnName] is bool))
-                                    {
-                                        if (itemRow[columnName] is byte)
-                                        {
-                                            fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
-                                        }
-                                        else if (itemRow[columnName] is sbyte)
-                                        {
-                                            fi.SetValue(this, ((sbyte)itemRow[columnName] > 0) ? true : false);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        fi.SetValue(this, itemRow[columnName]);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
-                                }
-                            }
-                            else
-                            {
-                                // This works only when the non repeated columns are not entirely TEXT
-                                if (fi.FieldType == typeof(string))
-                                {
-                                    columnCount++;
-                                }
-                                else
-                                {
-                                    throw new InvalidItemException();
-                                }
-                            }
-                        }
+	                        if (columns.Contains(columnName))
+	                        {
+	                            columnCount++;
+	                            if (!(itemRow[columnName] is DBNull))
+	                            {
+	                                try
+	                                {
+	                                    if (fi.FieldType == typeof(bool) && !(itemRow[columnName] is bool))
+	                                    {
+	                                        if (itemRow[columnName] is byte)
+	                                        {
+	                                            fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
+	                                        }
+	                                        else if (itemRow[columnName] is sbyte)
+	                                        {
+	                                            fi.SetValue(this, ((sbyte)itemRow[columnName] > 0) ? true : false);
+	                                        }
+	                                    }
+	                                    else
+	                                    {
+	                                        fi.SetValue(this, itemRow[columnName]);
+	                                    }
+	                                }
+	                                catch (Exception ex)
+	                                {
+	                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
+	                                }
+	                            }
+	                            else
+	                            {
+	                                // This works only when the non repeated columns are not entirely TEXT
+	                                if (fi.FieldType == typeof(string))
+	                                {
+	                                    columnCount++;
+	                                }
+	                                else
+	                                {
+	                                    throw new InvalidItemException();
+	                                }
+	                            }
+	                        }
+						}
                     }
                 }
             }

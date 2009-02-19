@@ -36,10 +36,10 @@ namespace BoxSocial.Applications.News
         private long articleId;
 		[DataField("user_id")]
         private long userId;
-		[DataField("article_item_id")]
-        private long ownerId;
-		[DataField("article_item_type", NAMESPACE)]
-        private string ownerType;
+		[DataField("article_item")]
+        private ItemKey ownerKey;
+		//[DataField("article_item_type", NAMESPACE)]
+        //private string ownerType;
 		[DataField("article_time_ut")]
         private long articleTime;
 		[DataField("article_subject", 127)]

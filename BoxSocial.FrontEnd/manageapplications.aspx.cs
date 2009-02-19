@@ -112,6 +112,7 @@ namespace BoxSocial.FrontEnd
 
                 if (isInternals)
                 {
+					BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
 
                     Display.ShowMessage("Internals Updated", "Internals have been updated.");
@@ -279,6 +280,7 @@ namespace BoxSocial.FrontEnd
                                     db.UpdateQuery(string.Format(@"DELETE FROM comment_types WHERE application_id = {0} AND type_updated_ut <> {1};",
                                         applicationId, updatedRaw));
 
+									BoxSocial.Internals.Application.InstallTypes(core, loadApplication, applicationId);
                                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
 
                                 }

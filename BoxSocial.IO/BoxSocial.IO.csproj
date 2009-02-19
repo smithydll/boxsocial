@@ -79,6 +79,7 @@
     <Compile Include="UniqueKey.cs" />
     <Compile Include="UpdateQuery.cs" />
     <Compile Include="FieldValuePair.cs" />
+    <Compile Include="Index.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

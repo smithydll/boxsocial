@@ -114,6 +114,29 @@ namespace BoxSocial.Internals
                 }
             }
         }
+		
+		public static void InstallTypes(Core core, Assembly asm, long applicationId)
+        {
+            Type[] types = asm.GetTypes();
+
+            foreach (Type type in types)
+            {
+                if (type.IsSubclassOf(typeof(Item)))
+                {
+					SelectQuery query = new SelectQuery(Item.GetTable(typeof(ItemType)));
+					query.AddCondition("type_namespace", type.FullName);
+					
+					if (core.db.Query(query).Rows.Count == 0)
+					{
+						InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(ItemType)));
+						iQuery.AddField("type_namespace", type.FullName);
+						iQuery.AddField("type_application_id", applicationId);
+						
+						core.db.Query(iQuery);
+					}
+				}
+			}
+		}
 
         public static void InstallTables(Core core, Assembly asm)
         {

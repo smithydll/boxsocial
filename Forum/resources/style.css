@@ -71,10 +71,8 @@ ul#topics li {
 	border: solid 1px black;
 	border-top: none;
 	margin: 0;
-}
-
-ul#topic li dt img.topic-icon {
-	float: left;
+	background-position: 5px center;
+	background-repeat: no-repeat;
 }
 
 ul#topics li#topic-head {
@@ -84,7 +82,7 @@ ul#topics li#topic-head {
 
 ul#topics dl {
 	position: relative;
-	padding: 0px 0;
+	padding: 0 0 0 30px;
 }
 
 ul#topics dl dt {
@@ -95,9 +93,12 @@ ul#topics dl dt {
 	margin: 0;
 }
 
-ul#topics dl dt span {
-	padding-left: 20px;
-	display: block;
+li.forum-med-read-unlocked {
+	background-image: url('/images/posticon_read_med.png');
+}
+
+li.forum-med-unread-unlocked {
+	background-image: url('/images/posticon_unread_med.png');
 }
 
 ul#topics dl dd {

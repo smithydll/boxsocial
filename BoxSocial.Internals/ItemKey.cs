@@ -65,6 +65,21 @@ namespace BoxSocial.Internals
 		{
 			this.itemId = itemId;
 			this.itemType = itemType;
+			this.itemTypeId = itemTypeCache[itemType];
+		}
+		
+		public ItemKey(long itemId, long itemTypeId)
+		{
+			this.itemId = itemId;
+			foreach (string value in itemTypeCache.Keys)
+			{
+				if (itemTypeCache[value] == itemTypeId)
+				{
+					this.itemType = value;
+					break;
+				}
+			}
+			this.itemTypeId = itemTypeId;
 		}
 		
 		internal static void populateItemTypeCache(Core core)
@@ -98,7 +113,7 @@ namespace BoxSocial.Internals
 					itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
 				}
 
-				cache.Add("itemTypeIds", itemTypeCache, new CacheDependency(), DateTime.Now.AddDays(1.0), new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+				cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
 			}
 		}
 	}

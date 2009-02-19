@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.News
 		[DataField("article_subject", 127)]
         private string articleSubject;
 		[DataField("article_body", MYSQL_TEXT)]
-        private long articleBody;
+        private string articleBody;
 		[DataField("article_comments")]
         private long articleComments;
 		
@@ -56,6 +56,22 @@ namespace BoxSocial.Applications.News
 				return articleId;
 			}
 		}
+
+        public string ArticleSubject
+        {
+            get
+            {
+                return articleSubject;
+            }
+        }
+
+        public string ArticleBody
+        {
+            get
+            {
+                return articleBody;
+            }
+        }
 
         public Article(Core core, long articleId)
             : base(core)

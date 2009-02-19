@@ -44,14 +44,17 @@ namespace BoxSocial.Applications.News
 			this.owner = owner;
 		}
 		
-		public List<Article> GetArticles(int offset, int count)
+		public List<Article> GetArticles(int currentPage, int count)
 		{
 			List<Article> articles = new List<Article>();
 			
 			SelectQuery query = Article.GetSelectQueryStub(typeof(Article));
-			query.AddCondition("article_item_id", owner.Id);
-			query.AddCondition("article_item_type", owner.Type);
+            ItemKey ik = new ItemKey(owner.Id, owner.Type);
+			query.AddCondition("article_item_id", ik.Id);
+			query.AddCondition("article_item_type_id", ik.TypeId);
 			query.AddSort(SortOrder.Ascending, "article_time_ut");
+            query.LimitStart = (currentPage - 1) * count;
+            query.LimitCount = count;
 			
 			DataTable articlesDataTable = db.Query(query);
 			
@@ -65,7 +68,20 @@ namespace BoxSocial.Applications.News
 		
 		public static void Show(Core core, GPage page)
 		{
+            int p = Functions.RequestInt("p", 1);
 			page.template.SetTemplate("News", "viewnews");
+
+            News news = new News(core, page.ThisGroup);
+
+            List<Article> articles = news.GetArticles(p, 10);
+
+            foreach (Article article in articles)
+            {
+                VariableCollection articleVariableCollection = page.template.CreateChild("news_list");
+
+                articleVariableCollection.Parse("BODY", article.ArticleBody);
+                articleVariableCollection.Parse("TITLE", article.ArticleSubject);
+            }
 		}
 	}
 }

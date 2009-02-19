@@ -31,6 +31,8 @@ namespace BoxSocial.Internals
 {
     public abstract class NumberedItem : Item
     {
+        protected ItemKey key = null;
+
         protected NumberedItem(Core core)
             : base (core)
         {
@@ -39,6 +41,18 @@ namespace BoxSocial.Internals
         public abstract long Id
         {
             get;
+        }
+
+        public ItemKey Key
+        {
+            get
+            {
+                if (key == null)
+                {
+                    key = new ItemKey(Id, this.GetType().FullName);
+                }
+                return key;
+            }
         }
 
         protected List<Item> getSubItems(Type typeToGet)

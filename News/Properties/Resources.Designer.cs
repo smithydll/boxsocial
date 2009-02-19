@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BoxSocial.Applications.News {
+namespace BoxSocial.Applications.News.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace BoxSocial.Applications.News {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Templates {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Templates() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.News {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Applications.News.Templates", typeof(Templates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("BoxSocial.Applications.News.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,33 +61,20 @@ namespace BoxSocial.Applications.News {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///
-        ///&lt;!-- IF news_list --&gt;
-        ///&lt;ul&gt;
-        ///&lt;!-- BEGIN news_list --&gt;
-        ///&lt;li&gt;
-        ///	&lt;h3&gt;{news_list.TITLE}&lt;/h3&gt;
-        ///	&lt;p&gt;{news_list.BODY}&lt;/p&gt;
-        ///&lt;/li&gt;
-        ///&lt;!-- END news_list --&gt;
-        ///&lt;/ul&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string viewnews {
+        internal static string script {
             get {
-                return ResourceManager.GetString("viewnews", resourceCulture);
+                return ResourceManager.GetString("script", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
-        internal static string viewprofilenews {
+        internal static string style {
             get {
-                return ResourceManager.GetString("viewprofilenews", resourceCulture);
+                return ResourceManager.GetString("style", resourceCulture);
             }
         }
     }

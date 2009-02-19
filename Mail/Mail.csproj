@@ -8,7 +8,7 @@
     <ProjectGuid>{4D5E2ACA-04F1-45FA-A9DA-46C0D55954B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Mail</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Mail</RootNamespace>
     <AssemblyName>Mail</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -64,6 +64,11 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="languages\" />
+    <Folder Include="resources\" />
+    <Folder Include="templates\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

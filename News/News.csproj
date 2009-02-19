@@ -8,9 +8,9 @@
     <ProjectGuid>{9793B8C0-266E-4163-8459-AD3B1BDC8C04}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>News</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <AssemblyName>News</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -43,17 +43,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -61,13 +52,18 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="Article.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Templates.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="AccountNews.cs" />
-    <Compile Include="templates\viewnews.html" />
+    <Content Include="templates\viewnews.html" />
     <Compile Include="News.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +89,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Templates.Designer.cs</LastGenOutput>
@@ -100,11 +101,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="resources\script.js" />
+    <Content Include="resources\style.css" />
     <Content Include="templates\viewprofilenews.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="languages\" />
-    <Folder Include="resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

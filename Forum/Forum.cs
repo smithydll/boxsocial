@@ -694,7 +694,7 @@ namespace BoxSocial.Applications.Forum
 
             SelectQuery query = new SelectQuery(GetTable(typeof(Forum)));
             query.AddFields("forum_order");
-            query.AddCondition("forum_parent_id", parent.Id);
+            query.AddCondition("forum_order", ConditionEquality.GreaterThan, parent.Order);
 			query.AddCondition("forum_item_id", parent.Owner.Id);
             query.AddCondition("forum_item_type", parent.Owner.Type);
             query.AddSort(SortOrder.Descending, "forum_order");

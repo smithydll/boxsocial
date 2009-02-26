@@ -49,6 +49,8 @@ namespace BoxSocial.Applications.News
 		[DataField("article_comments")]
         private long articleComments;
 		
+		private Primitive owner;
+		
 		public long ArticleId
 		{
 			get
@@ -70,6 +72,23 @@ namespace BoxSocial.Applications.News
             get
             {
                 return articleBody;
+            }
+        }
+		
+		public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -119,7 +138,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                throw new NotImplementedException();
+                return Owner.UriStub + "news/" + articleId.ToString();
             }
         }
 		

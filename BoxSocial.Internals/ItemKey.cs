@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
 			this.itemTypeId = itemTypeId;
 		}
 		
-		internal static void populateItemTypeCache(Core core)
+		public static void populateItemTypeCache(Core core)
 		{
 			System.Web.Caching.Cache cache = new System.Web.Caching.Cache();
 			

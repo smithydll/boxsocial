@@ -316,7 +316,7 @@ namespace BoxSocial.Applications.Blog
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
 
                 db.UpdateQuery(string.Format("UPDATE blog_postings SET post_guid = '{0}' WHERE post_id = {1} and user_id = {2}",
-                    postGuid, postId, LoggedInMember.UserId));
+                    Mysql.Escape(postGuid), postId, LoggedInMember.UserId));
 
                 db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
                     LoggedInMember.UserId));

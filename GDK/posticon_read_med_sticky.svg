@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="20"
+   height="20"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   version="1.0"
+   sodipodi:docname="posticon_read_med_sticky.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/var/www/images/posticon_read_med_stiky.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="23.577744"
+     inkscape:cx="8.5173057"
+     inkscape:cy="9.6911938"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="725"
+     inkscape:window-x="0"
+     inkscape:window-y="25" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="arc"
+       style="fill:#d5d5d5;fill-opacity:1;fill-rule:evenodd;stroke:#404040;stroke-width:0.70499997999999997;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path2384"
+       sodipodi:cx="9.9670267"
+       sodipodi:cy="10.584341"
+       sodipodi:rx="8.5249891"
+       sodipodi:ry="8.5249891"
+       d="M 18.492016,10.584341 A 8.5249891,8.5249891 0 1 1 1.4420376,10.584341 A 8.5249891,8.5249891 0 1 1 18.492016,10.584341 z"
+       transform="matrix(0.9011557,0,0,0.9011557,1.018157,0.4618608)" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.35294118000000002;fill-rule:evenodd;stroke:#3f3f3f;stroke-width:0.70499997999999997;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+       d="M 12.297774,2.7144549 L 12.07895,7.5285729 L 17.440127,8.1631613 C 17.440127,8.1631613 16.276496,5.6623338 15.505143,4.8450278 C 14.73379,4.0277219 12.297774,2.7144549 12.297774,2.7144549 z"
+       id="path3177"
+       sodipodi:nodetypes="cccsc" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#404040;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="7.5947266"
+       y="14.374023"
+       id="text3156"><tspan
+         sodipodi:role="line"
+         id="tspan3158"
+         x="7.5947266"
+         y="14.374023"
+         style="font-size:12px;fill:#404040;fill-opacity:1">!</tspan></text>
+  </g>
+</svg>

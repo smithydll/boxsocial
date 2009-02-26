@@ -49,10 +49,10 @@ namespace BoxSocial.Applications.News
 			List<Article> articles = new List<Article>();
 			
 			SelectQuery query = Article.GetSelectQueryStub(typeof(Article));
-            ItemKey ik = new ItemKey(owner.Id, owner.Type);
+            ItemKey ik = new ItemKey(owner.Id, owner.GetType().FullName);
 			query.AddCondition("article_item_id", ik.Id);
 			query.AddCondition("article_item_type_id", ik.TypeId);
-			query.AddSort(SortOrder.Ascending, "article_time_ut");
+			query.AddSort(SortOrder.Descending, "article_time_ut");
             query.LimitStart = (currentPage - 1) * count;
             query.LimitCount = count;
 			
@@ -74,14 +74,32 @@ namespace BoxSocial.Applications.News
             News news = new News(core, page.ThisGroup);
 
             List<Article> articles = news.GetArticles(p, 10);
+			
+			page.template.Parse("NEWS_COUNT", articles.Count.ToString());
 
             foreach (Article article in articles)
             {
                 VariableCollection articleVariableCollection = page.template.CreateChild("news_list");
 
-                articleVariableCollection.Parse("BODY", article.ArticleBody);
+				Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
                 articleVariableCollection.Parse("TITLE", article.ArticleSubject);
+				articleVariableCollection.Parse("U_ARTICLE", article.Uri);
             }
+			
+			Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, 2, false);
+			
+			List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "news", "News" });
+
+            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+		}
+		
+		public string Uri
+		{
+			get
+			{
+				return owner.UriStub;
+			}
 		}
 	}
 }

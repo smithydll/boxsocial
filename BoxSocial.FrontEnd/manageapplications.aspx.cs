@@ -112,8 +112,8 @@ namespace BoxSocial.FrontEnd
 
                 if (isInternals)
                 {
-					BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
+					BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
 
                     Display.ShowMessage("Internals Updated", "Internals have been updated.");
                 }

@@ -1,14 +1,20 @@
 <!-- INCLUDE page_header.html -->
 
-<!-- IF news_list -->
+<h2>News</h2>
+<p>{BREADCRUMBS}</p>
+<p>{PAGINATION}</p>
+<!-- IF NEWS_COUNT -->
 <ul>
 <!-- BEGIN news_list -->
 <li>
-	<h3>{news_list.TITLE}</h3>
+	<!-- IF news_list.TITLE -->
+	<h3><a href="{news_list.U_ARTICLE}">{news_list.TITLE}</a></h3>
+	<!-- ENDIF -->
 	<p>{news_list.BODY}</p>
 </li>
 <!-- END news_list -->
 </ul>
 <!-- ENDIF -->
+<p>{PAGINATION}</p>
 
 <!-- INCLUDE page_footer.html -->

@@ -201,6 +201,8 @@ namespace BoxSocial.Applications.News
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+			
+			aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddSlug("news", @"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("news", @"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
@@ -224,8 +226,8 @@ namespace BoxSocial.Applications.News
         {
             this.core = core;
 
-            /*core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
-            core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
+            core.RegisterApplicationPage(@"^/news(|/)$", showNews, 1);
+            /*core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
@@ -265,10 +267,21 @@ namespace BoxSocial.Applications.News
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilenews");
 
-            /*Forum forum = new Forum(core, (UserGroup)e.Owner);
-            template.Parse("U_NEWS", forum.Uri);*/
+			if (e.Owner is UserGroup)
+			{
+	            News news = new News(e.core, (UserGroup)e.Owner);
 
-            e.core.AddMainPanel(template);
+	            List<Article> articles = news.GetArticles(1, 5);
+
+	            foreach (Article article in articles)
+	            {
+	                VariableCollection articleVariableCollection = template.CreateChild("news_list");
+
+	                articleVariableCollection.Parse("TITLE", article.ArticleSubject);
+	            }
+			}
+
+            e.core.AddSidePanel(template);
         }
     }
 }

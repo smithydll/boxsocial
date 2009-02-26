@@ -38,7 +38,7 @@ namespace BoxSocial.Internals
         private long applicationId;
         [DataField("slug_primitives")]
         private byte slugPrimitives;
-        [DataField("slug_update_ut")]
+        [DataField("slug_updated_ut")]
         private long slugUpdatedTime;
 
         public long SlugId
@@ -75,7 +75,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("slug_slug_ex", slug);
             iQuery.AddField("application_id", applicationId);
             iQuery.AddField("slug_primitives", (byte)primitives);
-            iQuery.AddField("slug_update_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("slug_updated_ut", UnixTime.UnixTimeStamp());
 
             long slugId = core.db.Query(iQuery);
 

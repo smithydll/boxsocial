@@ -1539,7 +1539,7 @@ namespace BoxSocial.Internals
                 matches++;
             }
 
-            if (!Regex.IsMatch(userName, @"^([A-Za-z0-9\-_\.\!~\*'&=\$].+)$"))
+            if (!Regex.IsMatch(userName, @"^([A-Za-z0-9\-_\.\!~\*'&=\$]+)$"))
             {
                 matches++;
             }

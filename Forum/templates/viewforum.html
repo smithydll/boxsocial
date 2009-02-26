@@ -70,9 +70,40 @@
     </li>
     <!-- BEGIN topic_list -->
     <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
-    <li class="forum-med-read-unlocked">
-    <!-- ELSE -->
-    <li class="forum-med-unread-unlocked">
+    <li style="background-image: url('/images/posticon_read_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
+    <li style="background-image: url('/images/posticon_unread_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
+    <li style="background-image: url('/images/posticon_read_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
+    <li style="background-image: url('/images/posticon_unread_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
+    <li>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
+    <li>
     <!-- ENDIF -->
       <dl>
         <dt>

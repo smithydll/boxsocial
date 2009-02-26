@@ -390,6 +390,9 @@ namespace BoxSocial.Internals
                             {
                                 primitiveAttributes.Add(((PrimitiveAttribute)attr).Type, (PrimitiveAttribute)attr);
                                 primitiveTypes.Add(((PrimitiveAttribute)attr).Type, type);
+								// TODO: remove
+								primitiveAttributes.Add(type.FullName, (PrimitiveAttribute)attr);
+								primitiveTypes.Add(type.FullName, type);
                             }
                             typeAdded = true;
                         }

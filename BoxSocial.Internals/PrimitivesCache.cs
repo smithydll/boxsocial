@@ -104,7 +104,12 @@ namespace BoxSocial.Internals
                 if (t != null)
                 {
                     string keysTable = Primitive.GetTable(t);
-                    string idField = core.GetPrimitiveAttributes(type).IdField;
+					PrimitiveAttribute attr = core.GetPrimitiveAttributes(type);
+					if (attr == null)
+					{
+						continue;
+					}
+                    string idField = attr.IdField;
 
                     SelectQuery query = Primitive.GetSelectQueryStub(t);
                     query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[type]);

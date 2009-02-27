@@ -104,6 +104,8 @@
   <ItemGroup>
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_news_manage.html" />
+    <Content Include="templates\account_news_article_write.html" />
     <Content Include="templates\viewprofilenews.html" />
   </ItemGroup>
   <ItemGroup>

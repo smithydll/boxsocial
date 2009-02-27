@@ -1273,6 +1273,15 @@ namespace BoxSocial.Applications.Forum
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }
+
+                if (forumId == 0)
+                {
+                    page.template.Parse("INDEX_STATISTICS", "TRUE");
+
+                    page.template.Parse("FORUM_POSTS", Functions.LargeIntegerToString(settings.Posts));
+                    page.template.Parse("FORUM_TOPICS", Functions.LargeIntegerToString(settings.Topics));
+                    page.template.Parse("GROUP_MEMBERS", Functions.LargeIntegerToString(page.ThisGroup.Members));
+                }
             }
 
             Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));

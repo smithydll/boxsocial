@@ -61,20 +61,40 @@ namespace BoxSocial.Applications.News {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_news_article_write {
+            get {
+                return ResourceManager.GetString("account_news_article_write", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_news_manage {
+            get {
+                return ResourceManager.GetString("account_news_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;!-- IF news_list --&gt;
+        ///&lt;h2&gt;News&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///&lt;p&gt;{PAGINATION}&lt;/p&gt;
+        ///&lt;!-- IF NEWS_COUNT --&gt;
         ///&lt;ul&gt;
         ///&lt;!-- BEGIN news_list --&gt;
         ///&lt;li&gt;
-        ///	&lt;h3&gt;{news_list.TITLE}&lt;/h3&gt;
+        ///	&lt;!-- IF news_list.TITLE --&gt;
+        ///	&lt;h3&gt;&lt;a href=&quot;{news_list.U_ARTICLE}&quot;&gt;{news_list.TITLE}&lt;/a&gt;&lt;/h3&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///		&lt;p class=&quot;details&quot;&gt;&lt;strong&gt;{news_list.DATE}&lt;/strong&gt; &lt;em&gt;Posted by: &lt;a href=&quot;{news_list.U_POSTER}&quot;&gt;{news_list.USERNAME}&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
         ///	&lt;p&gt;{news_list.BODY}&lt;/p&gt;
-        ///&lt;/li&gt;
-        ///&lt;!-- END news_list --&gt;
-        ///&lt;/ul&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///	&lt;p&gt;&lt;a href=&quot;{news_list.U_ARTICLE}#comments&quot;&gt;Comments ({news_list.COMMENTS})&lt;/a&gt;&lt;/p&gt;
+        ///&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewnews {
             get {
@@ -84,6 +104,24 @@ namespace BoxSocial.Applications.News {
         
         /// <summary>
         ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewnewsarticle {
+            get {
+                return ResourceManager.GetString("viewnewsarticle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;profile-gallery-pane&quot; class=&quot;pane&quot;&gt;
+        ///	&lt;h3&gt;News&lt;/h3&gt;
+        ///	&lt;!-- IF news_list --&gt;
+        ///	&lt;ul&gt;
+        ///	&lt;!-- BEGIN news_list --&gt;
+        ///	  &lt;li&gt;{news_list.TITLE}&lt;/li&gt;
+        ///	&lt;!-- END news_list --&gt;
+        ///	&lt;/ul&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///	&lt;/div&gt;.
         /// </summary>
         internal static string viewprofilenews {
             get {

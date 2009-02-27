@@ -50,12 +50,21 @@ namespace BoxSocial.Applications.News
         private long articleComments;
 		
 		private Primitive owner;
+		private User poster;
 		
 		public long ArticleId
 		{
 			get
 			{
 				return articleId;
+			}
+		}
+		
+		public long PosterId
+		{
+			get
+			{
+				return userId;
 			}
 		}
 
@@ -90,6 +99,28 @@ namespace BoxSocial.Applications.News
                     return owner;
                 }
             }
+        }
+		
+		public User Poster
+        {
+            get
+            {
+                if (poster == null || userId != poster.Id)
+                {
+                    core.UserProfiles.LoadUserProfile(userId);
+                    poster = core.UserProfiles[userId];
+                    return poster;
+                }
+                else
+                {
+                    return poster;
+                }
+            }
+        }
+		
+		public DateTime GetCreatedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(articleTime);
         }
 
         public Article(Core core, long articleId)

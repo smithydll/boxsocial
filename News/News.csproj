@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
     <OutputType>Library</OutputType>
     <AssemblyName>News</AssemblyName>
-    <RootNamespace>News</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>News</AssemblyName>
     <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>News</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
@@ -65,6 +65,7 @@
     <Compile Include="AccountNews.cs" />
     <Content Include="templates\viewnews.html" />
     <Compile Include="News.cs" />
+    <Compile Include="templates\viewnewsarticle.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

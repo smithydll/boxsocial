@@ -251,7 +251,7 @@ namespace BoxSocial.Applications.News
         {
             if (sender is GPage)
             {
-                //Forum.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
+                Article.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
             }
         }
 

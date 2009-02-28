@@ -65,7 +65,7 @@
     <Compile Include="AccountNews.cs" />
     <Content Include="templates\viewnews.html" />
     <Compile Include="News.cs" />
-    <Compile Include="templates\viewnewsarticle.html" />
+    <None Include="templates\viewnewsarticle.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

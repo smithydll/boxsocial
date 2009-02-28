@@ -34,7 +34,7 @@ namespace BoxSocial.Applications.Pages
         [DataField("list_type_id", DataFieldKeys.Primary)]
         private long typeId;
         [DataField("list_type_title", 15)]
-        private long title;
+        private string title;
 
         public ListType(Core core, long typeId)
             : base(core)

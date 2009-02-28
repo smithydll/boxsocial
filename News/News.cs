@@ -89,7 +89,7 @@ namespace BoxSocial.Applications.News
 				Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
                 articleVariableCollection.Parse("TITLE", article.ArticleSubject);
 				articleVariableCollection.Parse("U_ARTICLE", article.Uri);
-				articleVariableCollection.Parse("U_POSTER", article.Poster.Id.ToString());
+				articleVariableCollection.Parse("U_POSTER", article.Poster.Uri);
 				articleVariableCollection.Parse("USERNAME", article.Poster.DisplayName);
 				articleVariableCollection.Parse("COMMENTS", article.Comments.ToString());
 				articleVariableCollection.Parse("DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));

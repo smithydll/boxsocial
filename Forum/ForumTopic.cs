@@ -501,6 +501,7 @@ namespace BoxSocial.Applications.Forum
 
             uQuery = new UpdateQuery(ForumSettings.GetTable(typeof(ForumSettings)));
             uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, 1));
+			uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Addition, 1));
             uQuery.AddCondition("forum_item_id", forum.Owner.Id);
             uQuery.AddCondition("forum_item_type", forum.Owner.Type);
 

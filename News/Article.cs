@@ -26,6 +26,7 @@ using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.News
 {
@@ -196,6 +197,43 @@ namespace BoxSocial.Applications.News
                 return 10;
             }
         }
+		
+		public static void Show(Core core, GPage page, long articleId)
+		{
+			int p = Functions.RequestInt("p", 1);
+			page.template.SetTemplate("News", "viewnewsarticle");
+			
+			Article article = null;
+			
+			try
+			{
+				article = new Article(core, articleId);
+			}
+			catch (InvalidArticleException)
+			{
+				Functions.Generate404();
+			}
+			
+			Display.ParseBbcode(page.template, "ARTICLE_BODY", article.ArticleBody);
+            page.template.Parse("ARTICLE_TITLE", article.ArticleSubject);
+			page.template.Parse("ARTICLE_U_ARTICLE", article.Uri);
+			page.template.Parse("ARTICLE_U_POSTER", article.Poster.Uri);
+			page.template.Parse("ARTICLE_USERNAME", article.Poster.DisplayName);
+			page.template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
+			page.template.Parse("ARTICLE_DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
+			
+			Display.ParsePagination(page.template, "PAGINATION", article.Uri, p, (int)Math.Ceiling((double)article.Comments / 10), false);
+			
+			List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "news", "News" });
+			breadCrumbParts.Add(new string[] { articleId.ToString(), article.ArticleSubject });
+
+            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+			
+
+            page.template.Parse("CAN_COMMENT", "TRUE");
+            Display.DisplayComments(page.template, page.ThisGroup, article);
+		}
     }
 
     public class InvalidArticleException : Exception

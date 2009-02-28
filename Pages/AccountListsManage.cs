@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.Pages
 
             for (int i = 0; i < listTypesTable.Rows.Count; i++)
             {
-                listTypesSelectBox.Add(new SelectBoxItem(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
+                listTypesSelectBox.Add(new SelectBoxItem(((long)listTypesTable.Rows[i]["list_type_id"]).ToString(),
                     (string)listTypesTable.Rows[i]["list_type_title"]));
             }
 
@@ -316,7 +316,7 @@ namespace BoxSocial.Applications.Pages
 
                 for (int i = 0; i < listTypesTable.Rows.Count; i++)
                 {
-                    listTypesSelectBox.Add(new SelectBoxItem(((short)listTypesTable.Rows[i]["list_type_id"]).ToString(),
+                    listTypesSelectBox.Add(new SelectBoxItem(((long)listTypesTable.Rows[i]["list_type_id"]).ToString(),
                         (string)listTypesTable.Rows[i]["list_type_title"]));
                 }
 

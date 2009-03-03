@@ -345,10 +345,10 @@ namespace BoxSocial.Applications.Pages
                 }
                 catch (PageNotFoundException)
                 {
-                    string listSlug = "lists";
+                    string listsSlug = "lists";
                     try
                     {
-                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listsSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                     }
                     catch (PageSlugNotUniqueException)
                     {

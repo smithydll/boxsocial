@@ -23,7 +23,7 @@
     <WarningLevel>4</WarningLevel>
     <OutputType>Library</OutputType>
     <AssemblyName>Mail</AssemblyName>
-    <RootNamespace>Mail</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Mail</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>Mail</AssemblyName>
     <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>Mail</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Mail</RootNamespace>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>

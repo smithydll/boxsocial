@@ -35,6 +35,7 @@ namespace BoxSocial.FrontEnd
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+			Server.ScriptTimeout = 1000;
             string assemblyName = Request.QueryString["app"];
             string mode = Request.QueryString["mode"];
 

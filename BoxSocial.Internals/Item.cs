@@ -89,7 +89,7 @@ namespace BoxSocial.Internals
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.IsPrimaryKey)
+                if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     keyField = field.Name;
                 }
@@ -140,7 +140,7 @@ namespace BoxSocial.Internals
             {
                 if (field.Name == uniqueIndex)
                 {
-                    if (field.IsUnique)
+                    if ((field.Key & (DataFieldKeys.Unique | DataFieldKeys.Primary)) != DataFieldKeys.None)
                     {
                         keyField = field.Name;
                     }
@@ -196,7 +196,7 @@ namespace BoxSocial.Internals
             {
                 if (field.Name == ownerIdIndex || field.Name == ownerTypeIndex)
                 {
-                    if (!field.IsUnique)
+                    if ((field.Key & DataFieldKeys.Unique) != DataFieldKeys.Unique)
                     {
                         throw new FieldNotUniqueIndexException();
                     }
@@ -451,43 +451,23 @@ namespace BoxSocial.Internals
 							if (fi.FieldType == typeof(ItemKey))
 							{
 								DataFieldInfo dfiId;
-								//DataFieldInfo dfiType;
 								DataFieldInfo dfiTypeId;
 								
-								if (((DataFieldAttribute)attr).Key == null)
-	                            {
-									dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
-									dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
-								}
-								else
-								{
-									dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
-									dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
-								}
+								dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
+								dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
 								
 								dfiId.ParentType = ((DataFieldAttribute)attr).ParentType;
 	                            dfiId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
-								//dfiType.ParentType = ((DataFieldAttribute)attr).ParentType;
-	                            //dfiType.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 								dfiTypeId.ParentType = ((DataFieldAttribute)attr).ParentType;
 	                            dfiTypeId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 								
 								returnValue.Add(dfiId);
-								//returnValue.Add(dfiType);
 								returnValue.Add(dfiTypeId);
 							}
 							else
 							{
 	                            DataFieldInfo dfi;
-	                            if (((DataFieldAttribute)attr).Key == null)
-	                            {
-	                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Indexes);
-	                            }
-	                            else
-	                            {
-									//HttpContext.Current.Response.Write(fi.DeclaringType.Name + " " + fi.FieldType.Name + " " + fi.ReflectedType.Name + " " + ((DataFieldAttribute)attr).FieldName + "<br />");
-	                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Key);
-	                            }
+                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
 	                            dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
 	                            dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
 
@@ -662,7 +642,7 @@ namespace BoxSocial.Internals
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.IsPrimaryKey)
+                if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     sQuery.AddFields(field.Name);
                     sQuery.AddCondition(field.Name, ConditionEquality.NotEqual, GetFieldValue(field, this));
@@ -673,7 +653,7 @@ namespace BoxSocial.Internals
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.IsUnique && !field.IsPrimaryKey)
+                if ((field.Key & DataFieldKeys.Unique) == DataFieldKeys.Unique)
                 {
                     containsUniqueFields = true;
                     sQuery.AddCondition(field.Name, GetFieldValue(field, this));
@@ -684,7 +664,7 @@ namespace BoxSocial.Internals
             {
                 foreach (DataFieldInfo field in fields)
                 {
-                    if (field.IsUnique)
+                    if ((field.Key & DataFieldKeys.Unique) == DataFieldKeys.Unique)
                     {
                         uQuery.AddCondition(field.Name, GetFieldValue(field, this));
                         if (updatedItems.Contains(field.Name))
@@ -809,7 +789,7 @@ namespace BoxSocial.Internals
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.IsPrimaryKey || field.IsUnique)
+                if ((field.Key & (DataFieldKeys.Primary | DataFieldKeys.Unique)) != DataFieldKeys.None)
                 {
                     dQuery.AddCondition(field.Name, GetFieldValue(field, this));
                     foundKey = true;

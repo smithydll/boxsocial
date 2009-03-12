@@ -68,7 +68,7 @@ namespace BoxSocial.Internals
         private string userName;
 		[DataField("user_name_lower", DataFieldKeys.Unique, 64)]
         private string userNameLower;
-        [DataField("user_domain", DataFieldKeys.Unique, 63)]
+        [DataField("user_domain", DataFieldKeys.Index, 63)]
         private string domain;
 
         private string userIconUri;

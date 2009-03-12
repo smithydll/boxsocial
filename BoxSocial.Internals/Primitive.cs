@@ -165,6 +165,14 @@ namespace BoxSocial.Internals
         {
             get;
         }
+		
+		public long TypeId
+        {
+            get
+            {
+                return new ItemKey(Id, this.GetType().FullName).TypeId;
+            }
+        }
 
         public abstract string AccountUriStub
         {

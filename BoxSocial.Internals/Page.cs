@@ -89,10 +89,12 @@ namespace BoxSocial.Internals
         private byte classificationId;
         [DataField("page_hierarchy", MYSQL_TEXT)]
         private string hierarchy;
-        [DataField("page_item_id")]
+		[DataField("page_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
+        /*[DataField("page_item_id")]
         private long ownerId;
         [DataField("page_item_type", NAMESPACE)]
-        private string ownerType;
+        private string ownerType;*/
 
         private User creator;
         private Primitive owner;
@@ -209,10 +211,10 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (owner == null || ownerId != owner.Id || ownerType != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerType, ownerId);
-                    owner = core.UserProfiles[ownerType, ownerId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else
@@ -421,7 +423,7 @@ namespace BoxSocial.Internals
             query.AddCondition("page_slug", Page.GetNameFromPath(pageName));
             query.AddCondition("page_parent_path", Page.GetParentPath(pageName));
             query.AddCondition("page_item_id", owner.Id);
-            query.AddCondition("page_item_type", owner.Type);
+            query.AddCondition("page_item_type_id", owner.TypeId);
 
             DataTable pageTable = db.Query(query);
 
@@ -454,7 +456,7 @@ namespace BoxSocial.Internals
             query.AddCondition("page_slug", pageName);
             query.AddCondition("page_parent_path", pageParentPath);
             query.AddCondition("page_item_id", owner.Id);
-            query.AddCondition("page_item_type", owner.Type);
+            query.AddCondition("page_item_type_id", owner.TypeId);
 
             DataTable pageTable = db.Query(query);
 
@@ -486,7 +488,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
             query.AddCondition("page_id", pageId);
             query.AddCondition("page_item_id", owner.Id);
-            query.AddCondition("page_item_type", owner.Type);
+            query.AddCondition("page_item_type_id", owner.TypeId);
 
             DataTable pageTable = db.Query(query);
 
@@ -534,8 +536,9 @@ namespace BoxSocial.Internals
         {
             pageId = (long)pageRow["page_id"];
             creatorId = (long)pageRow["user_id"];
-            ownerId = (long)pageRow["page_item_id"];
-            ownerType = (string)pageRow["page_item_type"];
+            /*ownerId = (long)pageRow["page_item_id"];
+            ownerType = (string)pageRow["page_item_type"];*/
+			ownerKey = new ItemKey((long)pageRow["page_item_id"], (long)pageRow["page_item_type_id"]);
             slug = (string)pageRow["page_slug"];
             title = (string)pageRow["page_title"];
             if (!(pageRow["page_text"] is DBNull))
@@ -654,7 +657,7 @@ namespace BoxSocial.Internals
             SelectQuery squery = new SelectQuery("user_pages");
             squery.AddFields("page_title");
             squery.AddCondition("page_item_id", owner.Id);
-            squery.AddCondition("page_item_type", owner.Type);
+            squery.AddCondition("page_item_type_id", owner.TypeId);
             squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
             squery.AddCondition("page_slug", slug);
             squery.AddCondition("page_parent_id", parent);

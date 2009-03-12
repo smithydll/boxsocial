@@ -80,6 +80,7 @@
     <Compile Include="UpdateQuery.cs" />
     <Compile Include="FieldValuePair.cs" />
     <Compile Include="Index.cs" />
+    <Compile Include="PrimaryKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

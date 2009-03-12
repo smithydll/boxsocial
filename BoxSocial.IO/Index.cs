@@ -27,7 +27,28 @@ namespace BoxSocial.IO
 {
     public class Index : IComparable
     {
-        private string key;
+        protected string key;
+		
+		public DataFieldKeys KeyType
+		{
+			get
+			{
+				if (this.GetType() == typeof(PrimaryKey))
+				{
+					return DataFieldKeys.Primary;
+				}
+				if (this.GetType() == typeof(UniqueKey))
+				{
+					return DataFieldKeys.Unique;
+				}
+				if (this.GetType() == typeof(Index))
+				{
+					return DataFieldKeys.Index;
+				}
+				// this should never happen
+				return DataFieldKeys.None;
+			}
+		}
 
         public string Key
         {
@@ -44,7 +65,7 @@ namespace BoxSocial.IO
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() == typeof(Index))
+            if (obj.GetType().IsSubclassOf(typeof(Index)) || obj.GetType() == typeof(Index))
             {
                 if (((Index)obj).key == key)
                 {
@@ -63,7 +84,7 @@ namespace BoxSocial.IO
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return key.GetHashCode();
         }
 
         public override string ToString()
@@ -71,47 +92,47 @@ namespace BoxSocial.IO
             return key;
         }
 
-        public static List<string> GetKeys(List<DataFieldInfo> fields)
+        public static List<Index> GetIndexes(List<DataFieldInfo> fields)
         {
-            List<string> keys = new List<string>();
+            List<Index> indexes = new List<Index>();
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.Key != null)
+                if (field.Index != null)
                 {
-                    if (!keys.Contains(field.Key.Key))
+                    if (!indexes.Contains(field.Index))
                     {
-                        keys.Add(field.Key.Key);
+                        indexes.Add(field.Index);
                     }
                 }
             }
 
-            return keys;
+            return indexes;
         }
 
         public static List<DataFieldInfo> GetFields(string key, List<DataFieldInfo> fields)
         {
-            List<DataFieldInfo> keyFields = new List<DataFieldInfo>();
+            List<DataFieldInfo> indexFields = new List<DataFieldInfo>();
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.Key != null)
+                if (field.Index != null)
                 {
-                    if (field.Key.Key == key)
+                    if (field.Index.Key == key)
                     {
-                        keyFields.Add(field);
+                        indexFields.Add(field);
                     }
                 }
             }
 
-            return keyFields;
+            return indexFields;
         }
 
         public int CompareTo(object obj)
         {
-            if (obj.GetType() == typeof(Index))
+            if (obj.GetType().IsSubclassOf(typeof(Index)) || obj.GetType() == typeof(Index))
             {
-                return ((Index)obj).Key.CompareTo(key);
+                return ((Index)obj).key.CompareTo(key);
             }
             else
             {

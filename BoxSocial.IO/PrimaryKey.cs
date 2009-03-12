@@ -25,10 +25,10 @@ using System.Web;
 
 namespace BoxSocial.IO
 {
-    public class UniqueKey : Index, IComparable
+    public class PrimaryKey : UniqueKey, IComparable
     {
-        public UniqueKey(string key)
-			: base(key)
+        public PrimaryKey()
+			: base("PRIMARY")
         {
         }
 
@@ -48,6 +48,7 @@ namespace BoxSocial.IO
             }
 
             return keyFields;
-        }
+        }
+
     }
 }

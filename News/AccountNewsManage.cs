@@ -60,7 +60,7 @@ namespace BoxSocial.Applications.News
         {
         }
 
-        void AccountFriendManage_Show(object sender, EventArgs e)
+        void AccountNewsManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_news_manage");
 
@@ -75,7 +75,7 @@ namespace BoxSocial.Applications.News
 			
 			if (Owner is UserGroup)
 {
-			Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).NewsArticles / 50.0));
+			//Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).NewsArticles / 50.0));
 }
         }
 	}

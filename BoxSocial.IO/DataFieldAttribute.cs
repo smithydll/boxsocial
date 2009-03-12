@@ -21,19 +21,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.IO
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class DataFieldAttribute : Attribute
     {
+		private DataFieldKeys key;
         private string fieldName;
-        private bool isPrimaryKey;
-        private bool isUnique;
         private long length;
         private Type parentType;
         private string parentFieldName;
-        private UniqueKey key;
+        private Index index;
 
         public DataFieldAttribute()
         {
@@ -41,88 +41,118 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName)
         {
+			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
-            this.isPrimaryKey = false;
-            this.isUnique = false;
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = null;
+            this.index = null;
         }
 
         public DataFieldAttribute(string fieldName, long fieldLength)
         {
+			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
-            this.isPrimaryKey = false;
-            this.isUnique = false;
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = null;
+            this.index = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key)
         {
+			this.key = key;
             this.fieldName = fieldName;
             switch (key)
             {
                 case DataFieldKeys.Primary:
-                    this.isUnique = this.isPrimaryKey = true;
+				    this.index = new PrimaryKey();
                     break;
                 case DataFieldKeys.Unique:
-                    this.isUnique = true;
-                    this.isPrimaryKey = false;
+				    this.index = new UniqueKey("u_" + fieldName);
                     break;
+				case DataFieldKeys.Index:
+				    this.index = new Index("i_" + fieldName);
+					break;
+				default:
+				    this.index = null;
+					break;
             }
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, string keyName)
         {
+			this.key = key;
             this.fieldName = fieldName;
-            if (!string.IsNullOrEmpty(keyName))
-            {
-                this.isUnique = true;
-            }
-            else
-            {
-                this.isUnique = false;
-            }
-            this.isPrimaryKey = false;
             this.length = 0;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = new UniqueKey(keyName);
+			switch (key)
+			{
+				case DataFieldKeys.Primary:
+		            this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+		            this.index = new UniqueKey(keyName);
+					break;
+				case DataFieldKeys.Index:
+		            this.index = new Index(keyName);
+					break;
+				default:
+		            this.index = null;
+					break;
+			}
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, long fieldLength)
             : this(fieldName, key)
         {
+			this.key = key;
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = null;
+            switch (key)
+			{
+				case DataFieldKeys.Primary:
+					this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+				    this.index = new UniqueKey("u_" + fieldName);
+					break;
+				case DataFieldKeys.Index:
+				    this.index = new Index("i_" + fieldName);
+					break;
+				default:
+    				this.index = null;
+					break;
+			}
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, string keyName, long fieldLength)
         {
+			this.key = key;
             this.fieldName = fieldName;
-            if (!string.IsNullOrEmpty(keyName))
-            {
-                this.isUnique = true;
-            }
-            else
-            {
-                this.isUnique = false;
-            }
-            this.isPrimaryKey = false;
             this.length = fieldLength;
             this.parentFieldName = null;
             this.parentType = null;
-            this.key = new UniqueKey(keyName);
+			switch (key)
+			{
+				case DataFieldKeys.Primary:
+					this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+				    this.index = new UniqueKey(keyName);
+					break;
+				case DataFieldKeys.Index:
+				    this.index = new Index(keyName);
+					break;
+				default:
+    				this.index = null;
+					break;
+			}
         }
 
         /// <summary>
@@ -137,13 +167,12 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName)
         {
+			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
-            this.isPrimaryKey = false;
-            this.isUnique = false;
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
-            this.key = null;
+            this.index = null;
         }
 
         public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName)
@@ -153,20 +182,26 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, DataFieldKeys key, string keyName)
         {
+			this.key = key;
             this.fieldName = fieldName;
-            if (!string.IsNullOrEmpty(keyName))
-            {
-                this.isUnique = true;
-            }
-            else
-            {
-                this.isUnique = false;
-            }
-            this.isPrimaryKey = false;
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
-            this.key = new UniqueKey(keyName);
+            switch (key)
+			{
+				case DataFieldKeys.Primary:
+				    this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+				    this.index = new UniqueKey(keyName);
+					break;
+				case DataFieldKeys.Index:
+				    this.index = new Index(keyName);
+					break;
+				default:
+    				this.index = null;
+					break;
+			}
         }
 
         public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName, long fieldLength)
@@ -176,20 +211,26 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, DataFieldKeys key, string keyName, long fieldLength)
         {
+			this.key = key;
             this.fieldName = fieldName;
-            if (!string.IsNullOrEmpty(keyName))
-            {
-                this.isUnique = true;
-            }
-            else
-            {
-                this.isUnique = false;
-            }
-            this.isPrimaryKey = false;
             this.length = fieldLength;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
-            this.key = new UniqueKey(keyName);
+			switch (key)
+			{
+				case DataFieldKeys.Primary:
+				    this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+				    this.index = new UniqueKey(keyName);
+					break;
+				case DataFieldKeys.Index:
+				    this.index = new Index(keyName);
+					break;
+				default:
+    				this.index = null;
+					break;
+			}
         }
 
         public string FieldName
@@ -200,43 +241,19 @@ namespace BoxSocial.IO
             }
         }
 
-        public bool IsPrimaryKey
-        {
-            get
-            {
-                return isPrimaryKey;
-            }
-        }
-
-        public bool IsUnique
-        {
-            get
-            {
-                return isUnique;
-            }
-        }
-
         public DataFieldKeys Indexes
         {
             get
             {
-                if (isPrimaryKey)
-                {
-                    return DataFieldKeys.Primary;
-                }
-                if (isUnique)
-                {
-                    return DataFieldKeys.Unique;
-                }
-                return DataFieldKeys.None;
+                return this.key;
             }
         }
 
-        public UniqueKey Key
+        public Index Index
         {
             get
             {
-                return key;
+                return index;
             }
         }
 

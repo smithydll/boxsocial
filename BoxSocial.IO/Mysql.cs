@@ -331,11 +331,13 @@ namespace BoxSocial.IO
 
                 if (((string)dr["Key"]).ToUpper() == "PRI")
                 {
-                    dfi.IsUnique = dfi.IsPrimaryKey = true;
+                    //dfi.IsUnique = dfi.IsPrimaryKey = true;
+					dfi.Key = DataFieldKeys.Primary;
                 }
                 if (((string)dr["Key"]).ToUpper() == "UNI")
                 {
-                    dfi.IsUnique = true;
+                    //dfi.IsUnique = true;
+					dfi.Key = DataFieldKeys.Unique;
                 }
 
                 fields.Add((string)dr["Field"], dfi);
@@ -343,10 +345,17 @@ namespace BoxSocial.IO
 
             return fields;
         }
+		
+		private List<DataFieldInfo> GetFields(string tableName)
+		{
+			Dictionary<string, DataFieldInfo> fields = GetColumns(tableName);
+			
+			return new List<DataFieldInfo>(fields.Values);
+		}
 
-        public override Dictionary<string, List<DataField>> GetIndexes(string tableName)
+        public override Dictionary<Index, List<DataField>> GetIndexes(string tableName)
         {
-            Dictionary<string, List<DataField>> indexes = new Dictionary<string, List<DataField>>();
+            Dictionary<Index, List<DataField>> indexes = new Dictionary<Index, List<DataField>>();
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW INDEXES FROM `{0}`",
                 Mysql.Escape(tableName)));
@@ -355,13 +364,31 @@ namespace BoxSocial.IO
             {
                 DataField df = new DataField((string)dr["Table"], (string)dr["Column_name"]);
                 string key = (string)dr["Key_name"];
+				
+				Index index = null;
+					
+				if ((long)dr["Non_unique"] == 0)
+				{
+					if (key == "PRIMARY")
+					{
+						index = new PrimaryKey();
+					}
+					else
+					{
+						index = new UniqueKey(key);
+					}
+				}
+				else
+				{
+					index = new Index(key);
+				}
 
-                if (indexes.ContainsKey(key) == false)
+                if (indexes.ContainsKey(index) == false)
                 {
-                    indexes.Add(key, new List<DataField>());
+                    indexes.Add(index, new List<DataField>());
                 }
 
-                indexes[key].Add(df);
+                indexes[index].Add(df);
             }
 
             return indexes;
@@ -535,10 +562,17 @@ namespace BoxSocial.IO
 
             if (type.ToLower().Contains("int("))
             {
-                if (field.IsPrimaryKey)
+                if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     notNull = " NOT NULL";
-                    defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+					if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+					{
+						defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+					}
+					else
+					{
+						defaultValue = " DEFAULT 0";
+					}
                 }
                 else
                 {
@@ -578,10 +612,17 @@ namespace BoxSocial.IO
 
                 if (type.ToLower().Contains("int("))
                 {
-                    if (field.IsPrimaryKey)
+                    if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
                         notNull = " NOT NULL";
-                        defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+						if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+						{
+							defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+						}
+						else
+						{
+							defaultValue = " DEFAULT 0";
+						}
                     }
                     else
                     {
@@ -632,10 +673,17 @@ namespace BoxSocial.IO
 
             if (type.ToLower().Contains("int("))
             {
-                if (field.IsPrimaryKey)
+                if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     notNull = " NOT NULL";
-                    defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+					if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+                    {
+						defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+					}
+					else
+					{
+						defaultValue = " DEFAULT 0";
+					}
                 }
                 else
                 {
@@ -655,9 +703,10 @@ namespace BoxSocial.IO
             {
                 UpdateQuery(query);
             }
-            catch
+            catch (Exception ex)
             {
                 HttpContext.Current.Response.Write(query.ToString());
+				HttpContext.Current.Response.Write(ex.ToString());
                 HttpContext.Current.Response.End();
             }
         }
@@ -671,7 +720,6 @@ namespace BoxSocial.IO
         public override void CreateTable(string tableName, List<DataFieldInfo> fields)
         {
             StringBuilder sb = new StringBuilder();
-            StringBuilder indexes = new StringBuilder();
             DataFieldInfo primaryKey = null;
 
             sb.Append(string.Format("CREATE TABLE IF NOT EXISTS `{0}` (",
@@ -701,7 +749,7 @@ namespace BoxSocial.IO
 
                 if (type.ToLower().Contains("int("))
                 {
-                    if (field.IsPrimaryKey)
+                    if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
                         notNull = " NOT NULL";
                         defaultValue = " DEFAULT NULL";
@@ -716,25 +764,16 @@ namespace BoxSocial.IO
                     defaultValue = " DEFAULT 0";
                 }
 
-                if (field.IsUnique)
+                if (field.Key > DataFieldKeys.None)
                 {
                     notNull = " NOT NULL";
-                    if (field.IsPrimaryKey)
+                    if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
-                        primaryKey = field;
-                        key = " AUTO_INCREMENT";
-                        indexes.Append(string.Format(", PRIMARY_KEY(`{0}`)",
-                            Mysql.Escape(field.Name)));
-                    }
-                    else if (field.Key != null)
-                    {
-                        key = " UNIQUE KEY";
-                        indexes.Append(string.Format(", INDEX(`{0}`)",
-                            Mysql.Escape(field.Name)));
-                    }
-                    else
-                    {
-                        //key = " NOT NULL UNIQUE KEY";
+						if (Index.GetFields(field.Index.Key, fields).Count == 1)
+						{
+	                        primaryKey = field;
+	                        key = " AUTO_INCREMENT";
+						}
                     }
                 }
 
@@ -742,20 +781,28 @@ namespace BoxSocial.IO
                     Mysql.Escape(field.Name), type, notNull, defaultValue, key));
             }
 
-            if (primaryKey != null)
+            List<Index> keys = Index.GetIndexes(fields);
+
+            foreach (Index key in keys)
             {
-                sb.Append(string.Format(", PRIMARY KEY (`{0}`)",
-                    Mysql.Escape(primaryKey.Name)));
-            }
+                List<DataFieldInfo> keyFields = Index.GetFields(key.Key, fields);
 
-            List<string> keys = UniqueKey.GetKeys(fields);
-
-            foreach (string key in keys)
-            {
-                List<DataFieldInfo> keyFields = UniqueKey.GetFields(key, fields);
-
-                sb.Append(string.Format(", UNIQUE INDEX `{0}` (",
-                    Mysql.Escape(key)));
+				switch (key.KeyType)
+				{
+					case DataFieldKeys.Primary:
+					    sb.Append(string.Format(", PRIMARY KEY (",
+					                        Mysql.Escape(key.Key)));
+					    continue;
+						break;
+					case DataFieldKeys.Unique:
+					    sb.Append(string.Format(", UNIQUE `{0}` (",
+					                        Mysql.Escape(key.Key)));
+						break;
+					case DataFieldKeys.Index:
+					    sb.Append(string.Format(", KEY `{0}` (",
+					                        Mysql.Escape(key.Key)));
+						break;
+				}
 
                 bool firstKey = true;
                 foreach (DataFieldInfo keyField in keyFields)
@@ -775,7 +822,7 @@ namespace BoxSocial.IO
 
                 sb.Append(")");
             }
-
+			
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
             UpdateQuery(sb.ToString());
@@ -783,28 +830,15 @@ namespace BoxSocial.IO
 
         public override void UpdateTableKeys(string tableName, List<DataFieldInfo> fields)
         {
-            Dictionary<string, List<DataField>> indexes = GetIndexes(tableName);
+            Dictionary<Index, List<DataField>> indexes = GetIndexes(tableName);
+            List<Index> keys = Index.GetIndexes(fields);
 
-            List<string> keys = UniqueKey.GetKeys(fields);
-
-            foreach (string key in indexes.Keys)
+            foreach (Index key in indexes.Keys)
             {
-                bool removeKey = !keys.Contains(key);
-                bool fieldKey = false;
-
-                if (indexes[key].Count == 1)
-                {
-                    foreach (DataFieldInfo field in fields)
-                    {
-                        if (field.IsUnique && field.Key == null && indexes[key][0].Name == field.Name)
-                        {
-                            fieldKey = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (removeKey && (!fieldKey))
+				//HttpContext.Current.Response.Write(tableName + ", " + key.Key + "<br />");
+                bool removeKey = (!keys.Contains(key));
+ 
+                if (removeKey)
                 {
                     // delete the key
                     string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
@@ -814,13 +848,14 @@ namespace BoxSocial.IO
                 }
             }
 
-            foreach (string key in keys)
+            foreach (Index key in keys)
             {
-                UniqueKey thisKey = new UniqueKey(key);
-                List<DataFieldInfo> keyFields = UniqueKey.GetFields(key, fields);
-                bool newKey = !indexes.ContainsKey(key);
+                List<DataFieldInfo> keyFields = UniqueKey.GetFields(key.Key, fields);
+                bool newKey = (!indexes.ContainsKey(key));
+				
+				//HttpContext.Current.Response.Write(tableName + ", " + key.Key + " " + newKey.ToString() + "<br />");
 
-                if (!newKey)
+                /*if (!newKey)
                 {
                     bool keyFieldsChanged = false;
 
@@ -861,7 +896,7 @@ namespace BoxSocial.IO
 
                         UpdateQuery(sql);
                     }
-                }
+                }*/
 
                 if (newKey)
                 {
@@ -880,8 +915,23 @@ namespace BoxSocial.IO
                         fieldList += "`" + keyField.Name + "`";
                     }
 
-                    string sql = string.Format("ALTER TABLE `{0}` ADD UNIQUE INDEX `{1}` ({2});",
-                        tableName, key, fieldList);
+					string sql = "";
+
+					switch (key.KeyType)
+					{
+						case DataFieldKeys.Primary:
+							sql = string.Format("ALTER TABLE `{0}` ADD PRIMARY KEY ({1});",
+	                        tableName, fieldList);
+							break;
+						case DataFieldKeys.Unique:						
+							sql = string.Format("ALTER TABLE `{0}` ADD UNIQUE INDEX `{1}` ({2});",
+	                        tableName, key, fieldList);
+							break;
+						case DataFieldKeys.Index:
+							sql = string.Format("ALTER TABLE `{0}` ADD KEY `{1}` ({2});",
+	                        tableName, key, fieldList);
+							break;
+					}
 
                     UpdateQuery(sql);
                 }

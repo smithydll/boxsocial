@@ -29,18 +29,18 @@ namespace BoxSocial.IO
         None = 0x00,
         Primary = 0x01,
         Unique = 0x02,
+		Index = 0x04,
     }
 
     public class DataFieldInfo
     {
+		private DataFieldKeys key;
         private string fieldName;
         private Type fieldType;
         private long fieldLength;
-        private bool isPrimaryKey;
-        private bool isUnique;
         private Type parentType;
         private string parentFieldName;
-        private UniqueKey key;
+        private Index index;
 
         public string Name
         {
@@ -65,36 +65,39 @@ namespace BoxSocial.IO
                 return fieldLength;
             }
         }
+		
+		public DataFieldKeys Key
+		{
+			get
+			{
+				return key;
+			}
+			set
+			{
+				this.key = value;
+				switch (this.key)
+	            {
+	                case DataFieldKeys.Primary:
+					    this.index = new PrimaryKey();
+	                    break;
+	                case DataFieldKeys.Unique:
+					    this.index = new UniqueKey("u_" + fieldName);
+	                    break;
+					case DataFieldKeys.Index:
+						this.index = new Index("i_" + fieldName);
+						break;
+				    default:
+						this.index = null;
+						break;
+	            }
+			}
+		}
 
-        public bool IsPrimaryKey
+        public Index Index
         {
             get
             {
-                return isPrimaryKey;
-            }
-            set
-            {
-                isPrimaryKey = value;
-            }
-        }
-
-        public bool IsUnique
-        {
-            get
-            {
-                return isUnique;
-            }
-            set
-            {
-                isUnique = value;
-            }
-        }
-
-        public UniqueKey Key
-        {
-            get
-            {
-                return key;
+                return index;
             }
         }
 
@@ -127,11 +130,9 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
-            this.isPrimaryKey = false;
-            this.isUnique = false;
             this.parentType = null;
             this.parentFieldName = null;
-            this.key = null;
+            this.index = null;
         }
 
         public DataFieldInfo(string name, Type type, long length, DataFieldKeys key)
@@ -142,35 +143,39 @@ namespace BoxSocial.IO
             switch (key)
             {
                 case DataFieldKeys.Primary:
-                    this.isUnique = this.isPrimaryKey = true;
+				    this.index = new PrimaryKey();
                     break;
                 case DataFieldKeys.Unique:
-                    this.isUnique = true;
-                    this.isPrimaryKey = false;
+				    this.index = new UniqueKey("u_" + fieldName);
                     break;
+				case DataFieldKeys.Index:
+					this.index = new Index("i_" + fieldName);
+					break;
+			    default:
+					this.index = null;
+					break;
             }
             this.parentType = null;
             this.parentFieldName = null;
-            this.key = null;
+			this.key = key;
         }
 
-        public DataFieldInfo(string name, Type type, long length, UniqueKey key)
+        public DataFieldInfo(string name, Type type, long length, Index key)
         {
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
-            if (key != null)
-            {
-                this.isUnique = true;
-            }
-            else
-            {
-                this.isUnique = false;
-            }
-            this.isPrimaryKey = false;
             this.parentType = null;
             this.parentFieldName = null;
-            this.key = key;
+            this.index = key;
+			if (key != null)
+			{
+				this.key = key.KeyType;
+			}
+			else
+			{
+				this.key = DataFieldKeys.None;
+			}
         }
     }
 }

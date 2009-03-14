@@ -690,7 +690,7 @@ namespace BoxSocial.Internals
             squery.AddCondition("page_title", ConditionEquality.GreaterThan, title);
             squery.AddCondition("page_parent_id", parent);
             squery.AddCondition("page_item_id", owner.Id);
-            squery.AddCondition("page_item_type", owner.Type);
+            squery.AddCondition("page_item_type_id", owner.TypeId);
             squery.AddSort(SortOrder.Ascending, "page_title");
             squery.LimitCount = 1;
 
@@ -708,7 +708,7 @@ namespace BoxSocial.Internals
                 squery.AddCondition("page_title", ConditionEquality.GreaterThan, parentPage.Title);
                 squery.AddCondition("page_parent_id", parentPage.ParentId);
                 squery.AddCondition("page_item_id", owner.Id);
-                squery.AddCondition("page_item_type", owner.Type);
+                squery.AddCondition("page_item_type_id", owner.TypeId);
                 squery.AddSort(SortOrder.Ascending, "page_title");
                 squery.LimitCount = 1;
 
@@ -728,7 +728,7 @@ namespace BoxSocial.Internals
                 squery = new SelectQuery("user_pages");
                 squery.AddFields("MAX(page_order) + 1 AS max_order");
                 squery.AddCondition("page_item_id", owner.Id);
-                squery.AddCondition("page_item_type", owner.Type);
+                squery.AddCondition("page_item_type_id", owner.TypeId);
                 squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
 
                 orderTable = core.db.Query(squery);
@@ -751,7 +751,7 @@ namespace BoxSocial.Internals
             uquery.AddField("page_order", new QueryOperation("page_order", QueryOperations.Addition, 1));
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("page_item_id", owner.Id);
-            uquery.AddCondition("page_item_type", owner.Type);
+            uquery.AddCondition("page_item_type_id", owner.TypeId);
 
             if (parentPage != null)
             {
@@ -794,7 +794,7 @@ namespace BoxSocial.Internals
                 iquery.AddField("user_id", owner.Id);
             }
             iquery.AddField("page_item_id", owner.Id);
-            iquery.AddField("page_item_type", owner.Type);
+            iquery.AddField("page_item_type_id", owner.TypeId);
             iquery.AddField("page_slug", slug);
             iquery.AddField("page_parent_path", parentPath);
             iquery.AddField("page_date_ut", UnixTime.UnixTimeStamp());
@@ -930,7 +930,7 @@ namespace BoxSocial.Internals
             SelectQuery squery = new SelectQuery("user_pages");
             squery.AddFields("page_title");
             squery.AddCondition("page_item_id", owner.Id);
-            squery.AddCondition("page_item_type", owner.Type);
+            squery.AddCondition("page_item_type_id", owner.TypeId);
             squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
             squery.AddCondition("page_slug", slug);
             squery.AddCondition("page_parent_id", parent);
@@ -951,7 +951,7 @@ namespace BoxSocial.Internals
                 squery.AddCondition("page_title", ConditionEquality.GreaterThan, title);
                 squery.AddCondition("page_parent_id", parent);
                 squery.AddCondition("page_item_id", owner.Id);
-                squery.AddCondition("page_item_type", owner.Type);
+                squery.AddCondition("page_item_type_id", owner.TypeId);
                 squery.AddSort(SortOrder.Ascending, "page_title");
                 squery.LimitCount = 1;
 
@@ -974,7 +974,7 @@ namespace BoxSocial.Internals
                     squery.AddCondition("page_title", ConditionEquality.GreaterThan, parentPage.Title);
                     squery.AddCondition("page_parent_id", parentPage.ParentId);
                     squery.AddCondition("page_item_id", owner.Id);
-                    squery.AddCondition("page_item_type", owner.Type);
+                    squery.AddCondition("page_item_type_id", owner.TypeId);
                     squery.AddSort(SortOrder.Ascending, "page_title");
                     squery.LimitCount = 1;
 
@@ -999,7 +999,7 @@ namespace BoxSocial.Internals
                     squery = new SelectQuery("user_pages");
                     squery.AddFields("MAX(page_order) + 1 AS max_order");
                     squery.AddCondition("page_item_id", owner.Id);
-                    squery.AddCondition("page_item_type", owner.Type);
+                    squery.AddCondition("page_item_type_id", owner.TypeId);
                     squery.AddCondition("page_id", ConditionEquality.NotEqual, pageId);
 
                     orderTable = core.db.Query(squery);
@@ -1028,7 +1028,7 @@ namespace BoxSocial.Internals
             uquery.AddField("page_order", new QueryField("page_order + 1"));
             uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
             uquery.AddCondition("page_item_id", owner.Id);
-            uquery.AddCondition("page_item_type", owner.Type);
+            uquery.AddCondition("page_item_type_id", owner.TypeId);
 
             db.Query(uquery);
 
@@ -1059,7 +1059,7 @@ namespace BoxSocial.Internals
             uquery.AddField("page_hierarchy", parents);
             uquery.AddCondition("page_id", this.PageId);
             uquery.AddCondition("page_item_id", owner.Id);
-            uquery.AddCondition("page_item_type", owner.Type);
+            uquery.AddCondition("page_item_type_id", owner.TypeId);
 
             db.Query(uquery);
         }
@@ -1073,7 +1073,7 @@ namespace BoxSocial.Internals
                 uquery.AddField("page_order", new QueryOperation("page_order", QueryOperations.Subtraction, 1));
                 uquery.AddCondition("page_order", ConditionEquality.GreaterThanEqual, order);
                 uquery.AddCondition("page_item_id", owner.Id);
-                uquery.AddCondition("page_item_type", owner.Type);
+                uquery.AddCondition("page_item_type_id", owner.TypeId);
 
                 db.BeginTransaction();
                 if (db.Query(uquery) >= 0)
@@ -1081,7 +1081,7 @@ namespace BoxSocial.Internals
                     DeleteQuery dquery = new DeleteQuery("user_pages");
                     dquery.AddCondition("page_id", pageId);
                     dquery.AddCondition("page_item_id", owner.Id);
-                    dquery.AddCondition("page_item_type", owner.Type);
+                    dquery.AddCondition("page_item_type_id", owner.TypeId);
 
                     db.Query(dquery);
 

@@ -790,9 +790,7 @@ namespace BoxSocial.IO
 				switch (key.KeyType)
 				{
 					case DataFieldKeys.Primary:
-					    sb.Append(string.Format(", PRIMARY KEY (",
-					                        Mysql.Escape(key.Key)));
-					    continue;
+					    sb.Append(", PRIMARY KEY (");
 						break;
 					case DataFieldKeys.Unique:
 					    sb.Append(string.Format(", UNIQUE `{0}` (",
@@ -820,7 +818,7 @@ namespace BoxSocial.IO
                         Mysql.Escape(keyField.Name)));
                 }
 
-                sb.Append(")");
+                sb.Append(")");				
             }
 			
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");

@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Pages
 
         [DataField("list_id", DataFieldKeys.Primary)]
         private long listId;
-        [DataField("user_id", DataFieldKeys.Unique)]
+        [DataField("user_id", DataFieldKeys.Unique, "u_user_path")]
         private long ownerId;
         [DataField("list_type", typeof(ListType))]
         private long type;
@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Pages
         private long items;
         [DataField("list_abstract", MYSQL_TEXT)]
         private string listAbstract;
-        [DataField("list_path", DataFieldKeys.Unique, 31)]
+        [DataField("list_path", DataFieldKeys.Unique, "u_user_path", 31)]
         private string path;
         [DataField("list_access")]
         private ushort permissions;

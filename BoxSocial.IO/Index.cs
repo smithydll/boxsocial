@@ -118,7 +118,7 @@ namespace BoxSocial.IO
             {
                 if (field.Index != null)
                 {
-                    if (field.Index.Key == key)
+                    if (field.Index.key == key)
                     {
                         indexFields.Add(field);
                     }

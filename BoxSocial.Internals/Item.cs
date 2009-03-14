@@ -539,7 +539,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal protected static string GetTable(Type type)
+        public static string GetTable(Type type)
         {
             bool attributeFound = false;
             foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))

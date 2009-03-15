@@ -432,7 +432,7 @@ namespace BoxSocial.Internals
                 template.Parse("COMMENTS", comments.Count.ToString());
             }
             template.Parse("ITEM_ID", item.Id.ToString());
-            template.Parse("ITEM_TYPE", item.Namespace);
+            template.Parse("ITEM_TYPE", item.Key.TypeId.ToString());
 
             if (item.CommentSortOrder == SortOrder.Ascending)
             {

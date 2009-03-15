@@ -148,8 +148,10 @@ namespace BoxSocial.Applications.Blog
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+			
+			ItemType itemType = new ItemType(core, typeof(BlogEntry).FullName);
 
-            core.RegisterCommentHandle("BLOGPOST", blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
+            core.RegisterCommentHandle(itemType.TypeId, blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
         }
 
         /// <summary>
@@ -228,9 +230,9 @@ namespace BoxSocial.Applications.Blog
         /// <param name="itemId">Blog post id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool blogCanPostComment(long itemId, User member)
+        private bool blogCanPostComment(ItemKey itemKey, User member)
         {
-            BlogEntry blogEntry = new BlogEntry(core, itemId);
+            BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
             blogEntry.BlogEntryAccess.SetViewer(member);
 
             if (blogEntry.BlogEntryAccess.CanComment)
@@ -249,9 +251,9 @@ namespace BoxSocial.Applications.Blog
         /// <param name="itemId">Blog post id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool blogCanDeleteComment(long itemId, User member)
+        private bool blogCanDeleteComment(ItemKey itemKey, User member)
         {
-            BlogEntry blogEntry = new BlogEntry(core, itemId);
+            BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
 
             if (blogEntry.OwnerId == member.UserId)
             {
@@ -268,10 +270,10 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="itemId">Blog post id</param>
         /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void blogAdjustCommentCount(long itemId, int adjustment)
+        private void blogAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
         /// <summary>

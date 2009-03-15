@@ -47,7 +47,8 @@ namespace BoxSocial.FrontEnd
         {
             string comment;
             long itemId;
-            string itemType;
+            long itemTypeId;
+			ItemKey itemKey = null;
             long commentId = -1;
             bool isAjax = false;
 
@@ -187,7 +188,7 @@ namespace BoxSocial.FrontEnd
 
                     try
                     {
-                        if (!core.CanDeleteComment(commentItemType, commentItemId))
+                        if (!core.CanDeleteComment(thisComment.Key))
                         {
                             Ajax.ShowMessage(isAjax, "permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                         }
@@ -214,8 +215,8 @@ namespace BoxSocial.FrontEnd
 
                     core.LoadUserProfile(thisComment.UserId);
                     User poster = core.UserProfiles[thisComment.UserId];
-                    Core.CommentDeleted(commentItemType, (long)commentItemId, thisComment, poster);
-                    Core.AdjustCommentCount(commentItemType, (long)commentItemId, -1);
+                    Core.CommentDeleted(thisComment.Key, thisComment, poster);
+                    Core.AdjustCommentCount(thisComment.Key, -1);
                 }
                 catch (InvalidCommentException)
                 {
@@ -228,8 +229,9 @@ namespace BoxSocial.FrontEnd
             try
             {
                 comment = (string)Request.Form["comment"];
-                itemId = long.Parse((string)Request.Form["item"]);
-                itemType = (string)Request.Form["type"];
+                itemId = Functions.RequestLong("item", 0);
+                itemTypeId = Functions.RequestLong("type", 0);
+				itemKey = new ItemKey(itemId, itemTypeId);
             }
             catch
             {
@@ -239,7 +241,8 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(itemType));
+				ItemType itemType = new ItemType(core, itemTypeId);
+                ApplicationEntry ae = new ApplicationEntry(core, itemType.ApplicationId);
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
             }
@@ -253,7 +256,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                if (!Core.CanPostComment(itemType, (long)itemId))
+                if (!Core.CanPostComment(itemKey))
                 {
                     Ajax.ShowMessage(isAjax, "notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
                 }
@@ -265,11 +268,11 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                Comment commentObject = Comment.Create(Core, itemType, (long)itemId, comment);
+                Comment commentObject = Comment.Create(Core, itemKey, comment);
                 commentId = commentObject.CommentId;
 
-                Core.AdjustCommentCount(itemType, (long)itemId, 1);
-                Core.CommentPosted(itemType, (long)itemId, commentObject, loggedInMember);
+                Core.AdjustCommentCount(itemKey, 1);
+                Core.CommentPosted(itemKey, commentObject, loggedInMember);
             }
             catch (NotLoggedInException)
             {

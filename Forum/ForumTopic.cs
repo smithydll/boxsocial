@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_topics")]
     public class ForumTopic : NumberedItem
     {
-        public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
+        //public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
 
         [DataField("topic_id", DataFieldKeys.Primary)]
         private long topicId;
@@ -71,6 +71,8 @@ namespace BoxSocial.Applications.Forum
         private bool topicLocked;
 		[DataField("topic_moved")]
 		private bool topicMoved;
+		[DataField("topic_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
 
         private Forum forum;
         private TopicReadStatus readStatus = null;
@@ -445,6 +447,8 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("topic_locked", false);
             iquery.AddField("topic_last_post_id", 0);
             iquery.AddField("topic_first_post_id", 0);
+			iquery.AddField("topic_item_id", forum.Owner.Id);
+			iquery.AddField("topic_item_type_id", forum.Owner.TypeId);
 
             long topicId = core.db.Query(iquery);
 

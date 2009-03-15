@@ -1445,13 +1445,14 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
                 galleryVariableCollection.Parse("VIEWS", Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
-                galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
+                galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
+				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
 
                 string thumbUri = string.Format("/{0}/images/_thumb/{1}/{2}",
                     page.ProfileOwner.UserName, galleryPath, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemId, "PHOTO");
+                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
 
                 galleryComments += galleryItem.ItemComments;
                 i++;
@@ -1632,7 +1633,7 @@ namespace BoxSocial.Applications.Gallery
                         page.ThisGroup.UriStub, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemId, "PHOTO");
+                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
 
                     galleryComments += galleryItem.ItemComments;
                     i++;
@@ -1809,7 +1810,7 @@ namespace BoxSocial.Applications.Gallery
                         page.TheNetwork.NetworkNetwork, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemId, "PHOTO");
+                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
 
                     galleryComments += galleryItem.ItemComments;
 

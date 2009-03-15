@@ -416,7 +416,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<Comment> comments = Comment.GetComments(core, item.Namespace, item.Id, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
+            List<Comment> comments = Comment.GetComments(core, item.Key, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
             if (commentCount >= 0)
@@ -498,17 +498,17 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void RatingBlock(float existingRating, Template template, long itemId, string itemType)
+        public static void RatingBlock(float existingRating, Template template, ItemKey itemKey)
         {
-            RatingBlock(existingRating, null, template, itemId, itemType);
+            RatingBlock(existingRating, null, template, itemKey);
         }
 
-        public static void RatingBlock(float existingRating, VariableCollection variables, long itemId, string itemType)
+        public static void RatingBlock(float existingRating, VariableCollection variables, ItemKey itemKey)
         {
-            RatingBlock(existingRating, variables, null, itemId, itemType);
+            RatingBlock(existingRating, variables, null, itemKey);
         }
 
-        private static void RatingBlock(float existingRating, VariableCollection variables, Template template, long itemId, string itemType)
+        private static void RatingBlock(float existingRating, VariableCollection variables, Template template, ItemKey itemKey)
         {
             int starsRating = 0;
             string one, two, three, four, five;
@@ -560,15 +560,15 @@ namespace BoxSocial.Internals
             loopVars.Add("STAR_FOUR_CLASS", four_class);
             loopVars.Add("STAR_FIVE_CLASS", five_class);
 
-            loopVars.Add("U_RATE_ONE_STAR", string.Format("/rate.aspx?rating=1&amp;item={0}&amp;type={1}", itemId, itemType));
-            loopVars.Add("U_RATE_TWO_STAR", string.Format("/rate.aspx?rating=2&amp;item={0}&amp;type={1}", itemId, itemType));
-            loopVars.Add("U_RATE_THREE_STAR", string.Format("/rate.aspx?rating=3&amp;item={0}&amp;type={1}", itemId, itemType));
-            loopVars.Add("U_RATE_FOUR_STAR", string.Format("/rate.aspx?rating=4&amp;item={0}&amp;type={1}", itemId, itemType));
-            loopVars.Add("U_RATE_FIVE_STAR", string.Format("/rate.aspx?rating=5&amp;item={0}&amp;type={1}", itemId, itemType));
+            loopVars.Add("U_RATE_ONE_STAR", string.Format("/rate.aspx?rating=1&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_TWO_STAR", string.Format("/rate.aspx?rating=2&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_THREE_STAR", string.Format("/rate.aspx?rating=3&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_FOUR_STAR", string.Format("/rate.aspx?rating=4&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_FIVE_STAR", string.Format("/rate.aspx?rating=5&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
 
             loopVars.Add("RATE_RATING", string.Format("{0:0.0}", existingRating));
             loopVars.Add("RATE_ACTIVE", RANK_ACTIVE);
-            loopVars.Add("RATE_TYPE", itemType);
+            loopVars.Add("RATE_TYPE", itemKey.TypeId.ToString());
             loopVars.Add("S_RATEBAR", "TRUE");
 
             if (template != null)

@@ -515,23 +515,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static bool IsValidItemType(string itemType)
-        {
-            if (itemTypes.Count == 0)
-            {
-                itemTypes.Add("PHOTO");
-                itemTypes.Add("BLOGPOST");
-                itemTypes.Add("PODCAST");
-                itemTypes.Add("PODCASTEPISODE");
-                itemTypes.Add("USER");
-                itemTypes.Add("PAGE");
-                itemTypes.Add("LIST");
-                itemTypes.Add("GROUP");
-                itemTypes.Add("NETWORK");
-            }
-            return itemTypes.Contains(itemType);
-        }
-
         public static void Generate404()
         {
             HttpContext.Current.Response.StatusCode = 404;

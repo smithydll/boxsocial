@@ -31,10 +31,12 @@ namespace BoxSocial.Internals
     {
         [DataField("app_id", DataFieldKeys.Primary)]
         private long appId;
-        [DataField("item_id")]
+        /*[DataField("item_id")]
         private long itemId;
         [DataField("item_type", 31)]
-        private string itemType;
+        private string itemType;*/
+		[DataField("item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("application_id")]
         private long applicationId;
         [DataField("app_access")]
@@ -55,15 +57,16 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (owner == null)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    if (itemType == "USER")
-                    {
-                        owner = core.UserProfiles[itemId];
-                    }
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
+                    return owner;
                 }
-
-                return owner;
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -90,7 +93,7 @@ namespace BoxSocial.Internals
             query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
             query.AddCondition("application_id", applicationId);
             query.AddCondition("item_id", owner.Id);
-            query.AddCondition("item_type", owner.Type);
+            query.AddCondition("item_type_id", owner.TypeId);
 
             DataTable appDataTable = db.Query(query);
 
@@ -129,10 +132,6 @@ namespace BoxSocial.Internals
 
         private void PrimitiveApplicationInfo_ItemLoad()
         {
-            if (itemType == "USER")
-            {
-                core.LoadUserProfile(itemId);
-            }
         }
 
         public override long Id

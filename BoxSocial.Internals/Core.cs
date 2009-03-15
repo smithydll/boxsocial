@@ -49,8 +49,8 @@ namespace BoxSocial.Internals
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
         public delegate void PageHandler(Core core, object sender);
-        public delegate bool CommentHandler(long itemId, User viewer);
-        public delegate void CommentCountHandler(long itemId, int adjustment);
+        public delegate bool CommentHandler(ItemKey itemKey, User viewer);
+        public delegate void CommentCountHandler(ItemKey itemKey, int adjustment);
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
 
@@ -62,8 +62,8 @@ namespace BoxSocial.Internals
         Dictionary<string, Type> primitiveTypes = new Dictionary<string, Type>();
         Dictionary<string, PrimitiveAttribute> primitiveAttributes = new Dictionary<string, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
-        private Dictionary<string, CommentHandle> commentHandles = new Dictionary<string, CommentHandle>();
-        private Dictionary<string, RatingHandler> ratingHandles = new Dictionary<string, RatingHandler>();
+        private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
+        private Dictionary<long, RatingHandler> ratingHandles = new Dictionary<long, RatingHandler>();
 
         /// <summary>
         /// A cache of application entries.
@@ -218,11 +218,11 @@ namespace BoxSocial.Internals
             Functions.Generate404();
         }
 
-        public bool CanPostComment(string itemType, long itemId)
+        public bool CanPostComment(ItemKey itemKey)
         {
-            if (commentHandles.ContainsKey(itemType))
+            if (commentHandles.ContainsKey(itemKey.TypeId))
             {
-                return commentHandles[itemType].CanPostComment(itemId, session.LoggedInMember);
+                return commentHandles[itemKey.TypeId].CanPostComment(itemKey, session.LoggedInMember);
             }
             else
             {
@@ -230,11 +230,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool CanDeleteComment(string itemType, long itemId)
+        public bool CanDeleteComment(ItemKey itemKey)
         {
-            if (commentHandles.ContainsKey(itemType))
+            if (commentHandles.ContainsKey(itemKey.TypeId))
             {
-                return commentHandles[itemType].CanDeleteComment(itemId, session.LoggedInMember);
+                return commentHandles[itemKey.TypeId].CanDeleteComment(itemKey, session.LoggedInMember);
             }
             else
             {
@@ -242,11 +242,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void AdjustCommentCount(string itemType, long itemId, int adjustment)
+        public void AdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            if (commentHandles.ContainsKey(itemType))
+            if (commentHandles.ContainsKey(itemKey.TypeId))
             {
-                commentHandles[itemType].AdjustCommentCount(itemId, adjustment);
+                commentHandles[itemKey.TypeId].AdjustCommentCount(itemKey, adjustment);
             }
             else
             {
@@ -254,11 +254,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void CommentPosted(string itemType, long itemId, Comment comment, User poster)
+        public void CommentPosted(ItemKey itemKey, Comment comment, User poster)
         {
-            if (commentHandles.ContainsKey(itemType))
+            if (commentHandles.ContainsKey(itemKey.TypeId))
             {
-                commentHandles[itemType].CommentPosted(comment, poster, itemType, itemId);
+                commentHandles[itemKey.TypeId].CommentPosted(comment, poster, itemKey);
             }
             else
             {
@@ -266,11 +266,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void CommentDeleted(string itemType, long itemId, Comment comment, User poster)
+        public void CommentDeleted(ItemKey itemKey, Comment comment, User poster)
         {
-            if (commentHandles.ContainsKey(itemType))
+            if (commentHandles.ContainsKey(itemKey.TypeId))
             {
-                commentHandles[itemType].CommentDeleted(comment, poster, itemType, itemId);
+                commentHandles[itemKey.TypeId].CommentDeleted(comment, poster, itemKey);
             }
             else
             {
@@ -278,11 +278,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void ItemRated(string itemType, long itemId, int rating, User rater)
+        public void ItemRated(ItemKey itemKey, int rating, User rater)
         {
-            if (ratingHandles.ContainsKey(itemType))
+            if (ratingHandles.ContainsKey(itemKey.TypeId))
             {
-                ratingHandles[itemType](new ItemRatedEventArgs(rating, rater, itemType, itemId));
+                ratingHandles[itemKey.TypeId](new ItemRatedEventArgs(rating, rater, itemKey));
             }
             else
             {
@@ -302,24 +302,24 @@ namespace BoxSocial.Internals
             pages.Add(new PageHandle(expression, pageHandle, order));
         }
 
-        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
+        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
         {
-            RegisterCommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, null, null);
+            RegisterCommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, null, null);
         }
 
-        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
+        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
         {
-            RegisterCommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, null);
+            RegisterCommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, null);
         }
 
-        public void RegisterCommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
+        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
         {
-            commentHandles.Add(token, new CommentHandle(token, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
+            commentHandles.Add(itemTypeId, new CommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
         }
 
-        public void RegisterRatingHandle(string token, Core.RatingHandler itemRated)
+        public void RegisterRatingHandle(long itemTypeId, Core.RatingHandler itemRated)
         {
-            ratingHandles.Add(token, itemRated);
+            ratingHandles.Add(itemTypeId, itemRated);
         }
 
         private VariableCollection createHeadPanel()

@@ -31,7 +31,7 @@ namespace BoxSocial.Internals
 {
     public class CommentHandle : IComparable
     {
-        private string token;
+        private long itemTypeId;
 
         /// <summary>
         /// The function that gets executed if a match
@@ -42,9 +42,9 @@ namespace BoxSocial.Internals
         private Core.CommentPostedHandler commentPosted;
         private Core.CommentPostedHandler commentDeleted;
 
-        public CommentHandle(string token, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
+        public CommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
         {
-            this.token = token;
+            this.itemTypeId = itemTypeId;
             this.canPostComment = canPostComment;
             this.canDeleteComment = canDeleteComment;
             this.adjustCommentCount = adjustCommentCount;
@@ -52,38 +52,38 @@ namespace BoxSocial.Internals
             this.commentDeleted = commentDeleted;
         }
 
-        public bool CanPostComment(long itemId, User viewer)
+        public bool CanPostComment(ItemKey itemKey, User viewer)
         {
-            return canPostComment(itemId, viewer);
+            return canPostComment(itemKey, viewer);
         }
 
-        public bool CanDeleteComment(long itemId, User viewer)
+        public bool CanDeleteComment(ItemKey itemKey, User viewer)
         {
-            return canDeleteComment(itemId, viewer);
+            return canDeleteComment(itemKey, viewer);
         }
 
-        public void AdjustCommentCount(long itemId, int adjustment)
+        public void AdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            adjustCommentCount(itemId, adjustment);
+            adjustCommentCount(itemKey, adjustment);
         }
 
-        public void CommentPosted(Comment comment, User poster, string itemType, long itemId)
+        public void CommentPosted(Comment comment, User poster, ItemKey itemKey)
         {
-            commentPosted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
+            commentPosted(new CommentPostedEventArgs(comment, poster, itemKey));
         }
 
-        public void CommentDeleted(Comment comment, User poster, string itemType, long itemId)
+        public void CommentDeleted(Comment comment, User poster, ItemKey itemKey)
         {
             if (commentDeleted != null)
             {
-                commentDeleted(new CommentPostedEventArgs(comment, poster, itemType, itemId));
+                commentDeleted(new CommentPostedEventArgs(comment, poster, itemKey));
             }
         }
 
         public int CompareTo(object obj)
         {
             if (!(obj is CommentHandle)) return -1;
-            return token.CompareTo(((CommentHandle)obj).token);
+            return itemTypeId.CompareTo(((CommentHandle)obj).itemTypeId);
         }
     }
 }

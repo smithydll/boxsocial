@@ -42,10 +42,12 @@ namespace BoxSocial.Internals
         private long commentId;
         [DataField("user_id")]
         private long userId;
-        [DataField("comment_item_id")]
+        /*[DataField("comment_item_id")]
         private long itemId;
         [DataField("comment_item_type", NAMESPACE)]
-        private string itemType;
+        private string itemType;*/
+		[DataField("comment_item", DataFieldKeys.Index)]
+        private ItemKey itemKey;
         [DataField("comment_spam_score")]
         private byte spamScore;
         [DataField("comment_time_ut")]
@@ -68,12 +70,20 @@ namespace BoxSocial.Internals
                 return userId;
             }
         }
+		
+		public ItemKey ItemKey
+		{
+			get
+			{
+				return itemKey;
+			}
+		}
 
         public long ItemId
         {
             get
             {
-                return itemId;
+                return itemKey.Id;
             }
         }
 
@@ -81,7 +91,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemType;
+                return itemKey.Type;
             }
         }
 
@@ -140,7 +150,7 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static Comment Create(Core core, string itemType, long itemId, string comment)
+        public static Comment Create(Core core, ItemKey itemKey, string comment)
         {
             if (!core.session.IsLoggedIn)
             {
@@ -165,20 +175,20 @@ namespace BoxSocial.Internals
 
             Relation relations = Relation.None;
             // A little bit of hard coding we can't avoid
-            if (itemType == "USER")
+            if (itemKey.Type == typeof(User).FullName)
             {
-                core.LoadUserProfile(itemId);
-                relations = core.UserProfiles[itemId].GetRelations(core.session.LoggedInMember);
+                core.LoadUserProfile(itemKey.Id);
+                relations = core.UserProfiles[itemKey.Id].GetRelations(core.session.LoggedInMember);
             }
 
             core.db.BeginTransaction();
-            long commentId = core.db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, '{1}', {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
-                    itemId, Mysql.Escape(itemType), core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
+            long commentId = core.db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type_id, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
+                    itemKey.Id, itemKey.TypeId, core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
 
             return new Comment(core, commentId);
         }
 
-        public static List<Comment> GetComments(Core core, string itemType, long itemId, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)
+        public static List<Comment> GetComments(Core core, ItemKey itemKey, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)
         {
             Mysql db = core.db;
             List<Comment> comments = new List<Comment>();
@@ -195,7 +205,7 @@ namespace BoxSocial.Internals
             {
                 if (commenters.Count == 2)
                 {
-                    if (itemType == "USER")
+                    if (itemKey.Type == typeof(User).FullName)
                     {
                         QueryCondition qc1 = query.AddCondition("comment_item_id", commenters[0].Id);
                         qc1.AddCondition("user_id", commenters[1].Id);
@@ -203,24 +213,24 @@ namespace BoxSocial.Internals
                         QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "comment_item_id", commenters[1].Id);
                         qc2.AddCondition("user_id", commenters[0].Id);
 
-                        query.AddCondition("comment_item_type", itemType);
+                        query.AddCondition("comment_item_type_id", itemKey.TypeId);
                     }
                     else
                     {
-                        query.AddCondition("comment_item_id", itemId);
-                        query.AddCondition("comment_item_type", itemType);
+                        query.AddCondition("comment_item_id", itemKey.Id);
+                        query.AddCondition("comment_item_type_id", itemKey.TypeId);
                     }
                 }
                 else
                 {
-                    query.AddCondition("comment_item_id", itemId);
-                    query.AddCondition("comment_item_type", itemType);
+                    query.AddCondition("comment_item_id", itemKey.Id);
+                    query.AddCondition("comment_item_type_id", itemKey.TypeId);
                 }
             }
             else
             {
-                query.AddCondition("comment_item_id", itemId);
-                query.AddCondition("comment_item_type", itemType);
+                query.AddCondition("comment_item_id", itemKey.Id);
+                query.AddCondition("comment_item_type_id", itemKey.TypeId);
             }
 
             DataTable commentsTable = db.Query(query);
@@ -407,8 +417,7 @@ namespace BoxSocial.Internals
     public class CommentPostedEventArgs : EventArgs
     {
         private Comment comment;
-        private string itemType;
-        private long itemId;
+        private ItemKey itemKey;
         private User poster;
 
         public Comment Comment
@@ -418,12 +427,20 @@ namespace BoxSocial.Internals
                 return comment;
             }
         }
+		
+		public ItemKey ItemKey
+		{
+			get
+			{
+				return itemKey;
+			}
+		}
 
         public string ItemType
         {
             get
             {
-                return itemType;
+                return itemKey.Type;
             }
         }
 
@@ -431,7 +448,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemId;
+                return itemKey.Id;
             }
         }
 
@@ -443,12 +460,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public CommentPostedEventArgs(Comment comment, User poster, string itemType, long itemId)
+        public CommentPostedEventArgs(Comment comment, User poster, ItemKey itemKey)
         {
             this.comment = comment;
             this.poster = poster;
-            this.itemType = itemType;
-            this.itemId = itemId;
+            this.itemKey = itemKey;
         }
     }
 

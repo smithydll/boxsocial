@@ -26,6 +26,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using System.Web.Caching;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -38,6 +39,9 @@ namespace BoxSocial.FrontEnd
 			Server.ScriptTimeout = 1000;
             string assemblyName = Request.QueryString["app"];
             string mode = Request.QueryString["mode"];
+			
+			System.Web.Caching.Cache cache = new System.Web.Caching.Cache();
+			cache.Remove("itemFields");
 
             if (mode == "update")
             {
@@ -68,12 +72,14 @@ namespace BoxSocial.FrontEnd
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
                     dr["user_id"] = dr["item_id"];
-                    core.UserProfiles.LoadPrimitiveProfile((string)dr["item_type"], (long)dr["item_id"]);
+					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
+                    core.UserProfiles.LoadPrimitiveProfile(itemKey.Type, itemKey.Id);
                 }
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
-                    Primitive member = core.UserProfiles[(string)dr["item_type"], (long)dr["item_id"]];
+					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
+                    Primitive member = core.UserProfiles[itemKey.Type, itemKey.Id];
                     //members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);
@@ -209,9 +215,10 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
+										ItemType itemType = new ItemType(core, typeof(ApplicationEntry).FullName);
                                         ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            profileAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
+                                            profileAe.ApplicationId, applicationId, itemType.TypeId, 0x1111));
                                     }
                                     catch
                                     {
@@ -219,9 +226,10 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
+										ItemType itemType = new ItemType(core, typeof(ApplicationEntry).FullName);
                                         ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
-                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            guestbookAe.ApplicationId, applicationId, Mysql.Escape("APPLICATION"), 0x1111));
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
+                                            guestbookAe.ApplicationId, applicationId, itemType.TypeId, 0x1111));
                                     }
                                     catch
                                     {

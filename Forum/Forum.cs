@@ -60,10 +60,12 @@ namespace BoxSocial.Applications.Forum
         private long lastPostTimeRaw;
         [DataField("forum_last_post_id")]
         private long lastPostId;
-        [DataField("forum_item_id")]
+        /*[DataField("forum_item_id")]
         private long ownerId;
         [DataField("forum_item_type", 63)]
-        private string ownerType;
+        private string ownerType;*/
+		[DataField("forum_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("forum_order")]
         private int forumOrder;
 		[DataField("forum_level")]
@@ -342,8 +344,7 @@ namespace BoxSocial.Applications.Forum
             : base(core)
         {
             this.owner = owner;
-            this.ownerId = owner.Id;
-            this.ownerType = owner.Type;
+            this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             forumId = 0;
             forumLocked = false;
 			forumLevel = 0;
@@ -479,8 +480,8 @@ namespace BoxSocial.Applications.Forum
             List<Forum> forums = new List<Forum>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
-            query.AddCondition("forum_item_id", ownerId);
-            query.AddCondition("forum_item_type", ownerType);
+            query.AddCondition("forum_item_id", ownerKey.Id);
+            query.AddCondition("forum_item_type_id", ownerKey.TypeId);
             query.AddCondition("forum_parent_id", forumId);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
@@ -569,8 +570,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             query.AddCondition("`forum_topics`.`forum_id`", forumId);
-			/*query.AddCondition("`forum_topics`.`topic_item_id`", Owner.Id);
-			query.AddCondition("`forum_topics`.`topic_item_type`", Owner.Type);*/
+			query.AddCondition("`forum_topics`.`topic_item_id`", Owner.Id);
+			query.AddCondition("`forum_topics`.`topic_item_type_id`", Owner.TypeId);
             query.AddCondition("topic_status", ConditionEquality.NotIn, new byte[] { (byte)TopicStates.Global, (byte)TopicStates.Announcement });
             query.AddSort(SortOrder.Descending, "topic_status");
             query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
@@ -603,6 +604,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             query.AddCondition("`forum_topics`.`forum_id`", forumId);
+			query.AddCondition("`forum_topics`.`topic_item_id`", Owner.Id);
+			query.AddCondition("`forum_topics`.`topic_item_type_id`", Owner.TypeId);
             query.AddCondition("topic_status", ConditionEquality.In, new byte[] { (byte)TopicStates.Global, (byte)TopicStates.Announcement });
             query.AddSort(SortOrder.Descending, "topic_status");
             query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
@@ -654,8 +657,8 @@ namespace BoxSocial.Applications.Forum
             List<ForumTopic> topics = new List<ForumTopic>();
 
             SelectQuery query = new SelectQuery("forum_topics");
-            query.AddCondition("topic_item_id", ownerId);
-            query.AddCondition("topic_item_type", ownerType);
+            query.AddCondition("topic_item_id", ownerKey.Id);
+            query.AddCondition("topic_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Descending, "topic_last_post_id");
 
             DataTable topicsTable = db.Query(query);
@@ -696,7 +699,7 @@ namespace BoxSocial.Applications.Forum
             query.AddFields("forum_order");
             query.AddCondition("forum_order", ConditionEquality.GreaterThan, parent.Order);
 			query.AddCondition("forum_item_id", parent.Owner.Id);
-            query.AddCondition("forum_item_type", parent.Owner.Type);
+            query.AddCondition("forum_item_type_id", parent.Owner.TypeId);
             query.AddSort(SortOrder.Descending, "forum_order");
             query.LimitCount = 1;
 
@@ -716,7 +719,7 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
             uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
             uQuery.AddCondition("forum_item_id", parent.Owner.Id);
-            uQuery.AddCondition("forum_item_type", parent.Owner.Type);
+            uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
 
             core.db.Query(uQuery);
 
@@ -757,7 +760,7 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("forum_topics", 0);
             iquery.AddField("forum_posts", 0);
             iquery.AddField("forum_item_id", parent.Owner.Id);
-            iquery.AddField("forum_item_type", parent.Owner.Type);
+            iquery.AddField("forum_item_type_id", parent.Owner.TypeId);
             iquery.AddField("forum_parents", parents);
             iquery.AddField("forum_last_post_id", 0);
             iquery.AddField("forum_last_post_time_ut", UnixTime.UnixTimeStamp());
@@ -798,7 +801,7 @@ namespace BoxSocial.Applications.Forum
             SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
 			query.AddCondition("forum_item_id", Owner.Id);
-			query.AddCondition("forum_item_type", Owner.Type);
+			query.AddCondition("forum_item_type_id", Owner.TypeId);
             query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
             query.AddSort(SortOrder.Ascending, "forum_order");
             query.LimitCount = 2;
@@ -838,7 +841,7 @@ namespace BoxSocial.Applications.Forum
                 query = Forum.GetSelectQueryStub(typeof(Forum));
                 query.AddCondition("forum_parent_id", ParentId); /* or any level below */
 				query.AddCondition("forum_item_id", Owner.Id);
-				query.AddCondition("forum_item_type", Owner.Type);
+				query.AddCondition("forum_item_type_id", Owner.TypeId);
                 query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
                 query.AddSort(SortOrder.Descending, "forum_order");
                 query.LimitCount = 1;
@@ -879,7 +882,7 @@ namespace BoxSocial.Applications.Forum
                     query = Forum.GetSelectQueryStub(typeof(Forum));
                     query.AddCondition("forum_parent_id", ParentId); /* or any level below */
 					query.AddCondition("forum_item_id", Owner.Id);
-					query.AddCondition("forum_item_type", Owner.Type);
+					query.AddCondition("forum_item_type_id", Owner.TypeId);
                     query.AddCondition("forum_order", ConditionEquality.GreaterThan, Order);
                     query.AddSort(SortOrder.Descending, "forum_order");
                     query.LimitCount = 1;
@@ -1316,10 +1319,10 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (owner == null || (ownerId != owner.Id && ownerType != owner.Type))
+                if (owner == null || (ownerKey.Id != owner.Id && ownerKey.TypeId != owner.TypeId))
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerType, ownerId);
-                    owner = core.UserProfiles[ownerType, ownerId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else

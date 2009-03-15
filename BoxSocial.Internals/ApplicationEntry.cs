@@ -456,6 +456,21 @@ namespace BoxSocial.Internals
                 throw new InvalidApplicationException();
             }
         }
+		
+        public ApplicationEntry(Core core, long applicationId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
+
+            try
+            {
+                LoadItem(applicationId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidApplicationException();
+            }
+        }
 
         public ApplicationEntry(Core core, Primitive owner, long applicationId)
             : base(core)
@@ -645,8 +660,8 @@ namespace BoxSocial.Internals
         {
             if (viewer != null)
             {
-                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type = '{2}'",
-                    applicationId, viewer.Id, Mysql.Escape(viewer.Type)));
+                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type_id = {2}",
+                    applicationId, viewer.Id, viewer.TypeId));
 
                 if (viewerTable.Rows.Count > 0)
                 {
@@ -680,7 +695,7 @@ namespace BoxSocial.Internals
                 InsertQuery iQuery = new InsertQuery("primitive_apps");
                 iQuery.AddField("application_id", applicationId);
                 iQuery.AddField("item_id", viewer.Id);
-                iQuery.AddField("item_type", viewer.Type);
+                iQuery.AddField("item_type_id", viewer.TypeId);
                 iQuery.AddField("app_access", 0x1111);
 
                 if (db.Query(iQuery) > 0)
@@ -788,7 +803,7 @@ namespace BoxSocial.Internals
                 DeleteQuery dQuery = new DeleteQuery("primitive_apps");
                 dQuery.AddCondition("application_id", applicationId);
                 dQuery.AddCondition("item_id", viewer.Id);
-                dQuery.AddCondition("item_type", viewer.Type);
+                dQuery.AddCondition("item_type_id", viewer.TypeId);
 
                 if (db.Query(dQuery) > 0)
                 {

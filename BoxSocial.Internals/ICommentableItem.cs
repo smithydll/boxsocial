@@ -63,6 +63,11 @@ namespace BoxSocial.Internals
         {
             get;
         }
+		
+		ItemKey Key
+		{
+			get;
+		}
 
         /// <summary>
         /// Gets the URI for the commentable item.

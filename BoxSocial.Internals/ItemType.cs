@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
 		
 		[DataField("type_id", DataFieldKeys.Primary)]
 		long typeId;
-		[DataField("type_namespace", 255)]
+		[DataField("type_namespace", DataFieldKeys.Unique, 255)]
 		string typeNamespace;
 		[DataField("type_application_id")]
 		long applicationId;
@@ -59,6 +59,21 @@ namespace BoxSocial.Internals
 			{
 				return applicationId;
 			}
+		}
+		
+		public ItemType(Core core, long typeId)
+			: base(core)
+		{
+			ItemLoad += new ItemLoadHandler(ItemType_ItemLoad);
+
+            try
+            {
+                LoadItem(typeId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidItemTypeException();
+            }
 		}
 		
 		public ItemType(Core core, string typeNamespace)

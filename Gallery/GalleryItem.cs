@@ -999,9 +999,11 @@ namespace BoxSocial.Applications.Gallery
 
                 page.template.Parse("PHOTO_COMMENTS", Functions.LargeIntegerToString(photo.ItemComments));
 
-                Display.RatingBlock(photo.ItemRating, page.template, photo.ItemId, "PHOTO");
+                Display.RatingBlock(photo.ItemRating, page.template, photo.Key);
 
                 page.template.Parse("ID", photo.ItemId.ToString());
+				page.template.Parse("TYPEID", photo.Key.TypeId.ToString());
+				
                 if (page.ProfileOwner.Id == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_MARK_DISPLAY_PIC", Linker.BuildMarkDisplayPictureUri(photo.ItemId));
@@ -1173,9 +1175,10 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.Key);
 
                 page.template.Parse("ID", galleryItem.ItemId.ToString());
+				page.template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
@@ -1284,9 +1287,10 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemId, "PHOTO");
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.Key);
 
                 page.template.Parse("ID", galleryItem.ItemId.ToString());
+				page.template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;

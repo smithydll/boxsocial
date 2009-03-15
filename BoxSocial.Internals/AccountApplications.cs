@@ -116,7 +116,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
             query.AddCondition("primitive_apps.application_id", id);
             query.AddCondition("item_id", Owner.Id);
-            query.AddCondition("item_type", Owner.Type);
+            query.AddCondition("item_type_id", Owner.TypeId);
 
             DataTable applicationTable = db.Query(query);
 
@@ -152,7 +152,7 @@ namespace BoxSocial.Internals
             UpdateQuery uquery = new UpdateQuery("primitive_apps");
             uquery.AddField("app_access", Functions.GetPermission());
             uquery.AddCondition("item_id", Owner.Id);
-            uquery.AddCondition("item_type", Owner.Type);
+            uquery.AddCondition("item_type_id", Owner.TypeId);
             uquery.AddCondition("application_id", id);
 
             db.Query(uquery);

@@ -174,6 +174,35 @@ namespace BoxSocial.IO
             this.parentFieldName = parentFieldName;
             this.index = null;
         }
+		
+		public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key)
+            : this(fieldName, parentType, fieldName, key)
+        {
+        }
+		
+		public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, DataFieldKeys key)
+        {
+			this.key = key;
+            this.fieldName = fieldName;
+            this.length = 0;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
+            switch (key)
+			{
+				case DataFieldKeys.Primary:
+				    this.index = new PrimaryKey();
+					break;
+				case DataFieldKeys.Unique:
+				    this.index = new UniqueKey("u_" + fieldName);
+					break;
+				case DataFieldKeys.Index:
+				    this.index = new Index("i_" + fieldName);
+					break;
+				default:
+    				this.index = null;
+					break;
+			}
+        }
 
         public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName)
             : this(fieldName, parentType, fieldName, key, keyName)

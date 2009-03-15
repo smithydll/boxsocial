@@ -148,9 +148,21 @@ namespace BoxSocial.Applications.Gallery
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+			
+			ItemType itemType = new ItemType(core, typeof(GalleryItem).FullName);
+			ItemType itemTypeU = new ItemType(core, typeof(UserGalleryItem).FullName);
+			ItemType itemTypeG = new ItemType(core, typeof(GroupGalleryItem).FullName);
+			ItemType itemTypeN = new ItemType(core, typeof(NetworkGalleryItem).FullName);
 
-            core.RegisterCommentHandle("PHOTO", photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            core.RegisterRatingHandle("PHOTO", photoRated);
+            core.RegisterCommentHandle(itemType.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+			core.RegisterCommentHandle(itemTypeU.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+			core.RegisterCommentHandle(itemTypeG.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+			core.RegisterCommentHandle(itemTypeN.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+			
+            core.RegisterRatingHandle(itemType.TypeId, photoRated);
+			core.RegisterRatingHandle(itemTypeU.TypeId, photoRated);
+			core.RegisterRatingHandle(itemTypeG.TypeId, photoRated);
+			core.RegisterRatingHandle(itemTypeN.TypeId, photoRated);
         }
 
         /// <summary>
@@ -234,10 +246,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="itemId">Gallery item id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool photoCanPostComment(long itemId, User member)
+        private bool photoCanPostComment(ItemKey itemKey, User member)
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
-            query.AddCondition("gallery_item_id", itemId);
+            query.AddCondition("gallery_item_id", itemKey.Id);
 
             DataTable galleryItemTable = core.db.Query(query);
 
@@ -281,10 +293,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="itemId">Gallery item id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool photoCanDeleteComment(long itemId, User member)
+        private bool photoCanDeleteComment(ItemKey itemKey, User member)
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
-            query.AddCondition("gallery_item_id", itemId);
+            query.AddCondition("gallery_item_id", itemKey.Id);
 
             DataTable galleryItemTable = core.db.Query(query);
 
@@ -328,10 +340,10 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="itemId">Gallery item id</param>
         /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void photoAdjustCommentCount(long itemId, int adjustment)
+        private void photoAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
         /// <summary>

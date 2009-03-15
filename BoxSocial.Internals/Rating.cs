@@ -34,11 +34,13 @@ namespace BoxSocial.Internals
     [DataTable("ratings")]
     public class Rating : Item
     {
-        [DataField("rate_item_id")]
+        /*[DataField("rate_item_id")]
         private long itemId;
         [DataField("rate_item_type", NAMESPACE)]
-        private string itemType;
-        [DataField("user_id")]
+        private string itemType;*/
+		[DataField("rate_item", DataFieldKeys.Index, "i_rating")]
+        private ItemKey itemKey;
+        [DataField("user_id", DataFieldKeys.Index, "i_rating")]
         private long ownerId;
         [DataField("rate_time_ut")]
         private long timeRaw;
@@ -46,12 +48,20 @@ namespace BoxSocial.Internals
         private string ip;
 
         private User owner;
+		
+		public ItemKey ItemKey
+		{
+			get
+			{
+				return itemKey;
+			}
+		}
 
         public long ItemId
         {
             get
             {
-                return itemId;
+                return itemKey.Id;
             }
         }
 
@@ -59,7 +69,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemType;
+                return itemKey.Type;
             }
         }
 
@@ -110,10 +120,10 @@ namespace BoxSocial.Internals
         /// <param name="itemId"></param>
         /// <param name="rating"></param>
         /// <remarks>ItemRated should implement a transaction.</remarks>
-        public static void Vote(Core core, string itemType, long itemId, int rating)
+        public static void Vote(Core core, ItemKey itemKey, int rating)
         {
 
-            if (itemId < 1)
+            if (itemKey.Id < 1)
             {
                 throw new InvalidItemException();
             }
@@ -126,8 +136,8 @@ namespace BoxSocial.Internals
             /* after 7 days release the IP for dynamics ip fairness */
             SelectQuery query = new SelectQuery("ratings r");
             query.AddFields("user_id");
-            query.AddCondition("rate_item_id", itemId);
-            query.AddCondition("rate_item_type", itemType);
+            query.AddCondition("rate_item_id", itemKey.Id);
+            query.AddCondition("rate_item_type_id", itemKey.TypeId);
             QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);
             QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.session.IPAddress.ToString());
             qc2.AddCondition("rate_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24 * 7);
@@ -140,11 +150,12 @@ namespace BoxSocial.Internals
             if (ratingsTable.Rows.Count > 0)
             {
                 throw new AlreadyRatedException();
+				return;
             }
 
             InsertQuery iQuery = new InsertQuery("ratings");
-            iQuery.AddField("rate_item_id", itemId);
-            iQuery.AddField("rate_item_type", itemType);
+            iQuery.AddField("rate_item_id", itemKey.Id);
+            iQuery.AddField("rate_item_type_id", itemKey.TypeId);
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
             iQuery.AddField("rate_rating", rating);
@@ -168,8 +179,7 @@ namespace BoxSocial.Internals
     public class ItemRatedEventArgs : EventArgs
     {
         private int rating;
-        private string itemType;
-        private long itemId;
+        private ItemKey itemKey;
         private User rater;
 
         public int Rating
@@ -179,12 +189,20 @@ namespace BoxSocial.Internals
                 return rating;
             }
         }
+		
+		public ItemKey ItemKey
+		{
+			get
+			{
+				return itemKey;
+			}
+		}
 
         public string ItemType
         {
             get
             {
-                return itemType;
+                return itemKey.Type;
             }
         }
 
@@ -192,7 +210,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemId;
+                return itemKey.Id;
             }
         }
 
@@ -204,12 +222,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ItemRatedEventArgs(int rating, User rater, string itemType, long itemId)
+        public ItemRatedEventArgs(int rating, User rater, ItemKey itemKey)
         {
             this.rating = rating;
             this.rater = rater;
-            this.itemType = itemType;
-            this.itemId = itemId;
+            this.itemKey = itemKey;
         }
     }
 

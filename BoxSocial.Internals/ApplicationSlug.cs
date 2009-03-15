@@ -34,7 +34,7 @@ namespace BoxSocial.Internals
         private string slugStub;
         [DataField("slug_slug_ex", 255)]
         private string slugEx;
-        [DataField("application_id")]
+        [DataField("application_id", DataFieldKeys.Index)]
         private long applicationId;
         [DataField("slug_primitives")]
         private byte slugPrimitives;

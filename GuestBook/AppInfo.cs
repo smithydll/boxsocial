@@ -127,11 +127,16 @@ namespace BoxSocial.Applications.GuestBook
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+			
+			ItemType itemTypeU = new ItemType(core, typeof(User).FullName);
+			ItemType itemTypeA = new ItemType(core, typeof(ApplicationEntry).FullName);
+			ItemType itemTypeG = new ItemType(core, typeof(UserGroup).FullName);
+			ItemType itemTypeN = new ItemType(core, typeof(Network).FullName);
 
-            core.RegisterCommentHandle("USER", userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted, userCommentDeleted);
-            core.RegisterCommentHandle("APPLICATION", applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
-            core.RegisterCommentHandle("GROUP", groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
-            core.RegisterCommentHandle("NETWORK", networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
+            core.RegisterCommentHandle(itemTypeU.TypeId, userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted, userCommentDeleted);
+            core.RegisterCommentHandle(itemTypeA.TypeId, applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
+            core.RegisterCommentHandle(itemTypeG.TypeId, groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
+            core.RegisterCommentHandle(itemTypeN.TypeId, networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -170,11 +175,11 @@ namespace BoxSocial.Applications.GuestBook
             core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
         }
 
-        private bool userCanPostComment(long itemId, User member)
+        private bool userCanPostComment(ItemKey itemKey, User member)
         {
             try
             {
-                User owner = new User(core, itemId, UserLoadOptions.All);
+                User owner = new User(core, itemKey.Id, UserLoadOptions.All);
 
                 owner.ProfileAccess.SetViewer(member);
 
@@ -193,9 +198,9 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool userCanDeleteComment(long itemId, User member)
+        private bool userCanDeleteComment(ItemKey itemKey, User member)
         {
-            if (itemId == member.UserId)
+            if (itemKey.Id == member.UserId)
             {
                 return true;
             }
@@ -268,17 +273,17 @@ namespace BoxSocial.Applications.GuestBook
         {
         }
 
-        private void userAdjustCommentCount(long itemId, int adjustment)
+        private void userAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
-        private bool groupCanPostComment(long itemId, User member)
+        private bool groupCanPostComment(ItemKey itemKey, User member)
         {
             try
             {
-                UserGroup owner = new UserGroup(core, itemId);
+                UserGroup owner = new UserGroup(core, itemKey.Id);
 
                 if (owner.IsGroupMember(member))
                 {
@@ -295,11 +300,11 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool groupCanDeleteComment(long itemId, User member)
+        private bool groupCanDeleteComment(ItemKey itemKey, User member)
         {
             try
             {
-                UserGroup owner = new UserGroup(core, itemId);
+                UserGroup owner = new UserGroup(core, itemKey.Id);
 
                 if (owner.IsGroupOperator(member))
                 {
@@ -316,17 +321,17 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private void groupAdjustCommentCount(long itemId, int adjustment)
+        private void groupAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE group_info SET group_comments = group_comments + {1} WHERE group_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
-        private bool networkCanPostComment(long itemId, User member)
+        private bool networkCanPostComment(ItemKey itemKey, User member)
         {
             try
             {
-                Network owner = new Network(core, itemId);
+                Network owner = new Network(core, itemKey.Id);
 
                 if (owner.IsNetworkMember(member))
                 {
@@ -343,18 +348,18 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool networkCanDeleteComment(long itemId, User member)
+        private bool networkCanDeleteComment(ItemKey itemKey, User member)
         {
             return false;
         }
 
-        private void networkAdjustCommentCount(long itemId, int adjustment)
+        private void networkAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE network_info SET network_comments = network_comments + {1} WHERE network_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
-        private bool applicationCanPostComment(long itemId, User member)
+        private bool applicationCanPostComment(ItemKey itemKey, User member)
         {
             if (member != null)
             {
@@ -366,16 +371,16 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        private bool applicationCanDeleteComment(long itemId, User member)
+        private bool applicationCanDeleteComment(ItemKey itemKey, User member)
         {
             // TODO: scrape for owner
             return false;
         }
 
-        private void applicationAdjustCommentCount(long itemId, int adjustment)
+        private void applicationAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE applications SET application_comments = application_comments + {1} WHERE application_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
         private void showProfileGuestBook(Core core, object sender)

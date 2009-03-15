@@ -109,8 +109,10 @@ namespace BoxSocial.Applications.Calendar
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+			
+			ItemType itemType = new ItemType(core, typeof(Event).FullName);
 
-            core.RegisterCommentHandle("EVENT", eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
+            core.RegisterCommentHandle(itemType.TypeId, eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -181,9 +183,9 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool eventCanPostComment(long itemId, User member)
+        private bool eventCanPostComment(ItemKey itemKey, User member)
         {
-            Event calendarEvent = new Event(core, null, itemId);
+            Event calendarEvent = new Event(core, null, itemKey.Id);
             calendarEvent.EventAccess.SetViewer(member);
 
             if (calendarEvent.EventAccess.CanComment || calendarEvent.IsInvitee(member))
@@ -202,9 +204,9 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="itemId">Event id</param>
         /// <param name="member">User to interrogate</param>
         /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool eventCanDeleteComment(long itemId, User member)
+        private bool eventCanDeleteComment(ItemKey itemKey, User member)
         {
-            Event calendarEvent = new Event(core, null, itemId);
+            Event calendarEvent = new Event(core, null, itemKey.Id);
 
             if (calendarEvent.UserId == member.UserId)
             {
@@ -221,10 +223,10 @@ namespace BoxSocial.Applications.Calendar
         /// </summary>
         /// <param name="itemId">Event id</param>
         /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void eventAdjustCommentCount(long itemId, int adjustment)
+        private void eventAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
         private void showCalendar(Core core, object sender)

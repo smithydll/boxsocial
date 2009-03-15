@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Text;
 using System.Web;
+using System.Web.Caching;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -114,7 +115,7 @@ namespace BoxSocial.Internals
             else
             {
                 // Error
-                throw new InvalidItemException();
+                throw new InvalidItemException(this.GetType().FullName);
             }
         }
 
@@ -146,7 +147,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        throw new FieldNotUniqueIndexException();
+                        throw new FieldNotUniqueIndexException(field.Name);
                     }
                 }
 
@@ -176,7 +177,7 @@ namespace BoxSocial.Internals
             else
             {
                 // Error
-                throw new InvalidItemException();
+                throw new InvalidItemException(this.GetType().FullName);
             }
         }
 
@@ -222,7 +223,7 @@ namespace BoxSocial.Internals
             else
             {
                 // Error
-                throw new InvalidItemException();
+                throw new InvalidItemException(this.GetType().FullName);
             }
         }
 
@@ -435,10 +436,40 @@ namespace BoxSocial.Internals
 
             return query;
         }
+		
+		private static Dictionary<Type, List<DataFieldInfo>> itemFieldsCache = null;
+		
+		private static void populateItemFieldsCache()
+		{
+			System.Web.Caching.Cache cache = new System.Web.Caching.Cache();
+			
+			object o = cache.Get("itemFields");
+			
+			if (o != null && o.GetType() == typeof(Dictionary<Type, List<DataFieldInfo>>))
+			{
+				itemFieldsCache = (Dictionary<Type, List<DataFieldInfo>>)o;
+			}
+			else
+			{
+				itemFieldsCache = new Dictionary<Type, List<DataFieldInfo>>();
+			}
+		}
 
         internal protected static List<DataFieldInfo> GetFields(Type type)
         {
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
+			
+			if  (itemFieldsCache != null)
+			{
+				if (itemFieldsCache.ContainsKey(type))
+				{
+					return itemFieldsCache[type];
+				}
+			}
+			else
+			{
+				populateItemFieldsCache();
+			}
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
@@ -482,6 +513,11 @@ namespace BoxSocial.Internals
                 }
 
             }
+			
+			itemFieldsCache.Add(type, returnValue);
+			
+			System.Web.Caching.Cache cache = new System.Web.Caching.Cache();
+			cache.Add("itemFields", itemFieldsCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
 
             return returnValue;
         }
@@ -752,7 +788,7 @@ namespace BoxSocial.Internals
 			}
 			else
 			{
-				throw new InvalidItemException();
+				throw new InvalidItemException(type.FullName);
 			}
 		}
 
@@ -906,7 +942,7 @@ namespace BoxSocial.Internals
 	                                }
 	                                else
 	                                {
-	                                    throw new InvalidItemException();
+	                                    throw new InvalidItemException(this.GetType().FullName);
 	                                }
 	                            }
 	                        }
@@ -917,7 +953,7 @@ namespace BoxSocial.Internals
 
             if (columnCount == 0)
             {
-                throw new InvalidItemException();
+                throw new InvalidItemException(this.GetType().FullName);
             }
 
             if (ItemLoad != null)
@@ -954,6 +990,14 @@ namespace BoxSocial.Internals
 
     public class InvalidItemException : Exception
     {
+		public InvalidItemException()
+		{
+		}
+		
+		public InvalidItemException(string type)
+			: base("Type: " + type)
+		{
+		}
     }
 
     public class NoPrimaryKeyException : Exception
@@ -966,6 +1010,15 @@ namespace BoxSocial.Internals
 
     public class FieldNotUniqueIndexException : Exception
     {
+		public FieldNotUniqueIndexException()
+			: base ()
+		{
+		}
+		
+		public FieldNotUniqueIndexException(string field)
+			: base("Field: " + field)
+		{
+		}
     }
 
     public class UnauthorisedToCreateItemException : Exception

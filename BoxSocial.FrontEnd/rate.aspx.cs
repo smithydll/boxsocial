@@ -49,14 +49,31 @@ namespace BoxSocial.FrontEnd
 
             int rating = Functions.RequestInt("rating", 0);
             long itemId = Functions.RequestLong("item", 0);
-            string itemType = (string)Request.QueryString["type"];
+            long itemTypeId = Functions.RequestLong("type", 0);
+			ItemKey itemKey = null;
+			
+			try
+			{
+				itemKey = new ItemKey(itemId, itemTypeId);
+			}
+			catch
+			{
+				Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                return;
+			}
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(itemType));
+				ItemType itemType = new ItemType(core, itemTypeId);
+                ApplicationEntry ae = new ApplicationEntry(core, itemType.ApplicationId);
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
             }
+			catch (InvalidItemTypeException)
+			{
+				Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                return;
+			}
             catch (InvalidApplicationException)
             {
                 Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
@@ -65,13 +82,12 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                Core.ItemRated(itemType, (long)itemId, rating, loggedInMember);
-
-                Rating.Vote(core, itemType, itemId, rating);
+                Rating.Vote(core, itemKey, rating);
+				Core.ItemRated(itemKey, rating, loggedInMember);
 
                 Ajax.SendStatus("voteAccepted");
             }
-            catch (InvalidItemException)
+            catch (InvalidItemException ex)
             {
                 Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
             }

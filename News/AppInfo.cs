@@ -112,17 +112,19 @@ namespace BoxSocial.Applications.News
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			core.RegisterCommentHandle("ARTICLE", articleCanPostComment, articleCanDeleteComment, articleAdjustCommentCount, articleCommentPosted);
+			ItemType itemType = new ItemType(core, typeof(Article).FullName);
+			
+			core.RegisterCommentHandle(itemType.TypeId, articleCanPostComment, articleCanDeleteComment, articleAdjustCommentCount, articleCommentPosted);
         }
 		
         private void articleCommentPosted(CommentPostedEventArgs e)
         {
         }
 
-        private bool articleCanPostComment(long itemId, User member)
+        private bool articleCanPostComment(ItemKey itemKey, User member)
         {
             SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
-            query.AddCondition("article_id", itemId);
+            query.AddCondition("article_id", itemKey.Id);
 
             DataTable articleTable = core.db.Query(query);
 
@@ -159,10 +161,10 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        private bool articleCanDeleteComment(long itemId, User member)
+        private bool articleCanDeleteComment(ItemKey itemKey, User member)
         {
             SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
-            query.AddCondition("article_id", itemId);
+            query.AddCondition("article_id", itemKey.Id);
 
             DataTable articleTable = core.db.Query(query);
 
@@ -192,10 +194,10 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        private void articleAdjustCommentCount(long itemId, int adjustment)
+        private void articleAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE articles SET article_comments = article_comments + {1} WHERE article_id = {0};",
-                itemId, adjustment));
+                itemKey.Id, adjustment));
         }
 
         public override ApplicationInstallationInfo Install()

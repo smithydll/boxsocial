@@ -40,7 +40,7 @@ namespace BoxSocial.IO
         private MySql.Data.MySqlClient.MySqlCommand sqlCommand;
         private bool inTransaction = false;
 
-        public string QueryList = "";
+        public StringBuilder QueryList = new StringBuilder();
 
         public Mysql(string username, string database, string host)
         {
@@ -71,7 +71,7 @@ namespace BoxSocial.IO
 
         public Mysql()
         {
-            connectionString = "";
+            connectionString = String.Empty;
             Connect();
         }
 
@@ -88,12 +88,13 @@ namespace BoxSocial.IO
 
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
-            QueryList += sqlquery + "\n";
+            QueryList.AppendLine(sqlquery);
 
             DataTable resultTable;
             try
             {
-                QueryList += sqlConnection.State.ToString() + "\n\n";
+                QueryList.AppendLine(sqlConnection.State.ToString());
+                QueryList.AppendLine();
                 DataSet resultSet = new DataSet();
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
@@ -113,6 +114,25 @@ namespace BoxSocial.IO
             }
         }
 
+        private System.Data.Common.DbDataReader SelectReaderQuery(string sqlquery)
+        {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            queryCount++;
+            sqlquery = sqlquery.Replace("\\", "\\\\");
+            QueryList.AppendLine(sqlquery);
+
+            MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
+            dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
+            System.Data.Common.DbDataReader resultReader = dataAdapter.SelectCommand.ExecuteReader();
+
+            timer.Stop();
+            queryTime += timer.ElapsedTicks;
+
+            return resultReader;
+        }
+
         private DataTable SelectQuery(SelectQuery query)
         {
             return SelectQuery(query.ToString());
@@ -125,7 +145,7 @@ namespace BoxSocial.IO
 
         public string Status()
         {
-            return sqlConnection.State.ToString() + ((inTransaction) ? " transaction" : "");
+            return sqlConnection.State.ToString() + ((inTransaction) ? " transaction" : String.Empty);
         }
 
         /// <summary>
@@ -140,7 +160,7 @@ namespace BoxSocial.IO
 
             int rowsAffected = 0;
             queryCount++;
-            QueryList += sqlquery + "\n";
+            QueryList.AppendLine(sqlquery);
 
             if (sqlCommand == null)
             {
@@ -151,7 +171,8 @@ namespace BoxSocial.IO
             try
             {
                 sqlCommand.CommandText = sqlquery;
-                QueryList += sqlConnection.State.ToString() + "\n\n";
+                QueryList.AppendLine(sqlConnection.State.ToString());
+                QueryList.AppendLine();
                 rowsAffected = sqlCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -203,7 +224,8 @@ namespace BoxSocial.IO
                 sqlCommand.Transaction = sqlTransaction;
                 inTransaction = true;
 
-                QueryList += "BEGIN TRANSACTION\n\n";
+                QueryList.AppendLine("BEGIN TRANSACTION");
+                QueryList.AppendLine();
             }
         }
 
@@ -211,7 +233,8 @@ namespace BoxSocial.IO
         {
             if (inTransaction)
             {
-                QueryList += "COMMIT TRANSACTION\n\n";
+                QueryList.AppendLine("COMMIT TRANSACTION");
+                QueryList.AppendLine();
                 inTransaction = false;
                 try
                 {
@@ -276,6 +299,11 @@ namespace BoxSocial.IO
         ~Mysql()
         {
             CloseConnection();
+        }
+
+        public override System.Data.Common.DbDataReader ReaderQuery(SelectQuery query)
+        {
+            return SelectReaderQuery(query.ToString());
         }
 
         public override DataTable Query(SelectQuery query)
@@ -552,8 +580,8 @@ namespace BoxSocial.IO
         public override void AddColumn(string tableName, DataFieldInfo field)
         {
             string type = TypeToMysql(field);
-            string defaultValue = "";
-            string notNull = "";
+            string defaultValue = String.Empty;
+            string notNull = String.Empty;
 
             if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
             {
@@ -602,8 +630,8 @@ namespace BoxSocial.IO
             foreach (DataFieldInfo field in fields)
             {
                 string type = TypeToMysql(field);
-                string defaultValue = "";
-                string notNull = "";
+                string defaultValue = String.Empty;
+                string notNull = String.Empty;
 
                 if (type.ToLower() == "text" || type.ToLower() == "mediumtext" || type.ToLower() == "longtext")
                 {
@@ -655,8 +683,8 @@ namespace BoxSocial.IO
         public override void ChangeColumn(string tableName, DataFieldInfo field)
         {
             string type = TypeToMysql(field);
-            string defaultValue = "";
-            string notNull = "";
+            string defaultValue = String.Empty;
+            string notNull = String.Empty;
 
             if (field.Type == typeof(string))
             {
@@ -738,9 +766,9 @@ namespace BoxSocial.IO
                 }
 
                 string type = TypeToMysql(field);
-                string notNull = "";
-                string key = "";
-                string defaultValue = "";
+                string notNull = String.Empty;
+                string key = String.Empty;
+                string defaultValue = String.Empty;
 
                 if (type == "text" || type == "mediumtext" || type == "longtext")
                 {
@@ -900,7 +928,7 @@ namespace BoxSocial.IO
                 {
                     // create the key
                     bool first = true;
-                    string fieldList = "";
+                    string fieldList = String.Empty;
                     
                     foreach (DataFieldInfo keyField in keyFields)
                     {
@@ -913,7 +941,7 @@ namespace BoxSocial.IO
                         fieldList += "`" + keyField.Name + "`";
                     }
 
-					string sql = "";
+                    string sql = String.Empty;
 
 					switch (key.KeyType)
 					{

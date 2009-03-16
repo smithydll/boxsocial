@@ -48,12 +48,12 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// A list of database fields associated with a user gallery.
         /// </summary>
-        public const string GALLERY_INFO_FIELDS = "ug.gallery_id, ug.gallery_parent_id, ug.gallery_access, ug.gallery_title, ug.gallery_parent_path, ug.gallery_path, ug.gallery_items, ug.gallery_abstract, ug.gallery_visits, ug.gallery_description, ug.gallery_bytes";
+        //public const string GALLERY_INFO_FIELDS = "ug.gallery_id, ug.gallery_parent_id, ug.gallery_access, ug.gallery_title, ug.gallery_parent_path, ug.gallery_path, ug.gallery_items, ug.gallery_abstract, ug.gallery_visits, ug.gallery_description, ug.gallery_bytes";
 
         /// <summary>
         /// A list of database fields associated with a user gallery icon.
         /// </summary>
-        public const string GALLERY_ICON_FIELDS = "gi.gallery_item_uri";
+        //public const string GALLERY_ICON_FIELDS = "gi.gallery_item_uri";
 
         /// <summary>
         /// Owner of the gallery

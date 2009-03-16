@@ -41,22 +41,14 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName)
         {
-			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
             this.length = 0;
-            this.parentFieldName = null;
-            this.parentType = null;
-            this.index = null;
         }
 
         public DataFieldAttribute(string fieldName, long fieldLength)
         {
-			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
             this.length = fieldLength;
-            this.parentFieldName = null;
-            this.parentType = null;
-            this.index = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key)
@@ -75,12 +67,9 @@ namespace BoxSocial.IO
 				    this.index = new Index("i_" + fieldName);
 					break;
 				default:
-				    this.index = null;
 					break;
             }
             this.length = 0;
-            this.parentFieldName = null;
-            this.parentType = null;
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, string keyName)
@@ -88,8 +77,6 @@ namespace BoxSocial.IO
 			this.key = key;
             this.fieldName = fieldName;
             this.length = 0;
-            this.parentFieldName = null;
-            this.parentType = null;
 			switch (key)
 			{
 				case DataFieldKeys.Primary:
@@ -102,7 +89,6 @@ namespace BoxSocial.IO
 		            this.index = new Index(keyName);
 					break;
 				default:
-		            this.index = null;
 					break;
 			}
         }
@@ -112,8 +98,6 @@ namespace BoxSocial.IO
         {
 			this.key = key;
             this.length = fieldLength;
-            this.parentFieldName = null;
-            this.parentType = null;
             switch (key)
 			{
 				case DataFieldKeys.Primary:
@@ -126,7 +110,6 @@ namespace BoxSocial.IO
 				    this.index = new Index("i_" + fieldName);
 					break;
 				default:
-    				this.index = null;
 					break;
 			}
         }
@@ -136,8 +119,6 @@ namespace BoxSocial.IO
 			this.key = key;
             this.fieldName = fieldName;
             this.length = fieldLength;
-            this.parentFieldName = null;
-            this.parentType = null;
 			switch (key)
 			{
 				case DataFieldKeys.Primary:
@@ -150,7 +131,6 @@ namespace BoxSocial.IO
 				    this.index = new Index(keyName);
 					break;
 				default:
-    				this.index = null;
 					break;
 			}
         }
@@ -167,12 +147,10 @@ namespace BoxSocial.IO
 
         public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName)
         {
-			this.key = DataFieldKeys.None;
             this.fieldName = fieldName;
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
-            this.index = null;
         }
 		
 		public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key)
@@ -199,7 +177,6 @@ namespace BoxSocial.IO
 				    this.index = new Index("i_" + fieldName);
 					break;
 				default:
-    				this.index = null;
 					break;
 			}
         }
@@ -228,7 +205,6 @@ namespace BoxSocial.IO
 				    this.index = new Index(keyName);
 					break;
 				default:
-    				this.index = null;
 					break;
 			}
         }
@@ -257,7 +233,6 @@ namespace BoxSocial.IO
 				    this.index = new Index(keyName);
 					break;
 				default:
-    				this.index = null;
 					break;
 			}
         }

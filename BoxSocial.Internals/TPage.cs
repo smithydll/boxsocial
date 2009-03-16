@@ -188,7 +188,6 @@ namespace BoxSocial.Internals
 
         public TPage()
         {
-            pageEnded = false;
 
             timer = new Stopwatch();
             timer.Start();

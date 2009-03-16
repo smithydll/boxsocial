@@ -25,7 +25,7 @@ using System.Text;
 namespace BoxSocial.Internals
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class PrimitiveAttribute : Attribute
+    public sealed class PrimitiveAttribute : Attribute
     {
         private string type;
         private object defaultLoadOptions;

@@ -49,7 +49,7 @@ namespace BoxSocial.Applications.Calendar
     [DataTable("tasks")]
     public class Task : NumberedItem, ICommentableItem, IPermissibleItem
     {
-        public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
+        //public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
 
         #region Data Fields
         [DataField("task_id", DataFieldKeys.Primary)]
@@ -64,10 +64,12 @@ namespace BoxSocial.Applications.Calendar
         private long comments;
         [DataField("task_access")]
         private ushort permissions;
-        [DataField("task_item_id")]
+        /*[DataField("task_item_id")]
         private long ownerId;
         [DataField("task_item_type", 31)]
-        private string ownerType;
+        private string ownerType;*/
+        [DataField("task_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("user_id")]
         private int userId; // creator
         [DataField("task_due_date_ut")]
@@ -226,23 +228,6 @@ namespace BoxSocial.Applications.Calendar
 
         void Task_ItemLoad()
         {
-            if (owner == null || owner.Id != ownerId)
-            {
-                if (ownerType == "USER")
-                {
-                    core.LoadUserProfile(ownerId);
-                    owner = core.UserProfiles[ownerId];
-                }
-                else if (ownerType == "GROUP")
-                {
-                    owner = new UserGroup(core, ownerId);
-                }
-                else if (ownerType == "NETWORK")
-                {
-                    owner = new Network(core, ownerId);
-                }
-            }
-
             if (percentageComplete == 100 || (TaskStatus)status == TaskStatus.Completed)
             {
                 status = (byte)TaskStatus.Completed;
@@ -260,7 +245,7 @@ namespace BoxSocial.Applications.Calendar
             InsertQuery query = new InsertQuery("tasks");
             query.AddField("user_id", creator.UserId);
             query.AddField("task_item_id", owner.Id);
-            query.AddField("task_item_type", owner.Type);
+            query.AddField("task_item_type_id", owner.TypeId);
             query.AddField("task_topic", topic);
             query.AddField("task_description", description);
             query.AddField("task_due_date_ut", dueTimestamp);
@@ -477,10 +462,10 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                if (owner == null || ownerId != owner.Id)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.LoadUserProfile(ownerId);
-                    owner = core.UserProfiles[ownerId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else

@@ -58,7 +58,6 @@ namespace BoxSocial.IO
         {
             this.tableName = tableName;
             this.fieldName = fieldName;
-            this.alias = null;
         }
 
         public DataField(string tableName, string fieldName, string alias)

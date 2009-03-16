@@ -25,8 +25,8 @@ namespace BoxSocial.IO
         {
             string query = string.Format("INSERT INTO {0}",
                 table);
-            string fields = "";
-            string values = "";
+            string fields = String.Empty;
+            string values = String.Empty;
 
             if (fieldValues.Count > 0)
             {

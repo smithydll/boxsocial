@@ -57,20 +57,19 @@ namespace BoxSocial.Applications.Calendar
 
             this.eventId = ~user.Id;
             this.subject = user.TitleNameOwnership + " birthday";
-            this.description = "";
+            this.description = string.Empty;
             this.views = 0;
             this.attendees = 0;
             this.permissions = 0;
             this.comments = 0;
-            this.ownerId = owner.Id;
-            this.ownerType = owner.Type;
+            this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.userId = user.Id;
             this.startTimeRaw =  tz.GetUnixTimeStamp(new DateTime(year, user.DateOfBirth.Month, user.DateOfBirth.Day, 0, 0, 0));
             this.endTimeRaw = tz.GetUnixTimeStamp(new DateTime(year, user.DateOfBirth.Month, user.DateOfBirth.Day, 23, 59, 59));
             this.allDay = true;
             this.invitees = 0;
             this.category = 0;
-            this.location = "";
+            this.location = string.Empty;
         }
 
         public override string Uri

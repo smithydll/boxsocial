@@ -25,7 +25,7 @@ using System.Text;
 namespace BoxSocial.Internals
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class AccountSubModuleAttribute : Attribute
+    public sealed class AccountSubModuleAttribute : Attribute
     {
         private string moduleName;
         private string subModuleName;

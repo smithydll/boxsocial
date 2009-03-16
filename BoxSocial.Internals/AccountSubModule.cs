@@ -144,9 +144,10 @@ namespace BoxSocial.Internals
                 {
                     if (attr != null)
                     {
-                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        AccountSubModuleAttribute asmattr = (AccountSubModuleAttribute)attr;
+                        if (asmattr.Name != null)
                         {
-                            return ((AccountSubModuleAttribute)attr).Name;
+                            return asmattr.Name;
                         }
                     }
                 }
@@ -166,9 +167,10 @@ namespace BoxSocial.Internals
                 {
                     if (attr != null)
                     {
-                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        AccountSubModuleAttribute asmattr = (AccountSubModuleAttribute)attr;
+                        if (asmattr.Name != null)
                         {
-                            return ((AccountSubModuleAttribute)attr).ModuleName;
+                            return asmattr.ModuleName;
                         }
                     }
                 }
@@ -188,9 +190,10 @@ namespace BoxSocial.Internals
                 {
                     if (attr != null)
                     {
-                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        AccountSubModuleAttribute asmattr = (AccountSubModuleAttribute)attr;
+                        if (asmattr.Name != null)
                         {
-                            return ((AccountSubModuleAttribute)attr).IsDefault;
+                            return asmattr.IsDefault;
                         }
                     }
                 }
@@ -210,9 +213,10 @@ namespace BoxSocial.Internals
                 {
                     if (attr != null)
                     {
-                        if (((AccountSubModuleAttribute)attr).Name != null)
+                        AccountSubModuleAttribute asmattr = (AccountSubModuleAttribute)attr;
+                        if (asmattr.Name != null)
                         {
-                            return ((AccountSubModuleAttribute)attr).Primitives;
+                            return asmattr.Primitives;
                         }
                     }
                 }

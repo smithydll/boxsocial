@@ -135,14 +135,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        [DataField("gallery_item_item_id")]
-        protected long itemItemId;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataField("gallery_item_item_type", 15)]
-        protected string itemItemType;
+        [DataField("gallery_item_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
 
         /// <summary>
         /// 
@@ -342,10 +336,10 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                if (owner == null || itemItemId != owner.Id || itemItemType != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(itemItemType, itemItemId);
-                    owner = core.UserProfiles[itemItemType, itemItemId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else
@@ -372,7 +366,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_item_parent_path", Gallery.GetParentPath(path));
             query.AddCondition("gallery_item_uri", Gallery.GetNameFromPath(path));
             query.AddCondition("gallery_item_item_id", owner.Id);
-            query.AddCondition("gallery_item_item_type", owner.Type);
+            query.AddCondition("gallery_item_item_type_id", owner.TypeId);
 
             DataTable galleryItemTable = db.Query(query);
 
@@ -474,7 +468,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_item_parent_path", Gallery.GetParentPath(path));
             query.AddCondition("gallery_item_uri", Gallery.GetNameFromPath(path));
             query.AddCondition("gallery_item_item_id", owner.Id);
-            query.AddCondition("gallery_item_item_type", owner.Type);
+            query.AddCondition("gallery_item_item_type_id", owner.TypeId);
 
             DataTable galleryItemTable = db.Query(query);
 
@@ -511,7 +505,7 @@ namespace BoxSocial.Applications.Gallery
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
             query.AddCondition("gallery_item_id", itemId);
             query.AddCondition("gallery_item_item_id", owner.Id);
-            query.AddCondition("gallery_item_item_type", owner.Type);
+            query.AddCondition("gallery_item_item_type_id", owner.TypeId);
 
             DataTable galleryItemTable = db.Query(query);
 
@@ -749,7 +743,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_license", license);
             iQuery.AddField("gallery_id", parent.GalleryId);
             iQuery.AddField("gallery_item_item_id", owner.Id);
-            iQuery.AddField("gallery_item_item_type", owner.Type);
+            iQuery.AddField("gallery_item_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_item_classification", (byte)classification);
 
             // we want to use transactions
@@ -790,8 +784,8 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="classification"></param>
         public void Update(string title, string description, ushort permissions, byte license, Classifications classification)
         {
-            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5}, gallery_item_classification = {8} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type = '{7}';",
-                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.Type, (byte)classification));
+            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5}, gallery_item_classification = {8} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type_id = {7};",
+                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.TypeId, (byte)classification));
 
             if (rowsChanged == 0)
             {

@@ -10,7 +10,7 @@ namespace BoxSocial.IO
         Descending,
     }
 
-    public struct TableSort
+    public class TableSort
     {
         public SortOrder Order;
         public string Field;
@@ -32,7 +32,7 @@ namespace BoxSocial.IO
                     return string.Format("{0} DESC",
                         Field);
                 default:
-                    return "";
+                    return String.Empty;
             }
         }
     }
@@ -193,7 +193,7 @@ namespace BoxSocial.IO
                     return string.Format("RIGHT JOIN `{0}` ON {1}",
                         Table, conditions.ToString());
                 default:
-                    return "";
+                    return String.Empty;
             }
         }
     }
@@ -243,7 +243,6 @@ namespace BoxSocial.IO
             conditions = new QueryCondition();
             joins = new List<TableJoin>();
             sorts = new List<TableSort>();
-            isDistinct = false;
 
             tables.Add(baseTableName);
         }

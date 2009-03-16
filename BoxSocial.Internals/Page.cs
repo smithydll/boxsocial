@@ -91,10 +91,6 @@ namespace BoxSocial.Internals
         private string hierarchy;
 		[DataField("page_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
-        /*[DataField("page_item_id")]
-        private long ownerId;
-        [DataField("page_item_type", NAMESPACE)]
-        private string ownerType;*/
 
         private User creator;
         private Primitive owner;
@@ -1210,7 +1206,7 @@ namespace BoxSocial.Internals
             {
                 foreach (ParentTreeNode ptn in thePage.Parents.Nodes)
                 {
-                    breadCrumbParts.Add(new string[] { ptn.ParentSlug.ToString(), ptn.ParentTitle });
+                    breadCrumbParts.Add(new string[] { ptn.ParentSlug, ptn.ParentTitle });
                 }
             }
 

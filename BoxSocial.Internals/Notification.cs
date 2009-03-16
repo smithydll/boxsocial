@@ -114,8 +114,6 @@ namespace BoxSocial.Internals
             this.body = body;
             this.primitiveId = owner.Id;
             this.timeRaw = timeRaw;
-            this.read = false;
-            this.seen = false;
         }
 
         public DateTime GetTime(UnixTime tz)

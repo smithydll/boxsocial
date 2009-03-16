@@ -40,14 +40,11 @@ namespace BoxSocial.IO
         public DataTableAttribute(string tableName)
         {
             this.tableName = tableName;
-            this.tableNamespace = null;
-            this.tableType = DataTableTypes.NonVolatile;
         }
 
         public DataTableAttribute(string tableName, DataTableTypes tableType)
         {
             this.tableName = tableName;
-            this.tableNamespace = null;
             this.tableType = tableType;
         }
 
@@ -55,7 +52,6 @@ namespace BoxSocial.IO
         {
             this.tableName = tableName;
             this.tableNamespace = tableNamespace;
-            this.tableType = DataTableTypes.NonVolatile;
         }
 
         public string TableName

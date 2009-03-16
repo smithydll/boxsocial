@@ -33,10 +33,8 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_settings")]
     public class ForumSettings : Item
     {
-        [DataField("forum_item_id", DataFieldKeys.Unique, "fs_key")]
-        private long ownerId;
-        [DataField("forum_item_type", DataFieldKeys.Unique, "fs_key", 63)]
-        private string ownerType;
+        [DataField("forum_item", DataFieldKeys.Unique)]
+        private ItemKey ownerKey;
         [DataField("forum_topics")]
         private long topics;
         [DataField("forum_posts")]
@@ -134,7 +132,7 @@ namespace BoxSocial.Applications.Forum
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumSettings)));
             iQuery.AddField("forum_item_id", thisGroup.Id);
-            iQuery.AddField("forum_item_type", thisGroup.Type);
+            iQuery.AddField("forum_item_type_id", thisGroup.TypeId);
             iQuery.AddField("forum_topics", 0);
             iQuery.AddField("forum_posts", 0);
             iQuery.AddField("forum_topics_per_page", 10);
@@ -160,8 +158,8 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddField("forum_posts_per_page", postsPerPage);
             uQuery.AddField("forum_allow_topics_root", allowTopicsAtRoot);
 
-            uQuery.AddCondition("forum_item_id", ownerId);
-            uQuery.AddCondition("forum_item_type", ownerType);
+            uQuery.AddCondition("forum_item_id", ownerKey.Id);
+            uQuery.AddCondition("forum_item_type_id", ownerKey.TypeId);
 
             return core.db.Query(uQuery);
         }

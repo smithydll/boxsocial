@@ -39,7 +39,6 @@ namespace BoxSocial.IO
 
         public QueryCondition(string field, ConditionEquality equality, object value) : this()
         {
-            this.relation = ConditionRelations.First;
             this.field = field;
             this.equality = equality;
             this.value = value;
@@ -128,7 +127,7 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            string query = "";
+            string query = String.Empty;
 
             if (!string.IsNullOrEmpty(field))
             {
@@ -158,13 +157,13 @@ namespace BoxSocial.IO
             switch (relation)
             {
                 case ConditionRelations.First:
-                    return "";
+                    return String.Empty;
                 case ConditionRelations.And:
                     return "AND";
                 case ConditionRelations.Or:
                     return "OR";
             }
-            return "";
+            return String.Empty;
         }
 
         public static string EqualityToString(ConditionEquality equality)
@@ -190,7 +189,7 @@ namespace BoxSocial.IO
                 case ConditionEquality.Like:
                     return "LIKE";
             }
-            return "";
+            return String.Empty;
         }
 
         public static string EscapeLikeness(string input)

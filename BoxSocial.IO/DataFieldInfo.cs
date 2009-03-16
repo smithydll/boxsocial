@@ -130,9 +130,6 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
-            this.parentType = null;
-            this.parentFieldName = null;
-            this.index = null;
         }
 
         public DataFieldInfo(string name, Type type, long length, DataFieldKeys key)
@@ -152,11 +149,8 @@ namespace BoxSocial.IO
 					this.index = new Index("i_" + fieldName);
 					break;
 			    default:
-					this.index = null;
 					break;
             }
-            this.parentType = null;
-            this.parentFieldName = null;
 			this.key = key;
         }
 
@@ -165,8 +159,6 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
-            this.parentType = null;
-            this.parentFieldName = null;
             this.index = key;
 			if (key != null)
 			{

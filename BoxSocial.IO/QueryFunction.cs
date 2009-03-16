@@ -45,7 +45,6 @@ namespace BoxSocial.IO
         {
             this.field = field;
             this.function = function;
-            this.alias = null;
         }
 
         public QueryFunction(string field, QueryFunctions function, string alias)
@@ -86,7 +85,8 @@ namespace BoxSocial.IO
                 case QueryFunctions.ToUpperCase:
                     return "UCASE";
             }
-            return "";
+
+            return String.Empty;
         }
     }
 }

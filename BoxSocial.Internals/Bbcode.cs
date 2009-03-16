@@ -44,7 +44,7 @@ namespace BoxSocial.Internals
 
     public class Bbcode
     {
-        public static Core core = null;
+        public static Core core;
 
         private delegate void BbcodeHookHandler(BbcodeEventArgs e);
 
@@ -90,7 +90,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeUser);
         }
 
-        private class BbcodeEventArgs
+        private sealed class BbcodeEventArgs
         {
             private BbcodeTag tag;
             private BbcodeAttributes attributes;
@@ -237,11 +237,10 @@ namespace BoxSocial.Internals
                 this.handled = handled;
                 this.abortParse = abortParse;
                 this.owner = postOwner;
-                this.noContents = false;
             }
         }
 
-        private class BbcodeTag
+        private sealed class BbcodeTag
         {
             public string Tag;
             public string Attributes;
@@ -278,7 +277,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        private class BbcodeTaglet : IComparable
+        private sealed class BbcodeTaglet : IComparable
         {
             public int StartIndex;
             public int Length;
@@ -290,7 +289,6 @@ namespace BoxSocial.Internals
                 StartIndex = startIndex;
                 Length = length;
                 RenderText = renderText;
-                Li = false;
             }
 
             public BbcodeTaglet(int startIndex, int length, string renderText, bool li)

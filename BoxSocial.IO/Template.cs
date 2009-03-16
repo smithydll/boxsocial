@@ -40,7 +40,7 @@ namespace BoxSocial.IO
 
         internal VariableCollection()
         {
-            loopName = "";
+            loopName = String.Empty;
         }
 
         public VariableCollection(string name)
@@ -158,7 +158,7 @@ namespace BoxSocial.IO
                         return parentCollection[key];
                     }
                 }
-                return "";
+                return String.Empty;
             }
         }
 
@@ -373,7 +373,7 @@ namespace BoxSocial.IO
             template = LoadTemplateFile(templateName);
 
             StringBuilder output = new StringBuilder();
-            string[] lines = template.Replace("\r", "").Split('\n');
+            string[] lines = template.Replace("\r", String.Empty).Split('\n');
             int lineAdjust = 0;
 
             ProcessLines(lines, output, variables);
@@ -401,7 +401,7 @@ namespace BoxSocial.IO
             int rootFalse = 0;
             string line;
             bool inLoop = false;
-            string loopName = "";
+            string loopName = String.Empty;
             List<string> loopCache = new List<string>();
 
             for (int i = 0; i < lines.Length; i++)
@@ -465,7 +465,7 @@ namespace BoxSocial.IO
                         {
                             if (variables[rm.Groups[1].Value] != null)
                             {
-                                if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != "")
+                                if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
                                 {
                                     conditionTrue.Push(true);
                                 }
@@ -499,7 +499,7 @@ namespace BoxSocial.IO
                                     }
                                     else
                                     {
-                                        if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != "")
+                                        if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != String.Empty)
                                         {
                                             conditionTrue.Push(true);
                                         }
@@ -651,7 +651,7 @@ namespace BoxSocial.IO
                 {
                     StringBuilder includeOutput = new StringBuilder();
                     //string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
-                    string[] includeLines = LoadTemplateFile(ma.Groups[1].Value).Replace("\r", "").Split('\n');
+                    string[] includeLines = LoadTemplateFile(ma.Groups[1].Value).Replace("\r", String.Empty).Split('\n');
                     ProcessLines(includeLines, includeOutput, variables);
                     line = line.Replace(string.Format("<!-- INCLUDE {0} -->", ma.Groups[1].Value), includeOutput.ToString());
                 }
@@ -739,7 +739,7 @@ namespace BoxSocial.IO
             }
             catch
             {
-                temp = "";
+                temp = String.Empty;
             }
             return temp;
         }

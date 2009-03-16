@@ -35,7 +35,6 @@ namespace BoxSocial.IO
 
         public Database()
         {
-            queryCount = 0;
             queryTime = 0;
         }
 
@@ -61,6 +60,7 @@ namespace BoxSocial.IO
             throw new System.NotImplementedException();
         }
 
+        public abstract System.Data.Common.DbDataReader ReaderQuery(SelectQuery query);
         public abstract DataTable Query(SelectQuery query);
         public abstract long Query(InsertQuery query);
         public abstract long Query(UpdateQuery query);

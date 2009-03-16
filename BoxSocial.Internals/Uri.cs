@@ -36,9 +36,9 @@ namespace BoxSocial.Internals
     public class Linker
     {
         private static Core core;
-        public static bool SecureUrls = false;
-        public static bool SidUrls = false;
-        private static string sid = "";
+        public static bool SecureUrls;
+        public static bool SidUrls;
+        private static string sid = String.Empty;
 
         public static Core Core
         {

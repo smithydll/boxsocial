@@ -96,22 +96,21 @@ namespace BoxSocial.Groups
         {
             loadItemInfo(typeof(GroupMember), memberRow);
 
-            try
+            /*try
+            {*/
+            if (memberRow != null && memberRow.Table.Columns.Contains("user_id_go"))
             {
-                if (memberRow["user_id_go"] is DBNull)
-                {
-                    isOperator = false;
-                }
-                else
+                if (!(memberRow["user_id_go"] is DBNull))
                 {
                     isOperator = true;
                 }
             }
+            /*}
             catch
             {
                 // TODO: is there a better way?
-                isOperator = false;
-            }
+                //isOperator = false;
+            }*/
         }
 
         public GroupMember(Core core, DataRow memberRow)
@@ -121,22 +120,21 @@ namespace BoxSocial.Groups
             core.LoadUserProfile(userId);
             loadUserFromUser(core.UserProfiles[userId]);
 
-            try
+            /*try
+            {*/
+            if (memberRow != null && memberRow.Table.Columns.Contains("user_id_go"))
             {
-                if (memberRow["user_id_go"] is DBNull)
-                {
-                    isOperator = false;
-                }
-                else
+                if (!(memberRow["user_id_go"] is DBNull))
                 {
                     isOperator = true;
                 }
             }
+            /*}
             catch
             {
                 // TODO: is there a better way?
-                isOperator = false;
-            }
+                //isOperator = false;
+            }*/
         }
 
         private void loadMemberInfo(DataRow memberRow)

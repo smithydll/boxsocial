@@ -107,7 +107,6 @@ namespace BoxSocial.Forms
             this.key = key;
             this.text = text;
             selectable = true;
-            selected = false;
         }
 
         /// <summary>
@@ -122,7 +121,6 @@ namespace BoxSocial.Forms
             this.text = text;
             this.icon = icon;
             selectable = true;
-            selected = false;
         }
 
         /// <summary>
@@ -136,7 +134,6 @@ namespace BoxSocial.Forms
             this.key = key;
             this.text = text;
             this.selectable = selectable;
-            selected = false;
         }
 
         /// <summary>
@@ -152,7 +149,6 @@ namespace BoxSocial.Forms
             this.text = text;
             this.icon = icon;
             this.selectable = selectable;
-            selected = false;
         }
 
         /// <summary>

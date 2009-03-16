@@ -129,7 +129,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage.ToString();
+            pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage;
             template.Parse("S_HOMEPAGE", pagesSelectBox);
             Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
         }

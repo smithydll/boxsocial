@@ -42,10 +42,12 @@ namespace BoxSocial.Applications.Calendar
     {
         [DataField("event_id", typeof(Event))]
         private long eventId;
-        [DataField("item_id")]
+        /*[DataField("item_id")]
         private long itemId;
         [DataField("item_type", NAMESPACE)]
-        private string itemType;
+        private string itemType;*/
+        [DataField("item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("inviter_id")]
         private long inviterId; // User
         [DataField("invite_date_ut")]

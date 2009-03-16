@@ -48,7 +48,7 @@ namespace BoxSocial.Applications.Calendar
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
 
             DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE (ev.event_access & {5:0} OR ev.user_id = {6}) AND ev.event_item_id = {1} AND ev.event_item_type = '{2}' AND ((ev.event_time_start_ut >= {3} AND ev.event_time_start_ut <= {4}) OR (ev.event_time_end_ut >= {3} AND ev.event_time_end_ut <= {4}) OR (ev.event_time_start_ut < {3} AND ev.event_time_end_ut > {4})) ORDER BY ev.event_time_start_ut ASC;",
-                Event.EVENT_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+                Event.GetFieldsPrefixed(typeof(Event)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
 
             foreach (DataRow dr in eventsTable.Rows)
             {
@@ -114,7 +114,7 @@ namespace BoxSocial.Applications.Calendar
             if (overdueTasks)
             {
                 DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND ((tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) OR ({7} > tk.task_due_date_ut AND tk.task_percent_complete < 100)) ORDER BY tk.task_due_date_ut ASC;",
-                    Task.TASK_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid, UnixTime.UnixTimeStamp()));
+                    Task.GetFieldsPrefixed(typeof(Task)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid, UnixTime.UnixTimeStamp()));
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {
@@ -124,7 +124,7 @@ namespace BoxSocial.Applications.Calendar
             else
             {
                 DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND (tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) ORDER BY tk.task_due_date_ut ASC;",
-                    Task.TASK_INFO_FIELDS, owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+                    Task.GetFieldsPrefixed(typeof(Task)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {

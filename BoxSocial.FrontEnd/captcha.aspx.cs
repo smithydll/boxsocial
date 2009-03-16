@@ -137,8 +137,8 @@ namespace BoxSocial.FrontEnd
                     mean[2] / colours.Length);
 
                 Color geomeanColour = Color.FromArgb((int)Math.Pow(geomean[0] / colours.Length, 0.5),
-                    (int)Math.Pow(geomean[1] / colours.Length, 0.5),
-                    (int)Math.Pow(geomean[2] / colours.Length, 0.5));
+                    (int)Math.Pow((double)geomean[1] / colours.Length, 0.5),
+                    (int)Math.Pow((double)geomean[2] / colours.Length, 0.5));
 
                 Color inverseMean = Color.FromArgb(255 - meanColour.R,
                     255 - meanColour.G,

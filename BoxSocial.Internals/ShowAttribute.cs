@@ -25,7 +25,7 @@ using System.Text;
 namespace BoxSocial.Internals
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class ShowAttribute : Attribute
+    public sealed class ShowAttribute : Attribute
     {
         private string slug;
         private string stub;

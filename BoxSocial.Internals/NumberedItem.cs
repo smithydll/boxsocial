@@ -75,7 +75,7 @@ namespace BoxSocial.Internals
             {
                 query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }); //GetSelectQueryStub(typeToGet);
             }
-            else if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", new Type[] { }) != null)
+            else if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
             {
                 query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
             }
@@ -113,7 +113,8 @@ namespace BoxSocial.Internals
         {
             if (this is IPermissibleItem)
             {
-                if (!((IPermissibleItem)this).Access.CanDelete)
+                IPermissibleItem iThis = (IPermissibleItem)this;
+                if (!iThis.Access.CanDelete)
                 {
                     throw new UnauthorisedToDeleteItemException();
                 }

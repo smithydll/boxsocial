@@ -283,7 +283,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlog(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender.GetType() == typeof(PPage))
             {
                 Blog.Show(core, (PPage)sender);
             }
@@ -296,7 +296,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogCategory(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender.GetType() == typeof(PPage))
             {
                 Blog.Show(core, (PPage)sender, core.PagePathParts[1].Value);
             }
@@ -309,7 +309,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogYear(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender.GetType() == typeof(PPage))
             {
                 Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value));
             }
@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogMonth(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender.GetType() == typeof(PPage))
             {
                 Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
@@ -335,7 +335,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogPost(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender.GetType() == typeof(PPage))
             {
                 Blog.Show(core, (PPage)sender, long.Parse(core.PagePathParts[3].Value), int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }

@@ -106,7 +106,7 @@ namespace BoxSocial.Internals
 
             query.AddCondition(keyField, primaryKey);
 
-            DataTable itemTable = Query(query);
+            /*DataTable itemTable = Query(query);
 
             if (itemTable.Rows.Count == 1)
             {
@@ -116,7 +116,9 @@ namespace BoxSocial.Internals
             {
                 // Error
                 throw new InvalidItemException(this.GetType().FullName);
-            }
+            }*/
+
+            loadItemInfo(type, core.db.ReaderQuery(query));
         }
 
         protected void LoadItem(string uniqueIndex, object value)
@@ -340,7 +342,7 @@ namespace BoxSocial.Internals
             Primitive owner;
 
             Type type = core.GetPrimitiveType(ownerType);
-            if (type.IsSubclassOf(typeof(Primitive)))
+            if (type is Primitive)
             {
                 owner = System.Activator.CreateInstance(type, new object[] { core, ownerId }) as Primitive;
 
@@ -414,7 +416,7 @@ namespace BoxSocial.Internals
         {
             SelectQuery query;
 
-            if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", new Type[] { }) != null)
+            if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
             {
                 query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
             }
@@ -445,7 +447,7 @@ namespace BoxSocial.Internals
 			
 			object o = cache.Get("itemFields");
 			
-			if (o != null && o.GetType() == typeof(Dictionary<Type, List<DataFieldInfo>>))
+			if (o != null && o is Dictionary<Type, List<DataFieldInfo>>)
 			{
 				itemFieldsCache = (Dictionary<Type, List<DataFieldInfo>>)o;
 			}
@@ -475,22 +477,23 @@ namespace BoxSocial.Internals
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
-                    if (attr.GetType() == typeof(DataFieldAttribute))
+                    if (attr is DataFieldAttribute)
                     {
-                        if (((DataFieldAttribute)attr).FieldName != null)
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                        if (dfattr.FieldName != null)
                         {
 							if (fi.FieldType == typeof(ItemKey))
 							{
 								DataFieldInfo dfiId;
 								DataFieldInfo dfiTypeId;
-								
-								dfiId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
-								dfiTypeId = new DataFieldInfo(((DataFieldAttribute)attr).FieldName + "_type_id", typeof(long), ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
-								
-								dfiId.ParentType = ((DataFieldAttribute)attr).ParentType;
-	                            dfiId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
-								dfiTypeId.ParentType = ((DataFieldAttribute)attr).ParentType;
-	                            dfiTypeId.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+
+                                dfiId = new DataFieldInfo(dfattr.FieldName + "_id", typeof(long), dfattr.MaxLength, dfattr.Index);
+                                dfiTypeId = new DataFieldInfo(dfattr.FieldName + "_type_id", typeof(long), dfattr.MaxLength, dfattr.Index);
+
+                                dfiId.ParentType = dfattr.ParentType;
+                                dfiId.ParentFieldName = dfattr.ParentFieldName;
+                                dfiTypeId.ParentType = dfattr.ParentType;
+                                dfiTypeId.ParentFieldName = dfattr.ParentFieldName;
 								
 								returnValue.Add(dfiId);
 								returnValue.Add(dfiTypeId);
@@ -498,9 +501,9 @@ namespace BoxSocial.Internals
 							else
 							{
 	                            DataFieldInfo dfi;
-                                dfi = new DataFieldInfo(((DataFieldAttribute)attr).FieldName, fi.FieldType, ((DataFieldAttribute)attr).MaxLength, ((DataFieldAttribute)attr).Index);
-	                            dfi.ParentType = ((DataFieldAttribute)attr).ParentType;
-	                            dfi.ParentFieldName = ((DataFieldAttribute)attr).ParentFieldName;
+                                dfi = new DataFieldInfo(dfattr.FieldName, fi.FieldType, dfattr.MaxLength, dfattr.Index);
+                                dfi.ParentType = dfattr.ParentType;
+                                dfi.ParentFieldName = dfattr.ParentFieldName;
 
 	                            returnValue.Add(dfi);
 							}
@@ -528,11 +531,12 @@ namespace BoxSocial.Internals
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
-                    if (attr.GetType() == typeof(DataFieldAttribute))
+                    if (attr is DataFieldAttribute)
                     {
-                        if (((DataFieldAttribute)attr).FieldName != null)
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                        if (dfattr.FieldName != null)
                         {
-                            if (dfi.Name == ((DataFieldAttribute)attr).FieldName)
+                            if (dfi.Name == dfattr.FieldName)
                             {
                                 return fi.GetValue(item);
                             }
@@ -580,11 +584,12 @@ namespace BoxSocial.Internals
             bool attributeFound = false;
             foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
             {
-                if (attr != null)
+                DataTableAttribute dtattr = (DataTableAttribute)attr;
+                if (dtattr != null)
                 {
-                    if (((DataTableAttribute)attr).TableName != null)
+                    if (dtattr.TableName != null)
                     {
-                        return ((DataTableAttribute)attr).TableName;
+                        return dtattr.TableName;
                     }
                     else
                     {
@@ -609,11 +614,12 @@ namespace BoxSocial.Internals
         {
             foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
             {
+                DataTableAttribute dtattr = (DataTableAttribute)attr;
                 if (attr != null)
                 {
-                    if (((DataTableAttribute)attr).Namespace != null)
+                    if (dtattr.Namespace != null)
                     {
-                        return ((DataTableAttribute)attr).Namespace;
+                        return dtattr.Namespace;
                     }
                 }
             }
@@ -625,8 +631,9 @@ namespace BoxSocial.Internals
         {
             if (this is IPermissibleItem)
             {
-				((IPermissibleItem)this).Access.SetSessionViewer(core.session);
-                if (!((IPermissibleItem)this).Access.CanEdit)
+                IPermissibleItem iThis = (IPermissibleItem)this;
+                iThis.Access.SetSessionViewer(core.session);
+                if (!iThis.Access.CanEdit)
                 {
                     throw new UnauthorisedToUpdateItemException();
                 }
@@ -657,11 +664,12 @@ namespace BoxSocial.Internals
 
                     if (updatedItems.Contains(fi.Name))
                     {
-                        if (attr.GetType() == typeof(DataFieldAttribute))
+                        if (attr is DataFieldAttribute)
                         {
-                            if (((DataFieldAttribute)attr).FieldName != null)
+                            DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                            if (dfattr.FieldName != null)
                             {
-                                uQuery.AddField(((DataFieldAttribute)attr).FieldName, fi.GetValue(this));
+                                uQuery.AddField(dfattr.FieldName, fi.GetValue(this));
                             }
                             else
                             {
@@ -796,8 +804,9 @@ namespace BoxSocial.Internals
         {
             if (this is IPermissibleItem)
             {
-				((IPermissibleItem)this).Access.SetSessionViewer(core.session);
-                if (!((IPermissibleItem)this).Access.CanDelete)
+                IPermissibleItem iThis = (IPermissibleItem)this;
+                iThis.Access.SetSessionViewer(core.session);
+                if (!iThis.Access.CanDelete)
                 {
                     throw new UnauthorisedToDeleteItemException();
                 }
@@ -851,6 +860,153 @@ namespace BoxSocial.Internals
             return result;
         }
 
+        protected void loadItemInfo(System.Data.Common.DbDataReader reader)
+        {
+            loadItemInfo(this.GetType(), reader);
+        }
+
+        protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
+        {
+            int fieldsLoaded = 0;
+            int objectFields = 0;
+            Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
+
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                {
+                    if (attr is DataFieldAttribute)
+                    {
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                        objectFields++;
+
+                        string columnPrefix;
+                        if (dfattr.FieldName != null)
+                        {
+                            columnPrefix = dfattr.FieldName;
+                        }
+                        else
+                        {
+                            columnPrefix = fi.Name;
+                        }
+
+                        fields.Add(columnPrefix, fi);
+                        if (fi.FieldType == typeof(ItemKey))
+                        {
+                            fields.Add(columnPrefix + "_id", fi);
+                            fields.Add(columnPrefix + "_type_id", fi);
+                        }
+                    }
+                }
+            }
+
+            /* buffer for item */
+            long ikBufferId = 0;
+            long ikBufferTypeId = 0;
+
+            if (reader.HasRows)
+            {
+                bool rowRead = false; /* past participle */
+                while (reader.Read())
+                {
+                    /* only read one row */
+                    if (rowRead)
+                    {
+                        // Error
+                        throw new InvalidItemException(this.GetType().FullName);
+                    }
+                    else
+                    {
+                        rowRead = true;
+                    }
+
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string column = reader.GetName(i);
+                        object value = null;
+
+                        if (fields.ContainsKey(column))
+                        {
+                            FieldInfo fi = fields[column];
+
+                            if (!reader.IsDBNull(i))
+                            {
+                                value = reader.GetValue(i);
+                            }
+                            else
+                            {
+                                if (fi.FieldType == typeof(string))
+                                {
+                                    fieldsLoaded++;
+                                    continue;
+                                }
+                            }
+
+                            /*try
+                            {*/
+                            if (fi.FieldType == typeof(ItemKey))
+                            {
+                                if (ikBufferId > 0 && column.EndsWith("_type_id"))
+                                {
+                                    fi.SetValue(this, new ItemKey(ikBufferId, (long)value));
+                                    fieldsLoaded++;
+                                }
+                                else if (ikBufferTypeId > 0 && column.EndsWith("_id"))
+                                {
+                                    fi.SetValue(this, new ItemKey((long)value, ikBufferTypeId));
+                                    fieldsLoaded++;
+                                }
+                                else
+                                {
+                                    if (column.EndsWith("_id"))
+                                    {
+                                        ikBufferId = (long)value;
+                                    }
+                                    else if (column.EndsWith("_type_id"))
+                                    {
+                                        ikBufferTypeId = (long)value;
+                                    }
+                                }
+                            }
+                            else if (fi.FieldType == typeof(bool) && !(value is bool))
+                            {
+                                if (value is byte)
+                                {
+                                    fi.SetValue(this, ((byte)value > 0) ? true : false);
+                                    fieldsLoaded++;
+                                }
+                                else if (value is sbyte)
+                                {
+                                    fi.SetValue(this, ((sbyte)value > 0) ? true : false);
+                                    fieldsLoaded++;
+                                }
+                            }
+                            else
+                            {
+                                fi.SetValue(this, value);
+                                fieldsLoaded++;
+                            }
+                            /*}
+                            catch (Exception ex)
+                            {
+                                Display.ShowMessage("Type error on load", Bbcode.Strip(column + " expected type " + fi.FieldType + " type returned was " + value.GetType() + "\n\n" + ex));
+                            }*/
+                        }
+                    }
+                }
+            }
+
+            if (fieldsLoaded != objectFields)
+            {
+                throw new InvalidItemException(this.GetType().FullName);
+            }
+
+            if (ItemLoad != null)
+            {
+                ItemLoad();
+            }
+        }
+
         protected void loadItemInfo(DataRow itemRow)
         {
             loadItemInfo(this.GetType(), itemRow);
@@ -871,14 +1027,15 @@ namespace BoxSocial.Internals
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
-                    if (attr.GetType() == typeof(DataFieldAttribute))
+                    if (attr is DataFieldAttribute)
                     {
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
 						if (fi.FieldType == typeof(ItemKey))
 						{
 							string columnPrefix;
-							if (((DataFieldAttribute)attr).FieldName != null)
+                            if (dfattr.FieldName != null)
 	                        {
-	                            columnPrefix = ((DataFieldAttribute)attr).FieldName;
+                                columnPrefix = dfattr.FieldName;
 	                        }
 	                        else
 	                        {
@@ -894,9 +1051,9 @@ namespace BoxSocial.Internals
 						else
 						{
 	                        string columnName;
-	                        if (((DataFieldAttribute)attr).FieldName != null)
+                            if (dfattr.FieldName != null)
 	                        {
-	                            columnName = ((DataFieldAttribute)attr).FieldName;
+                                columnName = dfattr.FieldName;
 	                        }
 	                        else
 	                        {
@@ -930,7 +1087,7 @@ namespace BoxSocial.Internals
 	                                }
 	                                catch (Exception ex)
 	                                {
-	                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName.ToString() + " expected type " + fi.FieldType.ToString() + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex.ToString()));
+	                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex));
 	                                }
 	                            }
 	                            else

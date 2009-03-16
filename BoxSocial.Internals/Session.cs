@@ -169,7 +169,7 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("session_keys", DataTableTypes.NonVolatile)]
-    internal class SessionKey : Item
+    internal sealed class SessionKey : Item
     {
         [DataField("key_id", DataFieldKeys.Primary, "ternary", 32)]
         private string keyId;
@@ -289,7 +289,6 @@ namespace BoxSocial.Internals
             this.db = db;
             this.core = core;
 
-            isLoggedIn = false;
             ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
             SessionPagestart(ipAddress.ToString());
             return;

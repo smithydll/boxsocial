@@ -44,7 +44,7 @@ namespace BoxSocial.Internals
 
     public class Bbcode
     {
-        public static Core core;
+        public static Core core = null;
 
         private delegate void BbcodeHookHandler(BbcodeEventArgs e);
 

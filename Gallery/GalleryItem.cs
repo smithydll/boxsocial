@@ -901,8 +901,8 @@ namespace BoxSocial.Applications.Gallery
             // keep going until we find a name that does not already exist in the database
             do
             {
-                DataTable galleryItemTable = core.db.Query(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type = '{3}';",
-                    Mysql.Escape(slug), gallery.GalleryId, owner.Id, owner.Type));
+                DataTable galleryItemTable = core.db.Query(string.Format("SELECT gallery_item_uri FROM gallery_items WHERE gallery_item_uri = '{0}' AND gallery_id = {1} AND gallery_item_item_id = {2} AND gallery_item_item_type_id = {3};",
+                    Mysql.Escape(slug), gallery.GalleryId, owner.Id, owner.TypeId));
 
                 if (galleryItemTable.Rows.Count > 0)
                 {

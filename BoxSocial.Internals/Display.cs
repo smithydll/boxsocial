@@ -818,6 +818,24 @@ namespace BoxSocial.Internals
 
         public static void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
         {
+			if (input == null)
+			{
+			HttpContext.Current.Response.Write("input null");
+			}
+			else if (templateVar == null)
+			{
+			HttpContext.Current.Response.Write("templateVar null");
+			}
+			else if (template == null)
+			{
+			HttpContext.Current.Response.Write("template null");
+			}
+			else if (core.session.LoggedInMember == null)
+			{
+			HttpContext.Current.Response.Write("core.session.LoggedInMember null");
+			}
+			else
+			{
             if (owner != null)
             {
                 template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
@@ -826,6 +844,7 @@ namespace BoxSocial.Internals
             {
                 template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
             }
+			}
         }
 
         public static void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)

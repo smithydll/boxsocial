@@ -165,7 +165,7 @@ namespace BoxSocial.Internals
                 query.AddCondition(keyField, value);
             }
 
-            DataTable itemTable = Query(query);
+            /*DataTable itemTable = Query(query);
 
             if (itemTable.Rows.Count == 1)
             {
@@ -180,7 +180,9 @@ namespace BoxSocial.Internals
             {
                 // Error
                 throw new InvalidItemException(this.GetType().FullName);
-            }
+            }*/
+			
+			loadItemInfo(this.GetType(), core.db.ReaderQuery(query));
         }
 
         protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner)
@@ -211,7 +213,7 @@ namespace BoxSocial.Internals
             query.AddCondition(ownerIdIndex, owner.Id);
             query.AddCondition(ownerTypeIndex, owner.Type);
 
-            DataTable itemTable = Query(query);
+            /*DataTable itemTable = Query(query);
 
             if (itemTable.Rows.Count == 1)
             {
@@ -226,7 +228,9 @@ namespace BoxSocial.Internals
             {
                 // Error
                 throw new InvalidItemException(this.GetType().FullName);
-            }
+            }*/
+			
+			loadItemInfo(this.GetType(), core.db.ReaderQuery(query));
         }
 
         protected List<Type> getSubTypes()
@@ -867,6 +871,7 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
+			//HttpContext.Current.Response.Write("I am being used " + type.FullName + "<br />");
             int fieldsLoaded = 0;
             int objectFields = 0;
             Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
@@ -913,6 +918,7 @@ namespace BoxSocial.Internals
                     if (rowRead)
                     {
                         // Error
+						reader.Close();
                         throw new InvalidItemException(this.GetType().FullName);
                     }
                     else
@@ -998,8 +1004,11 @@ namespace BoxSocial.Internals
 
             if (fieldsLoaded != objectFields)
             {
+				reader.Close();
                 throw new InvalidItemException(this.GetType().FullName);
             }
+			
+			reader.Close();
 
             if (ItemLoad != null)
             {

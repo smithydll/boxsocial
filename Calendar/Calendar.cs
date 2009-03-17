@@ -46,23 +46,38 @@ namespace BoxSocial.Applications.Calendar
 
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
-
-            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events ev WHERE (ev.event_access & {5:0} OR ev.user_id = {6}) AND ev.event_item_id = {1} AND ev.event_item_type = '{2}' AND ((ev.event_time_start_ut >= {3} AND ev.event_time_start_ut <= {4}) OR (ev.event_time_end_ut >= {3} AND ev.event_time_end_ut <= {4}) OR (ev.event_time_start_ut < {3} AND ev.event_time_end_ut > {4})) ORDER BY ev.event_time_start_ut ASC;",
-                Event.GetFieldsPrefixed(typeof(Event)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+			
+			string[] fields = Event.GetFieldsPrefixed(typeof(Event));
+			StringBuilder fieldsSb = new StringBuilder();
+			bool first = true;
+			
+			foreach (string field in fields)
+			{
+				if (!first)
+				{
+					fieldsSb.Append(", ");
+				}
+				fieldsSb.Append(field);
+				first = false;
+			}
+			
+            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events WHERE (event_access & {5:0} OR user_id = {6}) AND event_item_id = {1} AND event_item_type_id = {2} AND ((event_time_start_ut >= {3} AND event_time_start_ut <= {4}) OR (event_time_end_ut >= {3} AND event_time_end_ut <= {4}) OR (event_time_start_ut < {3} AND event_time_end_ut > {4})) ORDER BY event_time_start_ut ASC;",
+                fieldsSb, owner.Id, owner.TypeId, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
 
             foreach (DataRow dr in eventsTable.Rows)
             {
                 events.Add(new Event(core, owner, dr));
             }
 
-            if (owner.Type == "USER")
+			ItemType itemType = new ItemType(core, typeof(User).FullName);
+            if (owner.TypeId == itemType.TypeId)
             {
                 // now select events invited to
                 SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
-                query.AddFields("event_invites.item_id", "event_invites.item_type", "event_invites.inviter_id", "event_invites.event_id");
+                query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
                 query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
                 query.AddCondition("item_id", loggedIdUid);
-                query.AddCondition("item_type", "USER");
+                query.AddCondition("item_type_id", itemType.TypeId);
                 QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
                 qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
                 QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
@@ -110,11 +125,25 @@ namespace BoxSocial.Applications.Calendar
 
             long loggedIdUid = core.LoggedInMemberId;
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+			
+			string[] fields = Event.GetFieldsPrefixed(typeof(Task));
+			StringBuilder fieldsSb = new StringBuilder();
+			bool first = true;
+			
+			foreach (string field in fields)
+			{
+				if (!first)
+				{
+					fieldsSb.Append(", ");
+				}
+				fieldsSb.Append(field);
+				first = false;
+			}
 
             if (overdueTasks)
             {
-                DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND ((tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) OR ({7} > tk.task_due_date_ut AND tk.task_percent_complete < 100)) ORDER BY tk.task_due_date_ut ASC;",
-                    Task.GetFieldsPrefixed(typeof(Task)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid, UnixTime.UnixTimeStamp()));
+                DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks WHERE (task_access & {5:0} OR user_id = {6}) AND task_item_id = {1} AND task_item_type_id = {2} AND ((task_due_date_ut >= {3} AND task_due_date_ut <= {4}) OR ({7} > task_due_date_ut AND task_percent_complete < 100)) ORDER BY task_due_date_ut ASC;",
+                    fieldsSb, owner.Id, owner.TypeId, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid, UnixTime.UnixTimeStamp()));
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {
@@ -123,8 +152,8 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks tk WHERE (tk.task_access & {5:0} OR tk.user_id = {6}) AND tk.task_item_id = {1} AND tk.task_item_type = '{2}' AND (tk.task_due_date_ut >= {3} AND tk.task_due_date_ut <= {4}) ORDER BY tk.task_due_date_ut ASC;",
-                    Task.GetFieldsPrefixed(typeof(Task)), owner.Id, owner.Type, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+                DataTable tasksTable = db.Query(string.Format("SELECT {0} FROM tasks WHERE (task_access & {5:0} OR user_id = {6}) AND task_item_id = {1} AND task_item_type_id = {2} AND (task_due_date_ut >= {3} AND task_due_date_ut <= {4}) ORDER BY task_due_date_ut ASC;",
+                    fieldsSb, owner.Id, owner.TypeId, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
 
                 foreach (DataRow dr in tasksTable.Rows)
                 {

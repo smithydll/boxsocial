@@ -149,20 +149,15 @@ namespace BoxSocial.Applications.Gallery
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			ItemType itemType = new ItemType(core, typeof(GalleryItem).FullName);
-			ItemType itemTypeU = new ItemType(core, typeof(UserGalleryItem).FullName);
-			ItemType itemTypeG = new ItemType(core, typeof(GroupGalleryItem).FullName);
-			ItemType itemTypeN = new ItemType(core, typeof(NetworkGalleryItem).FullName);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
 
-            core.RegisterCommentHandle(itemType.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-			core.RegisterCommentHandle(itemTypeU.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-			core.RegisterCommentHandle(itemTypeG.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-			core.RegisterCommentHandle(itemTypeN.TypeId, photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-			
-            core.RegisterRatingHandle(itemType.TypeId, photoRated);
-			core.RegisterRatingHandle(itemTypeU.TypeId, photoRated);
-			core.RegisterRatingHandle(itemTypeG.TypeId, photoRated);
-			core.RegisterRatingHandle(itemTypeN.TypeId, photoRated);
+            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
+            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
+            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoRated);
+            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoRated);
         }
 
         /// <summary>
@@ -255,8 +250,12 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                Primitive owner = null;
-                switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
+                ItemKey ik = new ItemKey((long)galleryItemTable.Rows[0]["gallery_item_item_Id"], (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"]);
+
+                core.UserProfiles.LoadPrimitiveProfile(ik.Type, ik.Id);
+                Primitive owner = core.UserProfiles[ik.Type, ik.Id];
+
+                /*switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
                 {
                     case "USER":
                         owner = new User(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
@@ -267,7 +266,7 @@ namespace BoxSocial.Applications.Gallery
                     case "NETWORK":
                         owner = new Network(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
                         break;
-                }
+                }*/
 
                 Access photoAccess = new Access(core, (ushort)galleryItemTable.Rows[0]["gallery_item_access"], owner);
                 photoAccess.SetViewer(member);
@@ -302,9 +301,10 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
+                long itid = (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"];
+
+                if (itid == ItemKey.GetTypeId(typeof(User)))
                 {
-                    case "USER":
                         if ((long)galleryItemTable.Rows[0]["gallery_item_item_id"] == member.Id)
                         {
                             return true;
@@ -313,20 +313,22 @@ namespace BoxSocial.Applications.Gallery
                         {
                             return false;
                         }
-                    case "GROUP":
-                        UserGroup group = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
-                        if (group.IsGroupOperator(member))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    case "NETWORK":
+                }
+                else if (itid == ItemKey.GetTypeId(typeof(UserGroup)))
+                {
+                    UserGroup group = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
+                    if (group.IsGroupOperator(member))
+                    {
+                        return true;
+                    }
+                    else
+                    {
                         return false;
-                    default:
-                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
             else

@@ -149,9 +149,7 @@ namespace BoxSocial.Applications.Blog
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			ItemType itemType = new ItemType(core, typeof(BlogEntry).FullName);
-
-            core.RegisterCommentHandle(itemType.TypeId, blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(BlogEntry)), blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
         }
 
         /// <summary>
@@ -283,7 +281,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlog(Core core, object sender)
         {
-            if (sender.GetType() == typeof(PPage))
+            if (sender is PPage)
             {
                 Blog.Show(core, (PPage)sender);
             }
@@ -296,7 +294,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogCategory(Core core, object sender)
         {
-            if (sender.GetType() == typeof(PPage))
+            if (sender is PPage)
             {
                 Blog.Show(core, (PPage)sender, core.PagePathParts[1].Value);
             }
@@ -309,7 +307,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogYear(Core core, object sender)
         {
-            if (sender.GetType() == typeof(PPage))
+            if (sender is PPage)
             {
                 Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value));
             }
@@ -322,7 +320,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogMonth(Core core, object sender)
         {
-            if (sender.GetType() == typeof(PPage))
+            if (sender is PPage)
             {
                 Blog.Show(core, (PPage)sender, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
@@ -335,7 +333,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="sender">Object that called the page</param>
         private void showBlogPost(Core core, object sender)
         {
-            if (sender.GetType() == typeof(PPage))
+            if (sender is PPage)
             {
                 Blog.Show(core, (PPage)sender, long.Parse(core.PagePathParts[3].Value), int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }

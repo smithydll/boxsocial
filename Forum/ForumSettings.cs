@@ -109,7 +109,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                LoadItem("forum_item_id", "forum_item_type", owner);
+                LoadItem("forum_item_id", "forum_item_type_id", owner);
             }
             catch (InvalidItemException)
             {

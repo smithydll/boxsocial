@@ -288,6 +288,7 @@ namespace BoxSocial.Internals
             this.Response = Response;
             this.db = db;
             this.core = core;
+            this.isLoggedIn = false;
 
             ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
             SessionPagestart(ipAddress.ToString());

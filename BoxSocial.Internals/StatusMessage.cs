@@ -36,7 +36,7 @@ namespace BoxSocial.Internals
 
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Index)]
         private long ownerId;
         [DataField("status_message", 255)]
         private string statusMessage;

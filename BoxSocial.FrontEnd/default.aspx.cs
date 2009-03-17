@@ -94,7 +94,7 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (session.IsLoggedIn)
+            if (session != null && session.IsLoggedIn)
             {
                 core.InvokeHooks(new HookEventArgs(core, AppPrimitives.None, null));
 

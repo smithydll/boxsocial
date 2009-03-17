@@ -39,8 +39,8 @@ namespace BoxSocial.FrontEnd
 			Server.ScriptTimeout = 1000;
             string assemblyName = Request.QueryString["app"];
             string mode = Request.QueryString["mode"];
-			
-			System.Web.Caching.Cache cache = new System.Web.Caching.Cache();
+
+            System.Web.Caching.Cache cache = HttpContext.Current.Cache;
 			cache.Remove("itemFields");
 
             if (mode == "update")
@@ -215,10 +215,9 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
-										ItemType itemType = new ItemType(core, typeof(ApplicationEntry).FullName);
                                         ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            profileAe.ApplicationId, applicationId, itemType.TypeId, 0x1111));
+                                            profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
                                     }
                                     catch
                                     {
@@ -226,10 +225,9 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
-										ItemType itemType = new ItemType(core, typeof(ApplicationEntry).FullName);
                                         ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            guestbookAe.ApplicationId, applicationId, itemType.TypeId, 0x1111));
+                                            guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
                                     }
                                     catch
                                     {

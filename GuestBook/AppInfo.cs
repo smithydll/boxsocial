@@ -128,15 +128,10 @@ namespace BoxSocial.Applications.GuestBook
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			ItemType itemTypeU = new ItemType(core, typeof(User).FullName);
-			ItemType itemTypeA = new ItemType(core, typeof(ApplicationEntry).FullName);
-			ItemType itemTypeG = new ItemType(core, typeof(UserGroup).FullName);
-			ItemType itemTypeN = new ItemType(core, typeof(Network).FullName);
-
-            core.RegisterCommentHandle(itemTypeU.TypeId, userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted, userCommentDeleted);
-            core.RegisterCommentHandle(itemTypeA.TypeId, applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
-            core.RegisterCommentHandle(itemTypeG.TypeId, groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
-            core.RegisterCommentHandle(itemTypeN.TypeId, networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(User)), userCanPostComment, userCanDeleteComment, userAdjustCommentCount, userCommentPosted, userCommentDeleted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(ApplicationEntry)), applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGroup)), groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Network)), networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()

@@ -343,15 +343,13 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = core.LoggedInMemberId;
 			
-			ItemType itemType = new ItemType(core, typeof(User).FullName);
-
             DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
                 FROM applications ap, primitive_apps pa
                 WHERE (pa.item_id = {2} AND pa.item_type_id = {5})
                     AND pa.application_id = ap.application_id
                     AND ap.application_primitives & {6:0}
                     AND (pa.app_access & {3:0} OR (pa.item_id = {4} AND pa.item_type_id = {7}))",
-                ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS, owner.Id, readAccessLevel, loggedIdUid, owner.TypeId, (byte)owner.AppPrimitive, itemType.TypeId));
+                ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS, owner.Id, readAccessLevel, loggedIdUid, owner.TypeId, (byte)owner.AppPrimitive, ItemKey.GetTypeId(typeof(User))));
             return userApplicationsTable;
         }
 

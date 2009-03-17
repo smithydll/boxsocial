@@ -110,9 +110,7 @@ namespace BoxSocial.Applications.Calendar
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			ItemType itemType = new ItemType(core, typeof(Event).FullName);
-
-            core.RegisterCommentHandle(itemType.TypeId, eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Event)), eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()

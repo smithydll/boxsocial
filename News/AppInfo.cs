@@ -112,9 +112,7 @@ namespace BoxSocial.Applications.News
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
-			ItemType itemType = new ItemType(core, typeof(Article).FullName);
-			
-			core.RegisterCommentHandle(itemType.TypeId, articleCanPostComment, articleCanDeleteComment, articleAdjustCommentCount, articleCommentPosted);
+			core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Article)), articleCanPostComment, articleCanDeleteComment, articleAdjustCommentCount, articleCommentPosted);
         }
 		
         private void articleCommentPosted(CommentPostedEventArgs e)

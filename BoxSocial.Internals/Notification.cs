@@ -41,10 +41,12 @@ namespace BoxSocial.Internals
         private string body;
         [DataField("notification_application", typeof(ApplicationEntry))]
         private long applicationId;
-        [DataField("notification_primitive_id")]
+        /*[DataField("notification_primitive_id")]
         private long primitiveId;
         [DataField("notification_primitive_type", NAMESPACE)]
-        private string primitiveType;
+        private string primitiveType;*/
+        [DataField("notification_primitive", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("notification_time_ut")]
         private long timeRaw;
         [DataField("notification_read")]
@@ -112,7 +114,7 @@ namespace BoxSocial.Internals
             this.applicationId = applicationId;
             this.title = subject;
             this.body = body;
-            this.primitiveId = owner.Id;
+            this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.timeRaw = timeRaw;
         }
 
@@ -143,7 +145,7 @@ namespace BoxSocial.Internals
 
             InsertQuery iQuery = new InsertQuery("notifications");
             iQuery.AddField("notification_primitive_id", receiver.Id);
-            iQuery.AddField("notification_primitive_type", "USER");
+            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
             iQuery.AddField("notification_title", subject);
             iQuery.AddField("notification_body", body);
             iQuery.AddField("notification_time_ut", UnixTime.UnixTimeStamp());

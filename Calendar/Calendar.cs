@@ -69,15 +69,14 @@ namespace BoxSocial.Applications.Calendar
                 events.Add(new Event(core, owner, dr));
             }
 
-			ItemType itemType = new ItemType(core, typeof(User).FullName);
-            if (owner.TypeId == itemType.TypeId)
+            if (owner.TypeId == ItemKey.GetTypeId(typeof(User)))
             {
                 // now select events invited to
                 SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
                 query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
                 query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
                 query.AddCondition("item_id", loggedIdUid);
-                query.AddCondition("item_type_id", itemType.TypeId);
+                query.AddCondition("item_type_id", ItemKey.GetTypeId(typeof(User)));
                 QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
                 qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
                 QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);

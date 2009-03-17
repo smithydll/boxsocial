@@ -35,10 +35,12 @@ namespace BoxSocial.Applications.Pages
         private long tabId;
         [DataField("tab_page_id", typeof(Page))]
         private long pageId;
-        [DataField("tab_item_id")]
+        /*[DataField("tab_item_id")]
         private long ownerId;
         [DataField("tab_item_type", 15)]
-        private string ownerType;
+        private string ownerType;*/
+        [DataField("tab_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("tab_order")]
         private byte order;
 
@@ -81,10 +83,10 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                if (owner == null || ownerId != owner.Id || ownerType != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerType, ownerId);
-                    owner = core.UserProfiles[ownerType, ownerId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else
@@ -144,8 +146,8 @@ namespace BoxSocial.Applications.Pages
             {
                 UpdateQuery uQuery = new UpdateQuery(Item.GetTable(typeof(NagivationTab)));
                 uQuery.AddField("tab_order", new QueryOperation("tab_order", QueryOperations.Addition, 1));
-                uQuery.AddCondition("tab_item_id", ownerId);
-                uQuery.AddCondition("tab_item_type", ownerType);
+                uQuery.AddCondition("tab_item_id", ownerKey.Id);
+                uQuery.AddCondition("tab_item_type_id", ownerKey.TypeId);
                 uQuery.AddCondition("tab_order", ConditionEquality.Equal, order - 1);
 
                 db.Query(uQuery);
@@ -163,8 +165,8 @@ namespace BoxSocial.Applications.Pages
             byte maxOrder = 0;
 
             SelectQuery query = GetSelectQueryStub(typeof(NagivationTab), false);
-            query.AddCondition("tab_item_id", ownerId);
-            query.AddCondition("tab_item_type", ownerType);
+            query.AddCondition("tab_item_id", ownerKey.Id);
+            query.AddCondition("tab_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Descending, "tab_order");
             query.LimitCount = 1;
 
@@ -179,8 +181,8 @@ namespace BoxSocial.Applications.Pages
             {
                 UpdateQuery uQuery = new UpdateQuery(Item.GetTable(typeof(NagivationTab)));
                 uQuery.AddField("tab_order", new QueryOperation("tab_order", QueryOperations.Subtraction, 1));
-                uQuery.AddCondition("tab_item_id", ownerId);
-                uQuery.AddCondition("tab_item_type", ownerType);
+                uQuery.AddCondition("tab_item_id", ownerKey.Id);
+                uQuery.AddCondition("tab_item_type_id", ownerKey.TypeId);
                 uQuery.AddCondition("tab_order", ConditionEquality.Equal, order + 1);
 
                 db.Query(uQuery);
@@ -206,7 +208,7 @@ namespace BoxSocial.Applications.Pages
 
             SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab));
             query.AddCondition("tab_item_id", page.Owner.Id);
-            query.AddCondition("tab_item_type", page.Owner.Type);
+            query.AddCondition("tab_item_type_id", page.Owner.TypeId);
             query.AddSort(SortOrder.Descending, "tab_order");
             query.LimitCount = 1;
 
@@ -222,7 +224,7 @@ namespace BoxSocial.Applications.Pages
             InsertQuery iQuery = new InsertQuery(NagivationTab.GetTable(typeof(NagivationTab)));
             iQuery.AddField("tab_page_id", page.Id);
             iQuery.AddField("tab_item_id", page.Owner.Id);
-            iQuery.AddField("tab_item_type", page.Owner.Type);
+            iQuery.AddField("tab_item_type_id", page.Owner.TypeId);
             iQuery.AddField("tab_order", order);
 
             long tabId = core.db.Query(iQuery);
@@ -236,7 +238,7 @@ namespace BoxSocial.Applications.Pages
 
             SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab));
             query.AddCondition("tab_item_id", owner.Id);
-            query.AddCondition("tab_item_type", owner.Type);
+            query.AddCondition("tab_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "tab_order");
 
             DataTable tabTable = core.db.Query(query);

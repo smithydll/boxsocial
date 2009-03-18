@@ -99,6 +99,7 @@ namespace BoxSocial.IO
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
                 dataAdapter.Fill(resultSet);
+                dataAdapter.SelectCommand.Dispose();
 
                 resultTable = resultSet.Tables[0];
 
@@ -126,6 +127,7 @@ namespace BoxSocial.IO
             MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
             dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
             System.Data.Common.DbDataReader resultReader = dataAdapter.SelectCommand.ExecuteReader();
+            dataAdapter.SelectCommand.Dispose();
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;

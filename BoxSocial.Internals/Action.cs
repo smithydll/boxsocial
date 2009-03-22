@@ -39,10 +39,12 @@ namespace BoxSocial.Internals
         private string body;
         [DataField("action_application")]
         private long applicationId;
-        [DataField("action_primitive_id")]
+        /*[DataField("action_primitive_id")]
         private long primitiveId;
         [DataField("action_primitive_type", 15)]
-        private string primitiveType;
+        private string primitiveType;*/
+		[DataField("action_primitive", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
         [DataField("action_time_ut")]
         private long timeRaw;
 
@@ -67,7 +69,7 @@ namespace BoxSocial.Internals
                 else
                 {
                     return string.Format("[user]{0}[/user] {1}",
-                        primitiveId, title);
+                        ownerKey.Id, title);
                 }
             }
         }
@@ -84,7 +86,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return primitiveId;
+                return ownerKey.Id;
             }
         }
 
@@ -92,10 +94,10 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (owner == null || primitiveId != owner.Id || primitiveType != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(primitiveType, primitiveId);
-                    owner = core.UserProfiles[primitiveType, primitiveId];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
+                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
                     return owner;
                 }
                 else
@@ -128,7 +130,7 @@ namespace BoxSocial.Internals
             return getSubItems(typeof(ActionItem)).ConvertAll<ActionItem>(new Converter<Item, ActionItem>(convertToActionItem));
         }
 
-        public static List<Action> GetActions(Core core, User user, long itemId, string itemType)
+        public static List<Action> GetActions(Core core, User user, long itemId, long itemTypeId)
         {
             List<Action> actions = new List<Action>();
 
@@ -136,7 +138,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Inner, ActionItem.GetTable(typeof(ActionItem)), "action_id", "action_id");
             query.AddCondition("user_id", user.Id);
             query.AddCondition("item_id", itemId);
-            query.AddCondition("item_type", itemType);
+            query.AddCondition("item_type_id", itemTypeId);
             query.AddSort(SortOrder.Descending, "status_time_ut");
 
             DataTable actionsTable = core.db.Query(query);
@@ -153,7 +155,7 @@ namespace BoxSocial.Internals
         {
             SelectQuery query = Item.GetSelectQueryStub(typeof(ActionItem));
             query.AddFields(Item.GetFieldsPrefixed(type));
-            query.AddCondition("item_type", Item.GetNamespace(type));
+            query.AddCondition("item_type_id", ItemKey.GetTypeId(type));
             query.AddJoin(JoinTypes.Inner, Item.GetTable(type), "item_id", "gallery_item_id");
 
             DataTable itemsTable = db.Query(query);

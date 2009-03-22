@@ -165,7 +165,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Notification.GetSelectQueryStub(typeof(Notification));
             query.AddCondition("notification_read", false);
             query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("notification_primitive_type", "USER");
+            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
             query.AddCondition("notification_time_ut", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp(DateTime.UtcNow.AddDays(-7)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
             query.LimitCount = 128;
@@ -189,7 +189,7 @@ namespace BoxSocial.Internals
             query.AddCondition("notification_read", false);
             query.AddCondition("notification_seen", false);
             query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("notification_primitive_type", "USER");
+            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
 
             DataTable notificationsTable = core.db.Query(query);

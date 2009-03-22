@@ -1157,13 +1157,13 @@ namespace BoxSocial.Internals
             {
                 if (owner is User && owner.Id != core.session.LoggedInMember.UserId)
                 {
-                    core.db.UpdateQuery(string.Format("UPDATE user_pages SET page_views = page_views + 1 WHERE page_item_id = {0} AND page_item_type = '{1}' AND page_id = '{2}';",
-                        owner.Id, Mysql.Escape(owner.Type), thePage.PageId));
+                    core.db.UpdateQuery(string.Format("UPDATE user_pages SET page_views = page_views + 1 WHERE page_item_id = {0} AND page_item_type_id = {1} AND page_id = '{2}';",
+                        owner.Id, owner.TypeId, thePage.PageId));
                 }
                 else
                 {
-                    core.db.UpdateQuery(string.Format("UPDATE user_pages SET page_views = page_views + 1 WHERE page_item_id = {0} AND page_item_type = '{1}' AND page_id = '{2}';",
-                        owner.Id, Mysql.Escape(owner.Type), thePage.PageId));
+                    core.db.UpdateQuery(string.Format("UPDATE user_pages SET page_views = page_views + 1 WHERE page_item_id = {0} AND page_item_type_id = {1} AND page_id = '{2}';",
+                        owner.Id, owner.TypeId, thePage.PageId));
                 }
             }
 

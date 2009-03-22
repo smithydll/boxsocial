@@ -34,7 +34,7 @@ namespace BoxSocial.Internals
     public class ApplicationEntry : Primitive, ICommentableItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
-        public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type";
+        public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type_id";
         public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
         [DataField("application_id", DataFieldKeys.Primary)]
@@ -725,7 +725,7 @@ namespace BoxSocial.Internals
                     SelectQuery query = new SelectQuery("user_pages");
                     query.AddFields("page_id");
                     query.AddCondition("page_item_id", viewer.Id);
-                    query.AddCondition("page_item_type", viewer.Type);
+                    query.AddCondition("page_item_type_id", viewer.TypeId);
                     query.AddCondition("page_title", slugs[slug]);
                     query.AddCondition("page_slug", slug);
                     query.AddCondition("page_parent_path", "");
@@ -869,7 +869,7 @@ namespace BoxSocial.Internals
             SelectQuery query = new SelectQuery("notifications");
             query.AddField(new QueryFunction("notification_id", QueryFunctions.Count, "twentyfour")); //"COUNT(notification_id) as twentyfour");
             query.AddCondition("notification_primitive_id", owner.Id);
-            query.AddCondition("notification_primitive_type", owner.Type);
+            query.AddCondition("notification_primitive_type_id", owner.TypeId);
             query.AddCondition("notification_application", applicationId);
             query.AddCondition("notification_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
@@ -902,7 +902,7 @@ namespace BoxSocial.Internals
             SelectQuery query = new SelectQuery("actions");
             query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
             query.AddCondition("action_primitive_id", owner.Id);
-            query.AddCondition("action_primitive_type", owner.Type);
+            query.AddCondition("action_primitive_type_id", owner.TypeId);
             query.AddCondition("action_application", applicationId);
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
@@ -911,7 +911,7 @@ namespace BoxSocial.Internals
             {
                 InsertQuery iquery = new InsertQuery("actions");
                 iquery.AddField("action_primitive_id", owner.Id);
-                iquery.AddField("action_primitive_type", owner.Type);
+                iquery.AddField("action_primitive_type_id", owner.TypeId);
                 iquery.AddField("action_title", title);
                 iquery.AddField("action_body", message);
                 iquery.AddField("action_application", applicationId);
@@ -941,7 +941,7 @@ namespace BoxSocial.Internals
                 uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
                 uquery.AddCondition("action_application", applicationId);
                 uquery.AddCondition("action_primitive_id", action.OwnerId);
-                uquery.AddCondition("action_primitive_type", "USER");
+                uquery.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
                 uquery.AddCondition("action_id", action.ActionId);
 
                 db.Query(uquery);
@@ -959,7 +959,7 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.AddCondition("action_application", Id);
             query.AddCondition("action_primitive_id", owner.Id);
-            query.AddCondition("action_primitive_type", owner.Type);
+            query.AddCondition("action_primitive_type_id", owner.TypeId);
             query.LimitCount = 1;
 
             DataTable feedTable = db.Query(query);

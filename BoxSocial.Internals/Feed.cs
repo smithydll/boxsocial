@@ -46,7 +46,7 @@ namespace BoxSocial.Internals
                 core.LoadUserProfiles(friendIds);
 
                 query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
-                query.AddCondition("action_primitive_type", "USER");
+                query.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
 
                 DataTable feedTable = core.db.Query(query);
 

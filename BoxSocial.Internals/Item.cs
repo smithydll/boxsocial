@@ -447,7 +447,25 @@ namespace BoxSocial.Internals
 		
 		private static void populateItemFieldsCache()
 		{
-            System.Web.Caching.Cache cache = HttpContext.Current.Cache;
+            System.Web.Caching.Cache cache;
+			
+			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+			{
+				cache = HttpContext.Current.Cache;
+			}
+			else
+			{
+				cache = new Cache();
+			}
+			
+			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+			{
+				cache = HttpContext.Current.Cache;
+			}
+			else
+			{
+				cache = new Cache();
+			}
 			
 			object o = cache.Get("itemFields");
 			
@@ -523,7 +541,17 @@ namespace BoxSocial.Internals
 			
 			itemFieldsCache.Add(type, returnValue);
 
-            System.Web.Caching.Cache cache = HttpContext.Current.Cache;
+            System.Web.Caching.Cache cache;
+			
+			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+			{
+				cache = HttpContext.Current.Cache;
+			}
+			else
+			{
+				cache = new Cache();
+			}
+			
 			cache.Add("itemFields", itemFieldsCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
 
             return returnValue;

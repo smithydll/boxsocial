@@ -84,7 +84,16 @@ namespace BoxSocial.Internals
 		
 		public static void populateItemTypeCache(Core core)
 		{
-            System.Web.Caching.Cache cache = HttpContext.Current.Cache;
+            System.Web.Caching.Cache cache;
+			
+			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+			{
+				cache = HttpContext.Current.Cache;
+			}
+			else
+			{
+				cache = new Cache();
+			}
 			
 			object o = cache.Get("itemTypeIds");
 			

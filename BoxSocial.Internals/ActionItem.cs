@@ -36,7 +36,7 @@ namespace BoxSocial.Internals
         private long actionId;
         [DataField("item_id", DataFieldKeys.Unique, "ternary")]
         private long itemId;
-        [DataField("item_type", DataFieldKeys.Unique, "ternary", 15)]
+        [DataField("item_type_id", DataFieldKeys.Unique, "ternary")]
         private string itemType;
 
         public long ActionId
@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ActionItem(Core core, long actionId, long itemId, string itemType)
+        public ActionItem(Core core, long actionId, long itemId, long itemTypeId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(ActionItem_ItemLoad);
@@ -71,7 +71,7 @@ namespace BoxSocial.Internals
             SelectQuery query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
             query.AddCondition("action_id", actionId);
             query.AddCondition("item_id", itemId);
-            query.AddCondition("item_type", itemType);
+            query.AddCondition("item_type_id", itemTypeId);
 
             DataTable actionItemTable = db.Query(query);
 
@@ -89,12 +89,12 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static void Create(Core core, long actionId, long itemId, string itemType)
+        public static void Create(Core core, long actionId, long itemId, long itemTypeId)
         {
             InsertQuery iquery = new InsertQuery(ActionItem.GetTable(typeof(ActionItem)));
             iquery.AddField("action_id", actionId);
             iquery.AddField("item_id", itemId);
-            iquery.AddField("item_type", itemType);
+            iquery.AddField("item_type_id", itemTypeId);
 
             core.db.Query(iquery);
         }

@@ -109,8 +109,8 @@ namespace BoxSocial.Groups
                     break;
             }
 
-            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type = '{1}' ORDER BY page_order ASC;",
-                thisGroup.Id, thisGroup.Type));
+            DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
+                thisGroup.Id, thisGroup.TypeId));
 
             SelectBox pagesSelectBox = new SelectBox("homepage");
             Dictionary<string, string> pages = new Dictionary<string, string>();

@@ -162,7 +162,7 @@ namespace BoxSocial.Applications.Forum
                         List<string> disabledItems = new List<string>();
                         forumTypesSelectBox["FORUM"].Selectable = false;
                         forumTypesSelectBox["CAT"].Selectable = false;
-                        forumTypesSelectBox["LINK"].Selectable = false;
+                        //forumTypesSelectBox["LINK"].Selectable = false;
 
                         forumTypesSelectBox.SelectedKey = type;
 

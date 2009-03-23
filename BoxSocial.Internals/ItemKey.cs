@@ -119,7 +119,10 @@ namespace BoxSocial.Internals
 				
 				foreach (DataRow dr in typesTable.Rows)
 				{
-					itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                    if (!(itemTypeCache.ContainsKey((string)dr["type_namespace"])))
+                    {
+                        itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                    }
 				}
 
 				cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);

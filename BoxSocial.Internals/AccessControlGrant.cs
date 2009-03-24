@@ -25,12 +25,65 @@ using System.Web;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
-{	
-	public class AccessControlGrant
+{
+	/*
+	 * A primitive is granted permission to use an item with an allowance level. 
+	 */
+	
+	public enum AccessControlGrants : sbyte
 	{
+		Deny = -1,
+		Inherit = 0,
+		Allow = 1,
+	}
+	
+	[DataTable("account_control_grants")]
+	public class AccessControlGrant : Item
+	{
+		[DataField("grant_primitive", DataFieldKeys.Unique, "u_key")]
+		ItemKey primitiveKey;
+		[DataField("grant_item_id", DataFieldKeys.Unique, "u_key")]
+		long itemId;
+		[DataField("grant_item_type_id", DataFieldKeys.Unique, "u_key")]
+		long itemTypeId;
+		[DataField("grant_permission_id", DataFieldKeys.Unique, "u_key")]
+		long permissionId;
+		[DataField("grant_allow")]
+		sbyte grantAllow;
 		
-		public AccessControlGrant()
+		public AccessControlGrant(Core core, DataRow grantRow)
+			: base(core)
 		{
+			ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
+
+            loadItemInfo(grantRow);
+		}
+		
+		private void AccessControlGrant_ItemLoad()
+        {
+        }
+
+		
+		// Cannot use the built-in for un-numbered stuffs 
+		/*public static AccessControlPermission Create(Core core, ItemType type, string permissionName)
+		{
+			AccessControlGrant acg = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
+			                                                                   new FieldValuePair("permission_item_type", type.TypeId),
+			                                                                   new FieldValuePair("permission_name", permissionName));
+			
+			return acg;
+		}*/
+		
+		public override string Uri 
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
+	
+	public class InvalidAccessControlGrantException : Exception
+    {
+    }
 }

@@ -109,7 +109,7 @@ namespace BoxSocial.FrontEnd
                 defaultImages.Add("default_4.jpg");
                 defaultImages.Add("default_5.jpg");
 
-                Random rand = new Random((int)DateTime.Now.Ticks);
+                Random rand = new Random((int)(DateTime.Now.Second + DateTime.Now.Minute * 60 + DateTime.Now.Hour * 60 * 60));
 
                 template.Parse("I_DEFAULT", (string)defaultImages[rand.Next(defaultImages.Count)]);
 

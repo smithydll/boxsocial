@@ -31,21 +31,74 @@ namespace BoxSocial.Internals
 	{
 		[DataField("permission_id", DataFieldKeys.Primary)]
 		long permissionId;
-		[DataField("permission_name", 31)]
+		[DataField("permission_name", DataFieldKeys.Unique, "u_key", 31)]
 		string permissionName;
+		[DataField("permission_item_type_id", DataFieldKeys.Unique, "u_key")]
+		long itemTypeId;
 		
-		public AccessControlPermission(Core core)
-			: base (core)
+		public long PermissionId
 		{
-			
+			get
+			{
+				return permissionId;
+			}
 		}
 		
-		public static AccessControlPermission Create(Core core, string permissionName)
+		public string Name
+		{
+			get
+			{
+				return permissionName;
+			}
+		}
+		
+		public long ItemTypeId
+		{
+			get
+			{
+				return itemTypeId;
+			}
+		}
+		
+		public ItemType ItemType
+		{
+			get
+			{
+				return new ItemType(core, itemTypeId);
+			}
+		}
+		
+		public AccessControlPermission(Core core, long permissionId)
+			: base (core)
+		{
+            ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+
+            try
+            {
+                LoadItem(permissionId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidAccessControlPermissionException();
+            }
+		}
+		
+		private void AccessControlPermission_ItemLoad()
+        {
+        }
+		
+		public static AccessControlPermission Create(Core core, ItemType type, string permissionName)
 		{
 			AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
+			                                                                   new FieldValuePair("permission_item_type", type.TypeId),
 			                                                                   new FieldValuePair("permission_name", permissionName));
 			
 			return acp;
+		}
+		
+		public void Delete()
+		{
+			base.Delete();
 		}
 		
 		public override long Id 
@@ -65,4 +118,8 @@ namespace BoxSocial.Internals
 		}
 
 	}
+	
+	public class InvalidAccessControlPermissionException : Exception
+    {
+    }
 }

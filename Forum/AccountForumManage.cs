@@ -142,6 +142,7 @@ namespace BoxSocial.Applications.Forum
 
                     template.Parse("S_ID", id.ToString());
                     template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
+				
                     break;
                 case "edit":
                     try
@@ -167,6 +168,8 @@ namespace BoxSocial.Applications.Forum
                         forumTypesSelectBox.SelectedKey = type;
 
                         template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
+					
+					    Display.ParsePermissionsBox(template, "S_FORUM_PERMS", forum.Permissions, forum.PermissibleActions);
 
                         template.Parse("EDIT", "TRUE");
                     }
@@ -269,6 +272,7 @@ namespace BoxSocial.Applications.Forum
 
             forum.Title = title;
             forum.Description = description;
+			forum.Permissions = Functions.GetPermission();
 
             try
             {

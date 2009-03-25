@@ -19,36 +19,43 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
-using System.Web;
-using BoxSocial.Internals;
-using BoxSocial.IO;
 
-namespace BoxSocial.Groups
+namespace BoxSocial.IO
 {
-	[PseudoPrimitive]
-    [DataTable("group_operators")]
-    public class GroupOperator : GroupMember
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class TableViewAttribute : Attribute
     {
-        [DataField("group_id", DataFieldKeys.Primary, "ternary")]
-        private long groupId;
-        [DataField("user_id", DataFieldKeys.Primary, "ternary")]
-        private new long userId;
+        private string tableName;
+        private string tableNamespace;
 
-        internal GroupOperator(Core core, DataRow operatorRow)
-            : base(core, operatorRow)
+        public TableViewAttribute(string tableName)
         {
-            ItemLoad += new ItemLoadHandler(GroupOperator_ItemLoad);
+            this.tableName = tableName;
+        }
 
-            loadItemInfo(operatorRow);
+        public TableViewAttribute(string tableName, string tableNamespace)
+        {
+            this.tableName = tableName;
+            this.tableNamespace = tableNamespace;
         }
 
-        void GroupOperator_ItemLoad()
+        public string TableName
         {
-            
+            get
+            {
+                return tableName;
+            }
+        }
+
+        public string Namespace
+        {
+            get
+            {
+                return tableNamespace;
+            }
         }
     }
 }

@@ -900,14 +900,14 @@ namespace BoxSocial.Internals
         /// return a maximum of the first 255
         /// </summary>
         /// <returns></returns>
-        public List<UserRelation> GetFriends()
+        public List<Friend> GetFriends()
         {
             return GetFriends(1, 255);
         }
 
-        public List<UserRelation> GetFriends(int page, int perPage)
+        public List<Friend> GetFriends(int page, int perPage)
         {
-            List<UserRelation> friends = new List<UserRelation>();
+            List<Friend> friends = new List<Friend>();
 
             SelectQuery query = new SelectQuery("user_relations");
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
@@ -932,7 +932,7 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in friendsTable.Rows)
             {
-                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
+                friends.Add(new Friend(core, dr, UserLoadOptions.All));
             }
 
             return friends;
@@ -2017,7 +2017,7 @@ namespace BoxSocial.Internals
             core.template.Parse("FRIENDS", page.ProfileOwner.Friends.ToString());
             core.template.Parse("L_FRIENDS", langFriends);
 
-            List<UserRelation> friends = page.ProfileOwner.GetFriends(1, 8);
+            List<Friend> friends = page.ProfileOwner.GetFriends(1, 8);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");

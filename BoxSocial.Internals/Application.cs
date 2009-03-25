@@ -121,7 +121,7 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
-                if (type.IsSubclassOf(typeof(Item)))
+                if (type.IsSubclassOf(typeof(Item)) || type.GetCustomAttributes(typeof(PseudoPrimitiveAttribute), false).Length == 1)
                 {
 					SelectQuery query = new SelectQuery(Item.GetTable(typeof(ItemType)));
 					query.AddCondition("type_namespace", type.FullName);

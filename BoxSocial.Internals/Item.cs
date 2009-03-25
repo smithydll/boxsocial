@@ -428,6 +428,16 @@ namespace BoxSocial.Internals
             {
                 query = new SelectQuery(GetTable(type));
                 query.AddFields(GetFieldsPrefixed(type));
+				
+				/*Type[] interfaces = type.GetInterfaces();
+				foreach (Type i in interfaces)
+				{
+					if (i == typeof(IPermissibleItem))
+					{
+						//query.AddFields(GetFieldsPrefixed(typeof(AccessControlGrant)));
+						/*  * /
+					}
+				}*/
             }
 
             return query;

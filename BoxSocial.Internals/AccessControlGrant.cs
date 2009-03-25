@@ -19,8 +19,10 @@
  */
 
 using System;
-using System.Data;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Web;
 using BoxSocial.IO;
 
@@ -51,9 +53,31 @@ namespace BoxSocial.Internals
 		[DataField("grant_allow")]
 		sbyte grantAllow;
 		
-		public AccessControlGrant(Core core, DataRow grantRow)
+		Item item;
+		Primitive owner;
+		
+		public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || primitiveKey.Id != owner.Id || primitiveKey.Type != owner.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(primitiveKey.Type, primitiveKey.Id);
+                    owner = core.UserProfiles[primitiveKey.Type, primitiveKey.Id];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+		
+		private AccessControlGrant(Core core, Item item, DataRow grantRow)
 			: base(core)
 		{
+			this.item = item;
 			ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
 
             loadItemInfo(grantRow);
@@ -73,6 +97,32 @@ namespace BoxSocial.Internals
 			
 			return acg;
 		}*/
+		
+		public bool Can(User user)
+		{
+			bool isDenied = false;
+			bool isAllowed = false;
+			
+			return (!isDenied && isAllowed);
+		}
+		
+		public static List<AccessControlGrant> GetGrants(Core core, NumberedItem item)
+		{
+			List<AccessControlGrant> grants = new List<AccessControlGrant>();
+			
+			SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+			sQuery.AddCondition("grant_item_id", item.Key.Id);
+			sQuery.AddCondition("grant_item_type_id", item.Key.TypeId);
+			
+			DataTable grantsTable = core.db.Query(sQuery);
+			
+			foreach (DataRow dr in grantsTable.Rows)
+			{
+				grants.Add(new AccessControlGrant(core, item, dr));
+			}
+			
+			return grants;
+		}
 		
 		public override string Uri 
 		{

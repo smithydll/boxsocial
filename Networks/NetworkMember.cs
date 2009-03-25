@@ -32,6 +32,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Networks
 {
+	[PseudoPrimitive]
     [DataTable("network_members")]
     public class NetworkMember : User
     {

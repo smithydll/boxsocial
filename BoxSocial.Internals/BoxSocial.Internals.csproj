@@ -161,6 +161,10 @@
     <Compile Include="ItemType.cs" />
     <Compile Include="Contact.cs" />
     <Compile Include="ItemKey.cs" />
+    <Compile Include="PseudoPrimitiveAttribute.cs" />
+    <Compile Include="GuestUser.cs" />
+    <Compile Include="Friend.cs" />
+    <Compile Include="Kin.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

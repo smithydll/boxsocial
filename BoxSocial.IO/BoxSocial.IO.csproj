@@ -81,6 +81,7 @@
     <Compile Include="FieldValuePair.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="PrimaryKey.cs" />
+    <Compile Include="TableViewAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

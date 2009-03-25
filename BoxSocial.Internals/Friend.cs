@@ -19,36 +19,24 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Groups
+namespace BoxSocial.Internals
 {
+	
 	[PseudoPrimitive]
-    [DataTable("group_operators")]
-    public class GroupOperator : GroupMember
-    {
-        [DataField("group_id", DataFieldKeys.Primary, "ternary")]
-        private long groupId;
-        [DataField("user_id", DataFieldKeys.Primary, "ternary")]
-        private new long userId;
-
-        internal GroupOperator(Core core, DataRow operatorRow)
-            : base(core, operatorRow)
-        {
-            ItemLoad += new ItemLoadHandler(GroupOperator_ItemLoad);
-
-            loadItemInfo(operatorRow);
-        }
-
-        void GroupOperator_ItemLoad()
-        {
-            
-        }
-    }
+	public class Friend : UserRelation
+	{
+		
+		public Friend(Core core, DataRow userRow, UserLoadOptions loadOptions)
+			: base(core, userRow, loadOptions)
+		{
+		}
+	}
 }

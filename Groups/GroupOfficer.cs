@@ -29,6 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
+	[PseudoPrimitive]
     [DataTable("group_officers")]
     public class GroupOfficer : GroupMember
     {

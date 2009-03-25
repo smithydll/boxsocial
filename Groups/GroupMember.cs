@@ -40,6 +40,7 @@ namespace BoxSocial.Groups
         Banned = 2,
     }
 
+	[PseudoPrimitive]
     [DataTable("group_members")]
     public class GroupMember : User
     {

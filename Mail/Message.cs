@@ -36,6 +36,12 @@ namespace BoxSocial.Applications.Mail
 		private long messageId;
 		[DataField("sender_id")]
 		private long senderId;
+		[DataField("message_to", MYSQL_TEXT)]
+		private string to;
+		[DataField("message_cc", MYSQL_TEXT)]
+		private string cc;
+		[DataField("message_bcc", MYSQL_TEXT)]
+		private string bcc;
 		[DataField("message_subject", 127)]
 		private string subject;
 		[DataField("message_text", MYSQL_MEDIUM_TEXT)]

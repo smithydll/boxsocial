@@ -43,7 +43,7 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_pages", "PAGE")]
-    public class Page : NumberedItem
+    public class Page : NumberedItem, INestableItem
     {
         public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
 
@@ -87,6 +87,8 @@ namespace BoxSocial.Internals
         private long modifiedRaw;
         [DataField("page_classification")]
         private byte classificationId;
+		[DataField("page_level")]
+        private int pageLevel;
         [DataField("page_hierarchy", MYSQL_TEXT)]
         private string hierarchy;
 		[DataField("page_item", DataFieldKeys.Index)]
@@ -326,6 +328,11 @@ namespace BoxSocial.Internals
                 }
             }
         }
+		
+		public ParentTree GetParents()
+		{
+			return Parents;
+		}
 
         public ParentTree Parents
         {
@@ -361,6 +368,18 @@ namespace BoxSocial.Internals
                 SetProperty("order", value);
             }
         }
+		
+		public int Level
+		{
+			get
+			{
+				return pageLevel;
+			}
+			set
+			{
+				SetProperty("pageLevel", value);
+			}
+		}
 
         public string ParentPath
         {
@@ -565,6 +584,15 @@ namespace BoxSocial.Internals
         {
             license = new ContentLicense(core, pageRow);
         }
+		
+		public List<Item> GetChildren()
+		{
+			List<Item> children = new List<Item>();
+			
+			// TODO: fill this method
+			
+			return children;
+		}
 
         public static string PageStatusToString(PageStatus status)
         {

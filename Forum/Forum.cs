@@ -34,7 +34,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum")]
-    public class Forum : NumberedItem, IPermissibleItem, IComparable, INestableItem
+    public class Forum : NumberedItem, IPermissibleItem, IComparable, INestableItem, IOrderableItem
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;

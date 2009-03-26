@@ -54,6 +54,7 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="AccountMail.cs" />
     <Compile Include="AccountMailInbox.cs" />
+    <Compile Include="MailFolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">

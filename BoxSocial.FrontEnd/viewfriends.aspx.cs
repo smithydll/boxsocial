@@ -49,7 +49,7 @@ namespace BoxSocial.FrontEnd
             template.Parse("FRIENDS", profileOwner.Friends.ToString());
             template.Parse("L_FRIENDS", langFriends);
 
-            List<UserRelation> friends = profileOwner.GetFriends(page, 18);
+            List<Friend> friends = profileOwner.GetFriends(page, 18);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");

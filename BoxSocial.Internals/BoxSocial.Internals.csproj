@@ -165,6 +165,8 @@
     <Compile Include="GuestUser.cs" />
     <Compile Include="Friend.cs" />
     <Compile Include="Kin.cs" />
+    <Compile Include="IOrderableItem.cs" />
+    <Compile Include="PageInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

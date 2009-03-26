@@ -29,22 +29,16 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-	public interface INestableItem
+	public interface IOrderableItem
 	{
-
 		int Order
 		{
 			get;
 		}
 		
-		int Level
-		{
-			get;
-		}
+		void MoveUp();
 		
-		ParentTree GetParents();
-		
-		List<Item> GetChildren();
+		void MoveDown();
 		
 	}
 }

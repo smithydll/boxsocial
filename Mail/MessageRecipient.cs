@@ -38,19 +38,33 @@ namespace BoxSocial.Applications.Mail
 	}
 	
 	[DataTable("mail_message_recipients")]
-	public class MessageRecipient : NumberedItem
+	public class MessageRecipient : Item
 	{
-		[DataField("recipient_id", DataFieldKeys.Primary)] 
-		private long recipientId;
+		[DataField("message_id", DataFieldKeys.Primary)] 
+		private long messageId;
+		[DataField("user_id", DataFieldKeys.Primary)]
+		private long userId;
+		[DataField("sender_id")]
+		private long senderId;
+		[DataField("is_deleted")]
+		private bool isDeleted;
+		[DataField("is_read")]
+		private bool isRead;
+		[DataField("has_replied")]
+		private bool hasReplied;
+		[DataField("is_flagged")]
+		private bool isFlagged;
+		[DataField("has_forwarded")]
+		private bool hasForwarded;
 		
-		public MessageRecipient(Core core, long recipientId)
+		public MessageRecipient(Core core, DataRow recipientRow)
             : base(core)
         {
 			ItemLoad += new ItemLoadHandler(MessageRecipient_ItemLoad);
 
             try
             {
-                LoadItem(recipientId);
+                loadItemInfo(recipientRow);
             }
             catch (InvalidItemException)
             {
@@ -81,21 +95,14 @@ namespace BoxSocial.Applications.Mail
 			}
 		}
 		
-		public override long Id
-        {
-            get
-            {
-                return recipientId;
-            }
-        }
+		public override string Uri {
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
 
-        public override string Uri
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+		
 	}
 	
 	public class InvalidMessageRecipientException : Exception

@@ -73,13 +73,13 @@ namespace BoxSocial.FrontEnd
                 {
                     dr["user_id"] = dr["item_id"];
 					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
-                    core.UserProfiles.LoadPrimitiveProfile(itemKey.Type, itemKey.Id);
+                    core.UserProfiles.LoadPrimitiveProfile(itemKey);
                 }
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
 					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
-                    Primitive member = core.UserProfiles[itemKey.Type, itemKey.Id];
+                    Primitive member = core.UserProfiles[itemKey];
                     //members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);
@@ -274,6 +274,21 @@ namespace BoxSocial.FrontEnd
                                             {
                                                 db.UpdateQuery(string.Format(@"INSERT INTO comment_types (type_type, application_id, type_updated_ut) VALUES ('{0}', {1}, {2});",
                                                     Mysql.Escape(ct.Type), applicationId, updatedRaw));
+                                            }
+                                        }
+                                    }
+
+                                    if (aii.ApplicationItemAccessPermissions != null)
+                                    {
+                                        foreach (ApplicationItemAccessPermissions iap in aii.ApplicationItemAccessPermissions)
+                                        {
+                                            try
+                                            {
+                                                AccessControlPermission acp = new AccessControlPermission(core, iap.TypeId, iap.PermissionName);
+                                            }
+                                            catch (InvalidAccessControlPermissionException)
+                                            {
+                                                AccessControlPermission.Create(core, iap.TypeId, iap.PermissionName);
                                             }
                                         }
                                     }

@@ -28,7 +28,7 @@ namespace BoxSocial.Internals
     public struct PrimitiveKey : IComparable
     {
         private string key;
-        private string type;
+        private long typeId;
 
         public string Key
         {
@@ -38,17 +38,17 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Type
+        public long TypeId
         {
             get
             {
-                return type;
+                return typeId;
             }
         }
 
-        public PrimitiveKey(string type, string key)
+        public PrimitiveKey(string key, long typeId)
         {
-            this.type = type;
+            this.typeId = typeId;
             this.key = key;
         }
 
@@ -57,7 +57,8 @@ namespace BoxSocial.Internals
             if (obj.GetType() != typeof(PrimitiveKey)) return -1;
             PrimitiveKey pk = (PrimitiveKey)obj;
 
-            if (type != pk.Type) return type.CompareTo(pk.Type);
+            if (typeId != pk.typeId)
+                return typeId.CompareTo(pk.typeId);
             return key.CompareTo(pk.Key);
         }
 
@@ -66,43 +67,24 @@ namespace BoxSocial.Internals
             if (obj.GetType() != typeof(PrimitiveKey)) return false;
             PrimitiveKey pk = (PrimitiveKey)obj;
 
-            if (type != pk.Type) return false;
+            if (typeId != pk.typeId)
+                return false;
             if (key != pk.Key) return false;
             return true;
         }
 
         public override int GetHashCode()
         {
-            return type.GetHashCode() ^ key.GetHashCode();
+            return typeId.GetHashCode() ^ key.GetHashCode();
         }
 
     }
 
-    public struct PrimitiveId : IComparable
+    public class PrimitiveId : ItemKey, IComparable
     {
-        private long id;
-        private string type;
-
-        public long Id
+        public PrimitiveId(long itemId, long typeId)
+            : base(itemId, typeId)
         {
-            get
-            {
-                return id;
-            }
-        }
-
-        public string Type
-        {
-            get
-            {
-                return type;
-            }
-        }
-
-        public PrimitiveId(string type, long id)
-        {
-            this.type = type;
-            this.id = id;
         }
 
         public int CompareTo(object obj)
@@ -110,8 +92,9 @@ namespace BoxSocial.Internals
             if (obj.GetType() != typeof(PrimitiveId)) return -1;
             PrimitiveId pk = (PrimitiveId)obj;
 
-            if (type != pk.Type) return type.CompareTo(pk.Type);
-            return id.CompareTo(pk.Id);
+            if (TypeId != pk.TypeId)
+                return TypeId.CompareTo(pk.TypeId);
+            return Id.CompareTo(pk.Id);
         }
 
         public override bool Equals(object obj)
@@ -119,27 +102,31 @@ namespace BoxSocial.Internals
             if (obj.GetType() != typeof(PrimitiveId)) return false;
             PrimitiveId pk = (PrimitiveId)obj;
 
-            if (type != pk.Type) return false;
-            if (id != pk.Id) return false;
+            if (TypeId != pk.TypeId)
+                return false;
+            if (Id != pk.Id)
+                return false;
             return true;
         }
 
         public override int GetHashCode()
         {
-            return type.GetHashCode() ^ id.GetHashCode();
+            return TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
         public override string ToString()
         {
-            if (type != null)
+            if (TypeId < 0)
             {
                 return string.Format("{0}.{1}",
-                    type, id); ;
+                    TypeId, Id);
+                ;
             }
             else
             {
                 return string.Format("NULL.{0}",
-                    id); ;
+                    Id);
+                ;
             }
         }
     }
@@ -170,7 +157,15 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(Id, this.GetType().FullName).TypeId;
+                return ItemKey.GetTypeId(this.GetType());
+            }
+        }
+
+        public ItemKey ItemKey
+        {
+            get
+            {
+                return new ItemKey(Id, TypeId);
             }
         }
 

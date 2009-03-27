@@ -144,7 +144,7 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
-                if (type.IsSubclassOf(typeof(Item)))
+                if (type.IsSubclassOf(typeof(Item)) && type.GetCustomAttributes(typeof(DataTableAttribute), false).Length == 1)
                 {
                     string table = Item.GetTable(type);
 
@@ -165,7 +165,7 @@ namespace BoxSocial.Internals
                                 }
                                 else
                                 {
-                                    if (columns[field.Name].Type != field.Type || columns[field.Name].Length != field.Length)
+                                    if ((!columns[field.Name].Type.Equals(field.Type)) || columns[field.Name].Length != field.Length)
                                     {
                                         core.db.ChangeColumn(table, field);
                                     }

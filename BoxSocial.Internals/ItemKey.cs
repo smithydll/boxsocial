@@ -140,5 +140,28 @@ namespace BoxSocial.Internals
                 return 0;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof(ItemKey))
+                return false;
+            ItemKey ik = (ItemKey)obj;
+
+            if (TypeId != ik.TypeId)
+                return false;
+            if (Id != ik.Id)
+                return false;
+            return true;
+        }
+
+        public static bool operator ==(ItemKey ik1, ItemKey ik2)
+        {
+            return ik1.Equals(ik2);
+        }
+
+        public static bool operator !=(ItemKey ik1, ItemKey ik2)
+        {
+            return (!ik1.Equals(ik2));
+        }
 	}
 }

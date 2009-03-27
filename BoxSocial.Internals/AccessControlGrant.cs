@@ -55,6 +55,30 @@ namespace BoxSocial.Internals
 		
 		Item item;
 		Primitive owner;
+
+        public ItemKey PrimitiveKey
+        {
+            get
+            {
+                return primitiveKey;
+            }
+        }
+
+        public long PermissionId
+        {
+            get
+            {
+                return permissionId;
+            }
+        }
+
+        public AccessControlGrants Allow
+        {
+            get
+            {
+                return (AccessControlGrants)grantAllow;
+            }
+        }
 		
 		public Primitive Owner
         {
@@ -62,8 +86,8 @@ namespace BoxSocial.Internals
             {
                 if (owner == null || primitiveKey.Id != owner.Id || primitiveKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(primitiveKey.Type, primitiveKey.Id);
-                    owner = core.UserProfiles[primitiveKey.Type, primitiveKey.Id];
+                    core.UserProfiles.LoadPrimitiveProfile(primitiveKey);
+                    owner = core.UserProfiles[primitiveKey];
                     return owner;
                 }
                 else
@@ -123,6 +147,25 @@ namespace BoxSocial.Internals
 			
 			return grants;
 		}
+
+        public static List<AccessControlGrant> GetGrants(Core core, NumberedItem item, long permissionId)
+        {
+            List<AccessControlGrant> grants = new List<AccessControlGrant>();
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            sQuery.AddCondition("grant_item_id", item.Key.Id);
+            sQuery.AddCondition("grant_item_type_id", item.Key.TypeId);
+            sQuery.AddCondition("grant_permission_id", permissionId);
+
+            DataTable grantsTable = core.db.Query(sQuery);
+
+            foreach (DataRow dr in grantsTable.Rows)
+            {
+                grants.Add(new AccessControlGrant(core, item, dr));
+            }
+
+            return grants;
+        }
 		
 		public override string Uri 
 		{

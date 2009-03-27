@@ -341,12 +341,12 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        protected Primitive fillOwner(long ownerId, string ownerType)
+        protected Primitive fillOwner(long ownerId, long ownerTypeId)
         {
             Primitive owner;
 
-            Type type = core.GetPrimitiveType(ownerType);
-            if (type is Primitive)
+            Type type = core.GetPrimitiveType(ownerTypeId);
+            if (type.IsSubclassOf(typeof(Primitive)))
             {
                 owner = System.Activator.CreateInstance(type, new object[] { core, ownerId }) as Primitive;
 
@@ -633,12 +633,24 @@ namespace BoxSocial.Internals
                     {
                         return dtattr.TableName;
                     }
-                    else
-                    {
-                        // A null table is a table by proxy (false table)
-                        return null;
-                    }
                     attributeFound = true;
+                }
+            }
+
+            /* Maybe is a Table View if haven't found a DataTable */
+            if (!attributeFound)
+            {
+                foreach (Attribute attr in type.GetCustomAttributes(typeof(TableViewAttribute), false))
+                {
+                    TableViewAttribute tvattr = (TableViewAttribute)attr;
+                    if (tvattr != null)
+                    {
+                        if (tvattr.TableName != null)
+                        {
+                            return tvattr.TableName;
+                        }
+                        attributeFound = true;
+                    }
                 }
             }
 
@@ -1164,6 +1176,40 @@ namespace BoxSocial.Internals
             {
                 ItemLoad();
             }
+        }
+
+        protected void MoveUp(string orderField)
+        {
+            // TODO: make sure isn't INestableItem
+            IOrderableItem oItem = (IOrderableItem)this;
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(this.GetType()));
+            uQuery.AddField(orderField, new QueryOperation(orderField, QueryOperations.Addition, 1));
+            uQuery.AddCondition(orderField, oItem.Order);
+            oItem.AddSequenceConditon(uQuery);
+
+            core.db.Query(uQuery);
+
+            oItem.Order--;
+
+            this.Update();
+        }
+
+        protected void MoveDown(string orderField)
+        {
+            // TODO: make sure isn't INestableItem
+            IOrderableItem oItem = (IOrderableItem)this;
+
+            UpdateQuery uQuery = new UpdateQuery(GetTable(this.GetType()));
+            uQuery.AddField(orderField, new QueryOperation(orderField, QueryOperations.Subtraction, 1));
+            uQuery.AddCondition(orderField, oItem.Order);
+            oItem.AddSequenceConditon(uQuery);
+
+            core.db.Query(uQuery);
+
+            oItem.Order++;
+
+            this.Update();
         }
     }
 

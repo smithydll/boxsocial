@@ -252,8 +252,8 @@ namespace BoxSocial.Applications.Gallery
             {
                 ItemKey ik = new ItemKey((long)galleryItemTable.Rows[0]["gallery_item_item_Id"], (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"]);
 
-                core.UserProfiles.LoadPrimitiveProfile(ik.Type, ik.Id);
-                Primitive owner = core.UserProfiles[ik.Type, ik.Id];
+                core.UserProfiles.LoadPrimitiveProfile(ik);
+                Primitive owner = core.UserProfiles[ik];
 
                 /*switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
                 {

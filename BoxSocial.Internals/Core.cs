@@ -59,8 +59,8 @@ namespace BoxSocial.Internals
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
 
-        Dictionary<string, Type> primitiveTypes = new Dictionary<string, Type>();
-        Dictionary<string, PrimitiveAttribute> primitiveAttributes = new Dictionary<string, PrimitiveAttribute>();
+        Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
+        Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
         private Dictionary<long, RatingHandler> ratingHandles = new Dictionary<long, RatingHandler>();
@@ -378,21 +378,20 @@ namespace BoxSocial.Internals
         public void AddPrimitiveType(Type type)
         {
             bool typeAdded = false;
+            long primitiveTypeId = ItemKey.GetTypeId(type);
+
             if (type.IsSubclassOf(typeof(Primitive)))
             {
                 foreach (object attr in type.GetCustomAttributes(false))
                 {
                     if (attr.GetType() == typeof(PrimitiveAttribute))
                     {
-                        if (((PrimitiveAttribute)attr).Type != null)
+                        if (primitiveTypeId > 0)
                         {
-                            if (!primitiveTypes.ContainsKey(((PrimitiveAttribute)attr).Type))
+                            if (!primitiveTypes.ContainsKey(primitiveTypeId))
                             {
-                                primitiveAttributes.Add(((PrimitiveAttribute)attr).Type, (PrimitiveAttribute)attr);
-                                primitiveTypes.Add(((PrimitiveAttribute)attr).Type, type);
-								// TODO: remove
-								primitiveAttributes.Add(type.FullName, (PrimitiveAttribute)attr);
-								primitiveTypes.Add(type.FullName, type);
+                                primitiveAttributes.Add(primitiveTypeId, (PrimitiveAttribute)attr);
+                                primitiveTypes.Add(primitiveTypeId, type);
                             }
                             typeAdded = true;
                         }
@@ -401,9 +400,9 @@ namespace BoxSocial.Internals
 
                 if (!typeAdded)
                 {
-                    if (!primitiveTypes.ContainsKey(type.FullName))
+                    if (!primitiveTypes.ContainsKey(primitiveTypeId))
                     {
-                        primitiveTypes.Add(type.FullName, type);
+                        primitiveTypes.Add(primitiveTypeId, type);
                     }
                 }
             }
@@ -426,11 +425,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Type GetPrimitiveType(string ownerType)
+        public Type GetPrimitiveType(long typeId)
         {
-            if (primitiveTypes.ContainsKey(ownerType))
+            if (primitiveTypes.ContainsKey(typeId))
             {
-                return primitiveTypes[ownerType];
+                return primitiveTypes[typeId];
             }
             else
             {
@@ -438,11 +437,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public PrimitiveAttribute GetPrimitiveAttributes(string ownerType)
+        public PrimitiveAttribute GetPrimitiveAttributes(long typeId)
         {
-            if (primitiveAttributes.ContainsKey(ownerType))
+            if (primitiveAttributes.ContainsKey(typeId))
             {
-                return primitiveAttributes[ownerType];
+                return primitiveAttributes[typeId];
             }
             else
             {

@@ -19,8 +19,10 @@
  */
 
 using System;
-using System.Data;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Web;
 using BoxSocial.IO;
 
@@ -70,6 +72,19 @@ namespace BoxSocial.Internals
 
         private ushort accessBits;
 
+        private bool usesAccessControlLists;
+
+        private List<AccessControlGrant> grants;
+        private NumberedItem item;
+
+        public Access(Core core, IPermissibleItem item, Primitive owner)
+        {
+            this.item = (NumberedItem)item;
+            this.usesAccessControlLists = true;
+
+            grants = AccessControlGrant.GetGrants(core, this.item);
+        }
+
         public Access(Core core, ushort accessBits, Primitive owner)
         {
             this.core = core;
@@ -77,6 +92,9 @@ namespace BoxSocial.Internals
             this.owner = owner;
 
             this.accessBits = accessBits;
+            this.usesAccessControlLists = false;
+
+            grants = null;
         }
 
         public long SetViewer(User viewer)
@@ -101,6 +119,45 @@ namespace BoxSocial.Internals
             SetViewer(session.LoggedInMember);
 
             return loggedIdUid;
+        }
+
+        public bool Can(string permission)
+        {
+            bool allow = false;
+            bool deny = false;
+
+            AccessControlPermission acp = new AccessControlPermission(core, item.Key.TypeId, permission);
+
+            /*foreach (AccessControlGrant grant in grants)
+            {
+                if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(grant.PrimitiveKey);
+                }
+            }*/
+
+            foreach (AccessControlGrant grant in grants)
+            {
+                if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
+                {
+                    /*if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
+                    {
+                    }
+                    switch (grant.Allow)
+                    {
+                        case AccessControlGrants.Allow:
+                            allow = true;
+                            break;
+                        case AccessControlGrants.Deny:
+                            deny = true;
+                            break;
+                        case AccessControlGrants.Inherit:
+                            break;
+                    }*/
+                }
+            }
+
+            return (allow && (!deny));
         }
 
         /// <summary>

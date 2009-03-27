@@ -31,14 +31,17 @@ namespace BoxSocial.Internals
 {
 	public interface IOrderableItem
 	{
-		int Order
-		{
-			get;
-		}
+        int Order
+        {
+            get;
+            set;
+        }
 		
 		void MoveUp();
 		
 		void MoveDown();
+
+        void AddSequenceConditon(UpdateQuery uQuery);
 		
 	}
 }

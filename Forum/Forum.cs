@@ -218,6 +218,10 @@ namespace BoxSocial.Applications.Forum
             {
                 return forumOrder;
             }
+            set
+            {
+                SetProperty("forumOrder", value);
+            }
         }
 		
 		public int Level
@@ -284,6 +288,18 @@ namespace BoxSocial.Applications.Forum
                 stw.Close();
 
                 SetProperty("parents", sb.ToString());
+            }
+        }
+
+        public bool IsLocked
+        {
+            get
+            {
+                return forumLocked;
+            }
+            set
+            {
+                SetProperty("forumLocked", value);
             }
         }
 		
@@ -1321,8 +1337,8 @@ namespace BoxSocial.Applications.Forum
             {
                 if (owner == null || (ownerKey.Id != owner.Id && ownerKey.TypeId != owner.TypeId))
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey.Type, ownerKey.Id);
-                    owner = core.UserProfiles[ownerKey.Type, ownerKey.Id];
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
+                    owner = core.UserProfiles[ownerKey];
                     return owner;
                 }
                 else
@@ -1353,6 +1369,13 @@ namespace BoxSocial.Applications.Forum
             {
                 return -1;
             }
+        }
+
+        public void AddSequenceConditon(UpdateQuery uQuery)
+        {
+            uQuery.AddCondition("forum_parent_id", ParentId);
+            uQuery.AddCondition("forum_item_id", Owner.Id);
+            uQuery.AddCondition("forum_item_type_id", Owner.TypeId);
         }
     }
 

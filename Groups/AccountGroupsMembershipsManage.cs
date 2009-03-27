@@ -77,6 +77,8 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_membership");
 
+            long groupTypeId = ItemKey.GetTypeId(typeof(UserGroup));
+
             SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.Common);
             query.AddCondition("user_keys.user_id", LoggedInMember.Id);
 
@@ -86,7 +88,7 @@ namespace BoxSocial.Groups
             for (int i = 0; i < membershipGroupsTable.Rows.Count; i++)
             {
                 long groupId = (long)membershipGroupsTable.Rows[i]["group_id"];
-                core.UserProfiles.LoadPrimitiveProfile("GROUP", groupId);
+                core.UserProfiles.LoadPrimitiveProfile(groupId, groupTypeId);
                 groupIds.Add(groupId);
             }
 
@@ -99,7 +101,7 @@ namespace BoxSocial.Groups
 
                 try
                 {
-                    thisGroup = (UserGroup)core.UserProfiles["GROUP", (long)membershipGroupsTable.Rows[i]["group_id"]];
+                    thisGroup = (UserGroup)core.UserProfiles[(long)membershipGroupsTable.Rows[i]["group_id"], groupTypeId];
                 }
                 catch
                 {

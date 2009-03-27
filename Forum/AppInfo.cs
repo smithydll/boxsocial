@@ -115,6 +115,8 @@ namespace BoxSocial.Applications.Forum
 
         public override ApplicationInstallationInfo Install()
         {
+            long forumTypeId = ItemKey.GetTypeId(typeof(Forum));
+
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group);
@@ -126,6 +128,16 @@ namespace BoxSocial.Applications.Forum
             aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
+
+            /* Forum Permissions */
+            aii.AddItemAccessPermission(new ApplicationItemAccessPermissions("P_FORUM_VIEW", forumTypeId),
+                new ApplicationItemAccessPermissions("P_FORUM_READ", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_VIEW", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_READ", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_CREATE", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_REPLY", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_DELETE", forumTypeId),
+                new ApplicationItemAccessPermissions("P_TOPIC_MOVE", forumTypeId));
 
             return aii;
         }

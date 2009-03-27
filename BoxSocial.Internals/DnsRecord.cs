@@ -56,7 +56,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Primitive Owner
+        // TODO: 
+        /*public Primitive Owner
         {
             get
             {
@@ -71,7 +72,7 @@ namespace BoxSocial.Internals
                     return owner;
                 }
             }
-        }
+        }*/
 
         public DnsRecord(Core core, string domain)
             : base (core)

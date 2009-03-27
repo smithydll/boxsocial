@@ -84,6 +84,21 @@ namespace BoxSocial.Internals
                 throw new InvalidAccessControlPermissionException();
             }
 		}
+
+        public AccessControlPermission(Core core, long typeId, string permissionName)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+
+            try
+            {
+                // TODO
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidAccessControlPermissionException();
+            }
+        }
 		
 		private void AccessControlPermission_ItemLoad()
         {
@@ -91,12 +106,17 @@ namespace BoxSocial.Internals
 		
 		public static AccessControlPermission Create(Core core, ItemType type, string permissionName)
 		{
-			AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
-			                                                                   new FieldValuePair("permission_item_type", type.TypeId),
-			                                                                   new FieldValuePair("permission_name", permissionName));
-			
-			return acp;
+            return Create(core, type.TypeId, permissionName);
 		}
+
+        public static AccessControlPermission Create(Core core, long typeId, string permissionName)
+        {
+            AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
+                                                                               new FieldValuePair("permission_item_type", typeId),
+                                                                               new FieldValuePair("permission_name", permissionName));
+
+            return acp;
+        }
 		
 		public void Delete()
 		{

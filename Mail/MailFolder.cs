@@ -38,6 +38,8 @@ namespace BoxSocial.Applications.Mail
 		private long ownerId;
 		[DataField("folder_name", 31)]
 		private string folderName;
+        [DataField("folder_parent")]
+        private long parentId;
 		[DataField("folder_order")]
         private int folderOrder;
 		[DataField("folder_level")]
@@ -62,9 +64,24 @@ namespace BoxSocial.Applications.Mail
 		}
 
 		
-		public MailFolder()
-		{
-		}
+		public MailFolder(Core core, DataRow folderRow)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(MailFolder_ItemLoad);
+
+            try
+            {
+                loadItemInfo(folderRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
+
+        void MailFolder_ItemLoad()
+        {
+        }
 		
 		public override long Id
         {
@@ -78,9 +95,27 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-				return Linker.BuildAccountSubModuleUri("mail", "read", messageId);
-
+                throw new NotImplementedException();
             }
         }
-	}
+
+        #region INestableItem Members
+
+
+        public ParentTree GetParents()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Item> GetChildren()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+
+    public class InvalidMailFolderException : Exception
+    {
+    }
 }

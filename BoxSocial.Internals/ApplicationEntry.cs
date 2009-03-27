@@ -979,15 +979,16 @@ namespace BoxSocial.Internals
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
-            string type = HttpContext.Current.Request.QueryString["type"];
+            //string type = HttpContext.Current.Request.QueryString["type"];
+            long typeId = Functions.RequestLong("type", 0);
             long id = Functions.RequestLong("id", 0);
 
             Primitive viewer = core.session.LoggedInMember;
 
-            if (!string.IsNullOrEmpty(type))
+            if (typeId > 0)
             {
-                core.UserProfiles.LoadPrimitiveProfile(type, id);
-                viewer = core.UserProfiles[type, id];
+                core.UserProfiles.LoadPrimitiveProfile(id, typeId);
+                viewer = core.UserProfiles[id, typeId];
             }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);

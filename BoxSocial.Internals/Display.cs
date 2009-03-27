@@ -820,30 +820,39 @@ namespace BoxSocial.Internals
         {
 			if (input == null)
 			{
-			HttpContext.Current.Response.Write("input null");
+			    HttpContext.Current.Response.Write("input null");
 			}
 			else if (templateVar == null)
 			{
-			HttpContext.Current.Response.Write("templateVar null");
+			    HttpContext.Current.Response.Write("templateVar null");
 			}
 			else if (template == null)
 			{
-			HttpContext.Current.Response.Write("template null");
+			    HttpContext.Current.Response.Write("template null");
 			}
 			else if (core.session.LoggedInMember == null)
 			{
-			HttpContext.Current.Response.Write("core.session.LoggedInMember null");
+			    //HttpContext.Current.Response.Write("core.session.LoggedInMember null");
+
+                if (owner != null)
+                {
+                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), owner));
+                }
+                else
+                {
+                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input)));
+                }
 			}
 			else
 			{
-            if (owner != null)
-            {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
-            }
-            else
-            {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
-            }
+                if (owner != null)
+                {
+                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                }
+                else
+                {
+                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                }
 			}
         }
 

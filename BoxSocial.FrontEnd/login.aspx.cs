@@ -169,12 +169,44 @@ namespace BoxSocial.FrontEnd
                     string userName = Request.Form["username"];
                     string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
 
-                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}' AND ui.user_password = '{1}'",
-                       userName, password));
+                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
+                       userName));
 
                     if (userTable.Rows.Count == 1)
                     {
-                        DataRow userRow = userTable.Rows[0];
+						DataRow userRow = userTable.Rows[0];
+						bool authenticated = false;
+						string dbPassword = (string)userRow["user_password"];
+						
+						// old phpBB passwords
+						if (dbPassword.Length == 32)
+						{
+							// phpBB2 passwords
+							if (SessionState.SessionMd5(Request.Form["password"]) == dbPassword.ToLower())
+							{
+								authenticated = true;
+							}
+						}
+						else if (dbPassword.Length == 34)
+						{
+									// phpBB3 passwords
+							string itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+							
+							if (SessionState.phpBB3Hash(Request.Form["password"], dbPassword, ref itoa64) == dbPassword)
+							{
+								authenticated = true;
+							}
+						}
+						else
+						{
+							if (dbPassword == password)
+							{
+								authenticated = true;
+							}
+						}
+						
+						if (authenticated)
+						{
                         if (Request.Form["remember"] == "true")
                         {
                             session.SessionBegin((long)userRow["user_id"], false, true);
@@ -211,6 +243,11 @@ namespace BoxSocial.FrontEnd
                             Response.Redirect("/", true);
                         }
                         return; /* stop processing the display of this page */
+						}
+						else
+						{
+							template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
+						}
                     }
                     else
                     {

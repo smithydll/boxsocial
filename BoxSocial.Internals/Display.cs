@@ -364,7 +364,7 @@ namespace BoxSocial.Internals
                 SelectQuery query = new SelectQuery("comments");
                 query.AddFields("COUNT(*) AS total");
                 query.AddCondition("comment_item_id", item.Id);
-                query.AddCondition("comment_item_type", item.Namespace);
+                query.AddCondition("comment_item_type_id", item.Key.TypeId);
                 query.AddCondition("comment_id", ConditionEquality.LessThanEqual, c);
 
                 if (commenters != null)
@@ -379,24 +379,24 @@ namespace BoxSocial.Internals
                             QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "c.comment_item_id", commenters[1].Id);
                             qc2.AddCondition("user_id", commenters[0].Id);
 
-                            query.AddCondition("c.comment_item_type", item.Namespace);
+                            query.AddCondition("c.comment_item_type_id", item.Key.TypeId);
                         }
                         else
                         {
                             query.AddCondition("comment_item_id", item.Id);
-                            query.AddCondition("comment_item_type", item.Namespace);
+                            query.AddCondition("comment_item_type_id", item.Key.TypeId);
                         }
                     }
                     else
                     {
                         query.AddCondition("comment_item_id", item.Id);
-                        query.AddCondition("comment_item_type", item.Namespace);
+                        query.AddCondition("comment_item_type_id", item.Key.TypeId);
                     }
                 }
                 else
                 {
                     query.AddCondition("comment_item_id", item.Id);
-                    query.AddCondition("comment_item_type", item.Namespace);
+                    query.AddCondition("comment_item_type_id", item.Key.TypeId);
                 }
 
                 query.AddSort(SortOrder.Ascending, "comment_time_ut");

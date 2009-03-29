@@ -56,6 +56,8 @@ namespace BoxSocial.Applications.Mail
 		private bool isFlagged;
 		[DataField("has_forwarded")]
 		private bool hasForwarded;
+		[DataField("message_folder_id")]
+		private long messageFolderId;
 		
 		public MessageRecipient(Core core, DataRow recipientRow)
             : base(core)

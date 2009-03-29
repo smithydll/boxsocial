@@ -16,7 +16,7 @@
    version="1.0"
    sodipodi:docname="posticon_read_med_announce.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/var/www/images/posticon_unread_med_stiky.png"
+   inkscape:export-filename="/var/www/images/posticon_read_med_announce.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -78,12 +78,12 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#404040;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="8.3154297"
+       x="7.1655512"
        y="15"
        id="text3156"><tspan
          sodipodi:role="line"
          id="tspan3158"
-         x="8.3154297"
+         x="7.1655512"
          y="15"
          style="font-size:12px;font-style:italic;fill:#404040;fill-opacity:1">i</tspan></text>
   </g>

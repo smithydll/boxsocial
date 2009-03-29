@@ -16,7 +16,7 @@
    version="1.0"
    sodipodi:docname="posticon_unread_med_announce.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/var/www/images/posticon_unread_med_stiky.png"
+   inkscape:export-filename="/var/www/images/posticon_unread_med_announce.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -40,15 +40,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="23.577744"
-     inkscape:cx="1.9008966"
+     inkscape:cx="-3.4219197"
      inkscape:cy="7.9946786"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1150"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8" />
+     inkscape:window-height="1127"
+     inkscape:window-x="0"
+     inkscape:window-y="24" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -78,12 +78,12 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;fill:#003380;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="8.3154297"
+       x="7.1655512"
        y="15"
        id="text3156"><tspan
          sodipodi:role="line"
          id="tspan3158"
-         x="8.3154297"
+         x="7.1655512"
          y="15"
          style="font-size:12px;font-style:italic;fill:#003380;fill-opacity:1">i</tspan></text>
   </g>

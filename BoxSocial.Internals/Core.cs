@@ -147,6 +147,8 @@ namespace BoxSocial.Internals
 
             this.db = db;
             this.template = template;
+			
+			ItemKey.populateItemTypeCache(this);
 
             userProfileCache = new PrimitivesCache(this);
 

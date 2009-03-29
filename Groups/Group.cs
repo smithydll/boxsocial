@@ -1082,8 +1082,42 @@ namespace BoxSocial.Groups
 
         public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
-            bool isGroupMember = IsGroupMember(viewer);
-            bool isGroupOperator = IsGroupOperator(viewer);
+			byte accessBitsEveryone = (byte)(accessBits & 0x000F);
+            byte accessBitsMembers = (byte)((accessBits & 0x00F0) >> 4);
+            byte accessBitsOfficers = (byte)((accessBits & 0x0F00) >> 8);
+            byte accessBitsOperators = (byte)((accessBits & 0xF000) >> 12);
+			
+			bool isGroupOperator = IsGroupOperator(viewer);
+			
+			if (isGroupOperator)
+			{
+				canRead = ((accessBitsOperators & 0x1) == 0x1);
+                canComment = ((accessBitsOperators & 0x2) == 0x2);
+                canCreate = ((accessBitsOperators & 0x4) == 0x4);
+                canChange = ((accessBitsOperators & 0x8) == 0x8);
+				return;
+			}
+			
+			bool isGroupMember = IsGroupMember(viewer);
+			
+			if (isGroupMember)
+			{
+				canRead = ((accessBitsMembers & 0x1) == 0x1);
+                canComment = ((accessBitsMembers & 0x2) == 0x2);
+                canCreate = ((accessBitsMembers & 0x4) == 0x4);
+                canChange = ((accessBitsMembers & 0x8) == 0x8);
+				return;
+			}
+			
+			if (accessBitsEveryone == 0)
+			{
+				canRead = false;
+                canComment = false;
+                canCreate = false;
+                canChange = false;
+				return;
+			}
+			
             switch (GroupType)
             {
                 case "OPEN":

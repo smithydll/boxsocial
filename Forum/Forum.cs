@@ -364,6 +364,7 @@ namespace BoxSocial.Applications.Forum
             forumId = 0;
             forumLocked = false;
 			forumLevel = 0;
+			permissions = 0x1111;
         }
 
         public Forum(Core core, long forumId)
@@ -1029,6 +1030,12 @@ namespace BoxSocial.Applications.Forum
             {
                 return;
             }
+			
+			thisForum.Access.SetSessionViewer(core.session);
+			if (!thisForum.Access.CanRead)
+			{
+				Functions.Generate403();
+			}
 
             if (core.LoggedInMemberId > 0 && (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember)))
             {
@@ -1051,6 +1058,15 @@ namespace BoxSocial.Applications.Forum
 			}
 
             List<Forum> forums = thisForum.GetForums();
+			
+			foreach (Forum forum in forums)
+			{
+				forum.Access.SetSessionViewer(core.session);
+				if (!forum.Access.CanRead)
+				{
+					forums.Remove(forum);
+				}
+			}
 
             page.template.Parse("FORUMS", forums.Count.ToString());
 
@@ -1072,6 +1088,15 @@ namespace BoxSocial.Applications.Forum
             if (subForumIds.Count > 0)
             {
                 List<Forum> subForums = Forum.GetSubForums(core, page.ThisGroup, subForumIds);
+				
+				foreach (Forum forum in subForums)
+				{
+					forum.Access.SetSessionViewer(core.session);
+					if (!forum.Access.CanRead)
+					{
+						subForums.Remove(forum);
+					}
+				}
 
                 foreach (Forum forum in subForums)
                 {

@@ -956,6 +956,119 @@ namespace BoxSocial.Internals
         {
             return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
+		
+		public static byte[] phpBBMd5(byte[] input)
+		{
+			System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            return md5.ComputeHash(input);
+		}
+		
+		/*public static string phpBBMd5(string input)
+		{
+			System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            return ASCIIEncoding.ASCII.GetString(md5.ComputeHash(ASCIIEncoding.ASCII.GetBytes(input)));
+		}*/
+		
+		public static string phpBB3Hash(string password, string setting, ref string itoa64)
+		{
+		     string output = "*";
+
+            // Check for correct hash
+            if (setting.Substring(0, 3) != "$H$")
+            {
+                return output;
+            }
+
+            int count_log2 = itoa64.IndexOf(setting[3]);
+			
+			if (count_log2 <= 0)
+			{
+				count_log2 = 0;
+			}
+
+            if (count_log2 < 7 || count_log2 > 30)
+            {
+                return output;
+            }
+
+            int count = 1 << count_log2;
+            string salt = setting.Substring(4, 8);
+
+            if (salt.Length != 8)
+            {
+                return output;
+            }
+
+            byte[] hash = SessionState.phpBBMd5(ASCIIEncoding.ASCII.GetBytes(salt + password));
+			
+			//Console.WriteLine(hash.Length);
+
+            do
+            {
+                hash = SessionState.phpBBMd5(CombineByte(hash, ASCIIEncoding.ASCII.GetBytes(password)));
+            }
+            while ((--count) > 0);
+
+            output = setting.Substring(0, 12);
+
+            output += SessionState.phpBB3Encode64(hash, 16, ref itoa64);
+
+            return output;
+		}
+		
+		private static byte[] CombineByte(byte[] one, byte[] two)
+		{
+			byte[] ret = new byte[one.Length + two.Length];
+			
+			Array.Copy(one, 0, ret, 0, one.Length);
+			Array.Copy(two, 0, ret, one.Length, two.Length);
+			
+			return ret;
+		}
+		
+		private static string phpBB3Encode64(byte[] input, int count, ref string itoa64)
+        {
+            string output = "";
+            int i = 0;
+
+            do
+            {
+				/*Console.WriteLine(UTF7Encoding.UTF7.GetBytes(input[i].ToString()).Length);
+				Console.WriteLine(Convert.ToChar(Convert.ToByte(input[i])));
+				Console.WriteLine(input[i].ToString());*/
+                int val = Convert.ToByte(input[i++]);
+                output += itoa64[val & 0x3f];
+
+                if (i < count)
+                {
+                    val |= Convert.ToByte(input[i]) << 8;
+                }
+
+                output += itoa64[(val >> 6) & 0x3f];
+
+                if (i++ >= count)
+                {
+                    break;
+                }
+
+                if (i < count)
+                {
+                    val |= Convert.ToByte(input[i]) << 16;
+                }
+
+                output += itoa64[(val >> 12) & 0x3f];
+
+                if (i++ >= count)
+                {
+                    break;
+                }
+
+                output += itoa64[(val >> 18) & 0x3f];
+            }
+            while (i < count);
+
+            return output;
+        }
 
         public static void RedirectAuthenticate()
         {

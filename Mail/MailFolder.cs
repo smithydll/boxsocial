@@ -46,6 +46,8 @@ namespace BoxSocial.Applications.Mail
         private int folderLevel;
         [DataField("folder_parents", MYSQL_TEXT)]
         private string parents;
+		[DataField("folder_messages")]
+        private long folderMessages;
 		
 		public int Order
 		{

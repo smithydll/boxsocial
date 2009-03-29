@@ -203,7 +203,6 @@ namespace BoxSocial.Internals
             core = new Core(db, template);
             Core.DB = db;
             core.page = this;
-			ItemKey.populateItemTypeCache(Core);
             Bbcode.Initialise(core);
             Functions.Core = core;
             Display.Core = core;

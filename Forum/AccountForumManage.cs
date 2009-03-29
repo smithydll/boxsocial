@@ -169,7 +169,7 @@ namespace BoxSocial.Applications.Forum
 
                         template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
 					
-					    Display.ParsePermissionsBox(template, "S_FORUM_PERMS", forum.Permissions, forum.PermissibleActions);
+					    //Display.ParsePermissionsBox(template, "S_FORUM_PERMS", forum.Permissions, forum.PermissibleActions);
 
                         template.Parse("EDIT", "TRUE");
                     }
@@ -272,7 +272,7 @@ namespace BoxSocial.Applications.Forum
 
             forum.Title = title;
             forum.Description = description;
-			forum.Permissions = Functions.GetPermission();
+			//forum.Permissions = Functions.GetPermission();
 
             try
             {

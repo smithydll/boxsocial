@@ -457,6 +457,7 @@ namespace BoxSocial.Internals
 		
 		private static void populateItemFieldsCache()
 		{
+			object o = null;
             System.Web.Caching.Cache cache;
 			
 			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
@@ -477,7 +478,7 @@ namespace BoxSocial.Internals
 				cache = new Cache();
 			}
 			
-			object o = cache.Get("itemFields");
+			o = cache.Get("itemFields");
 			
 			if (o != null && o is Dictionary<Type, List<DataFieldInfo>>)
 			{

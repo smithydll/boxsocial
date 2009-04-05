@@ -85,6 +85,7 @@ namespace BoxSocial.Internals
 		public static void populateItemTypeCache(Core core)
 		{
             System.Web.Caching.Cache cache;
+			object o = null;
 			
 			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
 			{
@@ -95,7 +96,10 @@ namespace BoxSocial.Internals
 				cache = new Cache();
 			}
 			
-			object o = cache.Get("itemTypeIds");
+			if (cache != null)
+			{
+				o = cache.Get("itemTypeIds");
+			}
 			
 			if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
 			{
@@ -125,7 +129,10 @@ namespace BoxSocial.Internals
                     }
 				}
 
-				cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+				if (cache != null)
+				{
+					cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+				}
 			}
 		}
 

@@ -1058,15 +1058,17 @@ namespace BoxSocial.Applications.Forum
 			}
 
             List<Forum> forums = thisForum.GetForums();
+			List<Forum> accessibleForums = new List<Forum>();
 			
 			foreach (Forum forum in forums)
 			{
 				forum.Access.SetSessionViewer(core.session);
-				if (!forum.Access.CanRead)
+				if (forum.Access.CanRead)
 				{
-					forums.Remove(forum);
+					accessibleForums.Add(forum);
 				}
 			}
+			forums = accessibleForums;
 
             page.template.Parse("FORUMS", forums.Count.ToString());
 
@@ -1088,15 +1090,17 @@ namespace BoxSocial.Applications.Forum
             if (subForumIds.Count > 0)
             {
                 List<Forum> subForums = Forum.GetSubForums(core, page.ThisGroup, subForumIds);
+				List<Forum> accessibleSubForums = new List<Forum>();
 				
 				foreach (Forum forum in subForums)
 				{
 					forum.Access.SetSessionViewer(core.session);
-					if (!forum.Access.CanRead)
+					if (forum.Access.CanRead)
 					{
-						subForums.Remove(forum);
+						accessibleSubForums.Add(forum);
 					}
 				}
+				subForums = accessibleSubForums;
 
                 foreach (Forum forum in subForums)
                 {

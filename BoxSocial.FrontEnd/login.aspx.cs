@@ -169,7 +169,7 @@ namespace BoxSocial.FrontEnd
                     string userName = Request.Form["username"];
                     string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
 
-                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
+                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id, ui.user_password FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
                        userName));
 
                     if (userTable.Rows.Count == 1)

@@ -94,7 +94,7 @@ namespace BoxSocial.Internals
             else
             {
                 template.Parse("U_APPLICATIONS", Linker.AppendCoreSid(string.Format("/applications?type={0}&id={1}",
-                    Owner.Type, Owner.Id)));
+                    Owner.TypeId, Owner.Id)));
             }
         }
 

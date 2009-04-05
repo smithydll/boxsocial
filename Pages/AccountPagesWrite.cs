@@ -152,7 +152,7 @@ namespace BoxSocial.Applications.Pages
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            if (pageId > 0)
+            if (pageId > 0 && pagesSelectBox.ContainsKey(pageId.ToString()))
             {
                 pagesSelectBox[pageId.ToString()].Selectable = false;
             }

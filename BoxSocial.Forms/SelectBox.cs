@@ -74,7 +74,7 @@ namespace BoxSocial.Forms
         }
 
         /// <summary>
-        /// Get a select box item
+        /// Get a select box item.
         /// </summary>
         /// <param name="key">Item key</param>
         /// <returns>The select box item with the key</returns>
@@ -98,6 +98,16 @@ namespace BoxSocial.Forms
                 itemKeys.Add(item.Key, item);
             }
         }
+		
+		/// <summary>
+		/// Returns true is contains the given key.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public bool ContainsKey(string key)
+		{
+			return itemKeys.ContainsKey(key);
+		}
 
         /// <summary>
         /// Creates a string representing the XHTML syntax for the select box.

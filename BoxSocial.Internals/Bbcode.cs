@@ -1320,7 +1320,7 @@ namespace BoxSocial.Internals
                 string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
                 e.RemoveContents();
 
-                e.PrefixText = "<img src=\"http://agreendaysite.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+                e.PrefixText = "<img src=\"http://zinzam.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
                 e.SuffixText = "";
             }
         }

@@ -144,6 +144,7 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
+				//HttpContext.Current.Response.Write(type.FullName + ", " + type.GetCustomAttributes(typeof(DataTableAttribute), false).Length.ToString() + "<br />");
                 if (type.IsSubclassOf(typeof(Item)) && type.GetCustomAttributes(typeof(DataTableAttribute), false).Length == 1)
                 {
                     string table = Item.GetTable(type);
@@ -181,6 +182,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
+							//HttpContext.Current.Response.Write(table + "<br />");
                             core.db.CreateTable(table, dataFields);
                         }
                     }

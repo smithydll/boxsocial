@@ -1091,10 +1091,10 @@ namespace BoxSocial.Groups
 			
 			if (isGroupOperator)
 			{
-				canRead = ((accessBitsOperators & 0x1) == 0x1);
-                canComment = ((accessBitsOperators & 0x2) == 0x2);
-                canCreate = ((accessBitsOperators & 0x4) == 0x4);
-                canChange = ((accessBitsOperators & 0x8) == 0x8);
+				canRead = true;
+                canComment = true;
+                canCreate = true;
+                canChange = true;
 				return;
 			}
 			

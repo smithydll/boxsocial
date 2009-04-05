@@ -593,16 +593,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string GetUri(string type, long id)
+        public string GetUri(long typeId, long id)
         {
-            if (type == "USER")
+            if (typeId == ItemKey.GetTypeId(typeof(User)))
             {
                 return Uri;
             }
             else
             {
                 return Linker.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
-                    assemblyName, type, id));
+                    assemblyName, typeId, id));
             }
         }
 
@@ -660,7 +660,7 @@ namespace BoxSocial.Internals
         {
             if (viewer != null)
             {
-                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type_id = {2}",
+                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type_id FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type_id = {2}",
                     applicationId, viewer.Id, viewer.TypeId));
 
                 if (viewerTable.Rows.Count > 0)

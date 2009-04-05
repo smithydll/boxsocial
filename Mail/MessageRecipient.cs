@@ -40,9 +40,9 @@ namespace BoxSocial.Applications.Mail
 	[DataTable("mail_message_recipients")]
 	public class MessageRecipient : Item
 	{
-		[DataField("message_id", DataFieldKeys.Primary)] 
+		[DataField("message_id", DataFieldKeys.Index)] 
 		private long messageId;
-		[DataField("user_id", DataFieldKeys.Primary)]
+		[DataField("user_id", DataFieldKeys.Index)]
 		private long userId;
 		[DataField("sender_id")]
 		private long senderId;

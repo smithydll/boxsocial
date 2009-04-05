@@ -796,11 +796,11 @@ namespace BoxSocial.IO
 
                 if (field.Key > DataFieldKeys.None)
                 {
-                    notNull = " NOT NULL";
                     if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
 						if (Index.GetFields(field.Index.Key, fields).Count == 1)
 						{
+							notNull = " NOT NULL";
 	                        primaryKey = field;
 	                        key = " AUTO_INCREMENT";
 						}
@@ -853,6 +853,7 @@ namespace BoxSocial.IO
 			
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
+			//HttpContext.Current.Response.Write(sb.ToString() + "<br />");
             UpdateQuery(sb.ToString());
         }
 

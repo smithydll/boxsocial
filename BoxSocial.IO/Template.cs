@@ -177,6 +177,25 @@ namespace BoxSocial.IO
             }
             return false;
         }
+		
+		internal bool TryGetValue(string key, out string value)
+		{
+			if (!variables.TryGetValue(key, out value))
+			{
+				if (parentCollection != null)
+                {
+					return parentCollection.TryGetValue(key, out value);
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return true;
+			}
+		}
 
         internal List<VariableCollection> GetChildCollection(string name)
         {
@@ -461,11 +480,15 @@ namespace BoxSocial.IO
                     if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
                     {
                         inIf++;
-                        if (variables.ContainsKey(rm.Groups[1].Value))
+						string value1 = null;
+                        //if (variables.ContainsKey(rm.Groups[1].Value))
+						if (variables.TryGetValue(rm.Groups[1].Value, out value1))
                         {
-                            if (variables[rm.Groups[1].Value] != null)
+                            //if (variables[rm.Groups[1].Value] != null)
+							if (value1 != null)
                             {
-                                if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
+                                //if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
+								if (value1 != "false" && value1 != "0" && value1 != String.Empty)
                                 {
                                     conditionTrue.Push(true);
                                 }

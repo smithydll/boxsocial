@@ -31,6 +31,8 @@ using System.Web.UI.HtmlControls;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
+using BoxSocial.Networks;
 
 namespace BoxSocial.FrontEnd
 {
@@ -44,32 +46,32 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             int p = Functions.RequestInt("p", 1);
-            string type = Request.QueryString["type"];
+            long typeId = Functions.RequestLong("type", 0);
             long id = Functions.RequestLong("id", 0);
 
             AppPrimitives viewingPrimitive = AppPrimitives.Member;
 
-            if (!string.IsNullOrEmpty(type))
-            {
-                switch (type)
-                {
-                    case "USER":
-                        viewingPrimitive = AppPrimitives.Member;
-                        break;
-                    case "GROUP":
-                        viewingPrimitive = AppPrimitives.Group;
-                        break;
-                    case "NETWORK":
-                        viewingPrimitive = AppPrimitives.Network;
-                        break;
-                    case "APPLICATION":
-                        viewingPrimitive = AppPrimitives.Application;
-                        break;
-                    case "MUSIC":
-                        viewingPrimitive = AppPrimitives.Musician;
-                        break;
-                }
-            }
+            if (typeId == 0 || typeId == ItemKey.GetTypeId(typeof(User)))
+			{
+				typeId = ItemKey.GetTypeId(typeof(User));
+                viewingPrimitive = AppPrimitives.Member;
+			}
+			else if (typeId == ItemKey.GetTypeId(typeof(UserGroup)))
+			{					
+                viewingPrimitive = AppPrimitives.Group;
+			}
+			else if (typeId == ItemKey.GetTypeId(typeof(Network)))
+			{
+                viewingPrimitive = AppPrimitives.Network;
+			}
+			else if (typeId == ItemKey.GetTypeId(typeof(Application)))
+			{
+                viewingPrimitive = AppPrimitives.Application;
+			}
+			/*else if (typeId == ItemKey.GetTypeId(typeof(Musician)))
+			{
+                viewingPrimitive = AppPrimitives.Musician;
+            }*/
 
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + (byte)viewingPrimitive, (byte)viewingPrimitive);
@@ -86,7 +88,7 @@ namespace BoxSocial.FrontEnd
                 VariableCollection applicationVariableCollection = template.CreateChild("application_list");
 
                 applicationVariableCollection.Parse("TITLE", ae.Title);
-                applicationVariableCollection.Parse("URI", ae.GetUri(type, id));
+                applicationVariableCollection.Parse("URI", ae.GetUri(typeId, id));
             }
 
             Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));

@@ -98,6 +98,51 @@ namespace BoxSocial.Applications.Forum
                     Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", 3, sbis, topicState);
                 }
             }
+
+            if (topicId > 0)
+            {
+                ForumTopic thisTopic = new ForumTopic(core, topicId);
+
+                List<TopicPost> posts = thisTopic.GetLastPosts(10);
+
+                if (posts.Count > 0)
+                {
+                    page.template.Parse("PREVIEW_TOPIC", "TRUE");
+                }
+
+                foreach (TopicPost post in posts)
+                {
+                    VariableCollection postVariableCollection = page.template.CreateChild("post_list");
+
+                    postVariableCollection.Parse("SUBJECT", post.Title);
+                    postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
+                    //postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
+                    postVariableCollection.Parse("ID", post.Id.ToString());
+                    Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
+                    postVariableCollection.Parse("U_USER", post.Poster.Uri);
+                    postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
+                    postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
+                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
+                    postVariableCollection.Parse("USER_COUNTRY", post.Poster.Country);
+
+                    if (thisTopic.ReadStatus == null)
+                    {
+                        postVariableCollection.Parse("IS_READ", "FALSE");
+                    }
+                    else
+                    {
+                        if (thisTopic.ReadStatus.ReadTimeRaw < post.TimeCreatedRaw)
+                        {
+                            postVariableCollection.Parse("IS_READ", "FALSE");
+                        }
+                        else
+                        {
+                            postVariableCollection.Parse("IS_READ", "TRUE");
+                        }
+                    }
+                }
+            }
+
             page.template.Parse("S_MODE", mode);
 
             if (forumId > 0)

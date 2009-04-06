@@ -67,6 +67,21 @@ namespace BoxSocial.Internals
 
         protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument)
         {
+            return getSubItems(typeToGet, currentPage, perPage, feedParentArgument, null, false);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="typeToGet"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="perPage"></param>
+        /// <param name="feedParentArgument">Feed the parent as an argument to the constructor</param>
+        /// <param name="sortColumn"></param>
+        /// <param name="sortAsc"></param>
+        /// <returns></returns>
+        protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument, string sortColumn, bool sortAsc)
+        {
             List<Item> items = new List<Item>();
 
             SelectQuery query;
@@ -82,6 +97,18 @@ namespace BoxSocial.Internals
             else
             {
                 query = Item.GetSelectQueryStub(typeToGet);
+            }
+
+            if (!string.IsNullOrEmpty(sortColumn))
+            {
+                if (sortAsc)
+                {
+                    query.AddSort(SortOrder.Ascending, sortColumn);
+                }
+                else
+                {
+                    query.AddSort(SortOrder.Descending, sortColumn);
+                }
             }
 
             if (perPage > 0)

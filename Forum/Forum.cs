@@ -1195,7 +1195,7 @@ namespace BoxSocial.Applications.Forum
 			Forum lastForum = null;
             foreach (Forum forum in forums)
             {
-				if (lastForum != null && lastForum.Id == forum.parentId && lastForumVariableCollection != null)
+                if (lastForum != null && (!lastForum.IsCategory) && lastForum.Id == forum.parentId && lastForumVariableCollection != null)
 				{
 					VariableCollection subForumVariableCollection = lastForumVariableCollection.CreateChild("sub_forum_list");
 					

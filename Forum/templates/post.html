@@ -61,9 +61,29 @@
 </form>
 
 <!-- IF PREVIEW_TOPIC -->
-<ul>
+<ul id="posts">
   <!-- BEGIN post_list -->
-  <li></li>
+  <li>
+    <h3 id="p{post_list.ID}">
+      <a href="{post_list.URI}">{post_list.SUBJECT}</a>
+    </h3>
+    <p>
+      <!-- IF post_list.IS_READ -->
+      <img src="/images/posticon_read_sml.png" alt="Read" />
+      <!-- ELSE -->
+      <img src="/images/posticon_unread_sml.png" alt="New" />
+      <!-- ENDIF -->
+      by <strong>
+        <a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a>
+      </strong> on {post_list.POST_TIME}
+    </p>
+    <div class="postbody">
+      <p>{post_list.TEXT}</p>
+    </div>
+    <div class="top">
+      <a href="#posts">{L_TOP}</a>
+    </div>
+  </li>
   <!-- END post_list -->
 </ul>
 <!-- ENDIF -->

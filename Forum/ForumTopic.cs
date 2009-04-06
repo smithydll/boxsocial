@@ -625,7 +625,12 @@ namespace BoxSocial.Applications.Forum
 
         public List<TopicPost> GetPosts(int currentPage, int perPage)
         {
-            return getSubItems(typeof(TopicPost), currentPage, perPage, true).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
+            return getSubItems(typeof(TopicPost), currentPage, perPage, true, "post_time_ut", true).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
+        }
+
+        public List<TopicPost> GetLastPosts(int number)
+        {
+            return getSubItems(typeof(TopicPost), 1, number, true, "post_time_ut", false).ConvertAll<TopicPost>(new Converter<Item, TopicPost>(convertToTopicPost));
         }
 
         public TopicPost convertToTopicPost(Item input)

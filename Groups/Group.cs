@@ -60,7 +60,7 @@ namespace BoxSocial.Groups
         private Dictionary<User, bool> groupMemberBannedCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupMemberAbsoluteCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupOperatorCache = new Dictionary<User, bool>();
-
+		
         public long GroupId
         {
             get

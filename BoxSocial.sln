@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musician", "Musician\Musici
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Services.Installer", "BoxSocial.Services\BoxSocial.Services.Installer\BoxSocial.Services.Installer.csproj", "{201B6661-4497-45B1-AE71-5D84F107B2CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportPhpbb", "ImportPhpbb\ImportPhpbb.csproj", "{1A10B77B-E757-4F8E-822D-376CF890B74C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groups", "Groups\Groups.csproj", "{5167D049-B052-435C-BD6C-6A002AF15009}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -35,13 +33,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forum", "Forum\Forum.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mail", "Mail\Mail.csproj", "{4D5E2ACA-04F1-45FA-A9DA-46C0D55954B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Forms", "BoxSocial.Forms\BoxSocial.Forms.csproj", "{D073D777-367E-4DF6-B53E-B90DE1FD47CA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Profile", "Profile\Profile.csproj", "{BC7327B8-F476-409B-BEFD-5E1C1D417A79}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Forms", "BoxSocial.Forms\BoxSocial.Forms.csproj", "{D073D777-367E-4DF6-B53E-B90DE1FD47CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Install", "BoxSocial.Install\BoxSocial.Install.csproj", "{DEEDF491-9FA0-456D-B51F-1E772693C379}"
 EndProject
@@ -67,21 +65,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestBook", "GuestBook\Gues
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.KnowledgeBase", "BoxSocial.KnowledgeBase\BoxSocial.KnowledgeBase.csproj", "{6C246552-7F85-4712-B41C-8DDE6A3F81EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "News", "News\News.csproj", "{9793B8C0-266E-4163-8459-AD3B1BDC8C04}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Networks", "Networks\Networks.csproj", "{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "News", "News\News.csproj", "{9793B8C0-266E-4163-8459-AD3B1BDC8C04}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gallery", "Gallery\Gallery.csproj", "{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Updater", "BoxSocial.Updater\BoxSocial.Updater.csproj", "{788CE08E-CCAF-4586-A1C1-516CBABC5580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,10 +93,6 @@ Global
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1985F418-4B69-4296-AB99-F6B8DDC580EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Debug|Any CPU.ActiveCfg = Debug
-		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Debug|Any CPU.Build.0 = Debug
-		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Release|Any CPU.ActiveCfg = Debug
-		{1A10B77B-E757-4F8E-822D-376CF890B74C}.Release|Any CPU.Build.0 = Debug
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -137,10 +129,6 @@ Global
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Debug|Any CPU.ActiveCfg = Debug
-		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Debug|Any CPU.Build.0 = Debug
-		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Release|Any CPU.ActiveCfg = Debug
-		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Release|Any CPU.Build.0 = Debug
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Release|Any CPU.ActiveCfg = Release|Any CPU

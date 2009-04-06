@@ -28,6 +28,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.IO;
 using BoxSocial.Internals;
+using BoxSocial.Forms;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
@@ -469,7 +470,7 @@ namespace BoxSocial.Applications.Forum
 
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(ForumReadStatus)));
+                query.AddFields(ForumReadStatus.GetFieldsPrefixed(typeof(ForumReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, ForumReadStatus.GetTable(typeof(ForumReadStatus)), "forum_id", "forum_id");
                 tj1.AddCondition("`forum_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -568,6 +569,108 @@ namespace BoxSocial.Applications.Forum
 
             return forums;
         }
+		
+		public static List<Forum> GetForumLevels(Core core, Forum parent, int levels)
+		{
+			List<Forum> forums = new List<Forum>();
+			
+			SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+			query.AddCondition("forum_item_id", parent.Owner.Id);
+			query.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+            query.AddCondition("forum_level", ConditionEquality.GreaterThan, parent.Level);
+			query.AddCondition("forum_level", ConditionEquality.LessThanEqual, parent.Level + levels);
+			query.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, parent.Order);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+
+            DataTable forumsTable = core.db.Query(query);
+
+			bool isFirst = true;
+			long topLevelParent = -1;
+            foreach (DataRow dr in forumsTable.Rows)
+            {
+				Forum forum;
+                if (parent.Owner is UserGroup)
+                {
+                    forum = new Forum(core, (UserGroup)parent.Owner, dr);
+                }
+                else
+                {
+                    forum = new Forum(core, dr);
+                }
+				
+				if (isFirst)
+				{
+					if (forum.Order != parent.Order + 1 && forum.Order != 0)
+					{
+						break;
+					}
+					isFirst = false;
+				}
+				
+				if (topLevelParent == -1)
+				{
+					forums.Add(forum);
+					topLevelParent = forum.parentId;
+				}
+				else
+				{
+					if ((forum.Level == (parent.Level + 1)) && (forum.parentId != topLevelParent))
+					{
+						break;
+					}
+					else
+					{
+						forums.Add(forum);
+					}
+				}
+            }
+			
+			return forums;
+		}
+		
+		public static SelectBox BuildForumJumpBox(Core core, Primitive owner, long currentForum)
+		{
+			SelectBox sb = new SelectBox("forum");
+			
+			sb.Add(new SelectBoxItem("", "Select a forum"));
+			sb.Add(new SelectBoxItem("", "--------------------"));
+			
+			SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+			query.AddCondition("forum_item_id", owner.Id);
+			query.AddCondition("forum_item_type_id", owner.TypeId);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+			
+			DataTable forumsTable = core.db.Query(query);
+			
+			foreach (DataRow dr in forumsTable.Rows)
+            {
+				Forum forum;
+                if (owner is UserGroup)
+                {
+                    forum = new Forum(core, (UserGroup)owner, dr);
+                }
+                else
+                {
+                    forum = new Forum(core, dr);
+                }
+				if (forum != null)
+				{
+					forum.Access.SetSessionViewer(core.session);
+					
+					if (forum.Access.CanRead)
+					{
+						sb.Add(new SelectBoxItem(forum.Id.ToString(), forum.Title));
+					}
+				}
+            }
+			
+			if (sb.ContainsKey(currentForum.ToString()))
+			{
+				sb.SelectedKey = currentForum.ToString();
+			}
+			
+			return sb;
+		}
 
         public List<ForumTopic> GetTopics(int currentPage, int perPage)
         {
@@ -1056,8 +1159,10 @@ namespace BoxSocial.Applications.Forum
 			{
 				Display.ParseBbcode(page.template, "RULES", thisForum.Rules);
 			}
+			
+			List<Forum> forums = GetForumLevels(core, thisForum, 2);
 
-            List<Forum> forums = thisForum.GetForums();
+            //List<Forum> forums = thisForum.GetForums();
 			List<Forum> accessibleForums = new List<Forum>();
 			
 			foreach (Forum forum in forums)
@@ -1075,41 +1180,10 @@ namespace BoxSocial.Applications.Forum
             // ForumId, TopicPost
             Dictionary<long, TopicPost> lastPosts;
             List<long> lastPostIds = new List<long>();
-            List<long> subForumIds = new List<long>();
-
-            foreach (Forum forum in forums)
+			
+			foreach (Forum forum in forums)
             {
                 lastPostIds.Add(forum.LastPostId);
-
-                if (forum.IsCategory)
-                {
-                    subForumIds.Add(forum.Id);
-                }
-            }
-
-            if (subForumIds.Count > 0)
-            {
-                List<Forum> subForums = Forum.GetSubForums(core, page.ThisGroup, subForumIds);
-				List<Forum> accessibleSubForums = new List<Forum>();
-				
-				foreach (Forum forum in subForums)
-				{
-					forum.Access.SetSessionViewer(core.session);
-					if (forum.Access.CanRead)
-					{
-						accessibleSubForums.Add(forum);
-					}
-				}
-				subForums = accessibleSubForums;
-
-                foreach (Forum forum in subForums)
-                {
-                    forums.Add(forum);
-
-                    lastPostIds.Add(forum.LastPostId);
-                }
-
-                forums.Sort();
             }
 
             lastPosts = TopicPost.GetPosts(core, lastPostIds);
@@ -1118,9 +1192,20 @@ namespace BoxSocial.Applications.Forum
             bool lastCategory = true;
             bool first = true;
             long lastCategoryId = 0;
+			Forum lastForum = null;
             foreach (Forum forum in forums)
             {
-                if ((first && (!forum.IsCategory)) || (lastCategoryId != forum.ParentId && (!forum.IsCategory)))
+				if (lastForum != null && lastForum.Id == forum.parentId && lastForumVariableCollection != null)
+				{
+					VariableCollection subForumVariableCollection = lastForumVariableCollection.CreateChild("sub_forum_list");
+					
+					subForumVariableCollection.Parse("TITLE", forum.Title);
+					subForumVariableCollection.Parse("URI", forum.Uri);
+					
+					continue;
+				}
+				
+                if ((first && (!forum.IsCategory)) || (lastCategoryId != forum.parentId && (!forum.IsCategory)))
                 {
                     VariableCollection defaultVariableCollection = page.template.CreateChild("forum_list");
                     defaultVariableCollection.Parse("TITLE", "Forum");
@@ -1130,7 +1215,7 @@ namespace BoxSocial.Applications.Forum
                         lastForumVariableCollection.Parse("IS_LAST", "TRUE");
                     }
                     first = false;
-                    lastCategoryId = forum.ParentId;
+                    lastCategoryId = forum.parentId;
                     lastCategory = true;
                 }
 
@@ -1183,6 +1268,7 @@ namespace BoxSocial.Applications.Forum
                     lastCategory = false;
                 }
                 first = false;
+				lastForum = forum;
             }
 
             if (lastForumVariableCollection != null)
@@ -1402,7 +1488,7 @@ namespace BoxSocial.Applications.Forum
 
         public void AddSequenceConditon(UpdateQuery uQuery)
         {
-            uQuery.AddCondition("forum_parent_id", ParentId);
+            uQuery.AddCondition("forum_parent_id", parentId);
             uQuery.AddCondition("forum_item_id", Owner.Id);
             uQuery.AddCondition("forum_item_type_id", Owner.TypeId);
         }

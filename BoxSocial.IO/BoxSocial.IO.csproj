@@ -47,7 +47,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=5.0.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
+    <Reference Include="MySql.Data, Version=5.2.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <HintPath>..\BoxSocial\bin\MySql.Data.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>

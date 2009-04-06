@@ -44,6 +44,9 @@
 	      <!-- ENDIF -->
           <a href="{forum_list.URI}">{forum_list.TITLE}</a>
           <p>{forum_list.DESCRIPTION}</p>
+          <!-- BEGIN forum_list.sub_forum_list -->
+          <a href="{forum_list.sub_forum_list.URI}">{forum_list.sub_forum_list.TITLE}</a>
+          <!-- END forum_list.sub_forum_list -->
         </dt>
         <dd>{forum_list.POSTS}</dd>
         <dd>{forum_list.TOPICS}</dd>

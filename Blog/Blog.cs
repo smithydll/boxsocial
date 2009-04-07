@@ -564,7 +564,7 @@ namespace BoxSocial.Applications.Blog
                     archiveVariableCollection.Parse("URL", Blog.BuildUri(page.ProfileOwner, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
                 }
 
-                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(post_category) as category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
+                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
                     page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
 
                 page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());

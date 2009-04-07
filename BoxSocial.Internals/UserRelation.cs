@@ -34,13 +34,13 @@ namespace BoxSocial.Internals
     {
         [DataField("relation_id", DataFieldKeys.Primary)]
         private long relationId;
-        [DataField("relation_me")]
+        [DataField("relation_me", DataFieldKeys.Index, "i_relation")]
         private long relationMeId;
         [DataField("relation_you")]
         private new long userId;
         [DataField("relation_order")]
         private byte relationOrder;
-        [DataField("relation_type", 15)]
+        [DataField("relation_type", DataFieldKeys.Index, "i_relation", 15)]
         private string relationType;
         [DataField("relation_time_ut")]
         private long relationTime;

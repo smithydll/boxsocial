@@ -830,9 +830,13 @@ namespace BoxSocial.Internals
 			{
 			    HttpContext.Current.Response.Write("template null");
 			}
-			else if (core.session.LoggedInMember == null)
-			{
-			    //HttpContext.Current.Response.Write("core.session.LoggedInMember null");
+            else if (core.session == null)
+            {
+                HttpContext.Current.Response.Write("session null");
+            }
+            else if (core.session.LoggedInMember == null)
+            {
+                //HttpContext.Current.Response.Write("core.session.LoggedInMember null");
 
                 if (owner != null)
                 {
@@ -842,9 +846,9 @@ namespace BoxSocial.Internals
                 {
                     template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input)));
                 }
-			}
-			else
-			{
+            }
+            else
+            {
                 if (owner != null)
                 {
                     template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
@@ -853,7 +857,7 @@ namespace BoxSocial.Internals
                 {
                     template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
                 }
-			}
+            }
         }
 
         public static void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)

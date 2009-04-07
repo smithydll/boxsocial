@@ -549,8 +549,11 @@ namespace BoxSocial.Internals
                 }
 
             }
-			
-			itemFieldsCache.Add(type, returnValue);
+
+            if (!itemFieldsCache.ContainsKey(type))
+            {
+                itemFieldsCache.Add(type, returnValue);
+            }
 
             System.Web.Caching.Cache cache;
 			

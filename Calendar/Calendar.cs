@@ -390,6 +390,12 @@ namespace BoxSocial.Applications.Calendar
                 Functions.Generate404();
             }
 
+            // 15 year window
+            if (year < DateTime.Now - 5 || year > DateTime.Now > 10)
+            {
+                Functions.Generate404();
+            }
+
             page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
             page.template.Parse("CURRENT_YEAR", year.ToString());
             page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
@@ -426,6 +432,12 @@ namespace BoxSocial.Applications.Calendar
 
             Calendar cal = new Calendar(core);
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
+
+            /*if (startTime == -8885289600 || startTime == 11404281600 || endTime == -8885289600 || endTime == 11404281600)
+            {
+                Functions.Generate404();
+                return;
+            }*/
 
             /*foreach (Event calEvent in events)
             {

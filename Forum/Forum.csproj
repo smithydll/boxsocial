@@ -56,6 +56,7 @@
     <Compile Include="AccountForumSettings.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Forum.cs" />
+    <Compile Include="ForumMember.cs" />
     <Compile Include="ForumReadStatus.cs" />
     <Compile Include="ForumSettings.cs" />
     <Compile Include="ForumTopic.cs" />

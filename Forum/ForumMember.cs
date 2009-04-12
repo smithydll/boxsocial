@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Forum
 {

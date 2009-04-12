@@ -197,6 +197,20 @@ namespace BoxSocial.Applications.News
                 return 10;
             }
         }
+
+        public static Article Create(Core core, Primitive owner, string subject, string body)
+        {
+            // TODO: fix this
+            Item item = Item.Create(core, typeof(Article), new FieldValuePair("article_item_id", owner.Id),
+                new FieldValuePair("article_item_type_id", owner.TypeId),
+                new FieldValuePair("article_time_ut", UnixTime.UnixTimeStamp()),
+                new FieldValuePair("article_subject", subject),
+                new FieldValuePair("article_body", body),
+                new FieldValuePair("article_comments", 0),
+                new FieldValuePair("user_id", core.LoggedInMemberId));
+
+            return (Article)item;
+        }
 		
 		public static void Show(Core core, GPage page, long articleId)
 		{

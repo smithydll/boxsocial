@@ -103,7 +103,7 @@ namespace BoxSocial.Internals
             private bool noContents;
             private string contents;
             private bool stripTag;
-            private User owner;
+            private User owner = null;
 
             public BbcodeTag Tag
             {

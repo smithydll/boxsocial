@@ -63,6 +63,7 @@ namespace BoxSocial.Applications.Blog
             SetTemplate("account_blog_manage");
 
             Blog myBlog;
+            int p = Functions.RequestInt("p", 1);
 
             try
             {
@@ -74,7 +75,7 @@ namespace BoxSocial.Applications.Blog
             }
 
             ushort readAccessLevel = 0x0000;
-            List<BlogEntry> blogEntries = myBlog.GetEntries(null, -1, -1, -1, 1, 50, ref readAccessLevel);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(null, -1, -1, -1, p, 25, ref readAccessLevel);
 
             int i = 0;
             foreach (BlogEntry be in blogEntries)
@@ -98,6 +99,8 @@ namespace BoxSocial.Applications.Blog
                 }
                 i++;
             }
+
+            Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Entries / 25.0)), false);
         }
     }
 }

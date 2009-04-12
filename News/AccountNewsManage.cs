@@ -27,11 +27,10 @@ using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
-using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.News
 {
-    [AccountSubModule("news", "manage", true)]
+    [AccountSubModule(AppPrimitives.Group, "news", "manage", true)]
     public class AccountNewsManage : AccountSubModule
     {
         public override string Title
@@ -65,18 +64,30 @@ namespace BoxSocial.Applications.News
             SetTemplate("account_news_manage");
 
             int p = Functions.RequestInt("p", 1);
-			News news = new News(core, Owner);
-            List<Article> articles = news.GetArticles(p, 10); 
+            News news = new News(core, Owner);
+            List<Article> articles = news.GetArticles(p, 25);
 
             foreach (Article article in articles)
             {
                 VariableCollection articlesVariableCollection = template.CreateChild("news_list");
+
+                DateTime postedTime = article.GetCreatedDate(tz);
+
+                articlesVariableCollection.Parse("COMMENTS", article.Comments.ToString());
+                articlesVariableCollection.Parse("TITLE", article.ArticleSubject);
+                articlesVariableCollection.Parse("POSTED", tz.DateTimeToString(postedTime));
+
+                articlesVariableCollection.Parse("U_VIEW", article.Uri);
+
+                articlesVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", article.Id));
+                articlesVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", article.Id));
+
             }
-			
-			if (Owner is UserGroup)
-{
-			//Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).NewsArticles / 50.0));
-}
+
+            if (Owner is UserGroup)
+            {
+                Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).Info.NewsArticles / 25.0));
+            }
         }
 	}
 }

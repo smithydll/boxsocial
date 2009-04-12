@@ -1,1 +1,30 @@
-﻿
+﻿<h3>Manage News Articles</h3>
+
+<p>{PAGINATION}</p>
+
+<table style="width: 100%">
+<tr>
+	<th>Posted</th>
+	<th>Title</th>
+	<th>Comments</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN news_list -->
+<!-- IF news_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{news_list.POSTED}</td>
+	<td>{news_list.TITLE}</td>
+	<td><a href="{news_list.U_COMMENTS}">{news_list.COMMENTS}</a></td>
+	<td><a href="{news_list.U_VIEW}">View</a></td>
+	<td><a href="{news_list.U_EDIT}">Edit</a></td>
+	<td><a href="{news_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END news_list -->
+</table>
+
+<p>{PAGINATION}</p>

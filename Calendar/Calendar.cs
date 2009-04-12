@@ -391,7 +391,7 @@ namespace BoxSocial.Applications.Calendar
             }
 
             // 15 year window
-            if (year < DateTime.Now - 5 || year > DateTime.Now > 10)
+            if (year < DateTime.Now.Year - 5 || year > DateTime.Now.Year + 10)
             {
                 Functions.Generate404();
             }

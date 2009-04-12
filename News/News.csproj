@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountNewsWrite.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Article.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

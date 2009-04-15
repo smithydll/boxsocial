@@ -65,11 +65,11 @@ namespace BoxSocial.Internals
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
         [DataField("user_name", DataFieldKeys.Unique, 64)]
-        private string userName;
+        protected string userName;
 		[DataField("user_name_lower", DataFieldKeys.Unique, 64)]
         private string userNameLower;
         [DataField("user_domain", DataFieldKeys.Index, 63)]
-        private string domain;
+        protected string domain;
 
         private string userIconUri;
 
@@ -582,6 +582,22 @@ namespace BoxSocial.Internals
             get
             {
                 return userInfo.TimeZoneCode;
+            }
+        }
+
+        public string UserDomain
+        {
+            get
+            {
+                return domain;
+            }
+        }
+
+        public List<UserEmail> EmailAddresses
+        {
+            get
+            {
+                return emailAddresses;
             }
         }
 

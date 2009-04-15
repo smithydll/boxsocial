@@ -1,0 +1,28 @@
+﻿<h3>{L_FORUM_RANKS}</h3>
+
+<table style="width: 100%">
+  <tr>
+    <th>Rank</th>
+    <th>Special</th>
+    <th>Minimum Posts</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <!-- BEGIN rank_list -->
+  <!-- IF rank_list.INDEX_EVEN -->
+  <tr class="even">
+    <!-- ELSE -->
+    <tr class="odd">
+      <!-- ENDIF -->
+      <td>{rank_list.RANK}</td>
+      <td>{rank_list.SPECIAL}</td>
+      <td>{rank_list.MINIMUM_POSTS}</td>
+      <td>
+        <a href="{rank_list.U_EDIT}">Edit</a>
+      </td>
+      <td>
+        <a href="{rank_list.U_DELETE}">Delete</a>
+      </td>
+    </tr>
+    <!-- END rank_list -->
+  </table>

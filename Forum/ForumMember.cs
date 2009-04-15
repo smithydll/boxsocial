@@ -48,11 +48,43 @@ namespace BoxSocial.Applications.Forum
         [DataField("signature")]
         private string forumSignature;
 
+        public ForumMember(Core core, User user)
+            : base(core)
+        {
+            // load the info into a the new object being created
+            this.userInfo = user.Info;
+            this.userProfile = user.Profile;
+            this.userStyle = user.Style;
+            this.userId = user.UserId;
+            this.userName = user.UserName;
+            this.domain = user.UserDomain;
+            this.emailAddresses = user.EmailAddresses;
+
+            try
+            {
+                LoadItem(user.Id);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumMemberException();
+            }
+        }
 
         public ForumMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
             loadItemInfo(typeof(GroupMember), memberRow);
         }
+
+        // cannot use this method for conversion because we do not have public
+        // access to the core token
+        /*public static explicit operator ForumMember(User u)
+        {
+            return new ForumMember(u);
+        }*/
+    }
+
+    public class InvalidForumMemberException : Exception
+    {
     }
 }

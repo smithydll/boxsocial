@@ -100,6 +100,24 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public List<ForumMemberRank> GetRanks()
+        {
+            List<ForumMemberRank> ranks = new List<ForumMemberRank>();
+
+            SelectQuery query = ForumMemberRank.GetSelectQueryStub(typeof(ForumMemberRank));
+            query.AddCondition("rank_owner_id", ownerKey.Id);
+            query.AddCondition("rank_owner_type_id", ownerKey.TypeId);
+
+            DataTable ranksDataTable = core.db.Query(query);
+
+            foreach (DataRow dr in ranksDataTable.Rows)
+            {
+                ranks.Add(new ForumMemberRank(core, dr));
+            }
+
+            return ranks;
+        }
+
         public ForumSettings(Core core, Primitive owner)
             : base(core)
         {

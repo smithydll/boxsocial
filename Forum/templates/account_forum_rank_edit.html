@@ -1,0 +1,23 @@
+﻿<h3>Forum Rank</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Forum Rank</legend>
+		<dl>
+			<dt><label for="title">Title</label></dt>
+			<dd><input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" /></dd>
+			<dt><label for="min-posts">Minimum Posts</label></dt>
+			<dd><input type="text" id="min-posts" name="min-posts" value="{S_MINIMUM_POSTS}" style="width: 100%;" /></dd>
+      <dt><label for="special">Special Rank</label></dt>
+			<dd><input type="checkbox" id="special" name="special" {S_SPECIAL}/></dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="forum" />
+		<input type="hidden" name="sub" value="ranks" />
+    <!-- IF EDIT -->
+    <input type="hidden" name="mode" value="edit" />
+    <input type="hidden" name="id" value="{S_ID}" />
+    <!-- ENDIF -->
+	</fieldset>
+</form>

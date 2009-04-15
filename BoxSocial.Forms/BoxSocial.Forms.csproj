@@ -50,6 +50,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckBox.cs" />
+    <Compile Include="CheckBoxArray.cs" />
     <Compile Include="FormField.cs" />
     <Compile Include="SelectBox.cs" />
     <Compile Include="SelectBoxItem.cs" />

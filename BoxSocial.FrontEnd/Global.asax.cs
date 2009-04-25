@@ -224,11 +224,38 @@ namespace BoxSocial.FrontEnd
 
                 }
 
+                // fast cull
+                foreach (string[] pattern in patterns)
+                {
+                    int ioc = currentURI.IndexOf('/', 1);
+                    int iop = pattern[0].IndexOf('/', 2);
+                    if (currentURI.Substring(1, ioc - 1).Equals(pattern[0].Substring(2, iop - 2)))
+                    {
+                        if (Regex.IsMatch(currentURI, pattern[0]))
+                        {
+                            Regex rex = new Regex(pattern[0]);
+                            currentURI = rex.Replace(currentURI, pattern[1]);
+                            if (currentURI.Contains("?"))
+                            {
+                                httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                                return;
+                            }
+                            else
+                            {
+                                httpContext.RewritePath(currentURI + cUri.Query);
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                // full catch all
                 foreach (string[] pattern in patterns)
                 {
                     if (Regex.IsMatch(currentURI, pattern[0]))
                     {
-                        currentURI = Regex.Replace(currentURI, pattern[0], pattern[1]);
+                        Regex rex = new Regex(pattern[0]);
+                        currentURI = rex.Replace(currentURI, pattern[1]);
                         if (currentURI.Contains("?"))
                         {
                             httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));

@@ -385,7 +385,8 @@ namespace BoxSocial.Internals
             {
                 foreach (string slugEx in slugExs)
                 {
-                    Match pathMatch = Regex.Match(uri, slugEx);
+                    Regex rex = new Regex(slugEx, RegexOptions.Compiled);
+                    Match pathMatch = rex.Match(uri);
                     if (pathMatch.Success)
                     {
                         return true;

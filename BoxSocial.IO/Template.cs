@@ -31,6 +31,18 @@ using BoxSocial.Forms;
 
 namespace BoxSocial.IO
 {
+    public struct TemplateVariable
+    {
+        public string Name;
+        public int Index;
+
+        public TemplateVariable(string name, int index)
+        {
+            this.Name = name;
+            this.Index = index;
+        }
+    }
+
     public class VariableCollection
     {
         private string loopName;
@@ -112,9 +124,11 @@ namespace BoxSocial.IO
         public void ParseVariables(string key, string value)
         {
             try
+            //if (!variables.ContainsKey(key))
             {
                 variables.Add(key, value);
             }
+            //else
             catch
             {
                 /*HttpContext.Current.Response.Write("<hr /><dl><dd>");
@@ -147,7 +161,7 @@ namespace BoxSocial.IO
         {
             get
             {
-                if (variables.ContainsKey(key))
+                /*if (variables.ContainsKey(key))
                 {
                     return variables[key];
                 }
@@ -158,7 +172,16 @@ namespace BoxSocial.IO
                         return parentCollection[key];
                     }
                 }
-                return String.Empty;
+                return String.Empty;*/
+                string returnValue;
+                if (TryGetValue(key, out returnValue))
+                {
+                    return returnValue;
+                }
+                else
+                {
+                    return String.Empty;
+                }
             }
         }
 
@@ -218,7 +241,7 @@ namespace BoxSocial.IO
         private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>();
 
         private string template;
-        private Dictionary<string, string> loopTemplates;
+        //private Dictionary<string, string> loopTemplates;
 
         private string path;
         private string templateName;
@@ -430,36 +453,56 @@ namespace BoxSocial.IO
                 /* loops */
                 if (!inLoop)
                 {
-                    Match lm = Regex.Match(line, @"\<\!\-\- BEGIN ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
-
-                    if (lm.Success)
+                    int iob = line.IndexOf("<!-- BEGIN ");
+                    if (iob >= 0)
                     {
-                        inLoop = true;
-                        loopName = lm.Groups[1].Value;
-                        loopCache.Clear();
+                        int iobe = line.IndexOf(" -->", iob);
+                        //Match lm = Regex.Match(line, @"\<\!\-\- BEGIN ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
 
-                        line = line.Remove(lm.Index, lm.Length);
-                        continue;
+                        //if (lm.Success)
+                        if (iobe >= 0)
+                        {
+                            inLoop = true;
+                            //loopName = lm.Groups[1].Value;
+                            loopName = line.Substring(iob + 11, iobe - (iob + 11));
+                            loopCache.Clear();
+
+                            //line = line.Remove(lm.Index, lm.Length);
+                            line = line.Remove(iob, (iobe + 4) - iob);
+                            continue;
+                        }
                     }
                 }
                 else
                 {
-                    Match lm = Regex.Match(line, @"\<\!\-\- END " + loopName + @" \-\-\>", RegexOptions.Compiled);
-
-                    if (lm.Success)
+                    int ioe = line.IndexOf("<!-- END " + loopName + " -->");
+                    if (ioe >= 0)
                     {
-                        inLoop = false;
-                        int l;
-                        if (variables.ContainsLoop(loopName))
-                        //if (loopVariables.ContainsKey(loopName))
+                        //int ioee = line.IndexOf(loopName + " -->", ioe);
+                        //Match lm = Regex.Match(line, @"\<\!\-\- END " + loopName + @" \-\-\>", RegexOptions.Compiled);
+
+                        //if (lm.Success)
+                        //if (ioee >= 0)
                         {
-                            for (l = 0; l < variables.GetChildCollection(loopName).Count; l++)
+                            inLoop = false;
+                            int l;
+                            if (variables.ContainsLoop(loopName))
+                            //if (loopVariables.ContainsKey(loopName))
                             {
-                                ProcessLines(loopCache.ToArray(), output, variables.GetChildCollection(loopName)[l], l);
+                                for (l = 0; l < variables.GetChildCollection(loopName).Count; l++)
+                                {
+                                    ProcessLines(loopCache.ToArray(), output, variables.GetChildCollection(loopName)[l], l);
+                                }
                             }
+                            //line = line.Remove(lm.Index, lm.Length);
+                            line = line.Remove(ioe, loopName.Length + 9 + 4);
+                            continue;
                         }
-                        line = line.Remove(lm.Index, lm.Length);
-                        continue;
+                        /*else
+                        {
+                            loopCache.Add(line);
+                            continue;
+                        }*/
                     }
                     else
                     {
@@ -472,66 +515,39 @@ namespace BoxSocial.IO
                 /*
                  * To ensure the proper start tag ends the proper end tag, all tag sets have to be matched
                  */
-                Match rm = Regex.Match(line, @"\<\!\-\- IF ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
-
-                /* if we have found an if on the line */
-                if (rm.Success)
+                //Match rm = null;
+                int ioi = line.IndexOf("<!-- IF ");
+                if (ioi >= 0)
                 {
-                    if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
+                    int ioie = line.IndexOf(" -->", ioi);
+                    //rm = Regex.Match(line, @"\<\!\-\- IF ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
+
+                    /* if we have found an if on the line */
+                    //if (rm.Success)
+                    if (ioie >= 0)
                     {
-                        inIf++;
-						string value1 = null;
-                        //if (variables.ContainsKey(rm.Groups[1].Value))
-						if (variables.TryGetValue(rm.Groups[1].Value, out value1))
+                        string condition = line.Substring(ioi + 8, ioie - (ioi + 8));
+                        if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
                         {
-                            //if (variables[rm.Groups[1].Value] != null)
-							if (value1 != null)
+                            inIf++;
+                            string value1 = null;
+                            //if (variables.ContainsKey(rm.Groups[1].Value))
+                            //if (variables.TryGetValue(rm.Groups[1].Value, out value1))
+                            if (variables.TryGetValue(condition, out value1))
                             {
-                                //if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
-								if (value1 != "false" && value1 != "0" && value1 != String.Empty)
+                                //if (variables[rm.Groups[1].Value] != null)
+                                if (value1 != null)
                                 {
-                                    conditionTrue.Push(true);
-                                }
-                                else
-                                {
-                                    conditionTrue.Push(false);
-                                    rootFalse = inIf;
-                                }
-                            }
-                            else
-                            {
-                                conditionTrue.Push(false);
-                                rootFalse = inIf;
-                            }
-                        }
-                        else
-                        {
-                            if (childIndex >= 0)
-                            {
-                                string loopConditionVar = rm.Groups[1].Value;
-                                if (loopConditionVar.StartsWith(variables.Path + "."))
-                                {
-                                    loopConditionVar = loopConditionVar.Substring(variables.Path.Length + 1);
-                                }
-                                if (variables.ContainsKey(loopConditionVar))
-                                {
-                                    if (variables[loopConditionVar] == null)
+                                    //if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
+                                    if (value1.ToLower() != "false" && value1 != "0" && value1 != String.Empty)
+                                    {
+                                        conditionTrue.Push(true);
+                                    }
+                                    else
                                     {
                                         conditionTrue.Push(false);
                                         rootFalse = inIf;
                                     }
-                                    else
-                                    {
-                                        if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != String.Empty)
-                                        {
-                                            conditionTrue.Push(true);
-                                        }
-                                        else
-                                        {
-                                            conditionTrue.Push(false);
-                                            rootFalse = inIf;
-                                        }
-                                    }
                                 }
                                 else
                                 {
@@ -541,28 +557,73 @@ namespace BoxSocial.IO
                             }
                             else
                             {
-                                conditionTrue.Push(false);
-                                rootFalse = inIf;
+                                if (childIndex >= 0)
+                                {
+                                    //string loopConditionVar = rm.Groups[1].Value;
+                                    string loopConditionVar = condition;
+                                    if (loopConditionVar.StartsWith(variables.Path + "."))
+                                    {
+                                        loopConditionVar = loopConditionVar.Substring(variables.Path.Length + 1);
+                                    }
+                                    string value2 = null;
+                                    if (variables.TryGetValue(loopConditionVar, out value2))
+                                    //if (variables.ContainsKey(loopConditionVar))
+                                    {
+                                        //if (variables[loopConditionVar] == null)
+                                        if (value2 == null)
+                                        {
+                                            conditionTrue.Push(false);
+                                            rootFalse = inIf;
+                                        }
+                                        else
+                                        {
+                                            //if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != String.Empty)
+                                            if (value2.ToLower() != "false" && value2 != "0" && value2 != String.Empty)
+                                            {
+                                                conditionTrue.Push(true);
+                                            }
+                                            else
+                                            {
+                                                conditionTrue.Push(false);
+                                                rootFalse = inIf;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        conditionTrue.Push(false);
+                                        rootFalse = inIf;
+                                    }
+                                }
+                                else
+                                {
+                                    conditionTrue.Push(false);
+                                    rootFalse = inIf;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        inIf++;
-                        conditionTrue.Push(false);
-                    }
-                    
-                    inElse.Push(false);
-                    
-                    if (conditionTrue.Peek())
-                    {
-                        line = line.Remove(rm.Index, rm.Length);
-                    }
-                    else
-                    {
-                        line = line.Remove(rm.Index);
+                        else
+                        {
+                            inIf++;
+                            conditionTrue.Push(false);
+                        }
+
+                        inElse.Push(false);
+
+                        if (conditionTrue.Peek())
+                        {
+                            //line = line.Remove(rm.Index, rm.Length);
+                            line = line.Remove(ioi, (ioie + 4) - ioi);
+                        }
+                        else
+                        {
+                            //line = line.Remove(rm.Index);
+                            line = line.Remove(ioi);
+                        }
                     }
                 }
+
+                // END IF
 
                 /*Match rmei = Regex.Match(line, @"\<\!\-\- ELSEIF ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
 
@@ -595,58 +656,70 @@ namespace BoxSocial.IO
                     }
                 }*/
 
-                Match rme = Regex.Match(line, @"\<\!\-\- ELSE \-\-\>", RegexOptions.Compiled);
-
-                if (rme.Success && inIf > 0)
+                int iol = line.IndexOf("<!-- ELSE -->");
+                if (iol >= 0 && inIf > 0)
                 {
-                    if (conditionTrue.Count == inIf)
+                    //Match rme = Regex.Match(line, @"\<\!\-\- ELSE \-\-\>", RegexOptions.Compiled);
+
+                    //if (rme.Success && inIf > 0)
                     {
-                        if (!conditionTrue.Peek())
+                        if (conditionTrue.Count == inIf)
                         {
-                            if (rm.Success)
+                            if (!conditionTrue.Peek())
                             {
-                                line = line.Remove(rm.Index, (rme.Index - rm.Index + rme.Length));
+                                //if (rm != null && rm.Success)
+                                if (ioi >= 0)
+                                {
+                                    //line = line.Remove(rm.Index, (rme.Index - rm.Index + rme.Length));
+                                    line = line.Remove(ioi, (iol - ioi + 13));
+                                }
+                                else
+                                {
+                                    line = line.Remove(0, iol + 13);
+                                }
                             }
-                            else
+                            /* change the top most from false to true */
+                            inElse.Pop();
+                            inElse.Push(true);
+                            if (rootFalse == 0)
                             {
-                                line = line.Remove(0, rme.Index + rme.Length);
+                                rootFalse = inIf;
                             }
-                        }
-                        /* change the top most from false to true */
-                        inElse.Pop();
-                        inElse.Push(true);
-                        if (rootFalse == 0)
-                        {
-                            rootFalse = inIf;
-                        }
-                        else if (rootFalse == inIf)
-                        {
-                            rootFalse = 0;
+                            else if (rootFalse == inIf)
+                            {
+                                rootFalse = 0;
+                            }
                         }
                     }
                 }
 
-                Match rmd = Regex.Match(line, @"\<\!\-\- ENDIF \-\-\>", RegexOptions.Compiled);
-                if (rmd.Success && inIf > 0)
+                int ion = line.IndexOf("<!-- ENDIF -->");
+                if (ion >= 0 && inIf > 0)
                 {
-                    if (conditionTrue.Peek() & !inElse.Peek() || !conditionTrue.Peek() && inElse.Peek())
+                    //Match rmd = Regex.Match(line, @"\<\!\-\- ENDIF \-\-\>", RegexOptions.Compiled);
+                    //if (rmd.Success && inIf > 0)
                     {
-                        line = line.Remove(rmd.Index, rmd.Length);
-                    }
-                    else if (conditionTrue.Peek() & inElse.Peek() || !conditionTrue.Peek() && !inElse.Peek())
-                    {
-                        line = line.Remove(0, rmd.Index + rmd.Length);
-                    }
-                    
-                    if (rootFalse == inIf)
-                    {
-                        rootFalse = 0;
-                    }
+                        if (conditionTrue.Peek() & !inElse.Peek() || !conditionTrue.Peek() && inElse.Peek())
+                        {
+                            //line = line.Remove(rmd.Index, rmd.Length);
+                            line = line.Remove(ion, 14);
+                        }
+                        else if (conditionTrue.Peek() & inElse.Peek() || !conditionTrue.Peek() && !inElse.Peek())
+                        {
+                            //line = line.Remove(0, rmd.Index + rmd.Length);
+                            line = line.Remove(0, ion + 14);
+                        }
 
-                    /* we have finished this level of 'if', we decrement our counter */
-                    inIf--;
-                    inElse.Pop();
-                    conditionTrue.Pop();
+                        if (rootFalse == inIf)
+                        {
+                            rootFalse = 0;
+                        }
+
+                        /* we have finished this level of 'if', we decrement our counter */
+                        inIf--;
+                        inElse.Pop();
+                        conditionTrue.Pop();
+                    }
                 }
 
                 if (conditionTrue.Count == inIf && inIf > 0)
@@ -669,30 +742,51 @@ namespace BoxSocial.IO
                 }
 
                 /* Includes */
-                MatchCollection mc = Regex.Matches(line, @"\<\!\-\- INCLUDE ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
-                foreach (Match ma in mc)
+                int iou;
+                //MatchCollection mc = Regex.Matches(line, @"\<\!\-\- INCLUDE ([A-Za-z0-9\.\-_]+) \-\-\>", RegexOptions.Compiled);
+                //foreach (Match ma in mc)
+                //for (int j = 0; j < mc.Count; j++)
+                while ((iou = line.IndexOf("<!-- INCLUDE ")) >= 0)
                 {
-                    StringBuilder includeOutput = new StringBuilder();
-                    //string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
-                    string[] includeLines = LoadTemplateFile(ma.Groups[1].Value).Replace("\r", String.Empty).Split('\n');
-                    ProcessLines(includeLines, includeOutput, variables);
-                    line = line.Replace(string.Format("<!-- INCLUDE {0} -->", ma.Groups[1].Value), includeOutput.ToString());
+                    int ioue = line.IndexOf(" -->", iou);
+                    if (ioue >= 0)
+                    {
+                        string file = line.Substring(iou + 13, ioue - (iou + 13));
+
+                        StringBuilder includeOutput = new StringBuilder();
+                        //string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
+                        //string[] includeLines = LoadTemplateFile(mc[j].Groups[1].Value).Replace("\r", String.Empty).Split('\n');
+                        string[] includeLines = LoadTemplateFile(file).Replace("\r", String.Empty).Split('\n');
+                        ProcessLines(includeLines, includeOutput, variables);
+                        //line = line.Replace(string.Format("<!-- INCLUDE {0} -->", mc[j].Groups[1].Value), includeOutput.ToString());
+                        line = line.Replace(string.Format("<!-- INCLUDE {0} -->", file), includeOutput.ToString());
+                    }
                 }
 
                 /* experimental */
                 int offset = 0;
-                MatchCollection varMatches = Regex.Matches(line, @"{([A-Z\-_]+)}", RegexOptions.Compiled);
-                foreach (Match varMatch in varMatches)
+                //MatchCollection varMatches = Regex.Matches(line, @"{([A-Z\-_]+)}", RegexOptions.Compiled);
+                //foreach (Match varMatch in varMatches)
+                List<TemplateVariable> varMatches = GetVariablesFromLine(line);
+                foreach (TemplateVariable tv in varMatches)
                 {
-                    int nextOffset = -varMatch.Length;
-                    string key = varMatch.Groups[1].Value;
-                    line = line.Remove(varMatch.Index + offset, varMatch.Length);
-                    if (variables.ContainsKey(key))
+                    //int nextOffset = -varMatch.Length;
+                    //string key = varMatch.Groups[1].Value;
+                    //line = line.Remove(varMatch.Index + offset, varMatch.Length);
+                    string key = tv.Name;
+                    int nextOffset = -(key.Length + 2);
+                    line = line.Remove(tv.Index + offset, key.Length + 2);
+                    string value4 = null;
+                    //if (variables.ContainsKey(key))
+                    if (variables.TryGetValue(key, out value4))
                     {
-                        if (variables[key] != null)
+                        //if (variables[key] != null)
+                        if (value4 != null)
                         {
-                            nextOffset += variables[key].Length;
-                            line = line.Insert(varMatch.Index + offset, variables[key]);
+                            //nextOffset += variables[key].Length;
+                            //line = line.Insert(varMatch.Index + offset, variables[key]);
+                            nextOffset += value4.Length;
+                            line = line.Insert(tv.Index + offset, value4);
                         }
                     }
                     else if (prose != null && key.StartsWith("L_"))
@@ -712,7 +806,8 @@ namespace BoxSocial.IO
                         if (fragment != null)
                         {
                             nextOffset += fragment.Length;
-                            line = line.Insert(varMatch.Index + offset, fragment);
+                            //line = line.Insert(varMatch.Index + offset, fragment);
+                            line = line.Insert(tv.Index + offset, fragment);
                         }
                     }
                     offset += nextOffset;
@@ -722,18 +817,26 @@ namespace BoxSocial.IO
                 if (childIndex >= 0)
                 {
                     offset = 0;
-                    varMatches = Regex.Matches(line, string.Format(@"{{{0}\.([A-Z\-_]+)}}", Regex.Escape(variables.Path)), RegexOptions.Compiled);
-                    foreach (Match varMatch in varMatches)
+                    //MatchCollection varMatches2 = Regex.Matches(line, string.Format(@"{{{0}\.([A-Z\-_]+)}}", Regex.Escape(variables.Path)), RegexOptions.Compiled);
+                    List<TemplateVariable> varMatches2 = GetLoopVariablesFromLine(variables.Path, line);
+                    int varPathLength = variables.Path.Length;
+                    //foreach (Match varMatch in varMatches2)
+                    foreach (TemplateVariable tv in varMatches2)
                     {
-                        int nextOffset = -varMatch.Length;
+                        /*int nextOffset = -varMatch.Length;
                         string key = varMatch.Groups[1].Value;
-                        line = line.Remove(varMatch.Index + offset, varMatch.Length);
-                        if (variables.ContainsKey(key))
+                        line = line.Remove(varMatch.Index + offset, varMatch.Length);*/
+                        string key = tv.Name;
+                        int nextOffset = -(key.Length + 3 + varPathLength);
+                        line = line.Remove(tv.Index + offset, key.Length + 3 + varPathLength);
+                        string value3 = null;
+                        if (variables.TryGetValue(key, out value3))
+                        //if (variables.ContainsKey(key))
                         {
-                            if (variables[key] != null)
+                            if (value3 != null)
                             {
-                                nextOffset += variables[key].Length;
-                                line = line.Insert(varMatch.Index + offset, variables[key]);
+                                nextOffset += value3.Length;
+                                line = line.Insert(tv.Index + offset, value3);
                             }
                         }
                         offset += nextOffset;
@@ -741,6 +844,119 @@ namespace BoxSocial.IO
                 }
                 output.AppendLine(line);
             }
+        }
+
+        public static TemplateVariable GetConstructFromLine(string constructType, string line)
+        {
+
+            return new TemplateVariable("HI", 0);
+        }
+
+        private static List<TemplateVariable> GetVariablesFromLine(string line)
+        {
+            List<TemplateVariable> mc = new List<TemplateVariable>();
+            string varName = String.Empty;
+            bool inVar = false;
+            int varStart = 0;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i] == '{')
+                {
+                    inVar = true;
+                    varName = String.Empty;
+                    varStart = i;
+                    continue;
+                }
+
+                if (inVar)
+                {
+                    if (line[i] == '}')
+                    {
+                        mc.Add(new TemplateVariable(varName, varStart));
+                        continue;
+                    }
+
+                    if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-')
+                    {
+                        varName += line[i];
+                    }
+                    else
+                    {
+                        inVar = false;
+                        continue;
+                    }
+                }
+            }
+
+            return mc;
+        }
+
+        private static List<TemplateVariable> GetLoopVariablesFromLine(string parent, string line)
+        {
+            List<TemplateVariable> mc = new List<TemplateVariable>();
+            string varName = String.Empty;
+            bool inVar = false;
+            int varStart = 0;
+            int parentIndex = 0;
+            int parentMaxIndex = parent.Length - 1;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (line[i] == '{')
+                {
+                    inVar = true;
+                    varName = String.Empty;
+                    varStart = i;
+                    parentIndex = 0;
+                    continue;
+                }
+
+                if (inVar)
+                {
+                    if (line[i] == '}')
+                    {
+                        mc.Add(new TemplateVariable(varName, varStart));
+                        continue;
+                    }
+
+                    if (parentIndex < parent.Length)
+                    {
+                        if (line[i] == parent[parentIndex])
+                        {
+                            parentIndex++;
+                        }
+                        else
+                        {
+                            inVar = false;
+                            continue;
+                        }
+                    }
+                    else if (parentIndex == parent.Length)
+                    {
+                        if (line[i] == '.')
+                        {
+                            parentIndex++;
+                        }
+                        else
+                        {
+                            inVar = false;
+                            continue;
+                        }
+                    }
+                    else if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-')
+                    {
+                        varName += line[i];
+                    }
+                    else
+                    {
+                        inVar = false;
+                        continue;
+                    }
+                }
+            }
+
+            return mc;
         }
 
         #region file handling

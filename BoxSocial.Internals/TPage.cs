@@ -279,11 +279,16 @@ namespace BoxSocial.Internals
                 pageEnded = true;
 
                 Display.Header(this);
+                long templateStart = timer.ElapsedTicks;
                 HttpContext.Current.Response.Write(template.ToString());
+                double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
                 timer.Stop();
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
-                /*HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime()));
-                HttpContext.Current.Response.Write(db.QueryList.Replace("\n", "<br />"));
+                if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+                {
+                    HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                }
+                /*HttpContext.Current.Response.Write(db.QueryList.Replace("\n", "<br />"));
                 /*if (seconds < 0.5)
                 {
                     StreamWriter sw = new StreamWriter(Path.Combine(Path.Combine(Server.MapPath("."), "storage"), "time.log"), true);

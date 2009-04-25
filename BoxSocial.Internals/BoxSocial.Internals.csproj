@@ -124,6 +124,7 @@
     <Compile Include="Page.cs" />
     <Compile Include="PageHandle.cs" />
     <Compile Include="ParentTree.cs" />
+    <Compile Include="PerformanceMeter.cs" />
     <Compile Include="PPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

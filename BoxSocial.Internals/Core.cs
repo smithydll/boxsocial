@@ -209,7 +209,8 @@ namespace BoxSocial.Internals
 
             foreach (PageHandle page in pages)
             {
-                Match pathMatch = Regex.Match(PagePath, page.Expression);
+                Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
+                Match pathMatch = rex.Match(PagePath);
                 if (pathMatch.Success)
                 {
                     PagePathParts = pathMatch.Groups;

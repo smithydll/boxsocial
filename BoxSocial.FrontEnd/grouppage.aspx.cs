@@ -33,15 +33,29 @@ namespace BoxSocial.FrontEnd
 {
     public partial class grouppage : GPage
     {
+        private PerformanceMeter meter = null;
+
         public grouppage()
             : base("1201.html")
-        {
+        {            
+            meter = new PerformanceMeter();
+
+            meter.Add("Begin Group Page");
             BeginGroupPage();
+            meter.Add("End Begin Group Page");
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            meter.Add("Begin Invoke Applications");
             Core.InvokeApplication(this);
+
+            meter.Add("Begin End Response");
+
+            if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+            {
+                HttpContext.Current.Response.Write(meter.ToString() + "\n");
+            }
 
             EndResponse();
         }

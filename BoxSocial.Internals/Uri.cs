@@ -365,9 +365,22 @@ namespace BoxSocial.Internals
         {
             if (SidUrls || forceSid)
             {
-                if (uri.Contains("?sid=") || uri.Contains("&sid=") || uri.Contains("&amp;sid="))
+                int ior = uri.IndexOf("?sid=");
+                int ioo = 5;
+                if (ior >= 0)
                 {
-                    return Regex.Replace(uri, "sid=([a-z0-9]+)", string.Format("sid={0}", sid));
+                    ior = uri.IndexOf("&sid=");
+                    ioo = 5;
+                }
+                if (ior < 0)
+                {
+                    ior = uri.IndexOf("&amp;sid=");
+                    ioo = 9;
+                }
+                if (ior >= 0)
+                {
+                    return uri.Remove(ior + ioo, 32).Insert(ior + ioo, sid);
+                    //return Regex.Replace(uri, "sid=([a-z0-9]+)", string.Format("sid={0}", sid));
                 }
                 else
                 {

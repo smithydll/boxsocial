@@ -659,7 +659,10 @@ namespace BoxSocial.Internals
             input = input.Replace("<br /></ul>", "</ul>");
             input = input.Replace("<br /></ol>", "</ol>");
             input = input.Replace("<blockquote></blockquote>", "<blockquote>&nbsp;</blockquote>");
-            input = Regex.Replace(input, @"\<p\>(\s)\<\/p\>", "", RegexOptions.Compiled);
+            //input = Regex.Replace(input, @"\<p\>(\s)\<\/p\>", "", RegexOptions.Compiled);
+            input = input.Replace("<p> </p>", "");
+            input = input.Replace("<p>\n</p>", "");
+            input = input.Replace("<p>\r\n</p>", "");
             return input;
         }
 

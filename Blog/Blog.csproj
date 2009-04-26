@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -23,13 +24,11 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <DocumentationFile>..\docs\api\xml\Blog.xml</DocumentationFile>
-    <NoWarn>649 169</NoWarn>
+    <NoWarn>649,169</NoWarn>
     <OutputType>Library</OutputType>
-    <AssemblyName>Blog</AssemblyName>
     <RootNamespace>BoxSocial.Applications.Blog</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -42,10 +41,8 @@
     <DocumentationFile>..\docs\api\xml\Blog.xml</DocumentationFile>
     <NoWarn>649 169</NoWarn>
     <OutputType>Library</OutputType>
-    <AssemblyName>Blog</AssemblyName>
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>BoxSocial.Applications.Blog</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
@@ -68,8 +65,6 @@
     <Compile Include="BlogRollEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Templates.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="TrackBack.cs" />
@@ -92,7 +87,6 @@
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="templates\viewblog.html" />
   </ItemGroup>

@@ -34,7 +34,7 @@ using BoxSocial.Groups;
 namespace BoxSocial.Applications.Forum
 {
     [PseudoPrimitive]
-    [DataTable("group_members")]
+    [DataTable("forum_members")]
     public class ForumMember : User
     {
         [DataField("user_id")]
@@ -47,8 +47,40 @@ namespace BoxSocial.Applications.Forum
         private long forumRank;
         [DataField("signature")]
         private string forumSignature;
+		
+		public long ForumRankId
+		{
+			get
+			{
+				return forumRank;
+			}
+		}
+		
+		public long ForumPosts
+		{
+			get
+			{
+				return forumPosts;
+			}
+			set
+			{
+				SetProperty("forumPosts", value);
+			}
+		}
+		
+		public string ForumSignature
+		{
+			get
+			{
+				return forumSignature;
+			}
+			set
+			{
+				SetProperty("forumSignature", value);
+			}
+		}
 
-        public ForumMember(Core core, User user)
+        public ForumMember(Core core, Primitive owner, User user)
             : base(core)
         {
             // load the info into a the new object being created
@@ -59,10 +91,15 @@ namespace BoxSocial.Applications.Forum
             this.userName = user.UserName;
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
+			
+			SelectQuery sQuery = ForumMember.GetSelectQueryStub(typeof(ForumMember));
+			sQuery.AddCondition("user_id", user.Id);
+			sQuery.AddCondition("item_id", owner.Id);
+			sQuery.AddCondition("item_type_id", owner.TypeId);
 
             try
             {
-                LoadItem(user.Id);
+                loadItemInfo(typeof(ForumMember), core.db.ReaderQuery(sQuery));
             }
             catch (InvalidItemException)
             {
@@ -73,8 +110,24 @@ namespace BoxSocial.Applications.Forum
         public ForumMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
-            loadItemInfo(typeof(GroupMember), memberRow);
+            loadItemInfo(typeof(ForumMember), memberRow);
         }
+		
+		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)
+		{
+			InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumMember)));
+			iQuery.AddField("user_id", user.Id);
+			iQuery.AddField("item_id", owner.Id);
+			iQuery.AddField("item_type_id", owner.TypeId);
+			iQuery.AddField("posts", (firstPost) ? 1 : 0);
+			iQuery.AddField("rank", 0);
+			iQuery.AddField("signature", "");
+			
+			
+			core.db.Query(iQuery);
+			
+			return new ForumMember(core, owner, user);
+		}
 
         // cannot use this method for conversion because we do not have public
         // access to the core token
@@ -82,6 +135,40 @@ namespace BoxSocial.Applications.Forum
         {
             return new ForumMember(u);
         }*/
+		
+		public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        {
+            SelectQuery query = GetSelectQueryStub(typeof(ForumMember));
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+            {
+                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+            }
+            if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+            {
+                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            }
+            if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+            {
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            }
+
+            return query;
+        }
+		
+		public static List<ForumMember> GetMembers(Primitive forumOwner, List<long> userIds)
+		{
+			List<ForumMember> forumMembers = new List<ForumMember>();
+			//SelectQuery sQuery = new SelectQuery(
+			
+			return forumMembers;
+		}
     }
 
     public class InvalidForumMemberException : Exception

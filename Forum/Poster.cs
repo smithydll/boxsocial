@@ -242,7 +242,7 @@ namespace BoxSocial.Applications.Forum
                             Display.ShowMessage("Cannot reply", "Not authorised to reply to topic");
                             return;
                         }
-
+					
                         ForumTopic topic = new ForumTopic(core, forum, topicId);
 
                         TopicPost post = topic.AddReply(core, forum, subject, text);

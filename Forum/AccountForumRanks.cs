@@ -80,11 +80,13 @@ namespace BoxSocial.Applications.Forum
                 ranksVariableCollection.Parse("U_EDIT", BuildUri("ranks", "edit", rank.Id));
                 ranksVariableCollection.Parse("U_DELETE", BuildUri("ranks", "delete", rank.Id));
             }
+			
+			template.Parse("U_NEW_RANK", BuildUri("ranks", "add"));
         }
 
         void AccountNewsWrite_Add(object sender, ModuleModeEventArgs e)
         {
-            SetTemplate("account_forum_ranks_edit");
+            SetTemplate("account_forum_rank_edit");
 
             if (e.Mode == "edit")
             {
@@ -122,6 +124,35 @@ namespace BoxSocial.Applications.Forum
 
         void AccountNewsWrite_Add_Save(object sender, EventArgs e)
         {
+			AuthoriseRequestSid();
+			
+			string title = Request.Form["rank-title"];
+			long rankId = Functions.FormLong("id", 0);
+			int posts = Functions.FormInt("min-posts", 0);
+			bool special = (Request.Form["special"] == "true");
+			int colour = -1;
+			
+			if (rankId > 0)
+			{
+				// Edit
+				ForumMemberRank theRank = new ForumMemberRank(core, rankId);
+				theRank.RankTitleText = title;
+				theRank.RankPosts = posts;
+				theRank.RankSpecial = special;
+				theRank.RankColourRaw = colour;
+				
+				theRank.Update();
+				
+				SetRedirectUri(BuildUri("ranks"));
+				Display.ShowMessage("New Updated", "The rank has been updated.");
+			}
+			else
+			{
+				// New Rank
+				ForumMemberRank newRank = ForumMemberRank.Create(core, Owner, title, posts, special, colour);
+				SetRedirectUri(BuildUri("ranks"));
+				Display.ShowMessage("New Rank Created", "The new rank has been created.");
+			}
         }
     }
 }

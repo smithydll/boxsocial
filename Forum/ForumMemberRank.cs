@@ -35,13 +35,13 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_ranks")]
     public class ForumMemberRank : NumberedItem
     {
-        [DataField("rank_id")]
+        [DataField("rank_id", DataFieldKeys.Primary)]
         private long rankId;
         [DataField("rank_owner")]
         private ItemKey rankOwner;
         [DataField("rank_colour")]
         private int rankColour;
-        [DataField("rank_title")]
+        [DataField("rank_title", 31)]
         private string rankTitleText;
         [DataField("rank_posts")]
         private int rankPosts;
@@ -146,19 +146,17 @@ namespace BoxSocial.Applications.Forum
 		{
 		}
 
-        public static ForumMemberRank Create(Core core)
+        public static ForumMemberRank Create(Core core, Primitive forumOwner, string title, int posts, bool special, int colour)
         {
-            /*Item item = Item.Create(core, typeof(ForumMemberRank), new FieldValuePair("article_item_id", owner.Id),
-                new FieldValuePair("article_item_type_id", owner.TypeId),
-                new FieldValuePair("article_time_ut", UnixTime.UnixTimeStamp()),
-                new FieldValuePair("article_subject", subject),
-                new FieldValuePair("article_body", body),
-                new FieldValuePair("article_comments", 0),
-                new FieldValuePair("user_id", core.LoggedInMemberId));
+            Item item = Item.Create(core, typeof(ForumMemberRank), new FieldValuePair("rank_owner_id", forumOwner.Id),
+                new FieldValuePair("rank_owner_type_id", forumOwner.TypeId),
+                new FieldValuePair("rank_title", title),
+                new FieldValuePair("rank_posts", posts),
+                new FieldValuePair("rank_special", special),
+                new FieldValuePair("rank_colour", colour),
+			    new FieldValuePair("rank_image_id", 0));
 
-            return (Article)item;*/
-
-            throw new NotImplementedException();
+            return (ForumMemberRank)item;
         }
 
         public override long Id

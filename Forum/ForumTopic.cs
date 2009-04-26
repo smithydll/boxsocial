@@ -582,6 +582,19 @@ namespace BoxSocial.Applications.Forum
                 db.RollBackTransaction();
                 Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
+			
+			uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
+            uQuery.AddField("posts", new QueryOperation("posts", QueryOperations.Addition, 1));
+			uQuery.AddCondition("user_id", core.session.LoggedInMember.Id);
+            uQuery.AddCondition("item_id", Forum.Owner.Id);
+            uQuery.AddCondition("item_type_id", Forum.Owner.TypeId);
+				
+			rowsUpdated = db.Query(uQuery);
+			
+			if (rowsUpdated == 0)
+			{
+				ForumMember fm = ForumMember.Create(core, Forum.Owner, core.session.LoggedInMember, true);
+			}
 
             return post;
         }

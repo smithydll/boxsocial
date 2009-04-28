@@ -777,6 +777,15 @@ namespace BoxSocial.Applications.Forum
                 }
 
                 page.template.Parse("POSTS", posts.Count.ToString());
+				
+				List<long> posterIds = new List<long>();
+				
+				foreach (TopicPost post in posts)
+				{
+					posterIds.Add(post.UserId);
+				}
+				
+				Dictionary<long, ForumMember> postersList = ForumMember.GetMembers(core, thisForum.Owner, posterIds);
 
                 foreach (TopicPost post in posts)
                 {
@@ -788,10 +797,12 @@ namespace BoxSocial.Applications.Forum
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
 					postVariableCollection.Parse("U_USER", post.Poster.Uri);
-                    postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
-                    postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
-                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
-					postVariableCollection.Parse("USER_COUNTRY", post.Poster.Country);
+                    postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[post.UserId].Info.DisplayName);
+                    postVariableCollection.Parse("USER_TILE", postersList[post.UserId].UserIcon);
+                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.tz)));
+					postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Country);
+					postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
+					postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);
 
                     if (thisTopic.ReadStatus == null)
                     {

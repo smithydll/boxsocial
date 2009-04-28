@@ -140,6 +140,7 @@ namespace BoxSocial.Applications.Forum
         {
             SelectQuery query = GetSelectQueryStub(typeof(ForumMember));
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
                 query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
@@ -162,10 +163,19 @@ namespace BoxSocial.Applications.Forum
             return query;
         }
 		
-		public static List<ForumMember> GetMembers(Primitive forumOwner, List<long> userIds)
+		public static Dictionary<long, ForumMember> GetMembers(Core core, Primitive forumOwner, List<long> userIds)
 		{
-			List<ForumMember> forumMembers = new List<ForumMember>();
-			//SelectQuery sQuery = new SelectQuery(
+			Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
+			SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
+			sQuery.AddCondition("user_keys.user_id", ConditionEquality.In, userIds);
+			
+			DataTable membersTable = core.db.Query(sQuery);
+			
+			foreach (DataRow dr in membersTable.Rows)
+			{
+				ForumMember fm = new ForumMember(core, dr, UserLoadOptions.All);
+				forumMembers.Add(fm.Id, fm);
+			}
 			
 			return forumMembers;
 		}

@@ -308,7 +308,7 @@ namespace BoxSocial.Applications.Forum
                     posts.Add(tp.Id, tp);
                 }
 
-                core.LoadUserProfiles(posterIds);
+                //core.LoadUserProfiles(posterIds);
             }
 
             return posts;

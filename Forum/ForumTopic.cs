@@ -779,13 +779,27 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("POSTS", posts.Count.ToString());
 				
 				List<long> posterIds = new List<long>();
+				List<long> rankIds = new List<long>();
 				
 				foreach (TopicPost post in posts)
 				{
-					posterIds.Add(post.UserId);
+					if (!posterIds.Contains(post.UserId))
+					{
+						posterIds.Add(post.UserId);
+					}
 				}
 				
 				Dictionary<long, ForumMember> postersList = ForumMember.GetMembers(core, thisForum.Owner, posterIds);
+				
+				foreach (ForumMember fm in postersList.Values)
+				{
+					if (!rankIds.Contains(fm.ForumRankId))
+					{
+						rankIds.Add(fm.ForumRankId);
+					}
+				}
+				
+				Dictionary<long, ForumMemberRank> ranksList = ForumMemberRank.GetRanks(core, thisForum.Owner, rankIds);
 
                 foreach (TopicPost post in posts)
                 {
@@ -803,6 +817,11 @@ namespace BoxSocial.Applications.Forum
 					postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Country);
 					postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
 					postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);
+					
+					if (ranksList.ContainsKey(postersList[post.UserId].ForumRankId))
+					{
+						postVariableCollection.Parse("USER_RANK", ranksList[postersList[post.UserId].ForumRankId].RankTitleText);
+					}
 
                     if (thisTopic.ReadStatus == null)
                     {

@@ -174,6 +174,26 @@ namespace BoxSocial.Applications.Forum
                 throw new NotImplementedException();
             }
         }
+		
+		public static Dictionary<long, ForumMemberRank> GetRanks(Core core, Primitive forumOwner, List<long> rankIds)
+		{
+			Dictionary<long, ForumMemberRank> ranks = new Dictionary<long, ForumMemberRank>();
+			
+			SelectQuery sQuery = ForumMemberRank.GetSelectQueryStub(typeof(ForumMemberRank));
+			sQuery.AddCondition("rank_owner_id", forumOwner.Id);
+			sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
+			sQuery.AddCondition("rank_id", ConditionEquality.In, rankIds);
+			
+			DataTable ranksTable = core.db.Query(sQuery);
+			
+			foreach (DataRow dr in ranksTable.Rows)
+			{
+				ForumMemberRank fmr = new ForumMemberRank(core, dr);
+				ranks.Add(fmr.Id, fmr);
+			}
+			
+			return ranks;
+		}
     }
 
     public class InvalidForumMemberRankException : Exception

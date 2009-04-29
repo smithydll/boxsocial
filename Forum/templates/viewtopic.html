@@ -31,6 +31,9 @@
     <dl class="profile">
       <dt>
       	<p><strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong></p>
+      	<!-- IF post_list.USER_RANK -->
+      	<p>{post_list.USER_RANK}</p>
+      	<!-- ENDIF -->
         <!-- IF post_list.USER_TILE -->
         <div class="comment-disp-pic">
           <img src="{post_list.USER_TILE}" alt="{post_list.USER_DISPLAY_NAME}" />

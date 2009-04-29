@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="TopicPost.cs" />
     <Compile Include="TopicReadStatus.cs" />
+    <Compile Include="AccountForumMemberManage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

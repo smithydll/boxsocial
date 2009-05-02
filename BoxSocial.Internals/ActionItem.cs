@@ -37,7 +37,7 @@ namespace BoxSocial.Internals
         [DataField("item_id", DataFieldKeys.Unique, "ternary")]
         private long itemId;
         [DataField("item_type_id", DataFieldKeys.Unique, "ternary")]
-        private string itemType;
+        private long itemTypeId;
 
         public long ActionId
         {
@@ -55,11 +55,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string ItemType
+        public long ItemTypeId
         {
             get
             {
-                return itemType;
+                return itemTypeId;
             }
         }
 

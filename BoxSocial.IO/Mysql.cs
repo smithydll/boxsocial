@@ -782,7 +782,14 @@ namespace BoxSocial.IO
                     if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
                         notNull = " NOT NULL";
-                        defaultValue = " DEFAULT NULL";
+                        if (Index.GetFields(field.Index.Key, fields).Count == 1)
+                        {
+                            defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+                        }
+                        else
+                        {
+                            defaultValue = " DEFAULT 0";
+                        }
                     }
                     else
                     {
@@ -802,7 +809,10 @@ namespace BoxSocial.IO
 						{
 							notNull = " NOT NULL";
 	                        primaryKey = field;
-	                        key = " AUTO_INCREMENT";
+                            if (type.ToLower().Contains("int("))
+                            {
+                                key = " AUTO_INCREMENT";
+                            }
 						}
                     }
                 }

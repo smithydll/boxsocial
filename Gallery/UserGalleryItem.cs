@@ -32,7 +32,6 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a user gallery item
     /// </summary>
-    [DataTable(null, "PHOTO")]
     public class UserGalleryItem : GalleryItem
     {
 

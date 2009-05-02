@@ -44,11 +44,22 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Installer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">
+      <Project>{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}</Project>
+      <Name>BoxSocial.Internals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">
+      <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
+      <Name>BoxSocial.IO</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

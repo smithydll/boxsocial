@@ -8,7 +8,6 @@ function CreateUserTagNearPointer(id, event)
 	
 	newTag[0] = photox;
 	newTag[1] = photoy;
-	newTag[2] = FindFriendId();
 	
 	//PostToAccount(UserTagCreated, "gallery", "tag", id, null);
 	
@@ -18,12 +17,15 @@ function CreateUserTagNearPointer(id, event)
 	
 	apc("user-tags", nli);
 	
-	nli.innerHTML = "New";
+	var nlii = document.createElement('input');
+	nlii.type = 'input';
+	nlii.name = 'name[' + tags + ']';
+	nli.appendChild(nlii);
 	
 	var nih = document.createElement('input');
 	nih.type = 'hidden';
 	nih.name = 'tag[' + tags + ']';
-	nih.value = photox + ',' + photoy + ',' + newTag[2][1] + ',' + newTag[2][0];
+	nih.value = photox + ',' + photoy + ',' + newTag[2][1];
 	
 	apc("fieldlist", nih);
 	

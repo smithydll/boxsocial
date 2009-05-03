@@ -141,12 +141,45 @@ namespace BoxSocial.Applications.Gallery
 
                 List<string> tagInfo = new List<string>();
 
+                List<string> usernames = new List<string>();
+                Dictionary<string, long> usersTaggedByName = new Dictionary<string, long>();
+
+                // Load names
+                for (int i = 0; i < tagCount; i++)
+                {
+                    if (!string.IsNullOrEmpty(Request.Form["name[" + i + "]"]))
+                    {
+                        usernames.Add(Request.Form["name[" + i + "]"]);
+                        long userId = core.LoadUserProfile(Request.Form["name[" + i + "]"]);
+                        if (userId > 0)
+                        {
+                            usersTaggedByName.Add(Request.Form["name[" + i + "]"], userId);
+                        }
+                    }
+                }
+
 				/*
 				 * Tag info of the format x,y,title,uid
 				 */
                 for (int i = 0; i < tagCount; i++)
                 {
-                    tagInfo.Add(Request.Form["tag[" + i + "]"]);
+                    string tag = Request.Form["tag[" + i + "]"];
+                    string name = Request.Form["name[" + i + "]"];
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        tagInfo.Add(tag);
+                    }
+                    else
+                    {
+                        if (usersTaggedByName.ContainsKey(name))
+                        {
+                            tagInfo.Add(tag + "," + name + "," + usersTaggedByName[name].ToString());
+                        }
+                        else
+                        {
+                            tagInfo.Add(tag + "," + name + "," + "0");
+                        }
+                    }
                 }
 				
 				Dictionary<long, Point> newTags = new Dictionary<long, Point>();

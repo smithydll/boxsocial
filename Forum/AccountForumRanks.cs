@@ -56,10 +56,10 @@ namespace BoxSocial.Applications.Forum
 
         void AccountForumRanks_Load(object sender, EventArgs e)
         {
-            AddModeHandler("add", new ModuleModeHandler(AccountNewsWrite_Add));
-            AddSaveHandler("add", new EventHandler(AccountNewsWrite_Add_Save));
-            AddModeHandler("edit", new ModuleModeHandler(AccountNewsWrite_Add));
-            AddSaveHandler("edit", new EventHandler(AccountNewsWrite_Add_Save));
+            AddModeHandler("add", new ModuleModeHandler(AccountForumRanks_Add));
+            AddSaveHandler("add", new EventHandler(AccountForumRanks_Add_Save));
+            AddModeHandler("edit", new ModuleModeHandler(AccountForumRanks_Add));
+            AddSaveHandler("edit", new EventHandler(AccountForumRanks_Add_Save));
         }
 
         void AccountForumRanks_Show(object sender, EventArgs e)
@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Forum
 			template.Parse("U_NEW_RANK", BuildUri("ranks", "add"));
         }
 
-        void AccountNewsWrite_Add(object sender, ModuleModeEventArgs e)
+        void AccountForumRanks_Add(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_forum_rank_edit");
 
@@ -122,7 +122,7 @@ namespace BoxSocial.Applications.Forum
             template.Parse("S_SPECIAL", "");
         }
 
-        void AccountNewsWrite_Add_Save(object sender, EventArgs e)
+        void AccountForumRanks_Add_Save(object sender, EventArgs e)
         {
 			AuthoriseRequestSid();
 			

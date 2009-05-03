@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -66,7 +66,9 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Templates.Designer.cs">
+    <Compile Include="Templates1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="TopicPost.cs" />
@@ -103,6 +105,7 @@
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="languages\Forum.en.resx">
       <SubType>Designer</SubType>
@@ -114,6 +117,8 @@
     <Content Include="resources\style.css" />
     <Content Include="templates\account_forum_edit.html" />
     <Content Include="templates\account_forum_manage.html" />
+    <Content Include="templates\account_forum_member_edit.html" />
+    <Content Include="templates\account_forum_member_manage.html" />
     <Content Include="templates\account_forum_ranks.html" />
     <Content Include="templates\account_forum_rank_edit.html" />
     <Content Include="templates\account_forum_settings.html" />

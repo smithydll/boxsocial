@@ -70,6 +70,8 @@ namespace BoxSocial.Internals
         private string userNameLower;
         [DataField("user_domain", DataFieldKeys.Index, 63)]
         protected string domain;
+        [DataField("user_name_first", DataFieldKeys.Index, 1)]
+        protected string userNameFirstCharacter;
 
         private string userIconUri;
 
@@ -1214,6 +1216,7 @@ namespace BoxSocial.Internals
             query.AddField("user_name", userName);
 			query.AddField("user_name_lower", userName.ToLower());
             query.AddField("user_domain", "");
+            query.AddField("user_name_first", userName[0].ToString());
 
             db.BeginTransaction();
             long userId = db.Query(query);

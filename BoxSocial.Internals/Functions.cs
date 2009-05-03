@@ -292,6 +292,21 @@ namespace BoxSocial.Internals
             return byte.Parse(HttpContext.Current.Request.Form["license"]);
         }
 
+        public static SortOrder GetSortOrder()
+        {
+            return ((HttpContext.Current.Request.QueryString["order"] == "DESC") ? SortOrder.Descending : SortOrder.Ascending);
+        }
+
+        public static string GetSortCriteria()
+        {
+            return HttpContext.Current.Request.QueryString["sort"];
+        }
+
+        public static string GetFilter()
+        {
+            return HttpContext.Current.Request.QueryString["filter"];
+        }
+
         public static string BuildPermissionsBox(ushort permission, List<string> permissions)
         {
             StringBuilder permissionsBox = new StringBuilder();

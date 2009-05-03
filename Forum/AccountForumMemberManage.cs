@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -56,10 +57,90 @@ namespace BoxSocial.Applications.Forum
 		
 		void AccountForumMemberManage_Load(object sender, EventArgs e)
         {
+            AddModeHandler("edit", new ModuleModeHandler(AccountForumMemberManage_Edit));
+            AddSaveHandler("edit", new EventHandler(AccountForumMemberManage_Edit_Save));
 		}
 		
 		void AccountForumMemberManage_Show(object sender, EventArgs e)
         {
+            SetTemplate("account_forum_member_manage");
+
+            int page = Functions.RequestInt("p", 0);
+
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, Owner, Functions.GetFilter(), page, 20);
+
+            foreach (ForumMember member in members.Values)
+            {
+                VariableCollection membersVariableCollection = template.CreateChild("members");
+                
+                membersVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+            }
 		}
+
+        void AccountForumMemberManage_Edit(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_forum_member_edit");
+
+            long id = Functions.RequestLong("id", 0);
+            ForumMember member = null;
+
+            try
+            {
+                member = new ForumMember(core, Owner, id, UserLoadOptions.Common);
+            }
+            catch (InvalidForumMemberException)
+            {
+                Functions.Generate404();
+            }
+            catch (InvalidUserException)
+            {
+                Functions.Generate404();
+            }
+
+            SelectBox ranksSelectBox = new SelectBox("ranks");
+            ranksSelectBox.Add(new SelectBoxItem("0", "None"));
+
+            Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, Owner);
+
+            foreach (ForumMemberRank rank in ranks.Values)
+            {
+                ranksSelectBox.Add(new SelectBoxItem(rank.Id.ToString(), rank.RankTitleText));
+            }
+
+            if (ranksSelectBox.ContainsKey(member.ForumRankId.ToString()))
+            {
+                ranksSelectBox.SelectedKey = member.ForumRankId.ToString();
+            }
+
+            template.Parse("S_USERNAME", member.UserName);
+            template.Parse("S_RANK", ranksSelectBox);
+            template.Parse("S_SIGNATURE", member.ForumSignature);
+        }
+
+        void AccountForumMemberManage_Edit_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long id = Functions.FormLong("id", 0);
+            long rankId = Functions.FormLong("rank", 0);
+            ForumMember member = null;
+
+            try
+            {
+                member = new ForumMember(core, Owner, id, UserLoadOptions.Common);
+            }
+            catch (InvalidForumMemberException)
+            {
+                Functions.Generate404();
+            }
+            catch (InvalidUserException)
+            {
+                Functions.Generate404();
+            }
+
+            member.ForumSignature = Request.Form["signature"];
+            member.ForumRankId = rankId;
+            member.Update();
+        }
 	}
 }

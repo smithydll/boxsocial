@@ -43,6 +43,10 @@ namespace BoxSocial.Install
         private static string domain;
         private static string mysqlRootPassword;
         private static string mysqlDatabase;
+        private static string adminUsername;
+        private static string adminPassword;
+        private static string adminEmail;
+        private static long adminUid;
 
         static void Main(string[] args)
         {
@@ -75,6 +79,15 @@ namespace BoxSocial.Install
 
                 Console.WriteLine("Please enter the mysql database you have created:");
                 mysqlDatabase = Console.ReadLine();
+
+                Console.WriteLine("Please enter administrator username:");
+                adminUsername = Console.ReadLine();
+
+                Console.WriteLine("Please enter administrator e-mail address:");
+                adminEmail = Console.ReadLine();
+
+                Console.WriteLine("Please enter administrator password:");
+                adminPassword = Console.ReadLine();
 
                 // install
                 PerformInstall();
@@ -146,6 +159,21 @@ namespace BoxSocial.Install
             InstallRepository(@"News");
             InstallApplication(@"News");
             /* ==================== */
+
+            Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+            Template template = new Template(Path.Combine(root, "templates"), "default.html");
+            Core core = new Core(db, template);
+            UnixTime tz = new UnixTime(core, 0);
+
+            User anonymous = User.Register(core, "Anonymous", "anonymous@zinzam.com", "Anonymous", "Anonymous");
+            // blank out the anon password to make it impossible to login as
+            db.UpdateQuery("UPDATE user_info SET user_password = '' WHERE user_id = " + anonymous.Id + ";");
+
+            User admin = User.Register(core, adminUsername, adminEmail, adminPassword, adminPassword);
+            adminUid = admin.Id;
+
+            db.UpdateQuery("UPDATE applications SET user_id = " + adminUid + ";");
+            db.CloseConnection();
         }
 
         private static void DownloadRepository(string repo)
@@ -396,6 +424,8 @@ namespace BoxSocial.Install
                 Console.WriteLine(repo + " has been installed.");
 
             }
+
+            db.CloseConnection();
         }
 
         /// <summary>

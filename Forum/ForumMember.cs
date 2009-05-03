@@ -54,6 +54,10 @@ namespace BoxSocial.Applications.Forum
 			{
 				return forumRank;
 			}
+            set
+            {
+                SetProperty("forumRank", value);
+            }
 		}
 		
 		public long ForumPosts
@@ -111,6 +115,30 @@ namespace BoxSocial.Applications.Forum
             : base(core, memberRow, loadOptions)
         {
             loadItemInfo(typeof(ForumMember), memberRow);
+        }
+
+        public ForumMember(Core core, Primitive owner, long userId, UserLoadOptions loadOptions)
+            : base(core)
+        {
+            this.db = db;
+
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_keys.user_id", userId);
+            query.AddCondition("item_id", owner.Id);
+            query.AddCondition("item_type_id", owner.TypeId);
+
+            DataTable memberTable = db.Query(query);
+
+            if (memberTable.Rows.Count == 1)
+            {
+                loadItemInfo(memberTable.Rows[0]);
+                loadUserInfo(memberTable.Rows[0]);
+                loadUserIcon(memberTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
         }
 		
 		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)
@@ -179,6 +207,37 @@ namespace BoxSocial.Applications.Forum
 			
 			return forumMembers;
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="forumOwner"></param>
+        /// <param name="filter">First character based filter</param>
+        /// /// <param name="page"></param>
+        /// /// <param name="perPage"></param>
+        /// <returns></returns>
+        public static Dictionary<long, ForumMember> GetMembers(Core core, Primitive forumOwner, string filter, int page, int perPage)
+        {
+            Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
+            SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
+            if (!string.IsNullOrEmpty(filter))
+            {
+                sQuery.AddCondition("user_keys.user_name_first", filter);
+            }
+            sQuery.LimitCount = perPage;
+            sQuery.LimitStart = (page - 1) * perPage;
+
+            DataTable membersTable = core.db.Query(sQuery);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                ForumMember fm = new ForumMember(core, dr, UserLoadOptions.All);
+                forumMembers.Add(fm.Id, fm);
+            }
+
+            return forumMembers;
+        }
     }
 
     public class InvalidForumMemberException : Exception

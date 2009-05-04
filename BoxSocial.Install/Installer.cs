@@ -42,6 +42,8 @@ namespace BoxSocial.Install
         private static string scriptsRoot;
         private static string domain;
         private static string mysqlRootPassword;
+        private static string mysqlWebUser;
+        private static string mysqlWebPassword;
         private static string mysqlDatabase;
         private static string adminUsername;
         private static string adminPassword;
@@ -80,6 +82,12 @@ namespace BoxSocial.Install
                 Console.WriteLine("Please enter the mysql database you have created:");
                 mysqlDatabase = Console.ReadLine();
 
+                Console.WriteLine("Please enter the mysql low privledge user name (e.g. web@localhost):");
+                mysqlWebUser = Console.ReadLine();
+
+                Console.WriteLine("Please enter the mysql low privledge user password:");
+                mysqlWebPassword = Console.ReadLine();
+
                 Console.WriteLine("Please enter administrator username:");
                 adminUsername = Console.ReadLine();
 
@@ -107,9 +115,12 @@ namespace BoxSocial.Install
             if (Directory.Exists(binRoot))
             {
                 Directory.Delete(binRoot, true);
-                Directory.CreateDirectory(binRoot);
-                Directory.CreateDirectory(Path.Combine(binRoot, "applications"));
             }
+
+            Directory.CreateDirectory(binRoot);
+            Directory.CreateDirectory(Path.Combine(binRoot, "applications"));
+
+            File.Copy("MySql.Data.dll", Path.Combine(binRoot, "MySql.Data.dll"));
 
             /* ==================== */
             if (!binary)

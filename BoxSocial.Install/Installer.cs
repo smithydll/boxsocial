@@ -176,16 +176,121 @@ namespace BoxSocial.Install
             Core core = new Core(db, template);
             UnixTime tz = new UnixTime(core, 0);
 
-            User anonymous = User.Register(core, "Anonymous", "anonymous@zinzam.com", "Anonymous", "Anonymous");
+            //User anonymous = User.Register(core, "Anonymous", "anonymous@zinzam.com", "Anonymous", "Anonymous");
             // blank out the anon password to make it impossible to login as
-            db.UpdateQuery("UPDATE user_info SET user_password = '' WHERE user_id = " + anonymous.Id + ";");
+            //db.UpdateQuery("UPDATE user_info SET user_password = '' WHERE user_id = " + anonymous.Id + ";");
+			CreateUser(core, 1, "Anonymous", "anonymous@zinzam.com", null);
 
-            User admin = User.Register(core, adminUsername, adminEmail, adminPassword, adminPassword);
-            adminUid = admin.Id;
+            //User admin = User.Register(core, adminUsername, adminEmail, adminPassword, adminPassword);
+            //adminUid = admin.Id;
+			CreateUser(core, 2, adminUsername, adminEmail, adminPassword);
 
-            db.UpdateQuery("UPDATE applications SET user_id = " + adminUid + ";");
+            db.UpdateQuery("UPDATE applications SET user_id = 2;");
             db.CloseConnection();
         }
+		
+		public static void CreateUser(Core core, long userId, string userName, string email, string password)
+		{
+			InsertQuery iQuery = new InsertQuery("user_info");
+			iQuery.AddField("user_id", userId);
+			iQuery.AddField("user_name", userName);
+			iQuery.AddField("user_reg_ip", "");
+			iQuery.AddField("user_reg_date_ut", UnixTime.UnixTimeStamp().ToString());
+			iQuery.AddField("user_last_visit_ut", UnixTime.UnixTimeStamp().ToString());
+			if (password != null)
+			{
+				iQuery.AddField("user_password", User.HashPassword(password));
+			}
+			else
+			{
+				iQuery.AddField("user_password", "");
+			}
+			iQuery.AddField("user_new_password", "");
+			iQuery.AddField("user_active", 1);
+			iQuery.AddField("user_alternate_email", email);
+			iQuery.AddField("user_home_page", "/profile");
+			iQuery.AddField("user_show_custom_styles", 1);
+			iQuery.AddField("user_email_notifications", 1);
+			iQuery.AddField("user_show_bbcode", 0x07);
+			iQuery.AddField("user_bytes", 0);
+			
+			bsDb.Query(iQuery);
+			
+			iQuery = new InsertQuery("user_profile");
+			iQuery.AddField("user_id", nuid);
+			iQuery.AddField("profile_access", 0x3331);
+			
+			bsDb.Query(iQuery);
+			
+			iQuery = new InsertQuery("user_emails");
+			iQuery.AddField("email_user_id", nuid);
+			iQuery.AddField("email_email", email);
+			iQuery.AddField("email_verified", 1);
+					
+			iQuery.AddField("email_time_ut", UnixTime.UnixTimeStamp().ToString());
+			iQuery.AddField("email_access", 0);
+						
+			bsDb.Query(iQuery);
+			
+			User newUser = new User(core, userId);
+			core.session = new SessionState(core, newUser);
+			
+			// Install a couple of applications
+            try
+            {
+                ApplicationEntry profileAe = new ApplicationEntry(core, newUser, "Profile");
+                profileAe.Install(core, newUser);
+            }
+            catch (Exception ex)
+            {
+				Console.WriteLine(ex.ToString());
+            }
+
+            try
+            {
+                ApplicationEntry galleryAe = new ApplicationEntry(core, newUser, "Gallery");
+                galleryAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, newUser, "GuestBook");
+                guestbookAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry groupsAe = new ApplicationEntry(core, newUser, "Groups");
+                groupsAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry networksAe = new ApplicationEntry(core, newUser, "Networks");
+                networksAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                ApplicationEntry calendarAe = new ApplicationEntry(core, newUser, "Calendar");
+                calendarAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+		}
 
         private static void DownloadRepository(string repo)
         {

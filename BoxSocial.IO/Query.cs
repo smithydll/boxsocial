@@ -57,6 +57,10 @@ namespace BoxSocial.IO
             {
                 return ((ushort)value).ToString();
             }
+            else if (value is char)
+            {
+                return string.Format("'{0}'", Mysql.Escape(((char)value).ToString()));
+            }
             else if (value is byte)
             {
                 return ((byte)value).ToString();

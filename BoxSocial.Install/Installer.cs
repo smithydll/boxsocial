@@ -179,20 +179,27 @@ namespace BoxSocial.Install
             //User anonymous = User.Register(core, "Anonymous", "anonymous@zinzam.com", "Anonymous", "Anonymous");
             // blank out the anon password to make it impossible to login as
             //db.UpdateQuery("UPDATE user_info SET user_password = '' WHERE user_id = " + anonymous.Id + ";");
-			CreateUser(core, 1, "Anonymous", "anonymous@zinzam.com", null);
+			CreateUser(core, "Anonymous", "anonymous@zinzam.com", null);
 
             //User admin = User.Register(core, adminUsername, adminEmail, adminPassword, adminPassword);
             //adminUid = admin.Id;
-			CreateUser(core, 2, adminUsername, adminEmail, adminPassword);
+			long adminId = CreateUser(core, adminUsername, adminEmail, adminPassword);
 
-            db.UpdateQuery("UPDATE applications SET user_id = 2;");
+            db.UpdateQuery("UPDATE applications SET user_id = " + adminId + ";");
             db.CloseConnection();
         }
 		
-		public static void CreateUser(Core core, long userId, string userName, string email, string password)
+		public static long CreateUser(Core core, string userName, string email, string password)
 		{
-			InsertQuery iQuery = new InsertQuery("user_info");
-			iQuery.AddField("user_id", userId);
+            InsertQuery iQuery = new InsertQuery("user_keys");
+            iQuery.AddField("user_name", userName);
+            iQuery.AddField("user_name_lower", userName.ToLower());
+            iQuery.AddField("user_name_first", userName.ToLower()[0]);
+
+            long userId = core.db.Query(iQuery);
+
+			iQuery = new InsertQuery("user_info");
+            iQuery.AddField("user_id", userId);
 			iQuery.AddField("user_name", userName);
 			iQuery.AddField("user_reg_ip", "");
 			iQuery.AddField("user_reg_date_ut", UnixTime.UnixTimeStamp().ToString());
@@ -290,6 +297,8 @@ namespace BoxSocial.Install
             catch
             {
             }
+
+            return userId;
 		}
 
         private static void DownloadRepository(string repo)

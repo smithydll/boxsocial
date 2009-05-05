@@ -214,23 +214,23 @@ namespace BoxSocial.Install
 			iQuery.AddField("user_show_bbcode", 0x07);
 			iQuery.AddField("user_bytes", 0);
 			
-			bsDb.Query(iQuery);
+			core.db.Query(iQuery);
 			
 			iQuery = new InsertQuery("user_profile");
-			iQuery.AddField("user_id", nuid);
+			iQuery.AddField("user_id", userId);
 			iQuery.AddField("profile_access", 0x3331);
 			
-			bsDb.Query(iQuery);
+			core.db.Query(iQuery);
 			
 			iQuery = new InsertQuery("user_emails");
-			iQuery.AddField("email_user_id", nuid);
+			iQuery.AddField("email_user_id", userId);
 			iQuery.AddField("email_email", email);
 			iQuery.AddField("email_verified", 1);
 					
 			iQuery.AddField("email_time_ut", UnixTime.UnixTimeStamp().ToString());
 			iQuery.AddField("email_access", 0);
 						
-			bsDb.Query(iQuery);
+			core.db.Query(iQuery);
 			
 			User newUser = new User(core, userId);
 			core.session = new SessionState(core, newUser);

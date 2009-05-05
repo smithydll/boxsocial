@@ -489,8 +489,18 @@ namespace BoxSocial.Internals
 				itemFieldsCache = new Dictionary<Type, List<DataFieldInfo>>();
 			}
 		}
+		
+		internal protected static List<DataFieldInfo> GetFields(Type type)
+		{
+			return GetFields(type, false);
+		}
+		
+		internal protected static List<DataFieldInfo> GetRawFields(Type type)
+		{
+			return GetFields(type, true);
+		}
 
-        internal protected static List<DataFieldInfo> GetFields(Type type)
+        internal protected static List<DataFieldInfo> GetFields(Type type, bool getRawFields)
         {
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
 			
@@ -515,7 +525,7 @@ namespace BoxSocial.Internals
                         DataFieldAttribute dfattr = (DataFieldAttribute)attr;
                         if (dfattr.FieldName != null)
                         {
-							if (fi.FieldType == typeof(ItemKey))
+							if (fi.FieldType == typeof(ItemKey) && (!getRawFields))
 							{
 								DataFieldInfo dfiId;
 								DataFieldInfo dfiTypeId;
@@ -684,8 +694,13 @@ namespace BoxSocial.Internals
 
             return type.FullName;
         }
+		
+		public long Update()
+		{
+			return Update(this.GetType());
+		}
 
-        public long Update()
+        public long Update(Type type)
         {
             if (this is IPermissibleItem)
             {
@@ -712,10 +727,10 @@ namespace BoxSocial.Internals
                 return 0;
             }
 
-            SelectQuery sQuery = new SelectQuery(Item.GetTable(this.GetType()));
-            UpdateQuery uQuery = new UpdateQuery(Item.GetTable(this.GetType()));
+            SelectQuery sQuery = new SelectQuery(Item.GetTable(type));
+            UpdateQuery uQuery = new UpdateQuery(Item.GetTable(type));
 
-            foreach (FieldInfo fi in this.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -738,7 +753,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<DataFieldInfo> fields = GetFields(this.GetType());
+            List<DataFieldInfo> fields = GetRawFields(type);
             bool foundKey = false;
             bool containsUniqueFields = false;
 
@@ -757,8 +772,21 @@ namespace BoxSocial.Internals
             {
                 if ((field.Key & DataFieldKeys.Unique) == DataFieldKeys.Unique)
                 {
+					//HttpContext.Current.Response.Write(field.Name);
                     containsUniqueFields = true;
-                    sQuery.AddCondition(field.Name, GetFieldValue(field, this));
+					if (field.Type == typeof(ItemKey))
+					{
+						sQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
+						sQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+						
+						uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
+						uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+					}
+					else
+					{
+                    	sQuery.AddCondition(field.Name, GetFieldValue(field, this));
+						uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+					}
                 }
             }
 
@@ -796,6 +824,11 @@ namespace BoxSocial.Internals
 
                 if (uniqueness != 1)
                 {
+					/*HttpContext.Current.Response.Write("<br />");
+					HttpContext.Current.Response.Write(sQuery.ToString());
+					HttpContext.Current.Response.Write("<br />");
+					HttpContext.Current.Response.Write(uQuery.ToString());
+					HttpContext.Current.Response.End();*/
                     throw new RecordNotUniqueException();
                 }
             }

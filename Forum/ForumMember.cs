@@ -37,9 +37,9 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_members")]
     public class ForumMember : User
     {
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Unique, "u_key")]
         private new long userId;
-        [DataField("item")]
+        [DataField("item", DataFieldKeys.Unique, "u_key")]
         private ItemKey itemKey;
         [DataField("posts")]
         private long forumPosts;
@@ -120,18 +120,18 @@ namespace BoxSocial.Applications.Forum
         public ForumMember(Core core, Primitive owner, long userId, UserLoadOptions loadOptions)
             : base(core)
         {
-            this.db = db;
-
             SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("item_id", owner.Id);
             query.AddCondition("item_type_id", owner.TypeId);
 
             DataTable memberTable = db.Query(query);
+			
+			//HttpContext.Current.Response.Write(query.ToString());
 
             if (memberTable.Rows.Count == 1)
             {
-                loadItemInfo(memberTable.Rows[0]);
+                loadItemInfo(typeof(ForumMember), memberTable.Rows[0]);
                 loadUserInfo(memberTable.Rows[0]);
                 loadUserIcon(memberTable.Rows[0]);
             }

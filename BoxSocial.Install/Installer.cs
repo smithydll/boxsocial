@@ -122,6 +122,13 @@ namespace BoxSocial.Install
 
             File.Copy("MySql.Data.dll", Path.Combine(binRoot, "MySql.Data.dll"));
 
+            if (Directory.Exists(imagesRoot))
+            {
+                Directory.Delete(imagesRoot, true);
+            }
+
+            Directory.CreateDirectory(imagesRoot);
+
             /* ==================== */
             if (!binary)
             {

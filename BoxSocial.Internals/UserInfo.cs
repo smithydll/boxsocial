@@ -145,7 +145,7 @@ namespace BoxSocial.Internals
             {
                 if (userNameOwnership == null)
                 {
-                    userNameOwnership = (userDisplayName != "") ? userDisplayName : userName;
+                    userNameOwnership = (!String.IsNullOrEmpty(userDisplayName)) ? userDisplayName : userName;
 
                     if (userNameOwnership.EndsWith("s"))
                     {

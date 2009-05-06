@@ -134,7 +134,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Id of the highlighted photo
         /// </summary>
-        [DataField("gallery_item_highlight")]
+        [DataField("gallery_highlight_id")]
         protected long highlightId;
 
         /// <summary>

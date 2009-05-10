@@ -212,6 +212,15 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        [Show(@"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showUCP(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                ForumMember.ShowUCP(core, (GPage)sender);
+            }
+        }
+
         void core_PageHooks(HookEventArgs e)
         {
             if (e.PageType == AppPrimitives.Group)

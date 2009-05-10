@@ -28,6 +28,8 @@ using System.Reflection;
 using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using System.IO.Compression;
+using System.Diagnostics;
 
 namespace BoxSocial.Install
 {
@@ -60,6 +62,23 @@ namespace BoxSocial.Install
             else
             {
                 binary = true;
+            }
+
+            if (argsList.Contains("--update") || argsList.Contains("u") && argsList.Count >= 2)
+            {
+                InstallApplication(argsList[argsList.Count - 1]);
+
+                Console.WriteLine("Reloading apache");
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "/etc/init.d/apache2";
+                p1.StartInfo.Arguments = "force-reload";
+                p1.Start();
+
+                p1.WaitForExit();
+
+                Console.WriteLine(argsList[argsList.Count - 1] + " updated successfully.");
+
+                return;
             }
 
             Console.WriteLine("Box Social will only install into the root directory of a domain. Everything in the root directory will be deleted. Do you want to continue? (y/n)");
@@ -99,6 +118,14 @@ namespace BoxSocial.Install
 
                 // install
                 PerformInstall();
+
+                Console.WriteLine("Reloading apache");
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "/etc/init.d/apache2";
+                p1.StartInfo.Arguments = "force-reload";
+                p1.Start();
+
+                p1.WaitForExit();
 
                 Console.WriteLine("Box Social installed successfully.");
                 return;

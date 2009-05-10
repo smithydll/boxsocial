@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -114,6 +114,11 @@
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemTag.cs" />
+    <Compile Include="languages\Internals.en.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Internals.en.resx</DependentUpon>
+    </Compile>
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />
@@ -191,6 +196,13 @@
       <Visible>False</Visible>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="languages\Internals.en.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Internals.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -199,4 +211,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

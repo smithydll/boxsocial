@@ -1,9 +1,12 @@
 ﻿<div>
 <!-- IF LOGGED_IN -->
   <!-- IF U_JOIN -->
-  <a href="{U_JOIN}">Join Group</a>
+  <a href="{U_JOIN}">{L_JOIN_GROUP}</a>
+  <!-- ELSE -->
+  <a href="{U_UCP}">{L_FORUM_PROFILE}</a>
+  <a href="{U_MEMBERS}">{L_GROUP_MEMBERS}</a>
   <!-- ENDIF -->
 <!-- ELSE -->
-  <a href="{U_REGISTER}">Register</a>
+  <a href="{U_REGISTER}">{L_REGISTER}</a>
 <!-- ENDIF -->
 </div>

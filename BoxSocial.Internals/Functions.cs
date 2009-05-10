@@ -502,31 +502,31 @@ namespace BoxSocial.Internals
             switch (month)
             {
                 case 1:
-                    return "Janurary";
+                    return core.prose.GetString("JANUARY");
                 case 2:
-                    return "Feburary";
+                    return core.prose.GetString("FEBURARY");
                 case 3:
-                    return "March";
+                    return core.prose.GetString("MARCH");
                 case 4:
-                    return "April";
+                    return core.prose.GetString("APRIL");
                 case 5:
-                    return "May";
+                    return core.prose.GetString("MAY");
                 case 6:
-                    return "June";
+                    return core.prose.GetString("JUNE");
                 case 7:
-                    return "July";
+                    return core.prose.GetString("JULY");
                 case 8:
-                    return "August";
+                    return core.prose.GetString("AUGUST");
                 case 9:
-                    return "September";
+                    return core.prose.GetString("SEPTEMBER");
                 case 10:
-                    return "October";
+                    return core.prose.GetString("OCTOBER");
                 case 11:
-                    return "November";
+                    return core.prose.GetString("NOVEMBER");
                 case 12:
-                    return "December";
+                    return core.prose.GetString("DECEMBER");
                 default:
-                    return "Invalid";
+                    return core.prose.GetString("INVALID");
             }
         }
 

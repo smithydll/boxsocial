@@ -238,6 +238,19 @@ namespace BoxSocial.Applications.Forum
 
             return forumMembers;
         }
+
+        public static void ShowUCP(Core core, GPage page)
+        {
+            if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
+            {
+                ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
+            }
+            else
+            {
+                Functions.Generate403();
+                return;
+            }
+        }
     }
 
     public class InvalidForumMemberException : Exception

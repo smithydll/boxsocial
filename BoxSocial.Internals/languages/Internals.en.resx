@@ -117,135 +117,67 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CAN" xml:space="preserve">
-    <value>can</value>
+  <data name="APRIL" xml:space="preserve">
+    <value>April</value>
   </data>
-  <data name="CANNOT" xml:space="preserve">
-    <value>cannot</value>
+  <data name="AUGUST" xml:space="preserve">
+    <value>August</value>
   </data>
-  <data name="CREATE_NEW_FORUM" xml:space="preserve">
-    <value>Create New Forum</value>
+  <data name="DECEMBER" xml:space="preserve">
+    <value>December</value>
   </data>
-  <data name="EDIT_FORUM" xml:space="preserve">
-    <value>Edit Forum</value>
+  <data name="DELETE" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="FORUM_CATEGORY" xml:space="preserve">
-    <value>Forum/Category</value>
+  <data name="EDIT" xml:space="preserve">
+    <value>Edit</value>
   </data>
-  <data name="FORUM_DESCRIPTION" xml:space="preserve">
-    <value>Forum Description</value>
+  <data name="FEBURARY" xml:space="preserve">
+    <value>Feburary</value>
   </data>
-  <data name="FORUM_MEMBER" xml:space="preserve">
-    <value>Forum Member</value>
+  <data name="INVALID" xml:space="preserve">
+    <value>Invalid</value>
   </data>
-  <data name="FORUM_PROFILE" xml:space="preserve">
-    <value>Forum Profile</value>
+  <data name="JANUARY" xml:space="preserve">
+    <value>January</value>
   </data>
-  <data name="FORUM_RANK" xml:space="preserve">
-    <value>Forum Rank</value>
+  <data name="JULY" xml:space="preserve">
+    <value>July</value>
   </data>
-  <data name="FORUM_SETTINGS" xml:space="preserve">
-    <value>Forum Settings</value>
+  <data name="JUNE" xml:space="preserve">
+    <value>June</value>
   </data>
-  <data name="FORUM_TITLE" xml:space="preserve">
-    <value>Forum Title</value>
+  <data name="MARCH" xml:space="preserve">
+    <value>March</value>
   </data>
-  <data name="FORUM_TYPE" xml:space="preserve">
-    <value>Forum Type</value>
+  <data name="MAY" xml:space="preserve">
+    <value>May</value>
   </data>
-  <data name="GO_TO_FORUM" xml:space="preserve">
-    <value>Go to forum</value>
+  <data name="MOVE_DOWN" xml:space="preserve">
+    <value>Move Down</value>
   </data>
-  <data name="GROUP_MEMBERS" xml:space="preserve">
-    <value>Group Members</value>
+  <data name="MOVE_UP" xml:space="preserve">
+    <value>Move Up</value>
   </data>
-  <data name="JOINED" xml:space="preserve">
-    <value>Joined</value>
+  <data name="NEW" xml:space="preserve">
+    <value>New</value>
   </data>
-  <data name="JOIN_GROUP" xml:space="preserve">
-    <value>Join Group</value>
+  <data name="NOVEMBER" xml:space="preserve">
+    <value>November</value>
   </data>
-  <data name="LAST_POST" xml:space="preserve">
-    <value>Last Post</value>
+  <data name="OCTOBER" xml:space="preserve">
+    <value>October</value>
   </data>
-  <data name="MANAGE_FORUMS" xml:space="preserve">
-    <value>Manage Forum</value>
+  <data name="REGISTER" xml:space="preserve">
+    <value>Register</value>
   </data>
-  <data name="MANAGE_FORUMS_PROSE" xml:space="preserve">
-    <value>Here you can manage the categories, forums, and sub forums in your group's forum.</value>
+  <data name="SEPTEMBER" xml:space="preserve">
+    <value>September</value>
   </data>
-  <data name="MINIMUM_POSTS" xml:space="preserve">
-    <value>Minimum Posts</value>
+  <data name="USERNAME" xml:space="preserve">
+    <value>User name</value>
   </data>
-  <data name="NEW_RANK" xml:space="preserve">
-    <value>New Rank</value>
-  </data>
-  <data name="NEW_TOPIC" xml:space="preserve">
-    <value>New Topic</value>
-  </data>
-  <data name="NO_TOPICS" xml:space="preserve">
-    <value>There are no topics in this forum.</value>
-  </data>
-  <data name="NO_TOPICS_FORUM" xml:space="preserve">
-    <value>There are no topics in this forum.</value>
-  </data>
-  <data name="PERMISSION_POST_TOPIC" xml:space="preserve">
-    <value>You [b]{0}[/b] post new topics</value>
-    <comment>You can post new topics</comment>
-  </data>
-  <data name="PERMISSION_REPLY_TOPIC" xml:space="preserve">
-    <value>You [b]{0}[/b] reply to topics</value>
-    <comment>You can reply to topics</comment>
-  </data>
-  <data name="POST" xml:space="preserve">
-    <value>Post</value>
-  </data>
-  <data name="POSTS" xml:space="preserve">
-    <value>Posts</value>
-  </data>
-  <data name="POSTS_PER_PAGE" xml:space="preserve">
-    <value>Posts Per Page</value>
-  </data>
-  <data name="POST_REPLY" xml:space="preserve">
-    <value>Post Reply</value>
-  </data>
-  <data name="POST_SUBJECT" xml:space="preserve">
-    <value>Post Subject</value>
-  </data>
-  <data name="POST_TEXT" xml:space="preserve">
-    <value>Post Text</value>
-  </data>
-  <data name="RANK" xml:space="preserve">
-    <value>Rank</value>
-  </data>
-  <data name="RANK_TITLE" xml:space="preserve">
-    <value>Rank Title</value>
-  </data>
-  <data name="REPLIES" xml:space="preserve">
-    <value>Replies</value>
-  </data>
-  <data name="SIGNATURE" xml:space="preserve">
-    <value>Signature</value>
-  </data>
-  <data name="SPECIAL" xml:space="preserve">
-    <value>Special</value>
-  </data>
-  <data name="SPECIAL_RANK" xml:space="preserve">
-    <value>Special Rank</value>
-  </data>
-  <data name="TOP" xml:space="preserve">
-    <value>Top</value>
-  </data>
-  <data name="TOPICS" xml:space="preserve">
-    <value>Topics</value>
-  </data>
-  <data name="TOPICS_PER_PAGE" xml:space="preserve">
-    <value>Topics Per Page</value>
-  </data>
-  <data name="TOPIC_STATE" xml:space="preserve">
-    <value>Topic State</value>
-  </data>
-  <data name="VIEWS" xml:space="preserve">
-    <value>Views</value>
+  <data name="VIEW" xml:space="preserve">
+    <value>View</value>
   </data>
 </root>

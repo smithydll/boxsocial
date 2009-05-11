@@ -42,6 +42,7 @@ namespace BoxSocial.Applications.Forum
             Poster.page = page;
 
             page.template.SetTemplate("Forum", "post");
+            ForumSettings.ShowForumHeader(core, page);
 
             if (HttpContext.Current.Request.Form["save"] != null) // DRAFT
             {
@@ -84,7 +85,7 @@ namespace BoxSocial.Applications.Forum
             if (page is GPage)
             {
                 page.template.Parse("S_POST", string.Format("{0}forum/post",
-                    ((GPage)page).ThisGroup.UriStub));
+                    Linker.AppendSid(((GPage)page).ThisGroup.UriStub, true)));
 
                 if (((GPage)page).ThisGroup.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
                 {
@@ -206,6 +207,8 @@ namespace BoxSocial.Applications.Forum
 
         private static void SavePost(string mode, string subject, string text)
         {
+            AccountSubModule.AuthoriseRequestSid(core);
+
             long postId = Functions.FormLong("p", 0);
             long forumId = Functions.FormLong("f", 0);
             long topicId = Functions.FormLong("t", 0);

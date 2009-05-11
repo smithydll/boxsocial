@@ -1,0 +1,33 @@
+﻿<!-- INCLUDE page_header.html -->
+<!-- INCLUDE forum_header -->
+<h2>Memberlist</h2>
+
+<p>{BREADCRUMBS}</p>
+
+<!-- IF PAGINATION -->
+<p>
+  <strong>Go to page:</strong> {PAGINATION}
+</p>
+<!-- ENDIF -->
+
+<!-- IF MEMBERS -->
+<dl id="group-members">
+  <!-- BEGIN member_list -->
+  <dt class="member"></dt>
+  <dd><a href="{member_list.U_PROFILE}">{L_VIEW_PROFILE}</a></dd>
+  <dd>{member_list.POSTS}</dd>
+  <!-- END member_list -->
+</dl>
+<!-- ELSE -->
+<div>
+  This forum has no members.
+</div>
+<!-- ENDIF -->
+
+<!-- IF PAGINATION -->
+<p>
+  <strong>Go to page:</strong> {PAGINATION}
+</p>
+<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

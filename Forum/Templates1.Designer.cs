@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Forum {
         ///&lt;h3&gt;{L_EDIT_FORUM}&lt;/h3&gt;
         ///&lt;p&gt;Manage forums.&lt;/p&gt;
         ///&lt;!-- ELSE --&gt;
-        ///&lt;h3&gt;Create Forum&lt;/h3&gt;
+        ///&lt;h3&gt;{L_CREATE_NEW_FORUM}&lt;/h3&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
         ///&lt;!-- IF ERROR --&gt;
@@ -77,15 +77,14 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;!-- IF EDIT --&gt;
         ///    &lt;legend&gt;{L_EDIT_FORUM}&lt;/legend&gt;
         ///    &lt;!-- ELSE --&gt;
-        ///    &lt;legend&gt;Create Forum&lt;/legend&gt;
+        ///    &lt;legend&gt;{L_CREATE_NEW_FORUM}&lt;/legend&gt;
         ///    &lt;!-- ENDIF --&gt;
         ///    &lt;dl&gt;
         ///      &lt;dt&gt;
         ///        &lt;label for=&quot;type&quot;&gt;{L_FORUM_TYPE}&lt;/label&gt;
         ///      &lt;/dt&gt;
         ///      &lt;dd&gt;
-        ///        {S_FORUM_TYPE}
-        ///      &lt;/dd&gt;        /// [rest of string was truncated]&quot;;.
+        ///        {S_FORUM_TYP [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_edit {
             get {
@@ -125,20 +124,20 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Forum Member&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;{L_FORUM_MEMBER}&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Forum Member&lt;/legend&gt;
+        ///		&lt;legend&gt;{L_FORUM_MEMBER}&lt;/legend&gt;
         ///		&lt;dl&gt;
-        ///			&lt;dt&gt;User name&lt;/dt&gt;
+        ///			&lt;dt&gt;{L_USERNAME}&lt;/dt&gt;
         ///			&lt;dd&gt;{S_USERNAME}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;rank&quot;&gt;Rank&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;rank&quot;&gt;{L_RANK}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_RANK}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;signature&quot;&gt;Signature&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;signature&quot;&gt;{L_SIGNATURE}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;
         ///				&lt;textarea id=&quot;signature&quot; name=&quot;signature&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{S_SIGNATURE}&lt;/textarea&gt;
-        ///				&lt;div style=&quot;background-image: url(&apos;/imag [rest of string was truncated]&quot;;.
+        ///				&lt;div style=&quot;backgroun [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_member_edit {
             get {
@@ -151,13 +150,13 @@ namespace BoxSocial.Applications.Forum {
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///  &lt;tr&gt;
-        ///    &lt;th&gt;Rank&lt;/th&gt;
-        ///    &lt;th&gt;Special&lt;/th&gt;
-        ///    &lt;th&gt;Minimum Posts&lt;/th&gt;
+        ///    &lt;th&gt;{L_RANK}&lt;/th&gt;
+        ///    &lt;th&gt;{L_SPECIAL}&lt;/th&gt;
+        ///    &lt;th&gt;{L_MINIMUM_POSTS}&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
         ///  &lt;/tr&gt;
-        ///  &lt;!-- BEGIN rank_list --&gt;
+        ///  &lt;!-- BEGIN members --&gt;
         ///  &lt;!-- IF rank_list.INDEX_EVEN --&gt;
         ///  &lt;tr class=&quot;even&quot;&gt;
         ///    &lt;!-- ELSE --&gt;
@@ -167,9 +166,8 @@ namespace BoxSocial.Applications.Forum {
         ///      &lt;td&gt;{rank_list.SPECIAL}&lt;/td&gt;
         ///      &lt;td&gt;{rank_list.MINIMUM_POSTS}&lt;/td&gt;
         ///      &lt;td&gt;
-        ///        &lt;a href=&quot;{rank_list.U_EDIT}&quot;&gt;Edit&lt;/a&gt;
-        ///      &lt;/td&gt;
-        ///       [rest of string was truncated]&quot;;.
+        ///        &lt;a href=&quot;{rank_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_member_manage {
             get {
@@ -178,18 +176,17 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Forum Rank&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;{L_FORUM_RANK}&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Forum Rank&lt;/legend&gt;
+        ///		&lt;legend&gt;{L_FORUM_RANK}&lt;/legend&gt;
         ///		&lt;dl&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;rank-title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;rank-title&quot;&gt;{L_RANK_TITLE}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;rank-title&quot; name=&quot;rank-title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;min-posts&quot;&gt;Minimum Posts&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;min-posts&quot;&gt;{L_MINIMUM_POSTS}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;min-posts&quot; name=&quot;min-posts&quot; value=&quot;{S_MINIMUM_POSTS}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
-        ///      &lt;dt&gt;&lt;label for=&quot;special&quot;&gt;Special Rank&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;d [rest of string was truncated]&quot;;.
+        ///      &lt;dt&gt;&lt;label for=&quot;special&quot;&gt;{L_SPECIAL_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_rank_edit {
             get {
@@ -201,14 +198,14 @@ namespace BoxSocial.Applications.Forum {
         ///   Looks up a localized string similar to &lt;h3&gt;{L_FORUM_RANKS}&lt;/h3&gt;
         ///
         ///&lt;div id=&quot;new-stuff&quot;&gt;
-        ///	&lt;span id=&quot;new-rank&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_RANK}&quot;&gt;New Rank&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;span id=&quot;new-rank&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_NEW_RANK}&quot;&gt;{L_NEW_RANK}&lt;/a&gt;&lt;/span&gt;
         ///&lt;/div&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///  &lt;tr&gt;
-        ///    &lt;th&gt;Rank&lt;/th&gt;
-        ///    &lt;th&gt;Special&lt;/th&gt;
-        ///    &lt;th&gt;Minimum Posts&lt;/th&gt;
+        ///    &lt;th&gt;{L_RANK}&lt;/th&gt;
+        ///    &lt;th&gt;{L_SPECIAL}&lt;/th&gt;
+        ///    &lt;th&gt;{L_MINIMUM_POSTS}&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
         ///    &lt;th&gt;&lt;/th&gt;
         ///  &lt;/tr&gt;
@@ -219,8 +216,7 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;tr class=&quot;odd&quot;&gt;
         ///      &lt;!-- ENDIF --&gt;
         ///      &lt;td&gt;{rank_list.RANK}&lt;/td&gt;
-        ///      &lt;td&gt;{rank_list.SPECIAL}&lt;/td&gt;
-        ///      [rest of string was truncated]&quot;;.
+        ///      &lt;td&gt;{rank_list.SPEC [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_forum_ranks {
             get {
@@ -249,18 +245,32 @@ namespace BoxSocial.Applications.Forum {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;div&gt;
+        ///  &lt;a href=&quot;{U_FORUM_INDEX}&quot;&gt;{L_FORUM_INDEX}&lt;/a&gt;
+        ///  &lt;a href=&quot;{U_FAQ}&quot;&gt;{L_FORUM_HELP}&lt;/a&gt;
         ///&lt;!-- IF LOGGED_IN --&gt;
         ///  &lt;!-- IF U_JOIN --&gt;
-        ///  &lt;a href=&quot;{U_JOIN}&quot;&gt;Join Group&lt;/a&gt;
+        ///  &lt;a href=&quot;{U_JOIN}&quot;&gt;{L_JOIN_GROUP}&lt;/a&gt;
+        ///  &lt;!-- ELSE --&gt;
+        ///  &lt;a href=&quot;{U_UCP}&quot;&gt;{L_FORUM_PROFILE}&lt;/a&gt;
+        ///  &lt;a href=&quot;{U_MEMBERS}&quot;&gt;{L_GROUP_MEMBERS}&lt;/a&gt;
         ///  &lt;!-- ENDIF --&gt;
         ///&lt;!-- ELSE --&gt;
-        ///  &lt;a href=&quot;{U_REGISTER}&quot;&gt;Register&lt;/a&gt;
+        ///  &lt;a href=&quot;{U_REGISTER}&quot;&gt;{L_REGISTER}&lt;/a&gt;
         ///&lt;!-- ENDIF --&gt;
         ///&lt;/div&gt;.
         /// </summary>
         internal static string forum_header {
             get {
                 return ResourceManager.GetString("forum_header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string memberlist {
+            get {
+                return ResourceManager.GetString("memberlist", resourceCulture);
             }
         }
         
@@ -292,6 +302,31 @@ namespace BoxSocial.Applications.Forum {
         internal static string post {
             get {
                 return ResourceManager.GetString("post", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///&lt;!-- INCLUDE forum_header --&gt;
+        ///&lt;h2&gt;User Control Panel&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF ERROR --&gt;
+        ///&lt;p class=&quot;error&quot;&gt;{ERROR}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;form action=&quot;{S_POST}&quot; method=&quot;post&quot;&gt;
+        ///  &lt;fieldset&gt;
+        ///    &lt;legend&gt;User Control Panel&lt;/legend&gt;
+        ///    &lt;dl&gt;
+        ///      &lt;dt&gt;
+        ///        &lt;label for=&quot;signature&quot;&gt;{L_SIGNATURE}&lt;/label&gt;
+        ///      &lt;/dt&gt;
+        ///      &lt;dd&gt;
+        ///        &lt;textarea id=&quot;signature&quot; name=&quot;signature&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{S_SIG [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ucp {
+            get {
+                return ResourceManager.GetString("ucp", resourceCulture);
             }
         }
         

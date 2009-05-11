@@ -1117,6 +1117,7 @@ namespace BoxSocial.Applications.Forum
             long topicsCount = 0;
 
             page.template.SetTemplate("Forum", "viewforum");
+            ForumSettings.ShowForumHeader(core, page);
 
             try
             {

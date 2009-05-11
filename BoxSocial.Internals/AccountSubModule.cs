@@ -453,11 +453,11 @@ namespace BoxSocial.Internals
         /// Authorises a request ensuring the SID is present in the URL to
         /// prevent undesired operation of the account panel for users.
         /// </summary>
-        protected void AuthoriseRequestSid()
+        public static void AuthoriseRequestSid(Core core)
         {
-            if (Request.QueryString["sid"] != session.SessionId)
+            if (HttpContext.Current.Request.QueryString["sid"] != core.session.SessionId)
             {
-                if (string.IsNullOrEmpty(Request.QueryString["sid"]))
+                if (string.IsNullOrEmpty(HttpContext.Current.Request.QueryString["sid"]))
                 {
                     Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
@@ -465,17 +465,22 @@ namespace BoxSocial.Internals
 
                 SelectQuery query = new SelectQuery("user_sessions");
                 query.AddFields("user_id");
-                query.AddCondition("session_string", Request.QueryString["sid"]);
-                query.AddCondition("user_id", session.LoggedInMember.Id);
+                query.AddCondition("session_string", HttpContext.Current.Request.QueryString["sid"]);
+                query.AddCondition("user_id", core.session.LoggedInMember.Id);
                 query.AddCondition("session_signed_in", true);
-                query.AddCondition("session_ip", session.IPAddress.ToString());
+                query.AddCondition("session_ip", core.session.IPAddress.ToString());
 
-                if (db.Query(query).Rows.Count == 0)
+                if (core.db.Query(query).Rows.Count == 0)
                 {
                     Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
             }
+        }
+
+        protected void AuthoriseRequestSid()
+        {
+            AuthoriseRequestSid(core);
         }
 
         /// <summary>

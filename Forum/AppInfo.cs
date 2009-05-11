@@ -221,6 +221,15 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        [Show(@"^/forum/memberlist(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showMemberlist(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                ForumMember.ShowMemberlist(core, (GPage)sender);
+            }
+        }
+
         void core_PageHooks(HookEventArgs e)
         {
             if (e.PageType == AppPrimitives.Group)

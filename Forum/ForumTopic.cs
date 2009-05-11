@@ -725,6 +725,7 @@ namespace BoxSocial.Applications.Forum
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewtopic");
+            ForumSettings.ShowForumHeader(core, page);
 			
 			ForumSettings settings = new ForumSettings(core, page.ThisGroup);
 

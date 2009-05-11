@@ -186,6 +186,12 @@ namespace BoxSocial.Applications.Forum
         {
             get { throw new NotImplementedException(); }
         }
+
+        public static void ShowForumHeader(Core core, GPage page)
+        {
+            page.template.Parse("U_UCP", string.Format("{0}forum/ucp",
+                ((GPage)page).ThisGroup.UriStub));
+        }
     }
 
     public class InvalidForumSettingsException : Exception

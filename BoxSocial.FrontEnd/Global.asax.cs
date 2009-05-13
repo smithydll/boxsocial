@@ -81,12 +81,33 @@ namespace BoxSocial.FrontEnd
 
             string currentURI = null;
             Uri cUri = null;
-            if (redir.Length > 1)
+            if (httpContext.Request.RawUrl.Contains(";http://") || httpContext.Request.RawUrl.Contains("?http://"))
             {
-                currentURI = redir[1];
+                if (redir.Length > 1)
+                // Apache2/IIS
+                {
+                    currentURI = redir[1];
+                    cUri = new Uri(currentURI);
+                    currentURI = cUri.AbsolutePath;
+                }
+                else
+                // NGINX
+                {
+                    int i = httpContext.Request.RawUrl.IndexOf('?');
+                    if (httpContext.Request.RawUrl.Length >= i)
+                    {
+                        currentURI = httpContext.Request.RawUrl.Substring(i + 1);
+                    }
+                    cUri = new Uri(currentURI);
+                    currentURI = cUri.AbsolutePath;
+                }
+            }
+            /*else
+            {
+                currentURI = httpContext.Request.RawUrl;
                 cUri = new Uri(currentURI);
                 currentURI = cUri.AbsolutePath;
-            }
+            }*/
 
             if (!httpContext.Request.RawUrl.Contains("404.aspx"))
             {
@@ -225,25 +246,31 @@ namespace BoxSocial.FrontEnd
                 }
 
                 // fast cull
-                foreach (string[] pattern in patterns)
+                int ioc = currentURI.IndexOf('/', 1);
+                if (ioc >= 1)
                 {
-                    int ioc = currentURI.IndexOf('/', 1);
-                    int iop = pattern[0].IndexOf('/', 2);
-                    if (currentURI.Substring(1, ioc - 1).Equals(pattern[0].Substring(2, iop - 2)))
+                    foreach (string[] pattern in patterns)
                     {
-                        if (Regex.IsMatch(currentURI, pattern[0]))
+                        int iop = pattern[0].IndexOf('/', 2);
+                        if (iop >= 2)
                         {
-                            Regex rex = new Regex(pattern[0]);
-                            currentURI = rex.Replace(currentURI, pattern[1]);
-                            if (currentURI.Contains("?"))
+                            if (currentURI.Substring(1, ioc - 1).Equals(pattern[0].Substring(2, iop - 2)))
                             {
-                                httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
-                                return;
-                            }
-                            else
-                            {
-                                httpContext.RewritePath(currentURI + cUri.Query);
-                                return;
+                                if (Regex.IsMatch(currentURI, pattern[0]))
+                                {
+                                    Regex rex = new Regex(pattern[0]);
+                                    currentURI = rex.Replace(currentURI, pattern[1]);
+                                    if (currentURI.Contains("?"))
+                                    {
+                                        httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        httpContext.RewritePath(currentURI + cUri.Query);
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }

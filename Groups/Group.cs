@@ -415,7 +415,7 @@ namespace BoxSocial.Groups
         {
         }
 
-        public List<GroupMember> GetMembers(int page, int perPage)
+        public List<GroupMember> GetMembers(int page, int perPage, string filter)
         {
             List<GroupMember> members = new List<GroupMember>();
 
@@ -426,6 +426,10 @@ namespace BoxSocial.Groups
             tj.AddCondition(new DataField("group_members", "group_id"), new DataField("group_operators", "group_id"));
             query.AddCondition("`group_members`.`group_id`", groupId);
             query.AddCondition("group_member_approved", true);
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition("user_keys.user_name_first", filter);
+            }
             query.AddSort(SortOrder.Ascending, "group_member_date_ut");
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
@@ -1263,6 +1267,12 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string GetMemberlistUri(string filter)
+        {
+            return Linker.AppendSid(string.Format("{0}members?filter={1}",
+                    UriStub, filter));
+        }
+
         public string DeleteUri
         {
             get
@@ -1433,6 +1443,34 @@ namespace BoxSocial.Groups
             page.template.Parse("MEMBERS_TITLE", "Member list for " + page.ThisGroup.DisplayName);
             page.template.Parse("MEMBERS", ((ulong)page.ThisGroup.Members).ToString());
 
+            page.template.Parse("U_FILTER_ALL", page.ThisGroup.MemberlistUri);
+            page.template.Parse("U_FILTER_BEGINS_A", page.ThisGroup.GetMemberlistUri("a"));
+            page.template.Parse("U_FILTER_BEGINS_B", page.ThisGroup.GetMemberlistUri("b"));
+            page.template.Parse("U_FILTER_BEGINS_C", page.ThisGroup.GetMemberlistUri("c"));
+            page.template.Parse("U_FILTER_BEGINS_D", page.ThisGroup.GetMemberlistUri("d"));
+            page.template.Parse("U_FILTER_BEGINS_E", page.ThisGroup.GetMemberlistUri("e"));
+            page.template.Parse("U_FILTER_BEGINS_F", page.ThisGroup.GetMemberlistUri("f"));
+            page.template.Parse("U_FILTER_BEGINS_G", page.ThisGroup.GetMemberlistUri("g"));
+            page.template.Parse("U_FILTER_BEGINS_H", page.ThisGroup.GetMemberlistUri("h"));
+            page.template.Parse("U_FILTER_BEGINS_I", page.ThisGroup.GetMemberlistUri("i"));
+            page.template.Parse("U_FILTER_BEGINS_J", page.ThisGroup.GetMemberlistUri("j"));
+            page.template.Parse("U_FILTER_BEGINS_K", page.ThisGroup.GetMemberlistUri("k"));
+            page.template.Parse("U_FILTER_BEGINS_L", page.ThisGroup.GetMemberlistUri("l"));
+            page.template.Parse("U_FILTER_BEGINS_M", page.ThisGroup.GetMemberlistUri("m"));
+            page.template.Parse("U_FILTER_BEGINS_N", page.ThisGroup.GetMemberlistUri("n"));
+            page.template.Parse("U_FILTER_BEGINS_O", page.ThisGroup.GetMemberlistUri("o"));
+            page.template.Parse("U_FILTER_BEGINS_P", page.ThisGroup.GetMemberlistUri("p"));
+            page.template.Parse("U_FILTER_BEGINS_Q", page.ThisGroup.GetMemberlistUri("q"));
+            page.template.Parse("U_FILTER_BEGINS_R", page.ThisGroup.GetMemberlistUri("r"));
+            page.template.Parse("U_FILTER_BEGINS_S", page.ThisGroup.GetMemberlistUri("s"));
+            page.template.Parse("U_FILTER_BEGINS_T", page.ThisGroup.GetMemberlistUri("t"));
+            page.template.Parse("U_FILTER_BEGINS_U", page.ThisGroup.GetMemberlistUri("u"));
+            page.template.Parse("U_FILTER_BEGINS_V", page.ThisGroup.GetMemberlistUri("v"));
+            page.template.Parse("U_FILTER_BEGINS_W", page.ThisGroup.GetMemberlistUri("w"));
+            page.template.Parse("U_FILTER_BEGINS_X", page.ThisGroup.GetMemberlistUri("x"));
+            page.template.Parse("U_FILTER_BEGINS_Y", page.ThisGroup.GetMemberlistUri("y"));
+            page.template.Parse("U_FILTER_BEGINS_Z", page.ThisGroup.GetMemberlistUri("z"));
+
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.Parse("GROUP_OPERATOR", "TRUE");
@@ -1441,7 +1479,7 @@ namespace BoxSocial.Groups
                 query.AddCondition("group_members.group_id", page.ThisGroup.Id);
                 query.AddCondition("group_member_approved", false);
                 query.AddSort(SortOrder.Ascending, "group_member_date_ut");
-
+                
                 DataTable approvalTable = core.db.Query(query);
 
                 if (approvalTable.Rows.Count > 0)
@@ -1462,7 +1500,7 @@ namespace BoxSocial.Groups
 
             }
 
-            List<GroupMember> members = page.ThisGroup.GetMembers(p, 18);
+            List<GroupMember> members = page.ThisGroup.GetMembers(p, 18, Functions.GetFilter());
             foreach (GroupMember member in members)
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");

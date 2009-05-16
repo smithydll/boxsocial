@@ -1216,7 +1216,7 @@ namespace BoxSocial.Internals
             query.AddField("user_name", userName);
 			query.AddField("user_name_lower", userName.ToLower());
             query.AddField("user_domain", "");
-            query.AddField("user_name_first", userName[0].ToString());
+            query.AddField("user_name_first", userName[0].ToString().ToLower());
 
             db.BeginTransaction();
             long userId = db.Query(query);

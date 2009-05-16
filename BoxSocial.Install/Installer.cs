@@ -220,6 +220,11 @@ namespace BoxSocial.Install
 			long adminId = CreateUser(core, adminUsername, adminEmail, adminPassword);
 
             db.UpdateQuery("UPDATE applications SET user_id = " + adminId + ";");
+
+            // TODO:
+            // Fill Countries
+            // Fill Categories
+
             db.CloseConnection();
         }
 		

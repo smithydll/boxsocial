@@ -132,8 +132,11 @@ namespace BoxSocial.Applications.Forum
             if (memberTable.Rows.Count == 1)
             {
                 loadItemInfo(typeof(ForumMember), memberTable.Rows[0]);
-                loadUserInfo(memberTable.Rows[0]);
-                loadUserIcon(memberTable.Rows[0]);
+				loadItemInfo(typeof(User), memberTable.Rows[0]);
+				loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
+				loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
+                /*loadUserInfo(memberTable.Rows[0]);
+                loadUserIcon(memberTable.Rows[0]);*/
             }
             else
             {
@@ -260,8 +263,8 @@ namespace BoxSocial.Applications.Forum
             {
                 ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
 
-                page.template.Parse("S_POST", string.Format("{0}forum/ucp",
-                    Linker.AppendSid(((GPage)page).ThisGroup.UriStub, true)));
+                page.template.Parse("S_POST", Linker.AppendSid(string.Format("{0}forum/ucp",
+                    ((GPage)page).ThisGroup.UriStub), true));
                 page.template.Parse("S_SIGNATURE", member.forumSignature);
             }
             else
@@ -318,7 +321,7 @@ namespace BoxSocial.Applications.Forum
                 ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
                 member.ForumSignature = HttpContext.Current.Request.Form["signature"];
 
-                member.Update();
+                member.Update(typeof(ForumMember));
             }
         }
     }

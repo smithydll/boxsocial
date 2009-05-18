@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -414,12 +414,18 @@ namespace BoxSocial.Groups
         private void loadUserGroupIcon(DataRow groupRow)
         {
         }
+		
+		public List<GroupMember> GetMembers(int page, int perPage)
+		{
+			return GetMembers(page, perPage, null);
+		}
 
         public List<GroupMember> GetMembers(int page, int perPage, string filter)
         {
             List<GroupMember> members = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_members");
+			query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
             query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
             query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_members", "user_id"), new DataField("group_operators", "user_id"));

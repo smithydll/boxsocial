@@ -3,25 +3,23 @@
 <table style="width: 100%">
   <tr>
     <th>{L_RANK}</th>
-    <th>{L_SPECIAL}</th>
-    <th>{L_MINIMUM_POSTS}</th>
+    <th>{L_POSTS}</th>
     <th></th>
     <th></th>
   </tr>
   <!-- BEGIN members -->
-  <!-- IF rank_list.INDEX_EVEN -->
+  <!-- IF members.INDEX_EVEN -->
   <tr class="even">
     <!-- ELSE -->
     <tr class="odd">
       <!-- ENDIF -->
-      <td>{rank_list.RANK}</td>
-      <td>{rank_list.SPECIAL}</td>
-      <td>{rank_list.MINIMUM_POSTS}</td>
+      <td>{members.DISPLAY_NAME}</td>
+      <td>{members.POSTS}</td>
       <td>
-        <a href="{rank_list.U_EDIT}">{L_EDIT}</a>
+        <a href="{members.U_EDIT}">{L_EDIT}</a>
       </td>
       <td>
-        <a href="{rank_list.U_DELETE}">{L_DELETE}</a>
+        <a href="{members.U_DELETE}">{L_DELETE}</a>
       </td>
     </tr>
     <!-- END members -->

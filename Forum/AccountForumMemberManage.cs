@@ -74,6 +74,8 @@ namespace BoxSocial.Applications.Forum
                 VariableCollection membersVariableCollection = template.CreateChild("members");
                 
                 membersVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+				membersVariableCollection.Parse("POSTS", member.ForumPosts.ToString());
+				membersVariableCollection.Parse("U_EDIT", BuildUri("members", "edit", member.Id));
             }
 		}
 

@@ -19,38 +19,39 @@
   <!-- IF FORUMS -->
   <!-- BEGIN forum_list -->
   <!-- IF forum_list.IS_CATEGORY -->
-  <div class="forums">
-    <dl>
-      <dt>
-        <a href="{forum_list.URI}">{forum_list.TITLE}</a>
-      </dt>
-      <dd>{L_POSTS}</dd>
-      <dd>{L_TOPICS}</dd>
-      <dd>{L_LAST_POST}</dd>
-    </dl>
-  </div>
+			<div class="pane forums">
+				<dl class="title-row">
+					<dt>
+						<div><a href="{forum_list.URI}">{forum_list.TITLE}</a></div>
+					</dt>
+					<dd class="posts"><div>{L_POSTS}</div></dd>
+					<dd class="topics"><div>{L_TOPICS}</div></dd>
+					<dd class="lastpost"><div>{L_LAST_POST}</div></dd>
+				</dl>
+			</div>
   <!-- ENDIF -->
   <!-- IF forum_list.IS_FIRST -->
-  <ul class="forums">
+			<ul class="pane forums">
   <!-- ENDIF -->
     <!-- IF forum_list.IS_FORUM -->
-    <li>
-      <dl>
+				<li>
+					<dl class="icon">
         <dt>
 	      <!-- IF forum_list.IS_READ -->
-	      <img src="/images/posticon_read_med.png" alt="Read" />
+	      <div style="background-image: url('/images/posticon_read_med.png');">
 	      <!-- ELSE -->
-	      <img src="/images/posticon_unread_med.png" alt="New" />
+	      <div style="background-image: url('/images/posticon_unread_med.png');">
 	      <!-- ENDIF -->
           <a href="{forum_list.URI}">{forum_list.TITLE}</a>
           <p>{forum_list.DESCRIPTION}</p>
           <!-- BEGIN forum_list.sub_forum_list -->
           <a href="{forum_list.sub_forum_list.URI}">{forum_list.sub_forum_list.TITLE}</a>
           <!-- END forum_list.sub_forum_list -->
+          </div>
         </dt>
-        <dd>{forum_list.POSTS}</dd>
-        <dd>{forum_list.TOPICS}</dd>
-        <dd>{forum_list.LAST_POST}</dd>
+						<dd class="posts"><div>{forum_list.POSTS}</div></dd>
+						<dd class="topics"><div>{forum_list.TOPICS}</div></dd>
+						<dd class="lastpost"><div>{forum_list.LAST_POST}</div></dd>
       </dl>
     </li>
     <!-- ENDIF -->
@@ -62,96 +63,63 @@
 	
 	<!-- IF TOPICS -->
   <p>{PAGINATION}</p>
-	<ul id="topics">
+			<ul id="topics" class="pane">
     <li id="topic-head">
-      <dl>
-        <dt>&nbsp;</dt>
-        <dd>{L_VIEWS}</dd>
-        <dd>{L_REPLIES}</dd>
-        <dd>{L_LAST_POST}</dd>
+					<dl class="title-row">
+						<dt><div>&nbsp;</div></dt>
+						<dd><div>{L_VIEWS}</div></dd>
+						<dd><div>{L_REPLIES}</div></dd>
+						<dd><div>{L_LAST_POST}</div></dd>
       </dl>
     </li>
     <!-- BEGIN topic_list -->
+    <li>
+					<dl class="icon">
+        <dt>
     <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_read_med.png');">
+    <div style="background-image: url('/images/posticon_read_med.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_unread_med.png');">
+    <div style="background-image: url('/images/posticon_unread_med.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
     <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_read_med_sticky.png');">
+    <div style="background-image: url('/images/posticon_read_med_sticky.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_unread_med_sticky.png');">
+    <div style="background-image: url('/images/posticon_unread_med_sticky.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_read_med_announce.png');">
+    <div style="background-image: url('/images/posticon_read_med_announce.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
-    <li style="background-image: url('/images/posticon_unread_med_announce.png');">
+    <div style="background-image: url('/images/posticon_unread_med_announce.png');">
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
-    <li>
+    <div>
     <!-- ENDIF -->
-      <dl>
-        <dt>
-          <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
-          <!--img class="topic-icon" src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
-          <!--img class="topic-icon" src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
-          <!-- img src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
-          <!--img src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
-          <!-- img src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
-          <!--img src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
-          <!-- img src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
-          <!--img src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
-          <!-- img src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
-          <!--img src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
-          <!-- img src="/images/posticon_read_med.png" alt="Read" /-->
-          <!-- ENDIF -->
-          <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
-          <!--img src="/images/posticon_unread_med.png" alt="New" /-->
-          <!-- ENDIF -->
+
           <a href="{topic_list.URI}">{topic_list.TITLE}</a><br />
           by <a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE}
+          </div>
         </dt>
-        <dd>{topic_list.VIEWS}</dd>
-        <dd>{topic_list.REPLIES}</dd>
-        <dd>{topic_list.LAST_POST}</dd>
+        <dd><div>{topic_list.VIEWS}</div></dd>
+        <dd><div>{topic_list.REPLIES}</div></dd>
+        <dd><div>{topic_list.LAST_POST}</div></dd>
       </dl>
     </li>
     <!-- END topic_list -->

@@ -1,18 +1,18 @@
-﻿
 ul.forums {
-	list-style: none;
-	padding: 5px;
-	padding-top: 0;
-	margin: 0px;
+	list-style-type: none;
+	padding: 0px;
+	margin: 5px;
+	margin-top: 0;
+	display: block;
 }
 
 ul.forums li {
 	display: block;
 	list-style-type: none;
-	height: 6.5em;
-	border: solid 1px black;
+	border: solid 2px #333333;
 	border-top: none;
 	margin: 0;
+	min-height: 35px;
 }
 
 div.forums {
@@ -20,9 +20,10 @@ div.forums {
 	padding: 0px;
 	margin: 5px;
 	margin-bottom: 0;
-	height: 2.5em;
-	border: solid 1px black;
+	height: 2.0em;
+	border: solid 2px #333333;
 	font-weight: bold;
+	background-color: #333333;
 }
 
 .forums dl {
@@ -34,8 +35,8 @@ div.forums {
 .forums dl dt {
 	display: block;
 	float: left;
-	width: 50%;
-	padding: 0px 0;
+	width: 52%;
+	padding: 0;
 	margin: 0;
 }
 
@@ -44,14 +45,42 @@ div.forums {
 	float: left;
 	width: 16%;
 	text-align: center;
-	border-left: 1px solid black;
-	padding: 0px 0;
-	margin: 0;
-	height: 6.5em;
+	padding: 0;
+	margin: 0px;
+}
+
+.forums dl div {
+	margin: 5px;
+}
+
+ul.forums dd div, ul#topics dd div {
+	border-left: 1px solid #CCCCCC;
+}
+
+ul#topics li#topic-head dd div {
+	border: none !important;
+}
+
+div.forums .topics, div.forums .posts, div.forums .lastpost {
+	line-height: 1.2em;
+}
+
+ul.forums .topics, ul.forums .posts {
+	line-height: 4.5em;	
+	margin-left: -1px;
+}
+
+ul.forums .lastpost div, ul#topics .lastpost div {
+	padding-top: 1.2em;
+}
+
+
+div.forums dl dt {
+	line-height: 1.2em;
 }
 
 div.forums dl dd {
-	height: 2.5em;
+	height: 1.2em;
 }
 
 .forums dl dt h3 {
@@ -60,36 +89,39 @@ div.forums dl dd {
 
 ul#topics {
 	list-style: none;
-	padding: 5px;
-	margin: 0px;
+	padding: 0px;
+	margin: 5px;
+	border: solid 2px #333333;
 }
 
 ul#topics li {
 	display: block;
 	list-style-type: none;
-	height: 3.5em;
-	border: solid 1px black;
-	border-top: none;
 	margin: 0;
-	background-position: 6px center;
-	background-repeat: no-repeat;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+ul#topics li div {
+	margin: 5px;
 }
 
 ul#topics li#topic-head {
-	border-top: solid 1px black;
 	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #333333;
 }
 
 ul#topics dl {
 	position: relative;
-	padding: 0 0 0 30px;
+	padding: 0;
+	margin: 0;
 }
 
 ul#topics dl dt {
 	display: block;
 	float: left;
-	width: 50%;
-	padding: 0 0 0 0;
+	width: 52%;
+	padding: 0;
 	margin: 0;
 }
 
@@ -98,22 +130,22 @@ ul#topics dl dd {
 	float: left;
 	width: 16%;
 	text-align: center;
-	border-left: 1px solid black;
-	padding: 0px 0;
+	padding: 0;
 	margin: 0;
-	height: 3.5em;
 }
 
 ul#posts {
 	list-style: none;
-	margin: 0px;
+	margin: 0;
+	padding: 0;
 }
 
 ul#posts li {
-	border: solid 1px black;
+	/*border: solid 2px #333333;*/
 	list-style: none;
 	margin: 0px;
 	margin-bottom: 3px;
+	
 }
 
 ul#posts li h3 {
@@ -122,18 +154,41 @@ ul#posts li h3 {
 	font-size: 1.2em;
 }
 
+.post {
+	background-color: #ffffff;
+	padding: 5px;
+}
+
 .postbody {
 	float: left;
 	clear: both;
-	width: 50%;
-	margin-right: 205px;
+	width: 75%;
+}
+
+.postbody .inner {
+	padding: 5px;
 }
 
 ul#posts dl.profile {
 	float: right;
 	display: inline;
-	width: 200px;
+	width: 25%;
 }
+
+ul#posts .corners-top {
+	display: block;
+	height: 5px;
+	background-image: url('http://zinzam.com/images/corners-top-ffffff-900-5.png');
+	background-repeat: no-repeat;
+}
+
+ul#posts .corners-bottom {
+	display: block;
+	height: 5px;
+	background-image: url('http://zinzam.com/images/corners-bottom-ffffff-900-5.png');
+	background-repeat: no-repeat;
+}
+
 
 ul#posts div.top {
 	clear: both;
@@ -147,4 +202,39 @@ div#forum-rules {
 	padding: 5px;
 	margin-top: 5px;
 	margin-bottom: 10px;
+}
+
+.title-row dd, .title-row dt {
+	background-color: #333333;
+	color: #FFFFFF;
+}
+
+.title-row a {
+	color: #FFFFFF;
+	margin-left: 5px;
+}
+
+/* Simple fix so forum and topic lists always have a min-height set, even in IE6
+	From http://www.dustindiaz.com/min-height-fast-hack */
+dl.icon {
+	min-height: 35px;
+	height: auto !important;
+	height: 35px;
+	height: 1%;
+	overflow: hidden;
+
+}
+
+dl.icon dt div {
+	padding-left: 45px;		
+	background-repeat: no-repeat;
+	background-position: 10px 50%;		
+}
+
+dl.title-row {
+	min-height: 0px;
+	height: auto !important;
+	height: 0px;
+	height: 1%;
+	overflow: hidden;
 }

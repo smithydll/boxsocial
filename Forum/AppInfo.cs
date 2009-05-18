@@ -126,6 +126,8 @@ namespace BoxSocial.Applications.Forum
             aii.AddSlug("forum", @"^/forum/([0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+			aii.AddSlug("forum", @"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+			aii.AddSlug("forum", @"^/forum/memberlist(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
 

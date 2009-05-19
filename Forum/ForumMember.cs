@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.Forum
         private long forumPosts;
         [DataField("rank")]
         private long forumRank;
-        [DataField("signature")]
+        [DataField("signature", 255)]
         private string forumSignature;
 		
 		public long ForumRankId
@@ -322,6 +322,11 @@ namespace BoxSocial.Applications.Forum
                 member.ForumSignature = HttpContext.Current.Request.Form["signature"];
 
                 member.Update(typeof(ForumMember));
+				
+				Display.ShowMessage("Profile Updated", "Your forum profile has been saved in the database.");
+				
+				page.template.Parse("REDIRECT_URI", Linker.AppendSid(string.Format("{0}forum/ucp",
+                	page.ThisGroup.UriStub)));
             }
         }
     }

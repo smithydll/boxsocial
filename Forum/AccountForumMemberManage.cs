@@ -88,7 +88,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                member = new ForumMember(core, Owner, id, UserLoadOptions.Common);
+                member = new ForumMember(core, Owner, id, UserLoadOptions.All);
             }
             catch (InvalidForumMemberException)
             {
@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Forum
             template.Parse("S_USERNAME", member.UserName);
             template.Parse("S_RANK", ranksSelectBox);
             template.Parse("S_SIGNATURE", member.ForumSignature);
-			template.Parse("S_ID", member.UserId.ToString());
+			template.Parse("S_ID", id.ToString());
         }
 
         void AccountForumMemberManage_Edit_Save(object sender, EventArgs e)
@@ -144,6 +144,9 @@ namespace BoxSocial.Applications.Forum
             member.ForumSignature = Request.Form["signature"];
             member.ForumRankId = rankId;
             member.Update(typeof(ForumMember));
+			
+			SetRedirectUri(BuildUri());
+			Display.ShowMessage("Forum Profile Updated", "The user's forum profile has been saved in the database");
         }
 	}
 }

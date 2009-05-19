@@ -506,7 +506,7 @@ namespace BoxSocial.Internals
 			
 			if  (itemFieldsCache != null)
 			{
-				if (itemFieldsCache.ContainsKey(type))
+				if (itemFieldsCache.ContainsKey(type) && (!getRawFields))
 				{
 					return itemFieldsCache[type];
 				}
@@ -525,7 +525,7 @@ namespace BoxSocial.Internals
                         DataFieldAttribute dfattr = (DataFieldAttribute)attr;
                         if (dfattr.FieldName != null)
                         {
-							if (fi.FieldType == typeof(ItemKey) && (!getRawFields))
+							if ((fi.FieldType == typeof(ItemKey)) && (!getRawFields))
 							{
 								DataFieldInfo dfiId;
 								DataFieldInfo dfiTypeId;
@@ -560,7 +560,7 @@ namespace BoxSocial.Internals
 
             }
 
-            if (!itemFieldsCache.ContainsKey(type))
+            if ((!itemFieldsCache.ContainsKey(type)) && (!getRawFields))
             {
                 itemFieldsCache.Add(type, returnValue);
             }
@@ -779,13 +779,13 @@ namespace BoxSocial.Internals
 						sQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
 						sQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
 						
-						uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
-						uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+						//uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
+						//uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
 					}
 					else
 					{
                     	sQuery.AddCondition(field.Name, GetFieldValue(field, this));
-						uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+						//uQuery.AddCondition(field.Name, GetFieldValue(field, this));
 					}
                 }
             }
@@ -796,9 +796,18 @@ namespace BoxSocial.Internals
                 {
                     if ((field.Key & DataFieldKeys.Unique) == DataFieldKeys.Unique)
                     {
-                        uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+						if (field.Type == typeof(ItemKey))
+						{
+							uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
+							uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+						}
+						else
+						{
+                        	uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+						}
                         if (updatedItems.Contains(field.Name))
                         {
+							/* cannot change a unique key */
                             foundKey = false;
                             break;
                         }
@@ -824,14 +833,11 @@ namespace BoxSocial.Internals
 
                 if (uniqueness != 1)
                 {
-					/*HttpContext.Current.Response.Write("<br />");
-					HttpContext.Current.Response.Write(sQuery.ToString());
-					HttpContext.Current.Response.Write("<br />");
-					HttpContext.Current.Response.Write(uQuery.ToString());
-					HttpContext.Current.Response.End();*/
                     throw new RecordNotUniqueException();
                 }
             }
+			
+			//HttpContext.Current.Response.Write(uQuery.ToString());
 
             long result = db.Query(uQuery);
 

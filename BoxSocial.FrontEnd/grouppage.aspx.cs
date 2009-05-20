@@ -54,7 +54,7 @@ namespace BoxSocial.FrontEnd
 
             if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
             {
-                HttpContext.Current.Response.Write(meter.ToString() + "\n");
+                //HttpContext.Current.Response.Write(meter.ToString() + "\n");
             }
 
             EndResponse();

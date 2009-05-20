@@ -14,6 +14,8 @@
 <ul id="posts">
   <!-- BEGIN post_list -->
   <li>
+	<span class="corners-top"><span></span></span>
+  	<div class="post">
   	<h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
   	<p>
     <!-- IF post_list.IS_READ -->
@@ -23,10 +25,12 @@
     <!-- ENDIF -->
     by <strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong> on {post_list.POST_TIME}</p>
       <div class="postbody">
+      <div class="inner">
       	<p>{post_list.TEXT}</p>
       	<!-- IF post_list.SIGNATURE -->
-      	<p>{post_list.SIGNATURE}</p>
+      	<p>____________________<br/>{post_list.SIGNATURE}</p>
       	<!-- ENDIF -->
+      </div>
       </div>
     <dl class="profile">
       <dt>
@@ -51,6 +55,8 @@
       <!-- ENDIF -->
     </dl>
     <div class="top"><a href="#posts">{L_TOP}</a></div>
+    </div>
+    <span class="corners-bottom"><span</span></span>
   </li>
   <!-- END post_list -->
 </ul>

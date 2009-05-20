@@ -125,8 +125,10 @@ namespace BoxSocial.Applications.Forum
             AuthoriseRequestSid();
 
             long id = Functions.FormLong("id", 0);
-            long rankId = Functions.FormLong("rank", 0);
+            long rankId = Functions.FormLong("ranks", 0);
             ForumMember member = null;
+			
+			HttpContext.Current.Response.Write(rankId.ToString() + " <br />");
 
             try
             {

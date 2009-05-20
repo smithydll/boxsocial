@@ -124,17 +124,17 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("item_id", owner.Id);
             query.AddCondition("item_type_id", owner.TypeId);
-
+			
             DataTable memberTable = db.Query(query);
 			
 			//HttpContext.Current.Response.Write(query.ToString());
 
             if (memberTable.Rows.Count == 1)
             {
-                loadItemInfo(typeof(ForumMember), memberTable.Rows[0]);
 				loadItemInfo(typeof(User), memberTable.Rows[0]);
 				loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
 				loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
+				loadItemInfo(typeof(ForumMember), memberTable.Rows[0]);
                 /*loadUserInfo(memberTable.Rows[0]);
                 loadUserIcon(memberTable.Rows[0]);*/
             }
@@ -142,6 +142,8 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidUserException();
             }
+			
+			//HttpContext.Current.Response.Write(forumRank.ToString());
         }
 		
 		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)

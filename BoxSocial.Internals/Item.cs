@@ -1161,7 +1161,7 @@ namespace BoxSocial.Internals
 	                        {
 	                            columnName = fi.Name;
 	                        }
-
+							
 	                        columnsAttributed.Add(columnName);
 
 	                        if (columns.Contains(columnName))

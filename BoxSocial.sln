@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C# Express 2008
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar", "Calendar\Calendar.csproj", "{28571091-8A91-49BB-B69E-E33FA70B7ACE}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -79,6 +79,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gallery", "Gallery\Gallery.
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Updater", "BoxSocial.Updater\BoxSocial.Updater.csproj", "{788CE08E-CCAF-4586-A1C1-516CBABC5580}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C246552-7F85-4712-B41C-8DDE6A3F81EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{788CE08E-CCAF-4586-A1C1-516CBABC5580}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9793B8C0-266E-4163-8459-AD3B1BDC8C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -162,7 +168,9 @@ Global
 		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
+	GlobalSection(MonoDevelopProperties) = preSolution
+		version = 0.1
+		StartupItem = Calendar\Calendar.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

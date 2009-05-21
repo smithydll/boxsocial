@@ -800,7 +800,16 @@ namespace BoxSocial.Applications.Forum
 					}
 				}
 				
-				Dictionary<long, ForumMemberRank> ranksList = ForumMemberRank.GetRanks(core, thisForum.Owner, rankIds);
+				Dictionary<long, ForumMemberRank> ranksList = null;
+				
+				if (rankIds.Count > 0)
+				{
+					ranksList = ForumMemberRank.GetRanks(core, thisForum.Owner, rankIds);
+				}
+				else
+				{
+					ranksList = new Dictionary<long, ForumMemberRank>();
+				}
 
                 foreach (TopicPost post in posts)
                 {

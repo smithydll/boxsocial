@@ -201,6 +201,8 @@ namespace BoxSocial.Applications.Forum
 			Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
 			SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
 			sQuery.AddCondition("user_keys.user_id", ConditionEquality.In, userIds);
+			sQuery.AddCondition("item_id", forumOwner.Id);
+			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
 			
 			DataTable membersTable = core.db.Query(sQuery);
 			
@@ -226,6 +228,8 @@ namespace BoxSocial.Applications.Forum
         {
             Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
             SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
+			sQuery.AddCondition("item_id", forumOwner.Id);
+			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
             if (!string.IsNullOrEmpty(filter))
             {
                 sQuery.AddCondition("user_keys.user_name_first", filter);
@@ -263,11 +267,19 @@ namespace BoxSocial.Applications.Forum
 
             if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
             {
-                ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
-
-                page.template.Parse("S_POST", Linker.AppendSid(string.Format("{0}forum/ucp",
+				page.template.Parse("S_POST", Linker.AppendSid(string.Format("{0}forum/ucp",
                     ((GPage)page).ThisGroup.UriStub), true));
-                page.template.Parse("S_SIGNATURE", member.forumSignature);
+				
+				try
+				{
+                	ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
+
+                	page.template.Parse("S_SIGNATURE", member.forumSignature);
+				}
+				catch (InvalidForumMemberException)
+				{
+					// create on submit
+				}
             }
             else
             {
@@ -320,7 +332,16 @@ namespace BoxSocial.Applications.Forum
 
             if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
             {
-                ForumMember member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
+                ForumMember member = null;
+				
+				try
+				{
+					member = new ForumMember(core, page.ThisGroup, core.session.LoggedInMember);
+				}
+				catch (InvalidForumMemberException)
+				{
+					member = ForumMember.Create(core, page.ThisGroup, core.session.LoggedInMember, false);
+				}
                 member.ForumSignature = HttpContext.Current.Request.Form["signature"];
 
                 member.Update(typeof(ForumMember));

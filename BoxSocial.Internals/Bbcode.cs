@@ -77,6 +77,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeH2);
             BbcodeHooks += new BbcodeHookHandler(BbcodeH3);
             BbcodeHooks += new BbcodeHookHandler(BbcodeAlign);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeFloat);
             BbcodeHooks += new BbcodeHookHandler(BbcodeUrl);
             BbcodeHooks += new BbcodeHookHandler(BbcodeInternalUrl);
             BbcodeHooks += new BbcodeHookHandler(BbcodeInline);
@@ -1090,9 +1091,38 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled)) e.AbortParse();
+                if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled))
+                    e.AbortParse();
                 e.PrefixText = "</p><p style=\"text-align: " + e.Attributes.GetAttribute("default") + "\">";
                 e.SuffixText = "</p><p>";
+            }
+        }
+
+        private static void BbcodeFloat(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "float")
+                return;
+
+            e.SetHandled();
+
+            if (e.StripTag)
+            {
+                e.PrefixText = "";
+                e.SuffixText = "";
+            }
+            else
+            {
+                if (!e.InList)
+                {
+                    if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$", RegexOptions.Compiled))
+                        e.AbortParse();
+                    e.PrefixText = "</p><div style=\"float: " + e.Attributes.GetAttribute("default") + "\">";
+                    e.SuffixText = "</div><p>";
+                }
+                else
+                {
+                    e.AbortParse();
+                }
             }
         }
 

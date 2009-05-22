@@ -66,6 +66,23 @@ namespace BoxSocial.Install
 
             if (argsList.Contains("--update") || argsList.Contains("u") && argsList.Count >= 2)
             {
+                Console.WriteLine("Please enter the root directory of the domain you want to use:");
+                root = Console.ReadLine();
+                binRoot = Path.Combine(root, "bin");
+                imagesRoot = Path.Combine(root, "images");
+                stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
+                scriptsRoot = Path.Combine(root, "scripts");
+
+                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
+                domain = Console.ReadLine();
+
+                Console.WriteLine("Please enter the mysql root password:");
+                mysqlRootPassword = Console.ReadLine();
+
+                Console.WriteLine("Please enter the mysql database you have created:");
+                mysqlDatabase = Console.ReadLine();
+				
+				InstallRepository(argsList[argsList.Count - 1]);
                 InstallApplication(argsList[argsList.Count - 1]);
 
                 Console.WriteLine("Reloading apache");

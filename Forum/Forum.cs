@@ -1050,7 +1050,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    return Linker.AppendSid(string.Format("{0}forum/{1}/",
+                    return Linker.AppendSid(string.Format("{0}forum/{1}",
                         Owner.UriStub, forumId));
                 }
             }

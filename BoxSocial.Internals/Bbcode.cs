@@ -50,6 +50,8 @@ namespace BoxSocial.Internals
 
         private static event BbcodeHookHandler BbcodeHooks;
 
+        private static List<string> styleList;
+
         public Bbcode()
         {
         }
@@ -89,6 +91,10 @@ namespace BoxSocial.Internals
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
             BbcodeHooks += new BbcodeHookHandler(BbcodeUser);
+
+            styleList = new List<string>();
+            styleList.Add("color");
+            styleList.Add("size");
         }
 
         private sealed class BbcodeEventArgs
@@ -477,6 +483,7 @@ namespace BoxSocial.Internals
                                 {
                                     while (!((BbcodeTag)tags.Peek()).Tag.Equals(Tag))
                                     {
+                                        // TODO: style
                                         tags.Pop();
                                     }
                                 }

@@ -1012,6 +1012,7 @@ namespace BoxSocial.Internals
                     {
                         // Error
 						reader.Close();
+                        reader.Dispose();
                         throw new InvalidItemException(this.GetType().FullName);
                     }
                     else
@@ -1098,10 +1099,12 @@ namespace BoxSocial.Internals
             if (fieldsLoaded != objectFields)
             {
 				reader.Close();
+                reader.Dispose();
                 throw new InvalidItemException(this.GetType().FullName);
             }
-			
+
 			reader.Close();
+            reader.Dispose();
 
             if (ItemLoad != null)
             {

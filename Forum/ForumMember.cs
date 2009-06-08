@@ -198,6 +198,11 @@ namespace BoxSocial.Applications.Forum
 		
 		public static Dictionary<long, ForumMember> GetMembers(Core core, Primitive forumOwner, List<long> userIds)
 		{
+            if (userIds == null || userIds.Count == 0)
+            {
+                return new Dictionary<long, ForumMember>();
+            }
+
 			Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
 			SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
 			sQuery.AddCondition("user_keys.user_id", ConditionEquality.In, userIds);

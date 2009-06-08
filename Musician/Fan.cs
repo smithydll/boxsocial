@@ -24,19 +24,10 @@ using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Muscian
+namespace Muscian
 {
-    public enum RecordingType
-    {
-        Demo,
-        Studio,
-        Live,
-        Mix,
-        LiveVideo,
-        MusicVideo,
-    }
-
-    public class Recording
+    [DataTable("fans")]
+    public class Fan : User
     {
     }
 }

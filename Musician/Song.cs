@@ -26,17 +26,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Muscian
 {
-    public enum RecordingType
-    {
-        Demo,
-        Studio,
-        Live,
-        Mix,
-        LiveVideo,
-        MusicVideo,
-    }
-
-    public class Recording
+    public class Song
     {
     }
 }

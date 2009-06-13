@@ -83,6 +83,7 @@ namespace BoxSocial.IO
 
         private DataTable SelectQuery(string sqlquery)
         {
+            MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
@@ -115,8 +116,51 @@ namespace BoxSocial.IO
             }
         }
 
+        /*private DataTable SelectQuery(string sqlquery)
+        {
+            DataTable dt = new DataTable();
+
+            System.Data.Common.DbDataReader reader = SelectReaderQuery(sqlquery);
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string column = reader.GetName(i);
+                string c = column;
+                int count = 0;
+                while (dt.Columns.Contains(column))
+                {
+                    count++;
+                    column = c + "." + count;
+                }
+                //if (dt.Columns.Contains(column))
+                //{
+                //    continue;
+                //}
+                dt.Columns.Add(column, reader.GetFieldType(i));
+            }
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    DataRow dr = dt.NewRow();
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        dr[reader.GetName(i)] = reader.GetValue(i);
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+
+            reader.Close();
+            reader.Dispose();
+
+            return dt;
+        }*/
+
         private System.Data.Common.DbDataReader SelectReaderQuery(string sqlquery)
         {
+            MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
             Stopwatch timer = new Stopwatch();
             timer.Start();
 

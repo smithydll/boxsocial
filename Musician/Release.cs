@@ -24,16 +24,16 @@ using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Muscian
+namespace BoxSocial.Musician
 {
     public enum ReleaseType
     {
-        Demo,
-        Single,
-        Album,
-        EP,
-        DVD,
-        Compilation,
+        Demo = 1,
+        Single = 2,
+        Album = 3,
+        EP = 4,
+        DVD = 5,
+        Compilation = 6,
     }
 
     public class Release : NumberedItem, IRateableItem, ICommentableItem

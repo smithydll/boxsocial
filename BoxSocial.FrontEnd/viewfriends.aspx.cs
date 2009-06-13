@@ -30,7 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class viewfriends : PPage
+    public partial class viewfriends : UPage
     {
         public viewfriends()
             : base("viewfriends.html")

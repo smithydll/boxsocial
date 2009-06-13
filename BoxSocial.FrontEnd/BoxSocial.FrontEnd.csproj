@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -80,6 +80,9 @@
     <Compile Include="creategroup.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="createmuscian.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -106,6 +109,15 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="memberpage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="musicaccount.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="musicpage.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="musicstyle.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="networkpage.aspx.cs">
@@ -157,6 +169,9 @@
     <Compile Include="viewgroups.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="viewmusicians.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="viewnetworks.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -177,6 +192,10 @@
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Musician\Musician.csproj">
+      <Project>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</Project>
+      <Name>Musician</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networks\Networks.csproj">
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>

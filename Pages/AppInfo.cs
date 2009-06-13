@@ -144,9 +144,9 @@ namespace BoxSocial.Applications.Pages
 
         private void showPage(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                Page.Show(core, ((PPage)sender).ProfileOwner, core.PagePathParts[1].Value);
+                Page.Show(core, ((UPage)sender).ProfileOwner, core.PagePathParts[1].Value);
             }
             else if (sender is GPage)
             {
@@ -156,17 +156,17 @@ namespace BoxSocial.Applications.Pages
 
         private void showLists(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                List.ShowLists(core, (PPage)sender);
+                List.ShowLists(core, (UPage)sender);
             }
         }
 
         private void showList(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                List.Show(core, (PPage)sender, core.PagePathParts[1].Value);
+                List.Show(core, (UPage)sender, core.PagePathParts[1].Value);
             }
         }
 

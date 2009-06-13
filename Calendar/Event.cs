@@ -334,7 +334,7 @@ namespace BoxSocial.Applications.Calendar
                     InsertQuery iQuery = new InsertQuery("event_invites");
                     iQuery.AddField("event_id", EventId);
                     iQuery.AddField("item_id", invitee.Id);
-                    iQuery.AddField("item_type", invitee.Type);
+                    iQuery.AddField("item_type_id", invitee.TypeId);
                     iQuery.AddField("inviter_id", userId);
                     iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
                     iQuery.AddField("invite_accepted", false);
@@ -391,7 +391,7 @@ namespace BoxSocial.Applications.Calendar
                         InsertQuery iQuery = new InsertQuery("event_invites");
                         iQuery.AddField("event_id", EventId);
                         iQuery.AddField("item_id", invitee.Id);
-                        iQuery.AddField("item_type", invitee.Type);
+                        iQuery.AddField("item_typeId", invitee.TypeId);
                         iQuery.AddField("inviter_id", userId);
                         iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
                         iQuery.AddField("invite_accepted", false);
@@ -436,14 +436,14 @@ namespace BoxSocial.Applications.Calendar
             List<long> ids = new List<long>();
 
             SelectQuery query = new SelectQuery("event_invites");
-            query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+            query.AddFields("item_id", "item_type_id", "inviter_id", "event_id");
             query.AddCondition("event_id", EventId);
 
             DataTable invitees = db.Query(query);
 
             foreach (DataRow dr in invitees.Rows)
             {
-                if ((string)dr["item_type"] == "USER")
+                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(typeof(User)))
                 {
                     ids.Add((long)dr["item_id"]);
                 }
@@ -457,10 +457,10 @@ namespace BoxSocial.Applications.Calendar
             if (member != null)
             {
                 SelectQuery query = new SelectQuery("event_invites");
-                query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+                query.AddFields("item_id", "item_type_id", "inviter_id", "event_id");
                 query.AddCondition("event_id", EventId);
                 query.AddCondition("item_id", member.Id);
-                query.AddCondition("item_type", member.Type);
+                query.AddCondition("item_type_id", member.TypeId);
 
                 if (db.Query(query).Rows.Count > 0)
                 {
@@ -482,7 +482,7 @@ namespace BoxSocial.Applications.Calendar
             List<long> ids = new List<long>();
 
             SelectQuery query = new SelectQuery("event_invites");
-            query.AddFields("item_id", "item_type", "inviter_id", "event_id");
+            query.AddFields("item_id", "item_type_id", "inviter_id", "event_id");
             query.AddCondition("event_id", EventId);
             query.AddCondition("invite_accepted", (byte)EventAttendance.Yes);
 
@@ -490,7 +490,7 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (DataRow dr in invitees.Rows)
             {
-                if ((string)dr["item_type"] == "USER")
+                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(typeof(User)))
                 {
                     ids.Add((long)dr["item_id"]);
                 }

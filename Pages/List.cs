@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public static void ShowLists(Core core, PPage page)
+        public static void ShowLists(Core core, UPage page)
         {
             page.template.SetTemplate("viewlist.html");
 
@@ -400,7 +400,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public static void Show(Core core, PPage page, string listName)
+        public static void Show(Core core, UPage page, string listName)
         {
             page.template.SetTemplate("viewlist.html");
 

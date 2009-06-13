@@ -1488,6 +1488,7 @@ namespace BoxSocial.Internals
             disallowedNames.Add("video");
             disallowedNames.Add("videos");
             disallowedNames.Add("music");
+            disallowedNames.Add("musician");
             disallowedNames.Add("podcast");
             disallowedNames.Add("podcasts");
             disallowedNames.Add("security");
@@ -1551,6 +1552,12 @@ namespace BoxSocial.Internals
             disallowedNames.Add("application");
             disallowedNames.Add("applications");
             disallowedNames.Add("error-handler");
+            disallowedNames.Add("news");
+            disallowedNames.Add("politian");
+            disallowedNames.Add("officer");
+            disallowedNames.Add("sale");
+            disallowedNames.Add("donate");
+            disallowedNames.Add("comedian");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(userName.ToLower()) >= 0)
@@ -1960,7 +1967,7 @@ namespace BoxSocial.Internals
             return loggedIdUid;
         }
 
-        public static void ShowProfile(Core core, PPage page)
+        public static void ShowProfile(Core core, UPage page)
         {
             core.template.SetTemplate("viewprofile.html");
             page.Signature = PageSignature.viewprofile;

@@ -161,6 +161,11 @@ namespace BoxSocial.Internals
             FindAllPrimitivesLoaded();
         }
 
+        public void Dispose()
+        {
+            userProfileCache = null;
+        }
+
         void Core_LoadApplication(Core core, object sender)
         {
             

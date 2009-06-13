@@ -24,10 +24,10 @@ using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace Muscian
+namespace BoxSocial.Musician
 {
     [DataTable("fans")]
-    public class Fan : User
+    public class Fan // : User
     {
     }
 }

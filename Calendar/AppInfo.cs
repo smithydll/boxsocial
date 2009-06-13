@@ -229,36 +229,36 @@ namespace BoxSocial.Applications.Calendar
 
         private void showCalendar(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Calendar.Show(core, page, page.ProfileOwner);
             }
         }
 
         private void showCalendarYear(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value));
             }
         }
 
         private void showCalendarMonth(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 
         private void showCalendarDay(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
             }
         }
@@ -266,9 +266,9 @@ namespace BoxSocial.Applications.Calendar
         [Show(@"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showEvent(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Event.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
             }
         }
@@ -276,18 +276,18 @@ namespace BoxSocial.Applications.Calendar
         [Show(@"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTask(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Task.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
             }
         }
 
         private void showTasks(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                PPage page = (PPage)sender;
+                UPage page = (UPage)sender;
                 Task.ShowAll(core, page, page.ProfileOwner);
             }
         }

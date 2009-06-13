@@ -61,6 +61,13 @@ namespace BoxSocial.FrontEnd
             {
                 db.CloseConnection();
             }
+
+            core.prose.Close();
+            core.Dispose();
+            core = null;
+            Bbcode.Dispose();
+            Linker.Core = null;
+
             Response.End();
         }
     }

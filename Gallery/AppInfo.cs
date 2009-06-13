@@ -355,9 +355,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="sender">Object that called the page</param>
         private void showGallery(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                Gallery.Show(core, (PPage)sender, "");
+                Gallery.Show(core, (UPage)sender, "");
             }
             else if (sender is GPage)
             {
@@ -376,9 +376,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="sender">Object that called the page</param>
         private void showSubGallery(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                Gallery.Show(core, (PPage)sender, core.PagePathParts[1].Value);
+                Gallery.Show(core, (UPage)sender, core.PagePathParts[1].Value);
             }
         }
 
@@ -389,9 +389,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="sender">Object that called the page</param>
         private void showUserPhoto(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                GalleryItem.Show(core, (PPage)sender, core.PagePathParts[1].Value, core.PagePathParts[2].Value);
+                GalleryItem.Show(core, (UPage)sender, core.PagePathParts[1].Value, core.PagePathParts[2].Value);
             }
         }
 
@@ -421,9 +421,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="sender">Object that called the page</param>
         private void showImage(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                GalleryItem.ShowImage(core, (PPage)sender, core.PagePathParts[1].Value);
+                GalleryItem.ShowImage(core, (UPage)sender, core.PagePathParts[1].Value);
             }
             else if (sender is GPage)
             {

@@ -1,0 +1,28 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>Musicians</h2>
+<span id="create-musician" class="post-button"><a href="{U_CREATE_MUSICIAN}">Register New Musician</a></span>
+<!-- IF CATEGORIES -->
+<h3>Categories</h3>
+<ul>
+	<!-- BEGIN genre_list -->
+	<li><a href="{genre_list.U_MUSIC_GENRE}">{genre_list.TITLE}</a> ({genre_list.MUSICIANS})</li>
+	<!-- END genre_list -->
+</ul>
+<!-- ENDIF -->
+
+<!-- IF GENRE_TITLE -->
+<h3>{GENRE_TITLE}</h3>
+<!-- IF MUSICIANS -->
+<!-- ELSE -->
+<p>There are no musicians in this genre yet <span id="create-group-c" class="post-button"><a href="{U_CREATE_MUSICIAN}">Start One</a></span>!</p>
+<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- IF GROUPS -->
+<ul>
+	<!-- BEGIN musicians_list -->
+	<li><a href="{musicians_list.U_MUSICIAN}">{musicians_list.TITLE}</a></li>
+	<!-- END musicians_list -->
+</ul>
+<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

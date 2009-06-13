@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
@@ -32,96 +32,85 @@ using System.Xml.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Groups
+namespace BoxSocial.Musician
 {
-    public abstract partial class GPage : TPage
+    public abstract partial class MPage : TPage
     {
 
-        protected string groupSlug;
-        protected UserGroup thisGroup;
+        protected string musicianSlug;
+        protected Musician musician;
 
-        public UserGroup ThisGroup
+        public Musician Musician
         {
             get
             {
-                return thisGroup;
+                return musician;
             }
         }
 
-        public GPage()
+        public MPage()
             : base()
         {
             page = 1;
         }
 
-        public GPage(string templateFile)
+        public MPage(string templateFile)
             : base(templateFile)
         {
             page = 1;
         }
 
-        protected void BeginGroupPage()
+        protected void BeginMusicianPage()
         {
-            groupSlug = HttpContext.Current.Request["gn"];
+            musicianSlug = HttpContext.Current.Request["mn"];
 
             try
             {
-                thisGroup = new UserGroup(core, groupSlug);
+                musician = new Musician(core, musicianSlug);
             }
-            catch (InvalidGroupException)
+            catch (InvalidMusicianException)
             {
                 Functions.Generate404();
                 return;
             }
 
-            if (string.IsNullOrEmpty(thisGroup.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
+            // We do not have customised domains for musician
+            /*if (string.IsNullOrEmpty(mus.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
             {
                 core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
-            }
+            }*/
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
-                core.PagePath = ThisGroup.Info.GroupHomepage;
+                core.PagePath = Musician.Homepage;
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = "/profile";
             }
 
-            if (ThisGroup.IsGroupMemberBanned(core.session.LoggedInMember))
-            {
-                Functions.Generate403();
-                return;
-            }
-
-            if (!thisGroup.IsGroupMember(core.session.LoggedInMember) && thisGroup.GroupType == "PRIVATE")
-            {
-                Functions.Generate403();
-                return;
-            }
-
             if (loggedInMember != null)
             {
                 if (loggedInMember.ShowCustomStyles)
                 {
-                    template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                    template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", musician.Key));
                 }
             }
             else
             {
-                template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", musician.Key));
             }
 
             if (!core.PagePath.StartsWith("/account"))
             {
-                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, musician));
 
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
-                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
+                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, musician);
                 core.InvokeHeadHooks(e);
                 core.InvokeFootHooks(e);
             }
 
-            PageTitle = thisGroup.DisplayName;
+            PageTitle = musician.DisplayName;
         }
 
         void core_FootHooks(HookEventArgs e)
@@ -130,11 +119,11 @@ namespace BoxSocial.Groups
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
 
-                if (e.Owner.Type == "GROUP")
+                if (e.Owner.Type == "MUSIC")
                 {
-                    if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
+                    if (((Musician)e.Owner).IsMusicianMember(core.session.LoggedInMember))
                     {
-                        template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
+                        template.Parse("U_MUSICIAN_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
                     }
                 }
 

@@ -27,21 +27,21 @@ using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
-using BoxSocial.Groups;
+using BoxSocial.Musician;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class groupstyle : TPage
+    public partial class musicstyle : TPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string groupName = Request.QueryString["gn"];
-            UserGroup profileOwner;
+            string groupName = Request.QueryString["mn"];
+            Musician.Musician profileOwner;
 
             try
             {
 
-                profileOwner = new UserGroup(core, groupName);
+                profileOwner = new Musician.Musician(core, groupName);
             }
             catch
             {
@@ -53,13 +53,14 @@ namespace BoxSocial.FrontEnd
             Response.Clear();
 
             // don't allow to load up external stylesheets
-            Response.Write(Regex.Replace(profileOwner.Info.Style, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
+            // TODO:
+            //Response.Write(Regex.Replace(profileOwner.Style, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
 
             if (db != null)
             {
                 db.CloseConnection();
             }
-            
+
             core.prose.Close();
             core.Dispose();
             core = null;

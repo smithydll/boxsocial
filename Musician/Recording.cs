@@ -24,7 +24,7 @@ using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Muscian
+namespace BoxSocial.Musician
 {
     public enum RecordingType
     {

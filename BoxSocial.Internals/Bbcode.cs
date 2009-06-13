@@ -97,6 +97,11 @@ namespace BoxSocial.Internals
             styleList.Add("size");
         }
 
+        public static void Dispose()
+        {
+            Bbcode.core = null;
+        }
+
         private sealed class BbcodeEventArgs
         {
             private BbcodeTag tag;

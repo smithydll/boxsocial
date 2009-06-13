@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
@@ -38,10 +38,13 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    /// <summary>
+    /// Primitive Page, this used to be Profile Page, use UPage for User Page
+    /// </summary>
     public abstract partial class PPage : TPage
     {
-        protected string profileUserName;
-        protected User profileOwner;
+        protected string primitiveKey;
+        protected Primitive primitive;
 
         public PPage()
             : base()
@@ -72,76 +75,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public User ProfileOwner
+        public Primitive Owner
         {
             get
             {
-                return profileOwner;
-            }
-        }
-
-        protected void BeginProfile()
-        {
-            profileUserName = HttpContext.Current.Request["un"];
-
-            try
-            {
-                profileOwner = new User(core, profileUserName);
-            }
-            catch (InvalidUserException)
-            {
-                Functions.Generate404();
-                return;
-            }
-
-            if (core.PagePath.ToLower().StartsWith("/" + profileOwner.UserName.ToLower()))
-            {
-                core.PagePath = core.PagePath.Substring(profileOwner.UserName.Length + 1);
-            }
-            if (core.PagePath.Trim(new char[] { '/' }) == "")
-            {
-                core.PagePath = profileOwner.ProfileHomepage;
-            }
-
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, profileOwner));
-
-            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Member, profileOwner);
-            core.InvokeHeadHooks(e);
-
-            PageTitle = profileOwner.DisplayName;
-
-            if (loggedInMember != null)
-            {
-                if (loggedInMember.ShowCustomStyles)
-                {
-                    template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
-                }
-            }
-            else
-            {
-                template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
-            }
-            template.Parse("USER_NAME", profileOwner.UserName);
-            template.Parse("USER_DISPLAY_NAME", profileOwner.DisplayName);
-            template.Parse("USER_DISPLAY_NAME_OWNERSHIP", profileOwner.DisplayNameOwnership);
-
-            if (loggedInMember != null)
-            {
-                if (loggedInMember.UserId == profileOwner.UserId)
-                {
-                    template.Parse("OWNER", "TRUE");
-                    template.Parse("SELF", "TRUE");
-                }
-                else
-                {
-                    template.Parse("OWNER", "FALSE");
-                    template.Parse("SELF", "FALSE");
-                }
-            }
-            else
-            {
-                template.Parse("OWNER", "FALSE");
-                template.Parse("SELF", "FALSE");
+                return primitive;
             }
         }
     }

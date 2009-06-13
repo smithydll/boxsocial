@@ -26,7 +26,18 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    public class Tour
+    [DataTable("genres")]
+    public class MusicGenre
     {
+        [DataField("genre_id", DataFieldKeys.Primary)]
+        private long genreId;
+        [DataField("genre_is_sub")]
+        private bool isSubGenre;
+        [DataField("genre_name", 31)]
+        private string name;
+        [DataField("genre_musicians")]
+        private long musicians;
+        [DataField("genre_recordings")]
+        private long recordings;
     }
 }

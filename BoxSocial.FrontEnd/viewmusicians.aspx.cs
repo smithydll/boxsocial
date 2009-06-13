@@ -19,14 +19,27 @@
  */
 
 using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
-namespace BoxSocial.Musician
+namespace BoxSocial.FrontEnd
 {
-    public class Tour
+    public partial class viewmusicians : TPage
     {
+        public viewmusicians()
+            : base("viewmusicians.html")
+        {
+        }
     }
 }

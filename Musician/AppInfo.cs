@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -21,15 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
-using BoxSocial.Groups;
-using BoxSocial.Networks;
 
-namespace BoxSocial.Applications.Profile
+namespace BoxSocial.Musician
 {
     public class AppInfo : Application
     {
@@ -37,13 +36,14 @@ namespace BoxSocial.Applications.Profile
         public AppInfo(Core core)
             : base(core)
         {
+            core.AddPrimitiveType(typeof(Musician));
         }
 
         public override string Title
         {
             get
             {
-                return "Profile";
+                return "Music";
             }
         }
 
@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return "profile";
+                return "music";
             }
         }
 
@@ -83,7 +83,8 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return Properties.Resources.profile;
+                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
+                return null;
             }
         }
 
@@ -105,9 +106,8 @@ namespace BoxSocial.Applications.Profile
 
         public override void Initialise(Core core)
         {
-            this.core = core;
-
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -115,10 +115,10 @@ namespace BoxSocial.Applications.Profile
         {
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Application);
-            aii.AddSlug("profile", @"^/status-feed(|/)$", AppPrimitives.Member | AppPrimitives.Application);
+            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
+            aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Musician);
 
-            aii.AddModule("profile");
+            aii.AddModule("music");
 
             return aii;
         }
@@ -128,60 +128,70 @@ namespace BoxSocial.Applications.Profile
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("profile", "Profile");
-                slugs.Add("friends", "Friends");
-                slugs.Add("status-feed", "Status Feed");
+                //slugs.Add("profile", "Profile");
                 return slugs;
             }
         }
 
         void core_LoadApplication(Core core, object sender)
         {
-            this.core = core;
+            core.RegisterApplicationPage(@"^/profile(|/)$", showMusician);
+            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
+        }
 
-            core.RegisterApplicationPage(@"^/profile(|/)$", showProfile, 1);
-            core.RegisterApplicationPage(@"^/status-feed(|/)$", showStatusFeed, 1);
+        private void showMusician(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                //UserGroup.Show(core, (MPage)sender);
+            }
+        }
+
+        private void showMemberlist(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                //UserGroup.ShowMemberlist(core, (GPage)sender);
+            }
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Application;
-        }
-
-        private void showProfile(Core core, object sender)
-        {
-            if (sender is UPage)
-            {
-                User.ShowProfile(core, (UPage)sender);
-            }
-            else if (sender is APage)
-            {
-                ApplicationEntry.ShowPage(core, (APage)sender);
-            }
-        }
-
-        private void showStatusFeed(Core core, object sender)
-        {
-            if (sender is UPage)
-            {
-                UPage page = (UPage)sender;
-                StatusFeed.Show(core, page, page.ProfileOwner);
-            }
+            return AppPrimitives.Member | AppPrimitives.Musician;
         }
 
         void core_PageHooks(HookEventArgs e)
         {
-            if (e.PageType == AppPrimitives.None)
+            if (e.PageType == AppPrimitives.Member)
             {
-                if (e.core.PagePath.ToLower() == "/default.aspx")
-                {
-                    //ShowStatusUpdates(e);
-                }
+                ShowMemberMusicians(e);
             }
         }
 
-        /*void ShowStatusUpdates(HookEventArgs e)
+        void core_FootHooks(HookEventArgs e)
         {
-        }*/
+        }
+
+        public void ShowMemberMusicians(HookEventArgs e)
+        {
+            User profileOwner = (User)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilemusicians");
+
+            /*List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);
+            if (groups.Count > 0)
+            {
+                template.Parse("HAS_GROUPS", "TRUE");
+            }
+
+            foreach (UserGroup group in groups)
+            {
+                VariableCollection groupVariableCollection = template.CreateChild("groups_list");
+
+                groupVariableCollection.Parse("TITLE", group.DisplayName);
+                groupVariableCollection.Parse("U_GROUP", group.Uri);
+            }*/
+
+            e.core.AddSidePanel(template);
+        }
     }
 }

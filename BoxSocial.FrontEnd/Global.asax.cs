@@ -203,8 +203,13 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(|/)$", @"/groupaccount.aspx?gn=$1&module=$2" });
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(|/)$", @"/groupaccount.aspx?gn=$1" });
 
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/musicaccount.aspx?mn=$1&module=$2&sub=$3" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(|/)$", @"/musicaccount.aspx?mn=$1&module=$2" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account(|/)$", @"/musicaccount.aspx?mn=$1" });
+
                     patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
                     patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_]+).css$", @"/groupstyle.aspx?gn=$1" });
+                    patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_]+).css$", @"/musicstyle.aspx?gn=$1" });
 
                     patterns.Add(new string[] { @"^/help(|/)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(|/)$", @"/help.aspx?topic=$1" });
@@ -227,6 +232,13 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)(|/)$", @"/networkpage.aspx?nn=$1&path=" });
 
                     //patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?nn=$1&path=$2" });
+
+                    patterns.Add(new string[] { @"^/musicians/create(|/)$", @"/createmusician.aspx" });
+                    patterns.Add(new string[] { @"^/musicians(|/)$", @"/viewmusicians.aspx$1" });
+                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(|/)$", @"/viewmusicians.aspx?genre=$1" });
+                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(|/)([A-Za-z0-9\-_]+)(|/)$", @"/viewmusicians.aspx?genre=$1&sub=$2" });
+
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)(|/)$", @"/musicpage.aspx?mn=$1&path=" });
 
                     patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)(|/)$", @"/memberpage.aspx?un=$1&path=" });
 

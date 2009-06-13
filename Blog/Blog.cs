@@ -239,7 +239,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="post">Post id to get</param>
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A blog entry as a list</returns>
-        public List<BlogEntry> GetEntry(PPage page, int post, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int post, ref ushort readAccessLevel)
         {
             return GetEntries(null, post, -1, -1, 1, 1, ref readAccessLevel);
         }
@@ -253,7 +253,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="perPage">Number to show on each page</param>
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(PPage page, string category, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, string category, int currentPage, int perPage, ref ushort readAccessLevel)
         {
             return GetEntries(category, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
         }
@@ -267,7 +267,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="perPage">Number to show on each page</param>
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(PPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
         {
             return GetEntries(null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
         }
@@ -282,7 +282,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="perPage">Number to show on each page</param>
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(PPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
             return GetEntries(null, -1, year, month, currentPage, perPage, ref readAccessLevel);
         }
@@ -419,7 +419,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="page">Page calling</param>
-        public static void Show(Core core, PPage page)
+        public static void Show(Core core, UPage page)
         {
             Show(core, page, null, -1, -1, -1);
         }
@@ -430,7 +430,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="core">Core token</param>
         /// <param name="page">Page calling</param>
         /// <param name="category">Category to show</param>
-        public static void Show(Core core, PPage page, string category)
+        public static void Show(Core core, UPage page, string category)
         {
             Show(core, page, category, -1, -1, -1);
         }
@@ -441,7 +441,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="core">Core token</param>
         /// <param name="page">Page calling</param>
         /// <param name="year">Year to show</param>
-        public static void Show(Core core, PPage page, int year)
+        public static void Show(Core core, UPage page, int year)
         {
             Show(core, page, null, -1, year, -1);
         }
@@ -453,7 +453,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="page">Page calling</param>
         /// <param name="year">Year to show</param>
         /// <param name="month">Month to show</param>
-        public static void Show(Core core, PPage page, int year, int month)
+        public static void Show(Core core, UPage page, int year, int month)
         {
             Show(core, page, null, -1, year, month);
         }
@@ -466,7 +466,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="post">Post to show</param>
         /// <param name="year">Year to show</param>
         /// <param name="month">Month to show</param>
-        public static void Show(Core core, PPage page, long post, int year, int month)
+        public static void Show(Core core, UPage page, long post, int year, int month)
         {
             Show(core, page, null, post, year, month);
         }
@@ -481,7 +481,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="year">Year to show</param>
         /// <param name="month">Month to show</param>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private static void Show(Core core, PPage page, string category, long post, int year, int month)
+        private static void Show(Core core, UPage page, string category, long post, int year, int month)
         {
             page.template.SetTemplate("Blog", "viewblog");
 

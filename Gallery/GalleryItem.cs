@@ -940,7 +940,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="page">Page token</param>
         /// <param name="photoPath">Photo parent path</param>
         /// <param name="photoName">Photo slug</param>
-        public static void Show(Core core, PPage page, string photoPath, string photoName)
+        public static void Show(Core core, UPage page, string photoPath, string photoName)
         {
             page.template.SetTemplate("Gallery", "viewphoto");
 
@@ -1324,7 +1324,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="page">Page token</param>
         /// <param name="photoName">Photo slug</param>
-        public static void ShowImage(Core core, PPage page, string photoName)
+        public static void ShowImage(Core core, UPage page, string photoName)
         {
             ShowImage(core, page.ProfileOwner, photoName);
         }

@@ -57,7 +57,7 @@ namespace BoxSocial.Applications.GuestBook
                 anApplication.UriStub));
         }
 
-        public static void Show(Core core, PPage page)
+        public static void Show(Core core, UPage page)
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.GuestBook
         }
 
         // TODO: use user
-        public static void Show(Core core, PPage page, string user)
+        public static void Show(Core core, UPage page, string user)
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 

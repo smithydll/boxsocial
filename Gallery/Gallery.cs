@@ -1307,7 +1307,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="page">Page calling</param>
         /// <param name="galleryPath">Path to gallery</param>
-        public static void Show(Core core, PPage page, string galleryPath)
+        public static void Show(Core core, UPage page, string galleryPath)
         {
             page.template.SetTemplate("Gallery", "viewgallery");
 

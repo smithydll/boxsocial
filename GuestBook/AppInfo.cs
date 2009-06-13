@@ -380,18 +380,18 @@ namespace BoxSocial.Applications.GuestBook
 
         private void showProfileGuestBook(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                GuestBook.Show(core, (PPage)sender);
+                GuestBook.Show(core, (UPage)sender);
             }
         }
 
         private void showProfileGuestBookConversation(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
                 string[] paths = core.PagePathParts[1].Value.Split(new char[] {'/'});
-                GuestBook.Show(core, (PPage)sender, paths[paths.Length - 1]);
+                GuestBook.Show(core, (UPage)sender, paths[paths.Length - 1]);
             }
         }
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
@@ -27,21 +27,35 @@ using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Musician;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class memberpage : UPage
+    public partial class musicpage : MPage
     {
+        private PerformanceMeter meter = null;
 
-        public memberpage()
+        public musicpage()
             : base("1201.html")
         {
-            BeginProfile();
+            meter = new PerformanceMeter();
+
+            meter.Add("Begin Musician Page");
+            BeginMusicianPage();
+            meter.Add("End Begin Musician Page");
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            meter.Add("Begin Invoke Applications");
             Core.InvokeApplication(this);
+
+            meter.Add("Begin End Response");
+
+            if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+            {
+                //HttpContext.Current.Response.Write(meter.ToString() + "\n");
+            }
 
             EndResponse();
         }

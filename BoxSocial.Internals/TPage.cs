@@ -284,9 +284,12 @@ namespace BoxSocial.Internals
                 double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
                 timer.Stop();
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
-                if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+                if (core != null)
                 {
-                    HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                    if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+                    {
+                        HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                    }
                 }
                 /*HttpContext.Current.Response.Write(db.QueryList.Replace("\n", "<br />"));
                 /*if (seconds < 0.5)
@@ -302,6 +305,10 @@ namespace BoxSocial.Internals
                 }
 
                 core.prose.Close();
+                core.Dispose();
+                core = null;
+                Bbcode.Dispose();
+                Linker.Core = null;
 
                 HttpContext.Current.Response.End();
                 //System.Threading.Thread.CurrentThread.Abort();
@@ -317,6 +324,10 @@ namespace BoxSocial.Internals
             }
 
             core.prose.Close();
+            core.Dispose();
+            core = null;
+            Bbcode.Dispose();
+            Linker.Core = null;
         }
     }
 }

@@ -26,7 +26,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    public class Tour
+    public class MuscianMember
     {
     }
 }

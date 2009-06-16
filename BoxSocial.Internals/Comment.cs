@@ -401,8 +401,8 @@ namespace BoxSocial.Internals
 
         public string BuildUri(ICommentableItem item)
         {
-            return Linker.AppendSid(string.Format("{0}?c={2}&#c{1}",
-                    Linker.StripSid(item.Uri), commentId, commentId));
+            return core.Uri.AppendSid(string.Format("{0}?c={2}&#c{1}",
+                    core.Uri.StripSid(item.Uri), commentId, commentId));
         }
 
         public override string Uri

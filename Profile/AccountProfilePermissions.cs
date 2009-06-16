@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.Profile
             permissions.Add("Can Read");
             permissions.Add("Can Comment");
 
-            Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", LoggedInMember.Permissions, permissions);
+            core.Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", LoggedInMember.Permissions, permissions);
         }
 
         void AccountProfilePermissions_Save(object sender, EventArgs e)

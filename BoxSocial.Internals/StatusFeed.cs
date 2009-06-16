@@ -142,7 +142,7 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(item.GetTime(core.tz)));
             }
 
-            Display.ParsePagination(Linker.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0));
             owner.ParseBreadCrumbs("profile/status");
         }
     }

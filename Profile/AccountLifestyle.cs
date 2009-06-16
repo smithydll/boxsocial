@@ -168,7 +168,7 @@ namespace BoxSocial.Applications.Profile
                         RawTemplate atpl = new RawTemplate("emails/user_relationship_notification.eml");
 
                         atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
-                        atpl.Parse("U_CONFIRM", Linker.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId));
+                        atpl.Parse("U_CONFIRM", core.Uri.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId));
 
                         ae.SendNotification(relation, string.Format("[user]{0}[/user] wants to be in a relationship with you", core.LoggedInMemberId), atpl.ToString());
 
@@ -252,7 +252,7 @@ namespace BoxSocial.Applications.Profile
             hiddenFieldList.Add("mode", "confirm-relationship");
             hiddenFieldList.Add("id", relation.Id.ToString());
 
-            Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true),
+            core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true),
                 "Confirm relationship",
                 string.Format("Confirm your relationship with {0}",
                 relation.DisplayName), hiddenFieldList);
@@ -285,8 +285,8 @@ namespace BoxSocial.Applications.Profile
 
                 LoggedInMember.Profile.Update();
 
-                SetRedirectUri(Linker.BuildAccountModuleUri("dashboard"));
-                Display.ShowMessage("Maritial Status updated", "You have successfully updated your maritial status.");
+                SetRedirectUri(core.Uri.BuildAccountModuleUri("dashboard"));
+                core.Display.ShowMessage("Maritial Status updated", "You have successfully updated your maritial status.");
             }
             else
             {
@@ -295,7 +295,7 @@ namespace BoxSocial.Applications.Profile
 
                 relation.Profile.Update();
 
-                Display.ShowMessage("Maritial Status unchanged", "You have not updated your maritial status.");
+                core.Display.ShowMessage("Maritial Status unchanged", "You have not updated your maritial status.");
             }
         }
     }

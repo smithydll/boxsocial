@@ -59,8 +59,8 @@ namespace BoxSocial.FrontEnd
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
-            string pageUri = Linker.BuildFriendsUri(profileOwner);
-            Display.ParsePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0));
+            string pageUri = core.Uri.BuildFriendsUri(profileOwner);
+            core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0));
 
             EndResponse();
         }

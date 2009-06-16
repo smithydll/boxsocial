@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("TITLE", be.Title);
                 blogVariableCollection.Parse("POSTED", tz.DateTimeToString(postedTime));
 
-                blogVariableCollection.Parse("U_VIEW", Linker.BuildBlogPostUri(LoggedInMember, postedTime.Year, postedTime.Month, be.Id));
+                blogVariableCollection.Parse("U_VIEW", core.Uri.BuildBlogPostUri(LoggedInMember, postedTime.Year, postedTime.Month, be.Id));
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));

@@ -103,19 +103,19 @@ namespace BoxSocial.Applications.Gallery
 
                     photo.Rotate(core, rotation);
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, photo.ParentPath, photo.Path));
-                    Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
+                    SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, photo.ParentPath, photo.Path));
+                    core.Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
                     return;
                 }
                 catch (GalleryItemNotFoundException)
                 {
-                    Display.ShowMessage("Error", "An error has occured, go back.");
+                    core.Display.ShowMessage("Error", "An error has occured, go back.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage("Error", "An error has occured, go back.");
+                core.Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
         }

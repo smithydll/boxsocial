@@ -83,11 +83,11 @@ namespace BoxSocial.Applications.Pages
 
                 listVariableCollection.Parse("TITLE", l.Title);
                 listVariableCollection.Parse("TYPE", l.Type.ToString());
-                listVariableCollection.Parse("ITEMS", Functions.LargeIntegerToString(l.Items));
+                listVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(l.Items));
 
-                listVariableCollection.Parse("U_VIEW", Linker.BuildListUri(LoggedInMember, l.Path));
-                listVariableCollection.Parse("U_DELETE", Linker.BuildDeleteListUri(l.Id));
-                listVariableCollection.Parse("U_EDIT", Linker.BuildEditListUri(l.Id));
+                listVariableCollection.Parse("U_VIEW", core.Uri.BuildListUri(LoggedInMember, l.Path));
+                listVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteListUri(l.Id));
+                listVariableCollection.Parse("U_EDIT", core.Uri.BuildEditListUri(l.Id));
             }
 
             DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Pages
             permissions.Add("Can Read");
 
             template.Parse("S_LIST_TYPES", listTypesSelectBox);
-            Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
+            core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
 
             Save(new EventHandler(AccountListsManage_Save));
         }
@@ -127,17 +127,17 @@ namespace BoxSocial.Applications.Pages
                     List newList = List.Create(core, title, ref slug, listAbstract, type, Functions.GetPermission());
 
                     SetRedirectUri(BuildUri("lists"));
-                    Display.ShowMessage("List Created", "You have created a new list");
+                    core.Display.ShowMessage("List Created", "You have created a new list");
                     return;
                 }
                 catch (ListTypeNotValidException)
                 {
-                    Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
+                    core.Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again.");
                     return;
                 }
                 catch (ListSlugNotUniqueException)
                 {
-                    Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
+                    core.Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
                     return;
                 }
             }
@@ -193,8 +193,8 @@ namespace BoxSocial.Applications.Pages
                             Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
                         }
 
-                        SetRedirectUri(Linker.BuildAccountSubModuleUri(ModuleKey, "lists"));
-                        Display.ShowMessage("List Saved", "You have saved the list");
+                        SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
+                        core.Display.ShowMessage("List Saved", "You have saved the list");
                         return;
                     }
                     catch (UnauthorisedToUpdateItemException)
@@ -204,7 +204,7 @@ namespace BoxSocial.Applications.Pages
                     }
                     catch (RecordNotUniqueException)
                     {
-                        Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
+                        core.Display.ShowMessage("List Error", "You have already created a list with the same name, go back and give another name.");
                         return;
                     }
                 }
@@ -232,7 +232,7 @@ namespace BoxSocial.Applications.Pages
                 List.Remove(core, item);
 
                 SetRedirectUri(list.Uri);
-                Display.ShowMessage("List Updated", "You have successfully removed an item from your list.");
+                core.Display.ShowMessage("List Updated", "You have successfully removed an item from your list.");
             }
             catch (InvalidListItemException)
             {
@@ -265,7 +265,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 catch (UnauthorisedToDeleteItemException)
                 {
-                    Display.ShowMessage("Cannot Delete", "You are unauthorised to delete this list");
+                    core.Display.ShowMessage("Cannot Delete", "You are unauthorised to delete this list");
                     return;
                 }
 
@@ -280,13 +280,13 @@ namespace BoxSocial.Applications.Pages
                     // Can ignore
                 }
 
-                SetRedirectUri(Linker.BuildAccountSubModuleUri(ModuleKey, "lists"));
-                Display.ShowMessage("List Deleted", "You have deleted a list.");
+                SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
+                core.Display.ShowMessage("List Deleted", "You have deleted a list.");
                 return;
             }
             catch (InvalidListException)
             {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
+                core.Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;
             }
         }
@@ -323,7 +323,7 @@ namespace BoxSocial.Applications.Pages
                 listTypesSelectBox.SelectedKey = list.Type.ToString();
 
                 template.Parse("S_LIST_TYPES", listTypesSelectBox);
-                Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
+                core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
 
                 template.Parse("S_LIST_TITLE", list.Title);
                 template.Parse("S_LIST_SLUG", list.Path);
@@ -333,7 +333,7 @@ namespace BoxSocial.Applications.Pages
             }
             catch (InvalidListException)
             {
-                Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
+                core.Display.ShowMessage("List Error", "You submitted invalid information. Go back and try again. List may have already been deleted.");
                 return;
             }
         }
@@ -365,11 +365,11 @@ namespace BoxSocial.Applications.Pages
                     ApplicationEntry ae = new ApplicationEntry(core);
 
                     // TODO: different list types
-                    AppInfo.Entry.PublishToFeed(LoggedInMember, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
+                    core.CallingApplication.PublishToFeed(LoggedInMember, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
 
                     if (ajax)
                     {
-                        Ajax.SendRawText("posted", text);
+                        core.Ajax.SendRawText("posted", text);
 
                         if (db != null)
                         {
@@ -380,20 +380,20 @@ namespace BoxSocial.Applications.Pages
                     }
                     else
                     {
-                        SetRedirectUri(Linker.BuildListUri(LoggedInMember, list.Path));
-                        Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
+                        SetRedirectUri(core.Uri.BuildListUri(LoggedInMember, list.Path));
+                        core.Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
                     }
                 }
                 catch (UnauthorisedToCreateItemException)
                 {
-                    Ajax.ShowMessage(ajax, "unauthorised", "Unauthorised", "You are unauthorised to append to this list.");
+                    core.Ajax.ShowMessage(ajax, "unauthorised", "Unauthorised", "You are unauthorised to append to this list.");
                     return;
                 }
 
             }
             catch (InvalidListException)
             {
-                Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
+                core.Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
         }

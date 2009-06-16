@@ -120,7 +120,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
         }
@@ -224,7 +224,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
                 return;
             }
         }

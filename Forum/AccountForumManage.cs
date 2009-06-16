@@ -229,7 +229,7 @@ namespace BoxSocial.Applications.Forum
                     {
                         SetRedirectUri(BuildUri("forum", forum.ParentId));
                     }
-                    Display.ShowMessage("Forum Created", "A new forum has been created");
+                    core.Display.ShowMessage("Forum Created", "A new forum has been created");
                 }
                 catch (UnauthorisedToCreateItemException)
                 {
@@ -292,7 +292,7 @@ namespace BoxSocial.Applications.Forum
             {
                 SetRedirectUri(BuildUri("forum", forum.ParentId));
             }
-            Display.ShowMessage("Forum updated", "You have updated the forum");
+            core.Display.ShowMessage("Forum updated", "You have updated the forum");
         }
 
         void AccountForumManage_Move(object sender, ModuleModeEventArgs e)
@@ -324,11 +324,11 @@ namespace BoxSocial.Applications.Forum
             {
                 case "move-up":
                     forum.MoveUp();
-                    Display.ShowMessage("Forum moved up", "You have moved the forum up in the list.");
+                    core.Display.ShowMessage("Forum moved up", "You have moved the forum up in the list.");
                     break;
                 case "move-down":
                     forum.MoveDown();
-                    Display.ShowMessage("Forum moved down", "You have moved the forum down in the list.");
+                    core.Display.ShowMessage("Forum moved down", "You have moved the forum down in the list.");
                     break;
             }
         }

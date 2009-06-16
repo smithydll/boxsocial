@@ -246,7 +246,7 @@ namespace BoxSocial.Applications.Profile
                 repeatBoxItems.Add(new SelectBoxItem("repeat-y", "Vertical", "/images/bg-rpt-y.png"));
                 repeatBoxItems.Add(new SelectBoxItem("repeat", "Tile", "/images/bg-rpt.png"));
 
-                Display.ParseRadioArray(template, "S_BACKGROUND_REPEAT", "background-repeat", 2, repeatBoxItems, backgroundRepeat);
+                core.Display.ParseRadioArray(template, "S_BACKGROUND_REPEAT", "background-repeat", 2, repeatBoxItems, backgroundRepeat);
 
                 List<SelectBoxItem> positionBoxItems = new List<SelectBoxItem>();
                 positionBoxItems.Add(new SelectBoxItem("left top", "Top Left", "/images/bg-t-l.png"));
@@ -259,7 +259,7 @@ namespace BoxSocial.Applications.Profile
                 positionBoxItems.Add(new SelectBoxItem("center bottom", "Bottom Centre", "/images/bg-b-c.png"));
                 positionBoxItems.Add(new SelectBoxItem("right bottom", "Bottom Right", "/images/bg-b-r.png"));
 
-                Display.ParseRadioArray(template, "S_BACKGROUND_POSITION", "background-position", 3, positionBoxItems, backgroundPosition);
+                core.Display.ParseRadioArray(template, "S_BACKGROUND_POSITION", "background-position", 3, positionBoxItems, backgroundPosition);
 
                 if (backgroundAttachment)
                 {
@@ -434,7 +434,7 @@ namespace BoxSocial.Applications.Profile
             LoggedInMember.Style.Update();
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.");
+            core.Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.");
         }
     }
 }

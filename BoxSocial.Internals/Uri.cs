@@ -35,20 +35,17 @@ namespace BoxSocial.Internals
 {
     public class Linker
     {
-        private static Core core;
-        public static bool SecureUrls;
-        public static bool SidUrls;
-        private static string sid = String.Empty;
+        private Core core;
+        public bool SecureUrls;
+        public bool SidUrls;
+        private string sid = String.Empty;
 
-        public static Core Core
+        public Linker(Core core)
         {
-            set
-            {
-                core = value;
-            }
+            this.core = core;
         }
 
-        public static string Sid
+        public string Sid
         {
             set
             {
@@ -94,110 +91,110 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildMarkGalleryCoverUri(long pictureId)
+        public string BuildMarkGalleryCoverUri(long pictureId)
         {
             return BuildAccountSubModuleUri("galleries", "gallery-cover", pictureId, true);
         }
 
-        public static string BuildMarkDisplayPictureUri(long pictureId)
+        public string BuildMarkDisplayPictureUri(long pictureId)
         {
             return BuildAccountSubModuleUri("galleries", "display-pic", pictureId, true);
         }
 
-        public static string BuildGuestBookUri(User member)
+        public string BuildGuestBookUri(User member)
         {
             return AppendSid(string.Format("{0}profile/comments",
                 member.UriStub));
         }
 
-        public static string BuildGuestBookUri(User member, User member2)
+        public string BuildGuestBookUri(User member, User member2)
         {
             return AppendSid(string.Format("{0}profile/comments/{1}",
                 member.UriStub, member2.UserName.ToLower()));
         }
 
-        public static string BuildStatusUri(User member)
+        public string BuildStatusUri(User member)
         {
             return AppendSid(string.Format("{0}profile/status",
                 member.UriStub));
         }
 
-        public static string BuildListsUri(User member)
+        public string BuildListsUri(User member)
         {
             return AppendSid(string.Format("{0}lists",
                 member.UriStub));
         }
 
-        public static string BuildListUri(User member, string slug)
+        public string BuildListUri(User member, string slug)
         {
             return AppendSid(string.Format("{0}lists/{1}",
                 member.UriStub, slug));
         }
 
-        public static string BuildDeleteListUri(long deleteId)
+        public string BuildDeleteListUri(long deleteId)
         {
             return BuildAccountSubModuleUri("pages", "lists", "delete", deleteId, true);
         }
 
-        public static string BuildEditListUri(long editId)
+        public string BuildEditListUri(long editId)
         {
             return BuildAccountSubModuleUri("pages", "lists", "edit", editId, true);
         }
 
-        public static string BuildRemoveFromListUri(long removeId)
+        public string BuildRemoveFromListUri(long removeId)
         {
             return BuildAccountSubModuleUri("pages", "lists", "remove", removeId, true);
         }
 
-        public static string BuildBlogRssUri(User member)
+        public string BuildBlogRssUri(User member)
         {
             return AppendSid(string.Format("{0}blog?rss=true",
                 member.UriStub));
         }
 
-        public static string BuildBlogRssUri(User member, string category)
+        public string BuildBlogRssUri(User member, string category)
         {
             return AppendSid(string.Format("{0}blog/category/{1}?rss=true",
                 member.UriStub, category));
         }
 
-        public static string BuildBlogRssUri(User member, int year)
+        public string BuildBlogRssUri(User member, int year)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}?rss=true",
                 member.UriStub, year));
         }
 
-        public static string BuildBlogRssUri(User member, int year, int month)
+        public string BuildBlogRssUri(User member, int year, int month)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}/{2:00}?rss=true",
                 member.UriStub, year, month));
         }
 
-        public static string BuildBlogRssUri(User member, int year, int month, long postId)
+        public string BuildBlogRssUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}?rss=true",
                 member.UriStub, year, month, postId));
         }
 
-        public static string BuildFriendsUri(User member)
+        public string BuildFriendsUri(User member)
         {
             return AppendSid(string.Format("{0}friends",
                 member.UriStub));
         }
 
-        public static string BuildGalleryUri(User member)
+        public string BuildGalleryUri(User member)
         {
             return AppendSid(string.Format("{0}gallery",
                 member.UriStub));
         }
 
-        public static string BuildGalleryCommentsUri(User member)
+        public string BuildGalleryCommentsUri(User member)
         {
             return AppendSid(string.Format("{0}gallery/comments",
                 member.UriStub));
         }
 
-        public static string BuildGalleryCommentsUri(User member, string path)
+        public string BuildGalleryCommentsUri(User member, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -210,42 +207,42 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildGalleryEditUri(long galleryId)
+        public string BuildGalleryEditUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "galleries", "edit", galleryId, true);
         }
 
-        public static string BuildGalleryDeleteUri(long galleryId)
+        public string BuildGalleryDeleteUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "galleries", "delete", galleryId, true);
         }
 
-        public static string BuildPhotoUploadUri(long galleryId)
+        public string BuildPhotoUploadUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
         }
 
-        public static string BuildPhotoEditUri(long photoId)
+        public string BuildPhotoEditUri(long photoId)
         {
             return BuildAccountSubModuleUri("galleries", "edit-photo", photoId, true);
         }
 
-        public static string BuildPhotoRotateLeftUri(long photoId)
+        public string BuildPhotoRotateLeftUri(long photoId)
         {
             return BuildAccountSubModuleUri("galleries", "rotate-photo", true, string.Format("id={0}", photoId), "rotation=left");
         }
 
-        public static string BuildPhotoRotateRightUri(long photoId)
+        public string BuildPhotoRotateRightUri(long photoId)
         {
             return BuildAccountSubModuleUri("galleries", "rotate-photo", true, string.Format("id={0}", photoId), "rotation=right");
         }
 
-        public static string BuildNewGalleryUri(long galleryId)
+        public string BuildNewGalleryUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
         }
 
-        public static string BuildLogoutUri()
+        public string BuildLogoutUri()
         {
             if (Domain != CurrentDomain)
             {
@@ -257,7 +254,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildLoginUri()
+        public string BuildLoginUri()
         {
             if (Domain != CurrentDomain)
             {
@@ -269,29 +266,29 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildLoginUri(string redirectUri)
+        public string BuildLoginUri(string redirectUri)
         {
             return AppendCoreSid(string.Format("/sign-in/?redirect={0}", HttpUtility.UrlEncode(redirectUri)), true);
         }
 
-        public static string BuildBlogPostUri(User member, int year, int month, long postId)
+        public string BuildBlogPostUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStub, year, month, postId));
         }
 
-        public static string BuildBlogPostRssUri(User member, int year, int month, long postId)
+        public string BuildBlogPostRssUri(User member, int year, int month, long postId)
         {
             return AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}?rss=true",
                 member.UriStub, year, month, postId));
         }
 
-        public static string BuildAddFriendUri(long friendId)
+        public string BuildAddFriendUri(long friendId)
         {
             return BuildAccountSubModuleUri("friends", "friends", "add", friendId, true);
         }
 
-        public static string BuildAddFriendUri(long friendId, bool appendSid)
+        public string BuildAddFriendUri(long friendId, bool appendSid)
         {
             if (appendSid)
             {
@@ -303,65 +300,65 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildAddFamilyUri(long friendId)
+        public string BuildAddFamilyUri(long friendId)
         {
             return BuildAccountSubModuleUri("friends", "family", "add", friendId, true);
         }
 
-        public static string BuildBlockUserUri(long blockId)
+        public string BuildBlockUserUri(long blockId)
         {
             return BuildAccountSubModuleUri("friends", "block", "block", blockId, true);
         }
 
-        public static string BuildUnBlockUserUri(long blockId)
+        public string BuildUnBlockUserUri(long blockId)
         {
             return BuildAccountSubModuleUri("friends", "block", "unblock", blockId, true);
         }
 
-        public static string BuildDeleteFriendUri(long deleteId)
+        public string BuildDeleteFriendUri(long deleteId)
         {
             return BuildAccountSubModuleUri("friends", "friends", "delete", deleteId, true);
         }
 
-        public static string BuildDeleteFamilyUri(long deleteId)
+        public string BuildDeleteFamilyUri(long deleteId)
         {
             return BuildAccountSubModuleUri("friends", "family", "delete", deleteId, true);
         }
 
-        public static string BuildPromoteFriendUri(long promoteId)
+        public string BuildPromoteFriendUri(long promoteId)
         {
             return BuildAccountSubModuleUri("friends", "friends", "promote", promoteId, true);
         }
 
-        public static string BuildDemoteFriendUri(long demoteId)
+        public string BuildDemoteFriendUri(long demoteId)
         {
             return BuildAccountSubModuleUri("friends", "friends", "demote", demoteId, true);
         }
 
-        public static string BuildCommentQuoteUri(long commentId)
+        public string BuildCommentQuoteUri(long commentId)
         {
             return AppendSid(string.Format("/comment/?mode=quote&id={0}",
                 commentId));
         }
 
-        public static string BuildCommentReportUri(long commentId)
+        public string BuildCommentReportUri(long commentId)
         {
             return AppendSid(string.Format("/comment/?mode=report&id={0}",
                 commentId));
         }
 
-        public static string BuildCommentDeleteUri(long commentId)
+        public string BuildCommentDeleteUri(long commentId)
         {
             return AppendSid(string.Format("/comment/?mode=delete&id={0}",
                 commentId));
         }
 
-        public static string AppendSid(string uri)
+        public string AppendSid(string uri)
         {
             return AppendSid(uri, false);
         }
 
-        public static string AppendSid(string uri, bool forceSid)
+        public string AppendSid(string uri, bool forceSid)
         {
             if (SidUrls || forceSid)
             {
@@ -402,12 +399,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string AppendCoreSid(string uri)
+        public string AppendCoreSid(string uri)
         {
             return AppendCoreSid(uri, false);
         }
 
-        public static string AppendCoreSid(string uri, bool forceSid)
+        public string AppendCoreSid(string uri, bool forceSid)
         {
             if (Domain != CurrentDomain && (!uri.StartsWith("http://")))
             {
@@ -419,12 +416,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string AppendAbsoluteSid(string uri)
+        public string AppendAbsoluteSid(string uri)
         {
             return AppendAbsoluteSid(uri, false);
         }
 
-        public static string AppendAbsoluteSid(string uri, bool forceSid)
+        public string AppendAbsoluteSid(string uri, bool forceSid)
         {
             if (!uri.StartsWith("http://"))
             {
@@ -436,7 +433,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string StripSid(string uri)
+        public string StripSid(string uri)
         {
             int indexOfSid = uri.IndexOf("?sid");
             if (indexOfSid < 0)
@@ -453,52 +450,52 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildHomeUri()
+        public string BuildHomeUri()
         {
             return AppendCoreSid("/");
         }
 
-        public static string BuildAboutUri()
+        public string BuildAboutUri()
         {
             return AppendCoreSid("/about");
         }
 
-        public static string BuildSafetyUri()
+        public string BuildSafetyUri()
         {
             return AppendCoreSid("/safety");
         }
 
-        public static string BuildPrivacyUri()
+        public string BuildPrivacyUri()
         {
             return AppendCoreSid("/privacy");
         }
 
-        public static string BuildTermsOfServiceUri()
+        public string BuildTermsOfServiceUri()
         {
             return AppendCoreSid("/terms-of-service");
         }
 
-        public static string BuildRegisterUri()
+        public string BuildRegisterUri()
         {
             return AppendCoreSid("/register");
         }
 
-        public static string BuildHelpUri()
+        public string BuildHelpUri()
         {
             return AppendCoreSid("/help");
         }
 
-        public static string BuildSitemapUri()
+        public string BuildSitemapUri()
         {
             return AppendCoreSid("/site-map");
         }
 
-        public static string BuildCopyrightUri()
+        public string BuildCopyrightUri()
         {
             return AppendCoreSid("/copyright");
         }
 
-        public static string BuildAccountUri()
+        public string BuildAccountUri()
         {
             if (core.session.LoggedInMember != null)
             {
@@ -510,29 +507,29 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildSearchUri()
+        public string BuildSearchUri()
         {
             return AppendCoreSid("/search");
         }
 
         #region "Account Module Uri"
 
-        public static string BuildAccountModuleUri(string key)
+        public string BuildAccountModuleUri(string key)
         {
             return BuildAccountModuleUri(core.session.LoggedInMember, key);
         }
 
-        public static string BuildAccountModuleUri(string key, bool appendSid)
+        public string BuildAccountModuleUri(string key, bool appendSid)
         {
             return BuildAccountModuleUri(core.session.LoggedInMember, key, appendSid);
         }
 
-        public static string BuildAccountModuleUri(Primitive owner, string key)
+        public string BuildAccountModuleUri(Primitive owner, string key)
         {
             return BuildAccountModuleUri(owner, key, false);
         }
 
-        public static string BuildAccountModuleUri(Primitive owner, string key, bool appendSid)
+        public string BuildAccountModuleUri(Primitive owner, string key, bool appendSid)
         {
             if (owner != null)
             {
@@ -550,22 +547,22 @@ namespace BoxSocial.Internals
 
         #region "Account Sub Module Uri"
 
-        public static string BuildAccountSubModuleUri(string key, string sub)
+        public string BuildAccountSubModuleUri(string key, string sub)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub);
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, bool appendSid)
+        public string BuildAccountSubModuleUri(string key, string sub, bool appendSid)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, appendSid);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub)
         {
             return BuildAccountSubModuleUri(owner, key, sub, false);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid)
         {
             if (owner != null)
             {
@@ -579,22 +576,22 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, string mode)
+        public string BuildAccountSubModuleUri(string key, string sub, string mode)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode);
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, string mode, bool appendSid)
+        public string BuildAccountSubModuleUri(string key, string sub, string mode, bool appendSid)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, appendSid);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode)
         {
             return BuildAccountSubModuleUri(owner, key, sub, mode, false);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, bool appendSid)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, bool appendSid)
         {
             if (owner != null)
             {
@@ -608,22 +605,22 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, string mode, long id)
+        public string BuildAccountSubModuleUri(string key, string sub, string mode, long id)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, id);
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, string mode, long id, bool appendSid)
+        public string BuildAccountSubModuleUri(string key, string sub, string mode, long id, bool appendSid)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, id, appendSid);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id)
         {
             return BuildAccountSubModuleUri(owner, key, sub, mode, id, false);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id, bool appendSid)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id, bool appendSid)
         {
             if (owner != null)
             {
@@ -637,22 +634,22 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, long id)
+        public string BuildAccountSubModuleUri(string key, string sub, long id)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, id);
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, long id, bool appendSid)
+        public string BuildAccountSubModuleUri(string key, string sub, long id, bool appendSid)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, id, appendSid);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id)
         {
             return BuildAccountSubModuleUri(owner, key, sub, id, false);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id, bool appendSid)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id, bool appendSid)
         {
             if (owner != null)
             {
@@ -666,22 +663,22 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, params string[] arguments)
+        public string BuildAccountSubModuleUri(string key, string sub, params string[] arguments)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, false, arguments);
         }
 
-        public static string BuildAccountSubModuleUri(string key, string sub, bool appendSid, params string[] arguments)
+        public string BuildAccountSubModuleUri(string key, string sub, bool appendSid, params string[] arguments)
         {
             return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, appendSid, arguments);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, params string[] arguments)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, params string[] arguments)
         {
             return BuildAccountSubModuleUri(owner, key, sub, false, arguments);
         }
 
-        public static string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid, params string[] arguments)
+        public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, bool appendSid, params string[] arguments)
         {
             string argumentList = "";
 

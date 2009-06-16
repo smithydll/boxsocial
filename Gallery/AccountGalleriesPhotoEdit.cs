@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
 
@@ -110,18 +110,18 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
-                Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
+                core.Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
+                core.Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
 
                 template.Parse("S_PHOTO_TITLE", title);
                 template.Parse("S_PHOTO_DESCRIPTION", description);
                 template.Parse("S_PHOTO_ID", photoId.ToString());
 
-                Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", (Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]);
+                core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", (Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]);
             }
             else
             {
-                Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;
             }
         }
@@ -136,7 +136,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (photoId == 0)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x09)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x09)");
                 return;
             }
 
@@ -145,13 +145,13 @@ namespace BoxSocial.Applications.Gallery
                 UserGalleryItem galleryItem = new UserGalleryItem(core, LoggedInMember, photoId);
                 galleryItem.Update(title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
-                Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
+                SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
+                core.Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
                 return;
             }
             catch (GalleryItemNotFoundException)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
                 return;
             }
         }

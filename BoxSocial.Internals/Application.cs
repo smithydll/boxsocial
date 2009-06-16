@@ -190,7 +190,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static ApplicationEntry Entry
+        /*public static ApplicationEntry Entry
         {
             get
             {
@@ -204,7 +204,7 @@ namespace BoxSocial.Internals
 
                 return Functions.core.ApplicationEntries[assemblyName];
             }
-        }
+        }*/
 
         public virtual void Initialise(Core core)
         {

@@ -294,8 +294,8 @@ namespace BoxSocial.Internals
             template = new Template("1301.html");
             if (Owner != null)
             {
-                template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
-                template.Parse("S_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+                template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
+                template.Parse("S_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
             }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetProse(core.prose);
@@ -348,31 +348,42 @@ namespace BoxSocial.Internals
             return BuildUri(Key);
         }
 
+        public string BuildUri(Core core)
+        {
+            return BuildUri(core, Key);
+        }
+
         /// <summary>
         /// Builds a URI to a different sub module in this module
         /// </summary>
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return Linker.AppendSid(string.Format("{0}{1}/{2}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
+                Owner.AccountUriStub, ModuleKey, sub));
+        }
+
+        protected string BuildUri(Core core, string sub)
+        {
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
                 Owner.AccountUriStub, ModuleKey, sub));
         }
 
         public string BuildUri(string sub, long id)
         {
-            return Linker.AppendSid(string.Format("{0}{1}/{2}?id={3}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}?id={3}",
                 Owner.AccountUriStub, ModuleKey, sub, id));
         }
 
         public string BuildUri(string sub, string mode)
         {
-            return Linker.AppendSid(string.Format("{0}{1}/{2}?mode={3}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}?mode={3}",
                 Owner.AccountUriStub, ModuleKey, sub, mode));
         }
 
         public string BuildUri(string sub, string mode, long id)
         {
-            return Linker.AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}?mode={3}&id={4}",
                 Owner.AccountUriStub, ModuleKey, sub, mode, id), true);
         }
 
@@ -412,7 +423,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return Linker.AppendSid(string.Format("{0}{1}/{2}{3}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}{3}",
                 Owner.AccountUriStub, ModuleKey, sub, argumentList));
         }
 
@@ -459,7 +470,7 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(HttpContext.Current.Request.QueryString["sid"]))
                 {
-                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
 
@@ -472,7 +483,7 @@ namespace BoxSocial.Internals
 
                 if (core.db.Query(query).Rows.Count == 0)
                 {
-                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
             }
@@ -507,11 +518,11 @@ namespace BoxSocial.Internals
         {
             if (owner != null)
             {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
             }
             else
             {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
             }
         }
 

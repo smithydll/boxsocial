@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Profile
 
                 friendsVariableCollection.Parse("NAME", (string)blockTable.Rows[i]["user_name"]);
 
-                friendsVariableCollection.Parse("U_UNBLOCK", Linker.BuildUnBlockUserUri((long)blockTable.Rows[i]["user_id"]));
+                friendsVariableCollection.Parse("U_UNBLOCK", core.Uri.BuildUnBlockUserUri((long)blockTable.Rows[i]["user_id"]));
             }
         }
 
@@ -93,14 +93,14 @@ namespace BoxSocial.Applications.Profile
             }
             catch
             {
-                Display.ShowMessage("Cannot block person", "No person specified to block. Please go back and try again.");
+                core.Display.ShowMessage("Cannot block person", "No person specified to block. Please go back and try again.");
                 return;
             }
 
             // cannot befriend yourself
             if (blockId == LoggedInMember.UserId)
             {
-                Display.ShowMessage("Cannot block person", "You cannot block yourself.");
+                core.Display.ShowMessage("Cannot block person", "You cannot block yourself.");
                 return;
             }
 
@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Profile
                             hiddenFieldList.Add("mode", "block");
                             hiddenFieldList.Add("id", blockId.ToString());
 
-                            Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
+                            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
                                 "Delete as friend?",
                                 "Do you also want to delete this person from your friends list?",
                                 hiddenFieldList);
@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Profile
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage("Person Already Blocked", "You have already blocked this person.");
+                    core.Display.ShowMessage("Person Already Blocked", "You have already blocked this person.");
                     return;
                 }
             }
@@ -157,7 +157,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Blocked Person", "You have blocked a person.");
+            core.Display.ShowMessage("Blocked Person", "You have blocked a person.");
         }
 
         void AccountBlocklistManage_Unblock(object sender, EventArgs e)
@@ -173,7 +173,7 @@ namespace BoxSocial.Applications.Profile
             }
             catch
             {
-                Display.ShowMessage("Cannot unblock person", "No person specified to unblock. Please go back and try again.");
+                core.Display.ShowMessage("Cannot unblock person", "No person specified to unblock. Please go back and try again.");
                 return;
             }
 
@@ -189,7 +189,7 @@ namespace BoxSocial.Applications.Profile
                 }
                 else if (i == relationsTable.Rows.Count - 1)
                 {
-                    Display.ShowMessage("Cannot unblock person", "This person is not blocked, cannot unlock.");
+                    core.Display.ShowMessage("Cannot unblock person", "This person is not blocked, cannot unlock.");
                     return;
                 }
             }
@@ -204,7 +204,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Unblocked Person", "You have unblocked a person.");
+            core.Display.ShowMessage("Unblocked Person", "You have unblocked a person.");
         }
     }
 }

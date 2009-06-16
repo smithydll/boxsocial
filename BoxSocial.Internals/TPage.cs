@@ -201,14 +201,19 @@ namespace BoxSocial.Internals
                 WebConfigurationManager.AppSettings["mysql-host"]);
             template = new Template(Server.MapPath("./templates/"), "");
             core = new Core(db, template);
-            Core.DB = db;
+            //Core.DB = db;
             core.page = this;
-            Bbcode.Initialise(core);
-            Functions.Core = core;
-            Display.Core = core;
-            Email.Core = core;
-            Ajax.Core = core;
-            Linker.Core = core;
+            //Functions.Core = core;
+            //Display.Core = core;
+            //Email.Core = core;
+            //Ajax.Core = core;
+            //Linker.Core = core;
+            core.Bbcode = new Bbcode(core);
+            core.Functions = new Functions(core);
+            core.Display = new Display(core);
+            core.Email = new Email(core);
+            core.Ajax = new Ajax(core);
+            core.Uri = new Linker(core);
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -234,7 +239,7 @@ namespace BoxSocial.Internals
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
             tz = new UnixTime(core, UnixTime.UTC_CODE);
-            Display.page = this;
+            core.Display.page = this;
 
             core.session = session;
             core.CoreDomain = AppDomain.CurrentDomain;
@@ -278,7 +283,7 @@ namespace BoxSocial.Internals
             {
                 pageEnded = true;
 
-                Display.Header(this);
+                core.Display.Header(this);
                 long templateStart = timer.ElapsedTicks;
                 HttpContext.Current.Response.Write(template.ToString());
                 double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
@@ -305,10 +310,8 @@ namespace BoxSocial.Internals
                 }
 
                 core.prose.Close();
-                core.Dispose();
-                core = null;
-                Bbcode.Dispose();
-                Linker.Core = null;
+                //core.Dispose();
+                //core = null;
 
                 HttpContext.Current.Response.End();
                 //System.Threading.Thread.CurrentThread.Abort();
@@ -324,10 +327,8 @@ namespace BoxSocial.Internals
             }
 
             core.prose.Close();
-            core.Dispose();
-            core = null;
-            Bbcode.Dispose();
-            Linker.Core = null;
+            //core.Dispose();
+            //core = null;
         }
     }
 }

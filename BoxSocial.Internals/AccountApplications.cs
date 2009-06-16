@@ -89,11 +89,11 @@ namespace BoxSocial.Internals
 
             if (Owner == LoggedInMember)
             {
-                template.Parse("U_APPLICATIONS", Linker.AppendCoreSid("/applications"));
+                template.Parse("U_APPLICATIONS", core.Uri.AppendCoreSid("/applications"));
             }
             else
             {
-                template.Parse("U_APPLICATIONS", Linker.AppendCoreSid(string.Format("/applications?type={0}&id={1}",
+                template.Parse("U_APPLICATIONS", core.Uri.AppendCoreSid(string.Format("/applications?type={0}&id={1}",
                     Owner.TypeId, Owner.Id)));
             }
         }
@@ -106,7 +106,7 @@ namespace BoxSocial.Internals
 
             if (id == 0)
             {
-                Display.ShowMessage("Error", "Error!");
+                core.Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -128,12 +128,12 @@ namespace BoxSocial.Internals
                 applicationPermissions.Add("Can Access");
 
                 template.Parse("APPLICATION_NAME", ae.Title);
-                Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
+                core.Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
                 template.Parse("S_APPLICATION_ID", ae.ApplicationId.ToString());
             }
             else
             {
-                Display.ShowMessage("Error", "Error!");
+                core.Display.ShowMessage("Error", "Error!");
             }
         }
 
@@ -158,7 +158,7 @@ namespace BoxSocial.Internals
             db.Query(uquery);
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Settings updated", "The settings for this application have been successfully updated.");
+            core.Display.ShowMessage("Settings updated", "The settings for this application have been successfully updated.");
         }
 
         public void ApplicationInstall(object sender, EventArgs e)
@@ -173,7 +173,7 @@ namespace BoxSocial.Internals
             }
             catch
             {
-                Display.ShowMessage("Error", "Error!");
+                core.Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -187,7 +187,7 @@ namespace BoxSocial.Internals
             }*/
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
+            core.Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
         }
 
         public void ApplicationUninstall(object sender, EventArgs e)
@@ -202,7 +202,7 @@ namespace BoxSocial.Internals
             }
             catch
             {
-                Display.ShowMessage("Error", "Error!");
+                core.Display.ShowMessage("Error", "Error!");
                 return;
             }
 
@@ -216,7 +216,7 @@ namespace BoxSocial.Internals
             }
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Application Uninstalled", "The application has been uninstalled from your profile.");
+            core.Display.ShowMessage("Application Uninstalled", "The application has been uninstalled from your profile.");
         }
         
     }

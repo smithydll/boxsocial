@@ -107,7 +107,7 @@ namespace BoxSocial.Applications.Blog
             SelectBox postMonthsSelectBox = new SelectBox("post-month");
             for (int i = 1; i < 13; i++)
             {
-                postMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
+                postMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
             }
 
             postMonthsSelectBox.SelectedKey = postTime.Month.ToString();
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("S_BLOG_LICENSE", licensesSelectBox);
             template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
-            Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
+            core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
 
             template.Parse("S_TITLE", postTitle);
             template.Parse("S_BLOG_TEXT", postText);
@@ -332,7 +332,7 @@ namespace BoxSocial.Applications.Blog
                         string postUrl = HttpUtility.HtmlEncode(string.Format("/{0}/blog/{1}/{2:00}/{3}",
                             LoggedInMember.UserName, postDateTime.Year, postDateTime.Month, myBlogEntry.PostId));
 
-                        AppInfo.Entry.PublishToFeed(LoggedInMember, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
+                        core.CallingApplication.PublishToFeed(LoggedInMember, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
                             postUrl, myBlogEntry.Title));
                     }
                 }
@@ -342,12 +342,12 @@ namespace BoxSocial.Applications.Blog
             if (status == "DRAFT")
             {
                 SetRedirectUri(BuildUri("drafts"));
-                Display.ShowMessage("Draft Saved", "Your draft has been saved.");
+                core.Display.ShowMessage("Draft Saved", "Your draft has been saved.");
             }
             else
             {
                 SetRedirectUri(BuildUri("manage"));
-                Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
+                core.Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
             }
         }
 
@@ -370,7 +370,7 @@ namespace BoxSocial.Applications.Blog
                 LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Blog Post Deleted", "The blog post has been deleted from the database.");
+            core.Display.ShowMessage("Blog Post Deleted", "The blog post has been deleted from the database.");
             return;
         }
     }

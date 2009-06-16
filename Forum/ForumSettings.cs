@@ -189,11 +189,11 @@ namespace BoxSocial.Applications.Forum
 
         public static void ShowForumHeader(Core core, GPage page)
         {
-            page.template.Parse("U_FORUM_INDEX", Linker.AppendSid(string.Format("{0}forum",
+            page.template.Parse("U_FORUM_INDEX", core.Uri.AppendSid(string.Format("{0}forum",
                 ((GPage)page).ThisGroup.UriStub)));
-            page.template.Parse("U_UCP", Linker.AppendSid(string.Format("{0}forum/ucp",
+            page.template.Parse("U_UCP", core.Uri.AppendSid(string.Format("{0}forum/ucp",
                 ((GPage)page).ThisGroup.UriStub)));
-            page.template.Parse("U_MEMBERS", Linker.AppendSid(string.Format("{0}forum/memberlist",
+            page.template.Parse("U_MEMBERS", core.Uri.AppendSid(string.Format("{0}forum/memberlist",
                 ((GPage)page).ThisGroup.UriStub)));
         }
     }

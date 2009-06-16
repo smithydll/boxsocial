@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (pictureId == 0)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x07)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x07)");
                 return;
             }
 
@@ -98,18 +98,18 @@ namespace BoxSocial.Applications.Gallery
                     LoggedInMember.Info.DisplayPictureId = pictureId;
                     LoggedInMember.Info.Update();
 
-                    Display.ShowMessage("Display Picture Changed", "You have successfully changed your display picture.");
+                    core.Display.ShowMessage("Display Picture Changed", "You have successfully changed your display picture.");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage("Cannot set as display picture", "You must use a photo with public view permissions as your display picture.");
+                    core.Display.ShowMessage("Cannot set as display picture", "You must use a photo with public view permissions as your display picture.");
                     return;
                 }
             }
             catch (GalleryItemNotFoundException)
             {
-                Display.ShowMessage("Cannot change display picture", "You could not change your display picture to the selected image.");
+                core.Display.ShowMessage("Cannot change display picture", "You could not change your display picture to the selected image.");
                 return;
             }
         }

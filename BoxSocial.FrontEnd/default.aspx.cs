@@ -115,11 +115,11 @@ namespace BoxSocial.FrontEnd
 
                 if (loggedInMember != null)
                 {
-                    template.Parse("U_INVITE", Linker.BuildAccountSubModuleUri("friends", "invite"));
-                    template.Parse("U_WRITE_BLOG", Linker.BuildAccountSubModuleUri("blog", "write"));
+                    template.Parse("U_INVITE", core.Uri.BuildAccountSubModuleUri("friends", "invite"));
+                    template.Parse("U_WRITE_BLOG", core.Uri.BuildAccountSubModuleUri("blog", "write"));
                 }
 
-                template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));
+                template.Parse("U_FORGOT_PASSWORD", core.Uri.AppendSid("/sign-in/?mode=reset-password"));
 
                 // new_points
 

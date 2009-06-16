@@ -197,7 +197,7 @@ namespace BoxSocial.FrontEnd
                     List<long> friendIds = loggedInMember.GetFriendIds();
                     if (!friendIds.Contains(user.Id))
                     {
-                        userVariableCollection.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(user.Id, true));
+                        userVariableCollection.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(user.Id, true));
                     }
                 }
             }
@@ -218,7 +218,7 @@ namespace BoxSocial.FrontEnd
                     friendNames.Add(friends[i].Id, friends[i].DisplayName);
                 }
 
-                Ajax.SendDictionary("friends", friendNames);
+                core.Ajax.SendDictionary("friends", friendNames);
             }
             else
             {

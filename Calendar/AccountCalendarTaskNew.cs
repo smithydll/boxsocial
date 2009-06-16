@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Calendar
             Dictionary<string, string> months = new Dictionary<string, string>();
             for (int i = 1; i < 13; i++)
             {
-                months.Add(i.ToString(), Functions.IntToMonth(i));
+                months.Add(i.ToString(), core.Functions.IntToMonth(i));
             }
 
             Dictionary<string, string> days = new Dictionary<string, string>();
@@ -154,7 +154,7 @@ namespace BoxSocial.Applications.Calendar
                 }
                 catch
                 {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
             }
 
@@ -223,7 +223,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -244,8 +244,8 @@ namespace BoxSocial.Applications.Calendar
 
                 Task calendarTask = Task.Create(core, LoggedInMember, Owner, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
 
-                SetRedirectUri(Task.BuildTaskUri(calendarTask));
-                Display.ShowMessage("Task Created", "You have successfully created a new task.");
+                SetRedirectUri(Task.BuildTaskUri(core, calendarTask));
+                core.Display.ShowMessage("Task Created", "You have successfully created a new task.");
             }
             else
             {
@@ -271,8 +271,8 @@ namespace BoxSocial.Applications.Calendar
 
                 Task calendarTask = new Task(core, Owner, taskId);
 
-                SetRedirectUri(Task.BuildTaskUri(calendarTask));
-                Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");
+                SetRedirectUri(Task.BuildTaskUri(core, calendarTask));
+                core.Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");
             }
         }
     }

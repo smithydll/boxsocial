@@ -48,57 +48,54 @@ namespace BoxSocial.Internals
         Stripped,
     }
 
-    public static class Display
+    public class Display
     {
-        internal static TPage page;
+        internal TPage page;
 
         const string RANK_ACTIVE = "/images/star-on.png";
         const string RANK_RATING = "/images/star-on.png";
         const string RANK_SHADOW = "/images/star-off.png";
 
-        private static Core core;
+        private Core core;
 
-        public static Core Core
+        public Display(Core core)
         {
-            set
-            {
-                core = value;
-            }
+            this.core = core;
         }
 
         public delegate void DisplayCommentHookHandler(DisplayCommentHookEventArgs e);
 
-        public static void ParsePagination(string baseUri, int currentPage, int maxPages)
+        public void ParsePagination(string baseUri, int currentPage, int maxPages)
         {
             ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages);
         }
 
-        public static void ParsePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
         {
             ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages, isBlog);
         }
 
-        public static void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
+        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
         {
             ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages);
         }
 
-        public static void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
         {
             ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages, isBlog);
         }
 
-        public static void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
+        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
         {
             template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
         }
 
-        public static void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
         {
             template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, isBlog));
         }
 
-        public static string GeneratePagination(string baseUri, int currentPage, int maxPages)
+        public string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
             return GeneratePagination(baseUri, currentPage, maxPages, false);
         }
@@ -110,7 +107,7 @@ namespace BoxSocial.Internals
         /// <param name="currentPage"></param>
         /// <param name="maxPages"></param>
         /// <returns></returns>
-        public static string GeneratePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
+        public string GeneratePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
         {
             StringBuilder pagination = new StringBuilder();
             bool comma = false;
@@ -263,12 +260,12 @@ namespace BoxSocial.Internals
             return pagination.ToString();
         }
 
-        public static void ShowMessage(string title, string message)
+        public void ShowMessage(string title, string message)
         {
             ShowMessage(title, message, ShowMessageOptions.Unprocessed);
         }
 
-        public static void ShowMessage(string title, string message, ShowMessageOptions options)
+        public void ShowMessage(string title, string message, ShowMessageOptions options)
         {
             core.template.SetTemplate("std.message.html");
             core.template.Parse("MESSAGE_TITLE", title);
@@ -278,11 +275,11 @@ namespace BoxSocial.Internals
                     core.template.Parse("MESSAGE_BODY", message);
                     break;
                 case ShowMessageOptions.Bbcode:
-                    Display.ParseBbcode("MESSAGE_BODY", message);
+                    core.Display.ParseBbcode("MESSAGE_BODY", message);
                     break;
                 case ShowMessageOptions.Stripped:
                     // TODO: stripped bbcode parse
-                    core.template.Parse("MESSAGE_BODY", Bbcode.Strip(message));
+                    core.template.Parse("MESSAGE_BODY", core.Bbcode.Strip(message));
                     break;
             }
 
@@ -307,7 +304,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static ConfirmBoxResult ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
+        public ConfirmBoxResult ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
         {
             if (HttpContext.Current.Request.Form["1"] != null)
             {
@@ -337,22 +334,22 @@ namespace BoxSocial.Internals
             return ConfirmBoxResult.None;
         }
 
-        public static void DisplayComments(Template template, User profileOwner, ICommentableItem item)
+        public void DisplayComments(Template template, User profileOwner, ICommentableItem item)
         {
             DisplayComments(template, (Primitive)profileOwner, item);
         }
 
-        public static void DisplayComments(Template template, User profileOwner, ICommentableItem item, DisplayCommentHookHandler hook)
+        public void DisplayComments(Template template, User profileOwner, ICommentableItem item, DisplayCommentHookHandler hook)
         {
             DisplayComments(template, (Primitive)profileOwner, item, null, -1, hook);
         }
 
-        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item)
+        public void DisplayComments(Template template, Primitive owner, ICommentableItem item)
         {
             DisplayComments(template, owner, item, null, -1, null);
         }
 
-        public static void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
+        public void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
             Mysql db = core.db;
 
@@ -450,7 +447,7 @@ namespace BoxSocial.Internals
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
                 //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
-                Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body);
+                core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body);
 
                 try
                 {
@@ -459,9 +456,9 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("ID", comment.CommentId.ToString());
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
                     commentsVariableCollection.Parse("U_PROFILE", commentPoster.ProfileUri);
-                    commentsVariableCollection.Parse("U_QUOTE", Linker.BuildCommentQuoteUri(comment.CommentId));
-                    commentsVariableCollection.Parse("U_REPORT", Linker.BuildCommentReportUri(comment.CommentId));
-                    commentsVariableCollection.Parse("U_DELETE", Linker.BuildCommentDeleteUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(comment.CommentId));
                     commentsVariableCollection.Parse("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
 
@@ -582,7 +579,7 @@ namespace BoxSocial.Internals
 
         }
 
-        public static User fillLoggedInMember(System.Security.Principal.IPrincipal User, User loggedInMember)
+        public User fillLoggedInMember(System.Security.Principal.IPrincipal User, User loggedInMember)
         {
             if (loggedInMember == null)
             {
@@ -600,7 +597,7 @@ namespace BoxSocial.Internals
         /// <param name="template">The template that represents the current page</param>
         /// <param name="User"></param>
         /// <param name="loggedInMember"></param>
-        public static void Header(TPage page)
+        public void Header(TPage page)
         {
             Template template = page.template;
             SessionState session = page.session;
@@ -616,19 +613,19 @@ namespace BoxSocial.Internals
             /*
              * URIs
              */
-            template.Parse("U_HOME", Linker.BuildHomeUri());
-            template.Parse("U_ABOUT", Linker.BuildAboutUri());
-            template.Parse("U_SAFETY", Linker.BuildSafetyUri());
-            template.Parse("U_PRIVACY", Linker.BuildPrivacyUri());
-            template.Parse("U_TOS", Linker.BuildTermsOfServiceUri());
-            template.Parse("U_SIGNIN", Linker.BuildLoginUri());
-            template.Parse("U_SIGNOUT", Linker.BuildLogoutUri());
-            template.Parse("U_REGISTER", Linker.BuildRegisterUri());
-            template.Parse("U_HELP", Linker.BuildHelpUri());
-            template.Parse("U_SITEMAP", Linker.BuildSitemapUri());
-            template.Parse("U_COPYRIGHT", Linker.BuildCopyrightUri());
-            template.Parse("U_SEARCH", Linker.BuildSearchUri());
-            template.Parse("S_SEARCH", Linker.BuildSearchUri());
+            template.Parse("U_HOME", page.Core.Uri.BuildHomeUri());
+            template.Parse("U_ABOUT", page.Core.Uri.BuildAboutUri());
+            template.Parse("U_SAFETY", page.Core.Uri.BuildSafetyUri());
+            template.Parse("U_PRIVACY", page.Core.Uri.BuildPrivacyUri());
+            template.Parse("U_TOS", page.Core.Uri.BuildTermsOfServiceUri());
+            template.Parse("U_SIGNIN", page.Core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNOUT", page.Core.Uri.BuildLogoutUri());
+            template.Parse("U_REGISTER", page.Core.Uri.BuildRegisterUri());
+            template.Parse("U_HELP", page.Core.Uri.BuildHelpUri());
+            template.Parse("U_SITEMAP", page.Core.Uri.BuildSitemapUri());
+            template.Parse("U_COPYRIGHT", page.Core.Uri.BuildCopyrightUri());
+            template.Parse("U_SEARCH", page.Core.Uri.BuildSearchUri());
+            template.Parse("S_SEARCH", page.Core.Uri.BuildSearchUri());
 
             if (session != null)
             {
@@ -639,27 +636,27 @@ namespace BoxSocial.Internals
                     template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
-                    template.Parse("U_ACCOUNT", Linker.BuildAccountUri());
+                    template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
                 }
             }
         }
 
-        public static void ParsePageList(Primitive owner, bool fragment)
+        public void ParsePageList(Primitive owner, bool fragment)
         {
             ParsePageList(core.template, "PAGE_LIST", owner, fragment);
         }
 
-        public static void ParsePageList(string templateVar, Primitive owner, bool fragment)
+        public void ParsePageList(string templateVar, Primitive owner, bool fragment)
         {
             ParsePageList(core.template, templateVar, owner, fragment);
         }
 
-        public static void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment)
+        public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment)
         {
             template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment));
         }
 
-        public static string GeneratePageList(Primitive owner, User loggedInMember, bool fragment)
+        public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment)
         {
             Database db = core.db;
 
@@ -784,39 +781,39 @@ namespace BoxSocial.Internals
             return output.ToString();
         }
 
-        public static void ParseBbcode(string templateVar, string input)
+        public void ParseBbcode(string templateVar, string input)
         {
             ParseBbcode(templateVar, input, null);
         }
 
-        public static void ParseBbcode(string templateVar, string input, User owner)
+        public void ParseBbcode(string templateVar, string input, User owner)
         {
             ParseBbcode(core.template, templateVar, input, owner);
         }
 
-        public static void ParseBbcode(Template template, string templateVar, string input)
+        public void ParseBbcode(Template template, string templateVar, string input)
         {
             ParseBbcode(template, templateVar, input, null);
         }
 
-        public static void ParseBbcode(Template template, string templateVar, string input, User owner)
+        public void ParseBbcode(Template template, string templateVar, string input, User owner)
         {
             if (owner != null)
             {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
             }
             else
             {
-                template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
             }
         }
 
-        public static void ParseBbcode(VariableCollection template, string templateVar, string input)
+        public void ParseBbcode(VariableCollection template, string templateVar, string input)
         {
             ParseBbcode(template, templateVar, input, null);
         }
 
-        public static void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
+        public void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
         {
 			if (input == null)
 			{
@@ -840,102 +837,102 @@ namespace BoxSocial.Internals
 
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), owner));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), owner));
                 }
                 else
                 {
-                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input)));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input)));
                 }
             }
             else
             {
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
                 }
                 else
                 {
-                    template.ParseRaw(templateVar, Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
                 }
             }
         }
 
-        public static void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
+        public void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
         {
             ParsePermissionsBox(core.template, templateVar, permission, permissions);
         }
 
-        public static void ParsePermissionsBox(Template template, string templateVar, ushort permission, List<string> permissions)
+        public void ParsePermissionsBox(Template template, string templateVar, ushort permission, List<string> permissions)
         {
             template.ParseRaw(templateVar, Functions.BuildPermissionsBox(permission, permissions));
         }
 
-        public static void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        public void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {
             ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem);
         }
 
-        public static void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
+        public void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {
             template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem));
         }
 
-        public static void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        public void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
             ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem, disabledItems);
         }
 
-        public static void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        public void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
             template.ParseRaw(templateVar, Functions.BuildRadioArray(name, columns, items, selectedItem, disabledItems));
         }
 
-        public static void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
+        public void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
         {
             ParseSelectBox(core.template, templateVar, name, items, selectedItem);
         }
 
-        public static void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
+        public void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
         {
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem));
         }
 
-        public static void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        public void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
             ParseSelectBox(core.template, templateVar, name, items, selectedItem, disabledItems);
         }
 
-        public static void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
+        public void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
             template.ParseRaw(templateVar, Functions.BuildSelectBox(name, items, selectedItem, disabledItems));
         }
 
-        public static void ParseLicensingBox(string templateVar, byte selectedLicense)
+        public void ParseLicensingBox(string templateVar, byte selectedLicense)
         {
             ParseLicensingBox(core.template, templateVar, selectedLicense);
         }
 
-        public static void ParseLicensingBox(Template template, string templateVar, byte selectedLicense)
+        public void ParseLicensingBox(Template template, string templateVar, byte selectedLicense)
         {
             template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
         }
 
-        public static void ParseClassification(string templateVar, Classifications classification)
+        public void ParseClassification(string templateVar, Classifications classification)
         {
             ParseClassification(core.template, templateVar, classification);
         }
 
-        public static void ParseClassification(Template template, string templateVar, Classifications classification)
+        public void ParseClassification(Template template, string templateVar, Classifications classification)
         {
             template.ParseRaw(templateVar, Classification.BuildClassificationBox(classification));
         }
 
-        public static void ParseTimeZoneBox(string templateVar, string timeZone)
+        public void ParseTimeZoneBox(string templateVar, string timeZone)
         {
             ParseTimeZoneBox(core.template, templateVar, timeZone);
         }
 
-        public static void ParseTimeZoneBox(Template template, string templateVar, string timeZone)
+        public void ParseTimeZoneBox(Template template, string templateVar, string timeZone)
         {
             template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
         }

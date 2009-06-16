@@ -104,12 +104,12 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Read");
                 permissions.Add("Can Comment");
 
-                Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
-                Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
+                core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
+                core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
 
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
-                Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
+                core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
             catch (InvalidGalleryException)
             {
@@ -135,7 +135,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (Request.Files["photo-file"] == null)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -156,34 +156,34 @@ namespace BoxSocial.Applications.Gallery
 
                     UserGalleryItem.Create(core, LoggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(LoggedInMember, parent.FullPath, slug));
-                    Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+                    SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, parent.FullPath, slug));
+                    core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                     return;
                 }
                 catch (GalleryItemTooLargeException)
                 {
-                    Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                     return;
                 }
                 catch (GalleryQuotaExceededException)
                 {
-                    Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                    core.Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                     return;
                 }
                 catch (InvalidGalleryItemTypeException)
                 {
-                    Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                    core.Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                     return;
                 }
                 catch (InvalidGalleryFileNameException)
                 {
-                    Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                    core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                     return;
                 }
             }
             catch (InvalidGalleryException)
             {
-                Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
+                core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                 return;
             }
         }

@@ -68,7 +68,7 @@ namespace BoxSocial.Networks
             }
             catch (InvalidNetworkException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace BoxSocial.Networks
                         if (theNetwork.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
                         {
                             template.Parse("REDIRECT_URI", theNetwork.Uri);
-                            Display.ShowMessage("Joined Network", "You have successfully joined the network.");
+                            core.Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                             return;
                         }
                     }

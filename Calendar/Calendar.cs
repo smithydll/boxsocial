@@ -196,13 +196,13 @@ namespace BoxSocial.Applications.Calendar
 
             if (template != null)
             {
-                template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+                template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
                 template.Parse("CURRENT_YEAR", year.ToString());
             }
             else
             {
-                vc1.Parse("MONTH", Functions.IntToMonth(month));
-                vc1.Parse("U_MONTH", BuildMonthUri(owner, year, month));
+                vc1.Parse("MONTH", core.Functions.IntToMonth(month));
+                vc1.Parse("U_MONTH", BuildMonthUri(core, owner, year, month));
             }
 
             for (int week = 0; week < weeks; week++)
@@ -228,7 +228,7 @@ namespace BoxSocial.Applications.Calendar
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
                         dayVariableCollection.Parse("DATE", day.ToString());
-                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day));
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year - (month - 2) / 12, (month - 2) % 12 + 1, day));
                     }
                     for (int i = offset; i < 7; i++)
                     {
@@ -236,7 +236,7 @@ namespace BoxSocial.Applications.Calendar
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
                         dayVariableCollection.Parse("DATE", day.ToString());
-                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year, month, day));
                     }
                 }
                 else if (week + 1 == weeks)
@@ -247,7 +247,7 @@ namespace BoxSocial.Applications.Calendar
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
                         dayVariableCollection.Parse("DATE", day.ToString());
-                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year, month, day));
                     }
                     for (int i = 0; i < weeks * 7 - days - offset; i++)
                     {
@@ -255,7 +255,7 @@ namespace BoxSocial.Applications.Calendar
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
                         dayVariableCollection.Parse("DATE", day.ToString());
-                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year + (month) / 12, (month) % 12 + 1, day));
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year + (month) / 12, (month) % 12 + 1, day));
                     }
                 }
                 else
@@ -266,27 +266,27 @@ namespace BoxSocial.Applications.Calendar
 
                         VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
                         dayVariableCollection.Parse("DATE", day.ToString());
-                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
+                        dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year, month, day));
                     }
                 }
             }
         }
 
-        private static string BuildDateUri(Primitive owner, int year, int month, int day)
+        private static string BuildDateUri(Core core, Primitive owner, int year, int month, int day)
         {
-            return Linker.AppendSid(string.Format("/{0}/calendar/{1}/{2}/{3}",
+            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}/{2}/{3}",
                 owner.Key, year, month, day));
         }
 
-        private static string BuildMonthUri(Primitive owner, int year, int month)
+        private static string BuildMonthUri(Core core, Primitive owner, int year, int month)
         {
-            return Linker.AppendSid(string.Format("/{0}/calendar/{1}/{2}",
+            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}/{2}",
                 owner.Key, year, month));
         }
 
-        private static string BuildYearUri(Primitive owner, int year)
+        private static string BuildYearUri(Core core, Primitive owner, int year)
         {
-            return Linker.AppendSid(string.Format("/{0}/calendar/{1}",
+            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}",
                 owner.Key, year));
         }
 
@@ -372,8 +372,8 @@ namespace BoxSocial.Applications.Calendar
 
             page.template.Parse("CURRENT_YEAR", year.ToString());
 
-            page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(owner, year - 1));
-            page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(owner, year + 1));
+            page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(core, owner, year - 1));
+            page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(core, owner, year + 1));
 
             for (int i = 1; i <= 12; i++)
             {
@@ -387,23 +387,23 @@ namespace BoxSocial.Applications.Calendar
 
             if (month < 1 || month > 12)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
             // 15 year window
             if (year < DateTime.Now.Year - 5 || year > DateTime.Now.Year + 10)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
-            page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+            page.template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
             page.template.Parse("CURRENT_YEAR", year.ToString());
-            page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
-            page.template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(owner, YearOfNextMonth(year, month), NextMonth(month)));
+            page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
+            page.template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(core, owner, YearOfNextMonth(year, month), NextMonth(month)));
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1))));
@@ -501,7 +501,7 @@ namespace BoxSocial.Applications.Calendar
             List<string[]> calendarPath = new List<string[]>();
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
-            calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
+            calendarPath.Add(new string[] { month.ToString(), core.Functions.IntToMonth(month) });
             owner.ParseBreadCrumbs(calendarPath);
         }
 
@@ -511,21 +511,21 @@ namespace BoxSocial.Applications.Calendar
 
             if (month < 1 || month > 12)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
             if (day < 1 || day > DateTime.DaysInMonth(year, month))
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
             page.template.Parse("CURRENT_DAY", day.ToString());
-            page.template.Parse("CURRENT_MONTH", Functions.IntToMonth(month));
+            page.template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
             page.template.Parse("CURRENT_YEAR", year.ToString());
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", day)));
@@ -570,7 +570,7 @@ namespace BoxSocial.Applications.Calendar
             List<string[]> calendarPath = new List<string[]>();
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
-            calendarPath.Add(new string[] { month.ToString(), Functions.IntToMonth(month) });
+            calendarPath.Add(new string[] { month.ToString(), core.Functions.IntToMonth(month) });
             calendarPath.Add(new string[] { day.ToString(), day.ToString() });
             owner.ParseBreadCrumbs(calendarPath);
         }
@@ -579,7 +579,7 @@ namespace BoxSocial.Applications.Calendar
         {
             VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
             dayVariableCollection.Parse("DATE", day.ToString());
-            dayVariableCollection.Parse("URI", Calendar.BuildDateUri(owner, year, month, day));
+            dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year, month, day));
             bool hasEvents = false;
 
             List<Event> expired = new List<Event>();

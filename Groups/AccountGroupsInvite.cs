@@ -74,7 +74,7 @@ namespace BoxSocial.Groups
 
                 if (!thisGroup.IsGroupMember(LoggedInMember))
                 {
-                    Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
+                    core.Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                     return;
                 }
 
@@ -113,7 +113,7 @@ namespace BoxSocial.Groups
 
                     if (!thisGroup.IsGroupMember(LoggedInMember))
                     {
-                        Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
+                        core.Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                         return;
                     }
 
@@ -131,15 +131,15 @@ namespace BoxSocial.Groups
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
                             emailTemplate.Parse("GROUP_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("U_GROUP", Linker.StripSid(thisGroup.UriStubAbsolute));
-                            emailTemplate.Parse("U_JOIN", Linker.StripSid(Linker.AppendAbsoluteSid(thisGroup.JoinUri)));
+                            emailTemplate.Parse("U_GROUP", core.Uri.StripSid(thisGroup.UriStubAbsolute));
+                            emailTemplate.Parse("U_JOIN", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(thisGroup.JoinUri)));
 
                             ApplicationEntry ae = Application.GetExecutingApplication(core, LoggedInMember);
                             ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), string.Format("[url={0}]Join {1}[/url]",
-                                Linker.StripSid(Linker.AppendAbsoluteSid(thisGroup.JoinUri)), thisGroup.TitleName), emailTemplate);
+                                core.Uri.StripSid(core.Uri.AppendAbsoluteSid(thisGroup.JoinUri)), thisGroup.TitleName), emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);
-                            Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");
+                            core.Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");
                         }
                         else
                         {

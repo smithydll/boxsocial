@@ -96,7 +96,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupOperator(LoggedInMember))
             {
-                Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
+                core.Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
             }
             else
@@ -105,7 +105,7 @@ namespace BoxSocial.Groups
                         thisGroup.GroupId, Mysql.Escape(css.ToString())));
 
                 SetRedirectUri(thisGroup.Uri);
-                Display.ShowMessage("Group Style Saved", "You have successfully changed the group style.");
+                core.Display.ShowMessage("Group Style Saved", "You have successfully changed the group style.");
             }
         }
     }

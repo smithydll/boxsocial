@@ -58,7 +58,7 @@ namespace BoxSocial.FrontEnd
             // create a new confimation code
             Confirmation confirm = Confirmation.Create(core, session.SessionId, captchaString, 2);
 
-            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+            template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -66,7 +66,7 @@ namespace BoxSocial.FrontEnd
             if (session.IsLoggedIn == false)
             {
                 template.Parse("REDIRECT_URI", "/sign-in/?redirect=/groups/create");
-                Display.ShowMessage("Not Logged In", "You must be logged in to create a group.");
+                core.Display.ShowMessage("Not Logged In", "You must be logged in to create a group.");
                 return;
             }
 
@@ -219,7 +219,7 @@ namespace BoxSocial.FrontEnd
 
                         //Response.Redirect("/", true);
                         template.Parse("REDIRECT_URI", newGroup.Uri);
-                        Display.ShowMessage("Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
+                        core.Display.ShowMessage("Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
                         return; /* stop processing the display of this page */
                     }
                 }

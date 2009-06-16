@@ -36,21 +36,18 @@ namespace BoxSocial.Internals
     /// <summary>
     /// Summary description for Functions
     /// </summary>
-    public static class Functions
+    public class Functions
     {
-        internal static Core core;
-        private static NumberFormatInfo numberFormatInfo;
-        private static List<string> itemTypes = new List<string>();
+        private Core core;
+        private NumberFormatInfo numberFormatInfo;
+        private List<string> itemTypes = new List<string>();
         private static string selected = " selected=\"selected\"";
         private static string disabled = " disabled=\"disabled\"";
         private static string boxChecked = " checked=\"checked\"";
 
-        public static Core Core
+        public Functions(Core core)
         {
-            set
-            {
-                core = value;
-            }
+            this.core = core;
         }
 
         public static bool CheckPageNameValid(string userName)
@@ -497,7 +494,7 @@ namespace BoxSocial.Internals
             return selectBox.ToString();
         }
 
-        public static string IntToMonth(int month)
+        public string IntToMonth(int month)
         {
             switch (month)
             {
@@ -530,14 +527,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void Generate404()
+        public void Generate404()
         {
             HttpContext.Current.Response.StatusCode = 404;
             core.template.SetTemplate("404.html");
             core.EndResponse();
         }
 
-        public static void Generate404(bool customTemplate)
+        public void Generate404(bool customTemplate)
         {
             if (!customTemplate)
             {
@@ -550,14 +547,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void Generate403()
+        public void Generate403()
         {
             HttpContext.Current.Response.StatusCode = 403;
             core.template.SetTemplate("403.html");
             core.EndResponse();
         }
 
-        public static void Generate403(bool customTemplate)
+        public void Generate403(bool customTemplate)
         {
             if (!customTemplate)
             {
@@ -570,7 +567,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void ThrowError()
+        public void ThrowError()
         {
             core.template.SetTemplate("1202.html");
             core.EndResponse();
@@ -598,7 +595,7 @@ namespace BoxSocial.Internals
             return output;
         }
 
-        public static string LargeIntegerToString(long num)
+        public string LargeIntegerToString(long num)
         {
             if (numberFormatInfo == null)
             {
@@ -608,12 +605,12 @@ namespace BoxSocial.Internals
             return num.ToString("#,0", numberFormatInfo);
         }
 
-        public static string LargeIntegerToString(int num)
+        public string LargeIntegerToString(int num)
         {
             return LargeIntegerToString((long)num);
         }
 
-        public static string LargeIntegerToString(short num)
+        public string LargeIntegerToString(short num)
         {
             return LargeIntegerToString((long)num);
         }

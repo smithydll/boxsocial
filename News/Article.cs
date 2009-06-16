@@ -225,18 +225,18 @@ namespace BoxSocial.Applications.News
 			}
 			catch (InvalidArticleException)
 			{
-				Functions.Generate404();
+                core.Functions.Generate404();
 			}
-			
-			Display.ParseBbcode(page.template, "ARTICLE_BODY", article.ArticleBody);
+
+            core.Display.ParseBbcode(page.template, "ARTICLE_BODY", article.ArticleBody);
             page.template.Parse("ARTICLE_TITLE", article.ArticleSubject);
 			page.template.Parse("ARTICLE_U_ARTICLE", article.Uri);
 			page.template.Parse("ARTICLE_U_POSTER", article.Poster.Uri);
 			page.template.Parse("ARTICLE_USERNAME", article.Poster.DisplayName);
 			page.template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
 			page.template.Parse("ARTICLE_DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
-			
-			Display.ParsePagination(page.template, "PAGINATION", article.Uri, p, (int)Math.Ceiling((double)article.Comments / 10), false);
+
+            core.Display.ParsePagination(page.template, "PAGINATION", article.Uri, p, (int)Math.Ceiling((double)article.Comments / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });
@@ -246,7 +246,7 @@ namespace BoxSocial.Applications.News
 			
 
             page.template.Parse("CAN_COMMENT", "TRUE");
-            Display.DisplayComments(page.template, page.ThisGroup, article);
+            core.Display.DisplayComments(page.template, page.ThisGroup, article);
 		}
     }
 

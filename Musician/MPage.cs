@@ -70,7 +70,7 @@ namespace BoxSocial.Musician
             }
             catch (InvalidMusicianException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace BoxSocial.Musician
                 {
                     if (((Musician)e.Owner).IsMusicianMember(core.session.LoggedInMember))
                     {
-                        template.Parse("U_MUSICIAN_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
+                        template.Parse("U_MUSICIAN_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
                     }
                 }
 

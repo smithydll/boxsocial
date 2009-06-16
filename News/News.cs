@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.News
             {
                 VariableCollection articleVariableCollection = page.template.CreateChild("news_list");
 
-				Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
+                core.Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
                 articleVariableCollection.Parse("TITLE", article.ArticleSubject);
 				articleVariableCollection.Parse("U_ARTICLE", article.Uri);
 				articleVariableCollection.Parse("U_POSTER", article.Poster.Uri);
@@ -94,8 +94,8 @@ namespace BoxSocial.Applications.News
 				articleVariableCollection.Parse("COMMENTS", article.Comments.ToString());
 				articleVariableCollection.Parse("DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
             }
-			
-			Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.ThisGroup.Info.NewsArticles / 10), false);
+
+            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.ThisGroup.Info.NewsArticles / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });

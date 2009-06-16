@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             get
             {
-                return GuestBook.Uri(owner);
+                return GuestBook.Uri(core, owner);
             }
         }
 
@@ -66,8 +66,8 @@ namespace BoxSocial.Applications.GuestBook
 
         public string BuildConversationUri(User user)
         {
-            return Linker.AppendSid(string.Format("{0}/{1}",
-                    Linker.StripSid(Uri), user.UserName));
+            return core.Uri.AppendSid(string.Format("{0}/{1}",
+                    core.Uri.StripSid(Uri), user.UserName));
         }
 
         #region ICommentableItem Members

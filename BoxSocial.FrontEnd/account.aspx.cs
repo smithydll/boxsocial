@@ -168,7 +168,7 @@ namespace BoxSocial.FrontEnd
 					}
                 }
 
-                HttpContext.Current.Response.Redirect(Linker.BuildLoginUri(Linker.StripSid(Linker.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
+                HttpContext.Current.Response.Redirect(core.Uri.BuildLoginUri(core.Uri.StripSid(core.Uri.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
                 return;
             }
 
@@ -236,7 +236,7 @@ namespace BoxSocial.FrontEnd
                         accountModule.DisplayError("");
 
                         core.LoadUserProfile(ae.CreatorId);
-                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title  + "` at ZinZam.com", ex.ToString());
+                        core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
 
                     if (ae != null && ae.HasJavascript)
@@ -261,7 +261,7 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
-                    modulesVariableCollection.Parse("URI", asm.BuildUri());
+                    modulesVariableCollection.Parse("URI", asm.BuildUri(core));
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

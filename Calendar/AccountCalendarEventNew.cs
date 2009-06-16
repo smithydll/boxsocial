@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (id < 1)
                 {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
 
                 try
@@ -154,7 +154,7 @@ namespace BoxSocial.Applications.Calendar
                 }
                 catch (InvalidEventException)
                 {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 }
             }
 
@@ -175,8 +175,8 @@ namespace BoxSocial.Applications.Calendar
 
             for (int i = 1; i < 13; i++)
             {
-                monthsStartSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
-                monthsEndSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
+                monthsStartSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
+                monthsEndSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
             }
 
             monthsStartSelectBox.SelectedKey = startDate.Month.ToString();
@@ -242,7 +242,7 @@ namespace BoxSocial.Applications.Calendar
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            Display.ParsePermissionsBox(template, "S_EVENT_PERMS", eventAccess, permissions);
+            core.Display.ParsePermissionsBox(template, "S_EVENT_PERMS", eventAccess, permissions);
 
             template.Parse("S_SUBJECT", subject);
             template.Parse("S_LOCATION", location);
@@ -364,7 +364,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
 
@@ -384,8 +384,8 @@ namespace BoxSocial.Applications.Calendar
 					}
                 }
 
-                SetRedirectUri(Event.BuildEventUri(calendarEvent));
-                Display.ShowMessage("Event Created", "You have successfully created a new event.");
+                SetRedirectUri(Event.BuildEventUri(core, calendarEvent));
+                core.Display.ShowMessage("Event Created", "You have successfully created a new event.");
             }
             else
             {
@@ -424,8 +424,8 @@ namespace BoxSocial.Applications.Calendar
 					}
                 }
 
-                SetRedirectUri(Event.BuildEventUri(calendarEvent));
-                Display.ShowMessage("Event Saved", "You have successfully saved your changes to the event.");
+                SetRedirectUri(Event.BuildEventUri(core, calendarEvent));
+                core.Display.ShowMessage("Event Saved", "You have successfully saved your changes to the event.");
             }
         }
     }

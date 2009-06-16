@@ -582,7 +582,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Linker.AppendAbsoluteSid(UriStub);
+                return core.Uri.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -590,7 +590,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Linker.AppendSid(UriStub);
+                return core.Uri.AppendSid(UriStub);
             }
         }
 
@@ -602,7 +602,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                return Linker.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
+                return core.Uri.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
                     assemblyName, typeId, id));
             }
         }
@@ -862,7 +862,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.EmailNotifications)
                 {
-                    Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
+                    core.Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
                 }
             }
         }
@@ -878,9 +878,9 @@ namespace BoxSocial.Internals
                     RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
 
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
-                    emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
+                    emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
 
-                    Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
+                    core.Email.SendEmail(receiver.AlternateEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
                 }
             }
         }
@@ -1021,12 +1021,12 @@ namespace BoxSocial.Internals
 
             if (page.AnApplication.HasInstalled(viewer))
             {
-                core.template.Parse("U_UNINSTALL", Linker.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                core.template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
                     page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
             }
             else
             {
-                core.template.Parse("U_INSTALL", Linker.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                core.template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
                     page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
             }
 

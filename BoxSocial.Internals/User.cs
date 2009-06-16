@@ -1326,7 +1326,7 @@ namespace BoxSocial.Internals
             emailTemplate.Parse("USERNAME", userName);
             emailTemplate.Parse("PASSWORD", passwordClearText);
 
-            Email.SendEmail(eMail, "Welcome to ZinZam (Account Activation E-mail)", emailTemplate.ToString());
+            core.Email.SendEmail(eMail, "Welcome to ZinZam (Account Activation E-mail)", emailTemplate.ToString());
 
             return newUser;
         }
@@ -1939,11 +1939,11 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    return Linker.AppendAbsoluteSid(UriStub);
+                    return core.Uri.AppendAbsoluteSid(UriStub);
                 }
                 else
                 {
-                    return Linker.AppendAbsoluteSid(string.Format("http://{0}/",
+                    return core.Uri.AppendAbsoluteSid(string.Format("http://{0}/",
                             domain));
                 }
             }
@@ -1953,7 +1953,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Linker.AppendSid(UriStub);
+                return core.Uri.AppendSid(UriStub);
             }
         }
 
@@ -1980,7 +1980,7 @@ namespace BoxSocial.Internals
 
             if (!page.ProfileOwner.ProfileAccess.CanRead)
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -1997,20 +1997,20 @@ namespace BoxSocial.Internals
 
             core.template.Parse("USER_SEXUALITY", page.ProfileOwner.Sexuality);
             core.template.Parse("USER_GENDER", page.ProfileOwner.Gender);
-            Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
-            Display.ParseBbcode("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
+            core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
+            core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
             core.template.Parse("USER_AGE", age);
             core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate));
             core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true));
-            core.template.Parse("USER_PROFILE_VIEWS", Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews));
-            core.template.Parse("USER_SUBSCRIPTIONS", Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions));
+            core.template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews));
+            core.template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions));
             core.template.Parse("USER_COUNTRY", page.ProfileOwner.Country);
             core.template.Parse("USER_RELIGION", page.ProfileOwner.Profile.Religion);
             core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
 
             core.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
-            core.template.Parse("U_GALLERY", Linker.BuildGalleryUri(page.ProfileOwner));
-            core.template.Parse("U_FRIENDS", Linker.BuildFriendsUri(page.ProfileOwner));
+            core.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.ProfileOwner));
+            core.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.ProfileOwner));
 
             core.template.Parse("IS_PROFILE", "TRUE");
 
@@ -2034,8 +2034,8 @@ namespace BoxSocial.Internals
 
             if (core.LoggedInMemberId > 0)
             {
-                core.template.Parse("U_ADD_FRIEND", Linker.BuildAddFriendUri(page.ProfileOwner.UserId));
-                core.template.Parse("U_BLOCK_USER", Linker.BuildBlockUserUri(page.ProfileOwner.UserId));
+                core.template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.ProfileOwner.UserId));
+                core.template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.ProfileOwner.UserId));
             }
 
             string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
@@ -2057,7 +2057,7 @@ namespace BoxSocial.Internals
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
             /* pages */
-            Display.ParsePageList(page.ProfileOwner, true);
+            core.Display.ParsePageList(page.ProfileOwner, true);
 
             /* status */
             StatusMessage statusMessage = StatusFeed.GetLatest(core, page.ProfileOwner);

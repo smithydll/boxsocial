@@ -110,12 +110,12 @@ namespace BoxSocial.Applications.Calendar
                 db.Query(uEventQuery);
 
                 SetRedirectUri(calendarEvent.Uri);
-                Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");
+                core.Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");
                 return;
             }
             else
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
             }
         }

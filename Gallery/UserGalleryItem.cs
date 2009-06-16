@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Gallery
             UserGalleryItem myGalleryItem = new UserGalleryItem(core, owner, itemId);
             if (Access.FriendsCanRead(myGalleryItem.Permissions))
             {
-                Action action = AppInfo.Entry.GetMostRecentFeedAction(owner);
+                Action action = core.CallingApplication.GetMostRecentFeedAction(owner);
 
                 bool update = false;
                 if (action != null)
@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (Regex.Matches(action.Body, Regex.Escape("[/thumb]")).Count < 4)
                     {
-                        AppInfo.Entry.UpdateFeedAction(action, "uploaded new photos", string.Format("{0} [iurl={1}][thumb]{2}/{3}[/thumb][/iurl]",
+                        core.CallingApplication.UpdateFeedAction(action, "uploaded new photos", string.Format("{0} [iurl={1}][thumb]{2}/{3}[/thumb][/iurl]",
                             action.Body, myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
                     }
                     else
@@ -127,7 +127,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    AppInfo.Entry.PublishToFeed(owner, "uploaded a new photo", string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
+                    core.CallingApplication.PublishToFeed(owner, "uploaded a new photo", string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
                         myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
                 }
             }
@@ -140,7 +140,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public override string BuildUri()
         {
-            return Linker.AppendSid(string.Format("{0}gallery/{1}/{2}",
+            return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
                 ((User)owner).UriStub, parentPath, path));
         }
 
@@ -150,7 +150,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public string BuildDeleteUri()
         {
-            return Linker.BuildAccountSubModuleUri("galleries", "delete", Id, true);
+            return core.Uri.BuildAccountSubModuleUri("galleries", "delete", Id, true);
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public string BuildTagUri()
         {
-            return Linker.BuildAccountSubModuleUri("galleries", "tag", Id, true);
+            return core.Uri.BuildAccountSubModuleUri("galleries", "tag", Id, true);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}images/_tiny/{1}",
+                return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
                 owner.UriStub, path));
             }
         }

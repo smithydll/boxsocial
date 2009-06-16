@@ -154,7 +154,7 @@ namespace BoxSocial.FrontEnd
 
             if (!musician.IsMusicianMember(loggedInMember))
             {
-                Display.ShowMessage("Unauthorised", "You are unauthorised to manage this musician.");
+                core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this musician.");
             }
 
             template.Parse("ACCOUNT_TITLE", "Musician Control Panel :: " + musician.DisplayName);
@@ -205,7 +205,7 @@ namespace BoxSocial.FrontEnd
                         ApplicationEntry ae = new ApplicationEntry(core, musician, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
+                        core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
                 }
             }
@@ -223,7 +223,7 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
-                    modulesVariableCollection.Parse("URI", asm.BuildUri());
+                    modulesVariableCollection.Parse("URI", asm.BuildUri(core));
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

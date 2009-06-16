@@ -76,7 +76,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupOperator(LoggedInMember))
             {
-                Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
+                core.Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
             }
 
@@ -157,7 +157,7 @@ namespace BoxSocial.Groups
             }
             catch
             {
-                Display.ShowMessage("Error", "An error has occured, go back.");
+                core.Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -173,7 +173,7 @@ namespace BoxSocial.Groups
                     type = "PRIVATE";
                     break;
                 default:
-                    Display.ShowMessage("Error", "An error has occured, go back.");
+                    core.Display.ShowMessage("Error", "An error has occured, go back.");
                     return;
             }
 
@@ -181,7 +181,7 @@ namespace BoxSocial.Groups
 
             if (!thisGroup.IsGroupOperator(LoggedInMember))
             {
-                Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
+                core.Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;
             }
             else
@@ -217,7 +217,7 @@ namespace BoxSocial.Groups
                     thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type), Mysql.Escape(homepage)));
 
                 SetRedirectUri(thisGroup.Uri);
-                Display.ShowMessage("Group Saved", "You have successfully edited the group.");
+                core.Display.ShowMessage("Group Saved", "You have successfully edited the group.");
                 return;
             }
         }

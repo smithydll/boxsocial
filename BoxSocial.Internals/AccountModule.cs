@@ -118,7 +118,7 @@ namespace BoxSocial.Internals
         public void CreateTemplate()
         {
             template = new Template("1301.html");
-            template.Parse("U_ACCOUNT", Linker.AppendSid(Owner.AccountUriStub, true));
+            template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
@@ -234,7 +234,7 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(Request.QueryString["sid"]))
                 {
-                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
 
@@ -246,7 +246,7 @@ namespace BoxSocial.Internals
 
                 if (db.Query(query).Rows.Count == 0)
                 {
-                    Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
             }
@@ -273,7 +273,7 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri()
         {
-            return Linker.AppendSid(string.Format("{0}{1}",
+            return core.Uri.AppendSid(string.Format("{0}{1}",
                 Owner.AccountUriStub, Key));
         }
 
@@ -284,18 +284,18 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return Linker.AppendSid(string.Format("{0}{1}/{2}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
                 Owner.AccountUriStub, Key, sub));
         }
 
         public string BuildModuleUri(string sub, string mode, bool appendSid)
         {
-            return Linker.BuildAccountSubModuleUri(Owner, Key, sub, mode, appendSid);
+            return core.Uri.BuildAccountSubModuleUri(Owner, Key, sub, mode, appendSid);
         }
 
         public string BuildModuleUri(string sub, string mode, long id)
         {
-            return Linker.BuildAccountSubModuleUri(Owner, Key, sub, mode, id);
+            return core.Uri.BuildAccountSubModuleUri(Owner, Key, sub, mode, id);
         }
 
         /// <summary>
@@ -322,13 +322,13 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return Linker.AppendSid(string.Format("{0}{1}/{2}{3}",
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}{3}",
                 Owner.AccountUriStub, Key, sub, argumentList));
         }
 
         public string BuildUri(string module, string sub, params string[] arguments)
         {
-            return Linker.BuildAccountSubModuleUri(Owner, module, sub, false, arguments);
+            return core.Uri.BuildAccountSubModuleUri(Owner, module, sub, false, arguments);
         }
 
         /// <summary>

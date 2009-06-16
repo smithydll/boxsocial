@@ -264,8 +264,8 @@ namespace BoxSocial.Applications.Calendar
 
             if (Access.FriendsCanRead(myTask.Permissions))
             {
-                AppInfo.Entry.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
-                    Task.BuildTaskUri(myTask), myTask.Topic));
+                core.CallingApplication.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
+                    Task.BuildTaskUri(core, myTask), myTask.Topic));
             }
 
             return myTask;
@@ -277,7 +277,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", true,
+                page.template.Parse("U_NEW_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
@@ -315,8 +315,8 @@ namespace BoxSocial.Applications.Calendar
                 taskVariableCollection.Parse("DATE", taskDue.ToShortDateString() + " (" + taskDue.ToShortTimeString() + ")");
                 taskVariableCollection.Parse("TOPIC", calendarTask.Topic);
                 taskVariableCollection.Parse("ID", calendarTask.Id.ToString());
-                taskVariableCollection.Parse("URI", Task.BuildTaskUri(calendarTask));
-                taskVariableCollection.Parse("U_MARK_COMPLETE", Task.BuildTaskMarkCompleteUri(calendarTask));
+                taskVariableCollection.Parse("URI", Task.BuildTaskUri(core, calendarTask));
+                taskVariableCollection.Parse("U_MARK_COMPLETE", Task.BuildTaskMarkCompleteUri(core, calendarTask));
 
                 if (calendarTask.Status == TaskStatus.Overdue)
                 {
@@ -356,11 +356,11 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", true,
+                page.template.Parse("U_NEW_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
-                page.template.Parse("U_EDIT_TASK", Linker.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
+                page.template.Parse("U_EDIT_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
             }
 
             try
@@ -371,7 +371,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (!calendarTask.TaskAccess.CanRead)
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -388,7 +388,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
             }
         }
 
@@ -400,28 +400,28 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public static string BuildTaskUri(Task calendarTask)
+        public static string BuildTaskUri(Core core, Task calendarTask)
         {
-            return Linker.AppendSid(string.Format("{0}calendar/task/{1}",
+            return core.Uri.AppendSid(string.Format("{0}calendar/task/{1}",
                 calendarTask.owner.UriStub, calendarTask.TaskId));
         }
 
-        public static string BuildTasksUri(Primitive owner)
+        public static string BuildTasksUri(Core core, Primitive owner)
         {
-            return Linker.AppendSid(string.Format("{0}calendar/tasks",
+            return core.Uri.AppendSid(string.Format("{0}calendar/tasks",
                 owner.UriStub));
         }
 
-        public static string BuildTaskMarkCompleteUri(Task calendarTask)
+        public static string BuildTaskMarkCompleteUri(Core core, Task calendarTask)
         {
-            return Linker.BuildAccountSubModuleUri("calendar", "mark-complete", calendarTask.Id, true);
+            return core.Uri.BuildAccountSubModuleUri("calendar", "mark-complete", calendarTask.Id, true);
         }
 
         public override string Uri
         {
             get
             {
-                return Task.BuildTaskUri(this);
+                return Task.BuildTaskUri(core, this);
             }
         }
 

@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Profile
 
             for (int i = 1; i < 13; i++)
             {
-                dobMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), Functions.IntToMonth(i)));
+                dobMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
             }
 
             if (LoggedInMember.DateOfBirth != null)
@@ -156,7 +156,7 @@ namespace BoxSocial.Applications.Profile
             LoggedInMember.Profile.Update();
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Information Saved", "Your information has been saved in the database.");
+            core.Display.ShowMessage("Information Saved", "Your information has been saved in the database.");
         }
     }
 }

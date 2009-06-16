@@ -154,7 +154,7 @@ namespace BoxSocial.FrontEnd
 
             if (!thisGroup.IsGroupOperator(loggedInMember))
             {
-                Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
+                core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
             }
 
             template.Parse("ACCOUNT_TITLE", "Group Control Panel :: " + thisGroup.DisplayName);
@@ -205,7 +205,7 @@ namespace BoxSocial.FrontEnd
                         ApplicationEntry ae = new ApplicationEntry(core, thisGroup, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
+                        core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
                 }
             }
@@ -223,7 +223,7 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
-                    modulesVariableCollection.Parse("URI", asm.BuildUri());
+                    modulesVariableCollection.Parse("URI", asm.BuildUri(core));
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

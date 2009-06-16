@@ -48,11 +48,11 @@ namespace BoxSocial.FrontEnd
 
                 string sessionId = core.session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 
-                Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + path, true));
+                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + path, true));
             }
             catch (InvalidDnsRecordException)
             {
-                Display.ShowMessage("Error", "Error starting remote session");
+                core.Display.ShowMessage("Error", "Error starting remote session");
             }
         }
     }

@@ -481,7 +481,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return Linker.AppendAbsoluteSid(UriStub);
+                return core.Uri.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -489,7 +489,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return Linker.AppendSid(UriStub);
+                return core.Uri.AppendSid(UriStub);
             }
         }
 

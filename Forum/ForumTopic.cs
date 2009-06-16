@@ -471,7 +471,7 @@ namespace BoxSocial.Applications.Forum
             if (rowsUpdated != 1)
             {
                 core.db.RollBackTransaction();
-                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
             if (forum.Id > 0)
@@ -499,7 +499,7 @@ namespace BoxSocial.Applications.Forum
                 if (rowsUpdated < 1)
                 {
                     core.db.RollBackTransaction();
-                    Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                    core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
                 }
             }
 
@@ -514,7 +514,7 @@ namespace BoxSocial.Applications.Forum
             if (rowsUpdated != 1)
             {
                 core.db.RollBackTransaction();
-                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
             return topic;
@@ -539,7 +539,7 @@ namespace BoxSocial.Applications.Forum
             if (rowsUpdated != 1)
             {
                 db.RollBackTransaction();
-                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
             if (forumId > 0)
@@ -566,7 +566,7 @@ namespace BoxSocial.Applications.Forum
                 if (rowsUpdated < 1)
                 {
                     db.RollBackTransaction();
-                    Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                    core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
                 }
             }
 
@@ -580,7 +580,7 @@ namespace BoxSocial.Applications.Forum
             if (rowsUpdated != 1)
             {
                 db.RollBackTransaction();
-                Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 			
 			uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
@@ -666,12 +666,12 @@ namespace BoxSocial.Applications.Forum
 
                 if (forumId == 0)
                 {
-                    return Linker.AppendSid(string.Format("{0}forum/topic-{1}",
+                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}",
                         Forum.Owner.UriStub, topicId));
                 }
                 else
                 {
-                    return Linker.AppendSid(string.Format("{0}forum/{1}/topic-{2}",
+                    return core.Uri.AppendSid(string.Format("{0}forum/{1}/topic-{2}",
                         Forum.Owner.UriStub, Forum.Id, topicId));
                 }
 
@@ -682,7 +682,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}forum/post?t={1}&mode=reply",
+                return core.Uri.AppendSid(string.Format("{0}forum/post?t={1}&mode=reply",
                     Forum.Owner.UriStub, topicId));
             }
         }
@@ -756,7 +756,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (!thisForum.ForumAccess.CanRead)
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -819,7 +819,7 @@ namespace BoxSocial.Applications.Forum
 					postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
 					//postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
-                    Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
+                    core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
 					postVariableCollection.Parse("U_USER", post.Poster.Uri);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[post.UserId].Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", postersList[post.UserId].UserIcon);
@@ -861,7 +861,7 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 
-                Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
+                core.Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "forum", "Forum" });

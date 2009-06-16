@@ -33,27 +33,27 @@ namespace BoxSocial.Applications.GuestBook
     public class GuestBook
     {
 
-        public static string Uri(User member)
+        public static string Uri(Core core, User member)
         {
-            return Linker.AppendSid(string.Format("{0}profile/comments",
+            return core.Uri.AppendSid(string.Format("{0}profile/comments",
                 member.UriStub));
         }
 
-        public static string Uri(UserGroup thisGroup)
+        public static string Uri(Core core, UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("{0}comments",
+            return core.Uri.AppendSid(string.Format("{0}comments",
                 thisGroup.UriStub));
         }
 
-        public static string Uri(Network theNetwork)
+        public static string Uri(Core core, Network theNetwork)
         {
-            return Linker.AppendSid(string.Format("{0}comments",
+            return core.Uri.AppendSid(string.Format("{0}comments",
                 theNetwork.UriStub));
         }
 
-        public static string Uri(ApplicationEntry anApplication)
+        public static string Uri(Core core, ApplicationEntry anApplication)
         {
-            return Linker.AppendSid(string.Format("{0}comments",
+            return core.Uri.AppendSid(string.Format("{0}comments",
                 anApplication.UriStub));
         }
 
@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (!page.ProfileOwner.ProfileAccess.CanRead)
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -86,9 +86,9 @@ namespace BoxSocial.Applications.GuestBook
             breadCrumbParts.Add(new string[] { "profile", "Profile" });
             breadCrumbParts.Add(new string[] { "comments", "Comments" });
 
-            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, UserGuestBookHook);
+            core.Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, UserGuestBookHook);
             page.template.Parse("L_GUESTBOOK", page.ProfileOwner.DisplayNameOwnership + " Guest Book");
-            Display.ParsePagination(Linker.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.ProfileOwner), p, (int)Math.Ceiling(page.ProfileOwner.ProfileComments / 10.0));
             page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
         }
 
@@ -104,7 +104,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (!page.ProfileOwner.ProfileAccess.CanRead)
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -151,12 +151,12 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters, comments, UserGuestBookHook);
+            core.Display.DisplayComments(page.template, page.ProfileOwner, page.ProfileOwner, commenters, comments, UserGuestBookHook);
 
             //page.template.Parse("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.Parse("L_GUESTBOOK", page.ProfileOwner.DisplayNameOwnership + " Guest Book");
-            Display.ParsePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0));
             page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
         }
 
@@ -188,11 +188,11 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(page.template, page.ThisGroup, page.ThisGroup);
+            core.Display.DisplayComments(page.template, page.ThisGroup, page.ThisGroup);
             //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("comments"));
             page.template.Parse("L_GUESTBOOK", page.ThisGroup.DisplayNameOwnership + " Guest Book");
-            Display.ParsePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0));
             page.ThisGroup.ParseBreadCrumbs("comments");
             //Prose.GetString("GuestBook");
         }
@@ -211,11 +211,11 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(page.template, page.TheNetwork, page.TheNetwork);
+            core.Display.DisplayComments(page.template, page.TheNetwork, page.TheNetwork);
             //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("comments"));
             page.template.Parse("L_GUESTBOOK", page.TheNetwork.DisplayNameOwnership + " Guest Book");
-            Display.ParsePagination(GuestBook.Uri(page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0));
             page.TheNetwork.ParseBreadCrumbs("comments");
         }
 
@@ -230,11 +230,11 @@ namespace BoxSocial.Applications.GuestBook
                 page.template.Parse("CAN_COMMENT", "TRUE");
             }
 
-            Display.DisplayComments(page.template, page.AnApplication, page.AnApplication);
+            core.Display.DisplayComments(page.template, page.AnApplication, page.AnApplication);
             //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.AnApplication.GenerateBreadCrumbs("comments"));
             page.template.Parse("L_GUESTBOOK", page.AnApplication.DisplayNameOwnership + " Guest Book");
-            Display.ParsePagination(GuestBook.Uri(page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0));
             page.AnApplication.ParseBreadCrumbs("comments");
         }
     }

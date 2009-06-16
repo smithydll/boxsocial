@@ -95,7 +95,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (id == 0)
                 {
-                    Functions.Generate404();
+                    core.Functions.Generate404();
                     return;
                 }
 
@@ -112,7 +112,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 catch (InvalidForumMemberRankException)
                 {
-                    Functions.Generate404();
+                    core.Functions.Generate404();
                     return;
                 }
             }
@@ -144,14 +144,14 @@ namespace BoxSocial.Applications.Forum
 				theRank.Update();
 				
 				SetRedirectUri(BuildUri("ranks"));
-				Display.ShowMessage("New Updated", "The rank has been updated.");
+                core.Display.ShowMessage("New Updated", "The rank has been updated.");
 			}
 			else
 			{
 				// New Rank
 				ForumMemberRank newRank = ForumMemberRank.Create(core, Owner, title, posts, special, colour);
 				SetRedirectUri(BuildUri("ranks"));
-				Display.ShowMessage("New Rank Created", "The new rank has been created.");
+                core.Display.ShowMessage("New Rank Created", "The new rank has been created.");
 			}
         }
     }

@@ -62,6 +62,22 @@ namespace BoxSocial.Internals
         public event EventHandler ItemUpdated;
         public event EventHandler ItemDeleted;
 
+        public Bbcode Bbcode
+        {
+            get
+            {
+                return core.Bbcode;
+            }
+        }
+
+        private Functions Functions
+        {
+            get
+            {
+                return core.Functions;
+            }
+        }
+
         protected Item(Core core)
         {
             this.core = core;
@@ -1192,7 +1208,7 @@ namespace BoxSocial.Internals
 	                                }
 	                                catch (Exception ex)
 	                                {
-	                                    Display.ShowMessage("Type error on load", Bbcode.Strip(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex));
+	                                    core.Display.ShowMessage("Type error on load", core.Bbcode.Strip(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + "\n\n" + ex));
 	                                }
 	                            }
 	                            else

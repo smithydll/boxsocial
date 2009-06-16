@@ -91,7 +91,7 @@ namespace BoxSocial.Applications.Gallery
                 hiddenFieldList.Add("mode", "confirm");
                 hiddenFieldList.Add("id", ugi.Id.ToString());
 
-                Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true),
+                core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true),
                     "Confirm Delete Photo",
                     string.Format("Are you sure you want to delete the photo `{0}`",
                     ugi.Path), hiddenFieldList);
@@ -124,7 +124,7 @@ namespace BoxSocial.Applications.Gallery
                         photo.Delete(core);
 
                         SetRedirectUri(BuildUri("galleries", "galleries"));
-                        Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
+                        core.Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");
                     }
                     // TODO: not photo owner exception
                     /*catch (Invalid)
@@ -135,13 +135,13 @@ namespace BoxSocial.Applications.Gallery
                     catch
                     {
                         SetRedirectUri(photo.Uri);
-                        Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                        core.Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
                         return;
                     }
                 }
                 catch (InvalidGalleryItemTypeException)
                 {
-                    Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                    core.Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
                     return;
                 }
             }

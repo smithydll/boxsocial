@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.News
 
             if (Owner is UserGroup)
             {
-                Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).Info.NewsArticles / 25.0));
+                core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).Info.NewsArticles / 25.0));
             }
         }
 	}

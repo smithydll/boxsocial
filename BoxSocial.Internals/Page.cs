@@ -1131,7 +1131,7 @@ namespace BoxSocial.Internals
             }
             catch (PageNotFoundException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
         }
 
@@ -1144,7 +1144,7 @@ namespace BoxSocial.Internals
             }
             catch (PageNotFoundException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
         }
 
@@ -1159,11 +1159,11 @@ namespace BoxSocial.Internals
                 ((User)owner).LoadProfileInfo();
             }
 
-            Display.ParsePageList(owner, true);
+            core.Display.ParsePageList(owner, true);
 
             if (!thePage.PageAccess.CanRead)
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -1172,11 +1172,11 @@ namespace BoxSocial.Internals
             core.template.Parse("PAGE_TITLE", thePage.Title);
             if (owner is User)
             {
-                Display.ParseBbcode("PAGE_BODY", thePage.Body, (User)owner);
+                core.Display.ParseBbcode("PAGE_BODY", thePage.Body, (User)owner);
             }
             else
             {
-                Display.ParseBbcode("PAGE_BODY", thePage.Body);
+                core.Display.ParseBbcode("PAGE_BODY", thePage.Body);
             }
             DateTime pageDateTime = thePage.GetModifiedDate(core.tz);
             core.template.Parse("PAGE_LAST_MODIFIED", core.tz.DateTimeToString(pageDateTime));
@@ -1247,7 +1247,7 @@ namespace BoxSocial.Internals
 
             if (thePage.PageAccess.CanEdit)
             {
-                core.template.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(owner, "pages", "write", "edit", thePage.PageId, true));
+                core.template.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(owner, "pages", "write", "edit", thePage.PageId, true));
             }
         }
 
@@ -1263,7 +1263,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}{1}",
+                return core.Uri.AppendSid(string.Format("{0}{1}",
                     owner.UriStub, FullPath));
             }
         }

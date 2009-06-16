@@ -79,7 +79,7 @@ namespace BoxSocial.Applications.Blog
             List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
 
             template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
-            template.Parse("U_NEW_BLOG_ROLL", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "new"));
+            template.Parse("U_NEW_BLOG_ROLL", core.Uri.BuildAccountSubModuleUri(ModuleKey, Key, "new"));
 
             foreach (BlogRollEntry bre in blogRollEntries)
             {
@@ -95,8 +95,8 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 breVariableCollection.Parse("URI", bre.Uri);
-                breVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "edit", bre.Id));
-                breVariableCollection.Parse("U_DELETE", Linker.BuildAccountSubModuleUri(ModuleKey, Key, "delete", bre.Id));
+                breVariableCollection.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(ModuleKey, Key, "edit", bre.Id));
+                breVariableCollection.Parse("U_DELETE", core.Uri.BuildAccountSubModuleUri(ModuleKey, Key, "delete", bre.Id));
             }
         }
 
@@ -169,7 +169,7 @@ namespace BoxSocial.Applications.Blog
                 BlogRollEntry bre = BlogRollEntry.Create(core, title, uri);
 
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Blog Roll Entry Created", "The blog roll entry has been created");
+                core.Display.ShowMessage("Blog Roll Entry Created", "The blog roll entry has been created");
             }
             else if (e.Mode == "edit")
             {
@@ -191,7 +191,7 @@ namespace BoxSocial.Applications.Blog
                 bre.Update();
 
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Blog Roll Entry Saved", "The blog roll entry has been saved");
+                core.Display.ShowMessage("Blog Roll Entry Saved", "The blog roll entry has been saved");
             }
         }
 
@@ -216,7 +216,7 @@ namespace BoxSocial.Applications.Blog
             hiddenFieldList.Add("mode", "delete");
             hiddenFieldList.Add("id", bre.Id.ToString());
 
-            Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true),
+            core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true),
                 "Confirm",
                 "Do you really want to delete this blog roll entry?",
                 hiddenFieldList);
@@ -235,7 +235,7 @@ namespace BoxSocial.Applications.Blog
 
                     bre.Delete();
                     SetRedirectUri(BuildUri());
-                    Display.ShowMessage("Blog Roll Entry Deleted", "The blog roll entry has been deleted");
+                    core.Display.ShowMessage("Blog Roll Entry Deleted", "The blog roll entry has been deleted");
                 }
                 catch (InvalidBlogEntryException)
                 {
@@ -249,7 +249,7 @@ namespace BoxSocial.Applications.Blog
             else
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Blog Roll Entry Not Deleted", "The blog roll entry has not been deleted");
+                core.Display.ShowMessage("Blog Roll Entry Not Deleted", "The blog roll entry has not been deleted");
             }
         }
     }

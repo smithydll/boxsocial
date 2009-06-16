@@ -97,8 +97,8 @@ namespace BoxSocial.Applications.Gallery
                 {
                     pg = new UserGallery(core, LoggedInMember, parentGalleryId);
 
-                    template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(pg.Id));
-                    template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(pg.Id));
+                    template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(pg.Id));
+                    template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(pg.Id));
 
                     galleryParentPath = pg.FullPath;
                 }
@@ -111,7 +111,7 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 pg = new UserGallery(core, LoggedInMember);
-                template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
+                template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(0));
             }
 
             List<Gallery> ugs = pg.GetGalleries(core);
@@ -121,12 +121,12 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = template.CreateChild("gallery_list");
 
                 galleryVariableCollection.Parse("NAME", ug.GalleryTitle);
-                galleryVariableCollection.Parse("ITEMS", Functions.LargeIntegerToString(ug.Items));
+                galleryVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(ug.Items));
 
-                galleryVariableCollection.Parse("U_MANAGE", Linker.BuildAccountSubModuleUri(ModuleKey, "galleries", ug.Id));
-                galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(LoggedInMember, ug.FullPath));
-                galleryVariableCollection.Parse("U_EDIT", Linker.BuildGalleryEditUri(ug.Id));
-                galleryVariableCollection.Parse("U_DELETE", Linker.BuildGalleryDeleteUri(ug.Id));
+                galleryVariableCollection.Parse("U_MANAGE", core.Uri.BuildAccountSubModuleUri(ModuleKey, "galleries", ug.Id));
+                galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(core, LoggedInMember, ug.FullPath));
+                galleryVariableCollection.Parse("U_EDIT", core.Uri.BuildGalleryEditUri(ug.Id));
+                galleryVariableCollection.Parse("U_DELETE", core.Uri.BuildGalleryDeleteUri(ug.Id));
             }
         }
 
@@ -157,17 +157,17 @@ namespace BoxSocial.Applications.Gallery
                         Dictionary<string, string> licenses = new Dictionary<string, string>();
                         DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
-                        Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", pg.Permissions, permissions);
+                        core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", pg.Permissions, permissions);
                     }
                     catch (InvalidGalleryException)
                     {
-                        Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                        core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", 0x3333, permissions);
+                    core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", 0x3333, permissions);
                 }
             }
             else
@@ -185,11 +185,11 @@ namespace BoxSocial.Applications.Gallery
                     Dictionary<string, string> licenses = new Dictionary<string, string>();
                     DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
 
-                    Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", ug.Permissions, permissions);
+                    core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", ug.Permissions, permissions);
                 }
                 catch (InvalidGalleryException)
                 {
-                    Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                     return;
                 }
             }
@@ -207,7 +207,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryId == 0)
             {
-                Display.ShowMessage("Cannot Delete Gallery", "No gallery specified to delete. Please go back and try again.");
+                core.Display.ShowMessage("Cannot Delete Gallery", "No gallery specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -217,11 +217,11 @@ namespace BoxSocial.Applications.Gallery
                 Gallery.Delete(core, gallery);
 
                 SetRedirectUri(BuildUri("galleries", "galleries"));
-                Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");
+                core.Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");
             }
             catch
             {
-                Display.ShowMessage("Cannot Delete Gallery", "An Error occured while trying to delete the gallery.");
+                core.Display.ShowMessage("Cannot Delete Gallery", "An Error occured while trying to delete the gallery.");
                 return;
             }
         }
@@ -241,7 +241,7 @@ namespace BoxSocial.Applications.Gallery
             }
             catch
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x01)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x01)");
                 return;
             }
 
@@ -270,13 +270,13 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (UserGallery.Create(core, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
-                            SetRedirectUri(Linker.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
-                            Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
+                            SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
+                            core.Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
                         else
                         {
-                            Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x02)");
+                            core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x02)");
                             return;
                         }
                     }
@@ -301,7 +301,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 catch (Exception ex)
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x03) " + ex.ToString());
+                    core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x03) " + ex.ToString());
                     return;
                 }
             }
@@ -318,35 +318,35 @@ namespace BoxSocial.Applications.Gallery
                         {
                             gallery.Update(core, title, slug, description, Functions.GetPermission());
 
-                            SetRedirectUri(Linker.BuildAccountSubModuleUri("galleries", "galleries", gallery.ParentId));
-                            Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");
+                            SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", gallery.ParentId));
+                            core.Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }
                         else
                         {
-                            Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
+                            core.Display.ShowMessage("Gallery Path Too Long", "The gallery path you have given is too long. Try using a shorter name or less nesting.");
                             return;
                         }
                     }
                     catch (GallerySlugNotUniqueException)
                     {
-                        Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
+                        core.Display.ShowMessage("Gallery with same name already exists", "You have tried to create a gallery with the same name of one that already exits. Go back and give the gallery a unique name.");
                         return;
                     }
                     catch (GallerySlugNotValidException)
                     {
-                        Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
+                        core.Display.ShowMessage("Gallery name invalid", "The name of the gallery you have created is invalid, please choose another name.");
                         return;
                     }
                     catch (Exception ex)
                     {
-                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x04) " + ex.ToString());
+                        core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x04) " + ex.ToString());
                         return;
                     }
                 }
                 catch
                 {
-                    Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x05)");
+                    core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x05)");
                     return;
                 }
             }

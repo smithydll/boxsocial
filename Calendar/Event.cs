@@ -285,8 +285,8 @@ namespace BoxSocial.Applications.Calendar
 
             if (Access.FriendsCanRead(myEvent.Permissions))
             {
-                AppInfo.Entry.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
-                    Event.BuildEventUri(myEvent), myEvent.subject));
+                core.CallingApplication.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
+                    Event.BuildEventUri(core, myEvent), myEvent.subject));
             }
 
             return myEvent;
@@ -354,11 +354,11 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                    emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(core, this)));
-                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(core, this)));
+                    emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));
+                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
+                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
 
-                    AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                    core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                 }
@@ -405,11 +405,11 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                        emailTemplate.Parse("U_EVENT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventUri(this)));
-                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventAcceptUri(core, this)));
-                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + Linker.StripSid(Event.BuildEventRejectUri(core, this)));
+                        emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));
+                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
+                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
 
-                        AppInfo.Entry.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                        core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                     }
@@ -499,20 +499,20 @@ namespace BoxSocial.Applications.Calendar
             return ids;
         }
 
-        public static string BuildEventUri(Event calendarEvent)
+        public static string BuildEventUri(Core core, Event calendarEvent)
         {
-            return Linker.AppendSid(string.Format("{0}calendar/event/{1}",
+            return core.Uri.AppendSid(string.Format("{0}calendar/event/{1}",
                 calendarEvent.owner.Uri, calendarEvent.EventId));
         }
 
         public static string BuildEventAcceptUri(Core core, Event calendarEvent)
         {
-            return Linker.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
+            return core.Uri.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
         }
 
         public static string BuildEventRejectUri(Core core, Event calendarEvent)
         {
-            return Linker.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
+            return core.Uri.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)
@@ -524,12 +524,12 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", core.tz.Now.Year),
                     string.Format("month={0}", core.tz.Now.Month),
                     string.Format("day={0}", core.tz.Now.Day)));
-                page.template.Parse("U_EDIT_EVENT", Linker.BuildAccountSubModuleUri("calendar", "new-event", "edit", eventId, true));
-                page.template.Parse("U_DELETE_EVENT", Linker.BuildAccountSubModuleUri("calendar", "delete-event", eventId, true));
+                page.template.Parse("U_EDIT_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", eventId, true));
+                page.template.Parse("U_DELETE_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", eventId, true));
             }
 
             try
@@ -543,7 +543,7 @@ namespace BoxSocial.Applications.Calendar
 
                 if (!calendarEvent.EventAccess.CanRead && !calendarEvent.IsInvitee(core.session.LoggedInMember))
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -564,7 +564,7 @@ namespace BoxSocial.Applications.Calendar
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
-                Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
+                core.Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
 
                 List<long> attendees = calendarEvent.GetAttendees();
                 core.LoadUserProfiles(attendees);
@@ -601,7 +601,7 @@ namespace BoxSocial.Applications.Calendar
             }
             catch (Exception ex)
             {
-                Display.ShowMessage("Invalid event", "The event does not exist. " + ex.ToString());
+                core.Display.ShowMessage("Invalid event", "The event does not exist. " + ex.ToString());
             }
         }
 
@@ -617,7 +617,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return Event.BuildEventUri(this);
+                return Event.BuildEventUri(core, this);
             }
         }
 

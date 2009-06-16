@@ -536,7 +536,7 @@ namespace BoxSocial.Networks
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("S_EMAIL", member.MemberEmail);
 
-                Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                core.Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
         }
 
@@ -645,7 +645,7 @@ namespace BoxSocial.Networks
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("S_EMAIL", networkEmail);
 
-                Email.SendEmail(networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                core.Email.SendEmail(networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
             }
 
             return newMember;
@@ -797,7 +797,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return Linker.AppendAbsoluteSid(UriStub);
+                return core.Uri.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -805,7 +805,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return Linker.AppendSid(UriStub);
+                return core.Uri.AppendSid(UriStub);
             }
         }
 
@@ -813,24 +813,24 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}members",
+                return core.Uri.AppendSid(string.Format("{0}members",
                     UriStub));
             }
         }
 
         public string BuildJoinUri()
         {
-            return Linker.BuildAccountSubModuleUri("networks", "memberships", "join", NetworkId);
+            return core.Uri.BuildAccountSubModuleUri("networks", "memberships", "join", NetworkId);
         }
 
         public string BuildLeaveUri()
         {
-            return Linker.BuildAccountSubModuleUri("networks", "memberships", "leave", NetworkId);
+            return core.Uri.BuildAccountSubModuleUri("networks", "memberships", "leave", NetworkId);
         }
 
         public string BuildMemberListUri()
         {
-            return Linker.AppendSid(string.Format("/network/{0}/members",
+            return core.Uri.AppendSid(string.Format("/network/{0}/members",
                 NetworkNetwork));
         }
 
@@ -852,7 +852,7 @@ namespace BoxSocial.Networks
             }
 
             page.template.Parse("NETWORK_DISPLAY_NAME", page.TheNetwork.DisplayName);
-            Display.ParseBbcode("DESCRIPTION", page.TheNetwork.Description);
+            core.Display.ParseBbcode("DESCRIPTION", page.TheNetwork.Description);
 
             string langMembers = (page.TheNetwork.Members != 1) ? "members" : "member";
             string langIsAre = (page.TheNetwork.Members != 1) ? "are" : "is";
@@ -914,7 +914,7 @@ namespace BoxSocial.Networks
             }
 
             string pageUri = page.TheNetwork.MemberlistUri;
-            Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0));
+            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0));
             page.TheNetwork.GenerateBreadCrumbs("members");
         }
 

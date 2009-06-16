@@ -450,7 +450,7 @@ namespace BoxSocial.Internals
                             Response.Cookies.Add(sessionSidCookie);
                         }
 
-                        Display.ShowMessage("Error", "Error starting session");
+                        core.Display.ShowMessage("Error", "Error starting session");
 
                         if (db != null)
                         {
@@ -478,7 +478,7 @@ namespace BoxSocial.Internals
                     else
                     {
                         // TODO: activation
-                        Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                        core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
                         //Display.ShowMessage(this, "Error", "Error starting session");
                         //Response.Write("fail 1");
                         if (db != null)
@@ -587,7 +587,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            Linker.Sid = sessionId;
+            core.Uri.Sid = sessionId;
 
             if (record == null)
             {
@@ -714,7 +714,7 @@ namespace BoxSocial.Internals
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
                     loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info | UserLoadOptions.Icon);
-                    Linker.Sid = sessionId;
+                    core.Uri.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
                     {

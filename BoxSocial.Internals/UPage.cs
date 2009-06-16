@@ -90,7 +90,7 @@ namespace BoxSocial.Internals
             }
             catch (InvalidUserException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
                 return;
             }
 

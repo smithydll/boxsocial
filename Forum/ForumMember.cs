@@ -253,15 +253,15 @@ namespace BoxSocial.Applications.Forum
             return forumMembers;
         }
 
-        public static string GenerateMemberlistUri(Primitive primitive)
+        public static string GenerateMemberlistUri(Core core, Primitive primitive)
         {
-            return Linker.AppendSid(string.Format("{0}forum/memberlist",
+            return core.Uri.AppendSid(string.Format("{0}forum/memberlist",
                 primitive.UriStub));
         }
 
-        public static string GenerateMemberlistUri(Primitive primitive, string filter)
+        public static string GenerateMemberlistUri(Core core, Primitive primitive, string filter)
         {
-            return Linker.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
+            return core.Uri.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
                 primitive.UriStub, filter));
         }
 
@@ -272,7 +272,7 @@ namespace BoxSocial.Applications.Forum
 
             if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
             {
-				page.template.Parse("S_POST", Linker.AppendSid(string.Format("{0}forum/ucp",
+                page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/ucp",
                     ((GPage)page).ThisGroup.UriStub), true));
 				
 				try
@@ -288,7 +288,7 @@ namespace BoxSocial.Applications.Forum
             }
             else
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -302,33 +302,33 @@ namespace BoxSocial.Applications.Forum
         {
             page.template.SetTemplate("Forum", "memberlist");
 
-            page.template.Parse("U_FILTER_ALL", GenerateMemberlistUri(page.ThisGroup));
-            page.template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(page.ThisGroup, "a"));
-            page.template.Parse("U_FILTER_BEGINS_B", GenerateMemberlistUri(page.ThisGroup, "b"));
-            page.template.Parse("U_FILTER_BEGINS_C", GenerateMemberlistUri(page.ThisGroup, "c"));
-            page.template.Parse("U_FILTER_BEGINS_D", GenerateMemberlistUri(page.ThisGroup, "d"));
-            page.template.Parse("U_FILTER_BEGINS_E", GenerateMemberlistUri(page.ThisGroup, "e"));
-            page.template.Parse("U_FILTER_BEGINS_F", GenerateMemberlistUri(page.ThisGroup, "f"));
-            page.template.Parse("U_FILTER_BEGINS_G", GenerateMemberlistUri(page.ThisGroup, "g"));
-            page.template.Parse("U_FILTER_BEGINS_H", GenerateMemberlistUri(page.ThisGroup, "h"));
-            page.template.Parse("U_FILTER_BEGINS_I", GenerateMemberlistUri(page.ThisGroup, "i"));
-            page.template.Parse("U_FILTER_BEGINS_J", GenerateMemberlistUri(page.ThisGroup, "j"));
-            page.template.Parse("U_FILTER_BEGINS_K", GenerateMemberlistUri(page.ThisGroup, "k"));
-            page.template.Parse("U_FILTER_BEGINS_L", GenerateMemberlistUri(page.ThisGroup, "l"));
-            page.template.Parse("U_FILTER_BEGINS_M", GenerateMemberlistUri(page.ThisGroup, "m"));
-            page.template.Parse("U_FILTER_BEGINS_N", GenerateMemberlistUri(page.ThisGroup, "n"));
-            page.template.Parse("U_FILTER_BEGINS_O", GenerateMemberlistUri(page.ThisGroup, "o"));
-            page.template.Parse("U_FILTER_BEGINS_P", GenerateMemberlistUri(page.ThisGroup, "p"));
-            page.template.Parse("U_FILTER_BEGINS_Q", GenerateMemberlistUri(page.ThisGroup, "q"));
-            page.template.Parse("U_FILTER_BEGINS_R", GenerateMemberlistUri(page.ThisGroup, "r"));
-            page.template.Parse("U_FILTER_BEGINS_S", GenerateMemberlistUri(page.ThisGroup, "s"));
-            page.template.Parse("U_FILTER_BEGINS_T", GenerateMemberlistUri(page.ThisGroup, "t"));
-            page.template.Parse("U_FILTER_BEGINS_U", GenerateMemberlistUri(page.ThisGroup, "u"));
-            page.template.Parse("U_FILTER_BEGINS_V", GenerateMemberlistUri(page.ThisGroup, "v"));
-            page.template.Parse("U_FILTER_BEGINS_W", GenerateMemberlistUri(page.ThisGroup, "w"));
-            page.template.Parse("U_FILTER_BEGINS_X", GenerateMemberlistUri(page.ThisGroup, "x"));
-            page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(page.ThisGroup, "y"));
-            page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(page.ThisGroup, "z"));
+            page.template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.ThisGroup));
+            page.template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.ThisGroup, "a"));
+            page.template.Parse("U_FILTER_BEGINS_B", GenerateMemberlistUri(core, page.ThisGroup, "b"));
+            page.template.Parse("U_FILTER_BEGINS_C", GenerateMemberlistUri(core, page.ThisGroup, "c"));
+            page.template.Parse("U_FILTER_BEGINS_D", GenerateMemberlistUri(core, page.ThisGroup, "d"));
+            page.template.Parse("U_FILTER_BEGINS_E", GenerateMemberlistUri(core, page.ThisGroup, "e"));
+            page.template.Parse("U_FILTER_BEGINS_F", GenerateMemberlistUri(core, page.ThisGroup, "f"));
+            page.template.Parse("U_FILTER_BEGINS_G", GenerateMemberlistUri(core, page.ThisGroup, "g"));
+            page.template.Parse("U_FILTER_BEGINS_H", GenerateMemberlistUri(core, page.ThisGroup, "h"));
+            page.template.Parse("U_FILTER_BEGINS_I", GenerateMemberlistUri(core, page.ThisGroup, "i"));
+            page.template.Parse("U_FILTER_BEGINS_J", GenerateMemberlistUri(core, page.ThisGroup, "j"));
+            page.template.Parse("U_FILTER_BEGINS_K", GenerateMemberlistUri(core, page.ThisGroup, "k"));
+            page.template.Parse("U_FILTER_BEGINS_L", GenerateMemberlistUri(core, page.ThisGroup, "l"));
+            page.template.Parse("U_FILTER_BEGINS_M", GenerateMemberlistUri(core, page.ThisGroup, "m"));
+            page.template.Parse("U_FILTER_BEGINS_N", GenerateMemberlistUri(core, page.ThisGroup, "n"));
+            page.template.Parse("U_FILTER_BEGINS_O", GenerateMemberlistUri(core, page.ThisGroup, "o"));
+            page.template.Parse("U_FILTER_BEGINS_P", GenerateMemberlistUri(core, page.ThisGroup, "p"));
+            page.template.Parse("U_FILTER_BEGINS_Q", GenerateMemberlistUri(core, page.ThisGroup, "q"));
+            page.template.Parse("U_FILTER_BEGINS_R", GenerateMemberlistUri(core, page.ThisGroup, "r"));
+            page.template.Parse("U_FILTER_BEGINS_S", GenerateMemberlistUri(core, page.ThisGroup, "s"));
+            page.template.Parse("U_FILTER_BEGINS_T", GenerateMemberlistUri(core, page.ThisGroup, "t"));
+            page.template.Parse("U_FILTER_BEGINS_U", GenerateMemberlistUri(core, page.ThisGroup, "u"));
+            page.template.Parse("U_FILTER_BEGINS_V", GenerateMemberlistUri(core, page.ThisGroup, "v"));
+            page.template.Parse("U_FILTER_BEGINS_W", GenerateMemberlistUri(core, page.ThisGroup, "w"));
+            page.template.Parse("U_FILTER_BEGINS_X", GenerateMemberlistUri(core, page.ThisGroup, "x"));
+            page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.ThisGroup, "y"));
+            page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.ThisGroup, "z"));
         }
 
         private static void Save(Core core, GPage page)
@@ -350,10 +350,10 @@ namespace BoxSocial.Applications.Forum
                 member.ForumSignature = HttpContext.Current.Request.Form["signature"];
 
                 member.Update(typeof(ForumMember));
-				
-				Display.ShowMessage("Profile Updated", "Your forum profile has been saved in the database.");
-				
-				page.template.Parse("REDIRECT_URI", Linker.AppendSid(string.Format("{0}forum/ucp",
+
+                core.Display.ShowMessage("Profile Updated", "Your forum profile has been saved in the database.");
+
+                page.template.Parse("REDIRECT_URI", core.Uri.AppendSid(string.Format("{0}forum/ucp",
                 	page.ThisGroup.UriStub)));
             }
         }

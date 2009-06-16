@@ -67,7 +67,7 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_manage");
 
-            template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
+            template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/create"));
 
             DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
                 LoggedInMember.Id, UserGroup.GROUP_INFO_FIELDS));
@@ -83,7 +83,7 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
                 groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_EDIT", Linker.BuildAccountSubModuleUri(thisGroup, "groups", "edit"));
+                groupVariableCollection.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(thisGroup, "groups", "edit"));
                 groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
 
                 switch (thisGroup.GroupType)
@@ -113,7 +113,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("mode", "delete");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)),
+                core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
                     "Are you sure you want to delete this group?",
                     "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
                     hiddenFieldList);
@@ -138,7 +138,7 @@ namespace BoxSocial.Groups
                     UserGroup group = new UserGroup(core, groupId);
 
                     SetRedirectUri(BuildUri());
-                    Display.ShowMessage("Cancelled", "This feature is currently not supported.");
+                    core.Display.ShowMessage("Cancelled", "This feature is currently not supported.");
                     return;
                 }
                 catch (InvalidGroupException)
@@ -149,7 +149,7 @@ namespace BoxSocial.Groups
             }
             else
             {
-                Display.ShowMessage("Cancelled", "You cancelled the deletion of the group.");
+                core.Display.ShowMessage("Cancelled", "You cancelled the deletion of the group.");
                 return;
             }
         }

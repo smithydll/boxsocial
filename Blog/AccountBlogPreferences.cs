@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Comment");
 
             template.Parse("S_TITLE", myBlog.Title);
-            Display.ParsePermissionsBox(template, "S_BLOG_PERMS", myBlog.Permissions, permissions);
+            core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", myBlog.Permissions, permissions);
 
             Save(new EventHandler(AccountBlogPreferences_Save));
         }
@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.Blog
             db.Query(uQuery);
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Blog Preferences Updated", "Your blog preferences have been successfully updated.");
+            core.Display.ShowMessage("Blog Preferences Updated", "Your blog preferences have been successfully updated.");
         }
     }
 }

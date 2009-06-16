@@ -97,7 +97,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public override string BuildUri()
         {
-            return Linker.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
+            return core.Uri.AppendSid(string.Format("network/{0}/gallery/{1}/{2}",
                 owner.Key, parentPath, path));
         }
 
@@ -119,7 +119,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}images/_tiny/{1}",
+                return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
                 owner.UriStub, path));
             }
         }

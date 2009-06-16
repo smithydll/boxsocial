@@ -1246,11 +1246,11 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    return Linker.AppendAbsoluteSid(UriStub);
+                    return core.Uri.AppendAbsoluteSid(UriStub);
                 }
                 else
                 {
-                    return Linker.AppendAbsoluteSid(string.Format("http://{0}/",
+                    return core.Uri.AppendAbsoluteSid(string.Format("http://{0}/",
                             domain));
                 }
             }
@@ -1260,7 +1260,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.AppendSid(UriStub);
+                return core.Uri.AppendSid(UriStub);
             }
         }
 
@@ -1268,14 +1268,14 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}members",
+                return core.Uri.AppendSid(string.Format("{0}members",
                     UriStub));
             }
         }
 
         public string GetMemberlistUri(string filter)
         {
-            return Linker.AppendSid(string.Format("{0}members?filter={1}",
+            return core.Uri.AppendSid(string.Format("{0}members?filter={1}",
                     UriStub, filter));
         }
 
@@ -1283,7 +1283,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "groups", "delete", GroupId, true);
+                return core.Uri.BuildAccountSubModuleUri("groups", "groups", "delete", GroupId, true);
             }
         }
 
@@ -1291,7 +1291,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "memberships", "join", GroupId, true);
+                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "join", GroupId, true);
             }
         }
 
@@ -1299,7 +1299,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "memberships", "leave", GroupId, true);
+                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "leave", GroupId, true);
             }
         }
 
@@ -1307,7 +1307,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "invite", GroupId, true);
+                return core.Uri.BuildAccountSubModuleUri("groups", "invite", GroupId, true);
             }
         }
 
@@ -1315,7 +1315,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return Linker.BuildAccountSubModuleUri("groups", "memberships", "resign-operator", GroupId, true);
+                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "resign-operator", GroupId, true);
             }
         }
 
@@ -1347,7 +1347,7 @@ namespace BoxSocial.Groups
             string langIsAre = (page.ThisGroup.Members != 1) ? "are" : "is";
 
             //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.ThisGroup.Description), core.session.LoggedInMember));
-            Display.ParseBbcode("DESCRIPTION", page.ThisGroup.Description);
+            core.Display.ParseBbcode("DESCRIPTION", page.ThisGroup.Description);
             page.template.Parse("DATE_CREATED", core.tz.DateTimeToString(page.ThisGroup.DateCreated(core.tz)));
             page.template.Parse("CATEGORY", page.ThisGroup.Category);
 
@@ -1361,7 +1361,7 @@ namespace BoxSocial.Groups
             if (page.ThisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
-                page.template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(page.ThisGroup.AccountUriStub));
+                page.template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(page.ThisGroup.AccountUriStub));
             }
 
             if (core.session.IsLoggedIn)
@@ -1536,7 +1536,7 @@ namespace BoxSocial.Groups
             }
 
             string pageUri = page.ThisGroup.MemberlistUri;
-            Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0));
+            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.ThisGroup.Members / 18.0));
             page.ThisGroup.ParseBreadCrumbs("members");
         }
 

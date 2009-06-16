@@ -46,7 +46,7 @@ namespace BoxSocial.FrontEnd
         {
             if (string.IsNullOrEmpty(Request.QueryString["category"]))
             {
-                template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create"));
+                template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/create"));
                 DataTable categoriesTable = db.Query("SELECT category_title, category_path, category_groups FROM global_categories");
 
                 template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
@@ -57,7 +57,7 @@ namespace BoxSocial.FrontEnd
 
                     categoriesVariableCollection.Parse("TITLE", (string)categoriesTable.Rows[i]["category_title"]);
                     categoriesVariableCollection.Parse("GROUPS", ((long)categoriesTable.Rows[i]["category_groups"]).ToString());
-                    categoriesVariableCollection.Parse("U_GROUP_CATEGORY", Linker.AppendSid("/groups/" + (string)categoriesTable.Rows[i]["category_path"]));
+                    categoriesVariableCollection.Parse("U_GROUP_CATEGORY", core.Uri.AppendSid("/groups/" + (string)categoriesTable.Rows[i]["category_path"]));
                 }
 
             }
@@ -70,8 +70,8 @@ namespace BoxSocial.FrontEnd
                 if (categoryTable.Rows.Count > 0)
                 {
                     template.Parse("CATEGORY_TITLE", (string)categoryTable.Rows[0]["category_title"]);
-                    template.Parse("U_CREATE_GROUP_C", Linker.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
-                    template.Parse("U_CREATE_GROUP", Linker.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
+                    template.Parse("U_CREATE_GROUP_C", core.Uri.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
+                    template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
 
                     DataTable groupsTable = db.Query(string.Format("SELECT {1} FROM group_info gi WHERE gi.group_category = {0} AND gi.group_type <> 'PRIVATE'",
                         (long)categoryTable.Rows[0]["category_id"], UserGroup.GROUP_INFO_FIELDS));

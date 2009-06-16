@@ -45,17 +45,17 @@ namespace BoxSocial.FrontEnd
         {
             Exception ex = Server.GetLastError();
 
-            Display.ShowMessage("Error Message", ex.ToString(), ShowMessageOptions.Bbcode);
+            core.Display.ShowMessage("Error Message", ex.ToString(), ShowMessageOptions.Bbcode);
 
             try
             {
-                Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
             }
             catch
             {
                 try
                 {
-                    Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "EXCEPTION THROWN:\n" + ex.ToString());
+                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "EXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
                 {

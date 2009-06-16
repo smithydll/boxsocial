@@ -1197,9 +1197,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryPath">Gallery path</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(User member, string galleryPath, string photoPath)
+        public static string BuildPhotoUri(Core core, User member, string galleryPath, string photoPath)
         {
-            return Linker.AppendSid(string.Format("{0}gallery/{1}/{2}",
+            return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
                 member.UriStub, galleryPath, photoPath));
         }
 
@@ -1209,9 +1209,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="thisGroup">Photo owner</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(UserGroup thisGroup, string photoPath)
+        public static string BuildPhotoUri(Core core, UserGroup thisGroup, string photoPath)
         {
-            return Linker.AppendSid(string.Format("{0}gallery/{1}",
+            return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
                 thisGroup.UriStub, photoPath));
         }
 
@@ -1221,9 +1221,9 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="theNetwork">Photo owner</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(Network theNetwork, string photoPath)
+        public static string BuildPhotoUri(Core core, Network theNetwork, string photoPath)
         {
-            return Linker.AppendSid(string.Format("/network/{0}/gallery/{1}",
+            return core.Uri.AppendSid(string.Format("/network/{0}/gallery/{1}",
                 theNetwork.NetworkNetwork, photoPath));
         }
 
@@ -1232,9 +1232,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="thisGroup">Group to upload photo to</param>
         /// <returns>URI pointing to the upload form</returns>
-        public static string BuildGalleryUpload(UserGroup thisGroup)
+        public static string BuildGalleryUpload(Core core, UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("{0}gallery/?mode=upload",
+            return core.Uri.AppendSid(string.Format("{0}gallery/?mode=upload",
                 thisGroup.UriStub));
         }
 
@@ -1243,9 +1243,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="theNetwork">Network to upload photo to</param>
         /// <returns>URI pointing to the upload form</returns>
-        public static string BuildGalleryUpload(Network theNetwork)
+        public static string BuildGalleryUpload(Core core, Network theNetwork)
         {
-            return Linker.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
+            return core.Uri.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
                 theNetwork.NetworkNetwork));
         }
 
@@ -1254,9 +1254,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="member">Gallery owner</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(User member)
+        public static string BuildGalleryUri(Core core, User member)
         {
-            return Linker.AppendSid(string.Format("{0}gallery",
+            return core.Uri.AppendSid(string.Format("{0}gallery",
                 member.UriStub));
         }
 
@@ -1266,15 +1266,15 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="member">Gallery owner</param>
         /// <param name="path">sub-gallery path</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(User member, string path)
+        public static string BuildGalleryUri(Core core, User member, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                return BuildGalleryUri(member);
+                return BuildGalleryUri(core, member);
             }
             else
             {
-                return Linker.AppendSid(string.Format("{0}gallery/{1}",
+                return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
                     member.UriStub, path));
             }
         }
@@ -1284,9 +1284,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="thisGroup">Gallery owner</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(UserGroup thisGroup)
+        public static string BuildGalleryUri(Core core, UserGroup thisGroup)
         {
-            return Linker.AppendSid(string.Format("{0}gallery",
+            return core.Uri.AppendSid(string.Format("{0}gallery",
                 thisGroup.UriStub));
         }
 
@@ -1295,9 +1295,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="theNetwork">Gallery owner</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Network theNetwork)
+        public static string BuildGalleryUri(Core core, Network theNetwork)
         {
-            return Linker.AppendSid(string.Format("/network/{0}/gallery",
+            return core.Uri.AppendSid(string.Format("/network/{0}/gallery",
                 theNetwork.NetworkNetwork));
         }
 
@@ -1346,24 +1346,24 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!gallery.GalleryAccess.CanRead)
                     {
-                        Functions.Generate403();
+                        core.Functions.Generate403();
                         return;
                     }
 
                     if (gallery.GalleryAccess.CanCreate)
                     {
-                        page.template.Parse("U_UPLOAD_PHOTO", Linker.BuildPhotoUploadUri(gallery.GalleryId));
+                        page.template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(gallery.GalleryId));
                     }
                     if (gallery.Owner.Id == core.LoggedInMemberId)
                     {
-                        page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(gallery.GalleryId));
+                        page.template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(gallery.GalleryId));
                     }
 
-                    Display.ParsePagination(Gallery.BuildGalleryUri(page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
+                    core.Display.ParsePagination(Gallery.BuildGalleryUri(core, page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
                 }
                 catch (InvalidGalleryException)
                 {
-                    Functions.Generate404();
+                    core.Functions.Generate404();
                     return;
                 }
             }
@@ -1373,7 +1373,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (gallery.Owner.Id == core.LoggedInMemberId)
                 {
-                    page.template.Parse("U_NEW_GALLERY", Linker.BuildNewGalleryUri(0));
+                    page.template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(0));
                 }
             }
 
@@ -1414,9 +1414,9 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = page.template.CreateChild("gallery_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
-                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(page.ProfileOwner, galleryGallery.FullPath));
+                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(core, page.ProfileOwner, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
-                Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+                core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                 long items = galleryGallery.Items;
 
@@ -1426,7 +1426,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", Functions.LargeIntegerToString(items)));
+                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", core.Functions.LargeIntegerToString(items)));
                 }
             }
 
@@ -1441,9 +1441,9 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(page.ProfileOwner, galleryItem.ParentPath, galleryItem.Path));
-                galleryVariableCollection.Parse("COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
-                galleryVariableCollection.Parse("VIEWS", Functions.LargeIntegerToString(galleryItem.ItemViews));
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.ProfileOwner, galleryItem.ParentPath, galleryItem.Path));
+                galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
 				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
@@ -1465,7 +1465,7 @@ namespace BoxSocial.Applications.Gallery
 
             page.template.Parse("COMMENTS", galleryComments.ToString());
             page.template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
-            page.template.Parse("U_COMMENTS", Linker.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath));
+            page.template.Parse("U_COMMENTS", core.Uri.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath));
         }
 
         /// <summary>
@@ -1495,13 +1495,13 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch
                     {
-                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                        core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                     }
 
                     if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                     {
-                        Functions.Generate403();
+                        core.Functions.Generate403();
                         return;
                     }
 
@@ -1520,34 +1520,34 @@ namespace BoxSocial.Applications.Gallery
 
                         GroupGalleryItem.Create(core, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
-                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(page.ThisGroup, slug));
-                        Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.ThisGroup, slug));
+                        core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
                     catch (GalleryItemTooLargeException)
                     {
-                        Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                         return;
                     }
                     catch (GalleryQuotaExceededException)
                     {
-                        Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        core.Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                         return;
                     }
                     catch (InvalidGalleryItemTypeException)
                     {
-                        Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        core.Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                         return;
                     }
                     catch (InvalidGalleryFileNameException)
                     {
-                        Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                        core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                         return;
                     }
                 }
                 catch (InvalidGalleryException)
                 {
-                    Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
+                    core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
                 }
             }
@@ -1557,7 +1557,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -1573,7 +1573,7 @@ namespace BoxSocial.Applications.Gallery
                 licensesSelectBox.SelectedKey = "0";
                 page.template.Parse("S_GALLERY_LICENSE", licensesSelectBox);
 
-                Display.ParseClassification("S_PHOTO_CLASSIFICATION", Classifications.Everyone);
+                core.Display.ParseClassification("S_PHOTO_CLASSIFICATION", Classifications.Everyone);
             }
             else
             {
@@ -1596,7 +1596,7 @@ namespace BoxSocial.Applications.Gallery
                     case "PRIVATE":
                         if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403();
+                            core.Functions.Generate403();
                             return;
                         }
                         break;
@@ -1604,7 +1604,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
                 {
-                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(page.ThisGroup));
+                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.ThisGroup));
                 }
 
                 GroupGallery gallery = new GroupGallery(core, page.ThisGroup);
@@ -1624,8 +1624,8 @@ namespace BoxSocial.Applications.Gallery
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
                     galleryVariableCollection.Parse("PHOTO_URI", galleryItem.Uri);
-                    galleryVariableCollection.Parse("COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
-                    galleryVariableCollection.Parse("VIEWS", Functions.LargeIntegerToString(galleryItem.ItemViews));
+                    galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                    galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                     galleryVariableCollection.Parse("INDEX", i.ToString());
                     galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
 
@@ -1639,7 +1639,7 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                Display.ParsePagination(string.Format("{0}gallery",
+                core.Display.ParsePagination(string.Format("{0}gallery",
                     page.ThisGroup.UriStub), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0));
 
             }
@@ -1672,13 +1672,13 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch
                     {
-                        Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                        core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                         return;
                     }
 
                     if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                     {
-                        Functions.Generate403();
+                        core.Functions.Generate403();
                         return;
                     }
 
@@ -1697,34 +1697,34 @@ namespace BoxSocial.Applications.Gallery
 
                         NetworkGalleryItem.Create(core, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
-                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(page.TheNetwork, slug));
-                        Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.TheNetwork, slug));
+                        core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
                     catch (GalleryItemTooLargeException)
                     {
-                        Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
                         return;
                     }
                     catch (GalleryQuotaExceededException)
                     {
-                        Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        core.Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                         return;
                     }
                     catch (InvalidGalleryItemTypeException)
                     {
-                        Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        core.Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                         return;
                     }
                     catch (InvalidGalleryFileNameException)
                     {
-                        Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                        core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                         return;
                     }
                 }
                 catch (InvalidGalleryException)
                 {
-                    Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
+                    core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                     return;
                 }
             }
@@ -1734,7 +1734,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -1773,7 +1773,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.Workplace:
                         if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                         {
-                            Functions.Generate403();
+                            core.Functions.Generate403();
                             return;
                         }
                         break;
@@ -1781,7 +1781,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(page.TheNetwork));
+                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.TheNetwork));
                 }
 
                 NetworkGallery gallery = new NetworkGallery(core, page.TheNetwork);
@@ -1800,9 +1800,9 @@ namespace BoxSocial.Applications.Gallery
                     VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(page.TheNetwork, galleryItem.Path));
-                    galleryVariableCollection.Parse("COMMENTS", Functions.LargeIntegerToString(galleryItem.ItemComments));
-                    galleryVariableCollection.Parse("VIEWS", Functions.LargeIntegerToString(galleryItem.ItemViews));
+                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.TheNetwork, galleryItem.Path));
+                    galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                    galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                     galleryVariableCollection.Parse("INDEX", i.ToString());
                     galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
 
@@ -1817,7 +1817,7 @@ namespace BoxSocial.Applications.Gallery
                     i++;
                 }
 
-                Display.ParsePagination(string.Format("/network/{0}/gallery",
+                core.Display.ParsePagination(string.Format("/network/{0}/gallery",
                     page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0));
 
             }

@@ -33,17 +33,14 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Email
     {
-        private static Core core;
+        private Core core;
 
-        public static Core Core
+        public Email(Core core)
         {
-            set
-            {
-                core = value;
-            }
+            this.core = core;
         }
 
-        public static void SendEmail(string toAddress, string subject, string message)
+        public void SendEmail(string toAddress, string subject, string message)
         {
 			if (WebConfigurationManager.AppSettings == null || (!WebConfigurationManager.AppSettings.HasKeys()) || WebConfigurationManager.AppSettings["smtp-server"] == null)
 			{

@@ -491,7 +491,7 @@ namespace BoxSocial.Applications.Gallery
                     galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
                 }
 
-                template.Parse("U_GROUP_GALLERY", Gallery.BuildGalleryUri(thisGroup));
+                template.Parse("U_GROUP_GALLERY", Gallery.BuildGalleryUri(core, thisGroup));
 
                 e.core.AddMainPanel(template);
             }
@@ -518,14 +518,14 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(theNetwork, galleryItem.Path));
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, theNetwork, galleryItem.Path));
 
                 string thumbUri = string.Format("/network/{0}/images/_tiny/{1}",
                     theNetwork.NetworkNetwork, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
             }
 
-            template.Parse("U_NETWORK_GALLERY", Gallery.BuildGalleryUri(theNetwork));
+            template.Parse("U_NETWORK_GALLERY", Gallery.BuildGalleryUri(core, theNetwork));
 
             e.core.AddMainPanel(template);
         }

@@ -31,38 +31,43 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
-    public static class Poster
+    public class Poster
     {
-        private static Core core;
-        private static TPage page;
+        private Core core;
+        private TPage page;
+
+        public Poster(Core core, TPage page)
+        {
+            this.core = core;
+            this.page = page;
+        }
 
         public static void Show(Core core, GPage page)
         {
-            Poster.core = core;
-            Poster.page = page;
+            Poster poster = new Poster(core, page);
 
             page.template.SetTemplate("Forum", "post");
             ForumSettings.ShowForumHeader(core, page);
 
             if (HttpContext.Current.Request.Form["save"] != null) // DRAFT
             {
-                ShowPostingScreen("draft");
+                poster.ShowPostingScreen("draft");
             }
             else if (HttpContext.Current.Request.Form["preview"] != null) // PREVIEW
             {
-                ShowPostingScreen("preview");
+                poster.ShowPostingScreen("preview");
             }
             else if (HttpContext.Current.Request.Form["submit"] != null) // POST
             {
-                ShowPostingScreen("post");
+                poster.ShowPostingScreen("post");
             }
             else
             {
-                ShowPostingScreen("none");
+                poster.ShowPostingScreen("none");
             }
         }
 
-        private static void ShowPostingScreen(string submitMode)
+        private void ShowPostingScreen(string submitMode)
         {
             long forumId = Functions.FormLong("f", Functions.RequestLong("f", 0));
             long topicId = Functions.FormLong("t", Functions.RequestLong("t", 0));
@@ -84,7 +89,7 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                page.template.Parse("S_POST", Linker.AppendSid(string.Format("{0}forum/post",
+                page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/post",
                     ((GPage)page).ThisGroup.UriStub), true));
 
                 if (((GPage)page).ThisGroup.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
@@ -96,7 +101,7 @@ namespace BoxSocial.Applications.Forum
                     sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
                     // TODO: Global, remember to update columns to 4
 
-                    Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", 3, sbis, topicState);
+                    core.Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", 3, sbis, topicState);
                 }
             }
 
@@ -119,7 +124,7 @@ namespace BoxSocial.Applications.Forum
                     postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
                     //postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
-                    Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
+                    core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
                     postVariableCollection.Parse("U_USER", post.Poster.Uri);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
@@ -196,7 +201,7 @@ namespace BoxSocial.Applications.Forum
 
             if (submitMode == "preview")
             {
-                Display.ParseBbcode("PREVIEW", text);
+                core.Display.ParseBbcode("PREVIEW", text);
             }
 
             if (submitMode == "draft" || submitMode == "post")
@@ -205,7 +210,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        private static void SavePost(string mode, string subject, string text)
+        private void SavePost(string mode, string subject, string text)
         {
             AccountSubModule.AuthoriseRequestSid(core);
 
@@ -242,7 +247,7 @@ namespace BoxSocial.Applications.Forum
 
                         if (!forum.Access.CanCreate)
                         {
-                            Display.ShowMessage("Cannot reply", "Not authorised to reply to topic");
+                            core.Display.ShowMessage("Cannot reply", "Not authorised to reply to topic");
                             return;
                         }
 					
@@ -251,12 +256,12 @@ namespace BoxSocial.Applications.Forum
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 
                         page.template.Parse("REDIRECT_URI", post.Uri);
-                        Display.ShowMessage("Reply Posted", "Reply has been posted");
+                        core.Display.ShowMessage("Reply Posted", "Reply has been posted");
                         return;
                     }
                     catch (InvalidTopicException)
                     {
-                        Display.ShowMessage("ERROR", "An error occured");
+                        core.Display.ShowMessage("ERROR", "An error occured");
                     }
                     break;
                 case "post":
@@ -283,7 +288,7 @@ namespace BoxSocial.Applications.Forum
 
                         if (!forum.Access.CanCreate)
                         {
-                            Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
+                            core.Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
                             return;
                         }
 
@@ -292,7 +297,7 @@ namespace BoxSocial.Applications.Forum
                         ForumTopic topic = ForumTopic.Create(core, forum, subject, text, (TopicStates)Functions.FormByte("topic-state", (byte)TopicStates.Normal));
 
                         page.template.Parse("REDIRECT_URI", topic.Uri);
-                        Display.ShowMessage("Topic Posted", "Topic has been posted");
+                        core.Display.ShowMessage("Topic Posted", "Topic has been posted");
                         return;
                         /*}
                         catch
@@ -303,7 +308,7 @@ namespace BoxSocial.Applications.Forum
                     }
                     catch (InvalidForumException)
                     {
-                        Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
+                        core.Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
                         return;
                     }
             }

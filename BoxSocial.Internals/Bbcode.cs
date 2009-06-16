@@ -44,26 +44,22 @@ namespace BoxSocial.Internals
 
     public class Bbcode
     {
-        public static Core core = null;
+        private Core core = null;
 
         private delegate void BbcodeHookHandler(BbcodeEventArgs e);
 
-        private static event BbcodeHookHandler BbcodeHooks;
+        private event BbcodeHookHandler BbcodeHooks;
 
-        private static List<string> styleList;
+        private List<string> styleList;
 
-        public Bbcode()
+        public Bbcode(Core core)
         {
-        }
-
-        public static void Initialise(Core core)
-        {
-            Bbcode.core = core;
+            this.core = core;
 
             Initialise();
         }
 
-        public static void Initialise()
+        public void Initialise()
         {
             BbcodeHooks += new BbcodeHookHandler(BbcodeQuote);
             BbcodeHooks += new BbcodeHookHandler(BbcodeBold);
@@ -95,11 +91,6 @@ namespace BoxSocial.Internals
             styleList = new List<string>();
             styleList.Add("color");
             styleList.Add("size");
-        }
-
-        public static void Dispose()
-        {
-            Bbcode.core = null;
         }
 
         private sealed class BbcodeEventArgs
@@ -379,22 +370,22 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string Parse(string input)
+        public string Parse(string input)
         {
             return Parse(input, null);
         }
 
-        public static string Parse(string input, User viewer)
+        public string Parse(string input, User viewer)
         {
             return Parse(input, viewer, null);
         }
 
-        public static string Parse(string input, User viewer, User postOwner)
+        public string Parse(string input, User viewer, User postOwner)
         {
             return Parse(input, viewer, postOwner, false);
         }
 
-        private static string Parse(string input, User viewer, User postOwner, bool stripTags)
+        private string Parse(string input, User viewer, User postOwner, bool stripTags)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -767,7 +758,7 @@ namespace BoxSocial.Internals
             return input;
         }
 
-        private static void BbcodeQuote(BbcodeEventArgs e)
+        private void BbcodeQuote(BbcodeEventArgs e)
         {
             if (e.Tag.Tag != "quote") return;
 
@@ -1194,7 +1185,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        private static void BbcodeInternalUrl(BbcodeEventArgs e)
+        private void BbcodeInternalUrl(BbcodeEventArgs e)
         {
             if (e.Tag.Tag != "iurl") return;
 
@@ -1205,7 +1196,7 @@ namespace BoxSocial.Internals
                 if (e.Attributes.HasAttributes())
                 {
                     e.PrefixText = "";
-                    e.SuffixText = string.Format("(http://zinzam.com{0})", Linker.StripSid(e.Attributes.GetAttribute("default")));
+                    e.SuffixText = string.Format("(http://zinzam.com{0})", core.Uri.StripSid(e.Attributes.GetAttribute("default")));
                 }
                 else
                 {
@@ -1219,17 +1210,17 @@ namespace BoxSocial.Internals
                 {
                     if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
                     {
-                        e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                        e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
                     }
                     else
                     {
-                        e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                        e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
                     }
                     e.SuffixText = "</a>";
                 }
                 else
                 {
-                    e.PrefixText = "<a href=\"" + Linker.AppendSid(e.Contents) + "\">";
+                    e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Contents) + "\">";
                     e.SuffixText = "</a>";
                 }
             }
@@ -1416,7 +1407,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        private static void BbcodeUser(BbcodeEventArgs e)
+        private void BbcodeUser(BbcodeEventArgs e)
         {
             if (e.Tag.Tag != "user") return;
 
@@ -1524,17 +1515,17 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string Strip(string input)
+        public string Strip(string input)
         {
             return Parse(input, null, null, true);
         }
 
-        public static string Strip(string input, User viewer)
+        public string Strip(string input, User viewer)
         {
             return Parse(input, viewer, null, true);
         }
 
-        public static string Strip(string input, User viewer, User postOwner)
+        public string Strip(string input, User viewer, User postOwner)
         {
             return Parse(input, viewer, postOwner, true);
         }

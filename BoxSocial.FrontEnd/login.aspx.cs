@@ -46,7 +46,7 @@ namespace BoxSocial.FrontEnd
             {
                 try
                 {
-					if (domain != Linker.Domain)
+                    if (domain != Linker.Domain)
 					{
 						record = new DnsRecord(core, domain);
 					}
@@ -63,11 +63,11 @@ namespace BoxSocial.FrontEnd
 
                         if (!string.IsNullOrEmpty(redirect))
                         {
-                            Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                            Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                         }
                         else
                         {
-                            Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/", true));
+                            Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/", true));
                         }
                     }
                     else if (core.LoggedInMemberId > 0)
@@ -81,12 +81,12 @@ namespace BoxSocial.FrontEnd
 
                         sessionId = core.session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 
-                        Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                        Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                     }
                 }
                 catch (InvalidDnsRecordException)
                 {
-                    Display.ShowMessage("Error", "Error starting remote session");
+                    core.Display.ShowMessage("Error", "Error starting remote session");
                     return;
                 }
             }
@@ -118,7 +118,7 @@ namespace BoxSocial.FrontEnd
 
                     if (string.IsNullOrEmpty(email))
                     {
-                        Display.ShowMessage("Error", "An error occured");
+                        core.Display.ShowMessage("Error", "An error occured");
                         return;
                     }
                     else
@@ -146,20 +146,20 @@ namespace BoxSocial.FrontEnd
                                 emailTemplate.Parse("USERNAME", userEmail.Owner.UserName);
                                 emailTemplate.Parse("PASSWORD", newPassword);
 
-                                Email.SendEmail(userEmail.Email, "Password Reset", emailTemplate.ToString());
+                                core.Email.SendEmail(userEmail.Email, "Password Reset", emailTemplate.ToString());
 
-                                Display.ShowMessage("Password reset", "You have been sent an e-mail to the address you entered with your new password. You will need to click the confirmation link before you can sign in");
+                                core.Display.ShowMessage("Password reset", "You have been sent an e-mail to the address you entered with your new password. You will need to click the confirmation link before you can sign in");
                                 return;
                             }
                             else
                             {
-                                Display.ShowMessage("E-mail not verified", "The e-mail you have entered has not been verified, you need to enter an e-mail address you have verified to reset your password.");
+                                core.Display.ShowMessage("E-mail not verified", "The e-mail you have entered has not been verified, you need to enter an e-mail address you have verified to reset your password.");
                                 return;
                             }
                         }
                         catch (InvalidUserEmailException)
                         {
-                            Display.ShowMessage("No e-mail registered", "The e-mail you have entered is not associated with a user account.");
+                            core.Display.ShowMessage("No e-mail registered", "The e-mail you have entered is not associated with a user account.");
                             return;
                         }
                     }
@@ -219,14 +219,14 @@ namespace BoxSocial.FrontEnd
                         {
                             string sessionId = core.session.SessionBegin((long)userRow["user_id"], false, false, false, record);
 
-                            Linker.Sid = sessionId;
+                            core.Uri.Sid = sessionId;
                             if (!string.IsNullOrEmpty(redirect))
                             {
-                                Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                             }
                             else
                             {
-                                Response.Redirect(Linker.AppendSid("http://" + record.Domain + "/", true));
+                                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/", true));
                             }
                             return;
                         }
@@ -234,7 +234,7 @@ namespace BoxSocial.FrontEnd
                         {
                             if (redirect.StartsWith("/account"))
                             {
-                                redirect = Linker.AppendSid(Linker.StripSid(redirect), true);
+                                redirect = core.Uri.AppendSid(core.Uri.StripSid(redirect), true);
                             }
                             Response.Redirect(redirect, true);
                         }
@@ -265,7 +265,7 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
-                template.Parse("U_FORGOT_PASSWORD", Linker.AppendSid("/sign-in/?mode=reset-password"));
+                template.Parse("U_FORGOT_PASSWORD", core.Uri.AppendSid("/sign-in/?mode=reset-password"));
             }
 
             template.Parse("DOMAIN", domain);

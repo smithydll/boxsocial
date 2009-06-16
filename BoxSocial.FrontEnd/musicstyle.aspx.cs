@@ -45,7 +45,7 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
                 return;
             }
 
@@ -62,10 +62,8 @@ namespace BoxSocial.FrontEnd
             }
 
             core.prose.Close();
-            core.Dispose();
-            core = null;
-            Bbcode.Dispose();
-            Linker.Core = null;
+            //core.Dispose();
+            //core = null;
 
             Response.End();
         }

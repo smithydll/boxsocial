@@ -94,7 +94,7 @@ namespace BoxSocial.Applications.Pages
             hiddenFields.Add("sub", Key);
             hiddenFields.Add("mode", "delete");
 
-            if (Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true), "Delete?", "Are you sure you want to delete this tab?", hiddenFields) == ConfirmBoxResult.Yes)
+            if (core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true), "Delete?", "Are you sure you want to delete this tab?", hiddenFields) == ConfirmBoxResult.Yes)
             {
                 try
                 {
@@ -103,7 +103,7 @@ namespace BoxSocial.Applications.Pages
                     tab.Delete();
 
                     SetRedirectUri(BuildUri());
-                    Display.ShowMessage("Tab Deleted", "You have successfully deleted the navigation tab.");
+                    core.Display.ShowMessage("Tab Deleted", "You have successfully deleted the navigation tab.");
                 }
                 catch (InvalidNavigationTabException)
                 {
@@ -113,7 +113,7 @@ namespace BoxSocial.Applications.Pages
             else
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Tab Not Deleted", "You have aborted deleting the navigation tab.");
+                core.Display.ShowMessage("Tab Not Deleted", "You have aborted deleting the navigation tab.");
             }
         }
 
@@ -133,13 +133,13 @@ namespace BoxSocial.Applications.Pages
                         tab.MoveUp();
 
                         SetRedirectUri(BuildUri());
-                        Display.ShowMessage("Tab Moved", "You have successfully moved the tab up one place.");
+                        core.Display.ShowMessage("Tab Moved", "You have successfully moved the tab up one place.");
                         break;
                     case "move-down":
                         tab.MoveDown();
 
                         SetRedirectUri(BuildUri());
-                        Display.ShowMessage("Tab Moved", "You have successfully moved the tab down one place.");
+                        core.Display.ShowMessage("Tab Moved", "You have successfully moved the tab down one place.");
                         break;
                 }
             }
@@ -180,7 +180,7 @@ namespace BoxSocial.Applications.Pages
                 NagivationTab tab = NagivationTab.Create(core, thePage);
 
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Tab Created", "You have successfully created a navigation tab.");
+                core.Display.ShowMessage("Tab Created", "You have successfully created a navigation tab.");
             }
             catch (InvalidNavigationTabException)
             {

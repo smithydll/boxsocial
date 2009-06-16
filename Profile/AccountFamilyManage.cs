@@ -76,8 +76,8 @@ namespace BoxSocial.Applications.Profile
 
                 familyVariableCollection.Parse("NAME", (string)familyTable.Rows[i]["user_name"]);
 
-                familyVariableCollection.Parse("U_BLOCK", Linker.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"]));
-                familyVariableCollection.Parse("U_DELETE", Linker.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"]));
+                familyVariableCollection.Parse("U_BLOCK", core.Uri.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"]));
+                familyVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"]));
             }
         }
 
@@ -94,14 +94,14 @@ namespace BoxSocial.Applications.Profile
             }
             catch
             {
-                Display.ShowMessage("Cannot add to family", "No user specified to add as family. Please go back and try again.");
+                core.Display.ShowMessage("Cannot add to family", "No user specified to add as family. Please go back and try again.");
                 return;
             }
 
             // cannot befriend yourself
             if (friendId == LoggedInMember.UserId)
             {
-                Display.ShowMessage("Cannot add yourself", "You cannot add yourself as a family member.");
+                core.Display.ShowMessage("Cannot add yourself", "You cannot add yourself as a family member.");
                 return;
             }
 
@@ -113,12 +113,12 @@ namespace BoxSocial.Applications.Profile
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FAMILY")
                 {
-                    Display.ShowMessage("Already in family", "You have already added this person to your family.");
+                    core.Display.ShowMessage("Already in family", "You have already added this person to your family.");
                     return;
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage("Person Blocked", "You have blocked this person, to add them to your family you must first unblock them.");
+                    core.Display.ShowMessage("Person Blocked", "You have blocked this person, to add them to your family you must first unblock them.");
                     return;
                 }
             }
@@ -144,7 +144,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Added family member", "You have added person to your family.");
+            core.Display.ShowMessage("Added family member", "You have added person to your family.");
         }
 
         void AccountFamilyManage_Delete(object sender, EventArgs e)
@@ -160,7 +160,7 @@ namespace BoxSocial.Applications.Profile
             }
             catch
             {
-                Display.ShowMessage("Cannot delete family member", "No family member specified to delete. Please go back and try again.");
+                core.Display.ShowMessage("Cannot delete family member", "No family member specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId, deletedRows));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Deleted family member", "You have deleted a family member.");
+            core.Display.ShowMessage("Deleted family member", "You have deleted a family member.");
         }
     }
 }

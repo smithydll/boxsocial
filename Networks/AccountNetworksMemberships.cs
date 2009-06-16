@@ -122,7 +122,7 @@ namespace BoxSocial.Networks
                 if (theNetwork.IsNetworkMember(LoggedInMember))
                 {
                     SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage("Already a member", "You are already a member of this network");
+                    core.Display.ShowMessage("Already a member", "You are already a member of this network");
                     return;
                 }
 
@@ -136,7 +136,7 @@ namespace BoxSocial.Networks
                     if (theNetwork.Join(core, LoggedInMember, "") != null)
                     {
                         SetRedirectUri(theNetwork.Uri);
-                        Display.ShowMessage("Joined Network", "You have successfully joined the network.");
+                        core.Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                         return;
                     }
                     else
@@ -146,7 +146,7 @@ namespace BoxSocial.Networks
             }
             catch
             {
-                Display.ShowMessage("Error", "The network you are trying to join does not exist, go back.");
+                core.Display.ShowMessage("Error", "The network you are trying to join does not exist, go back.");
                 return;
             }
         }
@@ -163,7 +163,7 @@ namespace BoxSocial.Networks
             }
             catch
             {
-                Display.ShowMessage("Error", "An error has occured, go back.");
+                core.Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
             }
 
@@ -175,7 +175,7 @@ namespace BoxSocial.Networks
 
             if (!theNetwork.IsValidNetworkEmail(networkEmail))
             {
-                Display.ShowMessage("Invalid e-mail for network", "You have attempted to register an e-mail that is not associated with the network you are attempting to join. The e-mail address should have the form _user_@" + theNetwork.NetworkNetwork + ". Go back and enter a valid e-mail address for this network.");
+                core.Display.ShowMessage("Invalid e-mail for network", "You have attempted to register an e-mail that is not associated with the network you are attempting to join. The e-mail address should have the form _user_@" + theNetwork.NetworkNetwork + ". Go back and enter a valid e-mail address for this network.");
                 return;
             }
 
@@ -186,12 +186,12 @@ namespace BoxSocial.Networks
                 {
                     theNetwork.ResendConfirmationKey(core, member);
 
-                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
+                    core.Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
+                    core.Display.ShowMessage("Error", "The e-mail address you have attempted to register with the network is already in use with another account.");
                     return;
                 }
             }
@@ -199,19 +199,19 @@ namespace BoxSocial.Networks
             {
                 if (theNetwork.RequireConfirmation)
                 {
-                    Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
+                    core.Display.ShowMessage("Confirmation Required", "Before you are able to finish joining the network you must confirm your network e-mail address. An confirmation e-mail has been sent to your network e-mail address with a link to click. Once you confirm your e-mail address you will be able to join the network.");
                     return;
                 }
                 else
                 {
                     SetRedirectUri(theNetwork.Uri);
-                    Display.ShowMessage("Joined Network", "You have successfully joined the network.");
+                    core.Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage("Error", "Could not join network.");
+                core.Display.ShowMessage("Error", "Could not join network.");
                 return;
             }
             /*}
@@ -231,7 +231,7 @@ namespace BoxSocial.Networks
                 hiddenFieldList.Add("sub", "leave");
                 hiddenFieldList.Add("id", networkId.ToString());
 
-                Display.ShowConfirmBox(Linker.AppendSid(Owner.AccountUriStub, true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
+                core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
             }
             else
             {
@@ -260,13 +260,13 @@ namespace BoxSocial.Networks
                             theNetwork.Id));
 
                         SetRedirectUri(theNetwork.Uri);
-                        Display.ShowMessage("Left Network", "You have left the network.");
+                        core.Display.ShowMessage("Left Network", "You have left the network.");
                         return;
                     }
                     else
                     {
                         SetRedirectUri(theNetwork.Uri);
-                        Display.ShowMessage("Not a Member", "You cannot leave a network you are not a member of.");
+                        core.Display.ShowMessage("Not a Member", "You cannot leave a network you are not a member of.");
                         return;
                     }
                 }

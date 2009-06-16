@@ -85,14 +85,14 @@ namespace BoxSocial.Applications.Calendar
                 {
                     if (!isAjax)
                     {
-                        SetRedirectUri(Task.BuildTaskUri(task));
+                        SetRedirectUri(Task.BuildTaskUri(core, task));
                     }
-                    Ajax.ShowMessage(isAjax, "success", "Task Complete", "The task has been marked as complete.");
+                    core.Ajax.ShowMessage(isAjax, "success", "Task Complete", "The task has been marked as complete.");
                 }
             }
             catch (InvalidTaskException)
             {
-                Ajax.ShowMessage(isAjax, "error", "Error", "An error occured while marking the task as complete, go back");
+                core.Ajax.ShowMessage(isAjax, "error", "Error", "An error occured while marking the task as complete, go back");
             }
         }
     }

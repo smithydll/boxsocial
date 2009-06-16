@@ -49,7 +49,7 @@ namespace BoxSocial.FrontEnd
             // create a new confimation code
             Confirmation confirm = Confirmation.Create(core, session.SessionId, captchaString, 1);
 
-            template.Parse("U_CAPTCHA", Linker.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+            template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -71,18 +71,18 @@ namespace BoxSocial.FrontEnd
 
                     if (rowsChanged > 0)
                     {
-                        Display.ShowMessage("Opt-out of ZinZam Mailings", "You have successfully opted-out of further ZinZam mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Opt-out of ZinZam Mailings", "You have successfully opted-out of further ZinZam mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                         return;
                     }
                     else
                     {
-                        Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                    core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                     return;
                 }
             }
@@ -97,7 +97,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Display.ShowMessage("Error", "Error activating user.");
+                    core.Display.ShowMessage("Error", "Error activating user.");
                     return;
                 }
 
@@ -109,12 +109,12 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_active = 1 WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey)));
 
-                    Display.ShowMessage("Success", "You have successfully activated your account. You may now [url=\"/sign-in/\"]sign in[/url].");
+                    core.Display.ShowMessage("Success", "You have successfully activated your account. You may now [url=\"/sign-in/\"]sign in[/url].");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage("Error", "Error activating user.");
+                    core.Display.ShowMessage("Error", "Error activating user.");
                     return;
                 }
             }
@@ -129,7 +129,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    Display.ShowMessage("Error", "Error activating new password.");
+                    core.Display.ShowMessage("Error", "Error activating new password.");
                     return;
                 }
 
@@ -141,12 +141,12 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_password = '{2}', user_new_password = '' WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey), Mysql.Escape(BoxSocial.Internals.User.HashPassword((string)userTable.Rows[0]["user_new_password"]))));
 
-                    Display.ShowMessage("Success", "You have successfully activated your new password. You may now [url=\"/sign-in/\"]sign in[/url].");
+                    core.Display.ShowMessage("Success", "You have successfully activated your new password. You may now [url=\"/sign-in/\"]sign in[/url].");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage("Error", "Error activating new password.");
+                    core.Display.ShowMessage("Error", "Error activating new password.");
                     return;
                 }
             }
@@ -228,7 +228,7 @@ namespace BoxSocial.FrontEnd
                             Mysql.Escape(session.SessionId)));
 
                         //Response.Redirect("/", true);
-                        Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
+                        core.Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
                         return; /* stop processing the display of this page */
                     }
                 }

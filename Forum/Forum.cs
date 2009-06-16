@@ -1045,12 +1045,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId == 0)
                 {
-                    return Linker.AppendSid(string.Format("{0}forum/",
+                    return core.Uri.AppendSid(string.Format("{0}forum/",
                         Owner.UriStub));
                 }
                 else
                 {
-                    return Linker.AppendSid(string.Format("{0}forum/{1}",
+                    return core.Uri.AppendSid(string.Format("{0}forum/{1}",
                         Owner.UriStub, forumId));
                 }
             }
@@ -1060,7 +1060,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return Linker.AppendSid(string.Format("{0}forum/post?f={1}&mode=post",
+                return core.Uri.AppendSid(string.Format("{0}forum/post?f={1}&mode=post",
                     Owner.UriStub, forumId));
             }
         }
@@ -1138,7 +1138,7 @@ namespace BoxSocial.Applications.Forum
 			thisForum.Access.SetSessionViewer(core.session);
 			if (!thisForum.Access.CanRead)
 			{
-				Functions.Generate403();
+                core.Functions.Generate403();
 			}
 
             if (core.LoggedInMemberId > 0 && (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember)))
@@ -1152,13 +1152,13 @@ namespace BoxSocial.Applications.Forum
 
             if (!thisForum.ForumAccess.CanRead)
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 			
 			if (!string.IsNullOrEmpty(thisForum.Rules))
 			{
-				Display.ParseBbcode(page.template, "RULES", thisForum.Rules);
+                core.Display.ParseBbcode(page.template, "RULES", thisForum.Rules);
 			}
 			
 			List<Forum> forums = GetForumLevels(core, thisForum, 2);
@@ -1223,14 +1223,14 @@ namespace BoxSocial.Applications.Forum
                 VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
 
                 forumVariableCollection.Parse("TITLE", forum.Title);
-				Display.ParseBbcode(forumVariableCollection, "DESCRIPTION", forum.Description);
+                core.Display.ParseBbcode(forumVariableCollection, "DESCRIPTION", forum.Description);
                 forumVariableCollection.Parse("URI", forum.Uri);
                 forumVariableCollection.Parse("POSTS", forum.Posts.ToString());
                 forumVariableCollection.Parse("TOPICS", forum.Topics.ToString());
 
                 if (lastPosts.ContainsKey(forum.LastPostId))
                 {
-                    Display.ParseBbcode(forumVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                    core.Display.ParseBbcode(forumVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
                         lastPosts[forum.LastPostId].Uri, Functions.TrimStringToWord(lastPosts[forum.LastPostId].Title, 20), core.tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.tz))));
                 }
                 else
@@ -1316,7 +1316,7 @@ namespace BoxSocial.Applications.Forum
 
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {
-                        Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                        core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
                             topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
                     }
                     else
@@ -1410,7 +1410,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
+            core.Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });
@@ -1433,9 +1433,9 @@ namespace BoxSocial.Applications.Forum
             if (thisForum.Id == 0)
             {
                 page.template.Parse("INDEX_STATISTICS", "TRUE");
-                page.template.Parse("FORUM_POSTS", Functions.LargeIntegerToString(settings.Posts));
-                page.template.Parse("FORUM_TOPICS", Functions.LargeIntegerToString(settings.Topics));
-                page.template.Parse("GROUP_MEMBERS", Functions.LargeIntegerToString(page.ThisGroup.Members));
+                page.template.Parse("FORUM_POSTS", core.Functions.LargeIntegerToString(settings.Posts));
+                page.template.Parse("FORUM_TOPICS", core.Functions.LargeIntegerToString(settings.Topics));
+                page.template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.ThisGroup.Members));
             }
         }
 

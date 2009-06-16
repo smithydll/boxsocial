@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (pictureId == 0)
             {
-                Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x07)");
+                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x07)");
                 return;
             }
 
@@ -122,25 +122,25 @@ namespace BoxSocial.Applications.Gallery
                         db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_highlight_id = {0} WHERE user_id = {1} AND gallery_id = {2}",
                             pictureId, LoggedInMember.UserId, galleryId));
 
-                        SetRedirectUri(Gallery.BuildGalleryUri(LoggedInMember, galleryFullPath));
-                        Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
+                        SetRedirectUri(Gallery.BuildGalleryUri(core, LoggedInMember, galleryFullPath));
+                        core.Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
                         return;
                     }
                     else
                     {
-                        Display.ShowMessage("Cannot change gallery cover", "You must use a photo with equal view permissions as the gallery it is the cover of.");
+                        core.Display.ShowMessage("Cannot change gallery cover", "You must use a photo with equal view permissions as the gallery it is the cover of.");
                         return;
                     }
                 }
                 else
                 {
-                    Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
+                    core.Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
                     return;
                 }
             }
             catch (GalleryItemNotFoundException)
             {
-                Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
+                core.Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
                 return;
             }
         }

@@ -151,7 +151,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-				return Linker.BuildAccountSubModuleUri("mail", "read", messageId);
+                return core.Uri.BuildAccountSubModuleUri("mail", "read", messageId);
 
             }
         }

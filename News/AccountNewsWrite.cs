@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.News
             Article newArticle = Article.Create(core, Owner, subject, body);
 
             SetRedirectUri(BuildUri("manage"));
-            Display.ShowMessage("Article Published", "The news article has been published.");
+            core.Display.ShowMessage("Article Published", "The news article has been published.");
         }
 
         void AccountNewsWrite_Delete(object sender, EventArgs e)

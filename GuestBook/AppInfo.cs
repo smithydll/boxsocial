@@ -454,8 +454,8 @@ namespace BoxSocial.Applications.GuestBook
 
             template.Parse("IS_USER_GUESTBOOK", "TRUE");
 
-            Display.DisplayComments(template, profileOwner, profileOwner, GuestBook.UserGuestBookHook);
-            template.Parse("U_VIEW_ALL", GuestBook.Uri(profileOwner));
+            core.Display.DisplayComments(template, profileOwner, profileOwner, GuestBook.UserGuestBookHook);
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(core, profileOwner));
             template.Parse("IS_PROFILE", "TRUE");
 
             e.core.AddMainPanel(template);
@@ -474,8 +474,8 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, thisGroup, thisGroup);
-            template.Parse("U_VIEW_ALL", GuestBook.Uri(thisGroup));
+            core.Display.DisplayComments(template, thisGroup, thisGroup);
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(core, thisGroup));
 
             e.core.AddMainPanel(template);
         }
@@ -493,8 +493,8 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            Display.DisplayComments(template, theNetwork, theNetwork);
-            template.Parse("U_VIEW_ALL", GuestBook.Uri(theNetwork));
+            core.Display.DisplayComments(template, theNetwork, theNetwork);
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(core, theNetwork));
 
             e.core.AddMainPanel(template);
         }
@@ -509,8 +509,8 @@ namespace BoxSocial.Applications.GuestBook
                 template.Parse("CAN_COMMENT", "TRUE");
             }
 
-            Display.DisplayComments(template, anApplication, anApplication);
-            template.Parse("U_VIEW_ALL", GuestBook.Uri(anApplication));
+            core.Display.DisplayComments(template, anApplication, anApplication);
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(core, anApplication));
 
             e.core.AddMainPanel(template);
         }

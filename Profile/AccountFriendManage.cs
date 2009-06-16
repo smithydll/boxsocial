@@ -84,13 +84,13 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 friendsVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendsVariableCollection.Parse("U_BLOCK", Linker.BuildBlockUserUri(friend.Id));
-                friendsVariableCollection.Parse("U_DELETE", Linker.BuildDeleteFriendUri(friend.Id));
-                friendsVariableCollection.Parse("U_PROMOTE", Linker.BuildPromoteFriendUri(friend.Id));
-                friendsVariableCollection.Parse("U_DEMOTE", Linker.BuildDemoteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_BLOCK", core.Uri.BuildBlockUserUri(friend.Id));
+                friendsVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_PROMOTE", core.Uri.BuildPromoteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_DEMOTE", core.Uri.BuildDemoteFriendUri(friend.Id));
             }
 
-            Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.Friends / 50.0));
+            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.Friends / 50.0));
         }
 
         void AccountFriendManage_Add(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace BoxSocial.Applications.Profile
             catch
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Cannot add friend", "No friend specified to add. Please go back and try again.");
+                core.Display.ShowMessage("Cannot add friend", "No friend specified to add. Please go back and try again.");
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Profile
             if (friendId == LoggedInMember.UserId)
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Cannot add friend", "You cannot add yourself as a friend.");
+                core.Display.ShowMessage("Cannot add friend", "You cannot add yourself as a friend.");
                 return;
             }
 
@@ -127,12 +127,12 @@ namespace BoxSocial.Applications.Profile
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FRIEND")
                 {
-                    Display.ShowMessage("Already friend", "You have already added this person as a friend.");
+                    core.Display.ShowMessage("Already friend", "You have already added this person as a friend.");
                     return;
                 }
                 if ((string)relationsTable.Rows[i]["relation_type"] == "BLOCKED")
                 {
-                    Display.ShowMessage("Person Blocked", "You have blocked this person, to add them as a friend you must first unblock them.");
+                    core.Display.ShowMessage("Person Blocked", "You have blocked this person, to add them as a friend you must first unblock them.");
                     return;
                 }
             }
@@ -159,7 +159,7 @@ namespace BoxSocial.Applications.Profile
 
             if (!isFriend)
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", Linker.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Uri.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
             }
             else
             {
@@ -170,7 +170,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Added friend", "You have added a friend.");
+            core.Display.ShowMessage("Added friend", "You have added a friend.");
         }
 
         void AccountFriendManage_Delete(object sender, EventArgs e)
@@ -187,7 +187,7 @@ namespace BoxSocial.Applications.Profile
             catch
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Cannot delete friend", "No friend specified to delete. Please go back and try again.");
+                core.Display.ShowMessage("Cannot delete friend", "No friend specified to delete. Please go back and try again.");
                 return;
             }
 
@@ -199,7 +199,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId, deletedRows));
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Deleted friend", "You have deleted a friend.");
+            core.Display.ShowMessage("Deleted friend", "You have deleted a friend.");
         }
 
         void AccountFriendManage_Promote(object sender, EventArgs e)
@@ -216,7 +216,7 @@ namespace BoxSocial.Applications.Profile
             catch
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Cannot promote friend", "No friend specified to promote. Please go back and try again.");
+                core.Display.ShowMessage("Cannot promote friend", "No friend specified to promote. Please go back and try again.");
                 return;
             }
 
@@ -230,7 +230,7 @@ namespace BoxSocial.Applications.Profile
                 if (relationOrder == 1)
                 {
                     SetRedirectUri(BuildUri());
-                    Display.ShowMessage("Cannot promote friend", "Cannot promote higher than the number one position.");
+                    core.Display.ShowMessage("Cannot promote friend", "Cannot promote higher than the number one position.");
                     return;
                 }
                 else if (relationOrder > 0)
@@ -280,7 +280,7 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Friend Promoted", "You have successfully promoted your friend in your social hierarchy.");
+                core.Display.ShowMessage("Friend Promoted", "You have successfully promoted your friend in your social hierarchy.");
                 return;
             }
             else
@@ -304,7 +304,7 @@ namespace BoxSocial.Applications.Profile
             catch
             {
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Cannot demote friend", "No friend specified to demote. Please go back and try again.");
+                core.Display.ShowMessage("Cannot demote friend", "No friend specified to demote. Please go back and try again.");
                 return;
             }
 
@@ -347,7 +347,7 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 SetRedirectUri(BuildUri());
-                Display.ShowMessage("Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
+                core.Display.ShowMessage("Friend Demoted", "You have successfully demoted your friend in your social hierarchy.");
                 return;
             }
             else

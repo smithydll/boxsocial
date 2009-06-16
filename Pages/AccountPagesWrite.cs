@@ -159,11 +159,11 @@ namespace BoxSocial.Applications.Pages
 
             pagesSelectBox.SelectedKey = pageParentId.ToString();
 
-            Display.ParseLicensingBox(template, "S_PAGE_LICENSE", licenseId);
-            Display.ParseClassification(template, "S_PAGE_CLASSIFICATION", pageClassification);
+            core.Display.ParseLicensingBox(template, "S_PAGE_LICENSE", licenseId);
+            core.Display.ParseClassification(template, "S_PAGE_CLASSIFICATION", pageClassification);
             template.Parse("S_PAGE_PARENT", pagesSelectBox);
 
-            Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
+            core.Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
 
             template.Parse("S_TITLE", pageTitle);
             template.Parse("S_SLUG", pageSlug);
@@ -248,12 +248,12 @@ namespace BoxSocial.Applications.Pages
             if (status == PageStatus.Draft)
             {
                 SetRedirectUri(BuildUri("drafts"));
-                Display.ShowMessage("Draft Saved", "Your draft has been saved.");
+                core.Display.ShowMessage("Draft Saved", "Your draft has been saved.");
             }
             else
             {
                 SetRedirectUri(BuildUri("manage"));
-                Display.ShowMessage("Page Published", "Your page has been published");
+                core.Display.ShowMessage("Page Published", "Your page has been published");
             }
         }
 
@@ -270,18 +270,18 @@ namespace BoxSocial.Applications.Pages
                 if (page.Delete(core, Owner))
                 {
                     SetRedirectUri(BuildUri("manage"));
-                    Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");
+                    core.Display.ShowMessage("Page Deleted", "The page has been deleted from the database.");
                     return;
                 }
                 else
                 {
-                    Display.ShowMessage("Error", "Could not delete the page.");
+                    core.Display.ShowMessage("Error", "Could not delete the page.");
                     return;
                 }
             }
             catch (PageNotFoundException)
             {
-                Display.ShowMessage("Error", "Could not delete the page.");
+                core.Display.ShowMessage("Error", "Could not delete the page.");
                 return;
             }
         }

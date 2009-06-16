@@ -70,7 +70,7 @@ namespace BoxSocial.Groups
             }
             catch (InvalidGroupException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
                 return;
             }
 
@@ -89,13 +89,13 @@ namespace BoxSocial.Groups
 
             if (ThisGroup.IsGroupMemberBanned(core.session.LoggedInMember))
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
             if (!thisGroup.IsGroupMember(core.session.LoggedInMember) && thisGroup.GroupType == "PRIVATE")
             {
-                Functions.Generate403();
+                core.Functions.Generate403();
                 return;
             }
 
@@ -134,7 +134,7 @@ namespace BoxSocial.Groups
                 {
                     if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
                     {
-                        template.Parse("U_GROUP_ACCOUNT", Linker.AppendSid(e.Owner.AccountUriStub));
+                        template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
                     }
                 }
 

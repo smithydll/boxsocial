@@ -91,7 +91,7 @@ namespace BoxSocial.FrontEnd
                 applicationVariableCollection.Parse("URI", ae.GetUri(typeId, id));
             }
 
-            Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
+            core.Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
 
             EndResponse();
         }

@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Profile
                         galleryItem.Id, LoggedInMember.UserId));
 
                     SetRedirectUri(BuildUri());
-                    Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");
+                    core.Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");
                     return;
                 }
                 catch (GalleryItemTooLargeException)
@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.Profile
                 }
                 catch (InvalidGalleryFileNameException)
                 {
-                    Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                    core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                     return;
                 }
             }

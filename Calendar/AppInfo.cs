@@ -328,7 +328,7 @@ namespace BoxSocial.Applications.Calendar
             Calendar cal = new Calendar(e.core);
             List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
 
-            template.Parse("U_CALENDAR", Linker.AppendSid(string.Format("/{0}/calendar",
+            template.Parse("U_CALENDAR", core.Uri.AppendSid(string.Format("/{0}/calendar",
                 e.core.session.LoggedInMember.UserName)));
 
             VariableCollection appointmentDaysVariableCollection = null;
@@ -357,7 +357,7 @@ namespace BoxSocial.Applications.Calendar
                 appointmentVariableCollection.Parse("TIME", eventDay.ToShortTimeString() + " - " + eventEnd.ToShortTimeString());
                 appointmentVariableCollection.Parse("SUBJECT", calendarEvent.Subject);
                 appointmentVariableCollection.Parse("LOCATION", calendarEvent.Location);
-                appointmentVariableCollection.Parse("URI", Event.BuildEventUri(calendarEvent));
+                appointmentVariableCollection.Parse("URI", Event.BuildEventUri(core, calendarEvent));
             }
 
             e.core.AddMainPanel(template);
@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
                 template.Parse("HAS_TASKS", "TRUE");
             }
 
-            template.Parse("U_TASKS", Task.BuildTasksUri(e.core.session.LoggedInMember));
+            template.Parse("U_TASKS", Task.BuildTasksUri(e.core, e.core.session.LoggedInMember));
 
             foreach (Task calendarTask in tasks)
             {
@@ -396,8 +396,8 @@ namespace BoxSocial.Applications.Calendar
                 taskVariableCollection.Parse("DATE", taskDue.ToShortDateString() + " (" + taskDue.ToShortTimeString() + ")");
                 taskVariableCollection.Parse("TOPIC", calendarTask.Topic);
                 taskVariableCollection.Parse("ID", calendarTask.Id.ToString());
-                taskVariableCollection.Parse("URI", Task.BuildTaskUri(calendarTask));
-                taskVariableCollection.Parse("U_MARK_COMPLETE", Task.BuildTaskMarkCompleteUri(calendarTask));
+                taskVariableCollection.Parse("URI", Task.BuildTaskUri(core, calendarTask));
+                taskVariableCollection.Parse("U_MARK_COMPLETE", Task.BuildTaskMarkCompleteUri(core, calendarTask));
 
                 if (calendarTask.Status == TaskStatus.Overdue)
                 {

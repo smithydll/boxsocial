@@ -257,15 +257,15 @@ namespace BoxSocial.Applications.Pages
             return lists;
         }
 
-        public static string BuildListsUri(User member)
+        public static string BuildListsUri(Core core, User member)
         {
-            return Linker.AppendSid(string.Format("/{0}/lists",
+            return core.Uri.AppendSid(string.Format("/{0}/lists",
                 member.UserName.ToLower()));
         }
 
-        public static string BuildListUri(List list)
+        public static string BuildListUri(Core core, List list)
         {
-            return Linker.AppendSid(string.Format("/{0}/lists/{1}",
+            return core.Uri.AppendSid(string.Format("/{0}/lists/{1}",
                 list.owner.UserName.ToLower(), list.path));
         }
 
@@ -396,7 +396,7 @@ namespace BoxSocial.Applications.Pages
                 VariableCollection listVariableCollection = page.template.CreateChild("list_list");
 
                 listVariableCollection.Parse("TITLE", list.Title);
-                listVariableCollection.Parse("URI", List.BuildListUri(list));
+                listVariableCollection.Parse("URI", List.BuildListUri(core, list));
             }
         }
 
@@ -412,7 +412,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (!list.ListAccess.CanRead)
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -422,7 +422,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (!string.IsNullOrEmpty(list.Abstract))
                 {
-                    Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
+                    core.Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
                 }
                 else
                 {
@@ -445,13 +445,13 @@ namespace BoxSocial.Applications.Pages
 
                     if (list.Owner.Id == core.LoggedInMemberId)
                     {
-                        listVariableCollection.Parse("U_DELETE", Linker.BuildRemoveFromListUri(listItem.ListItemId));
+                        listVariableCollection.Parse("U_DELETE", core.Uri.BuildRemoveFromListUri(listItem.ListItemId));
                     }
                 }
             }
             catch (InvalidListException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
         }
 
@@ -467,7 +467,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return Linker.BuildListUri(Owner, path);
+                return core.Uri.BuildListUri(Owner, path);
             }
         }
 

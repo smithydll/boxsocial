@@ -47,7 +47,7 @@ namespace BoxSocial.FrontEnd
             {
                 if (core.LoggedInMemberId > 2 || core.LoggedInMemberId == 0)
                 {
-                    Functions.Generate403();
+                    core.Functions.Generate403();
                     return;
                 }
 
@@ -87,7 +87,7 @@ namespace BoxSocial.FrontEnd
                     ae.UpdateInstall(core, member);
                 }
 
-                Display.ShowMessage("Application Updated", "The application has been updated for all users.");
+                core.Display.ShowMessage("Application Updated", "The application has been updated for all users.");
             }
             else
             {
@@ -122,7 +122,7 @@ namespace BoxSocial.FrontEnd
                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
 					BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
 
-                    Display.ShowMessage("Internals Updated", "Internals have been updated.");
+                    core.Display.ShowMessage("Internals Updated", "Internals have been updated.");
                 }
                 else
                 {
@@ -204,7 +204,7 @@ namespace BoxSocial.FrontEnd
                                     }
                                     else
                                     {
-                                        Functions.Generate403();
+                                        core.Functions.Generate403();
                                         return;
                                     }
                                 }
@@ -308,14 +308,14 @@ namespace BoxSocial.FrontEnd
                                 }
                                 else
                                 {
-                                    Display.ShowMessage("Error", "Error installing application");
+                                    core.Display.ShowMessage("Error", "Error installing application");
                                     EndResponse();
                                 }
                             }
                         }
                     }
 
-                    Display.ShowMessage("Application Installed", "The application has been installed.");
+                    core.Display.ShowMessage("Application Installed", "The application has been installed.");
 
                 }
 

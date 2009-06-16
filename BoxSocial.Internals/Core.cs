@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
 {
     public sealed class Core
     {
-        internal static Mysql DB;
+        //internal Mysql DB;
 
         public Mysql db;
         internal Template template;
@@ -43,6 +43,12 @@ namespace BoxSocial.Internals
         public GroupCollection PagePathParts;
         public UnixTime tz;
         public Prose prose;
+        public Bbcode Bbcode;
+        public Functions Functions;
+        public Display Display;
+        public Email Email;
+        public Ajax Ajax;
+        public Linker Uri;
 
         internal TPage page;
 
@@ -111,6 +117,21 @@ namespace BoxSocial.Internals
             get
             {
                 return applicationEntryCache;
+            }
+        }
+
+        public ApplicationEntry CallingApplication
+        {
+            get
+            {
+                string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
+
+                if (!ApplicationEntries.ContainsKey(assemblyName))
+                {
+                    LoadApplicationEntry(assemblyName);
+                }
+
+                return ApplicationEntries[assemblyName];
             }
         }
 

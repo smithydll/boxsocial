@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Calendar
                     hiddenFieldList.Add("sub", "delete-event");
                     hiddenFieldList.Add("id", eventId.ToString());
 
-                    Display.ShowConfirmBox(HttpUtility.HtmlEncode(Linker.AppendSid(Owner.AccountUriStub, true)), "Do you want to delete this event?", "Are you sure you want to delete this event, you cannot undo this delete operation.", hiddenFieldList);
+                    core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)), "Do you want to delete this event?", "Are you sure you want to delete this event, you cannot undo this delete operation.", hiddenFieldList);
                 }
                 else
                 {
@@ -103,12 +103,12 @@ namespace BoxSocial.Applications.Calendar
                     {
                         calendarEvent.Delete(core);
 
-                        SetRedirectUri(Linker.BuildAccountModuleUri(ModuleKey));
-                        Display.ShowMessage("Event Deleted", "You have deleted an event from your calendar.");
+                        SetRedirectUri(core.Uri.BuildAccountModuleUri(ModuleKey));
+                        core.Display.ShowMessage("Event Deleted", "You have deleted an event from your calendar.");
                     }
                     catch (NotLoggedInException)
                     {
-                        Display.ShowMessage("Unauthorised", "You are unauthorised to delete this event.");
+                        core.Display.ShowMessage("Unauthorised", "You are unauthorised to delete this event.");
                     }
                 }
                 else

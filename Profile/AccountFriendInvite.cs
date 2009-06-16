@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.Profile
 
             if (string.IsNullOrEmpty(friendEmail))
             {
-                Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
+                core.Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
                 return;
             }
 
@@ -109,7 +109,7 @@ namespace BoxSocial.Applications.Profile
 
                     if (inviteKeysTable.Rows.Count > 0)
                     {
-                        Display.ShowMessage("Cannot Invite Friend", "The person you have invited has opted-out of mailings from ZinZam.");
+                        core.Display.ShowMessage("Cannot Invite Friend", "The person you have invited has opted-out of mailings from ZinZam.");
                         return;
                     }
                     else
@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.Profile
                         emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
                         emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
-                        Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
+                        core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                             LoggedInMember.DisplayName),
                             emailTemplate.ToString());
 
@@ -142,19 +142,19 @@ namespace BoxSocial.Applications.Profile
                 }
                 else
                 {
-                    Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
-                        Linker.BuildAddFriendUri(User.lastEmailId)));
+                    core.Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
+                        core.Uri.BuildAddFriendUri(User.lastEmailId)));
                     return;
                 }
             }
             else
             {
-                Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
+                core.Display.ShowMessage("Cannot Invite Friend", "You must enter a valid e-mail address to invite.");
                 return;
             }
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Invited Friend", "You have invited a friend to ZinZam.");
+            core.Display.ShowMessage("Invited Friend", "You have invited a friend to ZinZam.");
         }
 
         private void InviteFriendsSend(string[] friendEmails)
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Profile
                             emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
                             emailTemplate.Parse("U_OPTOUT", "http://zinzam.com/register/?mode=optout&key=" + emailKey);
 
-                            Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
+                            core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to ZinZam.",
                                 LoggedInMember.DisplayName),
                                 emailTemplate.ToString());
 
@@ -231,7 +231,7 @@ namespace BoxSocial.Applications.Profile
                                     emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                                     emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
-                                    Email.SendEmail(friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
+                                    core.Email.SendEmail(friendProfile.AlternateEmail, string.Format("{0} added you as a friend on ZinZam.",
                                         LoggedInMember.DisplayName),
                                         emailTemplate.ToString());
                                 }
@@ -246,7 +246,7 @@ namespace BoxSocial.Applications.Profile
             }
 
             SetRedirectUri(BuildUri());
-            Display.ShowMessage("Invited Friend", "You have invited all your friends to ZinZam.");
+            core.Display.ShowMessage("Invited Friend", "You have invited all your friends to ZinZam.");
         }
     }
 }

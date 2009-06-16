@@ -199,7 +199,7 @@ namespace BoxSocial.Internals
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("USERNAME", owner.UserName);
 
-                BoxSocial.Internals.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
+                core.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
             }
 
             return new UserEmail(core, emailId);

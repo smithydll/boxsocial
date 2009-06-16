@@ -92,11 +92,11 @@ namespace BoxSocial.Applications.Forum
             }
             catch (InvalidForumMemberException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
             catch (InvalidUserException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
             SelectBox ranksSelectBox = new SelectBox("ranks");
@@ -136,11 +136,11 @@ namespace BoxSocial.Applications.Forum
             }
             catch (InvalidForumMemberException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
             catch (InvalidUserException)
             {
-                Functions.Generate404();
+                core.Functions.Generate404();
             }
 
             member.ForumSignature = Request.Form["signature"];
@@ -148,7 +148,7 @@ namespace BoxSocial.Applications.Forum
             member.Update(typeof(ForumMember));
 			
 			SetRedirectUri(BuildUri());
-			Display.ShowMessage("Forum Profile Updated", "The user's forum profile has been saved in the database");
+            core.Display.ShowMessage("Forum Profile Updated", "The user's forum profile has been saved in the database");
         }
 	}
 }

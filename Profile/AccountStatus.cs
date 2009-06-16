@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Profile
 
             StatusFeed.SaveMessage(core, message);
 
-            Ajax.SendRawText("Success", message);
+            core.Ajax.SendRawText("Success", message);
         }
     }
 }

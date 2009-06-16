@@ -36,21 +36,18 @@ namespace BoxSocial.Internals
 {
     public class Ajax
     {
-        private static Core core;
+        private Core core;
 
-        public static Core Core
+        public Ajax(Core core)
         {
-            set
-            {
-                core = value;
-            }
+            this.core = core;
         }
 
         /// <summary>
         /// Send a status code only the client has to work out what to do with.
         /// </summary>
         /// <param name="ajaxCode"></param>
-        public static void SendStatus(string ajaxCode)
+        public void SendStatus(string ajaxCode)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -82,7 +79,7 @@ namespace BoxSocial.Internals
         /// <param name="ajaxCode"></param>
         /// <param name="core"></param>
         /// <param name="message"></param>
-        public static void SendRawText(string ajaxCode, string message)
+        public void SendRawText(string ajaxCode, string message)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -117,7 +114,7 @@ namespace BoxSocial.Internals
         /// <param name="core"></param>
         /// <param name="title"></param>
         /// <param name="message"></param>
-        public static void ShowMessage(bool ajax, string ajaxCode, string title, string message)
+        public void ShowMessage(bool ajax, string ajaxCode, string title, string message)
         {
             if (ajax)
             {
@@ -148,7 +145,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                Display.ShowMessage(title, message);
+                core.Display.ShowMessage(title, message);
             }
         }
 
@@ -158,7 +155,7 @@ namespace BoxSocial.Internals
         /// <param name="ajaxCore"></param>
         /// <param name="core"></param>
         /// <param name="arrayItems"></param>
-        public static void SendArray(string ajaxCode, string[] arrayItems)
+        public void SendArray(string ajaxCode, string[] arrayItems)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -185,7 +182,7 @@ namespace BoxSocial.Internals
             HttpContext.Current.Response.End();
         }
 
-        public static void SendDictionary(string ajaxCode, Dictionary<long, string> arrayItems)
+        public void SendDictionary(string ajaxCode, Dictionary<long, string> arrayItems)
         {
             XmlSerializer xs;
             StringWriter stw;

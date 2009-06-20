@@ -103,7 +103,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string StoragePath;
+        public static Object StoragePathLock = new object();
+        public static string StoragePath = null;
 
         public static string GetStorageFilePath(string fileName)
         {
@@ -194,7 +195,13 @@ namespace BoxSocial.Internals
             rand = new Random();
             page = Functions.RequestInt("p", 1);
 
-            StoragePath = Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]);
+            lock (StoragePathLock)
+            {
+                if (StoragePath == null)
+                {
+                    StoragePath = Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]);
+                }
+            }
             db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
                 WebConfigurationManager.AppSettings["mysql-password"],
                 WebConfigurationManager.AppSettings["mysql-database"],

@@ -142,9 +142,18 @@ namespace BoxSocial.Applications.Profile
                 }
                 else
                 {
-                    core.Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
-                        core.Uri.BuildAddFriendUri(User.lastEmailId)));
-                    return;
+                    try
+                    {
+                        UserEmail email = new UserEmail(core, friendEmail);
+                        core.Display.ShowMessage("Already Member", string.Format("This person is already a member of ZinZam. To add them to your friends list <a href=\"{0}\">click here</a>.",
+                            core.Uri.BuildAddFriendUri(email.UserId)));
+                        return;
+                    }
+                    catch (InvalidUserEmailException)
+                    {
+                        core.Display.ShowMessage("ERROR", "An exception has occured");
+                        return;
+                    }
                 }
             }
             else

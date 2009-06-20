@@ -176,7 +176,7 @@ namespace BoxSocial.Networks
                 Mysql.Escape(eMail.ToLower())));
             if (networkMemberTable.Rows.Count > 0)
             {
-                lastEmailId = (long)networkMemberTable.Rows[0]["user_id"];
+                //lastEmailId = (long)networkMemberTable.Rows[0]["user_id"];
                 return false;
             }
 

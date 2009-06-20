@@ -103,6 +103,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long UserId
+        {
+            get
+            {
+                return userId;
+            }
+        }
+
         public UserEmail(Core core, long emailId)
             : base(core)
         {

@@ -32,7 +32,8 @@ namespace BoxSocial.Internals
 {
 	public class ItemKey
 	{
-		private static Dictionary<string, long> itemTypeCache;
+        private static Object itemTypeCacheLock = new object();
+		private static Dictionary<string, long> itemTypeCache = null;
 		private long itemId;
 		private long itemTypeId;
 		private string itemType;
@@ -100,40 +101,43 @@ namespace BoxSocial.Internals
 			{
 				o = cache.Get("itemTypeIds");
 			}
-			
-			if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
-			{
-				itemTypeCache = (Dictionary<string, long>)o;
-			}
-			else
-			{
-				itemTypeCache = new Dictionary<string,long>();
-				SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
-				
-				DataTable typesTable;
-				
-				try
-				{
-					typesTable = core.db.Query(query);
-				}
-				catch
-				{
-					return;
-				}
-				
-				foreach (DataRow dr in typesTable.Rows)
-				{
-                    if (!(itemTypeCache.ContainsKey((string)dr["type_namespace"])))
-                    {
-                        itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
-                    }
-				}
 
-				if (cache != null)
-				{
-					cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
-				}
-			}
+            lock (itemTypeCacheLock)
+            {
+                if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
+                {
+                    itemTypeCache = (Dictionary<string, long>)o;
+                }
+                else
+                {
+                    itemTypeCache = new Dictionary<string, long>();
+                    SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
+
+                    DataTable typesTable;
+
+                    try
+                    {
+                        typesTable = core.db.Query(query);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+
+                    foreach (DataRow dr in typesTable.Rows)
+                    {
+                        if (!(itemTypeCache.ContainsKey((string)dr["type_namespace"])))
+                        {
+                            itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                        }
+                    }
+
+                    if (cache != null)
+                    {
+                        cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+                    }
+                }
+            }
 		}
 
         public static long GetTypeId(Type type)

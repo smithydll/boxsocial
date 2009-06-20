@@ -60,8 +60,6 @@ namespace BoxSocial.Internals
     [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
     public class User : Primitive, ICommentableItem
     {
-        public static long lastEmailId;
-
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
         [DataField("user_name", DataFieldKeys.Unique, 64)]

@@ -469,42 +469,46 @@ namespace BoxSocial.Internals
             return query;
         }
 		
+        private static Object itemFieldsCacheLock = new Object();
 		private static Dictionary<Type, List<DataFieldInfo>> itemFieldsCache = null;
-		
-		private static void populateItemFieldsCache()
-		{
-			object o = null;
+
+        private static void populateItemFieldsCache()
+        {
+            object o = null;
             System.Web.Caching.Cache cache;
-			
-			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-			{
-				cache = HttpContext.Current.Cache;
-			}
-			else
-			{
-				cache = new Cache();
-			}
-			
-			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-			{
-				cache = HttpContext.Current.Cache;
-			}
-			else
-			{
-				cache = new Cache();
-			}
-			
-			o = cache.Get("itemFields");
-			
-			if (o != null && o is Dictionary<Type, List<DataFieldInfo>>)
-			{
-				itemFieldsCache = (Dictionary<Type, List<DataFieldInfo>>)o;
-			}
-			else
-			{
-				itemFieldsCache = new Dictionary<Type, List<DataFieldInfo>>();
-			}
-		}
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            o = cache.Get("itemFields");
+
+            lock (itemFieldsCacheLock)
+            {
+                if (o != null && o is Dictionary<Type, List<DataFieldInfo>>)
+                {
+                    itemFieldsCache = (Dictionary<Type, List<DataFieldInfo>>)o;
+                }
+                else
+                {
+                    itemFieldsCache = new Dictionary<Type, List<DataFieldInfo>>();
+                }
+            }
+        }
 		
 		internal protected static List<DataFieldInfo> GetFields(Type type)
 		{
@@ -578,7 +582,10 @@ namespace BoxSocial.Internals
 
             if ((!itemFieldsCache.ContainsKey(type)) && (!getRawFields))
             {
-                itemFieldsCache.Add(type, returnValue);
+                lock (itemFieldsCacheLock)
+                {
+                    itemFieldsCache.Add(type, returnValue);
+                }
             }
 
             System.Web.Caching.Cache cache;

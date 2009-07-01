@@ -60,7 +60,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public abstract class TPage : System.Web.UI.Page
     {
-        private string pageTitle = "ZinZam • Your point in user space";
+        private string pageTitle = "ZinZam • A Global Community";
 
         public Template template;
         public Mysql db;

@@ -195,6 +195,15 @@ namespace BoxSocial.Applications.Forum
                 ((GPage)page).ThisGroup.UriStub)));
             page.template.Parse("U_MEMBERS", core.Uri.AppendSid(string.Format("{0}forum/memberlist",
                 ((GPage)page).ThisGroup.UriStub)));
+
+            if (core.session.IsLoggedIn && page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+            {
+                page.template.Parse("IS_FORUM_MEMBER", "TRUE");
+            }
+            else
+            {
+                page.template.Parse("IS_FORUM_MEMBER", "FALSE");
+            }
         }
     }
 

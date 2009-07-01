@@ -329,6 +329,21 @@ namespace BoxSocial.Applications.Forum
             page.template.Parse("U_FILTER_BEGINS_X", GenerateMemberlistUri(core, page.ThisGroup, "x"));
             page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.ThisGroup, "y"));
             page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.ThisGroup, "z"));
+
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.ThisGroup, Functions.GetFilter(), page.page, 20);
+
+            foreach (ForumMember member in members.Values)
+            {
+                VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
+
+                memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
+                //memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));
+                memberVariableCollection.Parse("USER_COUNTRY", member.Country);
+
+                memberVariableCollection.Parse("U_PROFILE", member.Uri);
+
+                memberVariableCollection.Parse("POSTS", member.ForumPosts.ToString());
+            }
         }
 
         private static void Save(Core core, GPage page)

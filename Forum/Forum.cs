@@ -1065,6 +1065,40 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public string MarkTopicsReadUri
+        {
+            get
+            {
+                if (forumId == 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/?mark=topics",
+                        Owner.UriStub));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/{1}?mark=topics",
+                        Owner.UriStub, forumId));
+                }
+            }
+        }
+
+        public string MarkForumsReadUri
+        {
+            get
+            {
+                if (forumId == 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/?mark=forums",
+                        Owner.UriStub));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/{1}?mark=forums",
+                        Owner.UriStub, forumId));
+                }
+            }
+        }
+
         public void ReadAll()
         {
             ReadAll(false);
@@ -1103,6 +1137,7 @@ namespace BoxSocial.Applications.Forum
         public static void Show(Core core, GPage page, long forumId)
         {
             int p = Functions.RequestInt("p", 1);
+            string mark = HttpContext.Current.Request.QueryString["mark"];
             ForumSettings settings;
             try
             {
@@ -1133,6 +1168,16 @@ namespace BoxSocial.Applications.Forum
             catch (InvalidForumException)
             {
                 return;
+            }
+
+            if (mark == "topics")
+            {
+                thisForum.ReadAll(false);
+            }
+
+            if (mark == "forums")
+            {
+                thisForum.ReadAll(true);
             }
 			
 			thisForum.Access.SetSessionViewer(core.session);

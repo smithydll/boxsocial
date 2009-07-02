@@ -146,27 +146,27 @@ namespace BoxSocial.FrontEnd
                         switch ((string)dnsTable.Rows[0]["dns_owner_type"])
                         {
                             case "GROUP":
-                                patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
+                                patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/groupstyle.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/account(|/)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account(/|)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^(|/)$", string.Format(@"/grouppage.aspx?gn={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;
                             case "USER":
-                                patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
+                                patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^/friends(|/)$", string.Format(@"/viewfriends.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/friends/([0-9]+)(|/)$", string.Format(@"/viewfriends.aspx?un={0}&page=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/friends(/|)$", string.Format(@"/viewfriends.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/friends/([0-9]+)(/|)$", string.Format(@"/viewfriends.aspx?un={0}&page=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/(.+)(|/)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;
                         }
                     }
@@ -182,78 +182,78 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).png$", @"/corners.aspx?location=$1&width=$3&roundness=$4&colour=$2&ext=png" });
                     patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).gif$", @"/corners.aspx?location=$1&width=$3&roundness=$4&colour=$2&ext=gif" });
 
-                    patterns.Add(new string[] { @"^/about(|/)$", @"/about.aspx" });
-                    patterns.Add(new string[] { @"^/opensource(|/)$", @"/opensource.aspx" });
-                    patterns.Add(new string[] { @"^/safety(|/)$", @"/safety.aspx" });
-                    patterns.Add(new string[] { @"^/privacy(|/)$", @"/privacy.aspx" });
-                    patterns.Add(new string[] { @"^/terms-of-service(|/)$", @"/tos.aspx" });
-                    patterns.Add(new string[] { @"^/site-map(|/)$", @"/sitemap.aspx" });
-                    patterns.Add(new string[] { @"^/copyright(|/)$", @"/copyright.aspx" });
-                    patterns.Add(new string[] { @"^/register(|/)$", @"/register.aspx" });
-                    patterns.Add(new string[] { @"^/sign-in(|/)$", @"/login.aspx" });
-                    patterns.Add(new string[] { @"^/login(|/)$", @"/login.aspx" });
-                    patterns.Add(new string[] { @"^/search(|/)$", @"/search.aspx" });
-                    patterns.Add(new string[] { @"^/comment(|/)$", @"/comment.aspx" });
+                    patterns.Add(new string[] { @"^/about(/|)$", @"/about.aspx" });
+                    patterns.Add(new string[] { @"^/opensource(/|)$", @"/opensource.aspx" });
+                    patterns.Add(new string[] { @"^/safety(/|)$", @"/safety.aspx" });
+                    patterns.Add(new string[] { @"^/privacy(/|)$", @"/privacy.aspx" });
+                    patterns.Add(new string[] { @"^/terms-of-service(/|)$", @"/tos.aspx" });
+                    patterns.Add(new string[] { @"^/site-map(/|)$", @"/sitemap.aspx" });
+                    patterns.Add(new string[] { @"^/copyright(/|)$", @"/copyright.aspx" });
+                    patterns.Add(new string[] { @"^/register(/|)$", @"/register.aspx" });
+                    patterns.Add(new string[] { @"^/sign-in(/|)$", @"/login.aspx" });
+                    patterns.Add(new string[] { @"^/login(/|)$", @"/login.aspx" });
+                    patterns.Add(new string[] { @"^/search(/|)$", @"/search.aspx" });
+                    patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
-                    patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/account.aspx?module=$1&sub=$2" });
-                    patterns.Add(new string[] { @"^/account/([a-z\-]+)(|/)$", @"/account.aspx?module=$1" });
-                    patterns.Add(new string[] { @"^/account(|/)$", @"/account.aspx" });
+                    patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
+                    patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
+                    patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });
 
-                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/groupaccount.aspx?gn=$1&module=$2&sub=$3" });
-                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(|/)$", @"/groupaccount.aspx?gn=$1&module=$2" });
-                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(|/)$", @"/groupaccount.aspx?gn=$1" });
+                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/groupaccount.aspx?gn=$1&module=$2&sub=$3" });
+                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(/|)$", @"/groupaccount.aspx?gn=$1&module=$2" });
+                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(/|)$", @"/groupaccount.aspx?gn=$1" });
 
-                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(|/)$", @"/musicaccount.aspx?mn=$1&module=$2&sub=$3" });
-                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(|/)$", @"/musicaccount.aspx?mn=$1&module=$2" });
-                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account(|/)$", @"/musicaccount.aspx?mn=$1" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/musicaccount.aspx?mn=$1&module=$2&sub=$3" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(/|)$", @"/musicaccount.aspx?mn=$1&module=$2" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account(/|)$", @"/musicaccount.aspx?mn=$1" });
 
                     patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
                     patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_]+).css$", @"/groupstyle.aspx?gn=$1" });
                     patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_]+).css$", @"/musicstyle.aspx?gn=$1" });
 
-                    patterns.Add(new string[] { @"^/help(|/)$", @"/help.aspx" });
-                    patterns.Add(new string[] { @"^/help/([a-z\-]+)(|/)$", @"/help.aspx?topic=$1" });
+                    patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
+                    patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });
 
-                    patterns.Add(new string[] { @"^/applications(|/)$", @"/viewapplications.aspx$1" });
+                    patterns.Add(new string[] { @"^/applications(/|)$", @"/viewapplications.aspx$1" });
 
-                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)(|/)$", @"/applicationpage.aspx?an=$1&path=" });
+                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)(/|)$", @"/applicationpage.aspx?an=$1&path=" });
 
-                    patterns.Add(new string[] { @"^/groups/create(|/)$", @"/creategroup.aspx" });
-                    patterns.Add(new string[] { @"^/groups(|/)$", @"/viewgroups.aspx$1" });
-                    patterns.Add(new string[] { @"^/groups/([A-Za-z0-9\-_]+)(|/)$", @"/viewgroups.aspx?category=$1" });
+                    patterns.Add(new string[] { @"^/groups/create(/|)$", @"/creategroup.aspx" });
+                    patterns.Add(new string[] { @"^/groups(/|)$", @"/viewgroups.aspx$1" });
+                    patterns.Add(new string[] { @"^/groups/([A-Za-z0-9\-_]+)(/|)$", @"/viewgroups.aspx?category=$1" });
 
-                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)(|/)$", @"/grouppage.aspx?gn=$1&path=" });
+                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)(/|)$", @"/grouppage.aspx?gn=$1&path=" });
 
                     //patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?gn=$1&path=$2" });
 
-                    patterns.Add(new string[] { @"^/networks(|/)$", @"/viewnetworks.aspx" });
-                    patterns.Add(new string[] { @"^/networks/([A-Za-z0-9\-_\.]+)(|/)$", @"/viewnetworks.aspx?type=$1" });
+                    patterns.Add(new string[] { @"^/networks(/|)$", @"/viewnetworks.aspx" });
+                    patterns.Add(new string[] { @"^/networks/([A-Za-z0-9\-_\.]+)(/|)$", @"/viewnetworks.aspx?type=$1" });
 
-                    patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)(|/)$", @"/networkpage.aspx?nn=$1&path=" });
+                    patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)(/|)$", @"/networkpage.aspx?nn=$1&path=" });
 
                     //patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?nn=$1&path=$2" });
 
-                    patterns.Add(new string[] { @"^/musicians/create(|/)$", @"/createmusician.aspx" });
-                    patterns.Add(new string[] { @"^/musicians(|/)$", @"/viewmusicians.aspx$1" });
-                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(|/)$", @"/viewmusicians.aspx?genre=$1" });
-                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(|/)([A-Za-z0-9\-_]+)(|/)$", @"/viewmusicians.aspx?genre=$1&sub=$2" });
+                    patterns.Add(new string[] { @"^/musicians/create(/|)$", @"/createmusician.aspx" });
+                    patterns.Add(new string[] { @"^/musicians(/|)$", @"/viewmusicians.aspx$1" });
+                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1" });
+                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(/|)([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1&sub=$2" });
 
-                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)(|/)$", @"/musicpage.aspx?mn=$1&path=" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)(/|)$", @"/musicpage.aspx?mn=$1&path=" });
 
-                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)(|/)$", @"/memberpage.aspx?un=$1&path=" });
+                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)(/|)$", @"/memberpage.aspx?un=$1&path=" });
 
-                    //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/profile(|/)$", @"/viewprofile.aspx?un=$1" });
+                    //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/profile(/|)$", @"/viewprofile.aspx?un=$1" });
 
-                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends(|/)$", @"/viewfriends.aspx?un=$1" });
-                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends/([0-9]+)(|/)$", @"/viewfriends.aspx?un=$1&page=$2" });
+                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends(/|)$", @"/viewfriends.aspx?un=$1" });
+                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/friends/([0-9]+)(/|)$", @"/viewfriends.aspx?un=$1&page=$2" });
 
                     //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?un=$1&path=$2" });
 
                     /* Wildcard for application loader */
-                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/(.+)(|/)$", @"/applicationpage.aspx?an=$1&path=$2" });
-                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/(.+)(|/)$", @"/grouppage.aspx?gn=$1&path=$2" });
-                    patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/(.+)(|/)$", @"/networkpage.aspx?nn=$1&path=$2" });
-                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/(.+)(|/)$", @"/memberpage.aspx?un=$1&path=$2" });
+                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/(.+)(/|)$", @"/applicationpage.aspx?an=$1&path=$2" });
+                    patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/(.+)(/|)$", @"/grouppage.aspx?gn=$1&path=$2" });
+                    patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/(.+)(/|)$", @"/networkpage.aspx?nn=$1&path=$2" });
+                    patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/(.+)(/|)$", @"/memberpage.aspx?un=$1&path=$2" });
 
                 }
 
@@ -274,12 +274,12 @@ namespace BoxSocial.FrontEnd
                                     currentURI = rex.Replace(currentURI, pattern[1]);
                                     if (currentURI.Contains("?"))
                                     {
-                                        httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                                        httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + "&" + cUri.Query.TrimStart(new char[] { '?' }));
                                         return;
                                     }
                                     else
                                     {
-                                        httpContext.RewritePath(currentURI + cUri.Query);
+                                        httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + cUri.Query);
                                         return;
                                     }
                                 }
@@ -297,12 +297,12 @@ namespace BoxSocial.FrontEnd
                         currentURI = rex.Replace(currentURI, pattern[1]);
                         if (currentURI.Contains("?"))
                         {
-                            httpContext.RewritePath(currentURI + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                            httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + "&" + cUri.Query.TrimStart(new char[] { '?' }));
                             return;
                         }
                         else
                         {
-                            httpContext.RewritePath(currentURI + cUri.Query);
+                            httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + cUri.Query);
                             return;
                         }
                     }

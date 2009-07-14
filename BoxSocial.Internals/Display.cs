@@ -837,7 +837,7 @@ namespace BoxSocial.Internals
 
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), owner));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), null, owner));
                 }
                 else
                 {

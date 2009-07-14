@@ -89,6 +89,22 @@ namespace BoxSocial.FrontEnd
                     currentURI = redir[1];
                     cUri = new Uri(currentURI);
                     currentURI = cUri.AbsolutePath;
+
+                    if (currentURI.EndsWith("index.php"))
+                    {
+                        currentURI = currentURI.Substring(0, currentURI.Length - 9);
+                        Response.Redirect(currentURI, true);
+                        Response.End();
+                        return;
+                    }
+
+                    if (currentURI.EndsWith(".php"))
+                    {
+                        currentURI = currentURI.Substring(0, currentURI.Length - 4);
+                        Response.Redirect(currentURI, true);
+                        Response.End();
+                        return;
+                    }
                 }
                 else
                 // NGINX

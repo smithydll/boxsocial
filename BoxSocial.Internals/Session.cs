@@ -346,47 +346,54 @@ namespace BoxSocial.Internals
             sessionData = null;
             sessionId = null;
 
-            if (Request.Cookies[cookieName + "_sid"] != null || Request.Cookies[cookieName + "_data"] != null)
+            if (record == null)
             {
-                if (Request.Cookies[cookieName + "_sid"] != null)
+                if (Request.Cookies[cookieName + "_sid"] != null || Request.Cookies[cookieName + "_data"] != null)
                 {
-                    sessionId = Request.Cookies[cookieName + "_sid"].Value;
-                }
-
-                if (Request.Cookies[cookieName + "_data"] != null)
-                {
-                    xs = new XmlSerializer(typeof(SessionCookie));
-                    StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
-
-                    try
+                    if (Request.Cookies[cookieName + "_sid"] != null)
                     {
-                        sessionData = (SessionCookie)xs.Deserialize(sr);
+                        sessionId = Request.Cookies[cookieName + "_sid"].Value;
                     }
-                    catch
+
+                    if (Request.Cookies[cookieName + "_data"] != null)
+                    {
+                        xs = new XmlSerializer(typeof(SessionCookie));
+                        StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
+
+                        try
+                        {
+                            sessionData = (SessionCookie)xs.Deserialize(sr);
+                        }
+                        catch
+                        {
+                            sessionData = new SessionCookie();
+                        }
+                    }
+                    else
                     {
                         sessionData = new SessionCookie();
                     }
+
+                    if (string.IsNullOrEmpty(sessionId))
+                    {
+                        sessionId = (string)Request.QueryString["sid"];
+                    }
+
+                    sessionMethod = SessionMethods.Cookie;
                 }
                 else
                 {
                     sessionData = new SessionCookie();
+                    if (Request.QueryString["sid"] != null)
+                    {
+                        sessionId = (string)Request.QueryString["sid"];
+                    }
+                    sessionMethod = SessionMethods.Get;
                 }
-
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    sessionId = (string)Request.QueryString["sid"];
-                }
-
-                sessionMethod = SessionMethods.Cookie;
             }
             else
             {
                 sessionData = new SessionCookie();
-                if (Request.QueryString["sid"] != null)
-                {
-                    sessionId = (string)Request.QueryString["sid"];
-                }
-                sessionMethod = SessionMethods.Get;
             }
 
             if (!string.IsNullOrEmpty(sessionId))
@@ -424,6 +431,7 @@ namespace BoxSocial.Internals
 
                     DataTable userSessionTable = db.Query(query);
 
+                    //HttpContext.Current.Response.Write(userSessionTable.Rows.Count.ToString() + ";");
                     if (userSessionTable.Rows.Count == 1)
                     {
                         loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
@@ -670,6 +678,7 @@ namespace BoxSocial.Internals
                 {
                     HttpContext.Current.Response.Redirect(Linker.Uri + string.Format("session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    //return;
                 }
 
                 sessionMethod = SessionMethods.Cookie;

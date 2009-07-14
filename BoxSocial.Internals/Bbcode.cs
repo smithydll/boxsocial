@@ -563,7 +563,7 @@ namespace BoxSocial.Internals
                 {
                     if (inTag)
                     {
-                        if (current.Equals('&') && input.Substring(i, 6).Equals("&quot;"))
+                        if (current.Equals('&') && (i + 6) <= strLength && input.Substring(i, 6).Equals("&quot;"))
                         {
                             inQuote = !inQuote;
                         }

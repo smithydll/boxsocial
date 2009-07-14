@@ -41,10 +41,16 @@ namespace BoxSocial.FrontEnd
         {
             string domain = Request.QueryString["domain"];
             string path = Request.QueryString["path"];
+            //string sessionId = Request.QueryString["sid"];
 
             try
             {
                 DnsRecord record = new DnsRecord(core, domain);
+
+                /*if (!string.IsNullOrEmpty(sessionId))
+                {
+                    core.session.SessionEnd(sessionId, 0, record);
+                }*/
 
                 string sessionId = core.session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 

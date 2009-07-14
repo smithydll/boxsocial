@@ -229,13 +229,13 @@ namespace BoxSocial.Internals
             {
                 core.PagePath = redir[1];
                 Uri cUri = new Uri(core.PagePath);
-                core.PagePath = cUri.AbsolutePath;
+                core.PagePath = cUri.AbsolutePath.TrimEnd(new char[] { '/' });
             }
             else
             {
                 if (httpContext.Request.Url.Host.ToLower() == Linker.Domain)
                 {
-                    Core.PagePath = httpContext.Request.RawUrl;
+                    Core.PagePath = httpContext.Request.RawUrl.TrimEnd(new char[] { '/' });
                 }
                 else
                 {

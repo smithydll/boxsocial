@@ -1538,6 +1538,14 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("forum_item_id", Owner.Id);
             uQuery.AddCondition("forum_item_type_id", Owner.TypeId);
         }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
     }
 
     public class InvalidForumException : Exception

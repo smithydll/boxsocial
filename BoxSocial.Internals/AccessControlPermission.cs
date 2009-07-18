@@ -21,6 +21,7 @@
 using System;
 using System.Data;
 using System.Configuration;
+using System.Reflection;
 using System.Web;
 using BoxSocial.IO;
 
@@ -37,6 +38,8 @@ namespace BoxSocial.Internals
 		long itemTypeId;
 		[DataField("permission_description", 31)]
 		string permissionDescription;
+
+        private string permissionAssembly;
 		
 		public long PermissionId
 		{
@@ -69,6 +72,26 @@ namespace BoxSocial.Internals
 				return new ItemType(core, itemTypeId);
 			}
 		}
+
+        public string Description
+        {
+            get
+            {
+                if (permissionDescription.StartsWith("{L_") && permissionDescription.EndsWith("}"))
+                {
+                    string key = permissionDescription.Substring(3, permissionDescription.Length - 4);
+                    if (core.prose.ContainsKey(key))
+                    {
+                        permissionDescription = core.prose.GetString(key);
+                    }
+                    else if ((!string.IsNullOrEmpty(permissionAssembly)) && core.prose.ContainsKey(permissionAssembly, key))
+                    {
+                        permissionDescription = core.prose.GetString(permissionAssembly, key);
+                    }
+                }
+                return permissionDescription;
+            }
+        }
 		
 		public AccessControlPermission(Core core, long permissionId)
 			: base (core)
@@ -99,6 +122,21 @@ namespace BoxSocial.Internals
                 throw new InvalidAccessControlPermissionException();
             }
         }
+
+        public AccessControlPermission(Core core, DataRow permissionRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+
+            try
+            {
+                loadItemInfo(permissionRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidAccessControlPermissionException();
+            }
+        }
 		
 		private void AccessControlPermission_ItemLoad()
         {
@@ -118,10 +156,15 @@ namespace BoxSocial.Internals
             return acp;
         }
 		
-		public void Delete()
+		public new void Delete()
 		{
 			base.Delete();
 		}
+
+        public void SetAssembly(Assembly value)
+        {
+            permissionAssembly = value.GetName().Name;
+        }
 		
 		public override long Id 
 		{

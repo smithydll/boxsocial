@@ -73,7 +73,20 @@ namespace BoxSocial.Internals
             get;
         }
 
+        /// <summary>
+        /// List of actions that require elevated permissions for an item
+        /// </summary>
+        List<AccessControlPermission> AclPermissions
+        {
+            get;
+        }
+
         long Id
+        {
+            get;
+        }
+
+        ItemKey Key
         {
             get;
         }

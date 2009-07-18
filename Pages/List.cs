@@ -497,6 +497,13 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
     }
 
     public class InvalidListException : Exception

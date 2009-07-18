@@ -427,6 +427,14 @@ namespace BoxSocial.Applications.Forum
 
             }
         }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
     }
 
     public class InvalidPostException : Exception

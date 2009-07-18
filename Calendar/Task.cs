@@ -486,6 +486,13 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
     }
 
     public class InvalidTaskException : Exception

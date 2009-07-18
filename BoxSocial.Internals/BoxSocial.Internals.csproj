@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Access.cs" />
+    <Compile Include="AccessControlLists.cs" />
     <Compile Include="Account.cs" />
     <Compile Include="AccountApplications.cs" />
     <Compile Include="AccountDashboard.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="ApplicationSlug.cs" />
     <Compile Include="Bbcode.cs" />
+    <Compile Include="BbcodeString.cs" />
     <Compile Include="Captcha.cs" />
     <Compile Include="CascadingStyleSheet.cs" />
     <Compile Include="Category.cs" />

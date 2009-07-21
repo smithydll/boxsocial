@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -39,7 +40,7 @@ namespace BoxSocial.Internals
             this.item = item;
         }
 
-        public void ParseACL(Template template)
+        public void ParseACL(Template template, string variable)
         {
             Template aclTemplate = new Template("std.acl.html");
 
@@ -66,18 +67,38 @@ namespace BoxSocial.Internals
                         
                         permissionVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
 
+                        RadioList allowrl = new RadioList(itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id);
+
+                        allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
+                        allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
+                        allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+
                         switch (itemGrant.Allow)
                         {
                             case AccessControlGrants.Allow:
+                                allowrl.SelectedKey = "allow";
                                 break;
                             case AccessControlGrants.Deny:
+                                allowrl.SelectedKey = "deny";
                                 break;
                             case AccessControlGrants.Inherit:
+                                allowrl.SelectedKey = "inherit";
                                 break;
                         }
+
+                        permissionVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
+                        permissionVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
+                        permissionVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
                     }
                 }
             }
+
+            if (string.IsNullOrEmpty(variable))
+            {
+                variable = "S_PERMISSIONS";
+            }
+
+            template.ParseRaw(variable, aclTemplate.ToString());
         }
 
         public static List<AccessControlPermission> GetPermissions(Core core, IPermissibleItem item)

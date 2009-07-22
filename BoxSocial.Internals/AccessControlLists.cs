@@ -40,7 +40,7 @@ namespace BoxSocial.Internals
             this.item = item;
         }
 
-        public void ParseACL(Template template, string variable)
+        public void ParseACL(Template template, Primitive owner, string variable)
         {
             Template aclTemplate = new Template("std.acl.html");
 
@@ -54,7 +54,7 @@ namespace BoxSocial.Internals
 
             foreach (AccessControlPermission itemPermission in itemPermissions)
             {
-                VariableCollection permissionVariableCollection = new VariableCollection("permission");
+                VariableCollection permissionVariableCollection = aclTemplate.CreateChild("permission");
                 permissionVariableCollection.Parse("ID", itemPermission.Id.ToString());
                 permissionVariableCollection.Parse("TITLE", itemPermission.Name);
                 permissionVariableCollection.Parse("DESCRIPTION", itemPermission.Description);
@@ -63,11 +63,11 @@ namespace BoxSocial.Internals
                 {
                     if (itemGrant.PermissionId == itemPermission.Id)
                     {
-                        VariableCollection grantVariableCollection = new VariableCollection("grant");
-                        
-                        permissionVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+                        VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
 
-                        RadioList allowrl = new RadioList(itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id);
+                        grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+
+                        RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");
 
                         allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                         allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
@@ -86,11 +86,34 @@ namespace BoxSocial.Internals
                                 break;
                         }
 
-                        permissionVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
-                        permissionVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
-                        permissionVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
+                        grantVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
+                        grantVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
+                        grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
                     }
                 }
+
+                foreach (AccessControlGrant itemGrant in itemGrants)
+                {
+                    VariableCollection grantsVariableCollection = template.CreateChild("grants");
+                }
+
+                SelectBox groupsSelectBox = new SelectBox("new-permission-group");
+
+
+
+                permissionVariableCollection.Parse("S_PERMISSION_GROUPS", groupsSelectBox);
+
+                RadioList allowNewrl = new RadioList("new-permission-group-allow");
+
+                allowNewrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
+                allowNewrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
+                allowNewrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+
+                allowNewrl.SelectedKey = "inherit";
+
+                permissionVariableCollection.Parse("S_ALLOW", allowNewrl["allow"].ToString());
+                permissionVariableCollection.Parse("S_DENY", allowNewrl["deny"].ToString());
+                permissionVariableCollection.Parse("S_INHERIT", allowNewrl["inherit"].ToString());
             }
 
             if (string.IsNullOrEmpty(variable))
@@ -116,6 +139,10 @@ namespace BoxSocial.Internals
             }
 
             return permissions;
+        }
+
+        public static void SavePermissions()
+        {
         }
     }
 }

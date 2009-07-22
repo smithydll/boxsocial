@@ -1,0 +1,66 @@
+<div>
+  <!--form-->
+  <ul>
+    <!-- BEGIN permission -->
+    <li>
+      {permission.NAME}
+      <!-- IF grant -->
+      <dl>
+        <dt>
+        </dt>
+        <dd>
+          {L_ALLOW}
+        </dd>
+        <dd>
+          {L_DENY}
+        </dd>
+        <dd>
+          {L_INHERIT}
+        </dd>
+      </dl>
+      <ul>
+        <!-- BEGIN grant -->
+        <li>
+          <dl>
+            <dt>
+              {permission.grant.DISPLAY_NAME}
+            </dt>
+            <dd>
+              {permission.grant.S_ALLOW}
+            </dd>
+            <dd>
+              {permission.grant.S_DENY}
+            </dd>
+            <dd>
+              {permission.grant.S_INHERIT}
+            </dd>
+          </dl>
+        </li>
+        <!-- END grant -->
+      </ul>
+      <!-- END grant -->
+      <div>
+          <dl>
+            <dt>
+              {permission.S_PERMISSION_GROUPS}
+            </dt>
+            <dd>
+              {permission.S_ALLOW}
+            </dd>
+            <dd>
+              {permission.S_DENY}
+            </dd>
+            <dd>
+              {permission.S_INHERIT}
+            </dd>
+          </dl>
+      	<input type="submit" name="add-permission" value="Add permission" />
+      </div>
+    </li>
+    <!-- END permission -->
+  </ul>
+  <!-- BEGIN grants -->
+  <input type="hidden" name="{grants.S_GRANT_INDEX}" value="{grants.S_GRANT_KEY}" />
+  <!-- END grants -->
+  <!--/form-->
+</div>

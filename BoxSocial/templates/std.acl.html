@@ -38,27 +38,14 @@
         </li>
         <!-- END grant -->
       </ul>
-      <!-- END grant -->
-      <div>
-          <dl>
-            <dt>
-              {permission.S_PERMISSION_GROUPS}
-            </dt>
-            <dd>
-              {permission.S_ALLOW}
-            </dd>
-            <dd>
-              {permission.S_DENY}
-            </dd>
-            <dd>
-              {permission.S_INHERIT}
-            </dd>
-          </dl>
-      	<input type="submit" name="add-permission" value="Add permission" />
-      </div>
+      <!-- ENDIF grant -->
     </li>
     <!-- END permission -->
   </ul>
+      <div>
+        {permission.S_PERMISSION_GROUPS}
+      	<input type="submit" name="add-permission" value="Add permission" />
+      </div>
   <!-- BEGIN grants -->
   <input type="hidden" name="{grants.S_GRANT_INDEX}" value="{grants.S_GRANT_KEY}" />
   <!-- END grants -->

@@ -105,9 +105,9 @@ namespace BoxSocial.Internals
 
                 RadioList allowNewrl = new RadioList("new-permission-group-allow");
 
-                allowNewrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
-                allowNewrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
-                allowNewrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "allow", "Allow"));
+                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "deny", "Deny"));
+                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "inherit", "Inherit"));
 
                 allowNewrl.SelectedKey = "inherit";
 

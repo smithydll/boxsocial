@@ -33,13 +33,13 @@ using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Applications.News
+namespace BoxSocial.Musician
 {
-    [AccountModule("news")]
-    public class AccountNews : AccountModule
+    [AccountModule("music")]
+    public class AccountMusician : AccountModule
     {
 
-        public AccountNews(Account account)
+        public AccountMusician(Account account)
             : base(account)
         {
         }
@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return "News";
+                return "Music";
             }
         }
 
@@ -60,7 +60,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return 11;
+                return 12;
             }
         }
     }

@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountMusician.cs" />
+    <Compile Include="AccountTourManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Fan.cs" />
     <Compile Include="Gig.cs" />
@@ -95,7 +97,11 @@
   <ItemGroup>
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_tour_manage.html" />
+    <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />
+    <Content Include="templates\viewsong.html" />
+    <Content Include="templates\viewtour.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

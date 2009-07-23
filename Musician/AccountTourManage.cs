@@ -19,40 +19,24 @@
  */
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
-using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Applications.News
+namespace BoxSocial.Musician
 {
-    [AccountModule("news")]
-    public class AccountNews : AccountModule
+    [AccountSubModule(AppPrimitives.Musician, "music", "tour", true)]
+    public class AccountTourManage : AccountSubModule
     {
-
-        public AccountNews(Account account)
-            : base(account)
-        {
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {
-        }
-
-        public override string Name
+        public override string Title
         {
             get
             {
-                return "News";
+                return "Manage Tours";
             }
         }
 
@@ -60,8 +44,24 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return 11;
+                return 1;
             }
+        }
+
+        public AccountTourManage()
+        {
+            this.Load += new EventHandler(AccountTourManage_Load);
+            this.Show += new EventHandler(AccountTourManage_Show);
+        }
+
+        void AccountTourManage_Load(object sender, EventArgs e)
+        {
+        }
+
+        void AccountTourManage_Show(object sender, EventArgs e)
+        {
+            SetTemplate("account_tour_manage");
+
         }
     }
 }

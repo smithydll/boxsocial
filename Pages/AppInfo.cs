@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Pages
         {
             if (sender is UPage)
             {
-                Page.Show(core, ((UPage)sender).ProfileOwner, core.PagePathParts[1].Value);
+                Page.Show(core, ((UPage)sender).User, core.PagePathParts[1].Value);
             }
             else if (sender is GPage)
             {

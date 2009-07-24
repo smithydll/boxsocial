@@ -232,7 +232,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.ProfileOwner);
+                Calendar.Show(core, page, page.User);
             }
         }
 
@@ -241,7 +241,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value));
+                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value));
             }
         }
 
@@ -250,7 +250,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
+                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 
@@ -259,7 +259,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.ProfileOwner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
+                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
             }
         }
 
@@ -269,7 +269,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Event.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
+                Event.Show(core, page, page.User, long.Parse(core.PagePathParts[1].Value));
             }
         }
 
@@ -279,7 +279,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Task.Show(core, page, page.ProfileOwner, long.Parse(core.PagePathParts[1].Value));
+                Task.Show(core, page, page.User, long.Parse(core.PagePathParts[1].Value));
             }
         }
 
@@ -288,7 +288,7 @@ namespace BoxSocial.Applications.Calendar
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                Task.ShowAll(core, page, page.ProfileOwner);
+                Task.ShowAll(core, page, page.User);
             }
         }
 

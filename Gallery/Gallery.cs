@@ -1331,7 +1331,7 @@ namespace BoxSocial.Applications.Gallery
             {
             }
 
-            page.ProfileOwner.LoadProfileInfo();
+            page.User.LoadProfileInfo();
 
             long loggedIdUid = core.LoggedInMemberId;
 
@@ -1340,7 +1340,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    gallery = new UserGallery(core, page.ProfileOwner, galleryPath);
+                    gallery = new UserGallery(core, page.User, galleryPath);
 
                     gallery.GalleryAccess.SetViewer(core.session.LoggedInMember);
 
@@ -1359,7 +1359,7 @@ namespace BoxSocial.Applications.Gallery
                         page.template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(gallery.GalleryId));
                     }
 
-                    core.Display.ParsePagination(Gallery.BuildGalleryUri(core, page.ProfileOwner, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
+                    core.Display.ParsePagination(Gallery.BuildGalleryUri(core, page.User, galleryPath), p, (int)Math.Ceiling(gallery.Items / 12.0));
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1369,7 +1369,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                gallery = new UserGallery(core, page.ProfileOwner);
+                gallery = new UserGallery(core, page.User);
 
                 if (gallery.Owner.Id == core.LoggedInMemberId)
                 {
@@ -1403,7 +1403,7 @@ namespace BoxSocial.Applications.Gallery
                 breadCrumbParts.Add(new string[] { gallery.Path, gallery.GalleryTitle });
             }
 
-            page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
+            page.User.ParseBreadCrumbs(breadCrumbParts);
 
             List<Gallery> galleries = gallery.GetGalleries(core);
 
@@ -1414,7 +1414,7 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = page.template.CreateChild("gallery_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
-                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(core, page.ProfileOwner, galleryGallery.FullPath));
+                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(core, page.User, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
                 core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
@@ -1441,7 +1441,7 @@ namespace BoxSocial.Applications.Gallery
                 VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.ProfileOwner, galleryItem.ParentPath, galleryItem.Path));
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.User, galleryItem.ParentPath, galleryItem.Path));
                 galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
                 galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
@@ -1449,7 +1449,7 @@ namespace BoxSocial.Applications.Gallery
 				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
 
                 string thumbUri = string.Format("/{0}/images/_thumb/{1}/{2}",
-                    page.ProfileOwner.UserName, galleryPath, galleryItem.Path);
+                    page.User.UserName, galleryPath, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
                 Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
@@ -1465,7 +1465,7 @@ namespace BoxSocial.Applications.Gallery
 
             page.template.Parse("COMMENTS", galleryComments.ToString());
             page.template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
-            page.template.Parse("U_COMMENTS", core.Uri.BuildGalleryCommentsUri(page.ProfileOwner, galleryPath));
+            page.template.Parse("U_COMMENTS", core.Uri.BuildGalleryCommentsUri(page.User, galleryPath));
         }
 
         /// <summary>

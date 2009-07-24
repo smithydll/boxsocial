@@ -338,4 +338,42 @@ namespace BoxSocial.Internals
             //core = null;
         }
     }
+
+    public class ShowPageEventArgs : EventArgs
+    {
+        protected Core core;
+        protected TPage page;
+
+        public Core Core
+        {
+            get
+            {
+                return core;
+            }
+        }
+
+        public Mysql Db
+        {
+            get
+            {
+                return core.db;
+            }
+        }
+
+        public TPage Page
+        {
+            get
+            {
+                return page;
+            }
+        }
+
+        public Template Template
+        {
+            get
+            {
+                return core.template;
+            }
+        }
+    }
 }

@@ -1972,18 +1972,18 @@ namespace BoxSocial.Internals
 
             bool hasProfileInfo = false;
 
-            page.ProfileOwner.LoadProfileInfo();
+            page.User.LoadProfileInfo();
 
-            page.ProfileOwner.ProfileAccess.SetViewer(core.session.LoggedInMember);
+            page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
 
-            if (!page.ProfileOwner.ProfileAccess.CanRead)
+            if (!page.User.ProfileAccess.CanRead)
             {
                 core.Functions.Generate403();
                 return;
             }
 
             string age;
-            int ageInt = page.ProfileOwner.Age;
+            int ageInt = page.User.Age;
             if (ageInt == 0)
             {
                 age = "FALSE";
@@ -1993,34 +1993,34 @@ namespace BoxSocial.Internals
                 age = ageInt.ToString() + " years old";
             }
 
-            core.template.Parse("USER_SEXUALITY", page.ProfileOwner.Sexuality);
-            core.template.Parse("USER_GENDER", page.ProfileOwner.Gender);
-            core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.ProfileOwner.Autobiography);
-            core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.ProfileOwner.MaritialStatus);
+            core.template.Parse("USER_SEXUALITY", page.User.Sexuality);
+            core.template.Parse("USER_GENDER", page.User.Gender);
+            core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Autobiography);
+            core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.MaritialStatus);
             core.template.Parse("USER_AGE", age);
-            core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.ProfileOwner.RegistrationDate));
-            core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.ProfileOwner.LastOnlineTime, true));
-            core.template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.ProfileOwner.ProfileViews));
-            core.template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.ProfileOwner.BlogSubscriptions));
-            core.template.Parse("USER_COUNTRY", page.ProfileOwner.Country);
-            core.template.Parse("USER_RELIGION", page.ProfileOwner.Profile.Religion);
-            core.template.Parse("USER_ICON", page.ProfileOwner.UserThumbnail);
+            core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.User.RegistrationDate));
+            core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.User.LastOnlineTime, true));
+            core.template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.ProfileViews));
+            core.template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.BlogSubscriptions));
+            core.template.Parse("USER_COUNTRY", page.User.Country);
+            core.template.Parse("USER_RELIGION", page.User.Profile.Religion);
+            core.template.Parse("USER_ICON", page.User.UserThumbnail);
 
-            core.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
-            core.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.ProfileOwner));
-            core.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.ProfileOwner));
+            core.template.Parse("U_PROFILE", page.User.Uri);
+            core.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.User));
+            core.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
             core.template.Parse("IS_PROFILE", "TRUE");
 
-            if (page.ProfileOwner.MaritialStatusRaw != "UNDEF")
+            if (page.User.MaritialStatusRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
-            if (page.ProfileOwner.GenderRaw != "UNDEF")
+            if (page.User.GenderRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
-            if (page.ProfileOwner.SexualityRaw != "UNDEF")
+            if (page.User.SexualityRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
@@ -2032,16 +2032,16 @@ namespace BoxSocial.Internals
 
             if (core.LoggedInMemberId > 0)
             {
-                core.template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.ProfileOwner.UserId));
-                core.template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.ProfileOwner.UserId));
+                core.template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.User.UserId));
+                core.template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
             }
 
-            string langFriends = (page.ProfileOwner.Friends != 1) ? "friends" : "friend";
+            string langFriends = (page.User.Friends != 1) ? "friends" : "friend";
 
-            core.template.Parse("FRIENDS", page.ProfileOwner.Friends.ToString());
+            core.template.Parse("FRIENDS", page.User.Friends.ToString());
             core.template.Parse("L_FRIENDS", langFriends);
 
-            List<Friend> friends = page.ProfileOwner.GetFriends(1, 8);
+            List<Friend> friends = page.User.GetFriends(1, 8);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
@@ -2051,14 +2051,14 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
-            ushort readAccessLevel = page.ProfileOwner.GetAccessLevel(core.session.LoggedInMember);
+            ushort readAccessLevel = page.User.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
 
             /* pages */
-            core.Display.ParsePageList(page.ProfileOwner, true);
+            core.Display.ParsePageList(page.User, true);
 
             /* status */
-            StatusMessage statusMessage = StatusFeed.GetLatest(core, page.ProfileOwner);
+            StatusMessage statusMessage = StatusFeed.GetLatest(core, page.User);
 
             if (statusMessage != null)
             {
@@ -2066,9 +2066,9 @@ namespace BoxSocial.Internals
                 core.template.Parse("STATUS_UPDATED", core.tz.DateTimeToString(statusMessage.GetTime(core.tz)));
             }
 
-            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.ProfileOwner));
+            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));
 
-            page.ProfileOwner.ProfileViewed(core.session.LoggedInMember);
+            page.User.ProfileViewed(core.session.LoggedInMember);
         }
 
         public override string AccountUriStub

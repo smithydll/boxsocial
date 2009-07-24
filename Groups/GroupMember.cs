@@ -70,7 +70,8 @@ namespace BoxSocial.Groups
             return tz.DateTimeFromMysql(memberJoinDateRaw);
         }
 
-        public GroupMember(Core core, UserGroup group, long userId) : base(core)
+        public GroupMember(Core core, UserGroup group, long userId)
+            : base(core)
         {
             this.db = db;
 

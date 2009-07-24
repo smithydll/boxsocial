@@ -954,11 +954,11 @@ namespace BoxSocial.Applications.Gallery
                 photoPath = "";
             }
 
-            page.ProfileOwner.LoadProfileInfo();
+            page.User.LoadProfileInfo();
 
             try
             {
-                UserGalleryItem photo = new UserGalleryItem(core, page.ProfileOwner, photoPath + "/" + photoName);
+                UserGalleryItem photo = new UserGalleryItem(core, page.User, photoPath + "/" + photoName);
 
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
@@ -972,12 +972,12 @@ namespace BoxSocial.Applications.Gallery
 
                 /* TODO: change to building path in photo class */
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
-                    page.ProfileOwner.UserName, photoPath, photo.Path);
+                    page.User.UserName, photoPath, photo.Path);
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
                 page.template.Parse("PHOTO_TITLE", photo.ItemTitle);
                 page.template.Parse("PHOTO_ID", photo.ItemId.ToString());
 
-                if (page.ProfileOwner.Id == core.LoggedInMemberId)
+                if (page.User.Id == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(photo.ParentId));
                 }
@@ -997,8 +997,8 @@ namespace BoxSocial.Applications.Gallery
 
                 page.template.Parse("ID", photo.ItemId.ToString());
 				page.template.Parse("TYPEID", photo.Key.TypeId.ToString());
-				
-                if (page.ProfileOwner.Id == core.LoggedInMemberId)
+
+                if (page.User.Id == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_MARK_DISPLAY_PIC", core.Uri.BuildMarkDisplayPictureUri(photo.ItemId));
                     page.template.Parse("U_MARK_GALLERY_COVER", core.Uri.BuildMarkGalleryCoverUri(photo.ItemId));
@@ -1077,14 +1077,14 @@ namespace BoxSocial.Applications.Gallery
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
-                core.Display.DisplayComments(page.template, page.ProfileOwner, photo);
+                core.Display.DisplayComments(page.template, page.User, photo);
 
                 string pageUri = string.Format("/{0}/gallery/{1}/{2}",
-                    HttpUtility.HtmlEncode(page.ProfileOwner.UserName), photoPath, photoName);
+                    HttpUtility.HtmlEncode(page.User.UserName), photoPath, photoName);
                 //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
                 //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
                 core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0));
-                page.ProfileOwner.ParseBreadCrumbs("gallery/" + photo.ParentPath + "/" + photo.Path);
+                page.User.ParseBreadCrumbs("gallery/" + photo.ParentPath + "/" + photo.Path);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1326,7 +1326,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, UPage page, string photoName)
         {
-            ShowImage(core, page.ProfileOwner, photoName);
+            ShowImage(core, page.User, photoName);
         }
 
         /// <summary>

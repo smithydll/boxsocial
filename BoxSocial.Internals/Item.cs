@@ -86,6 +86,28 @@ namespace BoxSocial.Internals
             updatedItems = new List<string>();
         }
 
+        public static string GetPrimaryKey(Type type)
+        {
+            List<DataFieldInfo> fields = GetFields(type);
+            string keyField = "";
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
+                {
+                    keyField = field.Name;
+                }
+            }
+
+            if (string.IsNullOrEmpty(keyField))
+            {
+                // Error
+                throw new NoPrimaryKeyException();
+            }
+
+            return keyField;
+        }
+
         protected void LoadItem(long primaryKey)
         {
             LoadItem(this.GetType(), primaryKey);
@@ -1279,6 +1301,15 @@ namespace BoxSocial.Internals
             oItem.Order++;
 
             this.Update();
+        }
+
+        public static void IncrementItemColumn(Core core, Type type, long id, string column, int value)
+        {
+            UpdateQuery uQuery = new UpdateQuery(GetTable(type));
+            uQuery.AddField(column, new QueryOperation(column, QueryOperations.Addition, value));
+            uQuery.AddCondition(GetPrimaryKey(type), id);
+
+            core.db.Query(uQuery);
         }
     }
 

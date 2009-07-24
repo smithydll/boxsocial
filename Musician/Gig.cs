@@ -210,6 +210,23 @@ namespace BoxSocial.Musician
         public static void Show(Core core, PPage page, long gigId)
         {
             page.template.SetTemplate("Musician", "viewgig");
+
+            Gig gig = null;
+
+            try
+            {
+                gig = new Gig(core, gigId);
+            }
+            catch (InvalidGigException)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            page.template.Parse("CITY", gig.City);
+            page.template.Parse("VENUE", gig.Venue);
+
+            core.Display.DisplayComments(page.template, gig.Musician, gig);
         }
 
         public long Comments

@@ -118,6 +118,11 @@ namespace BoxSocial.Musician
                 throw new NotImplementedException();
             }
         }
+
+        public static void Show(Core core, PPage page, long recordingId)
+        {
+            page.template.SetTemplate("Musician", "viewrecording");
+        }
     }
 
     public class InvalidRecordingException : Exception

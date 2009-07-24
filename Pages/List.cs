@@ -381,10 +381,10 @@ namespace BoxSocial.Applications.Pages
         {
             page.template.SetTemplate("viewlist.html");
 
-            page.template.Parse("LIST_TITLE", string.Format("{0} Lists", page.ProfileOwner.DisplayNameOwnership));
+            page.template.Parse("LIST_TITLE", string.Format("{0} Lists", page.User.DisplayNameOwnership));
             page.template.Parse("LIST_ABSTRACT", "FALSE");
 
-            List<List> lists = List.GetLists(core, page.ProfileOwner);
+            List<List> lists = List.GetLists(core, page.User);
 
             if (lists.Count > 0)
             {
@@ -406,7 +406,7 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                List list = new List(core, page.ProfileOwner, listName);
+                List list = new List(core, page.User, listName);
 
                 list.ListAccess.SetSessionViewer(core.session);
 

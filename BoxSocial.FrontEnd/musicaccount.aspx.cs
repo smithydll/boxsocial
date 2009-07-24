@@ -152,15 +152,15 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            if (!musician.IsMusicianMember(loggedInMember))
+            if (!Musician.IsMusicianMember(loggedInMember))
             {
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this musician.");
             }
 
-            template.Parse("ACCOUNT_TITLE", "Musician Control Panel :: " + musician.DisplayName);
+            template.Parse("ACCOUNT_TITLE", "Musician Control Panel :: " + Musician.DisplayName);
 
             Account accountObject = new Account(Core);
-            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, musician), module);
+            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, Musician), module);
 
             accountObject.RegisterModule += new Account.RegisterModuleHandler(OnRegisterModule);
             accountObject.RegisterAllModules();
@@ -174,11 +174,11 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", musician.AccountUriStub);
+                    modulesVariableCollection.Parse("URI", Musician.AccountUriStub);
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", musician.AccountUriStub + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", Musician.AccountUriStub + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
@@ -202,7 +202,7 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, musician, accountModule.assembly.GetName().Name);
+                        ApplicationEntry ae = new ApplicationEntry(core, Musician, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
@@ -218,7 +218,7 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
 
-                    asm.SetOwner = musician;
+                    asm.SetOwner = Musician;
 
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
@@ -228,7 +228,7 @@ namespace BoxSocial.FrontEnd
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core, musician);
+                    asm.ModuleVector(core, Musician);
                 }
             }
 

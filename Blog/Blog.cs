@@ -493,7 +493,7 @@ namespace BoxSocial.Applications.Blog
             Blog myBlog;
             try
             {
-                myBlog = new Blog(core, page.ProfileOwner);
+                myBlog = new Blog(core, page.User);
             }
             catch (InvalidBlogException)
             {
@@ -527,17 +527,17 @@ namespace BoxSocial.Applications.Blog
                 HttpContext.Current.Response.ContentType = "text/xml";
             }
 
-            page.ProfileOwner.LoadProfileInfo();
+            page.User.LoadProfileInfo();
 
             if (!rss)
             {
                 //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
-                core.Display.ParsePageList(page.ProfileOwner, true);
-                page.template.Parse("U_PROFILE", page.ProfileOwner.Uri);
-                page.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.ProfileOwner));
-                page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.ProfileOwner));
+                core.Display.ParsePageList(page.User, true);
+                page.template.Parse("U_PROFILE", page.User.Uri);
+                page.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.User));
+                page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
-                if (page.ProfileOwner.UserId == core.LoggedInMemberId)
+                if (page.User.UserId == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_POST", core.Uri.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
                 }
@@ -550,7 +550,7 @@ namespace BoxSocial.Applications.Blog
             if (!rss)
             {
                 DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
-                    page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
+                    page.User.UserId, loggedIdUid, readAccessLevel));
 
                 page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
 
@@ -561,11 +561,11 @@ namespace BoxSocial.Applications.Blog
                     archiveVariableCollection.Parse("TITLE", string.Format("{0} {1}",
                         core.Functions.IntToMonth((int)archiveTable.Rows[i]["month"]), ((int)archiveTable.Rows[i]["year"]).ToString()));
 
-                    archiveVariableCollection.Parse("URL", Blog.BuildUri(core, page.ProfileOwner, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
+                    archiveVariableCollection.Parse("URL", Blog.BuildUri(core, page.User, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
                 }
 
                 DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
-                    page.ProfileOwner.UserId, loggedIdUid, readAccessLevel));
+                    page.User.UserId, loggedIdUid, readAccessLevel));
 
                 page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 
@@ -575,7 +575,7 @@ namespace BoxSocial.Applications.Blog
 
                     categoryVariableCollection.Parse("TITLE", (string)categoriesTable.Rows[i]["category_title"]);
 
-                    categoryVariableCollection.Parse("URL", Blog.BuildUri(core, page.ProfileOwner, (string)categoriesTable.Rows[i]["category_path"]));
+                    categoryVariableCollection.Parse("URL", Blog.BuildUri(core, page.User, (string)categoriesTable.Rows[i]["category_path"]));
                 }
 
                 List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
@@ -601,23 +601,23 @@ namespace BoxSocial.Applications.Blog
 
             if (!string.IsNullOrEmpty(category))
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.ProfileOwner, category));
+                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, category));
             }
             else if (post > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogPostRssUri(page.ProfileOwner, year, month, post));
+                page.template.Parse("U_RSS", core.Uri.BuildBlogPostRssUri(page.User, year, month, post));
             }
             else if (month > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.ProfileOwner, year, month));
+                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, year, month));
             }
             else if (year > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.ProfileOwner, year));
+                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, year));
             }
             else
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.ProfileOwner));
+                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User));
             }
 
             if (rss)
@@ -629,27 +629,27 @@ namespace BoxSocial.Applications.Blog
                 doc.channels = new RssChannel[1];
                 doc.channels[0] = new RssChannel();
 
-                doc.channels[0].title = string.Format("RSS Feed for {0} blog", page.ProfileOwner.DisplayNameOwnership);
-                doc.channels[0].description = string.Format("RSS Feed for {0} blog", page.ProfileOwner.DisplayNameOwnership);
+                doc.channels[0].title = string.Format("RSS Feed for {0} blog", page.User.DisplayNameOwnership);
+                doc.channels[0].description = string.Format("RSS Feed for {0} blog", page.User.DisplayNameOwnership);
                 if (!string.IsNullOrEmpty(category))
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, category));
+                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, category));
                 }
                 else if (post > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, year, month, post));
+                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month, post));
                 }
                 else if (month > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, year, month));
+                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month));
                 }
                 else if (year > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, year));
+                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year));
                 }
                 else
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner));
+                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User));
                 }
                 doc.channels[0].category = "Blog";
 
@@ -659,9 +659,9 @@ namespace BoxSocial.Applications.Blog
                     DateTime postDateTime = blogEntries[i].GetCreatedDate(core.tz);
 
                     doc.channels[0].items[i] = new RssDocumentItem();
-                    doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner);
-                    doc.channels[0].items[i].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
-                    doc.channels[0].items[i].guid = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.ProfileOwner, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
+                    doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.User);
+                    doc.channels[0].items[i].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
+                    doc.channels[0].items[i].guid = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
                     doc.channels[0].items[i].pubdate = postDateTime.ToString();
 
@@ -690,19 +690,19 @@ namespace BoxSocial.Applications.Blog
                     DateTime postDateTime = blogEntries[i].GetCreatedDate(core.tz);
 
                     string postUrl = HttpUtility.HtmlEncode(string.Format("{0}blog/{1}/{2:00}/{3}",
-                            page.ProfileOwner.UriStub, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
+                            page.User.UriStub, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
                     blogPostVariableCollection.Parse("DATE", core.tz.DateTimeToString(postDateTime));
                     blogPostVariableCollection.Parse("URL", postUrl);
                     //blogPostVariableCollection.ParseRaw("POST", Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner));
-                    core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.ProfileOwner);
+                    core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
                     if (blogEntries[i].PostId == post)
                     {
                         comments = blogEntries[i].Comments;
                         page.template.Parse("BLOG_POST_COMMENTS", core.Functions.LargeIntegerToString(comments));
                         page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
 
-                        myBlog.blogAccess = new Access(core,  blogEntries[i].Permissions, page.ProfileOwner);
+                        myBlog.blogAccess = new Access(core, blogEntries[i].Permissions, page.User);
                         myBlog.blogAccess.SetViewer(core.session.LoggedInMember);
                     }
 
@@ -718,12 +718,12 @@ namespace BoxSocial.Applications.Blog
                     {
                         page.template.Parse("CAN_COMMENT", "TRUE");
                     }
-                    core.Display.DisplayComments(page.template, page.ProfileOwner, new BlogEntry(core, post));
+                    core.Display.DisplayComments(page.template, page.User, new BlogEntry(core, post));
                     page.template.Parse("SINGLE", "TRUE");
                 }
 
                 string pageUri = "";
-                string breadcrumbExtension = (page.ProfileOwner.ProfileHomepage == "/blog") ? "" : "blog/";
+                string breadcrumbExtension = (page.User.ProfileHomepage == "/blog") ? "" : "blog/";
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "blog", "Blog" });
@@ -732,7 +732,7 @@ namespace BoxSocial.Applications.Blog
                 {
                     Category cat = new Category(core, category);
                     breadCrumbParts.Add(new string[] { "categories/" + category, cat.Title });
-                    pageUri = Blog.BuildUri(core, page.ProfileOwner, category);
+                    pageUri = Blog.BuildUri(core, page.User, category);
                 }
                 else
                 {
@@ -752,15 +752,15 @@ namespace BoxSocial.Applications.Blog
 
                     if (post > 0)
                     {
-                        pageUri = Blog.BuildUri(core, page.ProfileOwner, year, month, post);
+                        pageUri = Blog.BuildUri(core, page.User, year, month, post);
                     }
                     else if (month > 0)
                     {
-                        pageUri = Blog.BuildUri(core, page.ProfileOwner, year, month);
+                        pageUri = Blog.BuildUri(core, page.User, year, month);
                     }
                     else if (year > 0)
                     {
-                        pageUri = Blog.BuildUri(core, page.ProfileOwner, year);
+                        pageUri = Blog.BuildUri(core, page.User, year);
                     }
                     else
                     {
@@ -768,7 +768,7 @@ namespace BoxSocial.Applications.Blog
                     }
                 }
                 //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
-                page.ProfileOwner.ParseBreadCrumbs(breadCrumbParts);
+                page.User.ParseBreadCrumbs(breadCrumbParts);
 
                 if (post <= 0)
                 {

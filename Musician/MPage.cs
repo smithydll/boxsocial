@@ -34,17 +34,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    public abstract partial class MPage : TPage
+    public abstract partial class MPage : PPage
     {
-
         protected string musicianSlug;
-        protected Musician musician;
 
         public Musician Musician
         {
             get
             {
-                return musician;
+                return (Musician)primitive;
             }
         }
 
@@ -66,7 +64,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                musician = new Musician(core, musicianSlug);
+                primitive = new Musician(core, musicianSlug);
             }
             catch (InvalidMusicianException)
             {
@@ -92,32 +90,32 @@ namespace BoxSocial.Musician
             {
                 if (loggedInMember.ShowCustomStyles)
                 {
-                    template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", musician.Key));
+                    template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", primitive.Key));
                 }
             }
             else
             {
-                template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", musician.Key));
+                template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", primitive.Key));
             }
 
             if (!core.PagePath.StartsWith("/account"))
             {
-                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, musician));
+                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, primitive));
 
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
-                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, musician);
+                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Musician, primitive);
                 core.InvokeHeadHooks(e);
                 core.InvokeFootHooks(e);
             }
 
-            PageTitle = musician.DisplayName;
+            PageTitle = primitive.DisplayName;
         }
 
         void core_FootHooks(HookEventArgs e)
         {
-            if (e.PageType == AppPrimitives.Group)
+            if (e.PageType == AppPrimitives.Musician)
             {
-                Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
+                Template template = new Template(Assembly.GetExecutingAssembly(), "music_footer");
 
                 if (e.Owner.Type == "MUSIC")
                 {

@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return false;
+                return true;
             }
         }
 

@@ -83,4 +83,26 @@ namespace BoxSocial.Internals
             }
         }
     }
+
+    public class ShowPPageEventArgs : ShowPageEventArgs
+    {
+        private new PPage page;
+        private long id;
+
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+        }
+
+        public new PPage Page
+        {
+            get
+            {
+                return page;
+            }
+        }
+    }
 }

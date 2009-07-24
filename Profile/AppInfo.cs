@@ -165,7 +165,7 @@ namespace BoxSocial.Applications.Profile
             if (sender is UPage)
             {
                 UPage page = (UPage)sender;
-                StatusFeed.Show(core, page, page.ProfileOwner);
+                StatusFeed.Show(core, page, page.User);
             }
         }
 

@@ -42,14 +42,14 @@ namespace BoxSocial.FrontEnd
             BeginProfile();
             int page = Functions.RequestInt("p", 1);
 
-            string langFriends = (profileOwner.Friends != 1) ? "friends" : "friend";
+            string langFriends = (User.Friends != 1) ? "friends" : "friend";
 
-            template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", profileOwner.DisplayNameOwnership));
+            template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", User.DisplayNameOwnership));
 
-            template.Parse("FRIENDS", profileOwner.Friends.ToString());
+            template.Parse("FRIENDS", User.Friends.ToString());
             template.Parse("L_FRIENDS", langFriends);
 
-            List<Friend> friends = profileOwner.GetFriends(page, 18);
+            List<Friend> friends = User.GetFriends(page, 18);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
@@ -59,8 +59,8 @@ namespace BoxSocial.FrontEnd
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
-            string pageUri = core.Uri.BuildFriendsUri(profileOwner);
-            core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(profileOwner.Friends / 18.0));
+            string pageUri = core.Uri.BuildFriendsUri(User);
+            core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(User.Friends / 18.0));
 
             EndResponse();
         }

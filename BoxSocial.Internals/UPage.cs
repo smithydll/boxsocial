@@ -38,10 +38,10 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public abstract partial class UPage : TPage
+    public abstract partial class UPage : PPage
     {
         protected string profileUserName;
-        protected User profileOwner;
+        //protected User profileOwner;
 
         public UPage()
             : base()
@@ -72,11 +72,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public User ProfileOwner
+        public User User
         {
             get
             {
-                return profileOwner;
+                return ((User)primitive);
             }
         }
 
@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                profileOwner = new User(core, profileUserName);
+                primitive = new User(core, profileUserName);
             }
             catch (InvalidUserException)
             {
@@ -94,40 +94,40 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (core.PagePath.ToLower().StartsWith("/" + profileOwner.UserName.ToLower()))
+            if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower()))
             {
-                core.PagePath = core.PagePath.Substring(profileOwner.UserName.Length + 1);
+                core.PagePath = core.PagePath.Substring(User.UserName.Length + 1);
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
-                core.PagePath = profileOwner.ProfileHomepage;
+                core.PagePath = User.ProfileHomepage;
             }
 
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, profileOwner));
+            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, User));
 
-            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Member, profileOwner);
+            HookEventArgs e = new HookEventArgs(core, AppPrimitives.Member, User);
             core.InvokeHeadHooks(e);
 
-            PageTitle = profileOwner.DisplayName;
+            PageTitle = User.DisplayName;
 
             if (loggedInMember != null)
             {
                 if (loggedInMember.ShowCustomStyles)
                 {
-                    template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
+                    template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
                 }
             }
             else
             {
-                template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", profileOwner.UserName));
+                template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
             }
-            template.Parse("USER_NAME", profileOwner.UserName);
-            template.Parse("USER_DISPLAY_NAME", profileOwner.DisplayName);
-            template.Parse("USER_DISPLAY_NAME_OWNERSHIP", profileOwner.DisplayNameOwnership);
+            template.Parse("USER_NAME", User.UserName);
+            template.Parse("USER_DISPLAY_NAME", User.DisplayName);
+            template.Parse("USER_DISPLAY_NAME_OWNERSHIP", User.DisplayNameOwnership);
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.UserId == profileOwner.UserId)
+                if (loggedInMember.UserId == User.UserId)
                 {
                     template.Parse("OWNER", "TRUE");
                     template.Parse("SELF", "TRUE");

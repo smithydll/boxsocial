@@ -67,7 +67,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -109,6 +109,77 @@ namespace BoxSocial.Musician
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gig)), gigCanPostComment, gigCanDeleteComment, gigAdjustCommentCount, gigCommentPosted);
+        }
+
+        private void gigCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private bool gigCanPostComment(ItemKey itemKey, User member)
+        {
+            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
+            query.AddCondition("gig_id", itemKey.Id);
+
+            DataTable gigTable = core.db.Query(query);
+
+            if (gigTable.Rows.Count == 1)
+            {
+                Primitive owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
+
+                /* TODO */
+                /*Access articleAccess = owner.Access;
+                articleAccess.SetViewer(member);
+
+                if (articleAccess.CanComment)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }*/
+                return true;
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private bool gigCanDeleteComment(ItemKey itemKey, User member)
+        {
+            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
+            query.AddCondition("gig_id", itemKey.Id);
+
+            DataTable gigTable = core.db.Query(query);
+
+            if (gigTable.Rows.Count == 1)
+            {
+                Musician owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
+
+                if (owner.IsMusicianMember(member))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private void gigAdjustCommentCount(ItemKey itemKey, int adjustment)
+        {
+            /*core.db.UpdateQuery(string.Format("UPDATE music_gigs SET gig_comments = gig_comments + {1} WHERE gig_id = {0};",
+                itemKey.Id, adjustment));*/
+
+            Item.IncrementItemColumn(core, typeof(Gig), itemKey.Id, "gig_comments", adjustment);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -117,6 +188,7 @@ namespace BoxSocial.Musician
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
             aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Musician);
+            //aii.AddSlug("fans", @"^/fans(|/)$", AppPrimitives.Musician);
 
             aii.AddModule("music");
 
@@ -192,6 +264,42 @@ namespace BoxSocial.Musician
             }*/
 
             e.core.AddSidePanel(template);
+        }
+
+        [Show(@"^/tours(|/)$", AppPrimitives.Musician)]
+        private void showTours(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Tour.Show(core, (MPage)sender);
+            }
+        }
+
+        [Show(@"^/tour/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        private void showTour(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Tour.Show(core, (MPage)sender, long.Parse(core.PagePathParts[1].Value));
+            }
+        }
+
+        [Show(@"^/gig/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        private void showGig(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Gig.Show(core, (MPage)sender, long.Parse(core.PagePathParts[1].Value));
+            }
+        }
+
+        [Show(@"^/fans(|/)$", AppPrimitives.Musician)]
+        private void showFans(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Fan.ShowAll(core, (MPage)sender);
+            }
         }
     }
 }

@@ -159,6 +159,11 @@ namespace BoxSocial.Musician
             return (Tour)item;
         }
 
+        public static void Show(Core core, PPage page)
+        {
+            page.template.SetTemplate("Musician", "viewtours");
+        }
+
         public static void Show(Core core, PPage page, long tourId)
         {
             page.template.SetTemplate("Musician", "viewtour");

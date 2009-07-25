@@ -19,9 +19,12 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -71,6 +74,8 @@ namespace BoxSocial.Musician
         private long subgenre;
         [DataField("musician_home_page", MYSQL_TEXT)]
         private string homepage;
+
+        private Dictionary<User, bool> musicianMemberCache = new Dictionary<User, bool>();
 
         public long MusicianId
         {
@@ -561,7 +566,37 @@ namespace BoxSocial.Musician
 
         public bool IsMusicianMember(User user)
         {
-            throw new NotImplementedException();
+            if (user != null)
+            {
+                if (musicianMemberCache.ContainsKey(user))
+                {
+                    return musicianMemberCache[user];
+                }
+                else
+                {
+                    preLoadMemberCache(user);
+                    return musicianMemberCache[user];
+                }
+            }
+            return false;
+        }
+
+        private void preLoadMemberCache(User member)
+        {
+            SelectQuery query = new SelectQuery("musician_members");
+            query.AddCondition("musician_id", musicianId);
+            query.AddCondition("user_id", member.UserId);
+
+            DataTable memberTable = db.Query(query);
+
+            if (memberTable.Rows.Count > 0)
+            {
+                musicianMemberCache.Add(member, true);
+            }
+            else
+            {
+                musicianMemberCache.Add(member, false);
+            }
         }
     }
 

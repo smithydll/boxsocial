@@ -29,6 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
+    [DataTable("musician_members")]
     public class MuscianMember : User
     {
         [DataField("user_id")]

@@ -138,6 +138,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Tour Tour
+        {
+            get
+            {
+                if (tour == null || tour.Id != tourId)
+                {
+                    tour = new Tour(core, tourId);
+                }
+                return tour;
+            }
+        }
+
         public DateTime GetTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(gigTime);
@@ -173,6 +185,22 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Gig(Core core, Tour tour, DataRow gigRow)
+            : base(core)
+        {
+            this.tour = tour;
+            ItemLoad += new ItemLoadHandler(Gig_ItemLoad);
+
+            try
+            {
+                loadItemInfo(gigRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGigException();
+            }
+        }
+
         void Gig_ItemLoad()
         {
         }
@@ -189,7 +217,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                throw new NotImplementedException();
+                return Owner.UriStub + "gig/" + gigId.ToString();
             }
         }
 
@@ -225,8 +253,37 @@ namespace BoxSocial.Musician
 
             page.template.Parse("CITY", gig.City);
             page.template.Parse("VENUE", gig.Venue);
+            page.template.Parse("TIME", core.tz.DateTimeToString(gig.GetTime(core.tz)));
 
             core.Display.DisplayComments(page.template, gig.Musician, gig);
+
+            List<string[]> gigPath = new List<string[]>();
+            if (gig.Tour != null)
+            {
+                gigPath.Add(new string[] { "*tours", "Tours" });
+                gigPath.Add(new string[] { "*tour", gig.Tour.Title });
+            }
+            gigPath.Add(new string[] { "*gigs", "Gigs" });
+            gigPath.Add(new string[] { "gig/" + gig.Id.ToString(), gig.Venue });
+
+            page.Owner.ParseBreadCrumbs(gigPath);
+        }
+
+        public static List<Gig> GetAll(Core core, Musician owner)
+        {
+            List<Gig> gigs = new List<Gig>();
+
+            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig));
+            query.AddCondition("musician_id", owner.Id);
+
+            DataTable gigTable = core.db.Query(query);
+
+            foreach (DataRow dr in gigTable.Rows)
+            {
+                gigs.Add(new Gig(core, dr));
+            }
+
+            return gigs;
         }
 
         public long Comments

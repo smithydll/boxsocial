@@ -29,14 +29,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    [AccountSubModule(AppPrimitives.Musician, "music", "tour", true)]
-    public class AccountTourManage : AccountSubModule
+    [AccountSubModule(AppPrimitives.Musician, "music", "members", true)]
+    public class AccountMembersManage : AccountSubModule
     {
         public override string Title
         {
             get
             {
-                return "Manage Tours";
+                return "Manage Members";
             }
         }
 
@@ -44,32 +44,24 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return 2;
+                return 1;
             }
         }
 
-        public AccountTourManage()
+        public AccountMembersManage()
         {
-            this.Load += new EventHandler(AccountTourManage_Load);
-            this.Show += new EventHandler(AccountTourManage_Show);
+            this.Load += new EventHandler(AccountMembersManage_Load);
+            this.Show += new EventHandler(AccountMembersManage_Show);
         }
 
-        void AccountTourManage_Load(object sender, EventArgs e)
+        void AccountMembersManage_Load(object sender, EventArgs e)
         {
-            this.AddModeHandler("gig", AccountTourManage_ShowGigs);
         }
 
-        void AccountTourManage_Show(object sender, EventArgs e)
+        void AccountMembersManage_Show(object sender, EventArgs e)
         {
-            SetTemplate("account_tour_manage");
+            SetTemplate("account_members_manage");
 
-        }
-
-        void AccountTourManage_ShowGigs(object sender, ModuleModeEventArgs e)
-        {
-            SetTemplate("account_gigs_manage");
-
-            List<Gig> gigs = Gig.GetAll(core, (Musician)Owner);
         }
     }
 }

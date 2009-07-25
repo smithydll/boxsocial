@@ -60,6 +60,11 @@ namespace BoxSocial.Internals
             return getSubItems(typeToGet, 0, 0);
         }
 
+        protected List<Item> getSubItems(Type typeToGet, bool feedParentArgument)
+        {
+            return getSubItems(typeToGet, 0, 0, feedParentArgument);
+        }
+
         protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage)
         {
             return getSubItems(typeToGet, currentPage, perPage, false);

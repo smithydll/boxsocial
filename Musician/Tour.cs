@@ -149,6 +149,16 @@ namespace BoxSocial.Musician
             }
         }
 
+        public List<Gig> GetGigs()
+        {
+            return getSubItems(typeof(Gig), true).ConvertAll<Gig>(new Converter<Item, Gig>(convertToGig));
+        }
+
+        public Gig convertToGig(Item input)
+        {
+            return (Gig)input;
+        }
+
         public static Tour Create(Core core, Musician owner, string title, short year)
         {
             // TODO: fix this
@@ -162,11 +172,75 @@ namespace BoxSocial.Musician
         public static void Show(Core core, PPage page)
         {
             page.template.SetTemplate("Musician", "viewtours");
+
+            if (!(PPage is MPage))
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            List<Tour> tours = Tour.GetAll(core, (Musician)page.Owner);
+
+            foreach (Tour tour in tours)
+            {
+                VariableCollection tourVariableCollection = page.template.CreateChild("tour_list");
+
+                tourVariableCollection.Parse("ID", tour.Id.ToString());
+            }
+
+            List<string[]> tourPath = new List<string[]>();
+            tourPath.Add(new string[] { "*tours", "Tours" });
+
+            page.Owner.ParseBreadCrumbs(tourPath);
         }
 
         public static void Show(Core core, PPage page, long tourId)
         {
             page.template.SetTemplate("Musician", "viewtour");
+
+            Tour tour = null;
+
+            try
+            {
+                tour = new Tour(core, tourId);
+            }
+            catch (InvalidTourException)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            List<Gig> gigs = tour.GetGigs();
+
+            foreach (Gig gig in gigs)
+            {
+                VariableCollection gigVariableCollection = page.template.CreateChild("gig_list");
+
+                gigVariableCollection.Parse("ID", gig.Id.ToString());
+            }
+
+            List<string[]> tourPath = new List<string[]>();
+            tourPath.Add(new string[] { "*tours", "Tours" });
+            tourPath.Add(new string[] { "tour/" + tour.Id.ToString(), tour.Title });
+
+            page.Owner.ParseBreadCrumbs(tourPath);
+        }
+
+        public static List<Tour> GetAll(Core core, Musician owner)
+        {
+            List<Tour> tours = new List<Tour>();
+
+            SelectQuery query = Tour.GetSelectQueryStub(typeof(Tour));
+            query.AddCondition("musician_id", owner.Id);
+
+            DataTable tourTable = core.db.Query(query);
+
+            foreach (DataRow dr in tourTable.Rows)
+            {
+                tours.Add(new Tour(core, dr));
+            }
+
+            return tours;
         }
     }
 

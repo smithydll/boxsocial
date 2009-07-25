@@ -46,6 +46,7 @@
     <Compile Include="AppInfo.cs" />
     <Compile Include="Fan.cs" />
     <Compile Include="Gig.cs" />
+    <Compile Include="Instrument.cs" />
     <Compile Include="MPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

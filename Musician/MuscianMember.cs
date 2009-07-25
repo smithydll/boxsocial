@@ -37,6 +37,8 @@ namespace BoxSocial.Musician
         private long musicianId;
         [DataField("member_date_ut")]
         private long memberDateRaw;
+        private bool leadVocalist;
+        private long instruments;
 
         private Musician musician;
 

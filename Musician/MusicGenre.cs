@@ -27,17 +27,81 @@ using BoxSocial.IO;
 namespace BoxSocial.Musician
 {
     [DataTable("genres")]
-    public class MusicGenre
+    public class MusicGenre : NumberedItem
     {
         [DataField("genre_id", DataFieldKeys.Primary)]
         private long genreId;
         [DataField("genre_is_sub")]
         private bool isSubGenre;
+        [DataField("parent_id", typeof(MusicGenre))]
+        private long parentGenreId;
         [DataField("genre_name", 31)]
         private string name;
         [DataField("genre_musicians")]
         private long musicians;
         [DataField("genre_recordings")]
         private long recordings;
+
+        public long GenreId
+        {
+            get
+            {
+                return genreId;
+            }
+        }
+
+        public MusicGenre(Core core, long genreId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MusicGenre_ItemLoad);
+
+            try
+            {
+                LoadItem(genreId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMusicGenreException();
+            }
+        }
+
+        public MusicGenre(Core core, DataRow genreRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MusicGenre_ItemLoad);
+
+            try
+            {
+                loadItemInfo(gigRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMusicGenreException();
+            }
+        }
+
+        void MusicGenre_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return genreId;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    public class InvalidMusicGenreException : Exception
+    {
     }
 }

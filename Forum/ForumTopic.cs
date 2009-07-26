@@ -726,18 +726,18 @@ namespace BoxSocial.Applications.Forum
 
             page.template.SetTemplate("Forum", "viewtopic");
             ForumSettings.ShowForumHeader(core, page);
-			
-			ForumSettings settings = new ForumSettings(core, page.ThisGroup);
+
+            ForumSettings settings = new ForumSettings(core, page.Owner);
 
             try
             {
                 if (forumId == 0)
                 {
-                    thisForum = new Forum(page.Core, page.ThisGroup);
+                    thisForum = new Forum(page.Core, page.Group);
                 }
                 else
                 {
-                    thisForum = new Forum(page.Core, page.ThisGroup, forumId);
+                    thisForum = new Forum(page.Core, page.Group, forumId);
                 }
             }
             catch (InvalidForumException)
@@ -760,9 +760,12 @@ namespace BoxSocial.Applications.Forum
                     return;
                 }
 
-                if (core.LoggedInMemberId > 0 && (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember)))
+                if (page is GPage)
                 {
-                    page.template.Parse("U_JOIN", page.ThisGroup.JoinUri);
+                    if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.session.LoggedInMember)))
+                    {
+                        page.template.Parse("U_JOIN", ((GPage)page).Group.JoinUri);
+                    }
                 }
 
                 page.template.Parse("TOPIC_TITLE", thisTopic.Title);
@@ -881,7 +884,7 @@ namespace BoxSocial.Applications.Forum
 
                 breadCrumbParts.Add(new string[] { "topic-" + thisTopic.Id.ToString(), thisTopic.Title });
 
-                page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+                page.Group.ParseBreadCrumbs(breadCrumbParts);
             }
             catch (InvalidTopicException)
             {

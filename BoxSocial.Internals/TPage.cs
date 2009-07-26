@@ -375,5 +375,10 @@ namespace BoxSocial.Internals
                 return core.template;
             }
         }
+
+        public ShowPageEventArgs(TPage page)
+        {
+            this.page = page;
+        }
     }
 }

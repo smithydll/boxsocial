@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.News
             int p = Functions.RequestInt("p", 1);
 			page.template.SetTemplate("News", "viewnews");
 
-            News news = new News(core, page.ThisGroup);
+            News news = new News(core, page.Group);
 
             List<Article> articles = news.GetArticles(p, 10);
 			
@@ -95,12 +95,12 @@ namespace BoxSocial.Applications.News
 				articleVariableCollection.Parse("DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
             }
 
-            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.ThisGroup.Info.NewsArticles / 10), false);
+            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.Group.Info.NewsArticles / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });
 
-            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+            page.Group.ParseBreadCrumbs(breadCrumbParts);
 		}
 		
 		public string Uri

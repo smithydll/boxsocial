@@ -150,7 +150,7 @@ namespace BoxSocial.Applications.Pages
             }
             else if (sender is GPage)
             {
-                Page.Show(core, ((GPage)sender).ThisGroup, core.PagePathParts[1].Value);
+                Page.Show(core, ((GPage)sender).Group, core.PagePathParts[1].Value);
             }
         }
 

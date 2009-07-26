@@ -40,6 +40,25 @@ namespace BoxSocial.Musician
         [DataField("user_id", DataFieldKeys.Primary, "P_TERNARY")]
         private long userId;
 
+        public MusicianInstruments(Core core, DataRow instrumentRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MusicianInstruments_ItemLoad);
+
+            try
+            {
+                loadItemInfo(instrumentRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMusicianInstrumentsException();
+            }
+        }
+
+        void MusicianInstruments_ItemLoad()
+        {
+        }
+
         public override string Uri
         {
             get
@@ -47,5 +66,9 @@ namespace BoxSocial.Musician
                 throw new NotImplementedException();
             }
         }
+    }
+
+    public class InvalidMusicianInstrumentsException : Exception
+    {
     }
 }

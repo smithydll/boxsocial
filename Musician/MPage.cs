@@ -129,4 +129,20 @@ namespace BoxSocial.Musician
             }
         }
     }
+
+    public class ShowMPageEventArgs : ShowPPageEventArgs
+    {
+        public new MPage Page
+        {
+            get
+            {
+                return (MPage)page;
+            }
+        }
+
+        public ShowMPageEventArgs(MPage page, long itemId)
+            : base(page, itemId)
+        {
+        }
+    }
 }

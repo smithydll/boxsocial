@@ -1108,16 +1108,16 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GroupGalleryItem galleryItem = new GroupGalleryItem(core, page.ThisGroup, photoName);
+                GroupGalleryItem galleryItem = new GroupGalleryItem(core, page.Group, photoName);
 
-                switch (page.ThisGroup.GroupType)
+                switch (page.Group.GroupType)
                 {
                     case "OPEN":
                         // can view the gallery and all it's photos
                         break;
                     case "CLOSED":
                     case "PRIVATE":
-                        if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                        if (!page.Group.IsGroupMember(core.session.LoggedInMember))
                         {
                             core.Functions.Generate403();
                             return;
@@ -1128,7 +1128,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryItem.Viewed(core.session.LoggedInMember);
 
                 string displayUri = string.Format("{0}images/_display/{1}",
-                        page.ThisGroup.UriStub, galleryItem.Path);
+                        page.Group.UriStub, galleryItem.Path);
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
                 page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
@@ -1185,16 +1185,16 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                if (page.Group.IsGroupMember(core.session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
-                core.Display.DisplayComments(page.template, page.ThisGroup, galleryItem);
+                core.Display.DisplayComments(page.template, page.Group, galleryItem);
 
                 string pageUri = string.Format("{0}gallery/{1}",
-                    HttpUtility.HtmlEncode(page.ThisGroup.UriStub), photoName);
+                    HttpUtility.HtmlEncode(page.Group.UriStub), photoName);
                 core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
-                page.ThisGroup.ParseBreadCrumbs("gallery/" + galleryItem.Path);
+                page.Group.ParseBreadCrumbs("gallery/" + galleryItem.Path);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1218,9 +1218,9 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                NetworkGalleryItem galleryItem = new NetworkGalleryItem(core, page.TheNetwork, photoName);
+                NetworkGalleryItem galleryItem = new NetworkGalleryItem(core, page.Network, photoName);
 
-                switch (page.TheNetwork.NetworkType)
+                switch (page.Network.NetworkType)
                 {
                     case NetworkTypes.Country:
                     case NetworkTypes.Global:
@@ -1229,7 +1229,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.University:
                     case NetworkTypes.School:
                     case NetworkTypes.Workplace:
-                        if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                        if (!page.Network.IsNetworkMember(core.session.LoggedInMember))
                         {
                             core.Functions.Generate403();
                             return;
@@ -1240,7 +1240,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryItem.Viewed(core.session.LoggedInMember);
 
                 string displayUri = string.Format("/network/{0}/images/_display/{1}",
-                        page.TheNetwork.NetworkNetwork, galleryItem.Path);
+                        page.Network.NetworkNetwork, galleryItem.Path);
                 page.template.Parse("PHOTO_DISPLAY", displayUri);
                 page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
@@ -1297,18 +1297,18 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
-                core.Display.DisplayComments(page.template, page.TheNetwork, galleryItem);
+                core.Display.DisplayComments(page.template, page.Network, galleryItem);
 
                 string pageUri = string.Format("/network/{0}/gallery/{1}",
-                    HttpUtility.HtmlEncode(page.TheNetwork.NetworkNetwork), photoName);
+                    HttpUtility.HtmlEncode(page.Network.NetworkNetwork), photoName);
                 //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
                 //page.template.Parse("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
                 core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
-                page.TheNetwork.ParseBreadCrumbs("gallery/" + galleryItem.Path);
+                page.Network.ParseBreadCrumbs("gallery/" + galleryItem.Path);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1337,7 +1337,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, GPage page, string photoName)
         {
-            ShowImage(core, page.ThisGroup, photoName);
+            ShowImage(core, page.Group, photoName);
         }
 
         /// <summary>
@@ -1348,7 +1348,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="photoName">Photo slug</param>
         public static void ShowImage(Core core, NPage page, string photoName)
         {
-            ShowImage(core, page.TheNetwork, photoName);
+            ShowImage(core, page.Network, photoName);
         }
 
         /// <summary>

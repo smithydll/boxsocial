@@ -33,16 +33,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Networks
 {
-    public abstract partial class NPage : TPage
+    public abstract partial class NPage : PPage
     {
         protected string networkNetwork;
-        protected Network theNetwork;
 
-        public Network TheNetwork
+        public Network Network
         {
             get
             {
-                return theNetwork;
+                return (Network)primitive;
             }
         }
 
@@ -64,7 +63,7 @@ namespace BoxSocial.Networks
 
             try
             {
-                theNetwork = new Network(core, networkNetwork);
+                primitive = new Network(core, networkNetwork);
             }
             catch (InvalidNetworkException)
             {
@@ -72,15 +71,15 @@ namespace BoxSocial.Networks
                 return;
             }
 
-            Core.PagePath = Core.PagePath.Substring(theNetwork.NetworkNetwork.Length + 1 + 8);
+            Core.PagePath = Core.PagePath.Substring(Network.NetworkNetwork.Length + 1 + 8);
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = "/profile";
             }
 
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Network, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, theNetwork));
+            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Network, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, Network));
 
-            PageTitle = theNetwork.DisplayName;
+            PageTitle = Network.DisplayName;
 
             if (loggedInMember != null && HttpContext.Current.Request.QueryString["mode"] == "activate")
             {
@@ -88,9 +87,9 @@ namespace BoxSocial.Networks
                 {
                     if (loggedInMember.UserId == long.Parse(HttpContext.Current.Request.QueryString["id"]))
                     {
-                        if (theNetwork.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
+                        if (Network.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
                         {
-                            template.Parse("REDIRECT_URI", theNetwork.Uri);
+                            template.Parse("REDIRECT_URI", Network.Uri);
                             core.Display.ShowMessage("Joined Network", "You have successfully joined the network.");
                             return;
                         }

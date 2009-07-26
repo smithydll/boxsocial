@@ -242,11 +242,11 @@ namespace BoxSocial.Applications.News
             breadCrumbParts.Add(new string[] { "news", "News" });
 			breadCrumbParts.Add(new string[] { articleId.ToString(), article.ArticleSubject });
 
-            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+            page.Group.ParseBreadCrumbs(breadCrumbParts);
 			
 
             page.template.Parse("CAN_COMMENT", "TRUE");
-            core.Display.DisplayComments(page.template, page.ThisGroup, article);
+            core.Display.DisplayComments(page.template, page.Group, article);
 		}
     }
 

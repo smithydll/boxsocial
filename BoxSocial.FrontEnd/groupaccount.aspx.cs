@@ -152,15 +152,15 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            if (!thisGroup.IsGroupOperator(loggedInMember))
+            if (!Group.IsGroupOperator(loggedInMember))
             {
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
             }
 
-            template.Parse("ACCOUNT_TITLE", "Group Control Panel :: " + thisGroup.DisplayName);
+            template.Parse("ACCOUNT_TITLE", "Group Control Panel :: " + Group.DisplayName);
 
             Account accountObject = new Account(Core);
-            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, thisGroup), module);
+            loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, Group), module);
 
             accountObject.RegisterModule += new Account.RegisterModuleHandler(OnRegisterModule);
             accountObject.RegisterAllModules();
@@ -174,11 +174,11 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", thisGroup.AccountUriStub);
+                    modulesVariableCollection.Parse("URI", Group.AccountUriStub);
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", thisGroup.AccountUriStub + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", Group.AccountUriStub + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)
@@ -202,7 +202,7 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, thisGroup, accountModule.assembly.GetName().Name);
+                        ApplicationEntry ae = new ApplicationEntry(core, Group, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
@@ -218,7 +218,7 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
 
-                    asm.SetOwner = thisGroup;
+                    asm.SetOwner = Group;
 
                     modulesVariableCollection.Parse("TITLE", asm.Title);
                     modulesVariableCollection.Parse("SUB", asm.Key);
@@ -228,7 +228,7 @@ namespace BoxSocial.FrontEnd
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core, thisGroup);
+                    asm.ModuleVector(core, Group);
                 }
             }
 

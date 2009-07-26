@@ -1141,12 +1141,12 @@ namespace BoxSocial.Applications.Forum
             ForumSettings settings;
             try
             {
-                settings = new ForumSettings(core, page.ThisGroup);
+                settings = new ForumSettings(core, page.Group);
             }
             catch (InvalidForumSettingsException)
             {
-                ForumSettings.Create(core, page.ThisGroup);
-                settings = new ForumSettings(core, page.ThisGroup);
+                ForumSettings.Create(core, page.Group);
+                settings = new ForumSettings(core, page.Group);
             }
             Forum thisForum = null;
             long topicsCount = 0;
@@ -1158,11 +1158,11 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId > 0)
                 {
-                    thisForum = new Forum(page.Core, page.ThisGroup, forumId);
+                    thisForum = new Forum(page.Core, page.Group, forumId);
                 }
                 else
                 {
-                    thisForum = new Forum(page.Core, page.ThisGroup);
+                    thisForum = new Forum(page.Core, page.Group);
                 }
             }
             catch (InvalidForumException)
@@ -1186,9 +1186,9 @@ namespace BoxSocial.Applications.Forum
                 core.Functions.Generate403();
 			}
 
-            if (core.LoggedInMemberId > 0 && (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember)))
+            if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.session.LoggedInMember)))
             {
-                page.template.Parse("U_JOIN", page.ThisGroup.JoinUri);
+                page.template.Parse("U_JOIN", page.Group.JoinUri);
             }
 
             topicsCount = thisForum.Topics;
@@ -1473,14 +1473,14 @@ namespace BoxSocial.Applications.Forum
                 breadCrumbParts.Add(new string[] { thisForum.Id.ToString(), thisForum.Title });
             }
 
-            page.ThisGroup.ParseBreadCrumbs(breadCrumbParts);
+            page.Group.ParseBreadCrumbs(breadCrumbParts);
 			
             if (thisForum.Id == 0)
             {
                 page.template.Parse("INDEX_STATISTICS", "TRUE");
                 page.template.Parse("FORUM_POSTS", core.Functions.LargeIntegerToString(settings.Posts));
                 page.template.Parse("FORUM_TOPICS", core.Functions.LargeIntegerToString(settings.Topics));
-                page.template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.ThisGroup.Members));
+                page.template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.Group.Members));
             }
         }
 

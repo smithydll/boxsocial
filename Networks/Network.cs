@@ -841,28 +841,28 @@ namespace BoxSocial.Networks
 
             if (core.session.IsLoggedIn)
             {
-                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    page.template.Parse("U_LEAVE", page.TheNetwork.BuildLeaveUri());
+                    page.template.Parse("U_LEAVE", page.Network.BuildLeaveUri());
                 }
                 else
                 {
-                    page.template.Parse("U_JOIN", page.TheNetwork.BuildJoinUri());
+                    page.template.Parse("U_JOIN", page.Network.BuildJoinUri());
                 }
             }
 
-            page.template.Parse("NETWORK_DISPLAY_NAME", page.TheNetwork.DisplayName);
-            core.Display.ParseBbcode("DESCRIPTION", page.TheNetwork.Description);
+            page.template.Parse("NETWORK_DISPLAY_NAME", page.Network.DisplayName);
+            core.Display.ParseBbcode("DESCRIPTION", page.Network.Description);
 
-            string langMembers = (page.TheNetwork.Members != 1) ? "members" : "member";
-            string langIsAre = (page.TheNetwork.Members != 1) ? "are" : "is";
+            string langMembers = (page.Network.Members != 1) ? "members" : "member";
+            string langIsAre = (page.Network.Members != 1) ? "are" : "is";
 
-            page.template.Parse("MEMBERS", page.TheNetwork.Members.ToString());
+            page.template.Parse("MEMBERS", page.Network.Members.ToString());
             page.template.Parse("L_MEMBERS", langMembers);
             page.template.Parse("L_IS_ARE", langIsAre);
-            page.template.Parse("U_MEMBERLIST", page.TheNetwork.BuildMemberListUri());
+            page.template.Parse("U_MEMBERLIST", page.Network.BuildMemberListUri());
 
-            List<NetworkMember> members = page.TheNetwork.GetMembers(1, 8);
+            List<NetworkMember> members = page.Network.GetMembers(1, 8);
 
             foreach (NetworkMember member in members)
             {
@@ -875,7 +875,7 @@ namespace BoxSocial.Networks
 
             }
 
-            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Network, page.TheNetwork));
+            core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Network, page.Network));
         }
 
         public static void ShowMemberlist(Core core, NPage page)
@@ -884,10 +884,10 @@ namespace BoxSocial.Networks
 
             int p = Functions.RequestInt("p", 1);
 
-            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.TheNetwork.DisplayName);
-            page.template.Parse("MEMBERS", ((ulong)page.TheNetwork.Members).ToString());
+            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Network.DisplayName);
+            page.template.Parse("MEMBERS", ((ulong)page.Network.Members).ToString());
 
-            foreach (NetworkMember member in page.TheNetwork.GetMembers(p, 18))
+            foreach (NetworkMember member in page.Network.GetMembers(p, 18))
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
 
@@ -913,9 +913,9 @@ namespace BoxSocial.Networks
                 memberVariableCollection.Parse("ICON", member.UserIcon);
             }
 
-            string pageUri = page.TheNetwork.MemberlistUri;
-            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.TheNetwork.Members / 18.0));
-            page.TheNetwork.GenerateBreadCrumbs("members");
+            string pageUri = page.Network.MemberlistUri;
+            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.Network.Members / 18.0));
+            page.Network.GenerateBreadCrumbs("members");
         }
 
         public override string AccountUriStub

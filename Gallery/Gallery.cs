@@ -1499,13 +1499,13 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                    if (!page.Group.IsGroupMember(core.session.LoggedInMember))
                     {
                         core.Functions.Generate403();
                         return;
                     }
 
-                    GroupGallery parent = new GroupGallery(core, page.ThisGroup);
+                    GroupGallery parent = new GroupGallery(core, page.Group);
 
                     string slug = HttpContext.Current.Request.Files["photo-file"].FileName;
 
@@ -1518,9 +1518,9 @@ namespace BoxSocial.Applications.Gallery
                             HttpContext.Current.Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        GroupGalleryItem.Create(core, page.ThisGroup, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
+                        GroupGalleryItem.Create(core, page.Group, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
-                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.ThisGroup, slug));
+                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.Group, slug));
                         core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
@@ -1555,7 +1555,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 page.template.SetTemplate("Gallery", "groupgalleryupload");
 
-                if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                if (!page.Group.IsGroupMember(core.session.LoggedInMember))
                 {
                     core.Functions.Generate403();
                     return;
@@ -1587,14 +1587,14 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                switch (page.ThisGroup.GroupType)
+                switch (page.Group.GroupType)
                 {
                     case "OPEN":
                         // can view the gallery and all it's photos
                         break;
                     case "CLOSED":
                     case "PRIVATE":
-                        if (!page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                        if (!page.Group.IsGroupMember(core.session.LoggedInMember))
                         {
                             core.Functions.Generate403();
                             return;
@@ -1602,12 +1602,12 @@ namespace BoxSocial.Applications.Gallery
                         break;
                 }
 
-                if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                if (page.Group.IsGroupMember(core.session.LoggedInMember))
                 {
-                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.ThisGroup));
+                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.Group));
                 }
 
-                GroupGallery gallery = new GroupGallery(core, page.ThisGroup);
+                GroupGallery gallery = new GroupGallery(core, page.Group);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
@@ -1630,7 +1630,7 @@ namespace BoxSocial.Applications.Gallery
                     galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
 
                     string thumbUri = string.Format("{0}images/_thumb/{1}",
-                        page.ThisGroup.UriStub, galleryItem.Path);
+                        page.Group.UriStub, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
                     Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
@@ -1640,7 +1640,7 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 core.Display.ParsePagination(string.Format("{0}gallery",
-                    page.ThisGroup.UriStub), p, (int)Math.Ceiling(page.ThisGroup.GalleryItems / 12.0));
+                    page.Group.UriStub), p, (int)Math.Ceiling(page.Group.GalleryItems / 12.0));
 
             }
         }
@@ -1676,13 +1676,13 @@ namespace BoxSocial.Applications.Gallery
                         return;
                     }
 
-                    if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                    if (!page.Network.IsNetworkMember(core.session.LoggedInMember))
                     {
                         core.Functions.Generate403();
                         return;
                     }
 
-                    NetworkGallery parent = new NetworkGallery(core, page.TheNetwork);
+                    NetworkGallery parent = new NetworkGallery(core, page.Network);
 
                     string slug = HttpContext.Current.Request.Files["photo-file"].FileName;
 
@@ -1695,9 +1695,9 @@ namespace BoxSocial.Applications.Gallery
                             HttpContext.Current.Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                         }
 
-                        NetworkGalleryItem.Create(core, page.TheNetwork, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
+                        NetworkGalleryItem.Create(core, page.Network, parent, title, ref slug, HttpContext.Current.Request.Files["photo-file"].FileName, saveFileName, HttpContext.Current.Request.Files["photo-file"].ContentType, (ulong)HttpContext.Current.Request.Files["photo-file"].ContentLength, description, 0x0011, license, Classification.RequestClassification());
 
-                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.TheNetwork, slug));
+                        page.template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, page.Network, slug));
                         core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                         return;
                     }
@@ -1732,7 +1732,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 page.template.SetTemplate("Gallery", "groupgalleryupload");
 
-                if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                if (!page.Network.IsNetworkMember(core.session.LoggedInMember))
                 {
                     core.Functions.Generate403();
                     return;
@@ -1762,7 +1762,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                switch (page.TheNetwork.NetworkType)
+                switch (page.Network.NetworkType)
                 {
                     case NetworkTypes.Country:
                     case NetworkTypes.Global:
@@ -1771,7 +1771,7 @@ namespace BoxSocial.Applications.Gallery
                     case NetworkTypes.University:
                     case NetworkTypes.School:
                     case NetworkTypes.Workplace:
-                        if (!page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                        if (!page.Network.IsNetworkMember(core.session.LoggedInMember))
                         {
                             core.Functions.Generate403();
                             return;
@@ -1779,12 +1779,12 @@ namespace BoxSocial.Applications.Gallery
                         break;
                 }
 
-                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
                 {
-                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.TheNetwork));
+                    page.template.Parse("U_UPLOAD_PHOTO", Gallery.BuildGalleryUpload(core, page.Network));
                 }
 
-                NetworkGallery gallery = new NetworkGallery(core, page.TheNetwork);
+                NetworkGallery gallery = new NetworkGallery(core, page.Network);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
 
@@ -1800,14 +1800,14 @@ namespace BoxSocial.Applications.Gallery
                     VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.TheNetwork, galleryItem.Path));
+                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.Network, galleryItem.Path));
                     galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
                     galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                     galleryVariableCollection.Parse("INDEX", i.ToString());
                     galleryVariableCollection.Parse("ID", galleryItem.ItemId.ToString());
 
                     string thumbUri = string.Format("/network/{0}/images/_thumb/{1}",
-                        page.TheNetwork.NetworkNetwork, galleryItem.Path);
+                        page.Network.NetworkNetwork, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
                     Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
@@ -1818,7 +1818,7 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 core.Display.ParsePagination(string.Format("/network/{0}/gallery",
-                    page.TheNetwork.NetworkNetwork), p, (int)Math.Ceiling(page.TheNetwork.GalleryItems / 12.0));
+                    page.Network.NetworkNetwork), p, (int)Math.Ceiling(page.Network.GalleryItems / 12.0));
 
             }
         }

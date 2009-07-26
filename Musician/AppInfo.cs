@@ -289,7 +289,11 @@ namespace BoxSocial.Musician
         {
             if (sender is MPage)
             {
-                Gig.Show(core, (MPage)sender, long.Parse(core.PagePathParts[1].Value));
+                Gig.Show(sender, new ShowMPageEventArgs((MPage)sender, long.Parse(core.PagePathParts[1].Value)));
+            }
+            else
+            {
+                core.Functions.Generate404();
             }
         }
 

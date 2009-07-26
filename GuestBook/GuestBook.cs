@@ -182,18 +182,18 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.session.IsLoggedIn)
             {
-                if (page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+                if (page.Group.IsGroupMember(core.session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
 
-            core.Display.DisplayComments(page.template, page.ThisGroup, page.ThisGroup);
+            core.Display.DisplayComments(page.template, page.Group, page.Group);
             //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("comments"));
-            page.template.Parse("L_GUESTBOOK", page.ThisGroup.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0));
-            page.ThisGroup.ParseBreadCrumbs("comments");
+            page.template.Parse("L_GUESTBOOK", page.Group.DisplayNameOwnership + " Guest Book");
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Group), p, (int)Math.Ceiling(page.Group.Comments / 10.0));
+            page.Group.ParseBreadCrumbs("comments");
             //Prose.GetString("GuestBook");
         }
 
@@ -205,18 +205,18 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.session.IsLoggedIn)
             {
-                if (page.TheNetwork.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
 
-            core.Display.DisplayComments(page.template, page.TheNetwork, page.TheNetwork);
+            core.Display.DisplayComments(page.template, page.Network, page.Network);
             //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("comments"));
-            page.template.Parse("L_GUESTBOOK", page.TheNetwork.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.TheNetwork), p, (int)Math.Ceiling(page.TheNetwork.Comments / 10.0));
-            page.TheNetwork.ParseBreadCrumbs("comments");
+            page.template.Parse("L_GUESTBOOK", page.Network.DisplayNameOwnership + " Guest Book");
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Network), p, (int)Math.Ceiling(page.Network.Comments / 10.0));
+            page.Network.ParseBreadCrumbs("comments");
         }
 
         public static void Show(Core core, APage page)

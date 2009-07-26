@@ -90,9 +90,9 @@ namespace BoxSocial.Applications.Forum
             if (page is GPage)
             {
                 page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/post",
-                    ((GPage)page).ThisGroup.UriStub), true));
+                    ((GPage)page).Group.UriStub), true));
 
-                if (((GPage)page).ThisGroup.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
+                if (((GPage)page).Group.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
                 {
                     
                     List<SelectBoxItem> sbis = new List<SelectBoxItem>();
@@ -233,11 +233,11 @@ namespace BoxSocial.Applications.Forum
                         {
                             if (forumId == 0)
                             {
-                                forum = new Forum(core, ((GPage)page).ThisGroup);
+                                forum = new Forum(core, ((GPage)page).Group);
                             }
                             else
                             {
-                                forum = new Forum(core, ((GPage)page).ThisGroup, forumId);
+                                forum = new Forum(core, ((GPage)page).Group, forumId);
                             }
                         }
                         else
@@ -274,11 +274,11 @@ namespace BoxSocial.Applications.Forum
                         {
                             if (forumId == 0)
                             {
-                                forum = new Forum(core, ((GPage)page).ThisGroup);
+                                forum = new Forum(core, ((GPage)page).Group);
                             }
                             else
                             {
-                                forum = new Forum(core, ((GPage)page).ThisGroup, forumId);
+                                forum = new Forum(core, ((GPage)page).Group, forumId);
                             }
                         }
                         else

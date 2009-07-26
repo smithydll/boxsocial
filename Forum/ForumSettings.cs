@@ -190,13 +190,13 @@ namespace BoxSocial.Applications.Forum
         public static void ShowForumHeader(Core core, GPage page)
         {
             page.template.Parse("U_FORUM_INDEX", core.Uri.AppendSid(string.Format("{0}forum",
-                ((GPage)page).ThisGroup.UriStub)));
+                ((GPage)page).Group.UriStub)));
             page.template.Parse("U_UCP", core.Uri.AppendSid(string.Format("{0}forum/ucp",
-                ((GPage)page).ThisGroup.UriStub)));
+                ((GPage)page).Group.UriStub)));
             page.template.Parse("U_MEMBERS", core.Uri.AppendSid(string.Format("{0}forum/memberlist",
-                ((GPage)page).ThisGroup.UriStub)));
+                ((GPage)page).Group.UriStub)));
 
-            if (core.session.IsLoggedIn && page.ThisGroup.IsGroupMember(core.session.LoggedInMember))
+            if (core.session.IsLoggedIn && page.Group.IsGroupMember(core.session.LoggedInMember))
             {
                 page.template.Parse("IS_FORUM_MEMBER", "TRUE");
             }

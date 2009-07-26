@@ -50,8 +50,10 @@ namespace BoxSocial.Musician
         private bool gigAllAges;
         [DataField("gig_comments")]
         private long gigComments;
-        [DataField("gig_Rating")]
+        [DataField("gig_rating")]
         private float gigRating;
+        [DataField("gig_abstract", MYSQL_TEXT)]
+        private string gigAbstract;
 
         private Tour tour;
         private Musician musician;
@@ -120,6 +122,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public string Abstract
+        {
+            get
+            {
+                return gigAbstract;
+            }
+            set
+            {
+                SetProperty("gigAbstract", value);
+            }
+        }
+
         public Musician Musician
         {
             get
@@ -147,6 +161,14 @@ namespace BoxSocial.Musician
                     tour = new Tour(core, tourId);
                 }
                 return tour;
+            }
+        }
+
+        public UnixTime TimeZone
+        {
+            get
+            {
+                return new UnixTime(core, timeZoneCode);
             }
         }
 
@@ -217,11 +239,11 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return Owner.UriStub + "gig/" + gigId.ToString();
+                return Musician.UriStub + "gig/" + gigId.ToString();
             }
         }
 
-        public static Gig Create(Core core, Musician owner, Tour tour, long time, ushort timezone, string city, string venue, bool allAges)
+        public static Gig Create(Core core, Musician owner, Tour tour, long time, ushort timezone, string city, string venue, string gigAbstract, bool allAges)
         {
             // TODO: fix this
             Item item = Item.Create(core, typeof(Gig), new FieldValuePair("musician_id", owner.Id),
@@ -230,32 +252,35 @@ namespace BoxSocial.Musician
                 new FieldValuePair("gig_time_zone", timezone),
                 new FieldValuePair("gig_city", city),
                 new FieldValuePair("gig_venue", venue),
+                new FieldValuePair("gig_abstract", gigAbstract),
                 new FieldValuePair("gig_all_ages", allAges));
 
             return (Gig)item;
         }
 
-        public static void Show(Core core, PPage page, long gigId)
+        public static void Show(Object sender, ShowMPageEventArgs e)
         {
-            page.template.SetTemplate("Musician", "viewgig");
+            e.Template.SetTemplate("Musician", "viewgig");
 
             Gig gig = null;
 
             try
             {
-                gig = new Gig(core, gigId);
+                gig = new Gig(e.Core, e.ItemId);
             }
             catch (InvalidGigException)
             {
-                core.Functions.Generate404();
+                e.Core.Functions.Generate404();
                 return;
             }
 
-            page.template.Parse("CITY", gig.City);
-            page.template.Parse("VENUE", gig.Venue);
-            page.template.Parse("TIME", core.tz.DateTimeToString(gig.GetTime(core.tz)));
+            e.Template.Parse("CITY", gig.City);
+            e.Template.Parse("VENUE", gig.Venue);
+            e.Template.Parse("TIME", e.Core.tz.DateTimeToString(gig.GetTime(e.Core.tz)));
+            e.Template.Parse("YEAR", gig.GetTime(gig.TimeZone).Year.ToString());
+            e.Core.Display.ParseBbcode("ABSTRACT", gig.Abstract);
 
-            core.Display.DisplayComments(page.template, gig.Musician, gig);
+            e.Core.Display.DisplayComments(e.Template, gig.Musician, gig);
 
             List<string[]> gigPath = new List<string[]>();
             if (gig.Tour != null)
@@ -266,7 +291,7 @@ namespace BoxSocial.Musician
             gigPath.Add(new string[] { "*gigs", "Gigs" });
             gigPath.Add(new string[] { "gig/" + gig.Id.ToString(), gig.Venue });
 
-            page.Owner.ParseBreadCrumbs(gigPath);
+            e.Page.Owner.ParseBreadCrumbs(gigPath);
         }
 
         public static List<Gig> GetAll(Core core, Musician owner)

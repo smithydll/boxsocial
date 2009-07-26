@@ -173,7 +173,7 @@ namespace BoxSocial.Musician
         {
             page.template.SetTemplate("Musician", "viewtours");
 
-            if (!(PPage is MPage))
+            if (!(page is MPage))
             {
                 core.Functions.Generate404();
                 return;

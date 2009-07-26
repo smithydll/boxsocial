@@ -34,17 +34,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
-    public abstract partial class GPage : TPage
+    public abstract partial class GPage : PPage
     {
-
         protected string groupSlug;
-        protected UserGroup thisGroup;
 
-        public UserGroup ThisGroup
+        public UserGroup Group
         {
             get
             {
-                return thisGroup;
+                return (UserGroup)primitive;
             }
         }
 
@@ -66,7 +64,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                thisGroup = new UserGroup(core, groupSlug);
+                primitive = new UserGroup(core, groupSlug);
             }
             catch (InvalidGroupException)
             {
@@ -74,26 +72,26 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (string.IsNullOrEmpty(thisGroup.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
+            if (string.IsNullOrEmpty(Group.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
             {
-                core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
+                core.PagePath = core.PagePath.Substring(Group.Slug.Length + 1 + 6);
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
-                core.PagePath = ThisGroup.Info.GroupHomepage;
+                core.PagePath = Group.Info.GroupHomepage;
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = "/profile";
             }
 
-            if (ThisGroup.IsGroupMemberBanned(core.session.LoggedInMember))
+            if (Group.IsGroupMemberBanned(core.session.LoggedInMember))
             {
                 core.Functions.Generate403();
                 return;
             }
 
-            if (!thisGroup.IsGroupMember(core.session.LoggedInMember) && thisGroup.GroupType == "PRIVATE")
+            if (!Group.IsGroupMember(core.session.LoggedInMember) && Group.GroupType == "PRIVATE")
             {
                 core.Functions.Generate403();
                 return;
@@ -103,25 +101,25 @@ namespace BoxSocial.Groups
             {
                 if (loggedInMember.ShowCustomStyles)
                 {
-                    template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                    template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", Group.Key));
                 }
             }
             else
             {
-                template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", Group.Key));
             }
 
             if (!core.PagePath.StartsWith("/account"))
             {
-                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, thisGroup));
+                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, Group));
 
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
-                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, thisGroup);
+                HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, Group);
                 core.InvokeHeadHooks(e);
                 core.InvokeFootHooks(e);
             }
 
-            PageTitle = thisGroup.DisplayName;
+            PageTitle = Group.DisplayName;
         }
 
         void core_FootHooks(HookEventArgs e)

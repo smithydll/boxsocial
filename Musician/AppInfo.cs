@@ -266,6 +266,16 @@ namespace BoxSocial.Musician
             e.core.AddSidePanel(template);
         }
 
+        [StaticShow("music", @"^(|/)$")]
+        private void showDefault(Core core, object sender)
+        {
+        }
+
+        [StaticShow("music", @"^/chart(|/)$")]
+        private void showChart(Core core, object sender)
+        {
+        }
+
         [Show(@"^/tours(|/)$", AppPrimitives.Musician)]
         private void showTours(Core core, object sender)
         {
@@ -294,6 +304,7 @@ namespace BoxSocial.Musician
             else
             {
                 core.Functions.Generate404();
+                return;
             }
         }
 
@@ -303,6 +314,20 @@ namespace BoxSocial.Musician
             if (sender is MPage)
             {
                 Fan.ShowAll(core, (MPage)sender);
+            }
+        }
+
+        [Show(@"^/song/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        private void showSong(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Song.Show(sender, new ShowMPageEventArgs((MPage)sender, long.Parse(core.PagePathParts[1].Value)));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
             }
         }
     }

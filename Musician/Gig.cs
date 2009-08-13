@@ -258,7 +258,7 @@ namespace BoxSocial.Musician
             return (Gig)item;
         }
 
-        public static void Show(Object sender, ShowMPageEventArgs e)
+        public static void Show(object sender, ShowMPageEventArgs e)
         {
             e.Template.SetTemplate("Musician", "viewgig");
 

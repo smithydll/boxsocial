@@ -117,32 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_discography" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_discography.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="ALBUM" xml:space="preserve">
+    <value>Album</value>
   </data>
-  <data name="account_gigs_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_gigs_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="ALBUMS" xml:space="preserve">
+    <value>Albums</value>
   </data>
-  <data name="account_profile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_profile.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="ARTIST" xml:space="preserve">
+    <value>Artist</value>
   </data>
-  <data name="account_tour_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_tour_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="DISCOGRAPHY" xml:space="preserve">
+    <value>Discography</value>
   </data>
-  <data name="viewgig" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewgig.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="EP" xml:space="preserve">
+    <value>EP</value>
   </data>
-  <data name="viewmusician" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewmusician.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="EPS" xml:space="preserve">
+    <value>EPs</value>
   </data>
-  <data name="viewsong" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewsong.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="MUSIC" xml:space="preserve">
+    <value>Music</value>
   </data>
-  <data name="viewtour" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewtour.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="MUSICIAN" xml:space="preserve">
+    <value>Musician</value>
   </data>
-  <data name="viewtours" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewtours.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="RECORDING" xml:space="preserve">
+    <value>Recording</value>
+  </data>
+  <data name="RECORDINGS" xml:space="preserve">
+    <value>Recordings</value>
+  </data>
+  <data name="SINGLE" xml:space="preserve">
+    <value>Single</value>
+  </data>
+  <data name="SINGLES" xml:space="preserve">
+    <value>Singles</value>
   </data>
 </root>

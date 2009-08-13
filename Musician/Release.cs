@@ -19,8 +19,11 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
+using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -38,20 +41,67 @@ namespace BoxSocial.Musician
 
     public class Release : NumberedItem, IRateableItem, ICommentableItem
     {
+        [DataField("release_id", DataFieldKeys.Primary)]
+        private long releaseId;
 
-        public Release(Core core)
+        public Release(Core core, long releaseId)
             : base (core)
         {
+            ItemLoad += new ItemLoadHandler(Release_ItemLoad);
+
+            try
+            {
+                LoadItem(releaseId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidReleaseException();
+            }
+        }
+
+        public Release(Core core, DataRow releaseRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Release_ItemLoad);
+
+            try
+            {
+                loadItemInfo(releaseRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidReleaseException();
+            }
+        }
+
+        void Release_ItemLoad()
+        {
+        }
+
+        public List<Track> GetTracks()
+        {
+            return getSubItems(typeof(Track), true).ConvertAll<Track>(new Converter<Item, Track>(convertToTrack));
+        }
+
+        public Gig convertToTrack(Item input)
+        {
+            return (Track)input;
         }
 
         public override long Id
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return releaseId;
+            }
         }
 
         public override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #region IRateableItem Members
@@ -81,5 +131,9 @@ namespace BoxSocial.Musician
         }
 
         #endregion
+    }
+
+    public class InvalidReleaseException : Exception
+    {
     }
 }

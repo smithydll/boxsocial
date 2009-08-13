@@ -36,6 +36,8 @@ namespace BoxSocial.Musician
         private long songId;
         [DataField("musician_id", typeof(Musician))]
         private long musicianId;
+        [DataField("song_title", 31)]
+        private string title;
         [DataField("song_recordings")]
         private long recordings;
         [DataField("song_lyrics", MYSQL_TEXT)]
@@ -51,6 +53,18 @@ namespace BoxSocial.Musician
             get
             {
                 return songId;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                SetProperty("title", value);
             }
         }
 
@@ -134,6 +148,16 @@ namespace BoxSocial.Musician
         {
         }
 
+        public List<Recording> GetRecordings()
+        {
+            return getSubItems(typeof(Recording), true).ConvertAll<Recording>(new Converter<Item, Recording>(convertToRecording));
+        }
+
+        public Gig convertToRecording(Item input)
+        {
+            return (Recording)input;
+        }
+
         public override long Id
         {
             get
@@ -150,9 +174,32 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static void Show(Core core, PPage page, long songId)
+        public static void Show(object sender, ShowMPageEventArgs e)
         {
-            page.template.SetTemplate("Musician", "viewsong");
+            e.Template.SetTemplate("Musician", "viewsong");
+            
+            Song song = null;
+
+            try
+            {
+                song = new Song(core, songId);
+            }
+            catch
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            e.Template.Parse("TITLE", song.Title);
+
+            List<Recording> recordings = song.GetRecordings();
+
+            foreach (Recording recording in recordings)
+            {
+                VariableCollection recordingVariableCollection = e.Template.CreateChild("recording_list");
+
+                //recordingVariableCollection.Parse(
+            }
         }
     }
 

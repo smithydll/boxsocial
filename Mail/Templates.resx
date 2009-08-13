@@ -118,31 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_discography" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_discography.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="account_compose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_compose.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="account_gigs_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_gigs_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="account_profile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_profile.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="account_tour_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_tour_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="viewgig" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewgig.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="viewmusician" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewmusician.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="viewsong" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewsong.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="viewtour" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewtour.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
-  <data name="viewtours" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewtours.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="account_mailbox" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_mailbox.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

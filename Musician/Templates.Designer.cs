@@ -63,9 +63,27 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string account_discography {
+            get {
+                return ResourceManager.GetString("account_discography", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string account_gigs_manage {
             get {
                 return ResourceManager.GetString("account_gigs_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_profile {
+            get {
+                return ResourceManager.GetString("account_profile", resourceCulture);
             }
         }
         
@@ -81,7 +99,23 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;h2&gt;Gig&lt;/h2&gt;
+        ///&lt;h2&gt;Gig {CITY} {YEAR}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;dl&gt;
+        ///  &lt;dt&gt;City&lt;/dt&gt;
+        ///  &lt;dd&gt;{CITY}&lt;/dd&gt;
+        ///  &lt;dt&gt;Venue&lt;/dt&gt;
+        ///  &lt;dd&gt;{VENUE}&lt;/dd&gt;
+        ///  &lt;dt&gt;Time&lt;/dt&gt;
+        ///  &lt;dd&gt;{TIME}&lt;/dd&gt;
+        ///&lt;/dl&gt;
+        ///
+        ///&lt;p&gt;{ABSTRACT}&lt;/p&gt;
+        ///
+        ///&lt;div class=&quot;comment-pane&quot;&gt;
+        ///  &lt;!-- INCLUDE pane.comments.html --&gt;
+        ///&lt;/div&gt;
         ///
         ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
@@ -122,6 +156,14 @@ namespace BoxSocial.Musician {
         ///
         ///&lt;h2&gt;Tour&lt;/h2&gt;
         ///
+        ///&lt;!-- IF gig_list --&gt;
+        ///&lt;ul&gt;
+        ///  &lt;!-- BEGIN gig_list --&gt;
+        ///  &lt;li&gt;&lt;/li&gt;
+        ///  &lt;!-- END gig_list --&gt;
+        ///&lt;/ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
         ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewtour {
@@ -131,7 +173,19 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;Tours&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF tour_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN tour_list --&gt;
+        ///  &lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END tour_list --&gt;
+        ///&lt;/ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewtours {
             get {

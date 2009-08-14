@@ -87,12 +87,21 @@ namespace BoxSocial.Internals
     public class ShowPPageEventArgs : ShowPageEventArgs
     {
         private long itemId;
+        private string itemSlug;
 
         public long ItemId
         {
             get
             {
                 return itemId;
+            }
+        }
+
+        public string Slug
+        {
+            get
+            {
+                return itemSlug;
             }
         }
 
@@ -104,11 +113,16 @@ namespace BoxSocial.Internals
             }
         }
 
-
         public ShowPPageEventArgs(PPage page, long itemId)
             : base(page)
         {
             this.itemId = itemId;
+        }
+
+        public ShowPPageEventArgs(PPage page, string slug)
+            : base(page)
+        {
+            this.itemSlug = slug;
         }
     }
 }

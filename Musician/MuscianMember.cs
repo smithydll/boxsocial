@@ -38,7 +38,9 @@ namespace BoxSocial.Musician
         private long musicianId;
         [DataField("member_date_ut")]
         private long memberDateRaw;
+        [DataField("member_lead")]
         private bool leadVocalist;
+        [DataField("member_instruments")]
         private long instruments;
 
         private Musician musician;
@@ -121,6 +123,52 @@ namespace BoxSocial.Musician
             else
             {
                 throw new InvalidUserException();
+            }
+        }
+
+        public List<Instrument> GetInstruments()
+        {
+            List<Instrument> instruments = new List<Instrument>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicianInstruments));
+            query.AddFields(Item.GetFieldsPrefixed(typeof(Instrument)));
+            query.AddCondition("musician_id", musicianId);
+            query.AddCondition("user_id", userId);
+            query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(MusicianInstruments)), "instrument_id"), new DataField(Item.GetTable(typeof(Instrument)), "instrument_id"));
+
+            DataTable instrumentDataTable = core.db.Query(query);
+
+            foreach (DataRow dr in instrumentDataTable.Rows)
+            {
+                instruments.Add(new Instrument(core, dr));
+            }
+
+            return instruments;
+        }
+
+        public static void Show(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("Musician", "viewmember");
+
+            MuscianMember member = null;
+
+            try
+            {
+                member = new MuscianMember(e.Core, (Musician)e.Page.Owner, e.ItemId, UserLoadOptions.All);
+            }
+            catch (InvalidMuscianMemberException)
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
+
+            List<Instrument> instruments = member.GetInstruments();
+
+            foreach (Instrument instrument in instruments)
+            {
+                VariableCollection instrumentVariableCollection = e.Template.CreateChild("instrument_list");
+
+
             }
         }
     }

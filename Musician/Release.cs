@@ -43,6 +43,73 @@ namespace BoxSocial.Musician
     {
         [DataField("release_id", DataFieldKeys.Primary)]
         private long releaseId;
+        [DataField("musician_id", typeof(Musician))]
+        private long musicianId;
+        [DataField("release_title", 63)]
+        private string releaseTitle;
+        [DataField("release_date_ut")]
+        private long releaseDateRaw;
+        [DataField("release_cover_art", 63)]
+        private long releaseCoverArt;
+        [DataField("release_comments")]
+        private long releaseComments;
+        [DataField("release_rating")]
+        private float releaseRating;
+        [DataField("release_ratings")]
+        private long releaseRatings;
+
+        private Musician musician;
+
+        public long ReleaseId
+        {
+            get
+            {
+                return releaseId;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return releaseTitle;
+            }
+        }
+
+        public long ReleaseDateRaw
+        {
+            get
+            {
+                return releaseDateRaw;
+            }
+            set
+            {
+                SetProperty("releaseDateRaw", value);
+            }
+        }
+
+        public DateTime GetReleaseDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(releaseDateRaw);
+        }
+
+        public Musician Musician
+        {
+            get
+            {
+                ItemKey ownerKey = new ItemKey(musicianId, ItemKey.GetTypeId(typeof(Musician)));
+                if (musician == null || ownerKey.Id != musician.Id || ownerKey.Type != musician.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
+                    musician = (Musician)core.UserProfiles[ownerKey];
+                    return musician;
+                }
+                else
+                {
+                    return musician;
+                }
+            }
+        }
 
         public Release(Core core, long releaseId)
             : base (core)
@@ -83,7 +150,7 @@ namespace BoxSocial.Musician
             return getSubItems(typeof(Track), true).ConvertAll<Track>(new Converter<Item, Track>(convertToTrack));
         }
 
-        public Gig convertToTrack(Item input)
+        public Track convertToTrack(Item input)
         {
             return (Track)input;
         }
@@ -104,33 +171,73 @@ namespace BoxSocial.Musician
             }
         }
 
-        #region IRateableItem Members
+        public static void Show(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("Musician", "viewrelease");
+
+            Release release = null;
+
+            try
+            {
+                release = new Release(e.Core, e.ItemId);
+            }
+            catch
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
+
+            List<Track> tracks = release.GetTracks();
+
+            foreach (Track track in tracks)
+            {
+                VariableCollection trackVariableCollection = e.Template.CreateChild("track_list");
+                
+
+            }
+
+            e.Core.Display.DisplayComments(e.Template, release.Musician, release);
+        }
 
         public float Rating
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return releaseRating;
+            }
         }
-
-        #endregion
-
-        #region ICommentableItem Members
 
         public long Comments
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return releaseComments;
+            }
         }
 
         public SortOrder CommentSortOrder
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return SortOrder.Descending;
+            }
         }
 
         public byte CommentsPerPage
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return 10;
+            }
         }
 
-        #endregion
+        public long Ratings
+        {
+            get
+            {
+                return releaseRatings;
+            }
+        }
     }
 
     public class InvalidReleaseException : Exception

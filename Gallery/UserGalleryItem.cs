@@ -135,16 +135,6 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns user gallery item URI
-        /// </summary>
-        /// <returns></returns>
-        public override string BuildUri()
-        {
-            return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
-                ((User)owner).UriStub, parentPath, path));
-        }
-
-        /// <summary>
         /// Returns user gallery delete item URI
         /// </summary>
         /// <returns></returns>
@@ -160,29 +150,6 @@ namespace BoxSocial.Applications.Gallery
         public string BuildTagUri()
         {
             return core.Uri.BuildAccountSubModuleUri("galleries", "tag", Id, true);
-        }
-
-        /// <summary>
-        /// Returns user gallery item URI
-        /// </summary>
-        public override string Uri
-        {
-            get
-            {
-                return BuildUri();
-            }
-        }
-
-        /// <summary>
-        /// Returns the user gallery item thumbnail uri
-        /// </summary>
-        public override string ThumbUri
-        {
-            get
-            {
-                return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                owner.UriStub, path));
-            }
         }
     }
 }

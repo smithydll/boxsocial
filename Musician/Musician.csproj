@@ -41,8 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountDiscographyManage.cs" />
     <Compile Include="AccountMembersManage.cs" />
     <Compile Include="AccountMusician.cs" />
+    <Compile Include="AccountProfileManage.cs" />
+    <Compile Include="AccountSongsManage.cs" />
     <Compile Include="AccountTourManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Fan.cs" />
@@ -70,6 +73,7 @@
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="Tour.cs" />
+    <Compile Include="Track.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
@@ -86,6 +90,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="languages\Musician.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -100,16 +107,15 @@
   <ItemGroup>
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_discography.html" />
     <Content Include="templates\account_gigs_manage.html" />
+    <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_tour_manage.html" />
     <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />
     <Content Include="templates\viewsong.html" />
     <Content Include="templates\viewtour.html" />
     <Content Include="templates\viewtours.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="languages\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

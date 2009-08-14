@@ -90,38 +90,5 @@ namespace BoxSocial.Applications.Gallery
             long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
             return new GroupGalleryItem(core, owner, itemId);
         }
-
-        /// <summary>
-        /// Returns group gallery item uri
-        /// </summary>
-        /// <returns></returns>
-        public override string BuildUri()
-        {
-            return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
-                owner.UriStub, path));
-        }
-
-        /// <summary>
-        /// Returns group gallery item uri
-        /// </summary>
-        public override string Uri
-        {
-            get
-            {
-                return BuildUri();
-            }
-        }
-
-        /// <summary>
-        /// Returns the group gallery item thumbnail uri
-        /// </summary>
-        public override string ThumbUri
-        {
-            get
-            {
-                return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                owner.UriStub, path));
-            }
-        }
     }
 }

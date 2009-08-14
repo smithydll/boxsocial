@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public abstract class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
     {
         /// <summary>
         /// Owner of the photo's user Id
@@ -931,7 +931,137 @@ namespace BoxSocial.Applications.Gallery
         /// Returns gallery item URI
         /// </summary>
         /// <returns></returns>
-        public abstract string BuildUri();
+        public string BuildUri()
+        {
+            if (parentId > 0)
+            {
+                return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
+                    owner.UriStub, parentPath, path));
+            }
+            else
+            {
+                return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
+                    owner.UriStub, path));
+            }
+        }
+
+        /// <summary>
+        /// Shows a group gallery item
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="page">Page token</param>
+        /// <param name="photoName">Photo slug</param>
+        public static void Show(object sender, ShowPPageEventArgs e)
+        {
+            e.Template.SetTemplate("Gallery", "viewphoto");
+
+            char[] trimStartChars = { '.', '/' };
+
+            try
+            {
+                GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
+
+                if (e.Page.Owner is UserGroup)
+                {
+                    UserGroup group = (UserGroup)e.Page.Owner;
+                    switch (group.GroupType)
+                    {
+                        case "OPEN":
+                            // can view the gallery and all it's photos
+                            break;
+                        case "CLOSED":
+                        case "PRIVATE":
+                            if (!group.IsGroupMember(e.Core.session.LoggedInMember))
+                            {
+                                e.Core.Functions.Generate403();
+                                return;
+                            }
+                            break;
+                    }
+                }
+
+                galleryItem.Viewed(e.Core.session.LoggedInMember);
+
+                string displayUri = string.Format("{0}images/_display/{1}",
+                        e.Page.Owner.UriStub, galleryItem.Path);
+                e.Template.Parse("PHOTO_DISPLAY", displayUri);
+                e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
+                e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
+                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
+                e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
+                e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(galleryItem.ParentId));
+
+                switch (galleryItem.Classification)
+                {
+                    case Classifications.Everyone:
+                        e.Template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
+                        e.Template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
+                        break;
+                    case Classifications.Mature:
+                        e.Template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
+                        e.Template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
+                        break;
+                    case Classifications.Restricted:
+                        e.Template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
+                        e.Template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
+                        break;
+                }
+
+                if (galleryItem.License != null)
+                {
+                    if (!string.IsNullOrEmpty(galleryItem.License.Title))
+                    {
+                        e.Template.Parse("PAGE_LICENSE", galleryItem.License.Title);
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Icon))
+                    {
+                        e.Template.Parse("I_PAGE_LICENSE", galleryItem.License.Icon);
+                    }
+                    if (!string.IsNullOrEmpty(galleryItem.License.Link))
+                    {
+                        e.Template.Parse("U_PAGE_LICENSE", galleryItem.License.Link);
+                    }
+                }
+
+                Display.RatingBlock(galleryItem.ItemRating, e.Template, galleryItem.Key);
+
+                e.Template.Parse("ID", galleryItem.ItemId.ToString());
+                e.Template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+                //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
+
+                int p = 1;
+
+                try
+                {
+                    p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
+                }
+                catch
+                {
+                }
+
+                if (e.Page.Owner is UserGroup)
+                {
+                    if (((UserGroup)e.Page.Owner).IsGroupMember(e.Core.session.LoggedInMember))
+                    {
+                        e.Template.Parse("CAN_COMMENT", "TRUE");
+                    }
+                }
+
+                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, galleryItem);
+
+                string pageUri = string.Format("{0}gallery/{1}",
+                    HttpUtility.HtmlEncode(e.Page.Owner.UriStub), e.Slug);
+                e.Core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                e.Page.Owner.ParseBreadCrumbs("gallery/" + galleryItem.Path);
+
+            }
+            catch (GalleryItemNotFoundException)
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
+        }
 
         /// <summary>
         /// Shows a user gallery item
@@ -1818,17 +1948,32 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns gallery item uri
         /// </summary>
-        public abstract override string Uri
+        public override string Uri
         {
-            get;
+            get
+            {
+                return BuildUri();
+            }
         }
 
         /// <summary>
         /// Returns the gallery item thumbnail uri
         /// </summary>
-        public abstract string ThumbUri
+        public string ThumbUri
         {
-            get;
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
+                        owner.UriStub, path));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
+                        owner.UriStub, path));
+                }
+            }
         }
 
         /// <summary>

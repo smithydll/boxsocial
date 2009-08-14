@@ -153,7 +153,7 @@ namespace BoxSocial.Musician
             return getSubItems(typeof(Recording), true).ConvertAll<Recording>(new Converter<Item, Recording>(convertToRecording));
         }
 
-        public Gig convertToRecording(Item input)
+        public Recording convertToRecording(Item input)
         {
             return (Recording)input;
         }
@@ -182,11 +182,11 @@ namespace BoxSocial.Musician
 
             try
             {
-                song = new Song(core, songId);
+                song = new Song(e.Core, e.ItemId);
             }
             catch
             {
-                core.Functions.Generate404();
+                e.Core.Functions.Generate404();
                 return;
             }
 

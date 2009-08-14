@@ -40,6 +40,14 @@ namespace BoxSocial.Internals
             get;
         }
 
+        /// <summary>
+        /// Number of times the item has been rated
+        /// </summary>
+        long Ratings
+        {
+            get;
+        }
+
         long Id
         {
             get;

@@ -396,12 +396,22 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Show a group or network gallery item
+        /// Show a primitive's gallery item
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
         private void showPhoto(Core core, object sender)
         {
+            /*if (sender is PPage)
+            {
+                GalleryItem.Show(sender, new ShowPPageEventArgs((PPage)sender, long.Parse(core.PagePathParts[1].Value)));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }*/
             if (sender is GPage)
             {
                 GalleryItem.Show(core, (GPage)sender, core.PagePathParts[1].Value);

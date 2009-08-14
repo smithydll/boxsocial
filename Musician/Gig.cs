@@ -52,6 +52,8 @@ namespace BoxSocial.Musician
         private long gigComments;
         [DataField("gig_rating")]
         private float gigRating;
+        [DataField("gig_ratings")]
+        private long gigRatings;
         [DataField("gig_abstract", MYSQL_TEXT)]
         private string gigAbstract;
 
@@ -340,6 +342,14 @@ namespace BoxSocial.Musician
             get
             {
                 return gigRating;
+            }
+        }
+
+        public long Ratings
+        {
+            get
+            {
+                return gigRatings;
             }
         }
     }

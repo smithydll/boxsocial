@@ -607,6 +607,11 @@ namespace BoxSocial.Internals
             template.Parse("SITE_TITLE", WebConfigurationManager.AppSettings["boxsocial-title"]);
             template.Parse("YEAR", DateTime.Now.Year.ToString());
 
+            if (page.CanonicalUri != null)
+            {
+                template.Parse("CANONICAL_URI", page.CanonicalUri);
+            }
+
             template.Parse("HEAD_COLOUR", "ffffff");
             template.Parse("HEAD_FORE_COLOUR", "black");
 

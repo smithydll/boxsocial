@@ -1,0 +1,30 @@
+﻿<h3>Manage Songs</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>Title</th>
+	<th>Recordings</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN song_list -->
+<!-- IF song_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{song_list.TITLE}</td>
+	<td><a href="{song_list.U_RECORDINGS}">{song_list.COMMENTS}</a></td>
+	<td><a href="{song_list.U_ADD_RECORDING}">Add Recording</a></td>
+	<td><a href="{song_list.U_EDIT}">{L_EDIT}</a></td>
+	<td>
+    <!-- IF song_list.CAN_DELETE -->
+    <a href="{song_list.U_DELETE}">{L_DELETE}</a>
+    <!-- ELSE -->
+    {L_DELETE}
+    <!-- ENDIF -->
+  </td>
+</tr>
+<!-- END song_list -->
+</table>

@@ -8,6 +8,9 @@
 	<!-- BEGIN style_sheet_list -->
 	<link href="{style_sheet_list.URI}" rel="Stylesheet" media="screen, projection" type="text/css"/>
 	<!-- END style_sheet_list -->
+	<!-- IF CANONICAL_URI -->
+	<link rel="canonical" href="{CANONICAL_URI}" />
+	<!-- ENDIF -->
 	<!-- IF REDIRECT_URI -->
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->

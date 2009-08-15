@@ -56,12 +56,77 @@ namespace BoxSocial.Musician
 
         void AccountSongsManage_Load(object sender, EventArgs e)
         {
+            AddModeHandler("add", new ModuleModeHandler(AccountSongsManage_Add));
+            AddModeHandler("edit", new ModuleModeHandler(AccountSongsManage_Add));
         }
 
         void AccountSongsManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_songs");
 
+            List<Song> songs = ((Musician)Owner).GetSongs();
+
+            foreach (Song song in songs)
+            {
+                VariableCollection songsVariableCollection = template.CreateChild("song_list");
+
+                songsVariableCollection.Parse("ID", song.Id.ToString());
+                songsVariableCollection.Parse("TITLE", song.Title);
+                songsVariableCollection.Parse("RECORDINGS", song.Recordings.ToString());
+                songsVariableCollection.Parse("U_EDIT", BuildUri("songs", "edit", song.Id));
+                songsVariableCollection.Parse("U_ADD_RECORDING", BuildUri("recordings", "add", song.Id));
+                songsVariableCollection.Parse("U_DELETE", BuildUri("songs", "delete", song.Id));
+            }
+        }
+
+        void AccountSongsManage_Add(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("");
+
+            if (e.Mode == "edit")
+            {
+                Song song = null;
+
+                try
+                {
+                    song = new Song(core, Functions.RequestLong("id", 0));
+                }
+                catch (InvalidSongException)
+                {
+                    core.Display.ShowMessage("Error", "Cannot edit the song");
+                    return;
+                }
+
+                template.Parse("TITLE", song.Title);
+            }
+
+            SaveMode(AccountSongsManage_Save);
+        }
+
+        void AccountSongsManage_Save(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            if (e.Mode == "edit")
+            {
+                Song song = null;
+
+                try
+                {
+                    song = new Song(core, Functions.RequestLong("id", 0));
+                }
+                catch (InvalidSongException)
+                {
+                    core.Display.ShowMessage("Error", "Cannot edit the song");
+                    return;
+                }
+            }
+            else
+            {
+                //Song song = Song.Create(core, );
+
+                this.SetRedirectUri(BuildUri("songs"));
+            }
         }
     }
 }

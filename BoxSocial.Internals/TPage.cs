@@ -61,6 +61,7 @@ namespace BoxSocial.Internals
     public abstract class TPage : System.Web.UI.Page
     {
         private string pageTitle = "ZinZam • A Global Community";
+        private string canonicalUri;
 
         public Template template;
         public Mysql db;
@@ -92,6 +93,25 @@ namespace BoxSocial.Internals
             set
             {
                 pageTitle = "ZinZam • " + HttpUtility.HtmlEncode(value);
+            }
+        }
+
+        public string CanonicalUri
+        {
+            get
+            {
+                return canonicalUri;
+            }
+            set
+            {
+                if (core != null && core.Uri != null)
+                {
+                    canonicalUri = core.Uri.StripSid(value);
+                }
+                else
+                {
+                    canonicalUri = value;
+                }
             }
         }
 

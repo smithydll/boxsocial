@@ -135,6 +135,16 @@ namespace BoxSocial.Musician
             }
         }
 
+        public List<Song> GetSongs()
+        {
+            return getSubItems(typeof(Song), true).ConvertAll<Song>(new Converter<Item, Song>(convertToSong));
+        }
+
+        public Song convertToSong(Item input)
+        {
+            return (Song)input;
+        }
+
         public static Musician Create(Core core, string title, string slug)
         {
             Mysql db = core.db;

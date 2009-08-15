@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem, IPermissibleItem
     {
         /// <summary>
         /// Owner of the photo's user Id
@@ -348,6 +348,10 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
         }
+
+        Access access;
+        List<string> actions = new List<string> { "VIEW", "RATE", "COMMENT" };
+        List<AccessControlPermission> permissionsList;
 
         /// <summary>
         /// Initialises a new instance of the GalleryItem class.
@@ -946,11 +950,10 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Shows a group gallery item
+        /// 
         /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.Template.SetTemplate("Gallery", "viewphoto");
@@ -961,23 +964,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
 
-                if (e.Page.Owner is UserGroup)
+                if (galleryItem.Access.Can("READ"))
                 {
-                    UserGroup group = (UserGroup)e.Page.Owner;
-                    switch (group.GroupType)
-                    {
-                        case "OPEN":
-                            // can view the gallery and all it's photos
-                            break;
-                        case "CLOSED":
-                        case "PRIVATE":
-                            if (!group.IsGroupMember(e.Core.session.LoggedInMember))
-                            {
-                                e.Core.Functions.Generate403();
-                                return;
-                            }
-                            break;
-                    }
+                    e.Core.Functions.Generate403();
+                    return;
                 }
 
                 galleryItem.Viewed(e.Core.session.LoggedInMember);
@@ -1040,12 +1030,9 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (e.Page.Owner is UserGroup)
+                if (galleryItem.Access.Can("COMMENT"))
                 {
-                    if (((UserGroup)e.Page.Owner).IsGroupMember(e.Core.session.LoggedInMember))
-                    {
-                        e.Template.Parse("CAN_COMMENT", "TRUE");
-                    }
+                    e.Template.Parse("CAN_COMMENT", "TRUE");
                 }
 
                 e.Core.Display.DisplayComments(e.Template, e.Page.Owner, galleryItem);
@@ -2028,6 +2015,44 @@ namespace BoxSocial.Applications.Gallery
         public string RebuildAction(Action action)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IPermissibleItem Members
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                return actions;
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                if (permissionsList == null)
+                {
+                    permissionsList = AccessControlLists.GetPermissions(core, this);
+                }
+
+                return permissionsList;
+            }
         }
 
         #endregion

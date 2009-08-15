@@ -101,6 +101,17 @@ namespace BoxSocial.Applications.Gallery
                 string title = (string)photoTable.Rows[0]["gallery_item_title"];
                 string description = "";
 
+                GalleryItem photo = null;
+                try
+                {
+                    photo = new GalleryItem(core, photoTable.Rows[0]);
+                }
+                catch
+                {
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                    return;
+                }
+
                 if (!(photoTable.Rows[0]["gallery_item_abstract"] is DBNull))
                 {
                     description = (string)photoTable.Rows[0]["gallery_item_abstract"];
@@ -112,6 +123,9 @@ namespace BoxSocial.Applications.Gallery
 
                 core.Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
                 core.Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
+
+                AccessControlLists acl = new AccessControlLists(core, photo);
+                acl.ParseACL(template, photo.Owner, "S_PHOTO_PERMS");
 
                 template.Parse("S_PHOTO_TITLE", title);
                 template.Parse("S_PHOTO_DESCRIPTION", description);

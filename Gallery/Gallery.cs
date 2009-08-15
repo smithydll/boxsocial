@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery
     /// </summary>
     [DataTable("user_galleries")]
-    public abstract class Gallery : NumberedItem
+    public class Gallery : NumberedItem, IPermissibleItem
     {
         /// <summary>
         /// A list of database fields associated with a user gallery.
@@ -158,6 +158,10 @@ namespace BoxSocial.Applications.Gallery
         /// Parent Tree
         /// </summary>
         private ParentTree parentTree;
+
+        Access access;
+        List<string> actions = new List<string> { "VIEW", "COMMENT", "CREATE_CHILD", "VIEW_ITEMS", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS", "EDIT_ITEMS", "DELETE_ITEMS"};
+        List<AccessControlPermission> permissionsList;
 
         /// <summary>
         /// Gets the gallery Id
@@ -1301,6 +1305,155 @@ namespace BoxSocial.Applications.Gallery
                 theNetwork.NetworkNetwork));
         }
 
+        public static void Show(object sender, ShowPPageEventArgs e)
+        {
+            page.template.SetTemplate("Gallery", "viewgallery");
+
+            int p = 1;
+            char[] trimStartChars = { '.', '/' };
+
+            string galleryPath = e.Slug;
+
+            if (galleryPath != null)
+            {
+                galleryPath = galleryPath.TrimEnd('/').TrimStart(trimStartChars);
+            }
+            else
+            {
+                galleryPath = "";
+            }
+
+            Gallery gallery;
+            if (galleryPath != "")
+            {
+                try
+                {
+                    gallery = new Gallery(e.Core, e.Page.Owner, galleryPath);
+
+                    if (!gallery.Access.Can("VIEW"))
+                    {
+                        e.Core.Functions.Generate403();
+                        return;
+                    }
+
+                    if (gallery.Access.Can("CREATE_ITEMS"))
+                    {
+                        e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(gallery.GalleryId));
+                    }
+                    if (gallery.Access.Can("CREATE_CHILD"))
+                    {
+                        e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(gallery.GalleryId));
+                    }
+
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(core, e.Page.Owner, galleryPath), e.Page.page, (int)Math.Ceiling(gallery.Items / 12.0));
+                }
+                catch (InvalidGalleryException)
+                {
+                    core.Functions.Generate404();
+                    return;
+                }
+            }
+            else
+            {
+                gallery = new Gallery(e.Core, e.Page.Owner);
+
+                if (gallery.Access.Can("CREATE_CHILD"))
+                {
+                    page.template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(0));
+                }
+            }
+
+            if (gallery.Id == 0)
+            {
+                page.template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
+            }
+            else
+            {
+                page.template.Parse("GALLERY_TITLE", gallery.GalleryTitle);
+            }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+
+            breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+
+            if (gallery.Parents != null)
+            {
+                foreach (ParentTreeNode ptn in gallery.Parents.Nodes)
+                {
+                    breadCrumbParts.Add(new string[] { ptn.ParentSlug.ToString(), ptn.ParentTitle });
+                }
+            }
+
+            if (gallery.Id > 0)
+            {
+                breadCrumbParts.Add(new string[] { gallery.Path, gallery.GalleryTitle });
+            }
+
+            page.User.ParseBreadCrumbs(breadCrumbParts);
+
+            List<Gallery> galleries = gallery.GetGalleries(core);
+
+            page.template.Parse("GALLERIES", galleries.Count.ToString());
+
+            foreach (Gallery galleryGallery in galleries)
+            {
+                VariableCollection galleryVariableCollection = page.template.CreateChild("gallery_list");
+
+                galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
+                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(core, page.User, galleryGallery.FullPath));
+                galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
+                core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+
+                long items = galleryGallery.Items;
+
+                if (items == 1)
+                {
+                    galleryVariableCollection.Parse("ITEMS", "1 item.");
+                }
+                else
+                {
+                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", core.Functions.LargeIntegerToString(items)));
+                }
+            }
+
+            List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
+
+            page.template.Parse("PHOTOS", galleryItems.Count.ToString());
+
+            long galleryComments = 0;
+            int i = 0;
+            foreach (GalleryItem galleryItem in galleryItems)
+            {
+                VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
+
+                galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.User, galleryItem.ParentPath, galleryItem.Path));
+                galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
+                galleryVariableCollection.Parse("INDEX", i.ToString());
+                galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
+				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+
+                string thumbUri = string.Format("/{0}/images/_thumb/{1}/{2}",
+                    page.User.UserName, galleryPath, galleryItem.Path);
+                galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
+
+                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
+
+                galleryComments += galleryItem.ItemComments;
+                i++;
+            }
+
+            if (galleryItems.Count > 0)
+            {
+                page.template.Parse("S_RATEBAR", "TRUE");
+            }
+
+            page.template.Parse("COMMENTS", galleryComments.ToString());
+            page.template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
+            page.template.Parse("U_COMMENTS", core.Uri.BuildGalleryCommentsUri(page.User, galleryPath));
+        }
+
         /// <summary>
         /// Show the gallery
         /// </summary>
@@ -1841,6 +1994,45 @@ namespace BoxSocial.Applications.Gallery
         {
             get { throw new NotImplementedException(); }
         }
+
+        #region IPermissibleItem Members
+
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                return actions;
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                if (permissionsList == null)
+                {
+                    permissionsList = AccessControlLists.GetPermissions(core, this);
+                }
+
+                return permissionsList;
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

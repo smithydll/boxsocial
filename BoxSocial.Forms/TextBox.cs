@@ -25,11 +25,23 @@ using System.Text;
 
 namespace BoxSocial.Forms
 {
-    public class CheckBoxArray : FormField
+    public class TextBox : FormField
     {
-        private List<CheckBox> items;
-        private Dictionary<string, CheckBox> itemKeys;
+        private string value;
         private bool disabled;
+        private int maxLength;
+
+        public string Value
+        {
+            get
+            {
+                return value;
+            }
+            set
+            {
+                this.value = value;
+            }
+        }
 
         public bool IsDisabled
         {
@@ -43,22 +55,36 @@ namespace BoxSocial.Forms
             }
         }
 
-        public CheckBoxArray(string name)
+        private int MaxLength
+        {
+            get
+            {
+                return maxLength;
+            }
+            set
+            {
+                maxLength = value;
+
+                // Update the value
+                if (this.value.Length > maxLength)
+                {
+                    this.value = this.value.Substring(0, maxLength);
+                }
+            }
+        }
+
+        public TextBox(string name)
         {
             this.name = name;
 
             disabled = false;
-            items = new List<RadioListItem>();
-            itemKeys = new Dictionary<string, RadioListItem>();
+            maxLength = -1;
         }
 
-        public void Add(CheckBox item)
+        public override string ToString()
         {
-            if (!itemKeys.ContainsKey(item.Key))
-            {
-                items.Add(item);
-                itemKeys.Add(item.Key, item);
-            }
+            return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;\" {2}/>",
+                name, Value, (IsDisabled) ? "disabled=\"disabled\" " : "");
         }
     }
 }

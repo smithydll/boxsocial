@@ -90,6 +90,15 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string account_songs {
+            get {
+                return ResourceManager.GetString("account_songs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         internal static string account_tour_manage {
             get {
                 return ResourceManager.GetString("account_tour_manage", resourceCulture);

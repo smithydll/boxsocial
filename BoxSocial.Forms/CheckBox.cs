@@ -25,7 +25,60 @@ using System.Text;
 
 namespace BoxSocial.Forms
 {
-    public class CheckBox
+    public class CheckBox : FormField
     {
+        private string caption;
+        private bool isChecked;
+        private bool disabled;
+
+        public string Caption
+        {
+            get
+            {
+                return caption;
+            }
+            set
+            {
+                caption = value;
+            }
+        }
+
+        public bool IsChecked
+        {
+            get
+            {
+                return isChecked;
+            }
+            set
+            {
+                isChecked = value;
+            }
+        }
+
+        public bool IsDisabled
+        {
+            get
+            {
+                return disabled;
+            }
+            set
+            {
+                disabled = value;
+            }
+        }
+
+        public CheckBox(string name)
+        {
+            this.name = name;
+
+            isChecked = false;
+            disabled = false;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;\" {2}{3}/>",
+                name, Value, (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
+        }
     }
 }

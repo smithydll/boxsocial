@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.Forms
 {
@@ -176,22 +177,22 @@ namespace BoxSocial.Forms
             if (selected && (!selectable))
             {
                 return string.Format("<input type=\"radio\" name=\"{0}\" value=\"{1}\" checked=\"checked\" disabled=\"disabled\" /> {2}",
-                    name, key, text);
+                    HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else if (selected)
             {
                 return string.Format("<input type=\"radio\" name=\"{0}\" value=\"{1}\" checked=\"checked\" /> {2}",
-                    name, key, text);
+                    HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else if (!selectable)
             {
                 return string.Format("<input type=\"radio\" name=\"{0}\" value=\"{1}\" disabled=\"disabled\" /> {2}",
-                    name, key, text);
+                    HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else
             {
                 return string.Format("<input type=\"radio\" name=\"{0}\" value=\"{1}\" /> {2}",
-                    name, key, text);
+                    HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
         }
     }

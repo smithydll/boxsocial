@@ -77,11 +77,13 @@ namespace BoxSocial.Musician
                 songsVariableCollection.Parse("U_ADD_RECORDING", BuildUri("recordings", "add", song.Id));
                 songsVariableCollection.Parse("U_DELETE", BuildUri("songs", "delete", song.Id));
             }
+
+            template.Parse("U_ADD_SONG", BuildUri("songs", "add"));
         }
 
         void AccountSongsManage_Add(object sender, ModuleModeEventArgs e)
         {
-            SetTemplate("");
+            SetTemplate("account_song_edit");
 
             if (e.Mode == "edit")
             {
@@ -97,7 +99,17 @@ namespace BoxSocial.Musician
                     return;
                 }
 
-                template.Parse("TITLE", song.Title);
+                template.Parse("S_TITLE", song.Title);
+                template.Parse("S_LYRICS", song.Lyrics);
+                template.Parse("S_MODE", "edit");
+
+                core.Display.ParseLicensingBox(template, "S_LICENSE", song.LicenseId);
+            }
+            else
+            {
+                template.Parse("S_MODE", "add");
+
+                core.Display.ParseLicensingBox(template, "S_LICENSE", 0);
             }
 
             SaveMode(AccountSongsManage_Save);
@@ -120,10 +132,26 @@ namespace BoxSocial.Musician
                     core.Display.ShowMessage("Error", "Cannot edit the song");
                     return;
                 }
+
+                song.Title = Request.Form["title"];
+                song.Lyrics = Request.Form["lyrics"];
+                song.LicenseId = Functions.GetLicense();
+
+                try
+                {
+                    song.Update();
+                }
+                catch (UnauthorisedToUpdateItemException)
+                {
+                    core.Display.ShowMessage("Unauthorised", "Unauthorised to update song");
+                    return;
+                }
+
+                this.SetRedirectUri(BuildUri("songs"));
             }
             else
             {
-                //Song song = Song.Create(core, );
+                Song song = Song.Create(core, (Musician)Owner, Request.Form["title"], Request.Form["lyrics"], Functions.GetLicense());
 
                 this.SetRedirectUri(BuildUri("songs"));
             }

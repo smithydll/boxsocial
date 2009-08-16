@@ -135,6 +135,26 @@ namespace BoxSocial.Musician
             }
         }
 
+        public List<Tour> GetTours()
+        {
+            return getSubItems(typeof(Tour), true).ConvertAll<Tour>(new Converter<Item, Tour>(convertToTour));
+        }
+
+        public Tour convertToTour(Item input)
+        {
+            return (Tour)input;
+        }
+
+        public List<Gig> GetGigs()
+        {
+            return getSubItems(typeof(Gig), true).ConvertAll<Gig>(new Converter<Item, Gig>(convertToGig));
+        }
+
+        public Gig convertToGig(Item input)
+        {
+            return (Gig)input;
+        }
+
         public List<Song> GetSongs()
         {
             return getSubItems(typeof(Song), true).ConvertAll<Song>(new Converter<Item, Song>(convertToSong));

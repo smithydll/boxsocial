@@ -780,6 +780,8 @@ namespace BoxSocial.Applications.Blog
                     //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
                     core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0));
                 }
+
+                page.CanonicalUri = pageUri;
             }
         }
 

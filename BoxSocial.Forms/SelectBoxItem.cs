@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.Forms
 {
@@ -160,22 +161,22 @@ namespace BoxSocial.Forms
             if (selected && (!selectable))
             {
                 return string.Format("<option value=\"{0}\" selected=\"selected\" disabled=\"disabled\">{1}</option>",
-                    key, text);
+                    HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else if (selected)
             {
                 return string.Format("<option value=\"{0}\" selected=\"selected\">{1}</option>",
-                    key, text);
+                    HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else if (!selectable)
             {
                 return string.Format("<option value=\"{0}\" disabled=\"disabled\">{1}</option>",
-                    key, text);
+                    HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
             else
             {
                 return string.Format("<option value=\"{0}\">{1}</option>",
-                    key, text);
+                    HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
         }
     }

@@ -88,7 +88,48 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Song&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{U_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Manage Song&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;post&quot;&gt;Lyrics&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				&lt;textarea id=&quot;lyrics&quot; name=&quot;lyrics&quot; style=&quot;margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;&quot; cols=&quot;70&quot; rows=&quot;15&quot;&gt;{S_LYRICS}&lt;/textarea&gt;
+        ///				&lt;div style=&quot;background-image:  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_song_edit {
+            get {
+                return ResourceManager.GetString("account_song_edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Songs&lt;/h3&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Title&lt;/th&gt;
+        ///	&lt;th&gt;Recordings&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN song_list --&gt;
+        ///&lt;!-- IF song_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{song_list.TITLE}&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_RECORDINGS}&quot;&gt;{song_list.COMMENTS}&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_ADD_RECORDING}&quot;&gt;Add Recording&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;
+        ///    &lt;!-- IF son [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_songs {
             get {

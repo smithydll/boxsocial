@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountDiscographyManage.cs" />
+    <Compile Include="AccountGigManage.cs" />
     <Compile Include="AccountMembersManage.cs" />
     <Compile Include="AccountMusician.cs" />
     <Compile Include="AccountProfileManage.cs" />
@@ -110,6 +111,8 @@
     <Content Include="templates\account_discography.html" />
     <Content Include="templates\account_gigs_manage.html" />
     <Content Include="templates\account_profile.html" />
+    <Content Include="templates\account_songs.html" />
+    <Content Include="templates\account_song_edit.html" />
     <Content Include="templates\account_tour_manage.html" />
     <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />

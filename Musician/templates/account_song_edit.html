@@ -1,0 +1,28 @@
+﻿<h3>Manage Song</h3>
+
+<form action="{U_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Manage Song</legend>
+		<dl>
+			<dt><label for="title">Title</label></dt>
+			<dd><input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" /></dd>
+			<dt><label for="post">Lyrics</label></dt>
+			<dd>
+				<textarea id="lyrics" name="lyrics" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{S_LYRICS}</textarea>
+				<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
+					<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
+				</div>
+			</dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="Save" />
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="music" />
+		<input type="hidden" name="sub" value="songs" />
+    <input type="hidden" name="mode" value="{S_MODE}" />
+		<!-- IF S_ID -->
+		<input type="hidden" name="id" value="{S_ID}" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

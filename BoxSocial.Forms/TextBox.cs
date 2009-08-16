@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.Forms
 {
@@ -84,7 +85,7 @@ namespace BoxSocial.Forms
         public override string ToString()
         {
             return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;\" {2}/>",
-                name, Value, (IsDisabled) ? "disabled=\"disabled\" " : "");
+                HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(Value), (IsDisabled) ? "disabled=\"disabled\" " : "");
         }
     }
 }

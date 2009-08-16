@@ -88,6 +88,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public string Lyrics
+        {
+            get
+            {
+                return lyrics;
+            }
+            set
+            {
+                SetProperty("lyrics", value);
+            }
+        }
+
         public ContentLicense License
         {
             get
@@ -156,6 +168,22 @@ namespace BoxSocial.Musician
         public Recording convertToRecording(Item input)
         {
             return (Recording)input;
+        }
+        public static Song Create(Core core, Musician owner, string title, string lyrics, byte licenseId)
+        {
+            if (owner.IsMusicianMember(core.session.LoggedInMember))
+            {
+                Item item = Item.Create(core, typeof(Song), new FieldValuePair("musician_id", owner.Id),
+                    new FieldValuePair("song_title", title),
+                    new FieldValuePair("song_lyrics", lyrics),
+                    new FieldValuePair("song_license", licenseId));
+
+                return (Song)item;
+            }
+            else
+            {
+                throw new UnauthorisedToCreateItemException();
+            }
         }
 
         public override long Id

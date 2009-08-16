@@ -40,6 +40,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -53,6 +54,7 @@
     <Compile Include="SelectBox.cs" />
     <Compile Include="SelectBoxItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextBox.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

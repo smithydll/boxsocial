@@ -56,20 +56,40 @@ namespace BoxSocial.Musician
 
         void AccountTourManage_Load(object sender, EventArgs e)
         {
-            this.AddModeHandler("gig", AccountTourManage_ShowGigs);
+            this.AddModeHandler("add", AccountTourManage_Edit);
+            this.AddModeHandler("edit", AccountTourManage_Edit);
         }
 
         void AccountTourManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_tour_manage");
 
+            List<Tour> tours = ((Musician)Owner).GetTours();
+
+            foreach (Tour tour in tours)
+            {
+                VariableCollection tourVariableCollection = template.CreateChild("tour_list");
+
+                tourVariableCollection.Parse("ID", tour.Id.ToString());
+                tourVariableCollection.Parse("TITLE", tour.Title);
+                tourVariableCollection.Parse("GIGS", tour.Gigs.ToString());
+                tourVariableCollection.Parse("U_EDIT", BuildUri("tour", "edit", tour.Id));
+                tourVariableCollection.Parse("U_ADD_GIG", BuildUri("gig", "add", tour.Id));
+                songsVariableCollection.Parse("U_DELETE", BuildUri("tour", "delete", tour.Id));
+            }
+
+            template.Parse("U_ADD_TOUR", BuildUri("tour", "add"));
         }
 
-        void AccountTourManage_ShowGigs(object sender, ModuleModeEventArgs e)
+        void AccountTourManage_Edit(object sender, ModuleModeEventArgs e)
         {
-            SetTemplate("account_gigs_manage");
 
-            List<Gig> gigs = Gig.GetAll(core, (Musician)Owner);
+            SaveMode(AccountTourManage_EditSave);
+        }
+
+        void AccountTourManage_EditSave(object sender, ModuleModeEventArgs e)
+        {
+
         }
     }
 }

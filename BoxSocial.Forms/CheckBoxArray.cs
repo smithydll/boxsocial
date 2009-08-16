@@ -30,6 +30,7 @@ namespace BoxSocial.Forms
         private List<CheckBox> items;
         private Dictionary<string, CheckBox> itemKeys;
         private bool disabled;
+        private int columns;
 
         public bool IsDisabled
         {
@@ -43,10 +44,23 @@ namespace BoxSocial.Forms
             }
         }
 
+        public int Columns
+        {
+            get
+            {
+                return columns;
+            }
+            set
+            {
+                columns = value;
+            }
+        }
+
         public CheckBoxArray(string name)
         {
             this.name = name;
 
+            columns = 1;
             disabled = false;
             items = new List<RadioListItem>();
             itemKeys = new Dictionary<string, RadioListItem>();
@@ -59,6 +73,22 @@ namespace BoxSocial.Forms
                 items.Add(item);
                 itemKeys.Add(item.Key, item);
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder checkBoxArray = new StringBuilder();
+            checkBoxArray.AppendLine(string.Format("<ul id=\"cl-" + name + "\">",
+                name));
+
+            foreach (CheckBox item in items)
+            {
+                checkBoxArray.AppendLine("<li>" + item.ToString() + "</li>");
+            }
+
+            checkBoxArray.AppendLine("</ul>");
+
+            return checkBoxArray.ToString();
         }
     }
 }

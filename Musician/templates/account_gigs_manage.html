@@ -1,1 +1,27 @@
-﻿
+﻿<h3>Manage Gigs</h3>
+
+<a href="{U_ADD_GIG}">Add Gig</a>
+
+<table style="width: 100%">
+<tr>
+	<th>City</th>
+	<th>Date</th>
+	<th>Venue</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN gig_list -->
+<!-- IF gig_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{gig_list.CITY}</td>
+	<td>{gig_list.DATE}</td>
+	<td>{gig_list.VENUE}</td>
+	<td><a href="{gig_list.U_EDIT}">{L_EDIT}</a></td>
+	<td><a href="{gig_list.U_DELETE}">{L_DELETE}</a>
+  </td>
+</tr>
+<!-- END gig_list -->
+</table>

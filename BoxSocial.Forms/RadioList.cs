@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.Forms
 {
@@ -112,7 +113,7 @@ namespace BoxSocial.Forms
         public override string ToString()
         {
             StringBuilder selectBox = new StringBuilder();
-            selectBox.AppendLine(string.Format("<ul id=\"rl-" + name + "\">",
+            selectBox.AppendLine(string.Format("<ul id=\"rl-" + HttpUtility.HtmlEncode(name) + "\">",
                 name));
 
             foreach (RadioListItem item in items)

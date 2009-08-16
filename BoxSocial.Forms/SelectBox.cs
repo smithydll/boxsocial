@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.Forms
 {
@@ -117,7 +118,7 @@ namespace BoxSocial.Forms
         {
             StringBuilder selectBox = new StringBuilder();
             selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\">",
-                name));
+                HttpUtility.HtmlEncode(name)));
 
             foreach (SelectBoxItem item in items)
             {

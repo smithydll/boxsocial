@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -74,59 +74,6 @@ namespace BoxSocial.Applications.Gallery
         public UserGallery(Core core, User owner, string path)
             : base(core, (Primitive)owner, path)
         {
-        }
-
-        /// <summary>
-        /// Returns a list of gallery photos
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <returns>A list of photos</returns>
-        public override List<GalleryItem> GetItems(Core core)
-        {
-            List<GalleryItem> items = new List<GalleryItem>();
-
-            foreach (DataRow dr in GetItemDataRows(core))
-            {
-                items.Add(new UserGalleryItem(core, (User)owner, dr));
-            }
-
-            return items;
-        }
-
-        /// <summary>
-        /// Returns a list of gallery photos
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="currentPage">Current page</param>
-        /// <param name="perPage">Photos per page</param>
-        /// <returns>A list of photos</returns>
-        public override List<GalleryItem> GetItems(Core core, int currentPage, int perPage)
-        {
-            List<GalleryItem> items = new List<GalleryItem>();
-
-            foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
-            {
-                items.Add(new UserGalleryItem(core, (User)owner, dr));
-            }
-
-            return items;
-        }
-
-        /// <summary>
-        /// Returns a list of sub-galleries
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <returns>A list of sub-galleries</returns>
-        public override List<Gallery> GetGalleries(Core core)
-        {
-            List<Gallery> items = new List<Gallery>();
-
-            foreach (DataRow dr in GetGalleryDataRows(core))
-            {
-                items.Add(new UserGallery(core, (User)owner, dr, true));
-            }
-
-            return items;
         }
 
         /// <summary>

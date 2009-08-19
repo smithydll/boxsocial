@@ -188,22 +188,22 @@ namespace BoxSocial.Internals
                 member.UriStub));
         }
 
-        public string BuildGalleryCommentsUri(User member)
+        public string BuildGalleryCommentsUri(Primitive owner)
         {
             return AppendSid(string.Format("{0}gallery/comments",
-                member.UriStub));
+                owner.UriStub));
         }
 
-        public string BuildGalleryCommentsUri(User member, string path)
+        public string BuildGalleryCommentsUri(Primitive owner, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                return BuildGalleryCommentsUri(member);
+                return BuildGalleryCommentsUri(owner);
             }
             else
             {
                 return AppendSid(string.Format("{0}gallery/{1}/comments",
-                    member.UriStub, path));
+                    owner.UriStub, path));
             }
         }
 

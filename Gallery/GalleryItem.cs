@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -359,7 +359,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="path">Gallery item path</param>
-        protected GalleryItem(Core core, Primitive owner, string path)
+        public GalleryItem(Core core, Primitive owner, string path)
             : base(core)
         {
             this.owner = owner;
@@ -419,7 +419,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
-        protected GalleryItem(Core core, Primitive owner, DataRow itemRow)
+        public GalleryItem(Core core, Primitive owner, DataRow itemRow)
             : base(core)
         {
             this.owner = owner;

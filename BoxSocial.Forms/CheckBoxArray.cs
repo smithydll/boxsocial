@@ -62,16 +62,16 @@ namespace BoxSocial.Forms
 
             columns = 1;
             disabled = false;
-            items = new List<RadioListItem>();
-            itemKeys = new Dictionary<string, RadioListItem>();
+            items = new List<CheckBox>();
+            itemKeys = new Dictionary<string, CheckBox>();
         }
 
         public void Add(CheckBox item)
         {
-            if (!itemKeys.ContainsKey(item.Key))
+            if (!itemKeys.ContainsKey(item.Name))
             {
                 items.Add(item);
-                itemKeys.Add(item.Key, item);
+                itemKeys.Add(item.Name, item);
             }
         }
 

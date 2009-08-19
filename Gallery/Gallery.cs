@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -613,7 +613,17 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <returns>A list of sub-galleries</returns>
-        public abstract List<Gallery> GetGalleries(Core core);
+        public List<Gallery> GetGalleries(Core core)
+		{
+			List<Gallery> items = new List<Gallery>();
+
+            foreach (DataRow dr in GetGalleryDataRows(core))
+            {
+                items.Add(new Gallery(core, owner, dr, false));
+            }
+
+            return items;
+		}
 
         /// <summary>
         /// Returns raw data for a list of sub-galleries
@@ -644,7 +654,17 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <returns>A list of photos</returns>
-        public abstract List<GalleryItem> GetItems(Core core);
+        public List<GalleryItem> GetItems(Core core)
+		{
+			List<GalleryItem> items = new List<GalleryItem>();
+
+            foreach (DataRow dr in GetItemDataRows(core))
+            {
+                items.Add(new GalleryItem(core, owner, dr));
+            }
+
+            return items;
+		}
 
         /// <summary>
         /// Returns a list of gallery photos
@@ -653,7 +673,17 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Photos per page</param>
         /// <returns>A list of photos</returns>
-        public abstract List<GalleryItem> GetItems(Core core, int currentPage, int perPage);
+        public List<GalleryItem> GetItems(Core core, int currentPage, int perPage)
+		{
+			List<GalleryItem> items = new List<GalleryItem>();
+
+            foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
+            {
+                items.Add(new GalleryItem(core, owner, dr));
+            }
+
+            return items;
+		}
 
         /// <summary>
         /// Returns raw data for a list of gallery photos
@@ -1201,10 +1231,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryPath">Gallery path</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(Core core, User member, string galleryPath, string photoPath)
+        public static string BuildPhotoUri(Core core, Primitive owner, string galleryPath, string photoPath)
         {
             return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
-                member.UriStub, galleryPath, photoPath));
+                owner.UriStub, galleryPath, photoPath));
         }
 
         /// <summary>
@@ -1213,22 +1243,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="thisGroup">Photo owner</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(Core core, UserGroup thisGroup, string photoPath)
+        public static string BuildPhotoUri(Core core, Primitive owner, string photoPath)
         {
             return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
-                thisGroup.UriStub, photoPath));
-        }
-
-        /// <summary>
-        /// Generates a URI pointing to a gallery photo from a given photo path
-        /// </summary>
-        /// <param name="theNetwork">Photo owner</param>
-        /// <param name="photoPath">Photo slug</param>
-        /// <returns>URI pointing to the photo</returns>
-        public static string BuildPhotoUri(Core core, Network theNetwork, string photoPath)
-        {
-            return core.Uri.AppendSid(string.Format("/network/{0}/gallery/{1}",
-                theNetwork.NetworkNetwork, photoPath));
+                owner.UriStub, photoPath));
         }
 
         /// <summary>
@@ -1258,10 +1276,10 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="member">Gallery owner</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Core core, User member)
+        public static string BuildGalleryUri(Core core, Primitive owner)
         {
             return core.Uri.AppendSid(string.Format("{0}gallery",
-                member.UriStub));
+                owner.UriStub));
         }
 
         /// <summary>
@@ -1270,44 +1288,22 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="member">Gallery owner</param>
         /// <param name="path">sub-gallery path</param>
         /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Core core, User member, string path)
+        public static string BuildGalleryUri(Core core, Primitive owner, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                return BuildGalleryUri(core, member);
+                return BuildGalleryUri(core, owner);
             }
             else
             {
                 return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
-                    member.UriStub, path));
+                    owner.UriStub, path));
             }
-        }
-
-        /// <summary>
-        /// Generates a URI to a group gallery
-        /// </summary>
-        /// <param name="thisGroup">Gallery owner</param>
-        /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Core core, UserGroup thisGroup)
-        {
-            return core.Uri.AppendSid(string.Format("{0}gallery",
-                thisGroup.UriStub));
-        }
-
-        /// <summary>
-        /// Generates a URI to a network gallery
-        /// </summary>
-        /// <param name="theNetwork">Gallery owner</param>
-        /// <returns>URI pointing to the gallery</returns>
-        public static string BuildGalleryUri(Core core, Network theNetwork)
-        {
-            return core.Uri.AppendSid(string.Format("/network/{0}/gallery",
-                theNetwork.NetworkNetwork));
         }
 
         public static void Show(object sender, ShowPPageEventArgs e)
         {
-            page.template.SetTemplate("Gallery", "viewgallery");
+            e.Template.SetTemplate("Gallery", "viewgallery");
 
             int p = 1;
             char[] trimStartChars = { '.', '/' };
@@ -1345,11 +1341,11 @@ namespace BoxSocial.Applications.Gallery
                         e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(gallery.GalleryId));
                     }
 
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(core, e.Page.Owner, galleryPath), e.Page.page, (int)Math.Ceiling(gallery.Items / 12.0));
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.page, (int)Math.Ceiling(gallery.Items / 12.0));
                 }
                 catch (InvalidGalleryException)
                 {
-                    core.Functions.Generate404();
+                    e.Core.Functions.Generate404();
                     return;
                 }
             }
@@ -1359,17 +1355,17 @@ namespace BoxSocial.Applications.Gallery
 
                 if (gallery.Access.Can("CREATE_CHILD"))
                 {
-                    page.template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(0));
+                    e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(0));
                 }
             }
 
             if (gallery.Id == 0)
             {
-                page.template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
+                e.Template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
             }
             else
             {
-                page.template.Parse("GALLERY_TITLE", gallery.GalleryTitle);
+                e.Template.Parse("GALLERY_TITLE", gallery.GalleryTitle);
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
@@ -1389,20 +1385,20 @@ namespace BoxSocial.Applications.Gallery
                 breadCrumbParts.Add(new string[] { gallery.Path, gallery.GalleryTitle });
             }
 
-            page.User.ParseBreadCrumbs(breadCrumbParts);
+            e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
-            List<Gallery> galleries = gallery.GetGalleries(core);
+            List<Gallery> galleries = gallery.GetGalleries(e.Core);
 
-            page.template.Parse("GALLERIES", galleries.Count.ToString());
+            e.Template.Parse("GALLERIES", galleries.Count.ToString());
 
             foreach (Gallery galleryGallery in galleries)
             {
-                VariableCollection galleryVariableCollection = page.template.CreateChild("gallery_list");
+                VariableCollection galleryVariableCollection = e.Template.CreateChild("gallery_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
-                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(core, page.User, galleryGallery.FullPath));
+                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
-                core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+                e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                 long items = galleryGallery.Items;
 
@@ -1412,30 +1408,30 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", core.Functions.LargeIntegerToString(items)));
+                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", e.Core.Functions.LargeIntegerToString(items)));
                 }
             }
 
-            List<GalleryItem> galleryItems = gallery.GetItems(core, p, 12);
+            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, p, 12);
 
-            page.template.Parse("PHOTOS", galleryItems.Count.ToString());
+            e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 
             long galleryComments = 0;
             int i = 0;
             foreach (GalleryItem galleryItem in galleryItems)
             {
-                VariableCollection galleryVariableCollection = page.template.CreateChild("photo_list");
+                VariableCollection galleryVariableCollection = e.Template.CreateChild("photo_list");
 
                 galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(core, page.User, galleryItem.ParentPath, galleryItem.Path));
-                galleryVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
-                galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(e.Core, e.Page.Owner, galleryItem.ParentPath, galleryItem.Path));
+                galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
 				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
 
-                string thumbUri = string.Format("/{0}/images/_thumb/{1}/{2}",
-                    page.User.UserName, galleryPath, galleryItem.Path);
+                string thumbUri = string.Format("{0}images/_thumb/{1}/{2}",
+                    e.Page.Owner.UriStub, galleryPath, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
                 Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
@@ -1446,12 +1442,12 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItems.Count > 0)
             {
-                page.template.Parse("S_RATEBAR", "TRUE");
+                e.Template.Parse("S_RATEBAR", "TRUE");
             }
 
-            page.template.Parse("COMMENTS", galleryComments.ToString());
-            page.template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
-            page.template.Parse("U_COMMENTS", core.Uri.BuildGalleryCommentsUri(page.User, galleryPath));
+            e.Template.Parse("COMMENTS", galleryComments.ToString());
+            e.Template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
+            e.Template.Parse("U_COMMENTS", e.Core.Uri.BuildGalleryCommentsUri(e.Page.Owner, galleryPath));
         }
 
         /// <summary>

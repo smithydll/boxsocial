@@ -78,8 +78,8 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
-            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;\" {2}{3}/>",
-                HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(Value), (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
+            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"width: 100%;\" {1}{2}/>",
+                HttpUtility.HtmlEncode(name), (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
         }
     }
 }

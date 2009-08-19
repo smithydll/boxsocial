@@ -75,7 +75,7 @@ namespace BoxSocial.Musician
                 tourVariableCollection.Parse("GIGS", tour.Gigs.ToString());
                 tourVariableCollection.Parse("U_EDIT", BuildUri("tour", "edit", tour.Id));
                 tourVariableCollection.Parse("U_ADD_GIG", BuildUri("gig", "add", tour.Id));
-                songsVariableCollection.Parse("U_DELETE", BuildUri("tour", "delete", tour.Id));
+                tourVariableCollection.Parse("U_DELETE", BuildUri("tour", "delete", tour.Id));
             }
 
             template.Parse("U_ADD_TOUR", BuildUri("tour", "add"));

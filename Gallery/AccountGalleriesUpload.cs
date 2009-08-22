@@ -105,7 +105,10 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Comment");
 
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
-                core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
+                //core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
+                
+                AccessControlLists acl = new AccessControlLists(core, gallery);
+                acl.ParseACL(template, LoggedInMember, "S_PHOTO_PERMS");
 
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 

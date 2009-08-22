@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -188,7 +188,7 @@ namespace BoxSocial.FrontEnd
 
                     try
                     {
-                        if (!core.CanDeleteComment(thisComment.Key))
+                        if (!core.CanDeleteComment(thisComment.ItemKey))
                         {
                             core.Ajax.ShowMessage(isAjax, "permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                         }
@@ -215,8 +215,8 @@ namespace BoxSocial.FrontEnd
 
                     core.LoadUserProfile(thisComment.UserId);
                     User poster = core.UserProfiles[thisComment.UserId];
-                    Core.CommentDeleted(thisComment.Key, thisComment, poster);
-                    Core.AdjustCommentCount(thisComment.Key, -1);
+                    Core.CommentDeleted(thisComment.ItemKey, thisComment, poster);
+                    Core.AdjustCommentCount(thisComment.ItemKey, -1);
                 }
                 catch (InvalidCommentException)
                 {

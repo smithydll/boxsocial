@@ -135,8 +135,8 @@ namespace BoxSocial.Internals
 			List<AccessControlGrant> grants = new List<AccessControlGrant>();
 			
 			SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
-			sQuery.AddCondition("grant_item_id", item.Key.Id);
-			sQuery.AddCondition("grant_item_type_id", item.Key.TypeId);
+			sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
+			sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
 			
 			DataTable grantsTable = core.db.Query(sQuery);
 			
@@ -153,8 +153,8 @@ namespace BoxSocial.Internals
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
-            sQuery.AddCondition("grant_item_id", item.Key.Id);
-            sQuery.AddCondition("grant_item_type_id", item.Key.TypeId);
+            sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
+            sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);
 
             DataTable grantsTable = core.db.Query(sQuery);

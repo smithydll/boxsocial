@@ -1014,10 +1014,10 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                Display.RatingBlock(galleryItem.ItemRating, e.Template, galleryItem.Key);
+                Display.RatingBlock(galleryItem.ItemRating, e.Template, galleryItem.ItemKey);
 
                 e.Template.Parse("ID", galleryItem.ItemId.ToString());
-                e.Template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+                e.Template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
@@ -1110,10 +1110,10 @@ namespace BoxSocial.Applications.Gallery
 
                 page.template.Parse("PHOTO_COMMENTS", core.Functions.LargeIntegerToString(photo.ItemComments));
 
-                Display.RatingBlock(photo.ItemRating, page.template, photo.Key);
+                Display.RatingBlock(photo.ItemRating, page.template, photo.ItemKey);
 
                 page.template.Parse("ID", photo.ItemId.ToString());
-				page.template.Parse("TYPEID", photo.Key.TypeId.ToString());
+				page.template.Parse("TYPEID", photo.ItemKey.TypeId.ToString());
 
                 if (page.User.Id == core.LoggedInMemberId)
                 {
@@ -1286,10 +1286,10 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.Key);
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemKey);
 
                 page.template.Parse("ID", galleryItem.ItemId.ToString());
-				page.template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+				page.template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;
@@ -1398,10 +1398,10 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.Key);
+                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemKey);
 
                 page.template.Parse("ID", galleryItem.ItemId.ToString());
-				page.template.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+				page.template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
                 int p = 1;

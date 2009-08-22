@@ -126,7 +126,7 @@ namespace BoxSocial.Internals
             bool allow = false;
             bool deny = false;
 
-            AccessControlPermission acp = new AccessControlPermission(core, item.Key.TypeId, permission);
+            AccessControlPermission acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
 
             /*foreach (AccessControlGrant grant in grants)
             {

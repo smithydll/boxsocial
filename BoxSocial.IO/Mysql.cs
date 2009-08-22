@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -339,7 +339,7 @@ namespace BoxSocial.IO
 
         public static string Escape(string input)
         {
-            return input.Replace("'", "''").Replace("\\", "\\\\").Replace("’", "\\’");
+            return input.Replace("'", "''").Replace("\\", "\\\\").Replace("Â’", "\\Â’");
         }
 
         ~Mysql()

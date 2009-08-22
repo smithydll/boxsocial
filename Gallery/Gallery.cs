@@ -1428,13 +1428,13 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
-				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+				galleryVariableCollection.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
 
                 string thumbUri = string.Format("{0}images/_thumb/{1}/{2}",
                     e.Page.Owner.UriStub, galleryPath, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
+                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
                 galleryComments += galleryItem.ItemComments;
                 i++;
@@ -1595,13 +1595,13 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("VIEWS", core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
-				galleryVariableCollection.Parse("TYPEID", galleryItem.Key.TypeId.ToString());
+				galleryVariableCollection.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
 
                 string thumbUri = string.Format("/{0}/images/_thumb/{1}/{2}",
                     page.User.UserName, galleryPath, galleryItem.Path);
                 galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
+                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
                 galleryComments += galleryItem.ItemComments;
                 i++;
@@ -1782,7 +1782,7 @@ namespace BoxSocial.Applications.Gallery
                         page.Group.UriStub, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
+                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
                     galleryComments += galleryItem.ItemComments;
                     i++;
@@ -1959,7 +1959,7 @@ namespace BoxSocial.Applications.Gallery
                         page.Network.NetworkNetwork, galleryItem.Path);
                     galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
 
-                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.Key);
+                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
                     galleryComments += galleryItem.ItemComments;
 

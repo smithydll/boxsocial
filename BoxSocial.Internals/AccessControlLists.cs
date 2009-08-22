@@ -42,78 +42,87 @@ namespace BoxSocial.Internals
 
         public void ParseACL(Template template, Primitive owner, string variable)
         {
-            Template aclTemplate = new Template("std.acl.html");
+            Template aclTemplate = new Template(HttpContext.Current.Server.MapPath("./templates"), "std.acl.html");
 
-            List<AccessControlPermission> itemPermissions = null;
+            List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
             List<AccessControlGrant> itemGrants = null;
 
-            foreach (AccessControlGrant itemGrant in itemGrants)
+            if (itemGrants != null)
             {
-                core.UserProfiles.LoadPrimitiveProfile(itemGrant.PrimitiveKey);
+                foreach (AccessControlGrant itemGrant in itemGrants)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(itemGrant.PrimitiveKey);
+                }
             }
 
-            foreach (AccessControlPermission itemPermission in itemPermissions)
+            if (itemPermissions != null)
             {
-                VariableCollection permissionVariableCollection = aclTemplate.CreateChild("permission");
-                permissionVariableCollection.Parse("ID", itemPermission.Id.ToString());
-                permissionVariableCollection.Parse("TITLE", itemPermission.Name);
-                permissionVariableCollection.Parse("DESCRIPTION", itemPermission.Description);
-
-                foreach (AccessControlGrant itemGrant in itemGrants)
+                foreach (AccessControlPermission itemPermission in itemPermissions)
                 {
-                    if (itemGrant.PermissionId == itemPermission.Id)
+                    VariableCollection permissionVariableCollection = aclTemplate.CreateChild("permission");
+                    permissionVariableCollection.Parse("ID", itemPermission.Id.ToString());
+                    permissionVariableCollection.Parse("TITLE", itemPermission.Name);
+                    permissionVariableCollection.Parse("DESCRIPTION", itemPermission.Description);
+    
+                    if (itemGrants != null)
                     {
-                        VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
-
-                        grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
-
-                        RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");
-
-                        allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
-                        allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
-                        allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
-
-                        switch (itemGrant.Allow)
+                        foreach (AccessControlGrant itemGrant in itemGrants)
                         {
-                            case AccessControlGrants.Allow:
-                                allowrl.SelectedKey = "allow";
-                                break;
-                            case AccessControlGrants.Deny:
-                                allowrl.SelectedKey = "deny";
-                                break;
-                            case AccessControlGrants.Inherit:
-                                allowrl.SelectedKey = "inherit";
-                                break;
+                            if (itemGrant.PermissionId == itemPermission.Id)
+                            {
+                                VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
+        
+                                grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+        
+                                RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");
+        
+                                allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
+                                allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
+                                allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+        
+                                switch (itemGrant.Allow)
+                                {
+                                    case AccessControlGrants.Allow:
+                                        allowrl.SelectedKey = "allow";
+                                        break;
+                                    case AccessControlGrants.Deny:
+                                        allowrl.SelectedKey = "deny";
+                                        break;
+                                    case AccessControlGrants.Inherit:
+                                        allowrl.SelectedKey = "inherit";
+                                        break;
+                                }
+        
+                                grantVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
+                                grantVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
+                                grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
+                            }
                         }
-
-                        grantVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
-                        grantVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
-                        grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
+        
+                        foreach (AccessControlGrant itemGrant in itemGrants)
+                        {
+                            VariableCollection grantsVariableCollection = template.CreateChild("grants");
+                        }
                     }
+    
+                    SelectBox groupsSelectBox = new SelectBox("new-permission-group");
+    
+    
+    
+                    permissionVariableCollection.Parse("S_PERMISSION_GROUPS", groupsSelectBox);
+    
+                    RadioList allowNewrl = new RadioList("new-permission-group-allow");
+    
+                    allowNewrl.Add(new RadioListItem(allowNewrl.Name, "allow", "Allow"));
+                    allowNewrl.Add(new RadioListItem(allowNewrl.Name, "deny", "Deny"));
+                    allowNewrl.Add(new RadioListItem(allowNewrl.Name, "inherit", "Inherit"));
+    
+                    allowNewrl.SelectedKey = "inherit";
+    
+                    permissionVariableCollection.Parse("S_ALLOW", allowNewrl["allow"].ToString());
+                    permissionVariableCollection.Parse("S_DENY", allowNewrl["deny"].ToString());
+                    permissionVariableCollection.Parse("S_INHERIT", allowNewrl["inherit"].ToString());
                 }
-
-                foreach (AccessControlGrant itemGrant in itemGrants)
-                {
-                    VariableCollection grantsVariableCollection = template.CreateChild("grants");
-                }
-
-                SelectBox groupsSelectBox = new SelectBox("new-permission-group");
-
-
-
-                permissionVariableCollection.Parse("S_PERMISSION_GROUPS", groupsSelectBox);
-
-                RadioList allowNewrl = new RadioList("new-permission-group-allow");
-
-                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "allow", "Allow"));
-                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "deny", "Deny"));
-                allowNewrl.Add(new RadioListItem(allowNewrl.Name, "inherit", "Inherit"));
-
-                allowNewrl.SelectedKey = "inherit";
-
-                permissionVariableCollection.Parse("S_ALLOW", allowNewrl["allow"].ToString());
-                permissionVariableCollection.Parse("S_DENY", allowNewrl["deny"].ToString());
-                permissionVariableCollection.Parse("S_INHERIT", allowNewrl["inherit"].ToString());
             }
 
             if (string.IsNullOrEmpty(variable))
@@ -129,7 +138,7 @@ namespace BoxSocial.Internals
             List<AccessControlPermission> permissions = new List<AccessControlPermission>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
-            query.AddCondition("permission_item_type_id", item.Key.TypeId);
+            query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
 
             DataTable permissionsDataTable = core.db.Query(query);
 

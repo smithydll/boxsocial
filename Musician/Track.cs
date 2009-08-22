@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith

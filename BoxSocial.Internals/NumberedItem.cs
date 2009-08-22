@@ -43,7 +43,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public ItemKey Key
+        public ItemKey ItemKey
         {
             get
             {

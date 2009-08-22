@@ -361,7 +361,7 @@ namespace BoxSocial.Internals
                 SelectQuery query = new SelectQuery("comments");
                 query.AddFields("COUNT(*) AS total");
                 query.AddCondition("comment_item_id", item.Id);
-                query.AddCondition("comment_item_type_id", item.Key.TypeId);
+                query.AddCondition("comment_item_type_id", item.ItemKey.TypeId);
                 query.AddCondition("comment_id", ConditionEquality.LessThanEqual, c);
 
                 if (commenters != null)
@@ -376,24 +376,24 @@ namespace BoxSocial.Internals
                             QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "c.comment_item_id", commenters[1].Id);
                             qc2.AddCondition("user_id", commenters[0].Id);
 
-                            query.AddCondition("c.comment_item_type_id", item.Key.TypeId);
+                            query.AddCondition("c.comment_item_type_id", item.ItemKey.TypeId);
                         }
                         else
                         {
                             query.AddCondition("comment_item_id", item.Id);
-                            query.AddCondition("comment_item_type_id", item.Key.TypeId);
+                            query.AddCondition("comment_item_type_id", item.ItemKey.TypeId);
                         }
                     }
                     else
                     {
                         query.AddCondition("comment_item_id", item.Id);
-                        query.AddCondition("comment_item_type_id", item.Key.TypeId);
+                        query.AddCondition("comment_item_type_id", item.ItemKey.TypeId);
                     }
                 }
                 else
                 {
                     query.AddCondition("comment_item_id", item.Id);
-                    query.AddCondition("comment_item_type_id", item.Key.TypeId);
+                    query.AddCondition("comment_item_type_id", item.ItemKey.TypeId);
                 }
 
                 query.AddSort(SortOrder.Ascending, "comment_time_ut");
@@ -413,7 +413,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<Comment> comments = Comment.GetComments(core, item.Key, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
+            List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
             if (commentCount >= 0)
@@ -429,7 +429,7 @@ namespace BoxSocial.Internals
                 template.Parse("COMMENTS", comments.Count.ToString());
             }
             template.Parse("ITEM_ID", item.Id.ToString());
-            template.Parse("ITEM_TYPE", item.Key.TypeId.ToString());
+            template.Parse("ITEM_TYPE", item.ItemKey.TypeId.ToString());
 
             if (item.CommentSortOrder == SortOrder.Ascending)
             {

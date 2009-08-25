@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -87,8 +87,9 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public static GalleryItem Create(Core core, Network owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
-            long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
-            return new NetworkGalleryItem(core, owner, itemId);
+            //long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
+            //return new NetworkGalleryItem(core, owner, itemId);
+            throw new NotImplementedException();
         }
     }
 }

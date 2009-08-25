@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -32,6 +32,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a user gallery item
     /// </summary>
+    [Obsolete("Use the generic GalleryItem", true)]
     public class UserGalleryItem : GalleryItem
     {
 
@@ -88,7 +89,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>New gallery item</returns>
         public static GalleryItem Create(Core core, User owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
-            long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
+            /*long itemId = GalleryItem.create(core, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license, classification);
 
             UserGalleryItem myGalleryItem = new UserGalleryItem(core, owner, itemId);
             if (Access.FriendsCanRead(myGalleryItem.Permissions))
@@ -131,7 +132,8 @@ namespace BoxSocial.Applications.Gallery
                         myGalleryItem.BuildUri(), myGalleryItem.ParentPath, myGalleryItem.Path));
                 }
             }
-            return myGalleryItem;
+            return myGalleryItem;*/
+            throw new NotImplementedException();
         }
 
         /// <summary>

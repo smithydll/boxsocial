@@ -83,7 +83,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem ugi = new UserGalleryItem(core, LoggedInMember, id);
+                GalleryItem ugi = new GalleryItem(core, LoggedInMember, id);
 
                 Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
                 hiddenFieldList.Add("module", ModuleKey);
@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, id);
+                    GalleryItem photo = new GalleryItem(core, LoggedInMember, id);
 
                     try
                     {

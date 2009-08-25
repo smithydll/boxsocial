@@ -79,6 +79,7 @@ namespace BoxSocial.Internals
 
         public Access(Core core, IPermissibleItem item, Primitive owner)
         {
+            this.core = core;
             this.item = (NumberedItem)item;
             this.usesAccessControlLists = true;
 

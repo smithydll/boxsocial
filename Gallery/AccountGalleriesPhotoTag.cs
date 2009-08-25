@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 long photoId = Functions.RequestLong("id", 0);
 
-                UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
+                GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
                 /* TODO: change to building path in photo class */
                 string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 long photoId = Functions.RequestLong("id", 0);
 
-                UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
+                GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
                 long tagCount = Functions.FormLong("tags", 0);
 

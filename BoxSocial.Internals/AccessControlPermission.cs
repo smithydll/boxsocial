@@ -112,12 +112,18 @@ namespace BoxSocial.Internals
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+            
+            SelectQuery query = GetSelectQueryStub();
+            query.AddCondition("permission_item_type_id", typeId);
+            query.AddCondition("permission_name", permissionName);
+            
+            DataTable dt = core.db.Query(query);
 
-            try
+            if (dt.Rows.Count == 1)
             {
-                // TODO
+                loadItemInfo(dt.Rows[0]);
             }
-            catch (InvalidItemException)
+            else
             {
                 throw new InvalidAccessControlPermissionException();
             }

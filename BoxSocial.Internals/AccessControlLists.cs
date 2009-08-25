@@ -45,7 +45,7 @@ namespace BoxSocial.Internals
             Template aclTemplate = new Template(HttpContext.Current.Server.MapPath("./templates"), "std.acl.html");
 
             List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
-            List<AccessControlGrant> itemGrants = null;
+            List<AccessControlGrant> itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
 
             if (itemGrants != null)
             {
@@ -147,6 +147,26 @@ namespace BoxSocial.Internals
                 permissions.Add(new AccessControlPermission(core, permissionsDataRow));
             }
 
+            return permissions;
+        }
+        
+        public static List<string> GetPermissionStrings(Type type)
+        {
+            List<string> permissions = new List<string>();
+            bool attributeFound = false;
+            foreach (Attribute attr in type.GetCustomAttributes(typeof(PermissionAttribute), false))
+            {
+                PermissionAttribute pattr = (PermissionAttribute)attr;
+                if (pattr != null)
+                {
+                    if (pattr.Permissions != null)
+                    {
+                        permissions.AddRange(pattr.Permissions);
+                    }
+                    attributeFound = true;
+                }
+            }
+            
             return permissions;
         }
 

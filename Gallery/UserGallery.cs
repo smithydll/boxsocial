@@ -30,6 +30,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Represents a user gallery
     /// </summary>
+    [Obsolete("Use the generic Gallery", true)]
     public class UserGallery : Gallery
     {
         /// <summary>
@@ -88,8 +89,9 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>An instance of the newly created gallery</returns>
         public static UserGallery Create(Core core, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
-            long galleryId = create(core, parent, title, ref slug, description, permissions);
-            return new UserGallery(core, core.session.LoggedInMember, galleryId);
+            //long galleryId = create(core, parent, title, ref slug, description, permissions);
+            //return new UserGallery(core, core.session.LoggedInMember, galleryId);
+            throw new NotImplementedException();
         }
 
         /// <summary>

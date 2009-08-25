@@ -88,7 +88,7 @@ namespace BoxSocial.Applications.Gallery
             // check the image is owned by the user trying to set it as their display picture
             try
             {
-                UserGalleryItem ugi = new UserGalleryItem(core, LoggedInMember, pictureId);
+                GalleryItem ugi = new GalleryItem(core, LoggedInMember, pictureId);
 
                 // check for public view permissions on the image
                 ushort photoAccess = ugi.Permissions;

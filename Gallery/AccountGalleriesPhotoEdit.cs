@@ -156,7 +156,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem galleryItem = new UserGalleryItem(core, LoggedInMember, photoId);
+                GalleryItem galleryItem = new GalleryItem(core, LoggedInMember, photoId);
                 galleryItem.Update(title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                 SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, galleryItem.ParentPath, galleryItem.Path));

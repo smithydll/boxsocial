@@ -29,6 +29,14 @@ namespace BoxSocial.Internals
     {
         private List<string> permissions = null;
         
+        public List<string> Permissions
+        {
+            get
+            {
+                return permissions;
+            }
+        }
+        
         public PermissionAttribute(params string[] permissions)
         {
             this.permissions = new List<string>(permissions);

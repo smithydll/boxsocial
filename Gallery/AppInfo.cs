@@ -150,12 +150,12 @@ namespace BoxSocial.Applications.Gallery
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
 
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
-            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
+            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoRated);
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoRated);
         }
@@ -172,8 +172,8 @@ namespace BoxSocial.Applications.Gallery
 
             aii.AddSlug("gallery", @"^/gallery(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Member);
-            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddSlug("images", @"^/images/([A-Za-z0-9\-_/\.]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
 
@@ -206,12 +206,12 @@ namespace BoxSocial.Applications.Gallery
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/gallery(|/)$", showGallery, 1);
-            core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", showSubGallery, 2);
-            core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", showUserPhoto, 3);
-            core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_\.]+)$", showPhoto, 4);
+            //core.RegisterApplicationPage(@"^/gallery(|/)$", showGallery, 1);
+            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", showSubGallery, 2);
+            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", showUserPhoto, 3);
+            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_\.]+)$", showPhoto, 4);
 
-            core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
+            //core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
         }
 
         /// <summary>
@@ -347,15 +347,39 @@ namespace BoxSocial.Applications.Gallery
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
                 itemKey.Id, adjustment));
         }
+        
+        [Show(@"^/gallery(|/)$", AppPrimitives.Member)]
+        private void showRootGallery(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                Gallery.Show(sender, new ShowPPageEventArgs((PPage)sender, ""));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
 
         /// <summary>
         /// Show a gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member)]
         private void showGallery(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
+            {
+                Gallery.Show(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+            /*if (sender is UPage)
             {
                 Gallery.Show(core, (UPage)sender, "");
             }
@@ -366,7 +390,7 @@ namespace BoxSocial.Applications.Gallery
             else if (sender is NPage)
             {
                 Gallery.Show(core, (NPage)sender);
-            }
+            }*/
         }
 
         /// <summary>
@@ -387,32 +411,32 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        private void showUserPhoto(Core core, object sender)
+        /*private void showUserPhoto(Core core, object sender)
         {
             if (sender is UPage)
             {
                 GalleryItem.Show(core, (UPage)sender, core.PagePathParts[1].Value, core.PagePathParts[2].Value);
             }
-        }
+        }*/
 
         /// <summary>
         /// Show a primitive's gallery item
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        [Show(@"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
+        [Show(@"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician | AppPrimitives.Member)]
         private void showPhoto(Core core, object sender)
         {
-            /*if (sender is PPage)
+            if (sender is PPage)
             {
-                GalleryItem.Show(sender, new ShowPPageEventArgs((PPage)sender, long.Parse(core.PagePathParts[1].Value)));
+                GalleryItem.Show(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value));
             }
             else
             {
                 core.Functions.Generate404();
                 return;
-            }*/
-            if (sender is GPage)
+            }
+            /*if (sender is GPage)
             {
                 GalleryItem.Show(core, (GPage)sender, core.PagePathParts[1].Value);
                 return;
@@ -420,6 +444,20 @@ namespace BoxSocial.Applications.Gallery
             else if (sender is NPage)
             {
                 GalleryItem.Show(core, (NPage)sender, core.PagePathParts[1].Value);
+                return;
+            }*/
+        }
+        
+        [Show(@"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician | AppPrimitives.Member)]
+        private void showGalleryPhoto(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                GalleryItem.Show(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value + "/" + core.PagePathParts[2].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
                 return;
             }
         }
@@ -429,6 +467,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"^/images/([A-Za-z0-9\-_/\.]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
         private void showImage(Core core, object sender)
         {
             if (sender is UPage)

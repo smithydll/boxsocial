@@ -203,6 +203,21 @@ namespace BoxSocial.Applications.Gallery
                 return path;
             }
         }
+        
+        public string FullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(parentPath))
+                {
+                    return path;
+                }
+                else
+                {
+                    return parentPath + "/" + path;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the number of comments
@@ -499,7 +514,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery item owner</param>
         /// <param name="itemId">Gallery item Id</param>
-        protected GalleryItem(Core core, Primitive owner, long itemId)
+        public GalleryItem(Core core, Primitive owner, long itemId)
             : base(core)
         {
             this.owner = owner;
@@ -645,8 +660,8 @@ namespace BoxSocial.Applications.Gallery
 
                 if (owner is User)
                 {
-                    UserGallery parent = new UserGallery(core, (User)owner, parentId);
-                    UserGallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
+                    Gallery parent = new Gallery(core, (User)owner, parentId);
+                    Gallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
                 }
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
@@ -691,7 +706,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="classification">Classification</param>
         /// <remarks>Slug is a reference</remarks>
         /// <returns>New gallery item</returns>
-        protected static long create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
         {
             Mysql db = core.db;
 
@@ -758,7 +773,7 @@ namespace BoxSocial.Applications.Gallery
                 //owner.UpdateGalleryInfo(parent, itemId, 1, (long)bytes);
                 if (owner is User)
                 {
-                    UserGallery.UpdateGalleryInfo(db, owner, parent, itemId, 1, (long)bytes);
+                    Gallery.UpdateGalleryInfo(db, owner, parent, itemId, 1, (long)bytes);
                 }
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
@@ -771,8 +786,8 @@ namespace BoxSocial.Applications.Gallery
                     throw new Exception("Transaction failed, panic!");
                 }
 
-                //return new GalleryItem(db, owner, itemId);
-                return itemId;
+                return new GalleryItem(core, owner, itemId);
+                //return itemId;
             }
 
             throw new Exception("Transaction failed, panic!");
@@ -964,16 +979,16 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
 
-                if (galleryItem.Access.Can("READ"))
+                /*if (galleryItem.Access.Can("READ"))
                 {
                     e.Core.Functions.Generate403();
                     return;
-                }
+                }*/
 
                 galleryItem.Viewed(e.Core.session.LoggedInMember);
 
                 string displayUri = string.Format("{0}images/_display/{1}",
-                        e.Page.Owner.UriStub, galleryItem.Path);
+                        e.Page.Owner.UriStub, galleryItem.FullPath);
                 e.Template.Parse("PHOTO_DISPLAY", displayUri);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
@@ -1030,10 +1045,10 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                if (galleryItem.Access.Can("COMMENT"))
+                /*if (galleryItem.Access.Can("COMMENT"))
                 {
                     e.Template.Parse("CAN_COMMENT", "TRUE");
-                }
+                }*/
 
                 e.Core.Display.DisplayComments(e.Template, e.Page.Owner, galleryItem);
 
@@ -1075,7 +1090,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGalleryItem photo = new UserGalleryItem(core, page.User, photoPath + "/" + photoName);
+                GalleryItem photo = new GalleryItem(core, page.User, photoPath + "/" + photoName);
 
                 photo.ItemAccess.SetViewer(core.session.LoggedInMember);
 
@@ -1122,8 +1137,8 @@ namespace BoxSocial.Applications.Gallery
                     page.template.Parse("U_EDIT", core.Uri.BuildPhotoEditUri(photo.ItemId));
                     page.template.Parse("U_ROTATE_LEFT", core.Uri.BuildPhotoRotateLeftUri(photo.ItemId));
                     page.template.Parse("U_ROTATE_RIGHT", core.Uri.BuildPhotoRotateRightUri(photo.ItemId));
-                    page.template.Parse("U_DELETE", photo.BuildDeleteUri());
-                    page.template.Parse("U_TAG", photo.BuildTagUri());
+                    //page.template.Parse("U_DELETE", photo.BuildDeleteUri());
+                    //page.template.Parse("U_TAG", photo.BuildTagUri());
                 }
 
                 switch (photo.Classification)
@@ -1516,7 +1531,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (owner is User)
                 {
-                    galleryItem = new UserGalleryItem(core, (User)owner, photoName);
+                    galleryItem = new GalleryItem(core, (User)owner, photoName);
                     galleryItem.ItemAccess.SetViewer(core.session.LoggedInMember);
 
                     if (!galleryItem.ItemAccess.CanRead)

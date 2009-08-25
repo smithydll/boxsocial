@@ -399,6 +399,7 @@ namespace BoxSocial.Internals
         public ShowPageEventArgs(TPage page)
         {
             this.page = page;
+            this.core = page.Core;
         }
     }
 }

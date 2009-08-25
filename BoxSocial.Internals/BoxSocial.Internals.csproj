@@ -175,6 +175,7 @@
     <Compile Include="Kin.cs" />
     <Compile Include="IOrderableItem.cs" />
     <Compile Include="PageInfo.cs" />
+    <Compile Include="PermissionAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

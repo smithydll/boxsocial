@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGallery gallery = new UserGallery(core, LoggedInMember, galleryId);
+                Gallery gallery = new Gallery(core, LoggedInMember, galleryId);
 
                 ushort galleryAccess = gallery.Permissions;
 
@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.Gallery
                 //core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
                 
                 AccessControlLists acl = new AccessControlLists(core, gallery);
-                acl.ParseACL(template, LoggedInMember, "S_PHOTO_PERMS");
+                acl.ParseACL(template, LoggedInMember, "S_GALLERY_PERMS");
 
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
@@ -144,7 +144,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                UserGallery parent = new UserGallery(core, LoggedInMember, galleryId);
+                Gallery parent = new Gallery(core, LoggedInMember, galleryId);
 
                 string slug = Request.Files["photo-file"].FileName;
 
@@ -157,7 +157,7 @@ namespace BoxSocial.Applications.Gallery
                         Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    UserGalleryItem.Create(core, LoggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");

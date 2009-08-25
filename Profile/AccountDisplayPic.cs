@@ -79,15 +79,15 @@ namespace BoxSocial.Applications.Profile
 
             string meSlug = "display-pictures";
 
-            UserGallery profileGallery;
+            BoxSocial.Applications.Gallery.Gallery profileGallery;
             try
             {
-                profileGallery = new UserGallery(core, LoggedInMember, meSlug);
+                profileGallery = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember, meSlug);
             }
             catch (InvalidGalleryException)
             {
-                UserGallery root = new UserGallery(core, LoggedInMember);
-                profileGallery = UserGallery.Create(core, root, "Display Pictures", ref meSlug, "All my uploaded display pictures", 0);
+                BoxSocial.Applications.Gallery.Gallery root = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember);
+                profileGallery = BoxSocial.Applications.Gallery.Gallery.Create(core, LoggedInMember, root, "Display Pictures", ref meSlug, "All my uploaded display pictures", 0);
             }
 
             if (profileGallery != null)
@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Profile
                         Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    GalleryItem galleryItem = UserGalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, 0x3331, 0, Classifications.Everyone);
+                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, 0x3331, 0, Classifications.Everyone);
 
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
                         galleryItem.Id, LoggedInMember.UserId));

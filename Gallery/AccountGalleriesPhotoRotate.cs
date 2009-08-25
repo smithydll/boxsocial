@@ -82,7 +82,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    UserGalleryItem photo = new UserGalleryItem(core, LoggedInMember, photoId);
+                    GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
                     System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
 

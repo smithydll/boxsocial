@@ -43,6 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery
     /// </summary>
     [DataTable("user_galleries")]
+    [Permission("VIEW", "COMMENT", "CREATE_CHILD", "VIEW_ITEMS", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS", "EDIT_ITEMS", "DELETE_ITEMS")]
     public class Gallery : NumberedItem, IPermissibleItem
     {
         /// <summary>
@@ -153,6 +154,12 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_hierarchy", MYSQL_TEXT)]
         private string hierarchy;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
 
         /// <summary>
         /// Parent Tree
@@ -187,9 +194,9 @@ namespace BoxSocial.Applications.Gallery
             {
                 SetProperty("parentId", value);
 
-                if (parentId > 0 && this.GetType() == typeof(UserGallery))
+                if (parentId > 0 && this.GetType() == typeof(Gallery))
                 {
-                    Gallery parent = new UserGallery(core, (User)owner, parentId);
+                    Gallery parent = new Gallery(core, (User)owner, parentId);
 
                     parentTree = new ParentTree();
 
@@ -461,7 +468,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
-        protected Gallery(Core core, Primitive owner)
+        public Gallery(Core core, Primitive owner)
             : base(core)
         {
             this.owner = owner;
@@ -482,7 +489,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryId">Gallery Id</param>
-        protected Gallery(Core core, Primitive owner, long galleryId)
+        public Gallery(Core core, Primitive owner, long galleryId)
             : base(core)
         {
             this.owner = owner;
@@ -515,7 +522,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
         /// <param name="path">Gallery path</param>
-        protected Gallery(Core core, Primitive owner, string path)
+        public Gallery(Core core, Primitive owner, string path)
             : base(core)
         {
             this.owner = owner;
@@ -545,7 +552,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="owner">Gallery owner</param>
         /// <param name="galleryRow">Raw data row of gallery</param>
         /// <param name="hasIcon">True if contains raw data for icon</param>
-        protected Gallery(Core core, Primitive owner, DataRow galleryRow, bool hasIcon)
+        public Gallery(Core core, Primitive owner, DataRow galleryRow, bool hasIcon)
             : base(core)
         {
             this.owner = owner;
@@ -796,7 +803,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (owner is User)
             {
-                List<Gallery> galleries = ((UserGallery)this).GetGalleries(core);
+                List<Gallery> galleries = ((Gallery)this).GetGalleries(core);
 
                 foreach (Gallery gallery in galleries)
                 {
@@ -859,7 +866,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="description">Gallery description</param>
         /// <param name="permissions">Gallery permission mask</param>
         /// <returns>An instance of the newly created gallery</returns>
-        protected static long create(Core core, Gallery parent, string title, ref string slug, string description, ushort permissions)
+        public static Gallery Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string description, ushort permissions)
         {
             string parents = "";
             // ensure we have generated a valid slug
@@ -910,6 +917,8 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_parent_path", parent.FullPath);
             iQuery.AddField("gallery_access", permissions);
             iQuery.AddField("user_id", core.LoggedInMemberId);
+            iQuery.AddField("gallery_item_id", owner.Id);
+            iQuery.AddField("gallery_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
             iQuery.AddField("gallery_bytes", 0);
             iQuery.AddField("gallery_items", 0);
@@ -918,7 +927,8 @@ namespace BoxSocial.Applications.Gallery
 
             long galleryId = core.db.Query(iQuery);
 
-            return galleryId;
+            //return galleryId;
+            return new Gallery(core, owner, galleryId);
         }
 
         /// <summary>
@@ -1326,19 +1336,31 @@ namespace BoxSocial.Applications.Gallery
                 {
                     gallery = new Gallery(e.Core, e.Page.Owner, galleryPath);
 
-                    if (!gallery.Access.Can("VIEW"))
+                    try
                     {
-                        e.Core.Functions.Generate403();
-                        return;
+                        if (!gallery.Access.Can("VIEW"))
+                        {
+                            e.Core.Functions.Generate403();
+                            return;
+                        }
+                    }
+                    catch (InvalidAccessControlPermissionException)
+                    {
                     }
 
-                    if (gallery.Access.Can("CREATE_ITEMS"))
+                    try
                     {
-                        e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(gallery.GalleryId));
+                        if (gallery.Access.Can("CREATE_ITEMS"))
+                        {
+                            e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(gallery.GalleryId));
+                        }
+                        if (gallery.Access.Can("CREATE_CHILD"))
+                        {
+                            e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(gallery.GalleryId));
+                        }
                     }
-                    if (gallery.Access.Can("CREATE_CHILD"))
+                    catch (InvalidAccessControlPermissionException)
                     {
-                        e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(gallery.GalleryId));
                     }
 
                     e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.page, (int)Math.Ceiling(gallery.Items / 12.0));
@@ -1353,9 +1375,15 @@ namespace BoxSocial.Applications.Gallery
             {
                 gallery = new Gallery(e.Core, e.Page.Owner);
 
-                if (gallery.Access.Can("CREATE_CHILD"))
+                try
                 {
-                    e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(0));
+                    if (gallery.Access.Can("CREATE_CHILD"))
+                    {
+                        e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(0));
+                    }
+                }
+                catch (InvalidAccessControlPermissionException)
+                {
                 }
             }
 
@@ -1484,12 +1512,12 @@ namespace BoxSocial.Applications.Gallery
 
             long loggedIdUid = core.LoggedInMemberId;
 
-            UserGallery gallery;
+            Gallery gallery;
             if (galleryPath != "")
             {
                 try
                 {
-                    gallery = new UserGallery(core, page.User, galleryPath);
+                    gallery = new Gallery(core, page.User, galleryPath);
 
                     gallery.GalleryAccess.SetViewer(core.session.LoggedInMember);
 
@@ -1518,7 +1546,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                gallery = new UserGallery(core, page.User);
+                gallery = new Gallery(core, page.User);
 
                 if (gallery.Owner.Id == core.LoggedInMemberId)
                 {

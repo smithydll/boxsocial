@@ -1066,431 +1066,14 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Shows a user gallery item
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoPath">Photo parent path</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void Show(Core core, UPage page, string photoPath, string photoName)
-        {
-            page.template.SetTemplate("Gallery", "viewphoto");
-
-            char[] trimStartChars = { '.', '/' };
-            if (photoPath != null)
-            {
-                photoPath = photoPath.TrimEnd('/').TrimStart(trimStartChars);
-            }
-            else
-            {
-                photoPath = "";
-            }
-
-            page.User.LoadProfileInfo();
-
-            try
-            {
-                GalleryItem photo = new GalleryItem(core, page.User, photoPath + "/" + photoName);
-
-                photo.ItemAccess.SetViewer(core.session.LoggedInMember);
-
-                if (!photo.ItemAccess.CanRead)
-                {
-                    core.Functions.Generate403();
-                    return;
-                }
-
-                photo.Viewed(core.session.LoggedInMember);
-
-                /* TODO: change to building path in photo class */
-                string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
-                    page.User.UserName, photoPath, photo.Path);
-                page.template.Parse("PHOTO_DISPLAY", displayUri);
-                page.template.Parse("PHOTO_TITLE", photo.ItemTitle);
-                page.template.Parse("PHOTO_ID", photo.ItemId.ToString());
-
-                if (page.User.Id == core.LoggedInMemberId)
-                {
-                    page.template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(photo.ParentId));
-                }
-
-                if (!string.IsNullOrEmpty(photo.ItemAbstract))
-                {
-                    core.Display.ParseBbcode("PHOTO_DESCRIPTION", photo.ItemAbstract);
-                }
-                else
-                {
-                    page.template.Parse("PHOTO_DESCRIPTION", "FALSE");
-                }
-
-                page.template.Parse("PHOTO_COMMENTS", core.Functions.LargeIntegerToString(photo.ItemComments));
-
-                Display.RatingBlock(photo.ItemRating, page.template, photo.ItemKey);
-
-                page.template.Parse("ID", photo.ItemId.ToString());
-				page.template.Parse("TYPEID", photo.ItemKey.TypeId.ToString());
-
-                if (page.User.Id == core.LoggedInMemberId)
-                {
-                    page.template.Parse("U_MARK_DISPLAY_PIC", core.Uri.BuildMarkDisplayPictureUri(photo.ItemId));
-                    page.template.Parse("U_MARK_GALLERY_COVER", core.Uri.BuildMarkGalleryCoverUri(photo.ItemId));
-                    page.template.Parse("U_EDIT", core.Uri.BuildPhotoEditUri(photo.ItemId));
-                    page.template.Parse("U_ROTATE_LEFT", core.Uri.BuildPhotoRotateLeftUri(photo.ItemId));
-                    page.template.Parse("U_ROTATE_RIGHT", core.Uri.BuildPhotoRotateRightUri(photo.ItemId));
-                    //page.template.Parse("U_DELETE", photo.BuildDeleteUri());
-                    //page.template.Parse("U_TAG", photo.BuildTagUri());
-                }
-
-                switch (photo.Classification)
-                {
-                    case Classifications.Everyone:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
-                        break;
-                    case Classifications.Mature:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
-                        break;
-                    case Classifications.Restricted:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
-                        break;
-                }
-
-                if (photo.License != null)
-                {
-                    if (!string.IsNullOrEmpty(photo.License.Title))
-                    {
-                        page.template.Parse("PAGE_LICENSE", photo.License.Title);
-                    }
-                    if (!string.IsNullOrEmpty(photo.License.Icon))
-                    {
-                        page.template.Parse("I_PAGE_LICENSE", photo.License.Icon);
-                    }
-                    if (!string.IsNullOrEmpty(photo.License.Link))
-                    {
-                        page.template.Parse("U_PAGE_LICENSE", photo.License.Link);
-                    }
-                }
-
-                List<UserTag> tags = UserTag.GetTags(core, photo);
-
-                if (tags.Count > 0)
-                {
-                    page.template.Parse("HAS_USER_TAGS", "TRUE");
-                }
-
-                int i = 0;
-                foreach (UserTag tag in tags)
-                {
-                    VariableCollection tagsVariableCollection = page.template.CreateChild("user_tags");
-
-                    tagsVariableCollection.Parse("INDEX", i.ToString());
-                    tagsVariableCollection.Parse("TAG_ID", tag.TagId.ToString());
-                    tagsVariableCollection.Parse("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
-                    tagsVariableCollection.Parse("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
-                    tagsVariableCollection.Parse("DISPLAY_NAME", tag.TaggedMember.DisplayName);
-                    tagsVariableCollection.Parse("U_MEMBER", tag.TaggedMember.Uri);
-
-                    i++;
-                }
-
-                int p = 1;
-
-                try
-                {
-                    p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
-                }
-                catch
-                {
-                }
-
-                if (photo.ItemAccess.CanComment)
-                {
-                    page.template.Parse("CAN_COMMENT", "TRUE");
-                }
-                core.Display.DisplayComments(page.template, page.User, photo);
-
-                string pageUri = string.Format("/{0}/gallery/{1}/{2}",
-                    HttpUtility.HtmlEncode(page.User.UserName), photoPath, photoName);
-                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0)));
-                //page.template.Parse("BREADCRUMBS", Functions.GenerateBreadCrumbs(page.ProfileOwner.UserName, "gallery/" + photo.ParentPath + "/" + photo.Path));
-                core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(photo.ItemComments / 10.0));
-                page.User.ParseBreadCrumbs("gallery/" + photo.ParentPath + "/" + photo.Path);
-
-            }
-            catch (GalleryItemNotFoundException)
-            {
-                core.Functions.Generate404();
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Shows a group gallery item
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void Show(Core core, GPage page, string photoName)
-        {
-            page.template.SetTemplate("Gallery", "viewphoto");
-
-            char[] trimStartChars = { '.', '/' };
-
-            try
-            {
-                GroupGalleryItem galleryItem = new GroupGalleryItem(core, page.Group, photoName);
-
-                switch (page.Group.GroupType)
-                {
-                    case "OPEN":
-                        // can view the gallery and all it's photos
-                        break;
-                    case "CLOSED":
-                    case "PRIVATE":
-                        if (!page.Group.IsGroupMember(core.session.LoggedInMember))
-                        {
-                            core.Functions.Generate403();
-                            return;
-                        }
-                        break;
-                }
-
-                galleryItem.Viewed(core.session.LoggedInMember);
-
-                string displayUri = string.Format("{0}images/_display/{1}",
-                        page.Group.UriStub, galleryItem.Path);
-                page.template.Parse("PHOTO_DISPLAY", displayUri);
-                page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
-                page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
-                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
-                page.template.Parse("PHOTO_COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
-                page.template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(galleryItem.ParentId));
-
-                switch (galleryItem.Classification)
-                {
-                    case Classifications.Everyone:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
-                        break;
-                    case Classifications.Mature:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
-                        break;
-                    case Classifications.Restricted:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
-                        break;
-                }
-
-                if (galleryItem.License != null)
-                {
-                    if (!string.IsNullOrEmpty(galleryItem.License.Title))
-                    {
-                        page.template.Parse("PAGE_LICENSE", galleryItem.License.Title);
-                    }
-                    if (!string.IsNullOrEmpty(galleryItem.License.Icon))
-                    {
-                        page.template.Parse("I_PAGE_LICENSE", galleryItem.License.Icon);
-                    }
-                    if (!string.IsNullOrEmpty(galleryItem.License.Link))
-                    {
-                        page.template.Parse("U_PAGE_LICENSE", galleryItem.License.Link);
-                    }
-                }
-
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemKey);
-
-                page.template.Parse("ID", galleryItem.ItemId.ToString());
-				page.template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
-                //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
-
-                int p = 1;
-
-                try
-                {
-                    p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
-                }
-                catch
-                {
-                }
-
-                if (page.Group.IsGroupMember(core.session.LoggedInMember))
-                {
-                    page.template.Parse("CAN_COMMENT", "TRUE");
-                }
-                core.Display.DisplayComments(page.template, page.Group, galleryItem);
-
-                string pageUri = string.Format("{0}gallery/{1}",
-                    HttpUtility.HtmlEncode(page.Group.UriStub), photoName);
-                core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
-                page.Group.ParseBreadCrumbs("gallery/" + galleryItem.Path);
-
-            }
-            catch (GalleryItemNotFoundException)
-            {
-                core.Functions.Generate404();
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Shows a network gallery item
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void Show(Core core, NPage page, string photoName)
-        {
-            page.template.SetTemplate("Gallery", "viewphoto");
-
-            char[] trimStartChars = { '.', '/' };
-
-            try
-            {
-                NetworkGalleryItem galleryItem = new NetworkGalleryItem(core, page.Network, photoName);
-
-                switch (page.Network.NetworkType)
-                {
-                    case NetworkTypes.Country:
-                    case NetworkTypes.Global:
-                        // can view the network and all it's photos
-                        break;
-                    case NetworkTypes.University:
-                    case NetworkTypes.School:
-                    case NetworkTypes.Workplace:
-                        if (!page.Network.IsNetworkMember(core.session.LoggedInMember))
-                        {
-                            core.Functions.Generate403();
-                            return;
-                        }
-                        break;
-                }
-
-                galleryItem.Viewed(core.session.LoggedInMember);
-
-                string displayUri = string.Format("/network/{0}/images/_display/{1}",
-                        page.Network.NetworkNetwork, galleryItem.Path);
-                page.template.Parse("PHOTO_DISPLAY", displayUri);
-                page.template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
-                page.template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
-                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
-                core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
-                page.template.Parse("PHOTO_COMMENTS", core.Functions.LargeIntegerToString(galleryItem.ItemComments));
-                page.template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(galleryItem.ParentId));
-
-                switch (galleryItem.Classification)
-                {
-                    case Classifications.Everyone:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Everyone");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_e.png");
-                        break;
-                    case Classifications.Mature:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Suitable for Mature Audiences 15+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_15.png");
-                        break;
-                    case Classifications.Restricted:
-                        page.template.Parse("PAGE_CLASSIFICATION", "Retricted to Audiences 18+");
-                        page.template.Parse("I_PAGE_CLASSIFICATION", "rating_18.png");
-                        break;
-                }
-
-                if (galleryItem.License != null)
-                {
-                    if (!string.IsNullOrEmpty(galleryItem.License.Title))
-                    {
-                        page.template.Parse("PAGE_LICENSE", galleryItem.License.Title);
-                    }
-                    if (!string.IsNullOrEmpty(galleryItem.License.Icon))
-                    {
-                        page.template.Parse("I_PAGE_LICENSE", galleryItem.License.Icon);
-                    }
-                    if (!string.IsNullOrEmpty(galleryItem.License.Link))
-                    {
-                        page.template.Parse("U_PAGE_LICENSE", galleryItem.License.Link);
-                    }
-                }
-
-                Display.RatingBlock(galleryItem.ItemRating, page.template, galleryItem.ItemKey);
-
-                page.template.Parse("ID", galleryItem.ItemId.ToString());
-				page.template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
-                //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
-
-                int p = 1;
-
-                try
-                {
-                    p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
-                }
-                catch
-                {
-                }
-
-                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
-                {
-                    page.template.Parse("CAN_COMMENT", "TRUE");
-                }
-                core.Display.DisplayComments(page.template, page.Network, galleryItem);
-
-                string pageUri = string.Format("/network/{0}/gallery/{1}",
-                    HttpUtility.HtmlEncode(page.Network.NetworkNetwork), photoName);
-                //page.template.Parse("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0)));
-                //page.template.Parse("BREADCRUMBS", page.TheNetwork.GenerateBreadCrumbs("gallery/" + galleryItem.Path));
-                core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
-                page.Network.ParseBreadCrumbs("gallery/" + galleryItem.Path);
-
-            }
-            catch (GalleryItemNotFoundException)
-            {
-                core.Functions.Generate404();
-                return;
-            }
-        }
-
-        /// <summary>
-        /// Shows a user image
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void ShowImage(Core core, UPage page, string photoName)
-        {
-            ShowImage(core, page.User, photoName);
-        }
-
-        /// <summary>
-        /// Shows a group image
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void ShowImage(Core core, GPage page, string photoName)
-        {
-            ShowImage(core, page.Group, photoName);
-        }
-
-        /// <summary>
-        /// Shows a network image
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="page">Page token</param>
-        /// <param name="photoName">Photo slug</param>
-        public static void ShowImage(Core core, NPage page, string photoName)
-        {
-            ShowImage(core, page.Network, photoName);
-        }
-
-        /// <summary>
         /// Shows an image
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="owner">Image owner</param>
         /// <param name="photoName">Photo slug</param>
-        private static void ShowImage(Core core, Primitive owner, string photoName)
+        public static void ShowImage(object sender, ShowPPageEventArgs e)
         {
+            string photoName = e.Slug;
             bool thumbnailRequest = false; // large 160px thumbnail
             bool displayRequest = false;
             bool iconRequest = false;
@@ -1529,39 +1112,39 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem galleryItem;// = new GalleryItem(db, owner, imagePath);
 
-                if (owner is User)
+                if (e.Page.Owner is User)
                 {
-                    galleryItem = new GalleryItem(core, (User)owner, photoName);
-                    galleryItem.ItemAccess.SetViewer(core.session.LoggedInMember);
+                    galleryItem = new GalleryItem(e.Core, (User)e.Page.Owner, photoName);
+                    galleryItem.ItemAccess.SetViewer(e.Core.session.LoggedInMember);
 
                     if (!galleryItem.ItemAccess.CanRead)
                     {
-                        core.Functions.Generate403();
+                        e.Core.Functions.Generate403();
                         return;
                     }
                 }
-                else if (owner is UserGroup)
+                else if (e.Page.Owner is UserGroup)
                 {
-                    galleryItem = new GroupGalleryItem(core, (UserGroup)owner, photoName);
-                    switch (((UserGroup)owner).GroupType)
+                    galleryItem = new GroupGalleryItem(e.Core, (UserGroup)e.Page.Owner, photoName);
+                    switch (((UserGroup)e.Page.Owner).GroupType)
                     {
                         case "OPEN":
                             // can view the gallery and all it's photos
                             break;
                         case "CLOSED":
                         case "PRIVATE":
-                            if (!((UserGroup)owner).IsGroupMember(core.session.LoggedInMember))
+                            if (!((UserGroup)e.Page.Owner).IsGroupMember(e.Core.session.LoggedInMember))
                             {
-                                core.Functions.Generate403();
+                                e.Core.Functions.Generate403();
                                 return;
                             }
                             break;
                     }
                 }
-                else if (owner is Network)
+                else if (e.Page.Owner is Network)
                 {
-                    galleryItem = new NetworkGalleryItem(core, (Network)owner, photoName);
-                    switch (((Network)owner).NetworkType)
+                    galleryItem = new NetworkGalleryItem(e.Core, (Network)e.Page.Owner, photoName);
+                    switch (((Network)e.Page.Owner).NetworkType)
                     {
                         case NetworkTypes.Country:
                         case NetworkTypes.Global:
@@ -1570,9 +1153,9 @@ namespace BoxSocial.Applications.Gallery
                         case NetworkTypes.University:
                         case NetworkTypes.School:
                         case NetworkTypes.Workplace:
-                            if (!((Network)owner).IsNetworkMember(core.session.LoggedInMember))
+                            if (!((Network)e.Page.Owner).IsNetworkMember(e.Core.session.LoggedInMember))
                             {
-                                core.Functions.Generate403();
+                                e.Core.Functions.Generate403();
                                 return;
                             }
                             break;
@@ -1580,7 +1163,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    core.Functions.Generate404();
+                    e.Core.Functions.Generate404();
                     return;
                 }
 
@@ -1710,13 +1293,13 @@ namespace BoxSocial.Applications.Gallery
             }
             catch (GalleryItemNotFoundException)
             {
-                core.Functions.Generate404();
+                e.Core.Functions.Generate404();
                 return;
             }
 
-            if (core.db != null)
+            if (e.Db != null)
             {
-                core.db.CloseConnection();
+                e.Db.CloseConnection();
             }
             HttpContext.Current.Response.End();
         }

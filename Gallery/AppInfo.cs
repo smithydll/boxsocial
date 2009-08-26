@@ -379,45 +379,7 @@ namespace BoxSocial.Applications.Gallery
                 core.Functions.Generate404();
                 return;
             }
-            /*if (sender is UPage)
-            {
-                Gallery.Show(core, (UPage)sender, "");
-            }
-            else if (sender is GPage)
-            {
-                Gallery.Show(core, (GPage)sender);
-            }
-            else if (sender is NPage)
-            {
-                Gallery.Show(core, (NPage)sender);
-            }*/
         }
-
-        /// <summary>
-        /// Show a sub gallery
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="sender">Object that called the page</param>
-        private void showSubGallery(Core core, object sender)
-        {
-            if (sender is UPage)
-            {
-                Gallery.Show(core, (UPage)sender, core.PagePathParts[1].Value);
-            }
-        }
-
-        /// <summary>
-        /// Show a user's gallery item
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="sender">Object that called the page</param>
-        /*private void showUserPhoto(Core core, object sender)
-        {
-            if (sender is UPage)
-            {
-                GalleryItem.Show(core, (UPage)sender, core.PagePathParts[1].Value, core.PagePathParts[2].Value);
-            }
-        }*/
 
         /// <summary>
         /// Show a primitive's gallery item
@@ -436,16 +398,6 @@ namespace BoxSocial.Applications.Gallery
                 core.Functions.Generate404();
                 return;
             }
-            /*if (sender is GPage)
-            {
-                GalleryItem.Show(core, (GPage)sender, core.PagePathParts[1].Value);
-                return;
-            }
-            else if (sender is NPage)
-            {
-                GalleryItem.Show(core, (NPage)sender, core.PagePathParts[1].Value);
-                return;
-            }*/
         }
         
         [Show(@"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician | AppPrimitives.Member)]
@@ -470,19 +422,9 @@ namespace BoxSocial.Applications.Gallery
         [Show(@"^/images/([A-Za-z0-9\-_/\.]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
         private void showImage(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                GalleryItem.ShowImage(core, (UPage)sender, core.PagePathParts[1].Value);
-            }
-            else if (sender is GPage)
-            {
-                GalleryItem.ShowImage(core, (GPage)sender, core.PagePathParts[1].Value);
-                return;
-            }
-            else if (sender is NPage)
-            {
-                GalleryItem.ShowImage(core, (NPage)sender, core.PagePathParts[1].Value);
-                return;
+                GalleryItem.ShowImage(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value));
             }
         }
 
@@ -492,7 +434,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>List of primitives given support of</returns>
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
+            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician;
         }
 
         /// <summary>

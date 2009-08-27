@@ -461,6 +461,7 @@ namespace BoxSocial.Applications.Gallery
             path = "";
             parentPath = "";
             userId = owner.Id;
+            ownerKey = owner.ItemKey;
         }
 
         /// <summary>
@@ -514,6 +515,7 @@ namespace BoxSocial.Applications.Gallery
                 this.path = "";
                 this.parentPath = "";
                 this.userId = owner.Id;
+                this.ownerKey = owner.ItemKey;
             }
         }
 
@@ -532,7 +534,8 @@ namespace BoxSocial.Applications.Gallery
             SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
             query.AddCondition("gallery_parent_path", Gallery.GetParentPath(path));
             query.AddCondition("gallery_path", Gallery.GetNameFromPath(path));
-            query.AddCondition("user_id", owner.Id);
+            query.AddCondition("gallery_item_id", owner.Id);
+            query.AddCondition("gallery_item_type_id", owner.TypeId);
 
             DataTable galleryTable = db.Query(query);
 
@@ -645,10 +648,10 @@ namespace BoxSocial.Applications.Gallery
 
             SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
-            query.AddJoin(JoinTypes.Left, new DataField(GalleryItem.GetTable(typeof(Gallery)), "gallery_highlight_id"), new DataField(GalleryItem.GetTable(typeof(GalleryItem)), "gallery_item_id"));
+            query.AddJoin(JoinTypes.Left, new DataField(typeof(Gallery), "gallery_highlight_id"), new DataField(typeof(GalleryItem), "gallery_item_id"));
             query.AddCondition("gallery_parent_id", Id);
-            QueryCondition qc1 = query.AddCondition(new QueryOperation("gallery_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
-            qc1.AddCondition(ConditionRelations.Or, "`user_galleries`.`user_id`", loggedIdUid);
+            /*QueryCondition qc1 = query.AddCondition(new QueryOperation("gallery_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
+            qc1.AddCondition(ConditionRelations.Or, "`user_galleries`.`user_id`", loggedIdUid);*/
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
             // TODO: permissions
@@ -879,7 +882,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotValidException();
             }
 
-            if (!Gallery.CheckGallerySlugUnique(core.db, (User)parent.owner, parent.FullPath, slug))
+            if (!Gallery.CheckGallerySlugUnique(core.db, parent.owner, parent.FullPath, slug))
             {
                 throw new GallerySlugNotUniqueException();
             }
@@ -1026,10 +1029,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="parentFullPath">Parent path</param>
         /// <param name="slug">Slug to check for uniqueness</param>
         /// <returns>True if slug is unique given owner and parent</returns>
-        public static bool CheckGallerySlugUnique(Mysql db, User owner, string parentFullPath, string slug)
+        public static bool CheckGallerySlugUnique(Mysql db, Primitive owner, string parentFullPath, string slug)
         {
-            DataTable galleryGalleryTable = db.Query(string.Format("SELECT gallery_path FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{1}' AND gallery_path = '{2}';",
-                        owner.UserId, Mysql.Escape(parentFullPath), Mysql.Escape(slug)));
+            DataTable galleryGalleryTable = db.Query(string.Format("SELECT gallery_path FROM user_galleries WHERE gallery_item_id = {0} AND gallery_item_type_id = {1} AND gallery_parent_path = '{2}' AND gallery_path = '{3}';",
+                        owner.Id, owner.TypeId, Mysql.Escape(parentFullPath), Mysql.Escape(slug)));
 
             if (galleryGalleryTable.Rows.Count > 0)
             {

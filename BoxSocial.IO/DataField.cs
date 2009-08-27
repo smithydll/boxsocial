@@ -53,6 +53,12 @@ namespace BoxSocial.IO
                 return alias;
             }
         }
+        
+        public DataField(Type type, string fieldName)
+        {
+            this.tableName = DataFieldAttribute.GetTable(type);
+            this.fieldName = fieldName;
+        }
 
         public DataField(string tableName, string fieldName)
         {

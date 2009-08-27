@@ -682,45 +682,7 @@ namespace BoxSocial.Internals
 
         public static string GetTable(Type type)
         {
-            bool attributeFound = false;
-            foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
-            {
-                DataTableAttribute dtattr = (DataTableAttribute)attr;
-                if (dtattr != null)
-                {
-                    if (dtattr.TableName != null)
-                    {
-                        return dtattr.TableName;
-                    }
-                    attributeFound = true;
-                }
-            }
-
-            /* Maybe is a Table View if haven't found a DataTable */
-            if (!attributeFound)
-            {
-                foreach (Attribute attr in type.GetCustomAttributes(typeof(TableViewAttribute), false))
-                {
-                    TableViewAttribute tvattr = (TableViewAttribute)attr;
-                    if (tvattr != null)
-                    {
-                        if (tvattr.TableName != null)
-                        {
-                            return tvattr.TableName;
-                        }
-                        attributeFound = true;
-                    }
-                }
-            }
-
-            if (attributeFound)
-            {
-                return type.Name;
-            }
-            else
-            {
-                return null;
-            }
+            return DataFieldAttribute.GetTable(type);
         }
 
         internal protected static string GetNamespace(Type type)

@@ -69,21 +69,18 @@ namespace BoxSocial.Applications.Gallery
 
         void AccountGalleriesManage_Load(object sender, EventArgs e)
         {
-            if (Owner.Type == "USER")
-            {
-                AddModeHandler("new", new ModuleModeHandler(AccountGalleriesManage_New));
-                AddModeHandler("edit", new ModuleModeHandler(AccountGalleriesManage_New));
-                AddModeHandler("delete", new ModuleModeHandler(AccountGalleriesManage_Delete));
-            }
+            AddModeHandler("new", new ModuleModeHandler(AccountGalleriesManage_New));
+            AddModeHandler("edit", new ModuleModeHandler(AccountGalleriesManage_New));
+            AddModeHandler("delete", new ModuleModeHandler(AccountGalleriesManage_Delete));
         }
 
         void AccountGalleriesManage_Show(object sender, EventArgs e)
         {
-            if (Owner.Type == "GROUP")
+            /*if (Owner.Type == "GROUP")
             {
                 SetTemplate("account_galleries_group");
                 return;
-            }
+            }*/
 
             SetTemplate("account_galleries");
 
@@ -95,10 +92,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    pg = new Gallery(core, LoggedInMember, parentGalleryId);
+                    pg = new Gallery(core, Owner, parentGalleryId);
 
-                    template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(pg.Id));
-                    template.Parse("U_UPLOAD_PHOTO", core.Uri.BuildPhotoUploadUri(pg.Id));
+                    template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", pg.Id));
+                    template.Parse("U_UPLOAD_PHOTO", BuildUri("upload", pg.Id));
 
                     galleryParentPath = pg.FullPath;
                 }
@@ -110,8 +107,8 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                pg = new Gallery(core, LoggedInMember);
-                template.Parse("U_NEW_GALLERY", core.Uri.BuildNewGalleryUri(0));
+                pg = new Gallery(core, Owner);
+                template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", 0));
             }
 
             List<Gallery> ugs = pg.GetGalleries(core);
@@ -124,7 +121,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(ug.Items));
 
                 galleryVariableCollection.Parse("U_MANAGE", core.Uri.BuildAccountSubModuleUri(ModuleKey, "galleries", ug.Id));
-                galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(core, LoggedInMember, ug.FullPath));
+                galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(core, Owner, ug.FullPath));
                 galleryVariableCollection.Parse("U_EDIT", core.Uri.BuildGalleryEditUri(ug.Id));
                 galleryVariableCollection.Parse("U_DELETE", core.Uri.BuildGalleryDeleteUri(ug.Id));
             }
@@ -152,7 +149,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     try
                     {
-                        Gallery pg = new Gallery(core, LoggedInMember, galleryId);
+                        Gallery pg = new Gallery(core, Owner, galleryId);
 
                         Dictionary<string, string> licenses = new Dictionary<string, string>();
                         DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
@@ -177,7 +174,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    Gallery ug = new Gallery(core, LoggedInMember, galleryId);
+                    Gallery ug = new Gallery(core, Owner, galleryId);
 
                     template.Parse("S_TITLE", ug.GalleryTitle);
                     template.Parse("S_DESCRIPTION", ug.GalleryAbstract);
@@ -213,7 +210,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                Gallery gallery = new Gallery(core, LoggedInMember, galleryId);
+                Gallery gallery = new Gallery(core, Owner, galleryId);
                 Gallery.Delete(core, gallery);
 
                 SetRedirectUri(BuildUri("galleries", "galleries"));
@@ -259,16 +256,16 @@ namespace BoxSocial.Applications.Gallery
                     Gallery parent;
                     if (galleryId > 0)
                     {
-                        parent = new Gallery(core, LoggedInMember, galleryId);
+                        parent = new Gallery(core, Owner, galleryId);
                     }
                     else
                     {
-                        parent = new Gallery(core, LoggedInMember);
+                        parent = new Gallery(core, Owner);
                     }
 
                     if (parent.FullPath.Length + slug.Length + 1 < 192)
                     {
-                        if (Gallery.Create(core, LoggedInMember, parent, title, ref slug, description, Functions.GetPermission()) != null)
+                        if (Gallery.Create(core, Owner, parent, title, ref slug, description, Functions.GetPermission()) != null)
                         {
                             SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
                             core.Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
@@ -310,7 +307,7 @@ namespace BoxSocial.Applications.Gallery
                 // save edit
                 try
                 {
-                    Gallery gallery = new Gallery(core, LoggedInMember, galleryId);
+                    Gallery gallery = new Gallery(core, Owner, galleryId);
 
                     try
                     {

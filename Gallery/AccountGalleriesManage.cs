@@ -120,10 +120,10 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("NAME", ug.GalleryTitle);
                 galleryVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(ug.Items));
 
-                galleryVariableCollection.Parse("U_MANAGE", core.Uri.BuildAccountSubModuleUri(ModuleKey, "galleries", ug.Id));
+                galleryVariableCollection.Parse("U_MANAGE", BuildUri("galleries", ug.Id));
                 galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(core, Owner, ug.FullPath));
-                galleryVariableCollection.Parse("U_EDIT", core.Uri.BuildGalleryEditUri(ug.Id));
-                galleryVariableCollection.Parse("U_DELETE", core.Uri.BuildGalleryDeleteUri(ug.Id));
+                galleryVariableCollection.Parse("U_EDIT", BuildUri("galleries", "edit", ug.Id));
+                galleryVariableCollection.Parse("U_DELETE", BuildUri("galleries", "delete", ug.Id));
             }
         }
 

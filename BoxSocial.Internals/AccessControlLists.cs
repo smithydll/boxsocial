@@ -132,13 +132,18 @@ namespace BoxSocial.Internals
 
             template.ParseRaw(variable, aclTemplate.ToString());
         }
-
+        
         public static List<AccessControlPermission> GetPermissions(Core core, IPermissibleItem item)
+        {
+            return GetPermissions(core, item.ItemKey);
+        }
+
+        public static List<AccessControlPermission> GetPermissions(Core core, ItemKey itemKey)
         {
             List<AccessControlPermission> permissions = new List<AccessControlPermission>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
-            query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
+            query.AddCondition("permission_item_type_id", itemKey.TypeId);
 
             DataTable permissionsDataTable = core.db.Query(query);
 

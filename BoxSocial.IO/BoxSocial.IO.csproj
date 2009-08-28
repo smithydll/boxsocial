@@ -78,6 +78,7 @@
     <Compile Include="Index.cs" />
     <Compile Include="PrimaryKey.cs" />
     <Compile Include="TableViewAttribute.cs" />
+    <Compile Include="Http.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

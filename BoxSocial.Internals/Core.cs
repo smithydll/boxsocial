@@ -34,6 +34,7 @@ namespace BoxSocial.Internals
     {
         //internal Mysql DB;
 
+        public Http Http;
         public Mysql db;
         internal Template template;
         public SessionState session;

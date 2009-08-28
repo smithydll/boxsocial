@@ -32,7 +32,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Account sub module for uploading photos.
     /// </summary>
-    [AccountSubModule("galleries", "upload")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "galleries", "upload")]
     public class AccountGalleriesUpload : AccountSubModule
     {
 

@@ -295,6 +295,10 @@ namespace BoxSocial.Internals
             core.tz = tz;
 
             isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
+            
+            // As a security measure we use the http object to prevent
+            // applications hijacking the response output
+            core.Http = new Http();
         }
 
         public TPage(string templateFile)
@@ -312,7 +316,8 @@ namespace BoxSocial.Internals
 
                 core.Display.Header(this);
                 long templateStart = timer.ElapsedTicks;
-                HttpContext.Current.Response.Write(template.ToString());
+                //HttpContext.Current.Response.Write(template.ToString());
+                core.Http.Write(template);
                 double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
                 timer.Stop();
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
@@ -340,7 +345,8 @@ namespace BoxSocial.Internals
                 //core.Dispose();
                 //core = null;
 
-                HttpContext.Current.Response.End();
+                //HttpContext.Current.Response.End();
+                core.Http.End();
                 //System.Threading.Thread.CurrentThread.Abort();
             }
         }

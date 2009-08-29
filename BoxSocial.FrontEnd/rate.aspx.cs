@@ -47,9 +47,9 @@ namespace BoxSocial.FrontEnd
                 isAjax = true;
             }
 
-            int rating = Functions.RequestInt("rating", 0);
-            long itemId = Functions.RequestLong("item", 0);
-            long itemTypeId = Functions.RequestLong("type", 0);
+            int rating = core.Functions.RequestInt("rating", 0);
+            long itemId = core.Functions.RequestLong("item", 0);
+            long itemTypeId = core.Functions.RequestLong("type", 0);
 			ItemKey itemKey = null;
 			
 			try

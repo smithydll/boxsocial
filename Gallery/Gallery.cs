@@ -46,15 +46,6 @@ namespace BoxSocial.Applications.Gallery
     [Permission("VIEW", "COMMENT", "CREATE_CHILD", "VIEW_ITEMS", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS", "EDIT_ITEMS", "DELETE_ITEMS")]
     public class Gallery : NumberedItem, IPermissibleItem
     {
-        /// <summary>
-        /// A list of database fields associated with a user gallery.
-        /// </summary>
-        //public const string GALLERY_INFO_FIELDS = "ug.gallery_id, ug.gallery_parent_id, ug.gallery_access, ug.gallery_title, ug.gallery_parent_path, ug.gallery_path, ug.gallery_items, ug.gallery_abstract, ug.gallery_visits, ug.gallery_description, ug.gallery_bytes";
-
-        /// <summary>
-        /// A list of database fields associated with a user gallery icon.
-        /// </summary>
-        //public const string GALLERY_ICON_FIELDS = "gi.gallery_item_uri";
 
         /// <summary>
         /// Owner of the gallery
@@ -142,12 +133,6 @@ namespace BoxSocial.Applications.Gallery
         /// URI of the highlighted photo
         /// </summary>
         protected string highlightUri;
-
-        /// <summary>
-        /// Permissions
-        /// </summary>
-        [DataField("gallery_access")]
-        protected ushort permissions;
 
         /// <summary>
         /// Hierarchy
@@ -254,17 +239,6 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Gets the raw permissions of the gallery
-        /// </summary>
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-        }
-
-        /// <summary>
         /// Gets the access object for the gallery
         /// </summary>
         public Access GalleryAccess
@@ -273,7 +247,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (galleryAccess == null)
                 {
-                    galleryAccess = new Access(core, permissions, Owner);
+                    galleryAccess = new Access(core, this, Owner);
                 }
                 return galleryAccess;
             }
@@ -452,23 +426,6 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="owner">Gallery owner</param>
-        public Gallery(Core core, User owner)
-            : base(core)
-        {
-            this.owner = owner;
-
-            galleryId = 0;
-            path = "";
-            parentPath = "";
-            userId = owner.Id;
-            ownerKey = owner.ItemKey;
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the Gallery class.
-        /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="owner">Gallery owner</param>
         public Gallery(Core core, Primitive owner)
             : base(core)
         {
@@ -561,7 +518,14 @@ namespace BoxSocial.Applications.Gallery
         {
             this.owner = owner;
 
-            loadGalleryInfo(galleryRow);
+            try
+            {
+                loadItemInfo(typeof(Gallery), galleryRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGalleryException();
+            }
 
             if (hasIcon)
             {
@@ -590,11 +554,6 @@ namespace BoxSocial.Applications.Gallery
                 galleryAbstract = (string)galleryRow["gallery_abstract"];
             }
             galleryDescription = (string)galleryRow["gallery_description"];
-            permissions = (ushort)galleryRow["gallery_access"];
-            if (owner is User)
-            {
-                galleryAccess = new Access(core, (ushort)galleryRow["gallery_access"], owner);
-            }
             items = (long)galleryRow["gallery_items"];
             bytes = (long)galleryRow["gallery_bytes"];
             visits = (long)galleryRow["gallery_visits"];
@@ -743,7 +702,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="slug">New gallery slug</param>
         /// <param name="description">New gallery description</param>
         /// <param name="permissions">New gallery permission mask</param>
-        public void Update(Core core, string title, string slug, string description, ushort permissions)
+        public void Update(Core core, string title, string slug, string description)
         {
             if (GalleryId == 0)
             {
@@ -795,8 +754,8 @@ namespace BoxSocial.Applications.Gallery
                 updateParentPathChildren(oldPath, slug);
             }
 
-            db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_title = '{2}', gallery_abstract = '{3}', gallery_path = '{4}', gallery_access = {5} WHERE user_id = {0} AND gallery_id = {1}",
-                member.UserId, galleryId, Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug), permissions));
+            db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_title = '{2}', gallery_abstract = '{3}', gallery_path = '{4}'WHERE user_id = {0} AND gallery_id = {1}",
+                member.UserId, galleryId, Mysql.Escape(title), Mysql.Escape(description), Mysql.Escape(slug)));
         }
 
         /// <summary>
@@ -871,7 +830,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="description">Gallery description</param>
         /// <param name="permissions">Gallery permission mask</param>
         /// <returns>An instance of the newly created gallery</returns>
-        public static Gallery Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string description, ushort permissions)
+        public static Gallery Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string description)
         {
             string parents = "";
             // ensure we have generated a valid slug
@@ -920,7 +879,6 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_abstract", description);
             iQuery.AddField("gallery_path", slug);
             iQuery.AddField("gallery_parent_path", parent.FullPath);
-            iQuery.AddField("gallery_access", permissions);
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("gallery_item_id", owner.Id);
             iQuery.AddField("gallery_item_type_id", owner.TypeId);
@@ -1499,11 +1457,26 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         public override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get
+            { 
+                if (string.IsNullOrEmpty(this.FullPath))
+                {
+                    return Owner.UriStub + "gallery/";
+                }
+                else
+                {
+                    return Owner.UriStub + "gallery/" + this.FullPath + "/";
+                }
+            }
         }
-
-        #region IPermissibleItem Members
-
+        
+        public string AclUri
+        {
+            get
+            {
+                return core.Uri.AppendSid(string.Format("/acl.aspx?id={0}&type={1}", Id, ItemKey.TypeId), true);
+            }
+        }
 
         public Access Access
         {
@@ -1539,7 +1512,6 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        #endregion
     }
 
     /// <summary>

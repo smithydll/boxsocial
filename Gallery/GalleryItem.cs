@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem, IPermissibleItem
+    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
     {
         /// <summary>
         /// Owner of the photo's user Id
@@ -98,12 +98,6 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_item_rating")]
         protected float itemRating;
-
-        /// <summary>
-        /// Gallery photo permission mask
-        /// </summary>
-        [DataField("gallery_item_access")]
-        protected ushort permissions;
 
         /// <summary>
         /// Gallery photo access information
@@ -249,32 +243,6 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return itemRating;
-            }
-        }
-
-        /// <summary>
-        /// Gets the permission mask for the gallery photo
-        /// </summary>
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-        }
-
-        /// <summary>
-        /// Gets the access information (permissions) for the gallery photo
-        /// </summary>
-        public Access ItemAccess
-        {
-            get
-            {
-                if (itemAccess == null)
-                {
-                    itemAccess = new Access(core, permissions, Owner);
-                }
-                return itemAccess;
             }
         }
 
@@ -706,7 +674,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="classification">Classification</param>
         /// <remarks>Slug is a reference</remarks>
         /// <returns>New gallery item</returns>
-        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license, Classifications classification)
+        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, byte license, Classifications classification)
         {
             Mysql db = core.db;
 
@@ -755,7 +723,6 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_date_ut", UnixTime.UnixTimeStamp());
             iQuery.AddField("gallery_item_storage_path", storageName);
             iQuery.AddField("gallery_item_parent_path", parent.FullPath);
-            iQuery.AddField("gallery_item_access", permissions);
             iQuery.AddField("gallery_item_content_type", contentType);
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("gallery_item_bytes", bytes);
@@ -801,10 +768,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="permissions"></param>
         /// <param name="license"></param>
         /// <param name="classification"></param>
-        public void Update(string title, string description, ushort permissions, byte license, Classifications classification)
+        public void Update(string title, string description, byte license, Classifications classification)
         {
-            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_access = {4}, gallery_item_license = {5}, gallery_item_classification = {8} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {6} AND gallery_item_item_type_id = {7};",
-                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), permissions, license, owner.Id, owner.TypeId, (byte)classification));
+            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_license = {4}, gallery_item_classification = {7} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {5} AND gallery_item_item_type_id = {6};",
+                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), license, owner.Id, owner.TypeId, (byte)classification));
 
             if (rowsChanged == 0)
             {
@@ -1039,7 +1006,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
+                    p = int.Parse(e.Core.Http.Query["p"]);
                 }
                 catch
                 {
@@ -1110,14 +1077,14 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GalleryItem galleryItem;// = new GalleryItem(db, owner, imagePath);
+                GalleryItem galleryItem;
 
                 if (e.Page.Owner is User)
                 {
-                    galleryItem = new GalleryItem(e.Core, (User)e.Page.Owner, photoName);
-                    galleryItem.ItemAccess.SetViewer(e.Core.session.LoggedInMember);
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
+                    Gallery gallery = new Gallery(e.Core, e.Page.Owner, galleryItem.ParentId);
 
-                    if (!galleryItem.ItemAccess.CanRead)
+                    if (!gallery.Access.Can("VIEW_ITEMS"))
                     {
                         e.Core.Functions.Generate403();
                         return;
@@ -1170,11 +1137,8 @@ namespace BoxSocial.Applications.Gallery
                 /* we assume exists */
 
                 FileInfo fi = new FileInfo(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Original));
-
-                HttpContext.Current.Response.Clear();
-                HttpContext.Current.Response.ContentType = galleryItem.ContentType;
-                HttpContext.Current.Response.Cache.SetLastModified(fi.LastWriteTimeUtc);
-                HttpContext.Current.Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
+                
+                e.Core.Http.SetToImageResponse(galleryItem.ContentType, fi.LastWriteTimeUtc);
 
                 if (thumbnailRequest)
                 {
@@ -1183,7 +1147,7 @@ namespace BoxSocial.Applications.Gallery
                         CreateThumbnail(TPage.GetStorageFilePath(galleryItem.StoragePath));
                     }
 
-                    if (HttpContext.Current.Response.ContentType == "image/png")
+                    if (galleryItem.ContentType == "image/png")
                     {
                         MemoryStream newStream = new MemoryStream();
 
@@ -1191,11 +1155,11 @@ namespace BoxSocial.Applications.Gallery
 
                         hoi.Save(newStream, hoi.RawFormat);
 
-                        newStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        e.Core.Http.WriteStream(newStream);
                     }
                     else
                     {
-                        HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail));
+                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail));
                     }
                 }
                 else if (displayRequest)
@@ -1205,7 +1169,7 @@ namespace BoxSocial.Applications.Gallery
                         CreateDisplay(TPage.GetStorageFilePath(galleryItem.StoragePath));
                     }
 
-                    if (HttpContext.Current.Response.ContentType == "image/png")
+                    if (galleryItem.ContentType == "image/png")
                     {
                         MemoryStream newStream = new MemoryStream();
 
@@ -1213,11 +1177,11 @@ namespace BoxSocial.Applications.Gallery
 
                         hoi.Save(newStream, hoi.RawFormat);
 
-                        newStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        e.Core.Http.WriteStream(newStream);
                     }
                     else
                     {
-                        HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Display));
+                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Display));
                     }
                 }
                 else if (iconRequest)
@@ -1227,7 +1191,7 @@ namespace BoxSocial.Applications.Gallery
                         CreateIcon(TPage.GetStorageFilePath(galleryItem.StoragePath));
                     }
 
-                    if (HttpContext.Current.Response.ContentType == "image/png")
+                    if (galleryItem.ContentType == "image/png")
                     {
                         MemoryStream newStream = new MemoryStream();
 
@@ -1235,11 +1199,11 @@ namespace BoxSocial.Applications.Gallery
 
                         hoi.Save(newStream, hoi.RawFormat);
 
-                        newStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        e.Core.Http.WriteStream(newStream);
                     }
                     else
                     {
-                        HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Icon));
+                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Icon));
                     }
                 }
                 else if (tileRequest)
@@ -1249,7 +1213,7 @@ namespace BoxSocial.Applications.Gallery
                         CreateTile(TPage.GetStorageFilePath(galleryItem.StoragePath));
                     }
 
-                    if (HttpContext.Current.Response.ContentType == "image/png")
+                    if (galleryItem.ContentType == "image/png")
                     {
                         MemoryStream newStream = new MemoryStream();
 
@@ -1257,11 +1221,11 @@ namespace BoxSocial.Applications.Gallery
 
                         hoi.Save(newStream, hoi.RawFormat);
 
-                        newStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        e.Core.Http.WriteStream(newStream);
                     }
                     else
                     {
-                        HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Tile));
+                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Tile));
                     }
                 }
                 else if (tinyRequest)
@@ -1271,7 +1235,7 @@ namespace BoxSocial.Applications.Gallery
                         CreateTiny(TPage.GetStorageFilePath(galleryItem.StoragePath));
                     }
 
-                    if (HttpContext.Current.Response.ContentType == "image/png")
+                    if (galleryItem.ContentType == "image/png")
                     {
                         MemoryStream newStream = new MemoryStream();
 
@@ -1279,16 +1243,16 @@ namespace BoxSocial.Applications.Gallery
 
                         hoi.Save(newStream, hoi.RawFormat);
 
-                        newStream.WriteTo(HttpContext.Current.Response.OutputStream);
+                        e.Core.Http.WriteStream(newStream);
                     }
                     else
                     {
-                        HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Tiny));
+                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Tiny));
                     }
                 }
                 else
                 {
-                    HttpContext.Current.Response.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath));
+                    e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath));
                 }
             }
             catch (GalleryItemNotFoundException)
@@ -1301,7 +1265,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 e.Db.CloseConnection();
             }
-            HttpContext.Current.Response.End();
+            e.Core.Http.End();
         }
 
         /// <summary>
@@ -1613,44 +1577,6 @@ namespace BoxSocial.Applications.Gallery
         public string RebuildAction(Action action)
         {
             throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region IPermissibleItem Members
-
-        public Access Access
-        {
-            get
-            {
-                if (access == null)
-                {
-                    access = new Access(core, this, this.Owner);
-                }
-
-                return access;
-            }
-        }
-
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                return actions;
-            }
-        }
-
-        public List<AccessControlPermission> AclPermissions
-        {
-            get
-            {
-                if (permissionsList == null)
-                {
-                    permissionsList = AccessControlLists.GetPermissions(core, this);
-                }
-
-                return permissionsList;
-            }
         }
 
         #endregion

@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -437,11 +437,6 @@ namespace BoxSocial.Applications.Calendar
             {
                 Functions.Generate404();
                 return;
-            }*/
-
-            /*foreach (Event calEvent in events)
-            {
-                //HttpContext.Current.Response.Write("<hr />");
             }*/
 
             for (int week = 0; week < weeks; week++)

@@ -151,14 +151,14 @@ namespace BoxSocial.Internals
 
             try
             {
-                displayImages = (int.Parse(Request.Form["display-images"]) == 1);
-                displayFlash = (int.Parse(Request.Form["display-flash"]) == 1);
-                displayVideos = (int.Parse(Request.Form["display-videos"]) == 1);
+                displayImages = (int.Parse(core.Http.Form["display-images"]) == 1);
+                displayFlash = (int.Parse(core.Http.Form["display-flash"]) == 1);
+                displayVideos = (int.Parse(core.Http.Form["display-videos"]) == 1);
                 // TODO: displayAudio
-                showCustomStyles = (int.Parse(Request.Form["show-styles"]) == 1);
-                emailNotifications = (int.Parse(Request.Form["email-notifications"]) == 1);
-                homepage = Request.Form["homepage"];
-                timeZoneCode = ushort.Parse(Request.Form["timezone"]);
+                showCustomStyles = (int.Parse(core.Http.Form["show-styles"]) == 1);
+                emailNotifications = (int.Parse(core.Http.Form["email-notifications"]) == 1);
+                homepage = core.Http.Form["homepage"];
+                timeZoneCode = ushort.Parse(core.Http.Form["timezone"]);
             }
             catch
             {

@@ -566,7 +566,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                if (core.Http.Domain != Linker.Domain)
                 {
                     return Linker.Uri + "application/" + assemblyName + "/";
                 }
@@ -690,7 +690,7 @@ namespace BoxSocial.Internals
                 foreach (string slug in slugs.Keys)
                 {
                     string tSlug = slug;
-                    Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                    Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
 					
 					if (myPage.ListOnly)
                     {
@@ -744,7 +744,7 @@ namespace BoxSocial.Internals
                     if (db.Query(query).Rows.Count == 0)
                     {
                         string tSlug = slug;
-                        Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
                     }
                     else
                     {
@@ -765,7 +765,7 @@ namespace BoxSocial.Internals
                         catch (PageNotFoundException)
                         {
                             string tSlug = slug;
-                            Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
 							
 							if (myPage.ListOnly)
                             {
@@ -875,7 +875,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.EmailNotifications)
                 {
-                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "notification.eml");
+                    RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "notification.eml");
 
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
                     emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
@@ -1000,9 +1000,8 @@ namespace BoxSocial.Internals
             core.template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
-            //string type = HttpContext.Current.Request.QueryString["type"];
-            long typeId = Functions.RequestLong("type", 0);
-            long id = Functions.RequestLong("id", 0);
+            long typeId = core.Functions.RequestLong("type", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             Primitive viewer = core.session.LoggedInMember;
 

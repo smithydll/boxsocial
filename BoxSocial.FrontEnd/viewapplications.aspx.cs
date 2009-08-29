@@ -45,9 +45,9 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            int p = Functions.RequestInt("p", 1);
-            long typeId = Functions.RequestLong("type", 0);
-            long id = Functions.RequestLong("id", 0);
+            int p = core.Functions.RequestInt("p", 1);
+            long typeId = core.Functions.RequestLong("type", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             AppPrimitives viewingPrimitive = AppPrimitives.Member;
 

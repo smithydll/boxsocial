@@ -71,9 +71,9 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            if (Request.Files["contacts"] != null)
+            if (core.Http.Files["contacts"] != null)
             {
-                StreamReader sr = new StreamReader(Request.Files["contacts"].InputStream);
+                StreamReader sr = new StreamReader(core.Http.Files["contacts"].InputStream);
                 string contactsString = sr.ReadToEnd();
 
                 MatchCollection mc = Regex.Matches(contactsString, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
@@ -88,11 +88,11 @@ namespace BoxSocial.Applications.Profile
                 return;
             }
 
-            string friendEmail = ((string)Request.Form["email"]).Trim(new char[] { ' ', '\t' });
-            string friendName = Request.Form["name"];
+            string friendEmail = ((string)core.Http.Form["email"]).Trim(new char[] { ' ', '\t' });
+            string friendName = core.Http.Form["name"];
 
-            friendEmail = (string.IsNullOrEmpty(friendEmail)) ? Request.QueryString["email"] : friendEmail;
-            friendName = (string.IsNullOrEmpty(friendName)) ? Request.QueryString["name"] : friendName;
+            friendEmail = (string.IsNullOrEmpty(friendEmail)) ? core.Http.Query["email"] : friendEmail;
+            friendName = (string.IsNullOrEmpty(friendName)) ? core.Http.Query["name"] : friendName;
 
             if (string.IsNullOrEmpty(friendEmail))
             {
@@ -118,7 +118,7 @@ namespace BoxSocial.Applications.Profile
                         string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                         emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
-                        RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
+                        RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_invitation.eml");
 
                         if (!string.IsNullOrEmpty(friendName))
                         {
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Profile
                             string emailKey = User.HashPassword(friendEmail + rand.NextDouble().ToString());
                             emailKey = emailKey.Substring((int)(rand.NextDouble() * 10), 32);
 
-                            RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_invitation.eml");
+                            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_invitation.eml");
 
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_EMAIL", LoggedInMember.AlternateEmail);
@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.Profile
                                 // only send a notification if they have subscribed to them
                                 if (friendProfile.EmailNotifications)
                                 {
-                                    RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_notification.eml");
+                                    RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_notification.eml");
 
                                     emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
                                     emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);

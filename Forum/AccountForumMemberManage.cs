@@ -65,9 +65,9 @@ namespace BoxSocial.Applications.Forum
         {
             SetTemplate("account_forum_member_manage");
 
-            int page = Functions.RequestInt("p", 0);
+            int page = core.Functions.RequestInt("p", 0);
 
-            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, Owner, Functions.GetFilter(), page, 20);
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, Owner, core.Functions.GetFilter(), page, 20);
 
             foreach (ForumMember member in members.Values)
             {
@@ -83,7 +83,7 @@ namespace BoxSocial.Applications.Forum
         {
             SetTemplate("account_forum_member_edit");
 
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
             ForumMember member = null;
 
             try
@@ -124,11 +124,9 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
-            long id = Functions.FormLong("id", 0);
-            long rankId = Functions.FormLong("ranks", 0);
+            long id = core.Functions.FormLong("id", 0);
+            long rankId = core.Functions.FormLong("ranks", 0);
             ForumMember member = null;
-			
-			HttpContext.Current.Response.Write(rankId.ToString() + " <br />");
 
             try
             {
@@ -143,7 +141,7 @@ namespace BoxSocial.Applications.Forum
                 core.Functions.Generate404();
             }
 
-            member.ForumSignature = Request.Form["signature"];
+            member.ForumSignature = core.Http.Form["signature"];
             member.ForumRankId = rankId;
             member.Update(typeof(ForumMember));
 			

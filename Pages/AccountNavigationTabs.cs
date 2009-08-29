@@ -87,7 +87,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long tabId = Functions.RequestLong("id", Functions.FormLong("id", 0));
+            long tabId = core.Functions.RequestLong("id", core.Functions.FormLong("id", 0));
 
             Dictionary<string, string> hiddenFields = new Dictionary<string, string>();
             hiddenFields.Add("key", ModuleKey);
@@ -121,7 +121,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long tabId = Functions.RequestLong("id", 0);
+            long tabId = core.Functions.RequestLong("id", 0);
 
             try
             {
@@ -171,7 +171,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long pageId = Functions.FormLong("page-id", 0);
+            long pageId = core.Functions.FormLong("page-id", 0);
 
             try
             {

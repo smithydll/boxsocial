@@ -91,7 +91,7 @@ namespace BoxSocial.Musician
 
                 try
                 {
-                    song = new Song(core, Functions.RequestLong("id", 0));
+                    song = new Song(core, core.Functions.RequestLong("id", 0));
                 }
                 catch (InvalidSongException)
                 {
@@ -125,7 +125,7 @@ namespace BoxSocial.Musician
 
                 try
                 {
-                    song = new Song(core, Functions.RequestLong("id", 0));
+                    song = new Song(core, core.Functions.RequestLong("id", 0));
                 }
                 catch (InvalidSongException)
                 {
@@ -133,9 +133,9 @@ namespace BoxSocial.Musician
                     return;
                 }
 
-                song.Title = Request.Form["title"];
-                song.Lyrics = Request.Form["lyrics"];
-                song.LicenseId = Functions.GetLicense();
+                song.Title = core.Http.Form["title"];
+                song.Lyrics = core.Http.Form["lyrics"];
+                song.LicenseId = core.Functions.GetLicense();
 
                 try
                 {
@@ -151,7 +151,7 @@ namespace BoxSocial.Musician
             }
             else
             {
-                Song song = Song.Create(core, (Musician)Owner, Request.Form["title"], Request.Form["lyrics"], Functions.GetLicense());
+                Song song = Song.Create(core, (Musician)Owner, core.Http.Form["title"], core.Http.Form["lyrics"], core.Functions.GetLicense());
 
                 this.SetRedirectUri(BuildUri("songs"));
             }

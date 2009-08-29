@@ -63,7 +63,7 @@ namespace BoxSocial.Musician
         void AccountGigManage_Show(object sender, EventArgs e)
         {
             List<Gig> gigs = null;
-            long tourId = Functions.RequestLong("id", 0);
+            long tourId = core.Functions.RequestLong("id", 0);
 
             if (tourId > 0)
             {

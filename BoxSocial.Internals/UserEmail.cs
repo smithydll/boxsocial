@@ -201,7 +201,7 @@ namespace BoxSocial.Internals
                 string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
                     emailId, activateKey);
 
-                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "email_activation.eml");
+                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_activation.eml");
 
                 emailTemplate.Parse("TO_NAME", owner.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);

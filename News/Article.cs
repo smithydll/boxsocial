@@ -214,7 +214,7 @@ namespace BoxSocial.Applications.News
 		
 		public static void Show(Core core, GPage page, long articleId)
 		{
-			int p = Functions.RequestInt("p", 1);
+			int p = core.Functions.RequestInt("p", 1);
 			page.template.SetTemplate("News", "viewnewsarticle");
 			
 			Article article = null;

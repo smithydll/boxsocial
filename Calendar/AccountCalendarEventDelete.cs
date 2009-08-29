@@ -62,9 +62,9 @@ namespace BoxSocial.Applications.Calendar
         {
             AuthoriseRequestSid();
 
-            long eventId = Functions.RequestLong("id", 0);
+            long eventId = core.Functions.RequestLong("id", 0);
 
-            if (Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
+            if (core.Display.GetConfirmBoxResult() != ConfirmBoxResult.None)
             {
                 Save(new EventHandler(AccountCalendarEventDelete_Save));
             }
@@ -91,9 +91,9 @@ namespace BoxSocial.Applications.Calendar
         {
             AuthoriseRequestSid();
 
-            long eventId = Functions.FormLong("id", 0);
+            long eventId = core.Functions.FormLong("id", 0);
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 if (eventId > 0)
                 {

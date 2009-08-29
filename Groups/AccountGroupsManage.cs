@@ -103,7 +103,7 @@ namespace BoxSocial.Groups
 
         void AccountGroupsManage_Delete(object sender, EventArgs e)
         {
-            long groupId = Functions.RequestLong("id", -1);
+            long groupId = core.Functions.RequestLong("id", -1);
 
             if (groupId >= 0)
             {
@@ -129,9 +129,9 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = Functions.RequestLong("id", -1);
+            long groupId = core.Functions.RequestLong("id", -1);
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 try
                 {

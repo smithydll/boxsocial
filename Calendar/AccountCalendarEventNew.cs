@@ -70,17 +70,17 @@ namespace BoxSocial.Applications.Calendar
             bool edit = false;
             ushort eventAccess = 0;
 
-            if (Request.QueryString["mode"] == "edit")
+            if (core.Http.Query["mode"] == "edit")
             {
                 edit = true;
             }
 
-            int year = Functions.RequestInt("year", tz.Now.Year);
-            int month = Functions.RequestInt("month", tz.Now.Month);
-            int day = Functions.RequestInt("day", tz.Now.Day);
+            int year = core.Functions.RequestInt("year", tz.Now.Year);
+            int month = core.Functions.RequestInt("month", tz.Now.Month);
+            int day = core.Functions.RequestInt("day", tz.Now.Day);
 
-            string inviteeIdList = Request.Form["inviteeses"];
-            string inviteeUsernameList = Request.Form["invitees"];
+            string inviteeIdList = core.Http.Form["inviteeses"];
+            string inviteeUsernameList = core.Http.Form["invitees"];
             List<long> inviteeIds = new List<long>();
 
             if (!(string.IsNullOrEmpty(inviteeIdList)))
@@ -128,7 +128,7 @@ namespace BoxSocial.Applications.Calendar
 			
 			if (edit)
             {
-                int id = Functions.RequestInt("id", -1);
+                int id = core.Functions.RequestInt("id", -1);
 
                 if (id < 1)
                 {
@@ -295,13 +295,13 @@ namespace BoxSocial.Applications.Calendar
             DateTime endTime = tz.Now;
             bool edit = false;
 
-            if (Request.Form["mode"] == "edit")
+            if (core.Http.Form["mode"] == "edit")
             {
                 edit = true;
             }
 
-            string inviteeIdList = Request.Form["inviteeses"];
-            string inviteeUsernameList = Request.Form["invitees"];
+            string inviteeIdList = core.Http.Form["inviteeses"];
+            string inviteeUsernameList = core.Http.Form["invitees"];
             List<long> inviteeIds = new List<long>();
 
             if (!(string.IsNullOrEmpty(inviteeIdList)))
@@ -337,29 +337,29 @@ namespace BoxSocial.Applications.Calendar
 
             try
             {
-                subject = Request.Form["subject"];
-                location = Request.Form["location"];
-                description = Request.Form["description"];
+                subject = core.Http.Form["subject"];
+                location = core.Http.Form["location"];
+                description = core.Http.Form["description"];
 
                 startTime = new DateTime(
-                    int.Parse(Request.Form["start-year"]),
-                    int.Parse(Request.Form["start-month"]),
-                    int.Parse(Request.Form["start-day"]),
-                    int.Parse(Request.Form["start-hour"]),
-                    int.Parse(Request.Form["start-minute"]),
+                    int.Parse(core.Http.Form["start-year"]),
+                    int.Parse(core.Http.Form["start-month"]),
+                    int.Parse(core.Http.Form["start-day"]),
+                    int.Parse(core.Http.Form["start-hour"]),
+                    int.Parse(core.Http.Form["start-minute"]),
                     0);
 
                 endTime = new DateTime(
-                    int.Parse(Request.Form["end-year"]),
-                    int.Parse(Request.Form["end-month"]),
-                    int.Parse(Request.Form["end-day"]),
-                    int.Parse(Request.Form["end-hour"]),
-                    int.Parse(Request.Form["end-minute"]),
+                    int.Parse(core.Http.Form["end-year"]),
+                    int.Parse(core.Http.Form["end-month"]),
+                    int.Parse(core.Http.Form["end-day"]),
+                    int.Parse(core.Http.Form["end-hour"]),
+                    int.Parse(core.Http.Form["end-minute"]),
                     0);
 
                 if (edit)
                 {
-                    eventId = long.Parse(Request.Form["id"]);
+                    eventId = long.Parse(core.Http.Form["id"]);
                 }
             }
             catch
@@ -371,7 +371,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Event calendarEvent = Event.Create(core, LoggedInMember, Owner, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime), Functions.GetPermission());
+                Event calendarEvent = Event.Create(core, LoggedInMember, Owner, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime));
 
                 foreach (long inviteeId in inviteeIds)
                 {
@@ -395,7 +395,6 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.Description = description;
                 calendarEvent.StartTimeRaw = tz.GetUnixTimeStamp(startTime);
                 calendarEvent.EndTimeRaw = tz.GetUnixTimeStamp(endTime);
-                calendarEvent.Permissions = Functions.GetPermission();
                 
                 calendarEvent.Update();
 				

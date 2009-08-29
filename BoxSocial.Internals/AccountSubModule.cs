@@ -48,9 +48,9 @@ namespace BoxSocial.Internals
         /// Account panel viewer
         /// </summary>
         protected User LoggedInMember;
-        protected HttpRequest Request;
-        protected HttpResponse Response;
-        protected HttpServerUtility Server;
+        //protected HttpRequest Request;
+        //protected HttpResponse Response;
+        //protected HttpServerUtility Server;
         private Dictionary<string, ModuleModeHandler> modes = new Dictionary<string, ModuleModeHandler>();
         private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
 
@@ -84,16 +84,12 @@ namespace BoxSocial.Internals
             this.db = core.db;
             this.session = core.session;
             this.tz = core.tz;
-            //this.loggedInMember = session.LoggedInMember;
             this.Owner = owner;
             this.LoggedInMember = session.LoggedInMember;
-            this.Request = HttpContext.Current.Request;
-            this.Response = HttpContext.Current.Response;
-            this.Server = HttpContext.Current.Server;
 
             CreateTemplate();
 
-            string mode = HttpContext.Current.Request["mode"];
+            string mode = core.Http["mode"];
 
             if (Load != null)
             {
@@ -242,7 +238,7 @@ namespace BoxSocial.Internals
 
         private void ShowMode(string mode)
         {
-            if (Request.Form["save"] != null)
+            if (core.Http.Form["save"] != null)
             {
                 if (saveHandlers.ContainsKey(mode))
                 {
@@ -265,7 +261,7 @@ namespace BoxSocial.Internals
 
         protected void Save(EventHandler saveHandler)
         {
-            if (Request.Form["save"] != null)
+            if (core.Http.Form["save"] != null)
             {
                 saveHandler(this, new EventArgs());
             }
@@ -273,11 +269,11 @@ namespace BoxSocial.Internals
 
         protected void SaveMode(ModuleModeHandler saveHandler)
         {
-            if (Request.Form["save"] != null)
+            if (core.Http.Form["save"] != null)
             {
-                if (Request.Form["mode"] != null)
+                if (core.Http.Form["mode"] != null)
                 {
-                    saveHandler(this, new ModuleModeEventArgs(Request.Form["mode"]));
+                    saveHandler(this, new ModuleModeEventArgs(core.Http.Form["mode"]));
                 }
             }
         }
@@ -291,7 +287,7 @@ namespace BoxSocial.Internals
         /// </summary>
         private void CreateTemplate()
         {
-            template = new Template("1301.html");
+            template = new Template(core.Http.TemplatePath, "1301.html");
             if (Owner != null)
             {
                 template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
@@ -315,7 +311,7 @@ namespace BoxSocial.Internals
         /// <param name="errorMessage"></param>
         protected void DisplayError(string errorMessage)
         {
-            template = new Template("1302.html");
+            template = new Template(core.Http.TemplatePath, "1302.html");
             template.Parse("ERROR_MESSAGE", errorMessage);
             RenderTemplate();
         }
@@ -326,7 +322,7 @@ namespace BoxSocial.Internals
         /// <param name="errorMessage"></param>
         protected void DisplayGenericError()
         {
-            template = new Template("1302.html");
+            template = new Template(core.Http.TemplatePath, "1302.html");
             template.ParseRaw("ERROR_MESSAGE", "An error has occured accessing this account module, maybe you are accessing it incorrectly. <a href=\"javascript:history.go(-1);\">Go Back</a>");
             RenderTemplate();
         }
@@ -466,9 +462,9 @@ namespace BoxSocial.Internals
         /// </summary>
         public static void AuthoriseRequestSid(Core core)
         {
-            if (HttpContext.Current.Request.QueryString["sid"] != core.session.SessionId)
+            if (core.Http.Query["sid"] != core.session.SessionId)
             {
-                if (string.IsNullOrEmpty(HttpContext.Current.Request.QueryString["sid"]))
+                if (string.IsNullOrEmpty(core.Http.Query["sid"]))
                 {
                     core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
@@ -476,7 +472,7 @@ namespace BoxSocial.Internals
 
                 SelectQuery query = new SelectQuery("user_sessions");
                 query.AddFields("user_id");
-                query.AddCondition("session_string", HttpContext.Current.Request.QueryString["sid"]);
+                query.AddCondition("session_string", core.Http.Query["sid"]);
                 query.AddCondition("user_id", core.session.LoggedInMember.Id);
                 query.AddCondition("session_signed_in", true);
                 query.AddCondition("session_ip", core.session.IPAddress.ToString());
@@ -566,9 +562,9 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
         }
 
-        protected void ParseClassification(string templateVar, Classifications classification)
+        protected void ParseClassification(Core core, string templateVar, Classifications classification)
         {
-            template.ParseRaw(templateVar, Classification.BuildClassificationBox(classification));
+            template.ParseRaw(templateVar, Classification.BuildClassificationBox(core, classification));
         }
 
         protected void ParseTimeZoneBox(string templateVar, string timeZone)

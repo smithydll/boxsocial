@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -327,7 +327,7 @@ namespace BoxSocial.Applications.Pages
             core.db.Query(uQuery);
         }
 
-        public static List Create(Core core, string title, ref string slug, string listAbstract, short listType, ushort permissions)
+        public static List Create(Core core, string title, ref string slug, string listAbstract, short listType)
         {
             Navigation.GenerateSlug(title, ref slug);
 
@@ -348,14 +348,14 @@ namespace BoxSocial.Applications.Pages
                     string listsSlug = "lists";
                     try
                     {
-                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listsSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listsSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
                     }
                     catch (PageSlugNotUniqueException)
                     {
                         throw new Exception("Cannot create lists slug.");
                     }
                 }
-                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
 
                 // Create list
 
@@ -365,7 +365,6 @@ namespace BoxSocial.Applications.Pages
                 iQuery.AddField("list_path", slug);
                 iQuery.AddField("list_type", listType);
                 iQuery.AddField("list_abstract", listAbstract);
-                iQuery.AddField("list_access", permissions);
 
                 long listId = core.db.Query(iQuery);
 

@@ -126,8 +126,6 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("item_type_id", owner.TypeId);
 			
             DataTable memberTable = db.Query(query);
-			
-			//HttpContext.Current.Response.Write(query.ToString());
 
             if (memberTable.Rows.Count == 1)
             {
@@ -142,8 +140,6 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidUserException();
             }
-			
-			//HttpContext.Current.Response.Write(forumRank.ToString());
         }
 		
 		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)
@@ -292,7 +288,7 @@ namespace BoxSocial.Applications.Forum
                 return;
             }
 
-            if (!string.IsNullOrEmpty(HttpContext.Current.Request.Form["submit"]))
+            if (!string.IsNullOrEmpty(core.Http.Form["submit"]))
             {
                 Save(core, page);
             }
@@ -330,7 +326,7 @@ namespace BoxSocial.Applications.Forum
             page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.Owner, "y"));
             page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.Owner, "z"));
 
-            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.Owner, Functions.GetFilter(), page.page, 20);
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.Owner, core.Functions.GetFilter(), page.page, 20);
 
             foreach (ForumMember member in members.Values)
             {
@@ -362,7 +358,7 @@ namespace BoxSocial.Applications.Forum
 				{
                     member = ForumMember.Create(core, page.Owner, core.session.LoggedInMember, false);
 				}
-                member.ForumSignature = HttpContext.Current.Request.Form["signature"];
+                member.ForumSignature = core.Http.Form["signature"];
 
                 member.Update(typeof(ForumMember));
 

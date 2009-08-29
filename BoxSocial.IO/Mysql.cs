@@ -779,9 +779,7 @@ namespace BoxSocial.IO
             }
             catch (Exception ex)
             {
-                HttpContext.Current.Response.Write(query.ToString());
-				HttpContext.Current.Response.Write(ex.ToString());
-                HttpContext.Current.Response.End();
+                // DEBUG HERE
             }
         }
 
@@ -907,7 +905,6 @@ namespace BoxSocial.IO
 			
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-			//HttpContext.Current.Response.Write(sb.ToString() + "<br />");
             UpdateQuery(sb.ToString());
         }
 
@@ -918,7 +915,6 @@ namespace BoxSocial.IO
 
             foreach (Index key in indexes.Keys)
             {
-				//HttpContext.Current.Response.Write(tableName + ", " + key.Key + "<br />");
                 bool removeKey = (!keys.Contains(key));
  
                 if (removeKey)
@@ -935,51 +931,6 @@ namespace BoxSocial.IO
             {
                 List<DataFieldInfo> keyFields = UniqueKey.GetFields(key.Key, fields);
                 bool newKey = (!indexes.ContainsKey(key));
-				
-				//HttpContext.Current.Response.Write(tableName + ", " + key.Key + " " + newKey.ToString() + "<br />");
-
-                /*if (!newKey)
-                {
-                    bool keyFieldsChanged = false;
-
-                    foreach (DataFieldInfo keyField in keyFields)
-                    {
-                        if (!indexes[key].Contains(new DataField(tableName, keyField.Name)))
-                        {
-                            keyFieldsChanged = true;
-                            newKey = true;
-                        }
-                    }
-
-                    foreach (DataField field in indexes[key])
-                    {
-                        bool flag = false;
-
-                        foreach (DataFieldInfo keyField in keyFields)
-                        {
-                            if (keyField.Name == field.Name)
-                            {
-                                flag = true;
-                                break;
-                            }
-                        }
-
-                        if (!flag)
-                        {
-                            keyFieldsChanged = true;
-                            newKey = true;
-                        }
-                    }
-
-                    if (keyFieldsChanged)
-                    {
-                        // delete the key
-                        string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
-                            tableName, key);
-
-                        UpdateQuery(sql);
-                    }
-                }*/
 
                 if (newKey)
                 {

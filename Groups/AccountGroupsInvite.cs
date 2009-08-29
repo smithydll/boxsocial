@@ -66,7 +66,7 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_invite");
 
-            long groupId = Functions.RequestLong("id", 0);
+            long groupId = core.Functions.RequestLong("id", 0);
 
             try
             {
@@ -100,8 +100,8 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = Functions.FormLong("id", 0);
-            string username = Request.Form["username"];
+            long groupId = core.Functions.FormLong("id", 0);
+            string username = core.Http.Form["username"];
 
             try
             {
@@ -125,7 +125,7 @@ namespace BoxSocial.Groups
 
                         if (friendsTable.Rows.Count > 0)
                         {
-                            RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "group_invitation.eml");
+                            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "group_invitation.eml");
 
                             emailTemplate.Parse("TO_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);

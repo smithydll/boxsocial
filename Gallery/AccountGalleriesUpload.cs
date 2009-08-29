@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.Gallery
         {
             SetTemplate("account_galleries_upload");
 
-            long galleryId = Functions.RequestLong("id", 0);
+            long galleryId = core.Functions.RequestLong("id", 0);
 
             if (galleryId == 0)
             {
@@ -98,17 +98,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 Gallery gallery = new Gallery(core, LoggedInMember, galleryId);
 
-                ushort galleryAccess = gallery.Permissions;
-
-                List<string> permissions = new List<string>();
-                permissions.Add("Can Read");
-                permissions.Add("Can Comment");
-
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
-                //core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", galleryAccess, permissions);
-                
-                AccessControlLists acl = new AccessControlLists(core, gallery);
-                acl.ParseACL(template, LoggedInMember, "S_GALLERY_PERMS");
 
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
@@ -132,11 +122,11 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long galleryId = Functions.FormLong("id", 0);
-            string title = Request.Form["title"];
-            string description = Request.Form["description"];
+            long galleryId = core.Functions.FormLong("id", 0);
+            string title = core.Http.Form["title"];
+            string description = core.Http.Form["description"];
 
-            if (Request.Files["photo-file"] == null)
+            if (core.Http.Files["photo-file"] == null)
             {
                 core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
                 return;
@@ -146,18 +136,18 @@ namespace BoxSocial.Applications.Gallery
             {
                 Gallery parent = new Gallery(core, LoggedInMember, galleryId);
 
-                string slug = Request.Files["photo-file"].FileName;
+                string slug = core.Http.Files["photo-file"].FileName;
 
                 try
                 {
-                    string saveFileName = GalleryItem.HashFileUpload(Request.Files["photo-file"].InputStream);
+                    string saveFileName = GalleryItem.HashFileUpload(core.Http.Files["photo-file"].InputStream);
                     if (!File.Exists(TPage.GetStorageFilePath(saveFileName)))
                     {
                         TPage.EnsureStoragePathExists(saveFileName);
-                        Request.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
+                        core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, Request.Files["photo-file"].FileName, saveFileName, Request.Files["photo-file"].ContentType, (ulong)Request.Files["photo-file"].ContentLength, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicense(), core.Functions.GetClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");

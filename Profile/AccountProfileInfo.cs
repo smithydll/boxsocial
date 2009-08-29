@@ -146,12 +146,12 @@ namespace BoxSocial.Applications.Profile
             AuthoriseRequestSid();
 
             string dob = string.Format("{0:0000}-{1:00}-{2:00}",
-                Request.Form["dob-year"], Request.Form["dob-month"], Request.Form["dob-day"]);
+                core.Http.Form["dob-year"], core.Http.Form["dob-month"], core.Http.Form["dob-day"]);
 
             LoggedInMember.Profile.DateOfBirth = DateTime.Parse(dob);
-            LoggedInMember.Profile.CountryIso = Request.Form["country"];
-            LoggedInMember.Profile.GenderRaw = Request.Form["gender"];
-            LoggedInMember.Profile.Autobiography = Request.Form["auto-biography"];
+            LoggedInMember.Profile.CountryIso = core.Http.Form["country"];
+            LoggedInMember.Profile.GenderRaw = core.Http.Form["gender"];
+            LoggedInMember.Profile.Autobiography = core.Http.Form["auto-biography"];
 
             LoggedInMember.Profile.Update();
 

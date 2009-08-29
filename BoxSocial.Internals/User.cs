@@ -1243,9 +1243,6 @@ namespace BoxSocial.Internals
 
             if (db.Query(query) < 0)
             {
-                HttpContext.Current.Response.Write(query.ToString());
-                HttpContext.Current.Response.End();
-
                 throw new InvalidUserException();
             }
 
@@ -1317,7 +1314,7 @@ namespace BoxSocial.Internals
             string activateUri = string.Format("{0}register/?mode=activate&id={1}&key={2}",
                 Linker.Uri, userId, activateKey);
 
-            RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "registration_welcome.eml");
+            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "registration_welcome.eml");
 
             emailTemplate.Parse("TO_NAME", userName);
             emailTemplate.Parse("U_ACTIVATE", activateUri);
@@ -1906,7 +1903,7 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                    if (core.Http.Domain != Linker.Domain)
                     {
                         return Linker.Uri + UserName.ToLower() + "/";
                     }
@@ -1918,7 +1915,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (domain == HttpContext.Current.Request.Url.Host.ToLower())
+                    if (domain == core.Http.Domain)
                     {
                         return "/";
                     }
@@ -2007,7 +2004,6 @@ namespace BoxSocial.Internals
             core.template.Parse("USER_ICON", page.User.UserThumbnail);
 
             core.template.Parse("U_PROFILE", page.User.Uri);
-            core.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.User));
             core.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
             core.template.Parse("IS_PROFILE", "TRUE");
@@ -2075,7 +2071,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (Linker.Domain == Linker.CurrentDomain)
+                if (Linker.Domain == core.Uri.CurrentDomain)
                 {
                     return "/account/";
                 }

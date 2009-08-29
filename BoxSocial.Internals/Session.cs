@@ -431,7 +431,6 @@ namespace BoxSocial.Internals
 
                     DataTable userSessionTable = db.Query(query);
 
-                    //HttpContext.Current.Response.Write(userSessionTable.Rows.Count.ToString() + ";");
                     if (userSessionTable.Rows.Count == 1)
                     {
                         loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
@@ -610,9 +609,6 @@ namespace BoxSocial.Internals
                 stw.Flush();
                 stw.Close();
 				
-				//HttpContext.Current.Response.Write(sb.ToString());
-				//HttpContext.Current.Response.End();
-				
                 newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                 newSessionDataCookie.Secure = false; // TODO: secure cookies
@@ -668,13 +664,13 @@ namespace BoxSocial.Internals
                     sessionId = (string)Request.QueryString["sid"];
                 }
 
-                if ((Linker.Domain != Linker.CurrentDomain) && (sessionId != (string)Request.QueryString["sid"]) && (!string.IsNullOrEmpty((string)Request.QueryString["sid"])))
+                if ((Linker.Domain != core.Uri.CurrentDomain) && (sessionId != (string)Request.QueryString["sid"]) && (!string.IsNullOrEmpty((string)Request.QueryString["sid"])))
                 {
                     sessionData = new SessionCookie();
                     sessionId = (string)Request.QueryString["sid"];
                 }
 
-                if ((Linker.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
+                if ((core.Uri.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
                 {
                     HttpContext.Current.Response.Redirect(Linker.Uri + string.Format("session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
@@ -814,12 +810,9 @@ namespace BoxSocial.Internals
             //
 
             long userId = (sessionData != null && sessionData.userId > 0) ? sessionData.userId : 0;
-			
-			//HttpContext.Current.Response.Write(Linker.CurrentDomain +  ", " + Linker.Domain);
-			//HttpContext.Current.Response.End();
 
 			// If the current domain is not the root domain, and the session is empty
-            if ((Linker.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
+            if ((core.Uri.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
             {
             }
             else
@@ -893,9 +886,6 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Secure = false; // TODO: secure cookies
                 Response.Cookies.Add(newSessionSidCookie);
             }
-			
-			// HttpContext.Current.Response.Write("Here");
-			//HttpContext.Current.Response.End();
 
             return;
         }

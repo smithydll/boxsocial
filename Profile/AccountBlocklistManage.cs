@@ -89,7 +89,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                blockId = long.Parse(Request["id"]);
+                blockId = long.Parse(core.Http["id"]);
             }
             catch
             {
@@ -112,7 +112,7 @@ namespace BoxSocial.Applications.Profile
             {
                 if ((string)relationsTable.Rows[i]["relation_type"] == "FRIEND")
                 {
-                    switch (Display.GetConfirmBoxResult())
+                    switch (core.Display.GetConfirmBoxResult())
                     {
                         case ConfirmBoxResult.None:
                             Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
@@ -169,7 +169,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                blockId = long.Parse(Request.QueryString["id"]);
+                blockId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {

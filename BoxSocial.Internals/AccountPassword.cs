@@ -67,8 +67,8 @@ namespace BoxSocial.Internals
         void AccountPassword_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
-
-            string password = Request.Form["old-password"];
+            
+            string password = core.Http.Form["old-password"];
 
             password = User.HashPassword(password);
 
@@ -84,19 +84,19 @@ namespace BoxSocial.Internals
                 SetError("The old password you entered does not match your old password, make sure you have entered your old password correctly.");
                 return;
             }
-            else if (Request.Form["new-password"] != Request.Form["confirm-password"])
+            else if (core.Http.Form["new-password"] != core.Http.Form["confirm-password"])
             {
                 SetError("The passwords you entered do not match, make sure you have entered your desired password correctly.");
                 return;
             }
-            else if (((string)Request.Form["new-password"]).Length < 6)
+            else if (((string)core.Http.Form["new-password"]).Length < 6)
             {
                 SetError("The password you entered is too short. Please choose a strong password of 6 characters or more.");
                 return;
             }
 
             UpdateQuery uquery = new UpdateQuery("user_info");
-            uquery.AddField("user_password", User.HashPassword(Request.Form["new-password"]));
+            uquery.AddField("user_password", User.HashPassword(core.Http.Form["new-password"]));
             uquery.AddCondition("user_id", core.LoggedInMemberId);
 
             long rowsChanged = db.Query(uquery);

@@ -19,9 +19,15 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Text;
 using System.Text;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace BoxSocial.IO
 {
@@ -34,6 +40,42 @@ namespace BoxSocial.IO
         {
             current = HttpContext.Current;
             HttpContext.Current = null;
+        }
+        
+        public void SetToImageResponse(string contextType, DateTime lastModified)
+        {
+            current.Response.Clear();
+            current.Response.ContentType = contextType;
+            current.Response.Cache.SetLastModified(lastModified);
+            current.Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
+        }
+        
+        public void SwitchContextType(string contextType)
+        {
+            current.Response.Clear();
+            current.Response.ContentType = contextType;
+        }
+        
+        public void WriteXml(XmlSerializer serializer, object obj)
+        {
+            SwitchContextType("text/xml");
+            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
+            
+            StringWriter sw = new StringWriter();
+            
+            serializer.Serialize(sw, obj);
+            
+            Write(sw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+        }
+        
+        public void TransmitFile(string fileName)
+        {
+            current.Response.TransmitFile(fileName);
+        }
+        
+        public void WriteStream(System.IO.MemoryStream stream)
+        {
+            stream.WriteTo(HttpContext.Current.Response.OutputStream);
         }
         
         internal void Write(string input)
@@ -61,25 +103,39 @@ namespace BoxSocial.IO
         {
             get
             {
-                if (GetFormValue(key) != null)
+                if (Form[key] != null)
                 {
-                    return GetFormValue(key);
+                    return Form[key];
                 }
                 else
                 {
-                    return GetQueryValue(key);
+                    return Query[key];
                 }
             }
         }
         
-        public string GetFormValue(string key)
+        public NameValueCollection Form
         {
-            return current.Request.Form[key];
+            get
+            {
+                return current.Request.Form;
+            }
         }
         
-        public string GetQueryValue(string key)
+        public NameValueCollection Query
         {
-            return current.Request.QueryString[key];
+            get
+            {
+                return current.Request.QueryString;
+            }
+        }
+        
+        public HttpFileCollection Files
+        {
+            get
+            {
+                return current.Request.Files;
+            }
         }
         
         public HttpCookie GetCookieValue(string key)
@@ -126,6 +182,51 @@ namespace BoxSocial.IO
             {
                 current.Response.StatusDescription = value;
             }
+        }
+        
+        public string AssemblyPath
+        {
+            get
+            {
+                return current.Server.MapPath("./bin/");
+            }
+        }
+        
+        public string LanguagePath
+        {
+            get
+            {
+                return current.Server.MapPath("./language/");
+            }
+        }
+        
+        public string TemplatePath
+        {
+            get
+            {
+                return current.Server.MapPath("./templates/");
+            }
+        }
+        
+        public string TemplateEmailPath
+        {
+            get
+            {
+                return current.Server.MapPath("./templates/emails/");
+            }
+        }
+        
+        public string Domain
+        {
+            get
+            {
+                return current.Request.Url.Host.ToLower();
+            }
+        }
+        
+        public void Redirect(string location)
+        {
+            current.Response.Redirect(location);
         }
     }
 }

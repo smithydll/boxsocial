@@ -91,7 +91,7 @@ namespace BoxSocial.Applications.Forum
             if (e.Mode == "edit")
             {
                 template.Parse("EDIT", "TRUE");
-                long id = Functions.RequestLong("id", 0);
+                long id = core.Functions.RequestLong("id", 0);
 
                 if (id == 0)
                 {
@@ -126,10 +126,10 @@ namespace BoxSocial.Applications.Forum
         {
 			AuthoriseRequestSid();
 			
-			string title = Request.Form["rank-title"];
-			long rankId = Functions.FormLong("id", 0);
-			int posts = Functions.FormInt("min-posts", 0);
-			bool special = (Request.Form["special"] == "true");
+			string title = core.Http.Form["rank-title"];
+			long rankId = core.Functions.FormLong("id", 0);
+			int posts = core.Functions.FormInt("min-posts", 0);
+			bool special = (core.Http.Form["special"] == "true");
 			int colour = -1;
 			
 			if (rankId > 0)

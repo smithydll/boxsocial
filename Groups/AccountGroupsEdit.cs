@@ -148,12 +148,12 @@ namespace BoxSocial.Groups
 
             try
             {
-                groupId = long.Parse(Request.Form["id"]);
-                category = short.Parse(Request.Form["category"]);
-                title = Request.Form["title"];
-                description = Request.Form["description"];
-                type = Request.Form["type"];
-                homepage = Request.Form["homepage"];
+                groupId = long.Parse(core.Http.Form["id"]);
+                category = short.Parse(core.Http.Form["category"]);
+                title = core.Http.Form["title"];
+                description = core.Http.Form["description"];
+                type = core.Http.Form["type"];
+                homepage = core.Http.Form["homepage"];
             }
             catch
             {

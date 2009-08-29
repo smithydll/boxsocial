@@ -56,21 +56,15 @@ namespace BoxSocial.Internals
             am.ResponseCode = ajaxCode;
 
             xs = new XmlSerializer(typeof(AjaxStatus));
-            stw = new StringWriter();
 
-            xs.Serialize(stw, am);
-
-            HttpContext.Current.Response.ContentType = "text/xml";
-            HttpContext.Current.Response.Clear();
-            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+            core.Http.WriteXml(xs, am);
 
             if (core.db != null)
             {
                 core.db.CloseConnection();
             }
 
-            HttpContext.Current.Response.End();
+            core.Http.End();
         }
 
         /// <summary>
@@ -91,19 +85,14 @@ namespace BoxSocial.Internals
             xs = new XmlSerializer(typeof(AjaxRawText));
             stw = new StringWriter();
 
-            xs.Serialize(stw, am);
-
-            HttpContext.Current.Response.ContentType = "text/xml";
-            HttpContext.Current.Response.Clear();
-            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+            core.Http.WriteXml(xs, am);
 
             if (core.db != null)
             {
                 core.db.CloseConnection();
             }
 
-            HttpContext.Current.Response.End();
+            core.Http.End();
         }
 
         /// <summary>
@@ -129,19 +118,14 @@ namespace BoxSocial.Internals
                 xs = new XmlSerializer(typeof(AjaxMessage));
                 stw = new StringWriter();
 
-                xs.Serialize(stw, am);
-
-                HttpContext.Current.Response.ContentType = "text/xml";
-                HttpContext.Current.Response.Clear();
-                HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-                HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+                core.Http.WriteXml(xs, am);
 
                 if (core.db != null)
                 {
                     core.db.CloseConnection();
                 }
 
-                HttpContext.Current.Response.End();
+                core.Http.End();
             }
             else
             {
@@ -167,19 +151,14 @@ namespace BoxSocial.Internals
             xs = new XmlSerializer(typeof(AjaxArray));
             stw = new StringWriter();
 
-            xs.Serialize(stw, am);
-
-            HttpContext.Current.Response.ContentType = "text/xml";
-            HttpContext.Current.Response.Clear();
-            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+            core.Http.WriteXml(xs, am);
 
             if (core.db != null)
             {
                 core.db.CloseConnection();
             }
 
-            HttpContext.Current.Response.End();
+            core.Http.End();
         }
 
         public void SendDictionary(string ajaxCode, Dictionary<long, string> arrayItems)
@@ -194,19 +173,14 @@ namespace BoxSocial.Internals
             xs = new XmlSerializer(typeof(AjaxDictionary));
             stw = new StringWriter();
 
-            xs.Serialize(stw, am);
-
-            HttpContext.Current.Response.ContentType = "text/xml";
-            HttpContext.Current.Response.Clear();
-            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-            HttpContext.Current.Response.Write(stw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+            core.Http.WriteXml(xs, am);
 
             if (core.db != null)
             {
                 core.db.CloseConnection();
             }
 
-            HttpContext.Current.Response.End();
+            core.Http.End();
         }
     }
 

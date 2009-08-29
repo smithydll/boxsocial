@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.News
             SetTemplate("account_news_article_write");
 
             Save(new EventHandler(AccountNewsWrite_Save));
-            if (Request.Form["publish"] != null)
+            if (core.Http.Form["publish"] != null)
             {
                 AccountNewsWrite_Save(this, new EventArgs());
             }
@@ -74,8 +74,8 @@ namespace BoxSocial.Applications.News
 
         void AccountNewsWrite_Save(object sender, EventArgs e)
         {
-            string subject = Request.Form["title"];
-            string body = Request.Form["post"];
+            string subject = core.Http.Form["title"];
+            string body = core.Http.Form["post"];
 
             Article newArticle = Article.Create(core, Owner, subject, body);
 

@@ -1136,8 +1136,8 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId)
         {
-            int p = Functions.RequestInt("p", 1);
-            string mark = HttpContext.Current.Request.QueryString["mark"];
+            int p = core.Functions.RequestInt("p", 1);
+            string mark = core.Http.Query["mark"];
             ForumSettings settings;
             try
             {

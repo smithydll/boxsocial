@@ -37,8 +37,8 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
 			Server.ScriptTimeout = 1000;
-            string assemblyName = Request.QueryString["app"];
-            string mode = Request.QueryString["mode"];
+            string assemblyName = core.Http.Query["app"];
+            string mode = core.Http.Query["mode"];
 
             System.Web.Caching.Cache cache = HttpContext.Current.Cache;
 			cache.Remove("itemFields");
@@ -115,7 +115,7 @@ namespace BoxSocial.FrontEnd
                         break;
                 }
 
-                Assembly loadApplication = Assembly.LoadFrom(HttpContext.Current.Server.MapPath(assemblyPath));
+                Assembly loadApplication = Assembly.LoadFrom(Path.Combine(core.Http.AssemblyPath, assemblyPath));
 
                 if (isInternals)
                 {

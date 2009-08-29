@@ -111,15 +111,15 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            LoggedInMember.Info.DisplayName = Request.Form["display"];
+            LoggedInMember.Info.DisplayName = core.Http.Form["display"];
 
             LoggedInMember.Info.Update();
 
-            LoggedInMember.Profile.Title = Request.Form["title"];
-            LoggedInMember.Profile.FirstName = Request.Form["firstname"];
-            LoggedInMember.Profile.MiddleName = Request.Form["middlename"];
-            LoggedInMember.Profile.LastName = Request.Form["lastname"];
-            LoggedInMember.Profile.Suffix = Request.Form["suffix"];
+            LoggedInMember.Profile.Title = core.Http.Form["title"];
+            LoggedInMember.Profile.FirstName = core.Http.Form["firstname"];
+            LoggedInMember.Profile.MiddleName = core.Http.Form["middlename"];
+            LoggedInMember.Profile.LastName = core.Http.Form["lastname"];
+            LoggedInMember.Profile.Suffix = core.Http.Form["suffix"];
 
             LoggedInMember.Profile.Update();
 

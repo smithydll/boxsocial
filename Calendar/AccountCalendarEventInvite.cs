@@ -69,7 +69,7 @@ namespace BoxSocial.Applications.Calendar
         {
             AuthoriseRequestSid();
 
-            long eventId = Functions.RequestLong("id", 0);
+            long eventId = core.Functions.RequestLong("id", 0);
 
             if (eventId > 0)
             {

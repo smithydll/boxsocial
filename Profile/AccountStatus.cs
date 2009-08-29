@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            string message = Request.Form["message"];
+            string message = core.Http.Form["message"];
 
             StatusFeed.SaveMessage(core, message);
 

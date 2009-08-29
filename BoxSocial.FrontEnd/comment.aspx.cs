@@ -229,8 +229,8 @@ namespace BoxSocial.FrontEnd
             try
             {
                 comment = (string)Request.Form["comment"];
-                itemId = Functions.RequestLong("item", 0);
-                itemTypeId = Functions.RequestLong("type", 0);
+                itemId = core.Functions.RequestLong("item", 0);
+                itemTypeId = core.Functions.RequestLong("type", 0);
 				itemKey = new ItemKey(itemId, itemTypeId);
             }
             catch

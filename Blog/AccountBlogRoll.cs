@@ -104,9 +104,9 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_blog_roll_new");
 
-            long id = Functions.RequestLong("id", Functions.FormLong("id", 0));
-            string title = Request.Form["title"];
-            string uri = Request.Form["uri"];
+            long id = core.Functions.RequestLong("id", core.Functions.FormLong("id", 0));
+            string title = core.Http.Form["title"];
+            string uri = core.Http.Form["uri"];
 
             if (e.Mode == "new")
             {
@@ -149,8 +149,8 @@ namespace BoxSocial.Applications.Blog
         void AccountBlogRoll_SaveNew(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
-            string title = Request.Form["title"];
-            string uri = Request.Form["uri"];
+            string title = core.Http.Form["title"];
+            string uri = core.Http.Form["uri"];
 
             if (string.IsNullOrEmpty(title))
             {
@@ -173,7 +173,7 @@ namespace BoxSocial.Applications.Blog
             }
             else if (e.Mode == "edit")
             {
-                long id = Functions.FormLong("id", 0);
+                long id = core.Functions.FormLong("id", 0);
                 BlogRollEntry bre = null;
 
                 try
@@ -197,7 +197,7 @@ namespace BoxSocial.Applications.Blog
 
         void AccountBlogRoll_Delete(object sender, EventArgs e)
         {
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
             BlogRollEntry bre = null;
 
             try
@@ -226,9 +226,9 @@ namespace BoxSocial.Applications.Blog
         {
             AuthoriseRequestSid();
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
-                long id = Functions.FormLong("id", 0);
+                long id = core.Functions.FormLong("id", 0);
                 try
                 {
                     BlogRollEntry bre = new BlogRollEntry(core, id);

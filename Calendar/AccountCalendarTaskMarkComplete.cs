@@ -62,10 +62,10 @@ namespace BoxSocial.Applications.Calendar
         {
             AuthoriseRequestSid();
 
-            long taskId = Functions.FormLong("id", 0);
+            long taskId = core.Functions.FormLong("id", 0);
             bool isAjax = false;
 
-            if (Request["ajax"] == "true")
+            if (core.Http["ajax"] == "true")
             {
                 isAjax = true;
             }

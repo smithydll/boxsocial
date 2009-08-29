@@ -40,15 +40,6 @@ namespace BoxSocial.Internals
 
     public interface IPermissibleItem
     {
-
-        /// <summary>
-        /// Raw Permissions
-        /// </summary>
-        ushort Permissions
-        {
-            get;
-        }
-
         /// <summary>
         /// Access Object
         /// </summary>

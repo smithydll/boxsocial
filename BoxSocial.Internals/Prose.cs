@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
@@ -51,6 +52,7 @@ namespace BoxSocial.Internals
     public class Prose : IProse
     {
 
+        private Core core;
         private string language;
         private CultureInfo culture;
         private Dictionary<string, ResourceManager> languageResources;
@@ -77,8 +79,9 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal void Initialise(string language)
+        internal void Initialise(Core core, string language)
         {
+            this.core = core;
             Language = language;
 
             languageResources = new Dictionary<string, ResourceManager>();
@@ -90,7 +93,7 @@ namespace BoxSocial.Internals
         {
             try
             {
-                ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, HttpContext.Current.Server.MapPath("./language/" + key + "/"), null);
+                ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.Http.LanguagePath, key), null);
 
                 languageResources.Add(key, rm);
             }

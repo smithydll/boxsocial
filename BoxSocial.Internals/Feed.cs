@@ -61,7 +61,7 @@ namespace BoxSocial.Internals
 
         public static void Show(Core core, TPage page, User owner)
         {
-            Template template = new Template("viewfeed.html");
+            Template template = new Template(core.Http.TemplatePath, "viewfeed.html");
 
             List<Action> feedActions = Feed.GetItems(core, owner);
 

@@ -140,7 +140,7 @@ namespace BoxSocial.FrontEnd
 
                                 // send the e-mail
 
-                                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "new_password.eml");
+                                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "new_password.eml");
                                 emailTemplate.Parse("TO_NAME", userEmail.Owner.DisplayName);
                                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                                 emailTemplate.Parse("USERNAME", userEmail.Owner.UserName);

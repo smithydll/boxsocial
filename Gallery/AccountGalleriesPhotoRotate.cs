@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long photoId = Functions.RequestLong("id", 0);
+            long photoId = core.Functions.RequestLong("id", 0);
 
             if (photoId > 0)
             {
@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.Gallery
 
                     System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
 
-                    switch (Request.QueryString["rotation"])
+                    switch (core.Http.Query["rotation"])
                     {
                         case "right":
                         case "90": // right 90

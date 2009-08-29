@@ -70,7 +70,7 @@ namespace BoxSocial.Applications.Forum
         {
             SetTemplate("account_forum_manage");
 
-            long forumId = Functions.RequestLong("id", 0);
+            long forumId = core.Functions.RequestLong("id", 0);
 
             Forum thisForum;
             if (forumId == 0)
@@ -127,7 +127,7 @@ namespace BoxSocial.Applications.Forum
         {
             SetTemplate("account_forum_edit");
 
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             SelectBox forumTypesSelectBox = new SelectBox("type");
             Dictionary<string, string> forumTypes = new Dictionary<string, string>();
@@ -185,10 +185,10 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
-            long parentId = Functions.FormLong("id", 0);
-            string title = Request.Form["title"];
-            string description = Request.Form["description"];
-            string type = Request.Form["type"];
+            long parentId = core.Functions.FormLong("id", 0);
+            string title = core.Http.Form["title"];
+            string description = core.Http.Form["description"];
+            string type = core.Http.Form["type"];
             bool isCategory = (type == "CAT");
 
             Forum parent;
@@ -246,10 +246,10 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
-            long forumId = Functions.FormLong("id", 0);
-            string title = Request.Form["title"];
-            string description = Request.Form["description"];
-            string type = Request.Form["type"];
+            long forumId = core.Functions.FormLong("id", 0);
+            string title = core.Http.Form["title"];
+            string description = core.Http.Form["description"];
+            string type = core.Http.Form["type"];
 
             Forum forum;
 
@@ -299,7 +299,7 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
-            long forumId = Functions.RequestLong("id", 0);
+            long forumId = core.Functions.RequestLong("id", 0);
 
             Forum forum;
 

@@ -81,7 +81,7 @@ namespace BoxSocial.Applications.Gallery
             long photoId = 0;
             try
             {
-                photoId = long.Parse(Request.QueryString["id"]);
+                photoId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -122,10 +122,6 @@ namespace BoxSocial.Applications.Gallery
                 permissions.Add("Can Comment");
 
                 core.Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
-                //core.Display.ParsePermissionsBox(template, "S_PHOTO_PERMS", photoAccess, permissions);
-
-                AccessControlLists acl = new AccessControlLists(core, photo);
-                acl.ParseACL(template, photo.Owner, "S_PHOTO_PERMS");
 
                 template.Parse("S_PHOTO_TITLE", title);
                 template.Parse("S_PHOTO_DESCRIPTION", description);
@@ -144,9 +140,9 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long photoId = Functions.FormLong("id", 0);
-            string title = Request.Form["title"];
-            string description = Request.Form["description"];
+            long photoId = core.Functions.FormLong("id", 0);
+            string title = core.Http.Form["title"];
+            string description = core.Http.Form["description"];
 
             if (photoId == 0)
             {
@@ -157,7 +153,7 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 GalleryItem galleryItem = new GalleryItem(core, LoggedInMember, photoId);
-                galleryItem.Update(title, description, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                galleryItem.Update(title, description, core.Functions.GetLicense(), core.Functions.GetClassification());
 
                 SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
                 core.Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");

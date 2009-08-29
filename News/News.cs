@@ -73,7 +73,7 @@ namespace BoxSocial.Applications.News
 		
 		public static void Show(Core core, GPage page)
 		{
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 			page.template.SetTemplate("News", "viewnews");
 
             News news = new News(core, page.Group);

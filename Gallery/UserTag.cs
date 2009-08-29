@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -281,7 +281,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (tag.TaggedMember.EmailNotifications)
                 {
-                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "photo_tag_notification.eml");
+                    RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "photo_tag_notification.eml");
 
                     emailTemplate.Parse("TO_NAME", tag.TaggedMember.DisplayName);
                     emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);

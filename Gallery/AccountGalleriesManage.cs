@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Gallery
 
             SetTemplate("account_galleries");
 
-            long parentGalleryId = Functions.RequestLong("id", 0);
+            long parentGalleryId = core.Functions.RequestLong("id", 0);
             string galleryParentPath = "";
             Gallery pg = null;
 
@@ -121,7 +121,8 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(ug.Items));
 
                 galleryVariableCollection.Parse("U_MANAGE", BuildUri("galleries", ug.Id));
-                galleryVariableCollection.Parse("U_VIEW", Gallery.BuildGalleryUri(core, Owner, ug.FullPath));
+                galleryVariableCollection.Parse("U_VIEW", ug.Uri);
+                galleryVariableCollection.Parse("U_PERMISSIONS", ug.AclUri);
                 galleryVariableCollection.Parse("U_EDIT", BuildUri("galleries", "edit", ug.Id));
                 galleryVariableCollection.Parse("U_DELETE", BuildUri("galleries", "delete", ug.Id));
             }
@@ -131,7 +132,7 @@ namespace BoxSocial.Applications.Gallery
         {
             SetTemplate("account_galleries_add");
 
-            long galleryId = Functions.RequestLong("id", 0);
+            long galleryId = core.Functions.RequestLong("id", 0);
             bool edit = false;
 
             if (e.Mode == "edit")
@@ -153,8 +154,6 @@ namespace BoxSocial.Applications.Gallery
 
                         Dictionary<string, string> licenses = new Dictionary<string, string>();
                         DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
-
-                        core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", pg.Permissions, permissions);
                     }
                     catch (InvalidGalleryException)
                     {
@@ -164,7 +163,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", 0x3333, permissions);
+                    // New Gallery
                 }
             }
             else
@@ -181,8 +180,6 @@ namespace BoxSocial.Applications.Gallery
 
                     Dictionary<string, string> licenses = new Dictionary<string, string>();
                     DataTable licensesTable = db.Query("SELECT license_id, license_title FROM licenses");
-
-                    core.Display.ParsePermissionsBox(template, "S_GALLERY_PERMS", ug.Permissions, permissions);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -200,7 +197,7 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long galleryId = Functions.RequestLong("id", 0);
+            long galleryId = core.Functions.RequestLong("id", 0);
 
             if (galleryId == 0)
             {
@@ -232,9 +229,9 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                galleryId = long.Parse(Request.Form["id"]);
-                title = Request.Form["title"];
-                description = Request.Form["description"];
+                galleryId = long.Parse(core.Http.Form["id"]);
+                title = core.Http.Form["title"];
+                description = core.Http.Form["description"];
             }
             catch
             {
@@ -242,7 +239,7 @@ namespace BoxSocial.Applications.Gallery
                 return;
             }
 
-            if (Request.Form["mode"] == "edit")
+            if (core.Http.Form["mode"] == "edit")
             {
                 edit = true;
             }
@@ -265,7 +262,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (parent.FullPath.Length + slug.Length + 1 < 192)
                     {
-                        if (Gallery.Create(core, Owner, parent, title, ref slug, description, Functions.GetPermission()) != null)
+                        if (Gallery.Create(core, Owner, parent, title, ref slug, description) != null)
                         {
                             SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
                             core.Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
@@ -313,7 +310,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (gallery.ParentPath.Length + slug.Length + 1 < 192)
                         {
-                            gallery.Update(core, title, slug, description, Functions.GetPermission());
+                            gallery.Update(core, title, slug, description);
 
                             SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", gallery.ParentId));
                             core.Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");

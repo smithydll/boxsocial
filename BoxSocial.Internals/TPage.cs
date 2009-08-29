@@ -213,7 +213,6 @@ namespace BoxSocial.Internals
             timer = new Stopwatch();
             timer.Start();
             rand = new Random();
-            page = Functions.RequestInt("p", 1);
 
             lock (StoragePathLock)
             {
@@ -284,7 +283,6 @@ namespace BoxSocial.Internals
             {
             }
             load.Stop();
-            //HttpContext.Current.Response.Write((load.ElapsedTicks / 10000000.0) .ToString() + " TPage()<br />");
 
             if (loggedInMember != null)
             {
@@ -299,6 +297,13 @@ namespace BoxSocial.Internals
             // As a security measure we use the http object to prevent
             // applications hijacking the response output
             core.Http = new Http();
+            Template.Path = core.Http.TemplatePath;
+            core.prose = new Prose();
+            core.prose.Initialise(core, "en");
+
+            template.SetProse(core.prose);
+            
+            page = core.Functions.RequestInt("p", 1);
         }
 
         public TPage(string templateFile)
@@ -316,7 +321,6 @@ namespace BoxSocial.Internals
 
                 core.Display.Header(this);
                 long templateStart = timer.ElapsedTicks;
-                //HttpContext.Current.Response.Write(template.ToString());
                 core.Http.Write(template);
                 double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
                 timer.Stop();
@@ -325,16 +329,9 @@ namespace BoxSocial.Internals
                 {
                     if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
                     {
-                        HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                        //HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                     }
                 }
-                /*HttpContext.Current.Response.Write(db.QueryList.Replace("\n", "<br />"));
-                /*if (seconds < 0.5)
-                {
-                    StreamWriter sw = new StreamWriter(Path.Combine(Path.Combine(Server.MapPath("."), "storage"), "time.log"), true);
-                    sw.WriteLine(string.Format("{0}\t{1}", seconds, HttpContext.Current.Request.RawUrl));
-                    sw.Close();
-                }*/
 
                 if (db != null)
                 {
@@ -345,7 +342,6 @@ namespace BoxSocial.Internals
                 //core.Dispose();
                 //core = null;
 
-                //HttpContext.Current.Response.End();
                 core.Http.End();
                 //System.Threading.Thread.CurrentThread.Abort();
             }

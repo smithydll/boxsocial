@@ -68,7 +68,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string CurrentDomain
+        public string CurrentDomain
         {
             get
             {
@@ -76,6 +76,10 @@ namespace BoxSocial.Internals
 				{
 					return HttpContext.Current.Request.Url.Host.ToLower();
 				}
+                else if (core.Http != null)
+                {
+                    return core.Http.Domain;
+                }
 				else
 				{
 					return "localhost";
@@ -179,12 +183,6 @@ namespace BoxSocial.Internals
         public string BuildFriendsUri(User member)
         {
             return AppendSid(string.Format("{0}friends",
-                member.UriStub));
-        }
-
-        public string BuildGalleryUri(User member)
-        {
-            return AppendSid(string.Format("{0}gallery",
                 member.UriStub));
         }
 

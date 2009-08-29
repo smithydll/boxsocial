@@ -60,7 +60,7 @@ namespace BoxSocial.Musician
 
         protected void BeginMusicianPage()
         {
-            musicianSlug = HttpContext.Current.Request["mn"];
+            musicianSlug = core.Http["mn"];
 
             try
             {
@@ -73,7 +73,7 @@ namespace BoxSocial.Musician
             }
 
             // We do not have customised domains for musician
-            /*if (string.IsNullOrEmpty(mus.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
+            /*if (string.IsNullOrEmpty(mus.Domain) || Linker.Domain == core.Http.Domain)
             {
                 core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
             }*/

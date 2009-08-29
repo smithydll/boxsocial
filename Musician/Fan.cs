@@ -104,8 +104,6 @@ namespace BoxSocial.Musician
             query.AddCondition("musician_id", owner.Id);
 			
             DataTable memberTable = db.Query(query);
-			
-			//HttpContext.Current.Response.Write(query.ToString());
 
             if (memberTable.Rows.Count == 1)
             {

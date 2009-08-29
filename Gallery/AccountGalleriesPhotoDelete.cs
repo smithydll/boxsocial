@@ -74,7 +74,7 @@ namespace BoxSocial.Applications.Gallery
 
         void AccountGalleriesPhotoDelete_Show(object sender, EventArgs e)
         {
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             if (id == 0)
             {
@@ -106,14 +106,14 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long id = Functions.FormLong("id", 0);
+            long id = core.Functions.FormLong("id", 0);
 
             if (id == 0)
             {
                 DisplayGenericError();
             }
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 try
                 {

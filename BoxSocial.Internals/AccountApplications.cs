@@ -102,7 +102,7 @@ namespace BoxSocial.Internals
         {
             template.SetTemplate("account_application_settings.html");
 
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             if (id == 0)
             {
@@ -141,7 +141,7 @@ namespace BoxSocial.Internals
         {
             AuthoriseRequestSid();
 
-            long id = Functions.FormLong("id", 0);
+            long id = core.Functions.FormLong("id", 0);
 
             if (id == 0)
             {
@@ -150,7 +150,7 @@ namespace BoxSocial.Internals
             }
 
             UpdateQuery uquery = new UpdateQuery("primitive_apps");
-            uquery.AddField("app_access", Functions.GetPermission());
+            //uquery.AddField("app_access", core.Functions.GetPermission());
             uquery.AddCondition("item_id", Owner.Id);
             uquery.AddCondition("item_type_id", Owner.TypeId);
             uquery.AddCondition("application_id", id);
@@ -169,7 +169,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                id = int.Parse(Request.QueryString["id"]);
+                id = int.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -198,7 +198,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                id = int.Parse(Request.QueryString["id"]);
+                id = int.Parse(core.Http.Query["id"]);
             }
             catch
             {

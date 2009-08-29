@@ -42,7 +42,7 @@ namespace BoxSocial.Internals
 
         public void ParseACL(Template template, Primitive owner, string variable)
         {
-            Template aclTemplate = new Template(HttpContext.Current.Server.MapPath("./templates"), "std.acl.html");
+            Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
 
             List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
             List<AccessControlGrant> itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);

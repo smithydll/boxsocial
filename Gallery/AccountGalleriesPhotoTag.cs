@@ -83,7 +83,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                long photoId = Functions.RequestLong("id", 0);
+                long photoId = core.Functions.RequestLong("id", 0);
 
                 GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
@@ -131,11 +131,11 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                long photoId = Functions.RequestLong("id", 0);
+                long photoId = core.Functions.RequestLong("id", 0);
 
                 GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
-                long tagCount = Functions.FormLong("tags", 0);
+                long tagCount = core.Functions.FormLong("tags", 0);
 
                 List<UserTag> tags = UserTag.GetTags(core, photo);
 
@@ -147,13 +147,13 @@ namespace BoxSocial.Applications.Gallery
                 // Load names
                 for (int i = 0; i < tagCount; i++)
                 {
-                    if (!string.IsNullOrEmpty(Request.Form["name[" + i + "]"]))
+                    if (!string.IsNullOrEmpty(core.Http.Form["name[" + i + "]"]))
                     {
-                        usernames.Add(Request.Form["name[" + i + "]"]);
-                        long userId = core.LoadUserProfile(Request.Form["name[" + i + "]"]);
+                        usernames.Add(core.Http.Form["name[" + i + "]"]);
+                        long userId = core.LoadUserProfile(core.Http.Form["name[" + i + "]"]);
                         if (userId > 0)
                         {
-                            usersTaggedByName.Add(Request.Form["name[" + i + "]"], userId);
+                            usersTaggedByName.Add(core.Http.Form["name[" + i + "]"], userId);
                         }
                     }
                 }
@@ -163,8 +163,8 @@ namespace BoxSocial.Applications.Gallery
 				 */
                 for (int i = 0; i < tagCount; i++)
                 {
-                    string tag = Request.Form["tag[" + i + "]"];
-                    string name = Request.Form["name[" + i + "]"];
+                    string tag = core.Http.Form["tag[" + i + "]"];
+                    string name = core.Http.Form["name[" + i + "]"];
                     if (string.IsNullOrEmpty(name))
                     {
                         tagInfo.Add(tag);

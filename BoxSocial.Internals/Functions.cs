@@ -165,12 +165,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static byte RequestByte(string var, byte defaultValue)
+        public byte RequestByte(string var, byte defaultValue)
         {
             byte outValue = defaultValue;
             try
             {
-                outValue = byte.Parse(HttpContext.Current.Request[var]);
+                outValue = byte.Parse(core.Http[var]);
             }
             catch
             {
@@ -178,12 +178,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static short RequestShort(string var, short defaultValue)
+        public short RequestShort(string var, short defaultValue)
         {
             short outValue = defaultValue;
             try
             {
-                outValue = short.Parse(HttpContext.Current.Request[var]);
+                outValue = short.Parse(core.Http[var]);
             }
             catch
             {
@@ -191,12 +191,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static int RequestInt(string var, int defaultValue)
+        public int RequestInt(string var, int defaultValue)
         {
             int outValue = defaultValue;
             try
             {
-                outValue = int.Parse(HttpContext.Current.Request[var]);
+                outValue = int.Parse(core.Http[var]);
             }
             catch
             {
@@ -204,12 +204,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static long RequestLong(string var, long defaultValue)
+        public long RequestLong(string var, long defaultValue)
         {
             long outValue = defaultValue;
             try
             {
-                outValue = long.Parse(HttpContext.Current.Request[var]);
+                outValue = long.Parse(core.Http[var]);
             }
             catch
             {
@@ -217,12 +217,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static byte FormByte(string var, byte defaultValue)
+        public byte FormByte(string var, byte defaultValue)
         {
             byte outValue = defaultValue;
             try
             {
-                outValue = byte.Parse(HttpContext.Current.Request.Form[var]);
+                outValue = byte.Parse(core.Http.Form[var]);
             }
             catch
             {
@@ -230,12 +230,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static short FormShort(string var, short defaultValue)
+        public short FormShort(string var, short defaultValue)
         {
             short outValue = defaultValue;
             try
             {
-                outValue = short.Parse(HttpContext.Current.Request.Form[var]);
+                outValue = short.Parse(core.Http.Form[var]);
             }
             catch
             {
@@ -243,12 +243,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static int FormInt(string var, int defaultValue)
+        public int FormInt(string var, int defaultValue)
         {
             int outValue = defaultValue;
             try
             {
-                outValue = int.Parse(HttpContext.Current.Request.Form[var]);
+                outValue = int.Parse(core.Http.Form[var]);
             }
             catch
             {
@@ -256,12 +256,12 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static long FormLong(string var, long defaultValue)
+        public long FormLong(string var, long defaultValue)
         {
             long outValue = defaultValue;
             try
             {
-                outValue = long.Parse(HttpContext.Current.Request.Form[var]);
+                outValue = long.Parse(core.Http.Form[var]);
             }
             catch
             {
@@ -269,39 +269,30 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public static ushort GetPermission()
+        public byte GetLicense()
         {
-            ushort permission = 0;
-
-            for (int i = 0; i < 16; i++)
-            {
-                if (HttpContext.Current.Request.Form[string.Format("perm-{0:X4}", 1 << i)] != null)
-                {
-                    permission = (ushort)(permission | (ushort)(1 << i));
-                }
-            }
-
-            return permission;
+            return byte.Parse(core.Http.Form["license"]);
+        }
+        
+        public Classifications GetClassification()
+        {
+            byte a = byte.Parse(core.Http.Form["classification"]);
+            return (Classifications)a;
         }
 
-        public static byte GetLicense()
+        public SortOrder GetSortOrder()
         {
-            return byte.Parse(HttpContext.Current.Request.Form["license"]);
+            return ((core.Http.Query["order"] == "DESC") ? SortOrder.Descending : SortOrder.Ascending);
         }
 
-        public static SortOrder GetSortOrder()
+        public string GetSortCriteria()
         {
-            return ((HttpContext.Current.Request.QueryString["order"] == "DESC") ? SortOrder.Descending : SortOrder.Ascending);
+            return core.Http.Query["sort"];
         }
 
-        public static string GetSortCriteria()
+        public string GetFilter()
         {
-            return HttpContext.Current.Request.QueryString["sort"];
-        }
-
-        public static string GetFilter()
-        {
-            return HttpContext.Current.Request.QueryString["filter"];
+            return core.Http.Query["filter"];
         }
 
         public static string BuildPermissionsBox(ushort permission, List<string> permissions)
@@ -529,7 +520,7 @@ namespace BoxSocial.Internals
 
         public void Generate404()
         {
-            HttpContext.Current.Response.StatusCode = 404;
+            core.Http.StatusCode = 404;
             core.template.SetTemplate("404.html");
             core.EndResponse();
         }
@@ -542,14 +533,14 @@ namespace BoxSocial.Internals
             }
             else
             {
-                HttpContext.Current.Response.StatusCode = 404;
+                core.Http.StatusCode = 404;
                 core.template.Parse("IS_404", "TRUE");
             }
         }
 
         public void Generate403()
         {
-            HttpContext.Current.Response.StatusCode = 403;
+            core.Http.StatusCode = 403;
             core.template.SetTemplate("403.html");
             core.EndResponse();
         }
@@ -562,7 +553,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                HttpContext.Current.Response.StatusCode = 403;
+                core.Http.StatusCode = 403;
                 core.template.Parse("IS_403", "TRUE");
             }
         }

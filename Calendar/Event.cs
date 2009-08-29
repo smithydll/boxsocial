@@ -276,10 +276,10 @@ namespace BoxSocial.Applications.Calendar
             eventAccess = new Access(core, permissions, owner);
         }
 
-        public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp, ushort permissions)
+        public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
         {
-            long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type_id, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut, event_access) VALUES ({0}, {1}, {2}, '{3}', '{4}', '{5}', {6}, {7}, {8})",
-                creator.UserId, owner.Id, owner.TypeId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp, permissions));
+            long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type_id, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut) VALUES ({0}, {1}, {2}, '{3}', '{4}', '{5}', {6}, {7})",
+                creator.UserId, owner.Id, owner.TypeId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp));
 
             Event myEvent = new Event(core, owner, eventId);
 
@@ -348,7 +348,7 @@ namespace BoxSocial.Applications.Calendar
 
                     db.Query(uQuery);
 
-                    RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+                    RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "event_invitation.eml");
 
                     emailTemplate.Parse("FROM_NAME", user.DisplayName);
                     emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
@@ -399,7 +399,7 @@ namespace BoxSocial.Applications.Calendar
 
                         long invitationId = db.Query(iQuery);
 
-                        RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "event_invitation.eml");
+                        RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "event_invitation.eml");
 
                         emailTemplate.Parse("FROM_NAME", user.DisplayName);
                         emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
@@ -517,9 +517,6 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, long eventId)
         {
-            /*HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetFields(typeof(Event))));*/
-            /*HttpContext.Current.Response.Write(BoxSocial.IO.Query.ObjectToSql(Event.GetTable(typeof(Event))));*/
-
             page.template.SetTemplate("Calendar", "viewcalendarevent");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")

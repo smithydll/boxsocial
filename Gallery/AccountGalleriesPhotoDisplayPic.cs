@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long pictureId = Functions.RequestLong("id", 0);
+            long pictureId = core.Functions.RequestLong("id", 0);
 
             if (pictureId == 0)
             {
@@ -91,8 +91,7 @@ namespace BoxSocial.Applications.Gallery
                 GalleryItem ugi = new GalleryItem(core, LoggedInMember, pictureId);
 
                 // check for public view permissions on the image
-                ushort photoAccess = ugi.Permissions;
-                if ((photoAccess & 0x1111) == 0x1111)
+                if (true)
                 {
 
                     LoggedInMember.Info.DisplayPictureId = pictureId;

@@ -720,8 +720,8 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId, long topicId)
         {
-            int p = Functions.RequestInt("p", 1);
-            long m = Functions.RequestLong("m", 0); // post, seeing as p has been globally reserved for page and cannot be used for post, we use m for message
+            int p = core.Functions.RequestInt("p", 1);
+            long m = core.Functions.RequestLong("m", 0); // post, seeing as p has been globally reserved for page and cannot be used for post, we use m for message
             Forum thisForum = null;
 
             page.template.SetTemplate("Forum", "viewtopic");

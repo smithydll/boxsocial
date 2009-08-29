@@ -622,22 +622,22 @@ namespace BoxSocial.Internals
             }
         }
 		
-		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification)
         {
-            return Create(core, false, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+            return Create(core, false, owner, title, ref slug, parent, pageBody, status, license, classification, null);
         }
 
-        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification)
         {
-            return Create(core, suppress, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+            return Create(core, suppress, owner, title, ref slug, parent, pageBody, status, license, classification, null);
         }
 		
-		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+		public static Page Create(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification, ApplicationEntry application)
         {
-			return Create(core, false, owner, title, ref slug, parent, pageBody, status, permissions, license, classification, null);
+			return Create(core, false, owner, title, ref slug, parent, pageBody, status, license, classification, null);
 		}
 
-        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification, ApplicationEntry application)
+        public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification, ApplicationEntry application)
         {
             string parents = "";
             string parentPath = "";
@@ -827,7 +827,6 @@ namespace BoxSocial.Internals
             iquery.AddField("page_ip", core.session.IPAddress.ToString());
             iquery.AddField("page_text", pageBody);
             iquery.AddField("page_license", license);
-            iquery.AddField("page_access", permissions);
             iquery.AddField("page_order", order);
             iquery.AddField("page_parent_id", parent);
             iquery.AddField("page_status", PageStatusToString(status));
@@ -853,7 +852,7 @@ namespace BoxSocial.Internals
             return new Page(core, owner, pageId);
         }
 
-        public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, ushort permissions, byte license, Classifications classification)
+        public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification)
         {
             string parents = "";
             string parentPath = "";
@@ -1071,7 +1070,6 @@ namespace BoxSocial.Internals
             uquery.AddField("page_ip", core.session.IPAddress.ToString());
             uquery.AddField("page_text", pageBody);
             uquery.AddField("page_license", license);
-            uquery.AddField("page_access", permissions);
             if (parentChanged)
             {
                 uquery.AddField("page_parent_id", parent);

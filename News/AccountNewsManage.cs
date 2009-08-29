@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.News
         {
             SetTemplate("account_news_manage");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
             News news = new News(core, Owner);
             List<Article> articles = news.GetArticles(p, 25);
 

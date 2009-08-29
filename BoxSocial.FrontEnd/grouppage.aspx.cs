@@ -52,11 +52,6 @@ namespace BoxSocial.FrontEnd
 
             meter.Add("Begin End Response");
 
-            if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
-            {
-                //HttpContext.Current.Response.Write(meter.ToString() + "\n");
-            }
-
             EndResponse();
         }
     }

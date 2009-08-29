@@ -75,8 +75,8 @@ namespace BoxSocial.Applications.Forum
             AuthoriseRequestSid();
 
             ForumSettings settings = new ForumSettings(core, Owner);
-            settings.TopicsPerPage = Functions.FormInt("topics-per-page", 10);
-            settings.PostsPerPage = Functions.FormInt("posts-per-page", 10);
+            settings.TopicsPerPage = core.Functions.FormInt("topics-per-page", 10);
+            settings.PostsPerPage = core.Functions.FormInt("posts-per-page", 10);
 
             settings.Update();
 			

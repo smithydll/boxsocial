@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
 
         protected void BeginProfile()
         {
-            profileUserName = HttpContext.Current.Request["un"];
+            profileUserName = core.Http["un"];
 
             try
             {

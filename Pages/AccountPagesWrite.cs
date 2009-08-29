@@ -68,37 +68,36 @@ namespace BoxSocial.Applications.Pages
             long pageParentId = 0;
             byte licenseId = 0;
             ushort pagePermissions = 4369;
-            string pageTitle = (Request.Form["title"] != null) ? Request.Form["title"] : "";
-            string pageSlug = (Request.Form["slug"] != null) ? Request.Form["slug"] : "";
-            string pageText = (Request.Form["post"] != null) ? Request.Form["post"] : "";
+            string pageTitle = (core.Http.Form["title"] != null) ? core.Http.Form["title"] : "";
+            string pageSlug = (core.Http.Form["slug"] != null) ? core.Http.Form["slug"] : "";
+            string pageText = (core.Http.Form["post"] != null) ? core.Http.Form["post"] : "";
             string pagePath = "";
             Classifications pageClassification = Classifications.Everyone;
 
             try
             {
-                if (Request.Form["license"] != null)
+                if (core.Http.Form["license"] != null)
                 {
-                    licenseId = Functions.GetLicense();
+                    licenseId = core.Functions.GetLicense();
                 }
-                if (Request.Form["id"] != null)
+                if (core.Http.Form["id"] != null)
                 {
-                    pageId = long.Parse(Request.Form["id"]);
-                    pagePermissions = Functions.GetPermission();
+                    pageId = long.Parse(core.Http.Form["id"]);
                 }
-                if (Request.Form["page-parent"] != null)
+                if (core.Http.Form["page-parent"] != null)
                 {
-                    pageParentId = long.Parse(Request.Form["page-parent"]);
+                    pageParentId = long.Parse(core.Http.Form["page-parent"]);
                 }
             }
             catch
             {
             }
 
-            if (Request.QueryString["id"] != null)
+            if (core.Http.Query["id"] != null)
             {
                 try
                 {
-                    pageId = long.Parse(Request.QueryString["id"]);
+                    pageId = long.Parse(core.Http.Query["id"]);
                 }
                 catch
                 {
@@ -107,7 +106,7 @@ namespace BoxSocial.Applications.Pages
 
             if (pageId > 0)
             {
-                if (Request.QueryString["mode"] == "edit")
+                if (core.Http.Query["mode"] == "edit")
                 {
                     try
                     {
@@ -171,7 +170,7 @@ namespace BoxSocial.Applications.Pages
             template.Parse("S_ID", pageId.ToString());
 
             Save(new EventHandler(AccountPagesWrite_Save));
-            if (Request.Form["publish"] != null)
+            if (core.Http.Form["publish"] != null)
             {
                 AccountPagesWrite_Save(this, new EventArgs());
             }
@@ -179,25 +178,25 @@ namespace BoxSocial.Applications.Pages
 
         void AccountPagesWrite_Save(object sender, EventArgs e)
         {
-            string slug = Request.Form["slug"];
-            string title = Request.Form["title"];
-            string pageBody = Request.Form["post"];
+            string slug = core.Http.Form["slug"];
+            string title = core.Http.Form["title"];
+            string pageBody = core.Http.Form["post"];
             long parent = 0;
             long pageId = 0;
             PageStatus status = PageStatus.Publish;
 
-            if (Request.Form["publish"] != null)
+            if (core.Http.Form["publish"] != null)
             {
                 status = PageStatus.Publish;
             }
 
-            if (Request.Form["save"] != null)
+            if (core.Http.Form["save"] != null)
             {
                 status = PageStatus.Draft;
             }
 
-            pageId = Functions.FormLong("id", 0);
-            parent = Functions.FormLong("page-parent", 0);
+            pageId = core.Functions.FormLong("id", 0);
+            parent = core.Functions.FormLong("page-parent", 0);
 
             try
             {
@@ -207,7 +206,7 @@ namespace BoxSocial.Applications.Pages
                     {
                         Page page = new Page(core, Owner, pageId);
 
-                        page.Update(core, Owner, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                        page.Update(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicense(), core.Functions.GetClassification());
                     }
                     catch (PageNotFoundException)
                     {
@@ -216,7 +215,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    Page.Create(core, Owner, title, ref slug, parent, pageBody, status, Functions.GetPermission(), Functions.GetLicense(), Classification.RequestClassification());
+                    Page.Create(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicense(), core.Functions.GetClassification());
                 }
             }
             catch (PageTitleNotValidException)
@@ -261,7 +260,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long pageId = Functions.RequestLong("id", 0);
+            long pageId = core.Functions.RequestLong("id", 0);
 
             try
             {

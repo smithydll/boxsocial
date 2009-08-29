@@ -163,10 +163,10 @@ namespace BoxSocial.Groups
 
         void AccountGroupsMembershipsManage_Join(object sender, ModuleModeEventArgs e)
         {
-            long groupId = Functions.RequestLong("id", 0);
+            long groupId = core.Functions.RequestLong("id", 0);
             UserGroup thisGroup;
 
-            if (Request.QueryString["sid"] == core.session.SessionId)
+            if (core.Http.Query["sid"] == core.session.SessionId)
             {
                 AccountGroupsMembershipsManage_Join_Save(sender, new EventArgs());
             }
@@ -200,7 +200,7 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = Functions.FormLong("id", Functions.RequestLong("id", 0));
+            long groupId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
 
             if (groupId == 0)
             {
@@ -208,7 +208,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes || Functions.RequestLong("id", 0) == groupId)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes || core.Functions.RequestLong("id", 0) == groupId)
             {
                 try
                 {
@@ -294,7 +294,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                groupId = long.Parse(Request.QueryString["id"]);
+                groupId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -369,7 +369,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Query["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
             }
@@ -428,10 +428,10 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.Form["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Form["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
-                title = Request.Form["title"];
+                title = core.Http.Form["title"];
             }
             catch
             {
@@ -524,7 +524,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Query["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
                 title = UTF8Encoding.UTF8.GetString(Convert.FromBase64String(idString[2]));
@@ -576,7 +576,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Query["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
             }
@@ -636,7 +636,7 @@ namespace BoxSocial.Groups
 
         void AccountGroupsMembershipsManage_ResignOperator(object sender, ModuleModeEventArgs e)
         {
-            long groupId = Functions.RequestLong("id", 0);
+            long groupId = core.Functions.RequestLong("id", 0);
 
             if (groupId == 0)
             {
@@ -660,7 +660,7 @@ namespace BoxSocial.Groups
         {
             AuthoriseRequestSid();
 
-            long groupId = Functions.RequestLong("id", 0);
+            long groupId = core.Functions.RequestLong("id", 0);
 
             if (groupId == 0)
             {
@@ -670,7 +670,7 @@ namespace BoxSocial.Groups
 
             UserGroup thisGroup = new UserGroup(core, groupId);
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 if (thisGroup.IsGroupOperator(LoggedInMember))
                 {
@@ -714,7 +714,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Query["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
             }
@@ -788,7 +788,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.QueryString["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Query["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
             }
@@ -819,7 +819,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                string[] idString = Request.Form["id"].Split(new char[] { ',' });
+                string[] idString = core.Http.Form["id"].Split(new char[] { ',' });
                 groupId = long.Parse(idString[0]);
                 userId = long.Parse(idString[1]);
             }
@@ -829,7 +829,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 try
                 {

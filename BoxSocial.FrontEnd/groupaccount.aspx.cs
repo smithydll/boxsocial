@@ -82,11 +82,11 @@ namespace BoxSocial.FrontEnd
                     string assemblyPath;
                     if (ae.IsPrimitive)
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
                     }
                     else
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}applications{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
                     }
                     Assembly assembly = Assembly.LoadFrom(assemblyPath);
 

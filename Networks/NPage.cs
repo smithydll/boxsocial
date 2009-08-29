@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -59,7 +59,7 @@ namespace BoxSocial.Networks
 
         protected void BeginNetworkPage()
         {
-            networkNetwork = HttpContext.Current.Request["nn"];
+            networkNetwork = core.Http["nn"];
 
             try
             {
@@ -81,13 +81,13 @@ namespace BoxSocial.Networks
 
             PageTitle = Network.DisplayName;
 
-            if (loggedInMember != null && HttpContext.Current.Request.QueryString["mode"] == "activate")
+            if (loggedInMember != null && core.Http.Query["mode"] == "activate")
             {
                 try
                 {
-                    if (loggedInMember.UserId == long.Parse(HttpContext.Current.Request.QueryString["id"]))
+                    if (loggedInMember.UserId == long.Parse(core.Http.Query["id"]))
                     {
-                        if (Network.Activate(this, loggedInMember, HttpContext.Current.Request.QueryString["key"]))
+                        if (Network.Activate(this, loggedInMember, core.Http.Query["key"]))
                         {
                             template.Parse("REDIRECT_URI", Network.Uri);
                             core.Display.ShowMessage("Joined Network", "You have successfully joined the network.");

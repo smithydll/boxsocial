@@ -1215,7 +1215,7 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                    if (core.Http.Domain != Linker.Domain)
                     {
                         return Linker.Uri + "group/" + Slug.ToLower() + "/";
                     }
@@ -1227,7 +1227,7 @@ namespace BoxSocial.Groups
                 }
                 else
                 {
-                    if (domain == HttpContext.Current.Request.Url.Host.ToLower())
+                    if (domain == core.Http.Domain)
                     {
                         return "/";
                     }
@@ -1444,7 +1444,7 @@ namespace BoxSocial.Groups
         {
             page.template.SetTemplate("Groups", "viewgroupmemberlist");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Group.DisplayName);
             page.template.Parse("MEMBERS", ((ulong)page.Group.Members).ToString());
@@ -1506,7 +1506,7 @@ namespace BoxSocial.Groups
 
             }
 
-            List<GroupMember> members = page.Group.GetMembers(p, 18, Functions.GetFilter());
+            List<GroupMember> members = page.Group.GetMembers(p, 18, core.Functions.GetFilter());
             foreach (GroupMember member in members)
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");

@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Blog
             SetTemplate("account_blog_manage");
 
             Blog myBlog;
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             try
             {

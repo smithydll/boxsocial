@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
 
         protected void BeginProfile()
         {
-            anAssemblyName = HttpContext.Current.Request["an"];
+            anAssemblyName = core.Http["an"];
 
             try
             {

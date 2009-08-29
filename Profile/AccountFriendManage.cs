@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_friends_manage");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             List<Friend> friends = LoggedInMember.GetFriends(p, 50);
 
@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -151,7 +151,7 @@ namespace BoxSocial.Applications.Profile
 
             ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
 
-            RawTemplate emailTemplate = new RawTemplate(Server.MapPath("./templates/emails/"), "friend_notification.eml");
+            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_notification.eml");
 
             emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
@@ -182,7 +182,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -211,7 +211,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -299,7 +299,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {

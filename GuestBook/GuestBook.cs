@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.GuestBook
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
             page.User.LoadProfileInfo();
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
 
@@ -98,7 +98,7 @@ namespace BoxSocial.Applications.GuestBook
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
             page.User.LoadProfileInfo();
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
 
@@ -178,7 +178,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             if (core.session.IsLoggedIn)
             {
@@ -201,7 +201,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             if (core.session.IsLoggedIn)
             {
@@ -223,7 +223,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             if (core.session.IsLoggedIn)
             {

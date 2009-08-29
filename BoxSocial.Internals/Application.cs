@@ -144,7 +144,6 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
-				//HttpContext.Current.Response.Write(type.FullName + ", " + type.GetCustomAttributes(typeof(DataTableAttribute), false).Length.ToString() + "<br />");
                 if (type.IsSubclassOf(typeof(Item)) && type.GetCustomAttributes(typeof(DataTableAttribute), false).Length == 1)
                 {
                     string table = Item.GetTable(type);
@@ -182,7 +181,6 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-							//HttpContext.Current.Response.Write(table + "<br />");
                             core.db.CreateTable(table, dataFields);
                         }
                     }
@@ -459,11 +457,11 @@ namespace BoxSocial.Internals
                         string assemblyPath;
                         if (ae.IsPrimitive)
                         {
-                            assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
                         }
                         else
                         {
-                            assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
                         }
                         Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
@@ -505,12 +503,12 @@ namespace BoxSocial.Internals
                     }
                     catch (Exception ex)
                     {
-                        HttpContext.Current.Response.Write(ex.ToString() + "<hr />");
+                        //core.Http.Write(ex.ToString() + "<hr />");
+                        // -- DEBUG HERE FOR APPLICATION LOADER --
                     }
                 }
             }
             load.Stop();
-            //HttpContext.Current.Response.Write((load.ElapsedTicks / 10000000.0).ToString() + " LoadApplications()<br />");
         }
 
         public static Application GetApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
@@ -520,9 +518,9 @@ namespace BoxSocial.Internals
                 string assemblyPath;
                 if (ae.IsPrimitive)
                 {
-					if (HttpContext.Current != null)
+					if (core.Http != null)
 					{
-						assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/{0}.dll", ae.AssemblyName));
+						assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
 					}
 					else
 					{
@@ -531,9 +529,9 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-					if (HttpContext.Current != null)
+					if (core.Http != null)
 					{
-						assemblyPath = HttpContext.Current.Server.MapPath(string.Format("/bin/applications/{0}.dll", ae.AssemblyName));
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
 					}
 					else
 					{
@@ -558,14 +556,7 @@ namespace BoxSocial.Internals
             }
             catch (Exception ex)
             {
-				if (HttpContext.Current != null)
-				{
-					HttpContext.Current.Response.Write(ex.ToString());
-				}
-				else
-				{
-					Console.WriteLine(ex.ToString());
-				}
+                // TODO DEBUG HERE
             }
             return null;
         }

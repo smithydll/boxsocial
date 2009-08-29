@@ -105,7 +105,7 @@ namespace BoxSocial.Networks
 
             AuthoriseRequestSid();
 
-            long networkId = Functions.RequestLong("id", 0);
+            long networkId = core.Functions.RequestLong("id", 0);
 
             if (networkId == 0)
             {
@@ -159,7 +159,7 @@ namespace BoxSocial.Networks
 
             try
             {
-                networkId = long.Parse(Request.Form["id"]);
+                networkId = long.Parse(core.Http.Form["id"]);
             }
             catch
             {
@@ -171,7 +171,7 @@ namespace BoxSocial.Networks
             {*/
             Network theNetwork = new Network(core, networkId);
 
-            string networkEmail = Request.Form["email"];
+            string networkEmail = core.Http.Form["email"];
 
             if (!theNetwork.IsValidNetworkEmail(networkEmail))
             {
@@ -222,7 +222,7 @@ namespace BoxSocial.Networks
 
         void AccountNetworksMemberships_Leave(object sender, ModuleModeEventArgs e)
         {
-            long networkId = Functions.RequestLong("id", -1);
+            long networkId = core.Functions.RequestLong("id", -1);
 
             if (networkId >= 0)
             {
@@ -242,9 +242,9 @@ namespace BoxSocial.Networks
 
         void AccountNetworksMemberships_Leave_Save(object sender, EventArgs e)
         {
-            long networkId = Functions.RequestLong("id", -1);
+            long networkId = core.Functions.RequestLong("id", -1);
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 try
                 {

@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -240,7 +240,7 @@ namespace BoxSocial.Applications.Calendar
             taskAccess = new Access(core,  permissions, owner);
         }
 
-        public static Task Create(Core core, User creator, Primitive owner, string topic, string description, long dueTimestamp, ushort permissions, TaskStatus status, byte percentComplete, TaskPriority priority)
+        public static Task Create(Core core, User creator, Primitive owner, string topic, string description, long dueTimestamp, TaskStatus status, byte percentComplete, TaskPriority priority)
         {
             InsertQuery query = new InsertQuery("tasks");
             query.AddField("user_id", creator.UserId);
@@ -249,7 +249,6 @@ namespace BoxSocial.Applications.Calendar
             query.AddField("task_topic", topic);
             query.AddField("task_description", description);
             query.AddField("task_due_date_ut", dueTimestamp);
-            query.AddField("task_access", permissions);
             query.AddField("task_views", 0);
             query.AddField("task_comments", 0);
             query.AddField("task_category", 0);

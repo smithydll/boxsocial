@@ -60,7 +60,7 @@ namespace BoxSocial.Groups
 
         protected void BeginGroupPage()
         {
-            groupSlug = HttpContext.Current.Request["gn"];
+            groupSlug = core.Http["gn"];
 
             try
             {
@@ -72,7 +72,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (string.IsNullOrEmpty(Group.Domain) || Linker.Domain == HttpContext.Current.Request.Url.Host.ToLower())
+            if (string.IsNullOrEmpty(Group.Domain) || Linker.Domain == core.Http.Domain)
             {
                 core.PagePath = core.PagePath.Substring(Group.Slug.Length + 1 + 6);
             }

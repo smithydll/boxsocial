@@ -512,20 +512,20 @@ namespace BoxSocial.Applications.Blog
 
             try
             {
-                rss = bool.Parse(HttpContext.Current.Request.QueryString["rss"]);
+                rss = bool.Parse(core.Http.Query["rss"]);
             }
             catch { }
 
             try
             {
-                p = int.Parse(HttpContext.Current.Request.QueryString["p"]);
+                p = int.Parse(core.Http.Query["p"]);
             }
             catch { }
 
-            if (rss)
+            /*if (rss)
             {
-                HttpContext.Current.Response.ContentType = "text/xml";
-            }
+                core.Http.SwitchContextType("text/xml");
+            }*/
 
             page.User.LoadProfileInfo();
 
@@ -534,7 +534,6 @@ namespace BoxSocial.Applications.Blog
                 //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
                 core.Display.ParsePageList(page.User, true);
                 page.template.Parse("U_PROFILE", page.User.Uri);
-                page.template.Parse("U_GALLERY", core.Uri.BuildGalleryUri(page.User));
                 page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
                 if (page.User.UserId == core.LoggedInMemberId)
@@ -671,12 +670,12 @@ namespace BoxSocial.Applications.Blog
                     }
                 }
 
-                serializer.Serialize(HttpContext.Current.Response.Output, doc);
+                core.Http.WriteXml(serializer, doc);
                 if (core.db != null)
                 {
                     core.db.CloseConnection();
                 }
-                HttpContext.Current.Response.End();
+                core.Http.End();
             }
             else
             {

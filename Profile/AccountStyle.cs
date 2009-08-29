@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_style");
 
-            string mode = Request["mode"];
+            string mode = core.Http["mode"];
 
             CascadingStyleSheet css = LoggedInMember.Style.StyleSheet;
 
@@ -280,7 +280,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountStyle_Save(object sender, EventArgs e)
         {
-            string mode = Request["mode"];
+            string mode = core.Http["mode"];
 
             CascadingStyleSheet css = new CascadingStyleSheet();
 
@@ -289,7 +289,7 @@ namespace BoxSocial.Applications.Profile
                 case "theme":
                     css.Generator = StyleGenerator.Theme;
 
-                    int baseHue = Functions.FormInt("theme", -1);
+                    int baseHue = core.Functions.FormInt("theme", -1);
 
                     if (baseHue == -1)
                     {
@@ -364,14 +364,14 @@ namespace BoxSocial.Applications.Profile
                 case "standard":
                     css.Generator = StyleGenerator.Standard;
                     css.AddStyle("body");
-                    css["body"].SetProperty("background-color", Request.Form["background-colour"]);
-                    css["body"].SetProperty("color", Request.Form["fore-colour"]);
-                    if (!string.IsNullOrEmpty(Request.Form["background-image"]))
+                    css["body"].SetProperty("background-color", core.Http.Form["background-colour"]);
+                    css["body"].SetProperty("color", core.Http.Form["fore-colour"]);
+                    if (!string.IsNullOrEmpty(core.Http.Form["background-image"]))
                     {
-                        css["body"].SetProperty("background-image", "url('" + Request.Form["background-image"] + "')");
-                        css["body"].SetProperty("background-repeat", Request.Form["background-repeat"]);
-                        css["body"].SetProperty("background-position", Request.Form["background-position"]);
-                        if (Request.Form["background-image-fixed"] == "true")
+                        css["body"].SetProperty("background-image", "url('" + core.Http.Form["background-image"] + "')");
+                        css["body"].SetProperty("background-repeat", core.Http.Form["background-repeat"]);
+                        css["body"].SetProperty("background-position", core.Http.Form["background-position"]);
+                        if (core.Http.Form["background-image-fixed"] == "true")
                         {
                             css["body"].SetProperty("background-attachment", "fixed");
                         }
@@ -382,51 +382,51 @@ namespace BoxSocial.Applications.Profile
                     }
 
                     css.AddStyle("a");
-                    css["a"].SetProperty("color", Request.Form["link-colour"]);
+                    css["a"].SetProperty("color", core.Http.Form["link-colour"]);
 
                     css.AddStyle("#pane-profile div.pane");
-                    css["#pane-profile div.pane"].SetProperty("background-color", Request.Form["box-background-colour"]);
-                    css["#pane-profile div.pane"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#pane-profile div.pane"].SetProperty("color", Request.Form["box-fore-colour"]);
+                    css["#pane-profile div.pane"].SetProperty("background-color", core.Http.Form["box-background-colour"]);
+                    css["#pane-profile div.pane"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#pane-profile div.pane"].SetProperty("color", core.Http.Form["box-fore-colour"]);
 
                     css.AddStyle("#profile div.pane");
-                    css["#profile div.pane"].SetProperty("background-color", Request.Form["box-background-colour"]);
-                    css["#profile div.pane"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#profile div.pane"].SetProperty("color", Request.Form["box-fore-colour"]);
+                    css["#profile div.pane"].SetProperty("background-color", core.Http.Form["box-background-colour"]);
+                    css["#profile div.pane"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#profile div.pane"].SetProperty("color", core.Http.Form["box-fore-colour"]);
 
                     css.AddStyle("#overview-profile");
-                    css["#overview-profile"].SetProperty("background-color", Request.Form["box-background-colour"]);
-                    css["#overview-profile"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#overview-profile"].SetProperty("color", Request.Form["box-fore-colour"]);
+                    css["#overview-profile"].SetProperty("background-color", core.Http.Form["box-background-colour"]);
+                    css["#overview-profile"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#overview-profile"].SetProperty("color", core.Http.Form["box-fore-colour"]);
 
                     css.AddStyle("#pane-profile div.pane h3");
-                    css["#pane-profile div.pane h3"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
-                    css["#pane-profile div.pane h3"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#pane-profile div.pane h3"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#pane-profile div.pane h3"].SetProperty("background-color", core.Http.Form["box-h3-background-colour"]);
+                    css["#pane-profile div.pane h3"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#pane-profile div.pane h3"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     css.AddStyle("#pane-profile div.pane h3 a");
-                    css["#pane-profile div.pane h3 a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#pane-profile div.pane h3 a"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     css.AddStyle("#profile div.pane h3");
-                    css["#profile div.pane h3"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
-                    css["#profile div.pane h3"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#profile div.pane h3"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#profile div.pane h3"].SetProperty("background-color", core.Http.Form["box-h3-background-colour"]);
+                    css["#profile div.pane h3"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#profile div.pane h3"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     css.AddStyle("#profile div.pane h3 a");
-                    css["#profile div.pane h3 a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#profile div.pane h3 a"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     css.AddStyle("#overview-profile div.info");
-                    css["#overview-profile div.info"].SetProperty("background-color", Request.Form["box-h3-background-colour"]);
-                    css["#overview-profile div.info"].SetProperty("border-color", Request.Form["box-border-colour"]);
-                    css["#overview-profile div.info"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#overview-profile div.info"].SetProperty("background-color", core.Http.Form["box-h3-background-colour"]);
+                    css["#overview-profile div.info"].SetProperty("border-color", core.Http.Form["box-border-colour"]);
+                    css["#overview-profile div.info"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     css.AddStyle("#overview-profile div.info a");
-                    css["#overview-profile div.info a"].SetProperty("color", Request.Form["box-h3-fore-colour"]);
+                    css["#overview-profile div.info a"].SetProperty("color", core.Http.Form["box-h3-fore-colour"]);
 
                     break;
                 case "advanced":
                     css.Generator = StyleGenerator.Advanced;
-                    css.Parse(Request.Form["css-style"]);
+                    css.Parse(core.Http.Form["css-style"]);
                     break;
             }
 

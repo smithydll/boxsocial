@@ -109,7 +109,6 @@ namespace BoxSocial.Musician
 			
             DataTable memberTable = db.Query(query);
 			
-			//HttpContext.Current.Response.Write(query.ToString());
 
             if (memberTable.Rows.Count == 1)
             {

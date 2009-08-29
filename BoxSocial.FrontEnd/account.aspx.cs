@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -81,11 +81,11 @@ namespace BoxSocial.FrontEnd
                     string assemblyPath;
                     if (ae.IsPrimitive)
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
                     }
                     else
                     {
-                        assemblyPath = HttpContext.Current.Server.MapPath(string.Format("{0}bin{0}applications{0}{1}.dll", Path.DirectorySeparatorChar, ae.AssemblyName));
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
                     }
                     Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
@@ -168,7 +168,7 @@ namespace BoxSocial.FrontEnd
 					}
                 }
 
-                HttpContext.Current.Response.Redirect(core.Uri.BuildLoginUri(core.Uri.StripSid(core.Uri.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
+                core.Http.Redirect(core.Uri.BuildLoginUri(core.Uri.StripSid(core.Uri.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
                 return;
             }
 

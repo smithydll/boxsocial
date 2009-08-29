@@ -67,14 +67,14 @@ namespace BoxSocial.Applications.Calendar
             bool edit = false;
             ushort taskAccess = 0;
 
-            if (Request.QueryString["mode"] == "edit")
+            if (core.Http.Query["mode"] == "edit")
             {
                 edit = true;
             }
 
-            int year = Functions.RequestInt("year", tz.Now.Year);
-            int month = Functions.RequestInt("month", tz.Now.Month);
-            int day = Functions.RequestInt("day", tz.Now.Day);
+            int year = core.Functions.RequestInt("year", tz.Now.Year);
+            int month = core.Functions.RequestInt("month", tz.Now.Month);
+            int day = core.Functions.RequestInt("day", tz.Now.Day);
 
             byte percentComplete = 0;
             TaskPriority priority = TaskPriority.Normal;
@@ -128,7 +128,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (edit)
             {
-                int id = Functions.RequestInt("id", -1);
+                int id = core.Functions.RequestInt("id", -1);
 
                 if (id < 1)
                 {
@@ -191,34 +191,34 @@ namespace BoxSocial.Applications.Calendar
             long taskId = 0;
             string topic = "";
             string description = "";
-            byte percentComplete = Functions.FormByte("percent-complete", 0);
-            TaskPriority priority = (TaskPriority)Functions.FormByte("priority", (byte)TaskPriority.Normal);
+            byte percentComplete = core.Functions.FormByte("percent-complete", 0);
+            TaskPriority priority = (TaskPriority)core.Functions.FormByte("priority", (byte)TaskPriority.Normal);
             DateTime dueDate = tz.Now;
             bool edit = false;
 
             AuthoriseRequestSid();
 
-            if (Request.Form["mode"] == "edit")
+            if (core.Http.Form["mode"] == "edit")
             {
                 edit = true;
             }
 
             try
             {
-                topic = Request.Form["topic"];
-                description = Request.Form["description"];
+                topic = core.Http.Form["topic"];
+                description = core.Http.Form["description"];
 
                 dueDate = new DateTime(
-                    int.Parse(Request.Form["due-year"]),
-                    int.Parse(Request.Form["due-month"]),
-                    int.Parse(Request.Form["due-day"]),
-                    int.Parse(Request.Form["due-hour"]),
-                    int.Parse(Request.Form["due-minute"]),
+                    int.Parse(core.Http.Form["due-year"]),
+                    int.Parse(core.Http.Form["due-month"]),
+                    int.Parse(core.Http.Form["due-day"]),
+                    int.Parse(core.Http.Form["due-hour"]),
+                    int.Parse(core.Http.Form["due-minute"]),
                     0);
 
                 if (edit)
                 {
-                    taskId = long.Parse(Request.Form["id"]);
+                    taskId = long.Parse(core.Http.Form["id"]);
                 }
             }
             catch
@@ -242,7 +242,7 @@ namespace BoxSocial.Applications.Calendar
                     status = TaskStatus.Completed;
                 }
 
-                Task calendarTask = Task.Create(core, LoggedInMember, Owner, topic, description, tz.GetUnixTimeStamp(dueDate), Functions.GetPermission(), status, percentComplete, priority);
+                Task calendarTask = Task.Create(core, LoggedInMember, Owner, topic, description, tz.GetUnixTimeStamp(dueDate), status, percentComplete, priority);
 
                 SetRedirectUri(Task.BuildTaskUri(core, calendarTask));
                 core.Display.ShowMessage("Task Created", "You have successfully created a new task.");
@@ -260,7 +260,6 @@ namespace BoxSocial.Applications.Calendar
                 query.AddField("task_topic", topic);
                 query.AddField("task_description", description);
                 query.AddField("task_due_date_ut", tz.GetUnixTimeStamp(dueDate));
-                query.AddField("task_access", Functions.GetPermission());
                 query.AddField("task_percent_complete", percentComplete);
                 query.AddField("task_status", (byte)status);
                 query.AddField("task_priority", (byte)priority);

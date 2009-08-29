@@ -86,12 +86,12 @@ namespace BoxSocial.Applications.Blog
         {
             AuthoriseRequestSid();
 
-            string title = Request.Form["title"];
+            string title = core.Http.Form["title"];
 
             UpdateQuery uQuery = new UpdateQuery("user_blog");
             uQuery.AddCondition("user_id", core.LoggedInMemberId);
             uQuery.AddField("blog_title", title);
-            uQuery.AddField("blog_access", Functions.GetPermission());
+            //uQuery.AddField("blog_access", core.Functions.GetPermission());
 
             db.Query(uQuery);
 

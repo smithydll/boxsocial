@@ -92,7 +92,7 @@ namespace BoxSocial.Groups
 
             CascadingStyleSheet css = new CascadingStyleSheet();
             css.Generator = StyleGenerator.Advanced;
-            css.Parse(Request.Form["css-style"]);
+            css.Parse(core.Http.Form["css-style"]);
 
             if (!thisGroup.IsGroupOperator(LoggedInMember))
             {

@@ -40,7 +40,7 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             BeginProfile();
-            int page = Functions.RequestInt("p", 1);
+            int page = core.Functions.RequestInt("p", 1);
 
             string langFriends = (User.Friends != 1) ? "friends" : "friend";
 

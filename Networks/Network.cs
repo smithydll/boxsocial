@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -530,7 +530,7 @@ namespace BoxSocial.Networks
 
             if (networkInfo.RequireConfirmation)
             {
-                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
+                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
 
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
@@ -639,7 +639,7 @@ namespace BoxSocial.Networks
             {
                 UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, 0x0000, true);
 
-                RawTemplate emailTemplate = new RawTemplate(HttpContext.Current.Server.MapPath("./templates/emails/"), "join_network.eml");
+                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
 
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
@@ -781,7 +781,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                if (HttpContext.Current.Request.Url.Host.ToLower() != Linker.Domain)
+                if (core.Http.Domain != Linker.Domain)
                 {
                     return Linker.Uri + "network/" + NetworkNetwork + "/";
                 }
@@ -882,7 +882,7 @@ namespace BoxSocial.Networks
         {
             page.template.SetTemplate("Networks", "viewnetworkmemberlist");
 
-            int p = Functions.RequestInt("p", 1);
+            int p = core.Functions.RequestInt("p", 1);
 
             page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Network.DisplayName);
             page.template.Parse("MEMBERS", ((ulong)page.Network.Members).ToString());

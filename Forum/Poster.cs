@@ -49,15 +49,15 @@ namespace BoxSocial.Applications.Forum
             page.template.SetTemplate("Forum", "post");
             ForumSettings.ShowForumHeader(core, page);
 
-            if (HttpContext.Current.Request.Form["save"] != null) // DRAFT
+            if (core.Http.Form["save"] != null) // DRAFT
             {
                 poster.ShowPostingScreen("draft");
             }
-            else if (HttpContext.Current.Request.Form["preview"] != null) // PREVIEW
+            else if (core.Http.Form["preview"] != null) // PREVIEW
             {
                 poster.ShowPostingScreen("preview");
             }
-            else if (HttpContext.Current.Request.Form["submit"] != null) // POST
+            else if (core.Http.Form["submit"] != null) // POST
             {
                 poster.ShowPostingScreen("post");
             }
@@ -69,17 +69,17 @@ namespace BoxSocial.Applications.Forum
 
         private void ShowPostingScreen(string submitMode)
         {
-            long forumId = Functions.FormLong("f", Functions.RequestLong("f", 0));
-            long topicId = Functions.FormLong("t", Functions.RequestLong("t", 0));
-            long postId = Functions.FormLong("p", Functions.RequestLong("p", 0));
-            string subject = HttpContext.Current.Request.Form["subject"];
-            string text = HttpContext.Current.Request.Form["post"];
-            string mode = HttpContext.Current.Request.QueryString["mode"];
-            string topicState = HttpContext.Current.Request.Form["topic-state"];
+            long forumId = core.Functions.FormLong("f", core.Functions.RequestLong("f", 0));
+            long topicId = core.Functions.FormLong("t", core.Functions.RequestLong("t", 0));
+            long postId = core.Functions.FormLong("p", core.Functions.RequestLong("p", 0));
+            string subject = core.Http.Form["subject"];
+            string text = core.Http.Form["post"];
+            string mode = core.Http.Query["mode"];
+            string topicState = core.Http.Form["topic-state"];
 
             if (string.IsNullOrEmpty(mode))
             {
-                mode = HttpContext.Current.Request.Form["mode"];
+                mode = core.Http.Form["mode"];
             }
 
             if (string.IsNullOrEmpty(topicState))
@@ -214,9 +214,9 @@ namespace BoxSocial.Applications.Forum
         {
             AccountSubModule.AuthoriseRequestSid(core);
 
-            long postId = Functions.FormLong("p", 0);
-            long forumId = Functions.FormLong("f", 0);
-            long topicId = Functions.FormLong("t", 0);
+            long postId = core.Functions.FormLong("p", 0);
+            long forumId = core.Functions.FormLong("f", 0);
+            long topicId = core.Functions.FormLong("t", 0);
 
             switch (mode)
             {
@@ -294,7 +294,7 @@ namespace BoxSocial.Applications.Forum
 
                         /*try
                         {*/
-                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text, (TopicStates)Functions.FormByte("topic-state", (byte)TopicStates.Normal));
+                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text, (TopicStates)core.Functions.FormByte("topic-state", (byte)TopicStates.Normal));
 
                         page.template.Parse("REDIRECT_URI", topic.Uri);
                         core.Display.ShowMessage("Topic Posted", "Topic has been posted");

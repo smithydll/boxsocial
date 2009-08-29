@@ -53,9 +53,9 @@ namespace BoxSocial.Internals
         protected User loggedInMember;
         protected Template template;
         protected UnixTime tz;
-        protected HttpRequest Request;
-        protected HttpResponse Response;
-        protected HttpServerUtility Server;
+        //protected HttpRequest Request;
+        //protected HttpResponse Response;
+        //protected HttpServerUtility Server;
         protected SessionState session;
 
         public Primitive SetOwner
@@ -105,10 +105,7 @@ namespace BoxSocial.Internals
             db = account.core.db;
             loggedInMember = account.core.session.LoggedInMember;
             tz = account.core.tz;
-            Request = HttpContext.Current.Request;
-            Response = HttpContext.Current.Response;
             session = account.core.session;
-            Server = HttpContext.Current.Server;
         }
 
         /// <summary>
@@ -117,7 +114,7 @@ namespace BoxSocial.Internals
         /// </summary>
         public void CreateTemplate()
         {
-            template = new Template("1301.html");
+            template = new Template(core.Http.TemplatePath, "1301.html");
             template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
             if (assembly != null)
             {
@@ -140,7 +137,7 @@ namespace BoxSocial.Internals
         /// <param name="errorMessage"></param>
         public void DisplayError(string errorMessage)
         {
-            template = new Template("1302.html");
+            template = new Template(core.Http.TemplatePath, "1302.html");
             template.Parse("ERROR_MESSAGE", errorMessage);
             RenderTemplate();
         }
@@ -230,16 +227,16 @@ namespace BoxSocial.Internals
         /// </summary>
         protected void AuthoriseRequestSid()
         {
-            if (Request.QueryString["sid"] != session.SessionId)
+            if (core.Http.Query["sid"] != session.SessionId)
             {
-                if (string.IsNullOrEmpty(Request.QueryString["sid"]))
+                if (string.IsNullOrEmpty(core.Http.Query["sid"]))
                 {
                     core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
                 }
 
                 SelectQuery query = new SelectQuery("user_sessions");
-                query.AddCondition("session_string", Request.QueryString["sid"]);
+                query.AddCondition("session_string", core.Http.Query["sid"]);
                 query.AddCondition("user_id", session.LoggedInMember.Id);
                 query.AddCondition("session_signed_in", true);
                 query.AddCondition("session_ip", session.IPAddress.ToString());

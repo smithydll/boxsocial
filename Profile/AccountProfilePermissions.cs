@@ -73,10 +73,10 @@ namespace BoxSocial.Applications.Profile
 
         void AccountProfilePermissions_Save(object sender, EventArgs e)
         {
-            ushort permission = Functions.GetPermission();
+            //ushort permission = core.Functions.GetPermission();
 
-            db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
-                LoggedInMember.UserId, permission));
+            /*db.UpdateQuery(string.Format("UPDATE user_profile SET profile_access = {1} WHERE user_id = {0};",
+                LoggedInMember.UserId, permission));*/
 
 			SetInformation("Your profile permissions have been saved in the database.");
             //SetRedirectUri(BuildUri());

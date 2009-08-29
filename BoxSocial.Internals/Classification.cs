@@ -38,9 +38,9 @@ namespace BoxSocial.Internals
     {
         private static string boxChecked = " checked=\"checked\"";
 
-        public static string BuildClassificationBox(Classifications classification)
+        public static string BuildClassificationBox(Core core, Classifications classification)
         {
-            Template template = new Template("std.classifications_box.html");
+            Template template = new Template(core.Http.TemplatePath, "std.classifications_box.html");
 
             switch (classification)
             {
@@ -59,12 +59,6 @@ namespace BoxSocial.Internals
             }
 
             return template.ToString();
-        }
-
-        public static Classifications RequestClassification()
-        {
-			byte a = byte.Parse(HttpContext.Current.Request.Form["classification"]);
-            return (Classifications)a;
         }
 
         public static void ApplyRestrictions(Core core, Classifications classification)

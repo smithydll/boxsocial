@@ -779,7 +779,6 @@ namespace BoxSocial.Internals
             {
                 if ((field.Key & DataFieldKeys.Unique) == DataFieldKeys.Unique)
                 {
-					//HttpContext.Current.Response.Write(field.Name);
                     containsUniqueFields = true;
 					if (field.Type == typeof(ItemKey))
 					{
@@ -843,8 +842,6 @@ namespace BoxSocial.Internals
                     throw new RecordNotUniqueException();
                 }
             }
-			
-			//HttpContext.Current.Response.Write(uQuery.ToString());
 
             long result = db.Query(uQuery);
 
@@ -971,7 +968,6 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
-			//HttpContext.Current.Response.Write("I am being used " + type.FullName + "<br />");
             int fieldsLoaded = 0;
             int objectFields = 0;
             Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();

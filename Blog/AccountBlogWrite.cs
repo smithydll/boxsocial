@@ -88,7 +88,7 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_post");
 			
-            long postId = Functions.RequestLong("id", 0);
+            long postId = core.Functions.RequestLong("id", 0);
             ushort blogPermissions = (ushort)0x3333;
             byte licenseId = (byte)0;
             short categoryId = (short)1;
@@ -122,7 +122,7 @@ namespace BoxSocial.Applications.Blog
 
             if (postId > 0)
             {
-                if (Request.QueryString["mode"] == "edit")
+                if (core.Http.Query["mode"] == "edit")
                 {
                     try
                     {
@@ -195,7 +195,7 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_ID", postId.ToString());
 
             Save(new EventHandler(AccountBlogWrite_Save));
-            if (Request.Form["publish"] != null)
+            if (core.Http.Form["publish"] != null)
             {
                 AccountBlogWrite_Save(this, new EventArgs());
             }
@@ -208,8 +208,8 @@ namespace BoxSocial.Applications.Blog
         /// <param name="e">Load EventArgs</param>
         void AccountBlogWrite_Save(object sender, EventArgs e)
         {
-            string title = Request.Form["title"];
-            string postBody = Request.Form["post"];
+            string title = core.Http.Form["title"];
+            string postBody = core.Http.Form["post"];
             short license = 0;
             short category = 1;
             long postId = 0;
@@ -232,30 +232,30 @@ namespace BoxSocial.Applications.Blog
             int postYear, postMonth, postDay, postHour, postMinute;
             DateTime postTime = DateTime.Now;
 
-            if (Request.Form["publish"] != null)
+            if (core.Http.Form["publish"] != null)
             {
                 status = "PUBLISH";
             }
 
-            if (Request.Form["save"] != null)
+            if (core.Http.Form["save"] != null)
             {
                 status = "DRAFT";
             }
 
-            postId = Functions.FormLong("id", 0);
-            license = Functions.FormShort("license", license);
-            category = Functions.FormShort("category", category);
+            postId = core.Functions.FormLong("id", 0);
+            license = core.Functions.FormShort("license", license);
+            category = core.Functions.FormShort("category", category);
 
             try
             {
-                postYear = Functions.FormInt("post-year", 0);
-                postMonth = Functions.FormInt("post-month", 0);
-                postDay = Functions.FormInt("post-day", 0);
+                postYear = core.Functions.FormInt("post-year", 0);
+                postMonth = core.Functions.FormInt("post-month", 0);
+                postDay = core.Functions.FormInt("post-day", 0);
 
-                postHour = Functions.FormInt("post-hour", 0);
-                postMinute = Functions.FormInt("post-minute", 0);
+                postHour = core.Functions.FormInt("post-hour", 0);
+                postMinute = core.Functions.FormInt("post-minute", 0);
 
-                postEditTimestamp = !string.IsNullOrEmpty(Request.Form["edit-timestamp"]);
+                postEditTimestamp = !string.IsNullOrEmpty(core.Http.Form["edit-timestamp"]);
 
                 postTime = new DateTime(postYear, postMonth, postDay, postHour, postMinute, 0);
             }
@@ -291,7 +291,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 db.UpdateQuery(string.Format("UPDATE blog_postings SET post_title = '{0}', post_modified_ut = UNIX_TIMESTAMP(), post_ip = '{1}', post_text = '{2}', post_license = {3}, post_access = {4}, post_status = '{5}', post_category = {8}{9} WHERE user_id = {6} AND post_id = {7}",
-                    Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, LoggedInMember.UserId, postId, category, sqlPostTime));
+                    Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, status, LoggedInMember.UserId, postId, category, sqlPostTime));
 
                 /* do not count edits as new postings*/
             }
@@ -309,8 +309,8 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 db.BeginTransaction();
-                postId = db.UpdateQuery(string.Format("INSERT INTO blog_postings (user_id, post_time_ut, post_title, post_modified_ut, post_ip, post_text, post_license, post_access, post_status, post_category) VALUES ({0}, {8}, '{1}', UNIX_TIMESTAMP(), '{2}', '{3}', {4}, {5}, '{6}', {7})",
-                    LoggedInMember.UserId, Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, Functions.GetPermission(), status, category, sqlPostTime));
+                postId = db.UpdateQuery(string.Format("INSERT INTO blog_postings (user_id, post_time_ut, post_title, post_modified_ut, post_ip, post_text, post_license, post_status, post_category) VALUES ({0}, {8}, '{1}', UNIX_TIMESTAMP(), '{2}', '{3}', {4}, '{5}', {6})",
+                    LoggedInMember.UserId, Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, status, category, sqlPostTime));
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
@@ -360,7 +360,7 @@ namespace BoxSocial.Applications.Blog
         {
             AuthoriseRequestSid();
 
-            long postId = Functions.RequestLong("id", 0);
+            long postId = core.Functions.RequestLong("id", 0);
 
             db.BeginTransaction();
             db.UpdateQuery(string.Format("DELETE FROM blog_postings WHERE post_id = {0} AND user_id = {1}",

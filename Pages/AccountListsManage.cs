@@ -113,18 +113,18 @@ namespace BoxSocial.Applications.Pages
 
         void AccountListsManage_Save(object sender, EventArgs e)
         {
-            string title = Request.Form["title"];
-            string slug = Request.Form["title"];
-            string listAbstract = Request.Form["abstract"];
-            short type = Functions.FormShort("type", 1);
-            long listId = Functions.FormLong("id", 0);
+            string title = core.Http.Form["title"];
+            string slug = core.Http.Form["title"];
+            string listAbstract = core.Http.Form["abstract"];
+            short type = core.Functions.FormShort("type", 1);
+            long listId = core.Functions.FormLong("id", 0);
 
             // new
             if (listId == 0)
             {
                 try
                 {
-                    List newList = List.Create(core, title, ref slug, listAbstract, type, Functions.GetPermission());
+                    List newList = List.Create(core, title, ref slug, listAbstract, type);
 
                     SetRedirectUri(BuildUri("lists"));
                     core.Display.ShowMessage("List Created", "You have created a new list");
@@ -152,7 +152,6 @@ namespace BoxSocial.Applications.Pages
                     string oldSlug = list.Path;
 
                     list.Title = title;
-                    list.Permissions = Functions.GetPermission();
                     list.Abstract = listAbstract;
                     list.Type = type;
 
@@ -182,7 +181,7 @@ namespace BoxSocial.Applications.Pages
                                 string listSlug = "lists";
                                 try
                                 {
-                                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
                                 }
                                 catch (PageSlugNotUniqueException)
                                 {
@@ -190,7 +189,7 @@ namespace BoxSocial.Applications.Pages
                                 }
                             }
                             slug = list.Path;
-                            Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0x1111, 0, Classifications.None);
+                            Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
                         }
 
                         SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
@@ -223,7 +222,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long itemId = Functions.RequestLong("id", 0);
+            long itemId = core.Functions.RequestLong("id", 0);
             try
             {
                 ListItem item = new ListItem(core, itemId);
@@ -253,7 +252,7 @@ namespace BoxSocial.Applications.Pages
         {
             AuthoriseRequestSid();
 
-            long listId = Functions.RequestLong("id", 0);
+            long listId = core.Functions.RequestLong("id", 0);
 
             try
             {
@@ -296,7 +295,7 @@ namespace BoxSocial.Applications.Pages
         /// </summary>
         void AccountListsManage_Edit(object sender, EventArgs e)
         {
-            long listId = Functions.RequestLong("id", 0);
+            long listId = core.Functions.RequestLong("id", 0);
 
             SetTemplate("account_list_edit");
 
@@ -343,14 +342,14 @@ namespace BoxSocial.Applications.Pages
         /// </summary>
         void AccountListsManage_Append(object sender, EventArgs e)
         {
-            string text = Request.Form["text"];
+            string text = core.Http.Form["text"];
             string slug = text; // normalised representation
-            long listId = Functions.FormLong("id", 0);
+            long listId = core.Functions.FormLong("id", 0);
             bool ajax = false;
 
             try
             {
-                ajax = bool.Parse(Request["ajax"]);
+                ajax = bool.Parse(core.Http["ajax"]);
             }
             catch { }
 
@@ -375,7 +374,7 @@ namespace BoxSocial.Applications.Pages
                         {
                             db.CloseConnection();
                         }
-                        Response.End();
+                        core.Http.End();
                         return;
                     }
                     else

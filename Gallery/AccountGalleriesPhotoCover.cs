@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long pictureId = Functions.RequestLong("id", 0);
+            long pictureId = core.Functions.RequestLong("id", 0);
 
             if (pictureId == 0)
             {
@@ -90,7 +90,6 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem ugi = new GalleryItem(core, LoggedInMember, pictureId);
 
-                ushort galleryItemAccess = ugi.Permissions;
                 string galleryFullPath = ugi.ParentPath;
                 int indexOfLastSlash = galleryFullPath.LastIndexOf('/');
                 string galleryPath;
@@ -115,7 +114,7 @@ namespace BoxSocial.Applications.Gallery
                     ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
 
                     // only worry about view permissions, don't worry about comment permissions
-                    if ((galleryItemAccess & galleryAccess & 0x1111) == (galleryAccess & 0x1111))
+                    if (true)
                     {
                         long galleryId = (long)galleryTable.Rows[0]["gallery_id"];
 

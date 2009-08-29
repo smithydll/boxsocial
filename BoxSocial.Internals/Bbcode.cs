@@ -1544,7 +1544,7 @@ namespace BoxSocial.Internals
             string val = "";
             for (int i = 0; i < length; i++)
             {
-                if (input[i].Equals('&') && input.Substring(i, 6).Equals("&quot;"))
+                if (input[i].Equals('&') && i + 6 < input.Length && input.Substring(i, 6).Equals("&quot;"))
                 {
                     inQuote = !inQuote;
                     i += 5;

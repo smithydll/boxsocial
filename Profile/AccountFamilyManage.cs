@@ -90,7 +90,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {
@@ -156,7 +156,7 @@ namespace BoxSocial.Applications.Profile
 
             try
             {
-                friendId = long.Parse(Request.QueryString["id"]);
+                friendId = long.Parse(core.Http.Query["id"]);
             }
             catch
             {

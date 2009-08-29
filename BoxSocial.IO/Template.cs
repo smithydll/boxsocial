@@ -124,18 +124,11 @@ namespace BoxSocial.IO
         public void ParseVariables(string key, string value)
         {
             try
-            //if (!variables.ContainsKey(key))
             {
                 variables.Add(key, value);
             }
-            //else
             catch
             {
-                /*HttpContext.Current.Response.Write("<hr /><dl><dd>");
-                HttpContext.Current.Response.Write(key);
-                HttpContext.Current.Response.Write("</dd><dt>");
-                HttpContext.Current.Response.Write(value);
-                HttpContext.Current.Response.Write("<hr />");*/
             }
         }
 
@@ -246,6 +239,27 @@ namespace BoxSocial.IO
         private string path;
         private string templateName;
         private string templateAssembly;
+        
+        private static Object pathLock = new object();
+        private static string templatePath = null;
+        
+        public static string Path
+        {
+            set
+            {
+                lock (pathLock)
+                {
+                    if (templatePath == null)
+                    {
+                        templatePath = value;
+                    }
+                }
+            }
+            get
+            {
+                return templatePath;
+            }
+        }
 
         public void AddPageAssembly(Assembly value)
         {
@@ -257,12 +271,12 @@ namespace BoxSocial.IO
 
         public Template()
         {
-            this.path = HttpContext.Current.Server.MapPath("./templates/");
+            this.path = Path;
         }
 
         public Template(Assembly assembly, string templateName)
         {
-            this.path = HttpContext.Current.Server.MapPath("./templates/");
+            this.path = Path;
 
             AddPageAssembly(assembly);
 
@@ -272,7 +286,7 @@ namespace BoxSocial.IO
 
         public Template(string fileName)
         {
-            this.path = HttpContext.Current.Server.MapPath("./templates/");
+            this.path = Path;
             templateName = fileName;
         }
 
@@ -395,7 +409,7 @@ namespace BoxSocial.IO
             }
             else
             {
-                template = Template.OpenTextFile(Path.Combine(path, templateName));
+                template = Template.OpenTextFile(System.IO.Path.Combine(path, templateName));
                 if (template == null)
                 {
                     template = string.Format("Could not load template {0}",

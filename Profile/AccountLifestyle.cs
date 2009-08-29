@@ -125,7 +125,7 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            string relationshipWith = Request.Form["relationship-with"];
+            string relationshipWith = core.Http.Form["relationship-with"];
             User relation = null;
 
             if (!string.IsNullOrEmpty(relationshipWith))
@@ -137,9 +137,9 @@ namespace BoxSocial.Applications.Profile
             string existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
             long existingMaritialWith = LoggedInMember.Profile.MaritialWithId;
 
-            LoggedInMember.Profile.ReligionId = short.Parse(Request.Form["religion"]);
-            LoggedInMember.Profile.SexualityRaw = Request.Form["sexuality"];
-            LoggedInMember.Profile.MaritialStatusRaw = Request.Form["maritial-status"];
+            LoggedInMember.Profile.ReligionId = short.Parse(core.Http.Form["religion"]);
+            LoggedInMember.Profile.SexualityRaw = core.Http.Form["sexuality"];
+            LoggedInMember.Profile.MaritialStatusRaw = core.Http.Form["maritial-status"];
 
             if (relation != null)
             {
@@ -157,7 +157,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.Profile.MaritialWithId = 0;
             }
 
-            switch (Request.Form["maritial-status"])
+            switch (core.Http.Form["maritial-status"])
             {
                 case "RELATIONSHIP":
                 case "MARRIED":
@@ -165,7 +165,7 @@ namespace BoxSocial.Applications.Profile
                     {
                         ApplicationEntry ae = new ApplicationEntry(core, LoggedInMember, "Profile");
 
-                        RawTemplate atpl = new RawTemplate("emails/user_relationship_notification.eml");
+                        RawTemplate atpl = new RawTemplate(core.Http.TemplateEmailPath, "user_relationship_notification.eml");
 
                         atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
                         atpl.Parse("U_CONFIRM", core.Uri.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId));
@@ -235,7 +235,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountLifestyle_ConfirmRelationship(object sender, EventArgs e)
         {
-            long id = Functions.RequestLong("id", 0);
+            long id = core.Functions.RequestLong("id", 0);
 
             if (id == 0)
             {
@@ -262,7 +262,7 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            long id = Functions.FormLong("id", 0);
+            long id = core.Functions.FormLong("id", 0);
 
             if (id == 0)
             {
@@ -273,7 +273,7 @@ namespace BoxSocial.Applications.Profile
 
             User relation = core.UserProfiles[id];
 
-            if (Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
+            if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
                 relation.Profile.MaritialWithConfirmed = true;
 

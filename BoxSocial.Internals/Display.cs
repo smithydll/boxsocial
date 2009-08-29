@@ -288,13 +288,13 @@ namespace BoxSocial.Internals
             core.EndResponse();
         }
 
-        public static ConfirmBoxResult GetConfirmBoxResult()
+        public ConfirmBoxResult GetConfirmBoxResult()
         {
-            if (HttpContext.Current.Request.Form["1"] != null)
+            if (core.Http.Form["1"] != null)
             {
                 return ConfirmBoxResult.Yes;
             }
-            else if (HttpContext.Current.Request.Form["0"] != null)
+            else if (core.Http.Form["0"] != null)
             {
                 return ConfirmBoxResult.No;
             }
@@ -306,11 +306,11 @@ namespace BoxSocial.Internals
 
         public ConfirmBoxResult ShowConfirmBox(string formAction, string title, string message, Dictionary<string, string> hiddenFieldList)
         {
-            if (HttpContext.Current.Request.Form["1"] != null)
+            if (core.Http.Form["1"] != null)
             {
                 return ConfirmBoxResult.Yes;
             }
-            else if (HttpContext.Current.Request.Form["0"] != null)
+            else if (core.Http.Form["0"] != null)
             {
                 return ConfirmBoxResult.No;
             }
@@ -353,8 +353,8 @@ namespace BoxSocial.Internals
         {
             Mysql db = core.db;
 
-            int p = Functions.RequestInt("p", 1);
-            long c = Functions.RequestLong("c", 0);
+            int p = core.Functions.RequestInt("p", 1);
+            long c = core.Functions.RequestLong("c", 0);
 
             if (c > 0)
             {
@@ -820,25 +820,8 @@ namespace BoxSocial.Internals
 
         public void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
         {
-			if (input == null)
-			{
-			    HttpContext.Current.Response.Write("input null");
-			}
-			else if (templateVar == null)
-			{
-			    HttpContext.Current.Response.Write("templateVar null");
-			}
-			else if (template == null)
-			{
-			    HttpContext.Current.Response.Write("template null");
-			}
-            else if (core.session == null)
+            if (core.session.LoggedInMember == null)
             {
-                HttpContext.Current.Response.Write("session null");
-            }
-            else if (core.session.LoggedInMember == null)
-            {
-                //HttpContext.Current.Response.Write("core.session.LoggedInMember null");
 
                 if (owner != null)
                 {
@@ -929,7 +912,7 @@ namespace BoxSocial.Internals
 
         public void ParseClassification(Template template, string templateVar, Classifications classification)
         {
-            template.ParseRaw(templateVar, Classification.BuildClassificationBox(classification));
+            template.ParseRaw(templateVar, Classification.BuildClassificationBox(core, classification));
         }
 
         public void ParseTimeZoneBox(string templateVar, string timeZone)

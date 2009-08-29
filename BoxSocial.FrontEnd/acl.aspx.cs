@@ -44,8 +44,8 @@ namespace BoxSocial.FrontEnd
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            int itemId = Functions.RequestInt("id", 0);
-            int itemTypeId = Functions.RequestInt("type", 0);
+            int itemId = core.Functions.RequestInt("id", 0);
+            int itemTypeId = core.Functions.RequestInt("type", 0);
             
             if (itemId == 0 || itemTypeId == 0)
             {
@@ -66,6 +66,11 @@ namespace BoxSocial.FrontEnd
             }
             
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
+            
+            /*AccessControlLists acl = new AccessControlLists(core, itemKey);
+            acl.ParseACL(template, loggedInMember, "S_PERMISSOINS");*/
+            
+            EndResponse();
         }
     }
 }

@@ -44,7 +44,7 @@ namespace BoxSocial.Musician
     }
 
     [DataTable("musicians", "MUSIC")]
-    public class Musician : Primitive
+    public class Musician : Primitive, IPermissibleItem
     {
         [DataField("musician_id")]
         private long musicianId;
@@ -74,6 +74,8 @@ namespace BoxSocial.Musician
         private long subgenre;
         [DataField("musician_home_page", MYSQL_TEXT)]
         private string homepage;
+
+        private Access access;
 
         private Dictionary<User, bool> musicianMemberCache = new Dictionary<User, bool>();
 
@@ -569,7 +571,7 @@ namespace BoxSocial.Musician
             throw new NotImplementedException();
         }
 
-        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             throw new NotImplementedException();
         }
@@ -626,6 +628,27 @@ namespace BoxSocial.Musician
             else
             {
                 musicianMemberCache.Add(member, false);
+            }
+        }
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public override List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
     }

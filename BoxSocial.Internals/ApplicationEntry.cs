@@ -31,7 +31,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("applications", "APPLICATION")]
-    public class ApplicationEntry : Primitive, ICommentableItem
+    public class ApplicationEntry : Primitive, ICommentableItem, IPermissibleItem
     {
         public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
         public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type_id";
@@ -79,7 +79,7 @@ namespace BoxSocial.Internals
         private string displayNameOwnership;
 
         private Primitive owner; // primitive installed the application
-        private Access applicationAccess; // primitive application access rights
+        private Access access; // primitive application access rights
 
         public long ApplicationId
         {
@@ -255,14 +255,6 @@ namespace BoxSocial.Internals
             get
             {
                 return comments;
-            }
-        }
-
-        public Access ApplicationAccess
-        {
-            get
-            {
-                return applicationAccess;
             }
         }
 
@@ -502,7 +494,7 @@ namespace BoxSocial.Internals
 
             if (installee != null)
             {
-                applicationAccess = new Access(core, permissions, installee);
+                access = new Access(core, this, installee);
             }
         }
 
@@ -516,10 +508,6 @@ namespace BoxSocial.Internals
 
         private void ApplicationEntry_ItemLoad()
         {
-            if (owner != null)
-            {
-                applicationAccess = new Access(core, permissions, owner);
-            }
         }
 
         private void loadApplicationInfo(DataRow applicationRow)
@@ -629,7 +617,7 @@ namespace BoxSocial.Internals
             return 0x0001;
         }
 
-        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             if (viewer != null)
             {
@@ -1061,6 +1049,27 @@ namespace BoxSocial.Internals
         }
 
         #endregion
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public override List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 
     public class InvalidApplicationException : Exception

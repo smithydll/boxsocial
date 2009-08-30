@@ -131,7 +131,7 @@ namespace BoxSocial.Internals
         }
     }
 
-    public abstract class Primitive : NumberedItem
+    public abstract class Primitive : NumberedItem, IPermissibleItem
     {
 
         protected Primitive(Core core) : base(core)
@@ -220,36 +220,6 @@ namespace BoxSocial.Internals
 
         public abstract ushort GetAccessLevel(User viewer);
 
-        public abstract void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange);
-
-        public bool GetCanRead(ushort accessBits, User viewer)
-        {
-            bool canRead, canComment, canCreate, canChange;
-            GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
-            return canRead;
-        }
-
-        public bool GetCanComment(ushort accessBits, User viewer)
-        {
-            bool canRead, canComment, canCreate, canChange;
-            GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
-            return canComment;
-        }
-
-        public bool GetCanCreate(ushort accessBits, User viewer)
-        {
-            bool canRead, canComment, canCreate, canChange;
-            GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
-            return canCreate;
-        }
-
-        public bool GetCanChange(ushort accessBits, User viewer)
-        {
-            bool canRead, canComment, canCreate, canChange;
-            GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
-            return canChange;
-        }
-
         public void ParseBreadCrumbs(string path)
         {
             ParseBreadCrumbs("BREADCRUMBS", path);
@@ -302,6 +272,32 @@ namespace BoxSocial.Internals
             }
 
             return parts;
+        }
+
+        public abstract Access Access
+        {
+            get;
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public abstract List<AccessControlPermission> AclPermissions
+        {
+            get;
         }
     }
 }

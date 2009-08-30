@@ -43,9 +43,9 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_pages", "PAGE")]
-    public class Page : NumberedItem, INestableItem
+    public class Page : NumberedItem, INestableItem, IPermissibleItem
     {
-        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_access, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
+        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
 
         [DataField("page_id", DataFieldKeys.Primary)]
         private long pageId;
@@ -57,8 +57,6 @@ namespace BoxSocial.Internals
         private string title;
         [DataField("page_text", MYSQL_MEDIUM_TEXT)]
         private string body;
-        [DataField("page_access")]
-        private ushort permissions;
         [DataField("page_license")]
         private byte licenseId;
         [DataField("page_views")]
@@ -96,7 +94,7 @@ namespace BoxSocial.Internals
 
         private User creator;
         private Primitive owner;
-        private Access pageAccess;
+        private Access access;
         private ContentLicense license;
         private Classifications classification;
         private ParentTree parentTree;
@@ -164,27 +162,15 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ushort Permissions
+        public Access Access
         {
             get
             {
-                return permissions;
-            }
-            set
-            {
-                SetProperty("permissions", value);
-            }
-        }
-
-        public Access PageAccess
-        {
-            get
-            {
-                if (pageAccess == null)
+                if (access == null)
                 {
-                    pageAccess = new Access(core, permissions, Owner);
+                    access = new Access(core, this, Owner);
                 }
-                return pageAccess;
+                return access;
             }
         }
 
@@ -560,7 +546,6 @@ namespace BoxSocial.Internals
             {
                 body = (string)pageRow["page_text"];
             }
-            permissions = (ushort)pageRow["page_access"];
             licenseId = (byte)pageRow["page_license"];
             views = (long)pageRow["page_views"];
             status = (string)pageRow["page_status"];
@@ -576,8 +561,6 @@ namespace BoxSocial.Internals
             {
                 hierarchy = (string)pageRow["page_hierarchy"];
             }
-
-            pageAccess = new Access(core, permissions, owner);
         }
 
         private void loadLicenseInfo(DataRow pageRow)
@@ -1150,7 +1133,7 @@ namespace BoxSocial.Internals
         {
             core.template.SetTemplate("Pages", "viewpage");
 
-            long loggedIdUid = thePage.PageAccess.SetSessionViewer(core.session);
+            long loggedIdUid = thePage.Access.SetSessionViewer(core.session);
 
             if (owner is User)
             {
@@ -1159,7 +1142,7 @@ namespace BoxSocial.Internals
 
             core.Display.ParsePageList(owner, true);
 
-            if (!thePage.PageAccess.CanRead)
+            if (!thePage.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -1243,7 +1226,7 @@ namespace BoxSocial.Internals
 
             owner.ParseBreadCrumbs(breadCrumbParts);
 
-            if (thePage.PageAccess.CanEdit)
+            if (thePage.Access.Can("EDIT"))
             {
                 core.template.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(owner, "pages", "write", "edit", thePage.PageId, true));
             }
@@ -1295,6 +1278,27 @@ namespace BoxSocial.Internals
 
             return paths[paths.Length - 1];
         }
+
+        #region IPermissibleItem Members
+
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 
     public class PageNotFoundException : Exception

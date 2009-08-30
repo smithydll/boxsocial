@@ -58,7 +58,7 @@ namespace BoxSocial.Internals
 
     [DataTable("user_keys", "USER")]
     [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
-    public class User : Primitive, ICommentableItem
+    public class User : Primitive, ICommentableItem, IPermissibleItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
@@ -83,6 +83,8 @@ namespace BoxSocial.Internals
         protected bool iconLoaded = false;
 
         protected List<UserEmail> emailAddresses;
+
+        private Access access;
 
         /// <summary>
         /// user ID (read only)
@@ -356,17 +358,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public Access ProfileAccess
-        {
-            get
-            {
-                return userProfile.ProfileAccess;
-            }
-        }
-
         public string ProfileUri
         {
             get
@@ -474,14 +465,6 @@ namespace BoxSocial.Internals
             get
             {
                 return userProfile.ReligionId;
-            }
-        }
-
-        public ushort Permissions
-        {
-            get
-            {
-                return userProfile.Permissions;
             }
         }
 
@@ -1810,7 +1793,7 @@ namespace BoxSocial.Internals
         /// <param name="canComment"></param>
         /// <param name="canCreate"></param>
         /// <param name="canChange"></param>
-        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             Relation viewerRelation;
             if (!sessionRelationsSet)
@@ -1971,9 +1954,9 @@ namespace BoxSocial.Internals
 
             page.User.LoadProfileInfo();
 
-            page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
+            page.User.Access.SetViewer(core.session.LoggedInMember);
 
-            if (!page.User.ProfileAccess.CanRead)
+            if (!page.User.Access.Can("VIEW_PROFILE"))
             {
                 core.Functions.Generate403();
                 return;
@@ -2109,6 +2092,27 @@ namespace BoxSocial.Internals
         public new long Update()
         {
             throw new Exception("Cannot update user key table.");
+        }
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public override List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 

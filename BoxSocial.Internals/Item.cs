@@ -713,7 +713,7 @@ namespace BoxSocial.Internals
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;
                 iThis.Access.SetSessionViewer(core.session);
-                if (!iThis.Access.CanEdit)
+                if (!iThis.Access.Can("EDIT"))
                 {
                     throw new UnauthorisedToUpdateItemException();
                 }
@@ -907,7 +907,7 @@ namespace BoxSocial.Internals
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;
                 iThis.Access.SetSessionViewer(core.session);
-                if (!iThis.Access.CanDelete)
+                if (!iThis.Access.Can("DELETE"))
                 {
                     throw new UnauthorisedToDeleteItemException();
                 }

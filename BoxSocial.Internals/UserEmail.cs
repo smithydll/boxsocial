@@ -30,7 +30,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_emails")]
-    public sealed class UserEmail : NumberedItem
+    public sealed class UserEmail : NumberedItem, IPermissibleItem
     {
         [DataField("email_id", DataFieldKeys.Primary)]
         private long emailId;
@@ -44,11 +44,9 @@ namespace BoxSocial.Internals
         private long emailTimeRaw;
         [DataField("email_activate_code", 32)]
         private string emailActivateKey;
-        [DataField("email_access")]
-        private ushort permissions;
 
         private User owner;
-        private Access emailAccess;
+        private Access access;
 
         public long EmailId
         {
@@ -74,15 +72,15 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Access EmailAccess
+        public Access Access
         {
             get
             {
-                if (emailAccess == null)
+                if (access == null)
                 {
-                    emailAccess = new Access(core, permissions, Owner);
+                    access = new Access(core, this, Owner);
                 }
-                return emailAccess;
+                return access;
             }
         }
 
@@ -239,6 +237,35 @@ namespace BoxSocial.Internals
         {
             get { throw new NotImplementedException(); }
         }
+
+        #region IPermissibleItem Members
+
+
+        Primitive IPermissibleItem.Owner
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidUserEmailException : Exception

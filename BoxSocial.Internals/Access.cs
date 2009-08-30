@@ -33,46 +33,11 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Access
     {
-        public const ushort ALL_CAN_READ = 0x1111;
-        public const ushort FRIENDS_CAN_READ = 0x1000;
-
-        public static bool AllCanRead(ushort permissions)
-        {
-            if ((permissions & Access.ALL_CAN_READ) == Access.ALL_CAN_READ)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public static bool FriendsCanRead(ushort permissions)
-        {
-            if ((permissions & Access.FRIENDS_CAN_READ) == Access.FRIENDS_CAN_READ)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         private Core core;
         private Mysql db;
-        private bool canRead = false;
-        private bool canComment = false;
-        private bool canCreate = false;
-        private bool canChange = false;
 
         private Primitive owner;
         private User viewer;
-
-        private ushort accessBits;
-
-        private bool usesAccessControlLists;
 
         private List<AccessControlGrant> grants;
         private NumberedItem item;
@@ -81,21 +46,8 @@ namespace BoxSocial.Internals
         {
             this.core = core;
             this.item = (NumberedItem)item;
-            this.usesAccessControlLists = true;
 
             grants = AccessControlGrant.GetGrants(core, this.item);
-        }
-
-        public Access(Core core, ushort accessBits, Primitive owner)
-        {
-            this.core = core;
-            this.db = core.db;
-            this.owner = owner;
-
-            this.accessBits = accessBits;
-            this.usesAccessControlLists = false;
-
-            grants = null;
         }
 
         public long SetViewer(User viewer)
@@ -107,8 +59,6 @@ namespace BoxSocial.Internals
             {
                 loggedIdUid = viewer.UserId;
             }
-
-            owner.GetCan(accessBits, viewer, out canRead, out canComment, out canCreate, out canChange);
 
             return loggedIdUid;
         }
@@ -128,6 +78,25 @@ namespace BoxSocial.Internals
             bool deny = false;
 
             AccessControlPermission acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+
+            if (grants.Count == 0)
+            {
+                if (item == owner)
+                {
+                    if (owner == viewer)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return owner.Access.Can(permission);
+                }
+            }
 
             /*foreach (AccessControlGrant grant in grants)
             {
@@ -159,49 +128,6 @@ namespace BoxSocial.Internals
             }
 
             return (allow && (!deny));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool CanRead
-        {
-            get
-            {
-                return canRead;
-            }
-        }
-
-        public bool CanComment
-        {
-            get
-            {
-                return canComment;
-            }
-        }
-
-        public bool CanCreate
-        {
-            get
-            {
-                return canCreate;
-            }
-        }
-
-        public bool CanEdit
-        {
-            get
-            {
-                return canChange;
-            }
-        }
-
-        public bool CanDelete
-        {
-            get
-            {
-                return canChange;
-            }
         }
     }
 }

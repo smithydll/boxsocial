@@ -42,7 +42,7 @@ namespace BoxSocial.Groups
 
     [DataTable("group_keys", "GROUP")]
     [Primitive("GROUP", UserGroupLoadOptions.All, "group_id", "group_name")]
-    public class UserGroup : Primitive, ICommentableItem
+    public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
 
@@ -54,6 +54,7 @@ namespace BoxSocial.Groups
         private string domain;
 
         private UserGroupInfo groupInfo;
+        private Access access;
 
         private Dictionary<User, bool> groupMemberCache = new Dictionary<User,bool>();
         private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
@@ -1090,7 +1091,7 @@ namespace BoxSocial.Groups
             return 0x0000;
         }
 
-        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
 			byte accessBitsEveryone = (byte)(accessBits & 0x000F);
             byte accessBitsMembers = (byte)((accessBits & 0x00F0) >> 4);
@@ -1569,6 +1570,27 @@ namespace BoxSocial.Groups
         }
 
         #endregion
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public override List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 
     public class InvalidGroupException : Exception

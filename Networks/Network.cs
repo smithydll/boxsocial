@@ -54,7 +54,7 @@ namespace BoxSocial.Networks
     /// </summary>
     [DataTable("network_keys", "NETWORK")]
     [Primitive("NETWORK", NetworkLoadOptions.All, "network_id", "network_network")]
-    public class Network : Primitive, ICommentableItem
+    public class Network : Primitive, ICommentableItem, IPermissibleItem
     {
         public const string NETWORK_INFO_FIELDS = "`network_info`.network_id, `network_info`.network_name_display, `network_info`.network_abstract, `network_info`.network_members, `network_info`.network_comments, `network_info`.network_require_confirmation, `network_info`.network_type, `network_info`.network_gallery_items, `network_info`.network_bytes";
 
@@ -64,6 +64,7 @@ namespace BoxSocial.Networks
         private string networkNetwork;
 
         private NetworkInfo networkInfo;
+        private Access access;
 
         private Dictionary<User, bool> networkMemberCache = new Dictionary<User, bool>();
 
@@ -705,7 +706,7 @@ namespace BoxSocial.Networks
             return 0x0000;
         }
 
-        public override void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
+        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             bool isNetworkMember = IsNetworkMember(viewer);
             switch (NetworkType)
@@ -947,6 +948,27 @@ namespace BoxSocial.Networks
         }
 
         #endregion
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this, this.Owner);
+                }
+
+                return access;
+            }
+        }
+
+        public override List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

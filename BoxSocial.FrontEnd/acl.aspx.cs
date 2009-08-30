@@ -64,20 +64,51 @@ namespace BoxSocial.FrontEnd
                 core.Functions.Generate404();
                 return;
             }
-            
-            ItemType type = new ItemType(core, itemKey.TypeId);
-            ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+
+            NumberedItem ni = NumberedItem.Reflect(core, itemKey);
+
+            if (!(ni is IPermissibleItem))
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            IPermissibleItem pi = (IPermissibleItem)ni;
             
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
             
-            /*AccessControlLists acl = new AccessControlLists(core, itemKey);
-            acl.ParseACL(template, loggedInMember, "S_PERMISSIONS");*/
+            AccessControlLists acl = new AccessControlLists(core, pi);
+            acl.ParseACL(template, loggedInMember, "S_PERMISSIONS");
             
-            Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
+            /*Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
             
-            template.ParseRaw("S_PERMISSIONS", aclTemplate.ToString());
+            template.ParseRaw("S_PERMISSIONS", aclTemplate.ToString());*/
+
+            if (!pi.Access.Can("EDIT_PERMISSIONS"))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
+            if (Request.Form["save"] != null)
+            {
+                acl_Save(acl);
+            }
             
             EndResponse();
+        }
+
+        private void acl_Save(AccessControlLists acl)
+        {
+            try
+            {
+                //acl.Save();
+            }
+            catch
+            {
+                core.Functions.Generate403();
+                return;
+            }
         }
     }
 }

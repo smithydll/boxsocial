@@ -38,6 +38,11 @@ namespace BoxSocial.Internals
         {
         }
 
+        protected NumberedItem(Core core, long id)
+            : base(core)
+        {
+        }
+
         public abstract long Id
         {
             get;
@@ -146,7 +151,7 @@ namespace BoxSocial.Internals
             if (this is IPermissibleItem)
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;
-                if (!iThis.Access.CanDelete)
+                if (!iThis.Access.Can("DELETE"))
                 {
                     throw new UnauthorisedToDeleteItemException();
                 }
@@ -168,6 +173,16 @@ namespace BoxSocial.Internals
             }
 
             return base.Delete();
+        }
+
+        public static NumberedItem Reflect(Core core, ItemKey ik)
+        {
+            ItemType type = new ItemType(core, ik.TypeId);
+            ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+
+            BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+
+            return (Activator.CreateInstance(Type.GetType(type.TypeNamespace), new object[] { core, ik.Id }) as NumberedItem);
         }
     }
 }

@@ -64,8 +64,6 @@ namespace BoxSocial.Internals
         private long profileViews;
         [DataField("profile_country", 2)]
         private string country;
-        [DataField("profile_access")]
-        private ushort permissions;
         [DataField("profile_height")]
         private byte height;
         [DataField("profile_weight")]
@@ -83,8 +81,6 @@ namespace BoxSocial.Internals
 
         private string countryName;
         private string religionTitle;
-
-        private Access profileAccess;
 
         public long UserId
         {
@@ -396,22 +392,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-        }
-
-        public Access ProfileAccess
-        {
-            get
-            {
-                return profileAccess;
-            }
-        }
-
         public string Country
         {
             get
@@ -510,8 +490,6 @@ namespace BoxSocial.Internals
 
         void UserProfile_ItemLoad()
         {
-            profileAccess = new Access(core, permissions, user);
-
             if (!string.IsNullOrEmpty(CountryIso))
             {
                 Country c = new Country(core, CountryIso);

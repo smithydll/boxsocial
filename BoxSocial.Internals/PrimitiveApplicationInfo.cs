@@ -27,7 +27,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("primitive_apps")]
-    public class PrimitiveApplicationInfo : NumberedItem
+    public class PrimitiveApplicationInfo : NumberedItem, IPermissibleItem
     {
         [DataField("app_id", DataFieldKeys.Primary)]
         private long appId;
@@ -39,11 +39,9 @@ namespace BoxSocial.Internals
         private ItemKey ownerKey;
         [DataField("application_id")]
         private long applicationId;
-        [DataField("app_access")]
-        private ushort permissions;
 
         private Primitive owner; // primitive installed the application
-        private Access applicationAccess; // primitive application access rights
+        private Access access; // primitive application access rights
 
         public long AppId
         {
@@ -70,16 +68,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Access ApplicationAccess
+        public Access Access
         {
             get
             {
-                if (applicationAccess == null)
+                if (access == null)
                 {
-                    applicationAccess = new Access(core, permissions, Owner);
+                    access = new Access(core, this, Owner);
                 }
 
-                return applicationAccess;
+                return access;
             }
         }
 
@@ -143,6 +141,26 @@ namespace BoxSocial.Internals
         {
             get { throw new NotImplementedException(); }
         }
+
+        #region IPermissibleItem Members
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidPrimitiveAppInfoException : Exception

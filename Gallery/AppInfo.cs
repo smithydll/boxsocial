@@ -268,10 +268,10 @@ namespace BoxSocial.Applications.Gallery
                         break;
                 }*/
 
-                Access photoAccess = new Access(core, (ushort)galleryItemTable.Rows[0]["gallery_item_access"], owner);
+                Access photoAccess = new Access(core, new GalleryItem(core, ik.Id), owner);
                 photoAccess.SetViewer(member);
 
-                if (photoAccess.CanComment)
+                if (photoAccess.Can("COMMENT"))
                 {
                     return true;
                 }

@@ -79,25 +79,6 @@ namespace BoxSocial.Internals
 
             AccessControlPermission acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
 
-            if (grants.Count == 0)
-            {
-                if (item == owner)
-                {
-                    if (owner == viewer)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return owner.Access.Can(permission);
-                }
-            }
-
             /*foreach (AccessControlGrant grant in grants)
             {
                 if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
@@ -124,6 +105,41 @@ namespace BoxSocial.Internals
                         case AccessControlGrants.Inherit:
                             break;
                     }*/
+                }
+            }
+
+            if (grants.Count == 0)
+            {
+                if (item == owner)
+                {
+                    if (owner == viewer)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (item is INestableItem)
+                    {
+                        INestableItem ni = (INestableItem)item;
+                        List<INestableItem> parents = ni.GetParents();
+                        if (parents.Count == 0)
+                        {
+                            return owner.Access.Can(permission);
+                        }
+                        else
+                        {
+                            return ((IPermissibleItem)parents[parents.Count - 1]).Access.Can(permission);
+                        }
+                    }
+                    else
+                    {
+                        return owner.Access.Can(permission);
+                    }
                 }
             }
 

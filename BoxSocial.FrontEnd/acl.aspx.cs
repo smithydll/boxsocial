@@ -65,10 +65,17 @@ namespace BoxSocial.FrontEnd
                 return;
             }
             
+            ItemType type = new ItemType(core, itemKey.TypeId);
+            ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+            
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
             
             /*AccessControlLists acl = new AccessControlLists(core, itemKey);
-            acl.ParseACL(template, loggedInMember, "S_PERMISSOINS");*/
+            acl.ParseACL(template, loggedInMember, "S_PERMISSIONS");*/
+            
+            Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
+            
+            template.ParseRaw("S_PERMISSIONS", aclTemplate.ToString());
             
             EndResponse();
         }

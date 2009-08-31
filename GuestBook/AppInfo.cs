@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -176,9 +176,9 @@ namespace BoxSocial.Applications.GuestBook
             {
                 User owner = new User(core, itemKey.Id, UserLoadOptions.All);
 
-                owner.ProfileAccess.SetViewer(member);
+                owner.Access.SetViewer(member);
 
-                if (owner.ProfileAccess.CanComment)
+                if (owner.Access.Can("COMMENT"))
                 {
                     return true;
                 }
@@ -441,12 +441,12 @@ namespace BoxSocial.Applications.GuestBook
             User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
-            profileOwner.ProfileAccess.SetViewer(e.core.session.LoggedInMember);
+            profileOwner.Access.SetViewer(e.core.session.LoggedInMember);
 
             if (e.core.session.IsLoggedIn)
             {
                 template.Parse("LOGGED_IN", "TRUE");
-                if (profileOwner.ProfileAccess.CanComment)
+                if (profileOwner.Access.Can("COMMENT"))
                 {
                     template.Parse("CAN_COMMENT", "TRUE");
                 }

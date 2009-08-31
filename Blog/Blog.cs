@@ -41,7 +41,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a user blog.
     /// </summary>
     [DataTable("user_blog", "BLOG")]
-    public class Blog : NumberedItem
+    public class Blog : NumberedItem, IPermissibleItem
     {
 
         /// <summary>
@@ -62,11 +62,9 @@ namespace BoxSocial.Applications.Blog
         private long comments;
         [DataField("blog_visits")]
         private long visits;
-        [DataField("blog_access")]
-        private ushort permissions;
 
         private User owner;
-        private Access blogAccess;
+        private Access access;
 
         /// <summary>
         /// Gets the id of the owner of the blog.
@@ -124,32 +122,21 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Gets the permission mask for the blog.
-        /// </summary>
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-        }
-
-        /// <summary>
         /// Gets the access information (permissions) for the blog.
         /// </summary>
-        public Access BlogAccess
+        public Access Access
         {
             get
             {
-                if (blogAccess == null)
+                if (access == null)
                 {
-                    blogAccess = new Access(core, permissions, Owner);
+                    access = new Access(core, this, Owner);
                 }
-                return blogAccess;
+                return access;
             }
         }
 
-        public User Owner
+        public Primitive Owner
         {
             get
             {
@@ -190,7 +177,6 @@ namespace BoxSocial.Applications.Blog
         private void Blog_ItemLoad()
         {
             core.LoadUserProfile(userId);
-            blogAccess = new Access(core, permissions, Owner);
         }
 
         /// <summary>
@@ -204,8 +190,6 @@ namespace BoxSocial.Applications.Blog
             entries = (long)blogRow["blog_entries"];
             comments = (long)blogRow["blog_comments"];
             visits = (long)blogRow["blog_visits"];
-            permissions = (ushort)blogRow["blog_access"];
-            blogAccess = new Access(core, permissions, owner);
         }
 
         /// <summary>
@@ -500,7 +484,7 @@ namespace BoxSocial.Applications.Blog
                 return;
             }
 
-            long loggedIdUid = myBlog.BlogAccess.SetSessionViewer(core.session);
+            long loggedIdUid = myBlog.Access.SetSessionViewer(core.session);
             ushort readAccessLevel = 0x0000;
 
             /* TODO: see what's wrong here, for not just rely on the application layer security settings */
@@ -701,8 +685,8 @@ namespace BoxSocial.Applications.Blog
                         page.template.Parse("BLOG_POST_COMMENTS", core.Functions.LargeIntegerToString(comments));
                         page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
 
-                        myBlog.blogAccess = new Access(core, blogEntries[i].Permissions, page.User);
-                        myBlog.blogAccess.SetViewer(core.session.LoggedInMember);
+                        //myBlog.Access = new Access(core, blogEntries[i], page.User);
+                        myBlog.Access.SetViewer(core.session.LoggedInMember);
                     }
 
                     if (post > 0)
@@ -713,7 +697,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post > 0)
                 {
-                    if (myBlog.BlogAccess.CanComment)
+                    if (myBlog.Access.Can("COMMENT"))
                     {
                         page.template.Parse("CAN_COMMENT", "TRUE");
                     }
@@ -875,6 +859,27 @@ namespace BoxSocial.Applications.Blog
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStubAbsolute, year, month, postId));
         }
+        
+        #region IPermissibleItem Members
+
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

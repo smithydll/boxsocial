@@ -178,9 +178,13 @@ namespace BoxSocial.Internals
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
             ItemType type = new ItemType(core, ik.TypeId);
-            ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
-
-            BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+            
+            if (type.ApplicationId > 0)
+            {
+                ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+    
+                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+            }
 
             return (Activator.CreateInstance(Type.GetType(type.TypeNamespace), new object[] { core, ik.Id }) as NumberedItem);
         }

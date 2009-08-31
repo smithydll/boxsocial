@@ -273,7 +273,6 @@ namespace BoxSocial.Applications.Calendar
 
         private void Event_ItemLoad()
         {
-            eventAccess = new Access(core, permissions, owner);
         }
 
         public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
@@ -283,11 +282,11 @@ namespace BoxSocial.Applications.Calendar
 
             Event myEvent = new Event(core, owner, eventId);
 
-            if (Access.FriendsCanRead(myEvent.Permissions))
+            /*if (Access.FriendsCanRead(myEvent.Permissions))
             {
                 core.CallingApplication.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
                     Event.BuildEventUri(core, myEvent), myEvent.subject));
-            }
+            }*/
 
             return myEvent;
         }
@@ -538,7 +537,7 @@ namespace BoxSocial.Applications.Calendar
 
                 calendarEvent.EventAccess.SetSessionViewer(core.session);
 
-                if (!calendarEvent.EventAccess.CanRead && !calendarEvent.IsInvitee(core.session.LoggedInMember))
+                if (!calendarEvent.EventAccess.Can("VIEW") && !calendarEvent.IsInvitee(core.session.LoggedInMember))
                 {
                     core.Functions.Generate403();
                     return;
@@ -557,7 +556,7 @@ namespace BoxSocial.Applications.Calendar
                 //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
                 owner.ParseBreadCrumbs(calendarPath);
 
-                if (calendarEvent.EventAccess.CanComment)
+                if (calendarEvent.EventAccess.Can("COMMENT"))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }

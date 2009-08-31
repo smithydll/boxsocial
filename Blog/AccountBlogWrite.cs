@@ -132,7 +132,6 @@ namespace BoxSocial.Applications.Blog
                         postText = be.Body;
                         licenseId = be.License;
                         categoryId = be.Category;
-                        blogPermissions = be.Permissions;
 
                         postTime = be.GetCreatedDate(tz);
 
@@ -188,7 +187,7 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("S_BLOG_LICENSE", licensesSelectBox);
             template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
-            core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
+            //core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
 
             template.Parse("S_TITLE", postTitle);
             template.Parse("S_BLOG_TEXT", postText);
@@ -325,7 +324,8 @@ namespace BoxSocial.Applications.Blog
                 {
                     BlogEntry myBlogEntry = new BlogEntry(core, postId);
 
-                    if (Access.FriendsCanRead(myBlogEntry.Permissions))
+                    // TODO Permissions
+                    //if (Access.FriendsCanRead(myBlogEntry.Permissions))
                     {
                         DateTime postDateTime = myBlogEntry.GetCreatedDate(core.tz);
 

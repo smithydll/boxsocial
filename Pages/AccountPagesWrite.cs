@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.Pages
                         pageParentId = page.ParentId;
                         pageTitle = page.Title;
                         pageSlug = page.Slug;
-                        pagePermissions = page.Permissions;
+                        //pagePermissions = page.Permissions;
                         licenseId = page.LicenseId;
                         pageText = page.Body;
                         pagePath = page.FullPath;
@@ -162,7 +162,7 @@ namespace BoxSocial.Applications.Pages
             core.Display.ParseClassification(template, "S_PAGE_CLASSIFICATION", pageClassification);
             template.Parse("S_PAGE_PARENT", pagesSelectBox);
 
-            core.Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
+            //core.Display.ParsePermissionsBox(template, "S_PAGE_PERMS", pagePermissions, permissions);
 
             template.Parse("S_TITLE", pageTitle);
             template.Parse("S_SLUG", pageSlug);

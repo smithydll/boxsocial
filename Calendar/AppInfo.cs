@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -184,9 +184,9 @@ namespace BoxSocial.Applications.Calendar
         private bool eventCanPostComment(ItemKey itemKey, User member)
         {
             Event calendarEvent = new Event(core, null, itemKey.Id);
-            calendarEvent.EventAccess.SetViewer(member);
+            calendarEvent.Access.SetViewer(member);
 
-            if (calendarEvent.EventAccess.CanComment || calendarEvent.IsInvitee(member))
+            if (calendarEvent.Access.Can("COMMENT") || calendarEvent.IsInvitee(member))
             {
                 return true;
             }

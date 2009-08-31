@@ -236,8 +236,6 @@ namespace BoxSocial.Applications.Calendar
             {
                 status = (byte)TaskStatus.Overdue;
             }
-
-            taskAccess = new Access(core,  permissions, owner);
         }
 
         public static Task Create(Core core, User creator, Primitive owner, string topic, string description, long dueTimestamp, TaskStatus status, byte percentComplete, TaskPriority priority)
@@ -261,11 +259,11 @@ namespace BoxSocial.Applications.Calendar
 
             Task myTask = new Task(core, owner, taskId);
 
-            if (Access.FriendsCanRead(myTask.Permissions))
+            /*if (Access.FriendsCanRead(myTask.Permissions))
             {
                 core.CallingApplication.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
                     Task.BuildTaskUri(core, myTask), myTask.Topic));
-            }
+            }*/
 
             return myTask;
         }
@@ -368,7 +366,7 @@ namespace BoxSocial.Applications.Calendar
 
                 calendarTask.TaskAccess.SetSessionViewer(core.session);
 
-                if (!calendarTask.TaskAccess.CanRead)
+                if (!calendarTask.TaskAccess.Can("VIEW"))
                 {
                     core.Functions.Generate403();
                     return;
@@ -451,7 +449,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 if (taskAccess == null)
                 {
-                    taskAccess = new Access(core, permissions, Owner);
+                    taskAccess = new Access(core, this, Owner);
                 }
                 return taskAccess;
             }

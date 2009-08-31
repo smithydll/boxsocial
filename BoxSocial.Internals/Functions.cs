@@ -295,7 +295,7 @@ namespace BoxSocial.Internals
             return core.Http.Query["filter"];
         }
 
-        public static string BuildPermissionsBox(ushort permission, List<string> permissions)
+        /*public static string BuildPermissionsBox(ushort permission, List<string> permissions)
         {
             StringBuilder permissionsBox = new StringBuilder();
 
@@ -330,7 +330,7 @@ namespace BoxSocial.Internals
             permissionsBox.AppendLine("</table>");
 
             return permissionsBox.ToString();
-        }
+        }*/
 
         public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {

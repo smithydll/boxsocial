@@ -566,7 +566,7 @@ namespace BoxSocial.Install
                                     }
                                 }*/
 
-                                if (aii.ApplicationItemAccessPermissions != null)
+                                /*if (aii.ApplicationItemAccessPermissions != null)
                                 {
                                     foreach (ApplicationItemAccessPermissions iap in aii.ApplicationItemAccessPermissions)
                                     {
@@ -579,7 +579,9 @@ namespace BoxSocial.Install
                                             AccessControlPermission.Create(core, iap.TypeId, iap.PermissionName);
                                         }
                                     }
-                                }
+                                }*/
+                                
+                                // TODO Permissions
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
                                     applicationId, updatedRaw));

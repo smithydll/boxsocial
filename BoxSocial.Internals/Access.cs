@@ -123,20 +123,20 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (item is INestableItem)
+                    /*if (item is INestableItem)
                     {
                         INestableItem ni = (INestableItem)item;
-                        List<INestableItem> parents = ni.GetParents();
-                        if (parents.Count == 0)
+                        ParentTree parents = ni.GetParents();
+                        if (parents.Nodes.Count == 0)
                         {
                             return owner.Access.Can(permission);
                         }
                         else
                         {
-                            return ((IPermissibleItem)parents[parents.Count - 1]).Access.Can(permission);
+                            return ((IPermissibleItem)NumberedItem.Reflect(core, parents.Nodes[parents.Nodes.Count - 1].ParentId))).Access.Can(permission);
                         }
                     }
-                    else
+                    else*/
                     {
                         return owner.Access.Can(permission);
                     }

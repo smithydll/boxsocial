@@ -754,7 +754,7 @@ namespace BoxSocial.Applications.Forum
                     thisForum = thisTopic.Forum;
                 }
 
-                if (!thisForum.ForumAccess.CanRead)
+                if (!thisForum.Access.Can("VIEW_TOPICS"))
                 {
                     core.Functions.Generate403();
                     return;
@@ -858,7 +858,7 @@ namespace BoxSocial.Applications.Forum
                     thisTopic.Read(posts[posts.Count - 1]);
                 }
 
-                if (thisForum.ForumAccess.CanCreate)
+                if (thisForum.Access.Can("POST_TOPIC"))
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);

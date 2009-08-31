@@ -164,9 +164,29 @@ namespace BoxSocial.Internals
                 PermissionAttribute pattr = (PermissionAttribute)attr;
                 if (pattr != null)
                 {
-                    if (pattr.Permissions != null)
+                    if (pattr.Key != null)
                     {
-                        permissions.AddRange(pattr.Permissions);
+                        permissions.Add(pattr.Key);
+                    }
+                    attributeFound = true;
+                }
+            }
+            
+            return permissions;
+        }
+        
+        public static List<PermissionInfo> GetPermissionInfo(Type type)
+        {
+            List<PermissionInfo> permissions = new List<PermissionInfo>();
+            bool attributeFound = false;
+            foreach (Attribute attr in type.GetCustomAttributes(typeof(PermissionAttribute), false))
+            {
+                PermissionAttribute pattr = (PermissionAttribute)attr;
+                if (pattr != null)
+                {
+                    if (pattr.Key != null)
+                    {
+                        permissions.Add(new PermissionInfo(pattr.Key, pattr.Description));
                     }
                     attributeFound = true;
                 }

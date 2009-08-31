@@ -175,7 +175,7 @@ namespace BoxSocial.Applications.Calendar
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            ParsePermissionsBox("S_TASK_PERMS", taskAccess, permissions);
+            //ParsePermissionsBox("S_TASK_PERMS", taskAccess, permissions);
 
             template.Parse("S_TOPIC", topic);
             template.Parse("S_DESCRIPTION", description);

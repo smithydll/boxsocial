@@ -24,22 +24,32 @@ using System.Text;
 
 namespace BoxSocial.Internals
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public class PermissionAttribute : Attribute
     {
-        private List<string> permissions = null;
+        private string permissionKey;
+        private string permissionDescription;
         
-        public List<string> Permissions
+        public string Key
         {
             get
             {
-                return permissions;
+                return permissionKey;
             }
         }
         
-        public PermissionAttribute(params string[] permissions)
+        public string Description
         {
-            this.permissions = new List<string>(permissions);
+            get
+            {
+                return permissionDescription;
+            }
+        }
+        
+        public PermissionAttribute(string key, string description)
+        {
+            this.permissionKey = key;
+            this.permissionDescription = description;
         }
     }
 }

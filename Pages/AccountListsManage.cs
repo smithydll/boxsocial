@@ -106,7 +106,7 @@ namespace BoxSocial.Applications.Pages
             permissions.Add("Can Read");
 
             template.Parse("S_LIST_TYPES", listTypesSelectBox);
-            core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
+            //core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", listPermissions, permissions);
 
             Save(new EventHandler(AccountListsManage_Save));
         }
@@ -303,7 +303,7 @@ namespace BoxSocial.Applications.Pages
             {
                 List list = new List(core, session.LoggedInMember, listId);
 
-                if (!list.Access.CanEdit)
+                if (!list.Access.Can("EDIT"))
                 {
                     DisplayGenericError();
                     return;
@@ -322,7 +322,7 @@ namespace BoxSocial.Applications.Pages
                 listTypesSelectBox.SelectedKey = list.Type.ToString();
 
                 template.Parse("S_LIST_TYPES", listTypesSelectBox);
-                core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
+                //core.Display.ParsePermissionsBox(template, "S_LIST_PERMS", list.Permissions, list.PermissibleActions);
 
                 template.Parse("S_LIST_TITLE", list.Title);
                 template.Parse("S_LIST_SLUG", list.Path);

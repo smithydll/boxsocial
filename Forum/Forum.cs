@@ -350,7 +350,7 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumAccess == null)
                 {
-                    forumAccess = new Access(core, permissions, Owner);
+                    forumAccess = new Access(core, this, Owner);
                     forumAccess.SetSessionViewer(core.session);
                 }
                 return forumAccess;
@@ -657,7 +657,7 @@ namespace BoxSocial.Applications.Forum
 				{
 					forum.Access.SetSessionViewer(core.session);
 					
-					if (forum.Access.CanRead)
+					if (forum.Access.Can("VIEW"))
 					{
 						sb.Add(new SelectBoxItem(forum.Id.ToString(), forum.Title));
 					}
@@ -1181,7 +1181,7 @@ namespace BoxSocial.Applications.Forum
             }
 			
 			thisForum.Access.SetSessionViewer(core.session);
-			if (!thisForum.Access.CanRead)
+			if (!thisForum.Access.Can("VIEW"))
 			{
                 core.Functions.Generate403();
 			}
@@ -1195,7 +1195,7 @@ namespace BoxSocial.Applications.Forum
 
             thisForum.ForumAccess.SetSessionViewer(core.session);
 
-            if (!thisForum.ForumAccess.CanRead)
+            if (!thisForum.ForumAccess.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -1214,7 +1214,7 @@ namespace BoxSocial.Applications.Forum
 			foreach (Forum forum in forums)
 			{
 				forum.Access.SetSessionViewer(core.session);
-				if (forum.Access.CanRead)
+				if (forum.Access.Can("VIEW"))
 				{
 					accessibleForums.Add(forum);
 				}
@@ -1449,7 +1449,7 @@ namespace BoxSocial.Applications.Forum
 					}
                 }
 
-                if (thisForum.ForumAccess.CanCreate)
+                if (thisForum.ForumAccess.Can("CREATE_TOPICS"))
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }

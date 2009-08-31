@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Pages
                 normalisedText = text;
             }
 
-            if (!list.Access.CanCreate)
+            if (!list.Access.Can("CREATE"))
             {
                 throw new UnauthorisedToCreateItemException();
             }

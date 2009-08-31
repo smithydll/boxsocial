@@ -278,7 +278,7 @@ namespace BoxSocial.FrontEnd
                                         }
                                     }
 
-                                    if (aii.ApplicationItemAccessPermissions != null)
+                                    /*if (aii.ApplicationItemAccessPermissions != null)
                                     {
                                         foreach (ApplicationItemAccessPermissions iap in aii.ApplicationItemAccessPermissions)
                                         {
@@ -291,7 +291,7 @@ namespace BoxSocial.FrontEnd
                                                 AccessControlPermission.Create(core, iap.TypeId, iap.PermissionName);
                                             }
                                         }
-                                    }
+                                    }*/
 
                                     db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
                                         applicationId, updatedRaw));
@@ -304,6 +304,33 @@ namespace BoxSocial.FrontEnd
 
 									BoxSocial.Internals.Application.InstallTypes(core, loadApplication, applicationId);
                                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
+                                    
+                                    //List<Type> types;
+                                    
+                                    //foreach (Type type in types)
+                                    {
+                                        List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(type);
+                                        
+                                        foreach (PermissionInfo pi in permissions)
+                                        {
+                                            try
+                                            {
+                                                ItemType it = new ItemType(core, type.FullName);
+                                                try
+                                                {
+                                                    AccessControlPermission acp = new AccessControlPermission(core, it.Id, pi.Key);
+                                                }
+                                                catch (InvalidAccessControlPermissionException)
+                                                {
+                                                    AccessControlPermission.Create(core, it.Id, pi.Key);
+                                                }
+                                            }
+                                            catch (InvalidItemTypeException)
+                                            {
+                                                // 
+                                            }
+                                        }
+                                    }
 
                                 }
                                 else

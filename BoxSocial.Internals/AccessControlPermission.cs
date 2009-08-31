@@ -27,6 +27,18 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public struct PermissionInfo
+    {
+        public string Key;
+        public string Description;
+        
+        public PermissionInfo(string key, string description)
+        {
+            this.Key = key;
+            this.Description = description;
+        }
+    }
+    
 	[DataTable("account_control_permissions")]
 	public class AccessControlPermission : NumberedItem
 	{

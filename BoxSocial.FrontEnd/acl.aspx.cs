@@ -84,11 +84,11 @@ namespace BoxSocial.FrontEnd
             
             template.ParseRaw("S_PERMISSIONS", aclTemplate.ToString());*/
 
-            if (!pi.Access.Can("EDIT_PERMISSIONS"))
+            /*if (!pi.Access.Can("EDIT_PERMISSIONS"))
             {
                 core.Functions.Generate403();
                 return;
-            }
+            }*/
 
             if (Request.Form["save"] != null)
             {

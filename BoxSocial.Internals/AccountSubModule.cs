@@ -522,10 +522,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        protected void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
+        /*protected void ParsePermissionsBox(string templateVar, ushort permission, List<string> permissions)
         {
             template.ParseRaw(templateVar, Functions.BuildPermissionsBox(permission, permissions));
-        }
+        }*/
 
         protected void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {

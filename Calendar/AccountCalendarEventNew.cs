@@ -242,7 +242,7 @@ namespace BoxSocial.Applications.Calendar
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            core.Display.ParsePermissionsBox(template, "S_EVENT_PERMS", eventAccess, permissions);
+            //core.Display.ParsePermissionsBox(template, "S_EVENT_PERMS", eventAccess, permissions);
 
             template.Parse("S_SUBJECT", subject);
             template.Parse("S_LOCATION", location);

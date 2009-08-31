@@ -128,7 +128,7 @@ namespace BoxSocial.Internals
                 applicationPermissions.Add("Can Access");
 
                 template.Parse("APPLICATION_NAME", ae.Title);
-                core.Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
+                //core.Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
                 template.Parse("S_APPLICATION_ID", ae.ApplicationId.ToString());
             }
             else

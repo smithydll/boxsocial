@@ -132,14 +132,14 @@ namespace BoxSocial.Applications.Forum
             aii.AddModule("forum");
 
             /* Forum Permissions */
-            aii.AddItemAccessPermission(new ApplicationItemAccessPermissions("P_FORUM_VIEW", forumTypeId),
+            /*aii.AddItemAccessPermission(new ApplicationItemAccessPermissions("P_FORUM_VIEW", forumTypeId),
                 new ApplicationItemAccessPermissions("P_FORUM_READ", forumTypeId),
                 new ApplicationItemAccessPermissions("P_TOPIC_VIEW", forumTypeId),
                 new ApplicationItemAccessPermissions("P_TOPIC_READ", forumTypeId),
                 new ApplicationItemAccessPermissions("P_TOPIC_CREATE", forumTypeId),
                 new ApplicationItemAccessPermissions("P_TOPIC_REPLY", forumTypeId),
                 new ApplicationItemAccessPermissions("P_TOPIC_DELETE", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_MOVE", forumTypeId));
+                new ApplicationItemAccessPermissions("P_TOPIC_MOVE", forumTypeId));*/
 
             return aii;
         }

@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Blog
             permissions.Add("Can Comment");
 
             template.Parse("S_TITLE", myBlog.Title);
-            core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", myBlog.Permissions, permissions);
+            //core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", myBlog.Permissions, permissions);
 
             Save(new EventHandler(AccountBlogPreferences_Save));
         }

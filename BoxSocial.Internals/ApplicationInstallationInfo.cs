@@ -39,24 +39,11 @@ namespace BoxSocial.Internals
         }
     }
 
-    public struct ApplicationItemAccessPermissions
-    {
-        public long TypeId;
-        public string PermissionName;
-
-        public ApplicationItemAccessPermissions(string name, long typeId)
-        {
-            TypeId = typeId;
-            PermissionName = name;
-        }
-    }
-
     public class ApplicationInstallationInfo
     {
         private List<ApplicationSlugInfo> applicationSlugs = new List<ApplicationSlugInfo>();
         private List<ApplicationModule> applicationModules = new List<ApplicationModule>();
         private List<ApplicationCommentType> applicationCommentTypes = new List<ApplicationCommentType>();
-        private List<ApplicationItemAccessPermissions> applicationItemAccessPermissions = new List<ApplicationItemAccessPermissions>();
 
         public void AddSlug(string stub, string slugEx, AppPrimitives primitives)
         {
@@ -71,16 +58,6 @@ namespace BoxSocial.Internals
         public void AddCommentType(string type)
         {
             applicationCommentTypes.Add(new ApplicationCommentType(type));
-        }
-
-        public void AddItemAccessPermission(string name, long typeId)
-        {
-            applicationItemAccessPermissions.Add(new ApplicationItemAccessPermissions(name, typeId));
-        }
-
-        public void AddItemAccessPermission(params ApplicationItemAccessPermissions[] values)
-        {
-            applicationItemAccessPermissions.AddRange(values);
         }
 
         public List<ApplicationSlugInfo> ApplicationSlugs
@@ -107,12 +84,5 @@ namespace BoxSocial.Internals
             }
         }
 
-        public List<ApplicationItemAccessPermissions> ApplicationItemAccessPermissions
-        {
-            get
-            {
-                return applicationItemAccessPermissions;
-            }
-        }
     }
 }

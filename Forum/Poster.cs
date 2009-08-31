@@ -245,7 +245,7 @@ namespace BoxSocial.Applications.Forum
                             forum = new Forum(core, forumId);
                         }
 
-                        if (!forum.Access.CanCreate)
+                        if (!forum.Access.Can("POST_REPLY"))
                         {
                             core.Display.ShowMessage("Cannot reply", "Not authorised to reply to topic");
                             return;
@@ -286,7 +286,7 @@ namespace BoxSocial.Applications.Forum
                             forum = new Forum(core, forumId);
                         }
 
-                        if (!forum.Access.CanCreate)
+                        if (!forum.Access.Can("POST_TOPIC"))
                         {
                             core.Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
                             return;

@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a blog entry
     /// </summary>
     [DataTable("blog_postings", "BLOGPOST")]
-    public class BlogEntry : NumberedItem, ICommentableItem
+    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -63,8 +63,6 @@ namespace BoxSocial.Applications.Blog
         private long trackbacks;
         [DataField("post_comments")]
         private long comments;
-        [DataField("post_access")]
-        private ushort access;
         [DataField("post_status", 15)]
         private string status;
         [DataField("post_license")]
@@ -81,7 +79,7 @@ namespace BoxSocial.Applications.Blog
         private long modifiedRaw;
 
         private Primitive owner;
-        private Access blogEntryAccess;
+        private Access access;
 
         /// <summary>
         /// Gets the blog entry id
@@ -185,17 +183,6 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Gets the permission mask for the blog entry.
-        /// </summary>
-        public ushort Permissions
-        {
-            get
-            {
-                return access;
-            }
-        }
-
-        /// <summary>
         /// Gets the category Id for the blog entry.
         /// </summary>
         public short Category
@@ -209,16 +196,16 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the access information (permissions) for the blog entry.
         /// </summary>
-        public Access BlogEntryAccess
+        public Access Access
         {
             get
             {
-                if (blogEntryAccess == null)
+                if (access == null)
                 {
-                    blogEntryAccess = new Access(core, Permissions, Owner);
-                    blogEntryAccess.SetSessionViewer(core.session);
+                    access = new Access(core, this, Owner);
+                    access.SetSessionViewer(core.session);
                 }
-                return blogEntryAccess;
+                return access;
 
             }
         }
@@ -330,7 +317,6 @@ namespace BoxSocial.Applications.Blog
             views = (uint)postEntryRow["post_views"];
             trackbacks = (uint)postEntryRow["post_trackbacks"];
             comments = (uint)postEntryRow["post_comments"];
-            access = (ushort)postEntryRow["post_access"];
             status = (string)postEntryRow["post_status"];
             license = (byte)postEntryRow["post_license"];
             category = (short)postEntryRow["post_category"];
@@ -343,7 +329,6 @@ namespace BoxSocial.Applications.Blog
             {
                 owner = new User(core, OwnerId);
             }
-            blogEntryAccess = new Access(core, access, owner);
         }
 
         /// <summary>
@@ -423,6 +408,27 @@ namespace BoxSocial.Applications.Blog
                 return 10;
             }
         }
+        
+        #region IPermissibleItem Members
+
+
+        public List<string> PermissibleActions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

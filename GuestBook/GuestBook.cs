@@ -64,9 +64,9 @@ namespace BoxSocial.Applications.GuestBook
             page.User.LoadProfileInfo();
             int p = core.Functions.RequestInt("p", 1);
 
-            page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
+            page.User.Access.SetViewer(core.session.LoggedInMember);
 
-            if (!page.User.ProfileAccess.CanRead)
+            if (!page.User.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -74,7 +74,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.session.IsLoggedIn)
             {
-                if (page.User.ProfileAccess.CanComment)
+                if (page.User.Access.Can("COMMENT"))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -100,9 +100,9 @@ namespace BoxSocial.Applications.GuestBook
             page.User.LoadProfileInfo();
             int p = core.Functions.RequestInt("p", 1);
 
-            page.User.ProfileAccess.SetViewer(core.session.LoggedInMember);
+            page.User.Access.SetViewer(core.session.LoggedInMember);
 
-            if (!page.User.ProfileAccess.CanRead)
+            if (!page.User.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -110,7 +110,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.session.IsLoggedIn)
             {
-                if (page.User.ProfileAccess.CanComment)
+                if (page.User.Access.Can("COMMENT"))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }

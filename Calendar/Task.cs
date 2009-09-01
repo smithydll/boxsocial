@@ -364,7 +364,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 Task calendarTask = new Task(core, owner, taskId);
 
-                calendarTask.TaskAccess.SetSessionViewer(core.session);
+                //calendarTask.TaskAccess.SetSessionViewer(core.session);
 
                 if (!calendarTask.TaskAccess.Can("VIEW"))
                 {

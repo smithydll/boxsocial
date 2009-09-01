@@ -483,6 +483,33 @@ namespace BoxSocial.Applications.Gallery
                 this.ownerKey = owner.ItemKey;
             }
         }
+        
+                /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="galleryId">Gallery Id</param>
+        public Gallery(Core core, long galleryId)
+            : base(core)
+        {
+            if (galleryId > 0)
+            {
+                ItemLoad += new ItemLoadHandler(Gallery_ItemLoad);
+
+                try
+                {
+                    LoadItem(typeof(Gallery), galleryId);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidGalleryException();
+                }
+            }
+            else
+            {
+                throw new InvalidGalleryException();
+            }
+        }
 
         /// <summary>
         /// Initialises a new instance of the Gallery class.

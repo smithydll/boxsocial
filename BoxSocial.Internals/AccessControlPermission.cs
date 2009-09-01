@@ -160,16 +160,17 @@ namespace BoxSocial.Internals
         {
         }
 		
-		public static AccessControlPermission Create(Core core, ItemType type, string permissionName)
+		public static AccessControlPermission Create(Core core, ItemType type, string permissionName, string permissionDescription)
 		{
-            return Create(core, type.TypeId, permissionName);
+            return Create(core, type.TypeId, permissionName, permissionDescription);
 		}
 
-        public static AccessControlPermission Create(Core core, long typeId, string permissionName)
+        public static AccessControlPermission Create(Core core, long typeId, string permissionName, string permissionDescription)
         {
             AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
-                                                                               new FieldValuePair("permission_item_type", typeId),
-                                                                               new FieldValuePair("permission_name", permissionName));
+                                                                               new FieldValuePair("permission_item_type_id", typeId),
+                                                                               new FieldValuePair("permission_name", permissionName),
+                                                                               new FieldValuePair("permission_description", permissionDescription));
 
             return acp;
         }

@@ -231,7 +231,7 @@ namespace BoxSocial.Applications.Blog
         private bool blogCanPostComment(ItemKey itemKey, User member)
         {
             BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
-            blogEntry.Access.SetViewer(member);
+            //blogEntry.Access.SetViewer(member);
 
             if (blogEntry.Access.Can("COMMENT"))
             {

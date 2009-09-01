@@ -419,6 +419,32 @@ namespace BoxSocial.Install
             {
                 BoxSocial.Internals.Application.InstallTables(core, loadApplication);
                 BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
+                
+                Type[] types = loadApplication.GetTypes();
+                foreach (Type t in types)
+                {
+                    //if (t.GetInterfaces().
+                    List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
+                    
+                    foreach (PermissionInfo pi in permissions)
+                    {
+                        try
+                        {
+                            ItemType it = new ItemType(core, t.FullName);
+                            try
+                            {
+                                AccessControlPermission acp = new AccessControlPermission(core, it.Id, pi.Key);
+                            }
+                            catch (InvalidAccessControlPermissionException)
+                            {
+                                AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
+                            }
+                        }
+                        catch (InvalidItemTypeException)
+                        {
+                        }
+                    }
+                }
 
                 Console.WriteLine(repo + " has been installed.");
             }
@@ -594,6 +620,32 @@ namespace BoxSocial.Install
 
                                 BoxSocial.Internals.Application.InstallTypes(core, loadApplication, applicationId);
                                 BoxSocial.Internals.Application.InstallTables(core, loadApplication);
+                                
+                                //Type[] types = loadApplication.GetTypes();
+                                foreach (Type t in types)
+                                {
+                                    //if (t.GetInterfaces().
+                                    List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
+                                    
+                                    foreach (PermissionInfo pi in permissions)
+                                    {
+                                        try
+                                        {
+                                            ItemType it = new ItemType(core, t.FullName);
+                                            try
+                                            {
+                                                AccessControlPermission acp = new AccessControlPermission(core, it.Id, pi.Key);
+                                            }
+                                            catch (InvalidAccessControlPermissionException)
+                                            {
+                                                AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
+                                            }
+                                        }
+                                        catch (InvalidItemTypeException)
+                                        {
+                                        }
+                                    }
+                                }
 
                             }
                             else

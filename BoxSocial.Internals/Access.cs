@@ -46,30 +46,10 @@ namespace BoxSocial.Internals
         {
             this.core = core;
             this.item = (NumberedItem)item;
+            this.owner = owner;
+            this.viewer = core.session.LoggedInMember;
 
             grants = AccessControlGrant.GetGrants(core, this.item);
-        }
-
-        public long SetViewer(User viewer)
-        {
-            this.viewer = viewer;
-
-            long loggedIdUid = 0;
-            if (viewer != null)
-            {
-                loggedIdUid = viewer.UserId;
-            }
-
-            return loggedIdUid;
-        }
-
-        public long SetSessionViewer(SessionState session)
-        {
-            long loggedIdUid = User.GetMemberId(session.LoggedInMember);
-
-            SetViewer(session.LoggedInMember);
-
-            return loggedIdUid;
         }
 
         public bool Can(string permission)
@@ -110,9 +90,9 @@ namespace BoxSocial.Internals
 
             if (grants.Count == 0)
             {
-                if (item == owner)
+                if (item.ItemKey.Equals(owner.ItemKey))
                 {
-                    if (owner == viewer)
+                    if (owner.ItemKey.Equals(viewer.ItemKey))
                     {
                         return true;
                     }

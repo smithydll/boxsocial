@@ -393,7 +393,7 @@ namespace BoxSocial.Applications.Forum
                 if (postAccess == null)
                 {
                     postAccess = new Access(core, this, Owner);
-                    postAccess.SetSessionViewer(core.session);
+                    //postAccess.SetSessionViewer(core.session);
                 }
                 return postAccess;
 

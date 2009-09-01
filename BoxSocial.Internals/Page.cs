@@ -1133,7 +1133,7 @@ namespace BoxSocial.Internals
         {
             core.template.SetTemplate("Pages", "viewpage");
 
-            long loggedIdUid = thePage.Access.SetSessionViewer(core.session);
+            //long loggedIdUid = thePage.Access.SetSessionViewer(core.session);
 
             if (owner is User)
             {

@@ -270,7 +270,7 @@ namespace BoxSocial.Applications.Gallery
 
                 GalleryItem gi = new GalleryItem(core, ik.Id);
                 Access photoAccess = new Access(core, new Gallery(core, gi.Owner, gi.ParentId), owner);
-                photoAccess.SetViewer(member);
+                //photoAccess.SetViewer(member);
 
                 if (photoAccess.Can("COMMENT_ITEMS"))
                 {

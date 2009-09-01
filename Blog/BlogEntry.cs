@@ -203,7 +203,7 @@ namespace BoxSocial.Applications.Blog
                 if (access == null)
                 {
                     access = new Access(core, this, Owner);
-                    access.SetSessionViewer(core.session);
+                    //access.SetSessionViewer(core.session);
                 }
                 return access;
 

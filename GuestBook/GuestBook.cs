@@ -64,7 +64,7 @@ namespace BoxSocial.Applications.GuestBook
             page.User.LoadProfileInfo();
             int p = core.Functions.RequestInt("p", 1);
 
-            page.User.Access.SetViewer(core.session.LoggedInMember);
+            //page.User.Access.SetViewer(core.session.LoggedInMember);
 
             if (!page.User.Access.Can("VIEW"))
             {
@@ -100,7 +100,7 @@ namespace BoxSocial.Applications.GuestBook
             page.User.LoadProfileInfo();
             int p = core.Functions.RequestInt("p", 1);
 
-            page.User.Access.SetViewer(core.session.LoggedInMember);
+            //page.User.Access.SetViewer(core.session.LoggedInMember);
 
             if (!page.User.Access.Can("VIEW"))
             {

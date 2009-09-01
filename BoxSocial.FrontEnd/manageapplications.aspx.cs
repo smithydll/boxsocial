@@ -40,7 +40,7 @@ namespace BoxSocial.FrontEnd
             string assemblyName = core.Http.Query["app"];
             string mode = core.Http.Query["mode"];
 
-            System.Web.Caching.Cache cache = HttpContext.Current.Cache;
+            System.Web.Caching.Cache cache = Cache;
 			cache.Remove("itemFields");
 
             if (mode == "update")
@@ -98,18 +98,18 @@ namespace BoxSocial.FrontEnd
                 switch (assemblyName)
                 {
                     case "Internals":
-                        assemblyPath = "/bin/BoxSocial.Internals.dll";
+                        assemblyPath = "BoxSocial.Internals.dll";
                         isInternals = true;
                         isPrimitive = false;
                         break;
                     case "Groups":
                     case "Networks":
-                        assemblyPath = string.Format("/bin/{0}.dll", assemblyName);
+                        assemblyPath = string.Format("{0}.dll", assemblyName);
                         isInternals = false;
                         isPrimitive = true;
                         break;
                     default:
-                        assemblyPath = string.Format("/bin/applications/{0}.dll", assemblyName);
+                        assemblyPath = string.Format("applications/{0}.dll", assemblyName);
                         isInternals = false;
                         isPrimitive = false;
                         break;
@@ -121,6 +121,32 @@ namespace BoxSocial.FrontEnd
                 {
                     BoxSocial.Internals.Application.InstallTables(core, loadApplication);
 					BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
+                    
+                    Type[] types = loadApplication.GetTypes();
+                    foreach (Type t in types)
+                    {
+                        //if (t.GetInterfaces().
+                        List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
+                        
+                        foreach (PermissionInfo pi in permissions)
+                        {
+                            try
+                            {
+                                ItemType it = new ItemType(core, t.FullName);
+                                try
+                                {
+                                    AccessControlPermission acp = new AccessControlPermission(core, it.Id, pi.Key);
+                                }
+                                catch (InvalidAccessControlPermissionException)
+                                {
+                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
+                                }
+                            }
+                            catch (InvalidItemTypeException)
+                            {
+                            }
+                        }
+                    }
 
                     core.Display.ShowMessage("Internals Updated", "Internals have been updated.");
                 }
@@ -307,27 +333,27 @@ namespace BoxSocial.FrontEnd
                                     
                                     //List<Type> types;
                                     
-                                    //foreach (Type type in types)
+                                    foreach (Type t in types)
                                     {
-                                        List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(type);
+                                        //if (t.FindInterfaces(TypeFilter.Equals, typeof(IPermissibleItem)))
+                                        List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
                                         
                                         foreach (PermissionInfo pi in permissions)
                                         {
                                             try
                                             {
-                                                ItemType it = new ItemType(core, type.FullName);
+                                                ItemType it = new ItemType(core, t.FullName);
                                                 try
                                                 {
                                                     AccessControlPermission acp = new AccessControlPermission(core, it.Id, pi.Key);
                                                 }
                                                 catch (InvalidAccessControlPermissionException)
                                                 {
-                                                    AccessControlPermission.Create(core, it.Id, pi.Key);
+                                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
                                                 }
                                             }
                                             catch (InvalidItemTypeException)
                                             {
-                                                // 
                                             }
                                         }
                                     }

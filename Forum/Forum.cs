@@ -351,7 +351,7 @@ namespace BoxSocial.Applications.Forum
                 if (forumAccess == null)
                 {
                     forumAccess = new Access(core, this, Owner);
-                    forumAccess.SetSessionViewer(core.session);
+                    //forumAccess.SetSessionViewer(core.session);
                 }
                 return forumAccess;
             }
@@ -655,7 +655,7 @@ namespace BoxSocial.Applications.Forum
                 }
 				if (forum != null)
 				{
-					forum.Access.SetSessionViewer(core.session);
+					//forum.Access.SetSessionViewer(core.session);
 					
 					if (forum.Access.Can("VIEW"))
 					{
@@ -1180,7 +1180,7 @@ namespace BoxSocial.Applications.Forum
                 thisForum.ReadAll(true);
             }
 			
-			thisForum.Access.SetSessionViewer(core.session);
+			//thisForum.Access.SetSessionViewer(core.session);
 			if (!thisForum.Access.Can("VIEW"))
 			{
                 core.Functions.Generate403();
@@ -1193,7 +1193,7 @@ namespace BoxSocial.Applications.Forum
 
             topicsCount = thisForum.Topics;
 
-            thisForum.ForumAccess.SetSessionViewer(core.session);
+            //thisForum.ForumAccess.SetSessionViewer(core.session);
 
             if (!thisForum.ForumAccess.Can("VIEW"))
             {
@@ -1213,7 +1213,7 @@ namespace BoxSocial.Applications.Forum
 			
 			foreach (Forum forum in forums)
 			{
-				forum.Access.SetSessionViewer(core.session);
+				//forum.Access.SetSessionViewer(core.session);
 				if (forum.Access.Can("VIEW"))
 				{
 					accessibleForums.Add(forum);

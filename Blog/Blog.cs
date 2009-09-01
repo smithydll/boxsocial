@@ -484,7 +484,7 @@ namespace BoxSocial.Applications.Blog
                 return;
             }
 
-            long loggedIdUid = myBlog.Access.SetSessionViewer(core.session);
+            //long loggedIdUid = myBlog.Access.SetSessionViewer(core.session);
             ushort readAccessLevel = 0x0000;
 
             /* TODO: see what's wrong here, for not just rely on the application layer security settings */
@@ -533,7 +533,7 @@ namespace BoxSocial.Applications.Blog
             if (!rss)
             {
                 DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
-                    page.User.UserId, loggedIdUid, readAccessLevel));
+                    page.User.UserId, core.LoggedInMemberId, readAccessLevel));
 
                 page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
 
@@ -548,7 +548,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
-                    page.User.UserId, loggedIdUid, readAccessLevel));
+                    page.User.UserId, core.LoggedInMemberId, readAccessLevel));
 
                 page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 
@@ -686,7 +686,7 @@ namespace BoxSocial.Applications.Blog
                         page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
 
                         //myBlog.Access = new Access(core, blogEntries[i], page.User);
-                        myBlog.Access.SetViewer(core.session.LoggedInMember);
+                        //myBlog.Access.SetViewer(core.session.LoggedInMember);
                     }
 
                     if (post > 0)

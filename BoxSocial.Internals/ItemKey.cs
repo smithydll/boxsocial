@@ -152,9 +152,9 @@ namespace BoxSocial.Internals
             }
         }
 
-        /*public override bool Equals(object obj)
+        public override bool Equals(object obj)
         {
-			if (obj.Equals(null))
+			if (obj == null)
 				return false;
             if (obj.GetType() != typeof(ItemKey))
                 return false;
@@ -167,7 +167,7 @@ namespace BoxSocial.Internals
             return true;
         }
 
-        public static bool operator ==(ItemKey ik1, ItemKey ik2)
+        /*public static bool operator ==(ItemKey ik1, ItemKey ik2)
         {
 			if ((ik1.Equals(null) || ik2.Equals(null)))
 				return false;

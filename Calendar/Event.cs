@@ -535,7 +535,7 @@ namespace BoxSocial.Applications.Calendar
                 /*calendarEvent.Subject = "Hi";
                 calendarEvent.Update();*/
 
-                calendarEvent.EventAccess.SetSessionViewer(core.session);
+                //calendarEvent.EventAccess.SetSessionViewer(core.session);
 
                 if (!calendarEvent.EventAccess.Can("VIEW") && !calendarEvent.IsInvitee(core.session.LoggedInMember))
                 {

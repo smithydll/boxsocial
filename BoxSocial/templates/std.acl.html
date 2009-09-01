@@ -3,7 +3,8 @@
     <!-- BEGIN permission -->
     <li>
       {permission.TITLE}
-      <!-- IF grant -->
+      <p>{permission.DESCRIPTION}</p>
+      <!-- XXIF grant -->
       <dl>
         <dt>
         </dt>
@@ -18,7 +19,7 @@
         </dd>
       </dl>
       <ul>
-        <!-- BEGIN grant -->
+        <!-- BEGIN permission.grant -->
         <li>
           <dl>
             <dt>
@@ -35,16 +36,16 @@
             </dd>
           </dl>
         </li>
-        <!-- END grant -->
+        <!-- END permission.grant -->
       </ul>
-      <!-- ENDIF -->
-    </li>
-    <!-- END permission -->
-  </ul>
+      <!-- XXENDIF -->
       <div>
         {permission.S_PERMISSION_GROUPS}
       	<input type="submit" name="add-permission" value="Add permission" />
       </div>
+    </li>
+    <!-- END permission -->
+  </ul>
   <!-- BEGIN grants -->
   <input type="hidden" name="{grants.S_GRANT_INDEX}" value="{grants.S_GRANT_KEY}" />
   <!-- END grants -->

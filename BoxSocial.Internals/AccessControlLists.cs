@@ -93,9 +93,9 @@ namespace BoxSocial.Internals
                                         break;
                                 }
         
-                                grantVariableCollection.Parse("S_ALLOW", allowrl["allow"].ToString());
-                                grantVariableCollection.Parse("S_DENY", allowrl["deny"].ToString());
-                                grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"].ToString());
+                                grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
+                                grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
+                                grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"]);
                             }
                         }
         
@@ -103,6 +103,23 @@ namespace BoxSocial.Internals
                         {
                             VariableCollection grantsVariableCollection = template.CreateChild("grants");
                         }
+                    }
+                    
+                    // Owner
+                    {
+                        VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
+                        
+                        grantVariableCollection.Parse("DISPLAY_NAME", owner.DisplayName);
+                        
+                        RadioList allowrl = new RadioList("allow[" + itemPermission + "," + owner.TypeId + "," + owner.Id +"]");
+    
+                        allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
+                        allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
+                        allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+                        
+                        grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
+                        grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
+                        grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"]);
                     }
     
                     SelectBox groupsSelectBox = new SelectBox("new-permission-group");

@@ -64,11 +64,14 @@ namespace BoxSocial.Applications.Profile
 			
             template.SetTemplate("account_permissions.html");
 
-            List<string> permissions = new List<string>();
+            /*List<string> permissions = new List<string>();
             permissions.Add("Can Read");
-            permissions.Add("Can Comment");
+            permissions.Add("Can Comment");*/
 
             //core.Display.ParsePermissionsBox(template, "S_PROFILE_PERMS", LoggedInMember.Permissions, permissions);
+            
+            AccessControlLists acl = new AccessControlLists(core, LoggedInMember);
+            acl.ParseACL(template, LoggedInMember, "S_PROFILE_PERMS");
         }
 
         void AccountProfilePermissions_Save(object sender, EventArgs e)

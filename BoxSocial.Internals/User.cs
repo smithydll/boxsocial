@@ -1956,9 +1956,9 @@ namespace BoxSocial.Internals
 
             page.User.LoadProfileInfo();
 
-            page.User.Access.SetViewer(core.session.LoggedInMember);
+            //page.User.Access.SetViewer(core.session.LoggedInMember);
 
-            if (!page.User.Access.Can("VIEW_PROFILE"))
+            if (!page.User.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -2102,7 +2102,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this.Owner);
+                    access = new Access(core, this, this);
                 }
 
                 return access;

@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.Pages
                 if (listAccess == null)
                 {
                     listAccess = new Access(core, this, Owner);
-                    listAccess.SetSessionViewer(core.session);
+                    //listAccess.SetSessionViewer(core.session);
                 }
                 return listAccess;
             }
@@ -407,7 +407,7 @@ namespace BoxSocial.Applications.Pages
             {
                 List list = new List(core, page.User, listName);
 
-                list.ListAccess.SetSessionViewer(core.session);
+                //list.ListAccess.SetSessionViewer(core.session);
 
                 if (!list.ListAccess.Can("VIEW"))
                 {

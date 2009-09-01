@@ -31,6 +31,7 @@ namespace BoxSocial.Groups
 {
 	[PseudoPrimitive]
     [DataTable("group_officers")]
+    [PermissionGroup]
     public class GroupOfficer : GroupMember
     {
         [DataField("group_id", DataFieldKeys.Primary, "ternary")]

@@ -60,6 +60,7 @@ namespace BoxSocial.Internals
     [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
     [Permission("VIEW", "Can view user profile")]
     [Permission("COMMENT", "Can write on the guest book")]
+    [PermissionGroup]
     public class User : Primitive, ICommentableItem, IPermissibleItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]

@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -32,8 +32,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Networks
 {
-	[PseudoPrimitive]
+    [PseudoPrimitive]
     [DataTable("network_members")]
+    [PermissionGroup]
     public class NetworkMember : User
     {
         public const string USER_NETWORK_FIELDS = "nm.user_id, nm.network_id, nm.member_join_date_ut, nm.member_join_ip, nm.member_email, nm.member_active, nm.member_activate_code";

@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -40,8 +40,9 @@ namespace BoxSocial.Groups
         Banned = 2,
     }
 
-	[PseudoPrimitive]
+    [PseudoPrimitive]
     [DataTable("group_members")]
+    [PermissionGroup]
     public class GroupMember : User
     {
         public const string USER_GROUP_FIELDS = "gm.user_id, gm.group_id, gm.group_member_approved, gm.group_member_ip, gm.group_member_date_ut";

@@ -176,6 +176,7 @@
     <Compile Include="IOrderableItem.cs" />
     <Compile Include="PageInfo.cs" />
     <Compile Include="PermissionAttribute.cs" />
+    <Compile Include="PermissionGroupAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

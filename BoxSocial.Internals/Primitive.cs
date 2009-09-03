@@ -299,5 +299,52 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>A dictionary of Item Type with language keys</returns>
+        public abstract List<PrimitivePermissionGroup> GetPrimitivePermissionGroups();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public struct PrimitivePermissionGroup
+    {
+        private long typeId;
+        private long itemId;
+        private string languageKey;
+
+        public long TypeId
+        {
+            get
+            {
+                return typeId;
+            }
+        }
+
+        public long ItemId
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        public string LanguageKey
+        {
+            get
+            {
+                return languageKey;
+            }
+        }
+
+        public PrimitivePermissionGroup(long typeId, long id, string languageKey)
+        {
+            this.typeId = typeId;
+            this.itemId = id;
+            this.languageKey = languageKey;
+        }
     }
 }

@@ -969,6 +969,16 @@ namespace BoxSocial.Networks
                 throw new NotImplementedException();
             }
         }
+
+        public override List<PrimitivePermissionGroup> GetPrimitivePermissionGroups()
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "L_MEMBER"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE"));
+
+            return ppgs;
+        }
     }
 
     public class InvalidNetworkException : Exception

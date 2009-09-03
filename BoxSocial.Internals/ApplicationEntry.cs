@@ -1070,6 +1070,16 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+
+        public override List<PrimitivePermissionGroup> GetPrimitivePermissionGroups()
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "L_CREATOR"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE"));
+
+            return ppgs;
+        }
     }
 
     public class InvalidApplicationException : Exception

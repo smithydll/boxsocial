@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -119,6 +119,11 @@
     <Compile Include="languages\Internals.en.Designer.cs">
       <DependentUpon>Internals.en.resx</DependentUpon>
     </Compile>
+    <Compile Include="languages\Internals.en1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Internals.en.resx</DependentUpon>
+    </Compile>
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />
@@ -206,6 +211,7 @@
     <EmbeddedResource Include="languages\Internals.en.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Internals.en1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

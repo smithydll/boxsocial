@@ -117,85 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ALBUM" xml:space="preserve">
-    <value>Album</value>
+  <data name="GROUP" xml:space="preserve">
+    <value>Group</value>
   </data>
-  <data name="ALBUMS" xml:space="preserve">
-    <value>Albums</value>
+  <data name="GROUPS" xml:space="preserve">
+    <value>Groups</value>
   </data>
-  <data name="ARTIST" xml:space="preserve">
-    <value>Artist</value>
+  <data name="OFFICER" xml:space="preserve">
+    <value>Officer</value>
   </data>
-  <data name="DISCOGRAPHY" xml:space="preserve">
-    <value>Discography</value>
+  <data name="OFFICERS" xml:space="preserve">
+    <value>Officers</value>
   </data>
-  <data name="EP" xml:space="preserve">
-    <value>EP</value>
+  <data name="OPERATOR" xml:space="preserve">
+    <value>Operator</value>
   </data>
-  <data name="EPS" xml:space="preserve">
-    <value>EPs</value>
-  </data>
-  <data name="FAN" xml:space="preserve">
-    <value>Fan</value>
-  </data>
-  <data name="FANS" xml:space="preserve">
-    <value>Fans</value>
-  </data>
-  <data name="GENRE" xml:space="preserve">
-    <value>Genre</value>
-  </data>
-  <data name="GENRES" xml:space="preserve">
-    <value>Genres</value>
-  </data>
-  <data name="GIG" xml:space="preserve">
-    <value>Gig</value>
-  </data>
-  <data name="GIGS" xml:space="preserve">
-    <value>Gigs</value>
-  </data>
-  <data name="GROUP_MEMBERS" xml:space="preserve">
-    <value>Group members</value>
-  </data>
-  <data name="INSTRUMENT" xml:space="preserve">
-    <value>Instrument</value>
-  </data>
-  <data name="INSTRUMENTS" xml:space="preserve">
-    <value>Instruments</value>
-  </data>
-  <data name="MUSIC" xml:space="preserve">
-    <value>Music</value>
-  </data>
-  <data name="MUSICIAN" xml:space="preserve">
-    <value>Musician</value>
-  </data>
-  <data name="RECORDING" xml:space="preserve">
-    <value>Recording</value>
-  </data>
-  <data name="RECORDINGS" xml:space="preserve">
-    <value>Recordings</value>
-  </data>
-  <data name="SINGLE" xml:space="preserve">
-    <value>Single</value>
-  </data>
-  <data name="SINGLES" xml:space="preserve">
-    <value>Singles</value>
-  </data>
-  <data name="SONG" xml:space="preserve">
-    <value>Song</value>
-  </data>
-  <data name="SONGS" xml:space="preserve">
-    <value>Songs</value>
-  </data>
-  <data name="TOUR" xml:space="preserve">
-    <value>Tour</value>
-  </data>
-  <data name="TOURS" xml:space="preserve">
-    <value>Tours</value>
-  </data>
-  <data name="TRACK" xml:space="preserve">
-    <value>Track</value>
-  </data>
-  <data name="TRACKS" xml:space="preserve">
-    <value>Tracks</value>
+  <data name="OPERATORS" xml:space="preserve">
+    <value>Operators</value>
   </data>
 </root>

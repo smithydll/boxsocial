@@ -2117,6 +2117,71 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+
+        public override List<PrimitivePermissionGroup> GetPrimitivePermissionGroups()
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "CREATOR"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -3, "REGISTERED_USERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -1, "FRIENDS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -2, "FAMILY_MEMBERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -3, "BLOCKED_USERS"));
+
+            return ppgs;
+        }
+
+        public bool IsMemberOf(IPermissibleItem item, Type type, long subType)
+        {
+            if (ItemType.GetTypeId(type) == ItemType.GetTypeId(typeof(Friend)))
+            {
+                switch (subType)
+                {
+                    case -1:
+                        if (IsFriend(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                    case -2:
+                        if (IsFamily(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                    case -3:
+                        if (IsBlocked(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            if (ItemType.GetTypeId(type) == ItemType.GetTypeId(typeof(User)))
+            {
+                switch (subType)
+                {
+                    case -1:
+                        if (item.Owner.Id == core.LoggedInMemberId)
+                        {
+                            return true;
+                        }
+                        break;
+                    case -2:
+                        return true;
+                    case -3:
+                        if (core.session.IsLoggedIn)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            return false;
+        }
     }
 
     public class InvalidUserException : Exception

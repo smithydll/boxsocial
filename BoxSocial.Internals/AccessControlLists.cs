@@ -40,6 +40,22 @@ namespace BoxSocial.Internals
             this.item = item;
         }
 
+        public SelectBox BuildGroupsSelectBox(string name, Primitive owner)
+        {
+            SelectBox sb = new SelectBox(name);
+
+            //sb.Add(new SelectBoxItem(string.Format("{0},{1}", ItemType.GetTypeId(typeof(User)), -1), "Everyone"));
+
+            List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
+
+            foreach (PrimitivePermissionGroup ppg in ownerGroups)
+            {
+                sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.prose.GetString(ppg.LanguageKey)));
+            }
+
+            return sb;
+        }
+
         public void ParseACL(Template template, Primitive owner, string variable)
         {
             Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
@@ -106,12 +122,15 @@ namespace BoxSocial.Internals
                     }
                     
                     // Owner
+                    /*List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
+
+                    foreach (PrimitivePermissionGroup ppg in ownerGroups)
                     {
                         VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
                         
-                        grantVariableCollection.Parse("DISPLAY_NAME", owner.DisplayName);
+                        grantVariableCollection.Parse("DISPLAY_NAME", ppg.LanguageKey);
                         
-                        RadioList allowrl = new RadioList("allow[" + itemPermission + "," + owner.TypeId + "," + owner.Id +"]");
+                        RadioList allowrl = new RadioList("allow[" + itemPermission + "," + ppg.TypeId + "," + ppg.ItemId +"]");
     
                         allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                         allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
@@ -120,11 +139,9 @@ namespace BoxSocial.Internals
                         grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
                         grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
                         grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"]);
-                    }
+                    }*/
     
-                    SelectBox groupsSelectBox = new SelectBox("new-permission-group");
-    
-    
+                    SelectBox groupsSelectBox = BuildGroupsSelectBox(string.Format("new-permission-group[{0}]", itemPermission.Id), owner);
     
                     permissionVariableCollection.Parse("S_PERMISSION_GROUPS", groupsSelectBox);
     

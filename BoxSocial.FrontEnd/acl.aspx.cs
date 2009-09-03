@@ -31,6 +31,8 @@ using System.Web.UI.HtmlControls;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
+using BoxSocial.Networks;
 
 namespace BoxSocial.FrontEnd
 {

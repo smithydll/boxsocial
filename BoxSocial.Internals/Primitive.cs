@@ -315,6 +315,7 @@ namespace BoxSocial.Internals
         private long typeId;
         private long itemId;
         private string languageKey;
+        private string displayName;
 
         public long TypeId
         {
@@ -339,12 +340,29 @@ namespace BoxSocial.Internals
                 return languageKey;
             }
         }
+        
+        public string DisplayName
+        {
+            get
+            {
+                return displayName;
+            }
+        }
 
-        public PrimitivePermissionGroup(long typeId, long id, string languageKey)
+        public PrimitivePermissionGroup(long typeId, long id, string displayName)
+        {
+            this.typeId = typeId;
+            this.itemId = id;
+            this.languageKey = null;
+            this.displayName = displayName;
+        }
+        
+        public PrimitivePermissionGroup(long typeId, long id, string languageKey, string displayName)
         {
             this.typeId = typeId;
             this.itemId = id;
             this.languageKey = languageKey;
+            this.displayName = displayName;
         }
     }
 }

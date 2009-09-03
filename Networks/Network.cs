@@ -974,8 +974,8 @@ namespace BoxSocial.Networks
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "L_MEMBER"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "", "L_MEMBER"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "", "L_EVERYONE"));
 
             return ppgs;
         }

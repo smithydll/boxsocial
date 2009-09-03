@@ -1596,9 +1596,9 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOperator)), -1, "OPERATORS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOfficer)), -1, "OFFICERS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupMember)), -1, "MEMBERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOperator)), -1, "", "OPERATORS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOfficer)), -1, "", "OFFICERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupMember)), -1, "", "MEMBERS"));
 
             return ppgs;
         }

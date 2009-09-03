@@ -2122,12 +2122,12 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "CREATOR"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -3, "REGISTERED_USERS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -1, "FRIENDS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -2, "FAMILY_MEMBERS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -3, "BLOCKED_USERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "", "CREATOR"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "", "EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -3, "", "REGISTERED_USERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -1, "", "FRIENDS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -2, "", "FAMILY_MEMBERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -3, "", "BLOCKED_USERS"));
 
             return ppgs;
         }

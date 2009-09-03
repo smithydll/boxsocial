@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -137,6 +138,19 @@ namespace BoxSocial.Groups
         {
             core.RegisterApplicationPage(@"^/profile(|/)$", showGroup);
             core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
+        }
+        
+        private List<SelectBoxItem> GetGroupItems(User user)
+        {
+            List<SelectBoxItem> sb = new List<SelectBoxItem>();
+            List<UserGroup> groups = UserGroup.GetUserGroups(core, user);
+            
+            foreach (UserGroup group in groups)
+            {
+                sb.Add(new SelectBoxItem(string.Format("{0},{1}", group.TypeId, group.Id), group.DisplayName));
+            }
+            
+            return sb;
         }
 
         private void showGroup(Core core, object sender)

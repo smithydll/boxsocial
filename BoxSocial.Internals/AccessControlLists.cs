@@ -50,7 +50,14 @@ namespace BoxSocial.Internals
 
             foreach (PrimitivePermissionGroup ppg in ownerGroups)
             {
-                sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.prose.GetString(ppg.LanguageKey)));
+                if (!string.IsNullOrEmpty(ppg.LanguageKey))
+                {
+                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.prose.GetString(ppg.LanguageKey)));
+                }
+                else
+                {
+                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), ppg.DisplayName));
+                }
             }
 
             return sb;

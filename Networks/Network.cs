@@ -992,13 +992,13 @@ namespace BoxSocial.Networks
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "", "L_MEMBER"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "", "L_EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "L_MEMBER", null));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null));
 
             return ppgs;
         }
 
-        private static List<PrimitivePermissionGroup> Network_GetPrimitiveGroups(Core core, Primitive owner)
+        public static List<PrimitivePermissionGroup> Network_GetPrimitiveGroups(Core core, Primitive owner)
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 

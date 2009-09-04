@@ -120,7 +120,7 @@ namespace BoxSocial.Internals
 
             foreach (Type type in primitiveTypes.Values)
             {
-                if (type.GetMethod(type.Name + "_GetPrimitiveGroups", Type.EmptyTypes) != null)
+                if (type.GetMethod(type.Name + "_GetPrimitiveGroups", new Type[] {typeof(Core), typeof(Primitive)}) != null)
                 {
                     ppgs.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetPrimitiveGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { this, owner }));
                 }

@@ -1075,8 +1075,8 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "", "L_CREATOR"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "", "L_EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "L_CREATOR", null));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null));
 
             return ppgs;
         }

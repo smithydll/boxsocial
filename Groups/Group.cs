@@ -1596,14 +1596,14 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOperator)), -1, "", "OPERATORS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOfficer)), -1, "", "OFFICERS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupMember)), -1, "", "MEMBERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOperator)), -1, "OPERATORS", null));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOfficer)), -1, "OFFICERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupMember)), -1, "MEMBERS", null));
 
             return ppgs;
         }
 
-        private static List<PrimitivePermissionGroup> UserGroup_GetPrimitiveGroups(Core core, Primitive owner)
+        public static List<PrimitivePermissionGroup> UserGroup_GetPrimitiveGroups(Core core, Primitive owner)
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 

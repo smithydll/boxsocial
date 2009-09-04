@@ -47,6 +47,8 @@ namespace BoxSocial.Internals
             //sb.Add(new SelectBoxItem(string.Format("{0},{1}", ItemType.GetTypeId(typeof(User)), -1), "Everyone"));
 
             List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
+            
+            ownerGroups.AddRange(core.GetPrimitivePermissionGroups(owner));
 
             foreach (PrimitivePermissionGroup ppg in ownerGroups)
             {

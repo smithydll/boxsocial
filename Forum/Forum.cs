@@ -35,6 +35,18 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum")]
+    [Permission("VIEW", "Can view the forum")]
+    [Permission("LIST_TOPICS", "Can list the topics in the forum")]
+    [Permission("VIEW_TOPICS", "Can view the topics in the forum")]
+    [Permission("REPLY_TOPICS", "Can reply to the topics in the forum")]
+    [Permission("CREATE_TOPICS", "Can post new topics")]
+    [Permission("EDIT_POSTS", "Can edit posts")]
+    [Permission("EDIT_OWN_POSTS", "Can edit own posts")]
+    [Permission("DELETE_OWN_POSTS", "Can delete own posts")]
+    [Permission("DELETE_TOPICS", "Can delete topics")]
+    [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements")]
+    [Permission("CREATE_STICKY", "Can create sticky topics")]
+    [Permission("REPORT_POSTS", "Can report posts")]
     public class Forum : NumberedItem, IPermissibleItem, IComparable, INestableItem, IOrderableItem
     {
         [DataField("forum_id", DataFieldKeys.Primary)]

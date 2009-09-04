@@ -47,6 +47,8 @@ namespace BoxSocial.Applications.Calendar
     }
 
     [DataTable("tasks")]
+    [Permission("VIEW", "Can view the task")]
+    [Permission("COMMENT", "Can comment on the task")]
     public class Task : NumberedItem, ICommentableItem, IPermissibleItem
     {
         //public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";

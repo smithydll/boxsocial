@@ -30,6 +30,8 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_emails")]
+    [Permission("VIEW", "Can view the e-mail address")]
+    [Permission("RECIEVE_FROM", "Can receive e-mail from")]
     public sealed class UserEmail : NumberedItem, IPermissibleItem
     {
         [DataField("email_id", DataFieldKeys.Primary)]

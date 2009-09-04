@@ -60,11 +60,13 @@ namespace BoxSocial.Internals
         public delegate void CommentCountHandler(ItemKey itemKey, int adjustment);
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
+        public delegate List<PrimitivePermissionGroup> PermissionGroupHandler(Core core, Primitive owner);
 
         public event HookHandler HeadHooks;
         public event HookHandler FootHooks;
         public event HookHandler PageHooks;
         public event LoadHandler LoadApplication;
+        public event PermissionGroupHandler primitivePermissionGroupHook;
 
         Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
         Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
@@ -108,6 +110,23 @@ namespace BoxSocial.Internals
         public List<long> LoadUserProfiles(List<string> usernames)
         {
             return userProfileCache.LoadUserProfiles(usernames);
+        }
+
+        public List<PrimitivePermissionGroup> GetPrimitivePermissionGroups(Primitive owner)
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            ppgs.AddRange(owner.GetPrimitivePermissionGroups());
+
+            foreach (Type type in primitiveTypes.Values)
+            {
+                if (type.GetMethod(type.Name + "_GetPrimitiveGroups", Type.EmptyTypes) != null)
+                {
+                    ppgs.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetPrimitiveGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { this, owner }));
+                }
+            }
+
+            return ppgs;
         }
 
         /// <summary>

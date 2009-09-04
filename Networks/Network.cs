@@ -429,6 +429,24 @@ namespace BoxSocial.Networks
             return memberships;
         }
 
+        public static List<Network> GetUserNetworks(Core core, User member)
+        {
+            List<Network> networks = new List<Network>();
+
+            SelectQuery query = Network.GetSelectQueryStub(NetworkLoadOptions.All);
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(Network), "network_id"), new DataField(typeof(NetworkMember), "network_id"));
+            query.AddCondition("user_id", member.Id);
+
+            DataTable networksTable = core.db.Query(query);
+
+            foreach (DataRow dr in networksTable.Rows)
+            {
+                networks.Add(new Network(core, dr, NetworkLoadOptions.Common));
+            }
+
+            return networks;
+        }
+
         public static List<Network> GetNetworks(Core core, NetworkTypes type)
         {
             List<Network> networks = new List<Network>();
@@ -976,6 +994,23 @@ namespace BoxSocial.Networks
 
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "", "L_MEMBER"));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "", "L_EVERYONE"));
+
+            return ppgs;
+        }
+
+        private static List<PrimitivePermissionGroup> Network_GetPrimitiveGroups(Core core, Primitive owner)
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            if (owner is User)
+            {
+                List<Network> networks = Network.GetUserNetworks(core, (User)owner);
+
+                foreach (Network network in networks)
+                {
+                    ppgs.Add(new PrimitivePermissionGroup(network.TypeId, network.Id, network.DisplayName));
+                }
+            }
 
             return ppgs;
         }

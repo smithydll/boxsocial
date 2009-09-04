@@ -41,6 +41,9 @@ namespace BoxSocial.Applications.Blog
     /// Represents a user blog.
     /// </summary>
     [DataTable("user_blog", "BLOG")]
+    [Permission("VIEW", "Can view your blog")]
+    [Permission("COMMENT_ITEMS", "Can comment on your blog entries")]
+    [Permission("RATE_ITEMS", "Can rate your blog entries")]
     public class Blog : NumberedItem, IPermissibleItem
     {
 

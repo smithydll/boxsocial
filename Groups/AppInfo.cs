@@ -110,6 +110,7 @@ namespace BoxSocial.Groups
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+            //core.primitivePermissionGroupHook += new Core.PermissionGroupHandler(GetGroupItems);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -138,19 +139,6 @@ namespace BoxSocial.Groups
         {
             core.RegisterApplicationPage(@"^/profile(|/)$", showGroup);
             core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
-        }
-        
-        private List<SelectBoxItem> GetGroupItems(User user)
-        {
-            List<SelectBoxItem> sb = new List<SelectBoxItem>();
-            List<UserGroup> groups = UserGroup.GetUserGroups(core, user);
-            
-            foreach (UserGroup group in groups)
-            {
-                sb.Add(new SelectBoxItem(string.Format("{0},{1}", group.TypeId, group.Id), group.DisplayName));
-            }
-            
-            return sb;
         }
 
         private void showGroup(Core core, object sender)

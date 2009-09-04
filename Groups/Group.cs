@@ -1602,6 +1602,23 @@ namespace BoxSocial.Groups
 
             return ppgs;
         }
+
+        private static List<PrimitivePermissionGroup> UserGroup_GetPrimitiveGroups(Core core, Primitive owner)
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            if (owner is User)
+            {
+                List<UserGroup> groups = UserGroup.GetUserGroups(core, (User)owner);
+
+                foreach (UserGroup group in groups)
+                {
+                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName));
+                }
+            }
+
+            return ppgs;
+        }
     }
 
     public class InvalidGroupException : Exception

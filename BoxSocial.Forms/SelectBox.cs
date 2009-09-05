@@ -30,7 +30,7 @@ namespace BoxSocial.Forms
     /// <summary>
     /// Represents a select box on an XHTML form.
     /// </summary>
-    public sealed class SelectBox : FormField
+    public sealed class SelectBox : FormField, IEnumerable
     {
         private List<SelectBoxItem> items;
         private Dictionary<string, SelectBoxItem> itemKeys;
@@ -129,5 +129,16 @@ namespace BoxSocial.Forms
 
             return selectBox.ToString();
         }
+        
+        public IEnumerator GetEnumerator ()
+        {
+           return items.GetEnumerator();
+        }
+
+        public override int GetHashCode ()
+        {
+            return items.GetHashCode();
+        }
+
     }
 }

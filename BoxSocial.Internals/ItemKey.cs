@@ -82,6 +82,24 @@ namespace BoxSocial.Internals
 			}
 			this.itemTypeId = itemTypeId;
 		}
+        
+        public ItemKey(string key)
+        {
+            string[] keys = key.Split(new char[] {','});
+            long itemId = long.Parse(keys[1]);
+            long itemTypeId = long.Parse(keys[0]);
+            
+            this.itemId = itemId;
+            foreach (string value in itemTypeCache.Keys)
+            {
+                if (itemTypeCache[value] == itemTypeId)
+                {
+                    this.itemType = value;
+                    break;
+                }
+            }
+            this.itemTypeId = itemTypeId;
+        }
 		
 		public static void populateItemTypeCache(Core core)
 		{

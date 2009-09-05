@@ -43,18 +43,18 @@ namespace BoxSocial.Internals
 	public class AccessControlGrant : Item
 	{
 		[DataField("grant_primitive", DataFieldKeys.Unique, "u_key")]
-		ItemKey primitiveKey;
+		private ItemKey primitiveKey;
 		[DataField("grant_item_id", DataFieldKeys.Unique, "u_key")]
-		long itemId;
+		private long itemId;
 		[DataField("grant_item_type_id", DataFieldKeys.Unique, "u_key")]
-		long itemTypeId;
+		private long itemTypeId;
 		[DataField("grant_permission_id", DataFieldKeys.Unique, "u_key")]
-		long permissionId;
+		private long permissionId;
 		[DataField("grant_allow")]
-		sbyte grantAllow;
+		private sbyte grantAllow;
 		
-		Item item;
-		Primitive owner;
+		private Item item;
+		private Primitive owner;
 
         public ItemKey PrimitiveKey
         {
@@ -175,6 +175,39 @@ namespace BoxSocial.Internals
 			}
 		}
 	}
+    
+    internal struct UnsavedAccessControlGrant
+    {
+        private long permissionId;
+        private sbyte grantAllow;
+        
+        private ItemKey key;
+        private Core core;
+
+        public long PermissionId
+        {
+            get
+            {
+                return permissionId;
+            }
+        }
+
+        public AccessControlGrants Allow
+        {
+            get
+            {
+                return (AccessControlGrants)grantAllow;
+            }
+        }
+        
+        public UnsavedAccessControlGrant(Core core, ItemKey key, long permissionId, AccessControlGrants grantAllow)
+        {
+            this.core = core;
+            this.key = key;
+            this.permissionId = permissionId;
+            this.grantAllow = (sbyte)grantAllow;
+        }
+    }
 	
 	public class InvalidAccessControlGrantException : Exception
     {

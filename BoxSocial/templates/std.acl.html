@@ -24,6 +24,7 @@
           <dl>
             <dt>
               {permission.grant.DISPLAY_NAME}
+              <input type="hidden" name="new-grant[{permission.grant.PERMISSION_ID},{permission.grant.ID}]" value="true" />
             </dt>
             <dd>
               {permission.grant.S_ALLOW}
@@ -41,7 +42,7 @@
       <!-- XXENDIF -->
       <div>
         {permission.S_PERMISSION_GROUPS}
-      	<input type="submit" name="add-permission" value="Add permission" />
+      	<input type="submit" name="add-permission[{permission.ID}]" value="Add permission" />
       </div>
     </li>
     <!-- END permission -->

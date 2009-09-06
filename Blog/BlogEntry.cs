@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Blog
     /// Represents a blog entry
     /// </summary>
     [DataTable("blog_postings", "BLOGPOST")]
-    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem
+    public class BlogEntry : NumberedItem, ICommentableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -79,7 +79,6 @@ namespace BoxSocial.Applications.Blog
         private long modifiedRaw;
 
         private Primitive owner;
-        private Access access;
 
         /// <summary>
         /// Gets the blog entry id
@@ -190,23 +189,6 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return category;
-            }
-        }
-
-        /// <summary>
-        /// Gets the access information (permissions) for the blog entry.
-        /// </summary>
-        public Access Access
-        {
-            get
-            {
-                if (access == null)
-                {
-                    access = new Access(core, this, Owner);
-                    //access.SetSessionViewer(core.session);
-                }
-                return access;
-
             }
         }
 
@@ -408,18 +390,6 @@ namespace BoxSocial.Applications.Blog
                 return 10;
             }
         }
-        
-        #region IPermissibleItem Members
-
-        public List<AccessControlPermission> AclPermissions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        #endregion
     }
 
     /// <summary>

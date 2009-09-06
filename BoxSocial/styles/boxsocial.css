@@ -920,28 +920,32 @@ ul#today-feeds li {
 }
 
 ul#permission-list {
-    
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
 }
 
 li.permission-titles {
-    
+    list-style: none;
+    padding: 5px;
+    margin: 5px;
+    background-color: #DDDDDD;
 }
 
 li dl.permission-titles {
     
 }
 
-li dl.permission-titles dd {
+li dl.permission-titles dt, li dl.permission-titles dd {
     float: left;
-    list-style: none;
-	padding: 0px;
-	margin: 0px;
-	font-weight: bold;
+    font-weight: bold;
+    width: 25%;
 }
 
-li.permission-grant dd {
+li.permission-grant dt {
     display: block;
     width: 25%;
+	float: left;
 }
 
 li.permission-grant dd {

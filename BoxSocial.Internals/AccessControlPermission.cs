@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
 		string permissionName;
 		[DataField("permission_item_type_id", DataFieldKeys.Unique, "u_key")]
 		long itemTypeId;
-		[DataField("permission_description", 31)]
+		[DataField("permission_description", 63)]
 		string permissionDescription;
 
         private string permissionAssembly;

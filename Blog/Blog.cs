@@ -872,6 +872,14 @@ namespace BoxSocial.Applications.Blog
                 throw new NotImplementedException();
             }
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
 
         #endregion
     }

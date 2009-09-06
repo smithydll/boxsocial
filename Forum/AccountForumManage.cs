@@ -110,6 +110,7 @@ namespace BoxSocial.Applications.Forum
                     forumVariableCollection.Parse("U_EDIT", BuildUri("forum", "edit", forum.Id));
                     forumVariableCollection.Parse("U_MOVE_UP", BuildUri("forum", "move-up", forum.Id));
                     forumVariableCollection.Parse("U_MOVE_DOWN", BuildUri("forum", "move-down", forum.Id));
+                    forumVariableCollection.Parse("U_EDIT_PERMISSION", core.Uri.AppendSid(string.Format("/acl.aspx?id={0}&type={1}", forum.Id, ItemType.GetTypeId(typeof(Forum))), true));
                 }
             }
 

@@ -252,6 +252,14 @@ namespace BoxSocial.Applications.Forum
                 throw new NotImplementedException();
             }
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
 
         public long Id
         {

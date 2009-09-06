@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_post")]
-    public class TopicPost : NumberedItem, IPermissibleItem
+    public class TopicPost : NumberedItem
     {
         //public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
 
@@ -61,7 +61,6 @@ namespace BoxSocial.Applications.Forum
         private User poster;
         private Forum forum;
         private ForumTopic topic;
-        private Access postAccess;
 
         public long PostId
         {
@@ -386,20 +385,6 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public Access Access
-        {
-            get
-            {
-                if (postAccess == null)
-                {
-                    postAccess = new Access(core, this, Owner);
-                    //postAccess.SetSessionViewer(core.session);
-                }
-                return postAccess;
-
-            }
-        }
-
         public Primitive Owner
         {
             get
@@ -415,14 +400,6 @@ namespace BoxSocial.Applications.Forum
                     return poster;
                 }
 
-            }
-        }
-
-        public List<AccessControlPermission> AclPermissions
-        {
-            get
-            {
-                return AccessControlLists.GetPermissions(core, this);
             }
         }
     }

@@ -1290,6 +1290,21 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                if (ParentId == 0)
+                {
+                    return Owner;
+                }
+                else
+                {
+                    return new Page(core, Owner, ParentId);
+                }
+            }
+        }
 
         #endregion
     }

@@ -1537,6 +1537,14 @@ namespace BoxSocial.Applications.Gallery
                 return permissionsList;
             }
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
 
     }
 

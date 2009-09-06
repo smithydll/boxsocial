@@ -151,6 +151,14 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
 
         #endregion
     }

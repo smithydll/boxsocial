@@ -21,8 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Reflection;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -178,15 +179,46 @@ namespace BoxSocial.Internals
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
             ItemType type = new ItemType(core, ik.TypeId);
+            Type tType = null;
             
             if (type.ApplicationId > 0)
             {
                 ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
     
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                //Application a = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
+                string assemblyPath;
+                if (ae.IsPrimitive)
+                {
+                    if (core.Http != null)
+                    {
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
+                    }
+                    else
+                    {
+                        assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+                    }
+                }
+                else
+                {
+                    if (core.Http != null)
+                    {
+                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
+                    }
+                    else
+                    {
+                        assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+                    }
+                }
+                Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                
+                tType = assembly.GetType(type.TypeNamespace);
+            }
+            else
+            {
+                tType = Type.GetType(type.TypeNamespace);
             }
 
-            return (Activator.CreateInstance(Type.GetType(type.TypeNamespace), new object[] { core, ik.Id }) as NumberedItem);
+            return (Activator.CreateInstance(tType, new object[] { core, ik.Id }) as NumberedItem);
         }
     }
 }

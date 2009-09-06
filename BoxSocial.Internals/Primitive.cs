@@ -291,6 +291,14 @@ namespace BoxSocial.Internals
         {
             get;
         }
+        
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return this;
+            }
+        }
 
         /// <summary>
         /// 

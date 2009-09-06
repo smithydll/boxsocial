@@ -18,6 +18,14 @@ namespace BoxSocial.IO
             table = tableName;
         }
 
+        public UpdateQuery(Type type)
+        {
+            fieldValues = new Dictionary<string, object>();
+            conditions = new QueryCondition();
+
+            table = DataFieldAttribute.GetTable(type);
+        }
+
         public bool HasFields
         {
             get

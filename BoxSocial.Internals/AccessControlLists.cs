@@ -34,9 +34,9 @@ namespace BoxSocial.Internals
         private Core core;
         private IPermissibleItem item;
         
-        private List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
-        private List<AccessControlGrant> itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
-        private List<UnsavedAccessControlGrant> unsavedGrants = new List<UnsavedAccessControlGrant>();
+        private List<AccessControlPermission> itemPermissions = null;
+        private List<AccessControlGrant> itemGrants = null;
+        private List<UnsavedAccessControlGrant> unsavedGrants = null;
 
         public AccessControlLists(Core core, IPermissibleItem item)
         {

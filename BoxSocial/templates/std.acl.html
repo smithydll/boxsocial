@@ -1,11 +1,11 @@
 <div>
-  <ul>
+  <ul id="permission-list">
     <!-- BEGIN permission -->
-    <li>
+    <li class="permission-titles">
       {permission.TITLE}
       <p>{permission.DESCRIPTION}</p>
       <!-- XXIF grant -->
-      <dl>
+      <dl class="permission-titles">
         <dt>
         </dt>
         <dd>
@@ -18,9 +18,9 @@
           {L_INHERIT}
         </dd>
       </dl>
-      <ul>
+      <ul class="permission-grant-list">
         <!-- BEGIN permission.grant -->
-        <li>
+        <li class="permission-grant">
           <dl>
             <dt>
               {permission.grant.DISPLAY_NAME}
@@ -44,7 +44,7 @@
       <!-- XXENDIF -->
       <div>
         {permission.S_PERMISSION_GROUPS}
-      	<input type="submit" name="add-permission[{permission.ID}]" value="Add permission" />
+      	<input type="submit" name="add-permission[{permission.ID}]" value="{L_ADD_PERMISSION}" />
       </div>
     </li>
     <!-- END permission -->

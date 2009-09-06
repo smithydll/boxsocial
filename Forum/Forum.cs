@@ -1521,17 +1521,6 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                List<string> permissions = new List<string>();
-                permissions.Add("Can Read");
-                permissions.Add("Can Post");
-                return permissions;
-            }
-        }
-
         public int CompareTo(object obj)
         {
             if (obj.GetType() == typeof(Forum))
@@ -1556,6 +1545,21 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 return AccessControlLists.GetPermissions(core, this);
+            }
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                if (forumId == 0)
+                {
+                    return new ForumSettings(core, Owner);
+                }
+                else
+                {
+                    return new Forum(core, ParentId);
+                }
             }
         }
     }

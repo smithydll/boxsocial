@@ -16,6 +16,13 @@ namespace BoxSocial.IO
             table = tableName;
         }
 
+        public DeleteQuery(Type type)
+        {
+            conditions = new QueryCondition();
+
+            table = DataFieldAttribute.GetTable(type);
+        }
+
         public QueryCondition AddCondition(string field, object value)
         {
             if (conditions.Count == 0)

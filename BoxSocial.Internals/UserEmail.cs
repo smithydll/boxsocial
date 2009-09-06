@@ -251,14 +251,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public List<AccessControlPermission> AclPermissions
         {
             get

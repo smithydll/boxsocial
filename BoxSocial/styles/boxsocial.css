@@ -918,3 +918,40 @@ ul#today-feeds li {
 	line-height: 150%;
 	font-size: 175%;
 }
+
+ul#permission-list {
+    
+}
+
+li.permission-titles {
+    
+}
+
+li dl.permission-titles {
+    
+}
+
+li dl.permission-titles dd {
+    float: left;
+    list-style: none;
+	padding: 0px;
+	margin: 0px;
+	font-weight: bold;
+}
+
+li.permission-grant dd {
+    display: block;
+    width: 25%;
+}
+
+li.permission-grant dd {
+    float: left;
+    display: block;
+    width: 25%;
+}
+
+ul.permission-grant-list {
+    list-style: none;
+	padding: 0px;
+	margin: 0px;
+}

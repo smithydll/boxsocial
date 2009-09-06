@@ -418,16 +418,6 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                List<string> permissions = new List<string>();
-                return permissions;
-
-            }
-        }
-
         public List<AccessControlPermission> AclPermissions
         {
             get

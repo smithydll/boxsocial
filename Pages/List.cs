@@ -486,16 +486,6 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                List<string> permissions = new List<string>();
-                permissions.Add("Can Read");
-                return permissions;
-            }
-        }
-
         public List<AccessControlPermission> AclPermissions
         {
             get

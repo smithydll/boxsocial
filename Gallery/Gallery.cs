@@ -160,7 +160,6 @@ namespace BoxSocial.Applications.Gallery
         private ParentTree parentTree;
 
         Access access;
-        List<string> actions = new List<string> { "VIEW", "COMMENT", "CREATE_CHILD", "VIEW_ITEMS", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS", "EDIT_ITEMS", "DELETE_ITEMS"};
         List<AccessControlPermission> permissionsList;
 
         /// <summary>
@@ -1523,14 +1522,6 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 return access;
-            }
-        }
-
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                return actions;
             }
         }
 

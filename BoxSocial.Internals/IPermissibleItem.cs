@@ -49,14 +49,6 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// List of actions that require permissions for an item
-        /// </summary>
-        List<string> PermissibleActions
-        {
-            get;
-        }
-
-        /// <summary>
         /// List of actions that require elevated permissions for an item
         /// </summary>
         List<AccessControlPermission> AclPermissions
@@ -80,6 +72,11 @@ namespace BoxSocial.Internals
         }
 
         string Uri
+        {
+            get;
+        }
+
+        IPermissibleItem PermissiveParent
         {
             get;
         }

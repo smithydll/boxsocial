@@ -8,7 +8,7 @@
 	</div>
 	<!-- IF ARCHIVES -->
 	<div id="pane-blog-archive" class="pane">
-		<h3>Archive</h3>
+		<h3>{L_ARCHIVE}</h3>
 		<ul>
 		<!-- BEGIN archive_list -->
 			<li><a href="{archive_list.URL}">{archive_list.TITLE}</a></li>
@@ -18,7 +18,7 @@
 	<!-- ENDIF -->
 	<!-- IF CATEGORIES -->
 	<div id="pane-blog-categories" class="pane">
-		<h3>Categories</h3>
+		<h3>{L_CATEGORIES}</h3>
 		<ul>
 		<!-- BEGIN category_list -->
 		<li><a href="{category_list.URL}">{category_list.TITLE}</a></li>
@@ -28,7 +28,7 @@
 	<!-- ENDIF -->
 	<!-- IF BLOG_ROLL_ENTRIES -->
 	<div id="pange-blog-roll" class="pane">
-		<h3>Blogroll</h3>
+		<h3>{L_BLOGROLL}</h3>
 		<ul>
       <!-- BEGIN blog_roll_list -->
       <li><a href="{blog_roll_list.URI}">{blog_roll_list.TITLE}</a></li>
@@ -38,7 +38,7 @@
 	<!-- ENDIF -->
 	<div id="pange-blog-feed" class="pane">
 		<h3>Feed</h3>
-		<p style="padding-left: 10px;"><a href="{U_RSS}">RSS Feed</a></p>
+		<p style="padding-left: 10px;"><a href="{U_RSS}">{L_RSS_FEED}</a></p>
 	</div>
 </div>
 <div id="profile">
@@ -46,7 +46,7 @@
 <p>{BREADCRUMBS}</p>
 	<!-- IF U_POST -->
 	<div id="new-stuff">
-		<span id="post-blog" class="post-button"><a href="{U_POST}">New Blog Post</a></span>
+		<span id="post-blog" class="post-button"><a href="{U_POST}">{L_NEW_BLOG_POST}</a></span>
 	</div>
 	<!-- ENDIF -->
 	<div id="page-body">
@@ -62,12 +62,12 @@
 			<!-- IF blog_list.COMMENTS -->
 			<p><a href="{blog_list.URL}#comments">{blog_list.COMMENTS} Comments</a></p>
 			<!-- ELSE -->
-			<p><a href="{blog_list.URL}#comments">No Comments</a></p>
+			<p><a href="{blog_list.URL}#comments">{L_NO_COMMENTS}</a></p>
 			<!-- ENDIF -->
 		</div>
 		<!-- END blog_list -->
 		<!-- ELSE -->
-		<p>No blog posts.</p>
+		<p>{NO_BLOG_POSTS}</p>
 		<!-- ENDIF -->
 		<!-- IF SINGLE -->
 		<div id="comments" class="comment-pane">

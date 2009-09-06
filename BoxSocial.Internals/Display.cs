@@ -672,8 +672,8 @@ namespace BoxSocial.Internals
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);
             query.AddCondition("page_status", "PUBLISH");
-            QueryCondition qc1 = query.AddCondition(new QueryOperation("page_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
-            qc1.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            //QueryCondition qc1 = query.AddCondition(new QueryOperation("page_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
+            //qc1.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
             query.AddSort(SortOrder.Ascending, "page_order");
 
             DataTable pagesTable = db.Query(query);
@@ -701,7 +701,10 @@ namespace BoxSocial.Internals
             {
                 Page page = new Page(core, owner, pagesTable.Rows[i]);
 
-                pages.Add(page);
+                if (page.Access.Can("VIEW"))
+                {
+                    pages.Add(page);
+                }
             }
 
             for (int i = 0; i < pages.Count; i++)

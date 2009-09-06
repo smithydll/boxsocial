@@ -111,8 +111,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
-                return null;
+                return Properties.Resources.blog;
             }
         }
 
@@ -123,7 +122,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -134,7 +133,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return null;
+                return Properties.Resources.script;
             }
         }
 

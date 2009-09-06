@@ -411,15 +411,6 @@ namespace BoxSocial.Applications.Blog
         
         #region IPermissibleItem Members
 
-
-        public List<string> PermissibleActions
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public List<AccessControlPermission> AclPermissions
         {
             get

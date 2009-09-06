@@ -31,7 +31,19 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_settings")]
-    public class ForumSettings : Item
+    [Permission("VIEW", "Can view the forum")]
+    [Permission("LIST_TOPICS", "Can list the topics in the forum")]
+    [Permission("VIEW_TOPICS", "Can view the topics in the forum")]
+    [Permission("REPLY_TOPICS", "Can reply to the topics in the forum")]
+    [Permission("CREATE_TOPICS", "Can post new topics")]
+    [Permission("EDIT_POSTS", "Can edit posts")]
+    [Permission("EDIT_OWN_POSTS", "Can edit own posts")]
+    [Permission("DELETE_OWN_POSTS", "Can delete own posts")]
+    [Permission("DELETE_TOPICS", "Can delete topics")]
+    [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements")]
+    [Permission("CREATE_STICKY", "Can create sticky topics")]
+    [Permission("REPORT_POSTS", "Can report posts")]
+    public class ForumSettings : Item, IPermissibleItem
     {
         [DataField("forum_item", DataFieldKeys.Unique)]
         private ItemKey ownerKey;
@@ -205,6 +217,59 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("IS_FORUM_MEMBER", "FALSE");
             }
         }
+
+        #region IPermissibleItem Members
+
+        public Access Access
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
+                {
+                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
+                    owner = core.UserProfiles[ownerKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public long Id
+        {
+            get
+            {
+                return ownerKey.Id;
+            }
+        }
+
+        public ItemKey ItemKey
+        {
+            get
+            {
+                return new ItemKey(ItemType.GetTypeId(typeof(ForumSettings)), ownerKey.Id);
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidForumSettingsException : Exception

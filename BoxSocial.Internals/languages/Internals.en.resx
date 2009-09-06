@@ -120,6 +120,12 @@
   <data name="ADD_FRIEND" xml:space="preserve">
     <value>Add friend</value>
   </data>
+  <data name="ADD_PERMISSION" xml:space="preserve">
+    <value>Add Permission</value>
+  </data>
+  <data name="ALLOW" xml:space="preserve">
+    <value>Allow</value>
+  </data>
   <data name="APRIL" xml:space="preserve">
     <value>April</value>
   </data>
@@ -132,6 +138,12 @@
   <data name="BLOCKED_USERS" xml:space="preserve">
     <value>Blocked users</value>
   </data>
+  <data name="CATEGORIES" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="COMMENTS" xml:space="preserve">
+    <value>Comments</value>
+  </data>
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
@@ -140,6 +152,9 @@
   </data>
   <data name="DELETE" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="DENY" xml:space="preserve">
+    <value>Deny</value>
   </data>
   <data name="EDIT" xml:space="preserve">
     <value>Edit</value>
@@ -156,11 +171,20 @@
   <data name="FEBURARY" xml:space="preserve">
     <value>Feburary</value>
   </data>
+  <data name="FIVE_STAR" xml:space="preserve">
+    <value>Five stars</value>
+  </data>
+  <data name="FOUR_STAR" xml:space="preserve">
+    <value>Four stars</value>
+  </data>
   <data name="FRIEND" xml:space="preserve">
     <value>Friend</value>
   </data>
   <data name="FRIENDS" xml:space="preserve">
     <value>Friends</value>
+  </data>
+  <data name="INHERIT" xml:space="preserve">
+    <value>Inherit</value>
   </data>
   <data name="INVALID" xml:space="preserve">
     <value>Invalid</value>
@@ -195,23 +219,50 @@
   <data name="NEW" xml:space="preserve">
     <value>New</value>
   </data>
+  <data name="NEXT" xml:space="preserve">
+    <value>Next</value>
+  </data>
   <data name="NOVEMBER" xml:space="preserve">
     <value>November</value>
+  </data>
+  <data name="NO_COMMENTS" xml:space="preserve">
+    <value>No Comments</value>
   </data>
   <data name="OCTOBER" xml:space="preserve">
     <value>October</value>
   </data>
+  <data name="ONE_STAR" xml:space="preserve">
+    <value>One star</value>
+  </data>
   <data name="OWNER" xml:space="preserve">
     <value>Owner</value>
+  </data>
+  <data name="PREV" xml:space="preserve">
+    <value>Prev</value>
+  </data>
+  <data name="RATING" xml:space="preserve">
+    <value>Rating</value>
   </data>
   <data name="REGISTER" xml:space="preserve">
     <value>Register</value>
   </data>
-  <data name="REGISTERS_USERS" xml:space="preserve">
+  <data name="REGISTERED_USERS" xml:space="preserve">
     <value>Registered users</value>
   </data>
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
+  </data>
+  <data name="TAGS" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="THREE_STAR" xml:space="preserve">
+    <value>Three stars</value>
+  </data>
+  <data name="TWO_STAR" xml:space="preserve">
+    <value>Two stars</value>
+  </data>
+  <data name="UNRATED" xml:space="preserve">
+    <value>Unrated</value>
   </data>
   <data name="USERNAME" xml:space="preserve">
     <value>User name</value>

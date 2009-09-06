@@ -33,6 +33,10 @@ namespace BoxSocial.Internals
     {
         private Core core;
         private IPermissibleItem item;
+        
+        private List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
+        private List<AccessControlGrant> itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
+        private List<UnsavedAccessControlGrant> unsavedGrants = new List<UnsavedAccessControlGrant>();
 
         public AccessControlLists(Core core, IPermissibleItem item)
         {
@@ -68,10 +72,19 @@ namespace BoxSocial.Internals
         public void ParseACL(Template template, Primitive owner, string variable)
         {
             Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
-
-            List<AccessControlPermission> itemPermissions = GetPermissions(core, item);
-            List<AccessControlGrant> itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
-            List<UnsavedAccessControlGrant> unsavedGrants = new List<UnsavedAccessControlGrant>();
+            
+            if (itemPermissions == null)
+            {
+                itemPermissions = GetPermissions(core, item);
+            }
+            if (itemGrants == null)
+            {
+                itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
+            }
+            if (unsavedGrants == null)
+            {
+                unsavedGrants = new List<UnsavedAccessControlGrant>();
+            }
 
             if (itemGrants != null)
             {
@@ -106,7 +119,15 @@ namespace BoxSocial.Internals
                                 
                                 VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
         
-                                grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+                                if (groupsSelectBox.ContainsKey(itemGrant.PrimitiveKey.ToString()))
+                                {
+                                    grantVariableCollection.Parse("DISPLAY_NAME", groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Text);
+                                    groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Selectable = false;
+                                }
+                                else
+                                {
+                                    grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+                                }
         
                                 RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");
         
@@ -138,6 +159,7 @@ namespace BoxSocial.Internals
                                 
                                 grantVariableCollection.Parse("ID", string.Format("{0},{1}", itemGrant.PrimitiveKey.TypeId, itemGrant.PrimitiveKey.Id));
                                 grantVariableCollection.Parse("PERMISSION_ID", itemPermission.Id.ToString());
+                                grantVariableCollection.Parse("IS_NEW", "FALSE");
                             }
                         }
         
@@ -147,6 +169,8 @@ namespace BoxSocial.Internals
                         }
                     }
                     
+                    if (core.Http.Form["save"] == null)
+                    {
                     foreach (SelectBoxItem gsbi in groupsSelectBox)
                     {
                         if (core.Http.Form[string.Format("new-grant[{0},{1}]", itemPermission.Id, gsbi.Key)] != null)
@@ -191,30 +215,12 @@ namespace BoxSocial.Internals
                             
                             grantVariableCollection.Parse("ID", string.Format("{0},{1}", ik.TypeId, ik.Id));
                             grantVariableCollection.Parse("PERMISSION_ID", itemPermission.Id.ToString());
+                            grantVariableCollection.Parse("IS_NEW", "TRUE");
                             
                             gsbi.Selectable = false;
                         }
                     }
-                    
-                    // Owner
-                    /*List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
-
-                    foreach (PrimitivePermissionGroup ppg in ownerGroups)
-                    {
-                        VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
-                        
-                        grantVariableCollection.Parse("DISPLAY_NAME", ppg.LanguageKey);
-                        
-                        RadioList allowrl = new RadioList("allow[" + itemPermission + "," + ppg.TypeId + "," + ppg.ItemId +"]");
-    
-                        allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
-                        allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
-                        allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
-                        
-                        grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
-                        grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
-                        grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"]);
-                    }*/
+                    }
                     
                     if (core.Http.Form[string.Format("add-permission[{0}]", itemPermission.Id)] != null)
                     {
@@ -253,6 +259,7 @@ namespace BoxSocial.Internals
                         
                         grantVariableCollection.Parse("ID", string.Format("{0},{1}", ik.TypeId, ik.Id));
                         grantVariableCollection.Parse("PERMISSION_ID", itemPermission.Id.ToString());
+                        grantVariableCollection.Parse("IS_NEW", "TRUE");
                         
                         groupsSelectBox[groupSelectBoxId].Selectable = false;
                     }
@@ -343,8 +350,62 @@ namespace BoxSocial.Internals
             return permissions;
         }
 
-        public static void SavePermissions()
+        public void SavePermissions()
         {
+            if (itemPermissions == null)
+            {
+                itemPermissions = GetPermissions(core, item);
+            }
+            if (itemGrants == null)
+            {
+                itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
+            }
+            if (unsavedGrants == null)
+            {
+                unsavedGrants = new List<UnsavedAccessControlGrant>();
+            }
+            
+            if (itemPermissions != null)
+            {
+                foreach (AccessControlPermission itemPermission in itemPermissions)
+                {
+                    SelectBox groupsSelectBox = BuildGroupsSelectBox(string.Format("new-permission-group[{0}]", itemPermission.Id), item.Owner);
+                    
+                    foreach (SelectBoxItem gsbi in groupsSelectBox)
+                    {
+                        if (core.Http.Form[string.Format("new-grant[{0},{1}]", itemPermission.Id, gsbi.Key)] != null)
+                        {
+                            ItemKey ik = new ItemKey(gsbi.Key);
+                        
+                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, itemPermission.Id, AccessControlGrants.Inherit);
+                                                        
+                            if (core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"] != null)
+                            {
+                                switch (core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"])
+                                {
+                                    case "allow":
+                                        uacg.Allow = AccessControlGrants.Allow;
+                                        break;
+                                    case "deny":
+                                        uacg.Allow = AccessControlGrants.Deny;
+                                        break;
+                                    case "inherit":
+                                        uacg.Allow = AccessControlGrants.Inherit;
+                                        break;
+                                }
+                            }
+                            
+                            try
+                            {
+                                AccessControlGrant.Create(core, ik, item.ItemKey, itemPermission.Id, uacg.Allow);
+                            }
+                            catch (InvalidAccessControlGrantException)
+                            {
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

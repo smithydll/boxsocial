@@ -24,7 +24,9 @@
           <dl>
             <dt>
               {permission.grant.DISPLAY_NAME}
+		<!-- IF permission.grant.IS_NEW -->
               <input type="hidden" name="new-grant[{permission.grant.PERMISSION_ID},{permission.grant.ID}]" value="true" />
+		<!-- ENDIF -->
             </dt>
             <dd>
               {permission.grant.S_ALLOW}

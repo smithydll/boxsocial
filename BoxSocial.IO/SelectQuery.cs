@@ -246,6 +246,18 @@ namespace BoxSocial.IO
 
             tables.Add(baseTableName);
         }
+        
+        public SelectQuery(Type type)
+        {
+            tables = new List<string>();
+            fields = new List<string>();
+            groupings = new List<string>();
+            conditions = new QueryCondition();
+            joins = new List<TableJoin>();
+            sorts = new List<TableSort>();
+
+            tables.Add(DataFieldAttribute.GetTable(type));
+        }
 
         public void AddFields(params string[] fields)
         {

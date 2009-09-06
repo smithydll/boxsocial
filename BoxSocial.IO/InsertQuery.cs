@@ -15,6 +15,13 @@ namespace BoxSocial.IO
 
             table = tableName;
         }
+        
+        public InsertQuery(Type type)
+        {
+            fieldValues = new Dictionary<string, object>();
+
+            table = DataFieldAttribute.GetTable(type);
+        }
 
         public void AddField(string field, object value)
         {

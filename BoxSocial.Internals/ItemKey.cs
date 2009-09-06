@@ -169,6 +169,11 @@ namespace BoxSocial.Internals
                 return 0;
             }
         }
+        
+        public override string ToString ()
+        {
+            return string.Format("{0},{1}", TypeId, Id);
+        }
 
         public override bool Equals(object obj)
         {

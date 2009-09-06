@@ -1,7 +1,7 @@
 /*
- * Box Social™
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -64,6 +64,10 @@ namespace BoxSocial.IO
             else if (value is byte)
             {
                 return ((byte)value).ToString();
+            }
+            else if (value is sbyte)
+            {
+                return ((sbyte)value).ToString();
             }
             else if (value is double)
             {

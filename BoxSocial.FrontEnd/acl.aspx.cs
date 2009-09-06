@@ -104,7 +104,7 @@ namespace BoxSocial.FrontEnd
         {
             try
             {
-                //acl.Save();
+                acl.SavePermissions();
             }
             catch
             {

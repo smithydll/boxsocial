@@ -5,6 +5,9 @@
   <div id="acl">
     <form action="./acl.aspx" method="POST">
       {S_PERMISSIONS}
+        <input type="submit" name="save" value="Save" />
+        <input type="hidden" name="id" value="{S_ITEM_ID}" />
+        <input type="hidden" name="type" value="{S_ITEM_TYPE_ID}" />
     </form>
   </div>
 <!-- INCLUDE page_footer.html -->

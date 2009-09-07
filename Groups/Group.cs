@@ -42,6 +42,9 @@ namespace BoxSocial.Groups
 
     [DataTable("group_keys", "GROUP")]
     [Primitive("GROUP", UserGroupLoadOptions.All, "group_id", "group_name")]
+    [Permission("VIEW", "Can view the group")]
+    [Permission("COMMENT", "Can write on the guest book")]
+    [Permission("VIEW_MEMBERS", "Can view the group members")]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
@@ -1091,102 +1094,6 @@ namespace BoxSocial.Groups
             return 0x0000;
         }
 
-        public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
-        {
-			byte accessBitsEveryone = (byte)(accessBits & 0x000F);
-            byte accessBitsMembers = (byte)((accessBits & 0x00F0) >> 4);
-            byte accessBitsOfficers = (byte)((accessBits & 0x0F00) >> 8);
-            byte accessBitsOperators = (byte)((accessBits & 0xF000) >> 12);
-			
-			bool isGroupOperator = IsGroupOperator(viewer);
-			
-			if (isGroupOperator)
-			{
-				canRead = true;
-                canComment = true;
-                canCreate = true;
-                canChange = true;
-				return;
-			}
-			
-			bool isGroupMember = IsGroupMember(viewer);
-			
-			if (isGroupMember)
-			{
-				canRead = ((accessBitsMembers & 0x1) == 0x1);
-                canComment = ((accessBitsMembers & 0x2) == 0x2);
-                canCreate = ((accessBitsMembers & 0x4) == 0x4);
-                canChange = ((accessBitsMembers & 0x8) == 0x8);
-				return;
-			}
-			
-			if (accessBitsEveryone == 0)
-			{
-				canRead = false;
-                canComment = false;
-                canCreate = false;
-                canChange = false;
-				return;
-			}
-			
-            switch (GroupType)
-            {
-                case "OPEN":
-                    if (isGroupOperator)
-                    {
-                        canRead = true;
-                        canComment = true;
-                        canCreate = true;
-                        canChange = true;
-                    }
-                    else if (isGroupMember)
-                    {
-                        canRead = true;
-                        canComment = true;
-                        canCreate = true;
-                        canChange = false;
-                    }
-                    else
-                    {
-                        canRead = true;
-                        canComment = false;
-                        canCreate = false;
-                        canChange = false;
-                    }
-                    break;
-                case "CLOSED":
-                case "PRIVATE":
-                    if (isGroupOperator)
-                    {
-                        canRead = true;
-                        canComment = true;
-                        canCreate = true;
-                        canChange = true;
-                    }
-                    else if (isGroupMember)
-                    {
-                        canRead = true;
-                        canComment = true;
-                        canCreate = true;
-                        canChange = false;
-                    }
-                    else
-                    {
-                        canRead = false;
-                        canComment = false;
-                        canCreate = false;
-                        canChange = false;
-                    }
-                    break;
-                default:
-                    canRead = false;
-                    canComment = false;
-                    canCreate = false;
-                    canChange = false;
-                    break;
-            }
-        }
-
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = "";
@@ -1618,6 +1525,43 @@ namespace BoxSocial.Groups
             }
 
             return ppgs;
+        }
+        
+        public bool GetDefaultAccess(string permission)
+        {
+            switch (permission)
+            {
+                case "VIEW":
+                    switch (GroupType)
+                    {
+                        case "OPEN":
+                            return true;
+                        case "CLOSED":
+                            if (IsGroupMember(core.session.LoggedInMember))
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        case "PRIVATE":
+                            return false;
+                    }
+                    break;
+                case "COMMENT":
+                    if (IsGroupMember(core.session.LoggedInMember))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    break;
+            }
+            
+            return false;
         }
     }
 

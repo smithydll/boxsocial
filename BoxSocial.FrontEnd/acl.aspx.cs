@@ -46,8 +46,8 @@ namespace BoxSocial.FrontEnd
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            int itemId = core.Functions.RequestInt("id", 0);
-            int itemTypeId = core.Functions.RequestInt("type", 0);
+            long itemId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+            long itemTypeId = core.Functions.FormLong("type", core.Functions.RequestLong("type", 0));
             
             if (itemId == 0 || itemTypeId == 0)
             {
@@ -80,7 +80,13 @@ namespace BoxSocial.FrontEnd
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
             
             AccessControlLists acl = new AccessControlLists(core, pi);
-            acl.ParseACL(template, loggedInMember, "S_PERMISSIONS");
+            
+            if (Request.Form["save"] != null)
+            {
+                acl_Save(acl);
+            }
+            
+            acl.ParseACL(template, pi.Owner, "S_PERMISSIONS");
             
             /*Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
             
@@ -91,11 +97,9 @@ namespace BoxSocial.FrontEnd
                 core.Functions.Generate403();
                 return;
             }*/
-
-            if (Request.Form["save"] != null)
-            {
-                acl_Save(acl);
-            }
+            
+            template.Parse("S_ITEM_ID", itemId.ToString());
+            template.Parse("S_ITEM_TYPE_ID", itemTypeId.ToString());
             
             EndResponse();
         }

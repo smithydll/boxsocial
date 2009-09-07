@@ -458,7 +458,8 @@ namespace BoxSocial.Internals
 
             foreach (AssemblyName an in assemblies)
             {
-                Type[] types = Assembly.Load(an).GetTypes();
+                Assembly asm = Assembly.Load(an);
+                Type[] types = asm.GetTypes();
                 foreach (Type type in types)
                 {
                     if (type.IsSubclassOf(typeof(Primitive)))

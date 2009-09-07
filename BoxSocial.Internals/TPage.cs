@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Web;
 using System.Web.Configuration;
 using System.Drawing;
@@ -300,6 +301,15 @@ namespace BoxSocial.Internals
             Template.Path = core.Http.TemplatePath;
             core.prose = new Prose();
             core.prose.Initialise(core, "en");
+            
+            AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
+
+            foreach (AssemblyName an in assemblies)
+            {
+                core.prose.AddApplication(an.Name);
+                Assembly asm = Assembly.Load(an);
+                template.AddPageAssembly(asm);
+            }
 
             template.SetProse(core.prose);
             

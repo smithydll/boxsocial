@@ -116,8 +116,18 @@ namespace BoxSocial.Internals
             }
             catch
             {
-                return "<MISSING LANGUAGE KEY>";
+                foreach (string akey in languageResources.Keys)
+                {
+                    try
+                    {
+                        return languageResources[akey].GetString(key, culture);
+                    }
+                    catch
+                    {
+                    }
+                }
             }
+            return "<MISSING LANGUAGE KEY>";
         }
 
         /// <summary>

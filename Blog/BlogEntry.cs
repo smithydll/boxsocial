@@ -390,6 +390,19 @@ namespace BoxSocial.Applications.Blog
                 return 10;
             }
         }
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

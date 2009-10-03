@@ -2185,6 +2185,53 @@ namespace BoxSocial.Internals
 
             return false;
         }
+
+        #region IPermissibleItem Members
+
+        Access IPermissibleItem.Access
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        Primitive IPermissibleItem.Owner
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        List<AccessControlPermission> IPermissibleItem.AclPermissions
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        long IPermissibleItem.Id
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        ItemKey IPermissibleItem.ItemKey
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        string IPermissibleItem.Namespace
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        string IPermissibleItem.Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IPermissibleItem IPermissibleItem.PermissiveParent
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidUserException : Exception

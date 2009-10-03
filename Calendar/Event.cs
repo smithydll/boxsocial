@@ -674,6 +674,19 @@ namespace BoxSocial.Applications.Calendar
         }
 
         #endregion
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidEventException : Exception

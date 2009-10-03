@@ -190,6 +190,11 @@ namespace BoxSocial.Internals
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         /*public static bool operator ==(ItemKey ik1, ItemKey ik2)
         {
 			if ((ik1.Equals(null) || ik2.Equals(null)))

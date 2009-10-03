@@ -1546,6 +1546,19 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>

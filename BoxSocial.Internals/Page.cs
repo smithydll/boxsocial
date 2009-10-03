@@ -1307,6 +1307,19 @@ namespace BoxSocial.Internals
         }
 
         #endregion
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     public class PageNotFoundException : Exception

@@ -402,6 +402,19 @@ namespace BoxSocial.Applications.Forum
 
             }
         }
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidPostException : Exception

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
@@ -882,6 +882,19 @@ namespace BoxSocial.Applications.Blog
         }
 
         #endregion
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -898,3 +911,4 @@ namespace BoxSocial.Applications.Blog
     {
     }
 }
+

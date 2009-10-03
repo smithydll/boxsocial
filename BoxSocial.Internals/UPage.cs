@@ -72,7 +72,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public User User
+        public new User User
         {
             get
             {

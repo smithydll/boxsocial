@@ -278,6 +278,19 @@ namespace BoxSocial.Applications.Forum
         }
 
         #endregion
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
     }
 
     public class InvalidForumSettingsException : Exception

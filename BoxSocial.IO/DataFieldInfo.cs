@@ -24,7 +24,7 @@ using System.Text;
 
 namespace BoxSocial.IO
 {
-    public enum DataFieldKeys
+    public enum DataFieldKeys : byte
     {
         None = 0x00,
         Primary = 0x01,

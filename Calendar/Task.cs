@@ -481,6 +481,19 @@ namespace BoxSocial.Applications.Calendar
                 return AccessControlLists.GetPermissions(core, this);
             }
         }
+
+        #region IPermissibleItem Members
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        #endregion
         
         public IPermissibleItem PermissiveParent
         {

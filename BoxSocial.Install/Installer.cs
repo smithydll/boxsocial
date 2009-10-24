@@ -92,21 +92,28 @@ namespace BoxSocial.Install
                 AccessControlPermission acpView = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "VIEW");
                 AccessControlPermission acpComment = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "COMMENT");
 
-                foreach (DataRow dr in dt.Rows)
+                /*foreach (DataRow dr in dt.Rows)
                 {
                     User user = new User(core, dr, UserLoadOptions.Key);
 
+                    // FRIENDS
                     AccessControlGrant.Create(core, new ItemKey(-1, ItemType.GetTypeId(typeof(Friend))), user.ItemKey, acpView.Id, AccessControlGrants.Allow);
                     AccessControlGrant.Create(core, new ItemKey(-1, ItemType.GetTypeId(typeof(Friend))), user.ItemKey, acpComment.Id, AccessControlGrants.Allow);
+                    // EVERYONE
                     AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), user.ItemKey, acpView.Id, AccessControlGrants.Allow);
-                }
+                }*/
 
                 query = new SelectQuery(typeof(Page));
                 dt = db.Query(query);
 
+                acpView = new AccessControlPermission(core, ItemType.GetTypeId(typeof(Page)), "VIEW");
+
                 foreach (DataRow dr in dt.Rows)
                 {
                     Page page = new Page(core, null, dr);
+
+                    // EVERYONE
+                    AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), page.ItemKey, acpView.Id, AccessControlGrants.Allow);
                 }
 
                 return;

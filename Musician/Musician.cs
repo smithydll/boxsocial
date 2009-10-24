@@ -129,7 +129,7 @@ namespace BoxSocial.Musician
         {
             try
             {
-                LoadItem("muscian_slug", slug);
+                LoadItem("musician_slug", slug);
             }
             catch (InvalidItemException)
             {
@@ -656,11 +656,16 @@ namespace BoxSocial.Musician
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MuscianMember)), -1, "GROUP_MEMBERS"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MusicianMember)), -1, "GROUP_MEMBERS"));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Fan)), -1, "FANS"));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE"));
 
             return ppgs;
+        }
+
+        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        {
+            throw new NotImplementedException();
         }
     }
 

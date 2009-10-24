@@ -66,7 +66,7 @@ namespace BoxSocial.FrontEnd
             if (session.IsLoggedIn == false)
             {
                 template.Parse("REDIRECT_URI", "/sign-in/?redirect=/groups/create");
-                core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new muscian.");
+                core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new musician.");
                 return;
             }
 
@@ -101,8 +101,8 @@ namespace BoxSocial.FrontEnd
             else
             {
                 // submit the form
-                template.Parse("MUSCIAN_TITLE", (string)Request.Form["title"]);
-                template.Parse("MUSCIAN_NAME_SLUG", slug);
+                template.Parse("MUSICIAN_TITLE", (string)Request.Form["title"]);
+                template.Parse("MUSICIAN_NAME_SLUG", slug);
 
                 DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 3 AND session_id = '{0}' LIMIT 1",
                     Mysql.Escape(session.SessionId)));
@@ -119,17 +119,17 @@ namespace BoxSocial.FrontEnd
                 }
                 else if (!Musician.Musician.CheckMusicianNameValid(slug))
                 {
-                    template.Parse("ERROR", "Muscian slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                    template.Parse("ERROR", "Musician slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                     prepareNewCaptcha();
                 }
                 else if (!Musician.Musician.CheckMusicianNameUnique(core, slug))
                 {
-                    template.Parse("ERROR", "Muscian slug is already taken, please choose another one.");
+                    template.Parse("ERROR", "Musician slug is already taken, please choose another one.");
                     prepareNewCaptcha();
                 }
                 else if ((string)Request.Form["agree"] != "true")
                 {
-                    template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create register a muscian.");
+                    template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create register a musician.");
                     prepareNewCaptcha();
                 }
                 else

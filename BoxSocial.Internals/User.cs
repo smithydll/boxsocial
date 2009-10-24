@@ -2232,6 +2232,57 @@ namespace BoxSocial.Internals
         }
 
         #endregion
+
+        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        {
+            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(Friend)))
+            {
+                switch (primitiveKey.Id)
+                {
+                    case -1:
+                        if (IsFriend(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                    case -2:
+                        if (IsFamily(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                    case -3:
+                        if (IsBlocked(core.session.LoggedInMember))
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(User)))
+            {
+                switch (primitiveKey.Id)
+                {
+                    case -1:
+                        if (Id == core.LoggedInMemberId)
+                        {
+                            return true;
+                        }
+                        break;
+                    case -2:
+                        return true;
+                    case -3:
+                        if (core.session.IsLoggedIn)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            return false;
+        }
     }
 
     public class InvalidUserException : Exception

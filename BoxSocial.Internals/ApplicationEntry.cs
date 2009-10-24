@@ -1127,6 +1127,23 @@ namespace BoxSocial.Internals
         }
 
         #endregion
+
+        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        {
+            switch (primitiveKey.Id)
+            {
+                case -1: // OWNER
+                    break;
+                case -2: // EVERYONE
+                    if (core.LoggedInMemberId > 0)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
     }
 
     public class InvalidApplicationException : Exception

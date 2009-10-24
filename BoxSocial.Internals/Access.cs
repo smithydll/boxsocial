@@ -71,20 +71,20 @@ namespace BoxSocial.Internals
             {
                 if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
                 {
-                    /*if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
+                    if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
                     {
+                        switch (grant.Allow)
+                        {
+                            case AccessControlGrants.Allow:
+                                allow = true;
+                                break;
+                            case AccessControlGrants.Deny:
+                                deny = true;
+                                break;
+                            case AccessControlGrants.Inherit:
+                                break;
+                        }
                     }
-                    switch (grant.Allow)
-                    {
-                        case AccessControlGrants.Allow:
-                            allow = true;
-                            break;
-                        case AccessControlGrants.Deny:
-                            deny = true;
-                            break;
-                        case AccessControlGrants.Inherit:
-                            break;
-                    }*/
                 }
             }
 

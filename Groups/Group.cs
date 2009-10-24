@@ -1563,6 +1563,11 @@ namespace BoxSocial.Groups
             
             return false;
         }
+
+        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class InvalidGroupException : Exception

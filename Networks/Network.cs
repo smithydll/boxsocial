@@ -1014,6 +1014,11 @@ namespace BoxSocial.Networks
 
             return ppgs;
         }
+
+        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class InvalidNetworkException : Exception

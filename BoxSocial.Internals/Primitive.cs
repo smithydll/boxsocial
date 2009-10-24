@@ -305,6 +305,8 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <returns>A dictionary of Item Type with language keys</returns>
         public abstract List<PrimitivePermissionGroup> GetPrimitivePermissionGroups();
+
+        public abstract bool GetIsMemberOfPrimitive(ItemKey primitiveKey);
     }
 
     /// <summary>

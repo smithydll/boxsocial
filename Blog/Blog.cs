@@ -882,19 +882,6 @@ namespace BoxSocial.Applications.Blog
         }
 
         #endregion
-
-        #region IPermissibleItem Members
-
-
-        public IPermissibleItem PermissiveParent
-        {
-            get
-            {
-                return Owner;
-            }
-        }
-
-        #endregion
     }
 
     /// <summary>

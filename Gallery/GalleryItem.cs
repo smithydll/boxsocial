@@ -1082,7 +1082,16 @@ namespace BoxSocial.Applications.Gallery
                 if (e.Page.Owner is User)
                 {
                     galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
-                    Gallery gallery = new Gallery(e.Core, e.Page.Owner, galleryItem.ParentId);
+                    Gallery gallery = null;
+
+                    if (galleryItem.ParentId > 0)
+                    {
+                        gallery = new Gallery(e.Core, e.Page.Owner, galleryItem.ParentId);
+                    }
+                    else
+                    {
+                        gallery = new Gallery(e.Core, e.Page.Owner);
+                    }
 
                     if (!gallery.Access.Can("VIEW_ITEMS"))
                     {

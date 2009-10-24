@@ -128,8 +128,8 @@ namespace BoxSocial.Applications.News
 
             if (articleTable.Rows.Count == 1)
             {
-                Primitive owner = null;
-                switch ((string)articleTable.Rows[0]["article_item_type"])
+                /*Primitive owner = null;
+                switch ((string)articleTable.Rows[0]["article_item_type_id"])
                 {
                     case "GROUP":
                         owner = new UserGroup(core, (long)articleTable.Rows[0]["article_item_id"]);
@@ -137,7 +137,7 @@ namespace BoxSocial.Applications.News
                     case "NETWORK":
                         owner = new Network(core, (long)articleTable.Rows[0]["article_item_id"]);
                         break;
-                }
+                }*/
 
 				/* TODO */
                 /*Access articleAccess = owner.Access;

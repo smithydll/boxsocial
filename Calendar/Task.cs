@@ -495,13 +495,6 @@ namespace BoxSocial.Applications.Calendar
 
         #endregion
         
-        public IPermissibleItem PermissiveParent
-        {
-            get
-            {
-                return Owner;
-            }
-        }
     }
 
     public class InvalidTaskException : Exception

@@ -823,18 +823,25 @@ namespace BoxSocial.Applications.Forum
 					//postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
-					postVariableCollection.Parse("U_USER", post.Poster.Uri);
-                    postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[post.UserId].Info.DisplayName);
-                    postVariableCollection.Parse("USER_TILE", postersList[post.UserId].UserIcon);
-                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.tz)));
-					postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Country);
-					postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
-					postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);
-					
-					if (ranksList.ContainsKey(postersList[post.UserId].ForumRankId))
-					{
-						postVariableCollection.Parse("USER_RANK", ranksList[postersList[post.UserId].ForumRankId].RankTitleText);
-					}
+                    if (postersList.ContainsKey(post.UserId))
+                    {
+                        postVariableCollection.Parse("U_USER", post.Poster.Uri);
+                        postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[post.UserId].Info.DisplayName);
+                        postVariableCollection.Parse("USER_TILE", postersList[post.UserId].UserIcon);
+                        postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.tz)));
+                        postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Country);
+                        postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
+                        postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);
+
+                        if (ranksList.ContainsKey(postersList[post.UserId].ForumRankId))
+                        {
+                            postVariableCollection.Parse("USER_RANK", ranksList[postersList[post.UserId].ForumRankId].RankTitleText);
+                        }
+                    }
+                    else
+                    {
+                        postVariableCollection.Parse("USER_DISPLAY_NAME", "Anonymous");
+                    }
 
                     if (thisTopic.ReadStatus == null)
                     {

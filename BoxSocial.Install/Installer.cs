@@ -64,6 +64,54 @@ namespace BoxSocial.Install
                 binary = true;
             }
 
+            if (argsList.Contains("--sync") || argsList.Contains("s") && argsList.Count >= 2)
+            {
+                string mysqlRootPassword = string.Empty;
+                string mysqlDatabase = string.Empty;
+                int passwordIndex = argsList.IndexOf("-p");
+                int databaseIndex = argsList.IndexOf("-d");
+
+                if (passwordIndex > 0 && passwordIndex + 1 < args.Length)
+                {
+                    mysqlRootPassword = argsList[passwordIndex + 1];
+                }
+
+                if (databaseIndex > 0 && databaseIndex + 1 < args.Length)
+                {
+                    mysqlDatabase = argsList[databaseIndex + 1];
+                }
+
+                Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+                Template template = new Template(Path.Combine("/var/www/", "templates"), "default.html");
+                Core core = new Core(db, template);
+                UnixTime tz = new UnixTime(core, 0);
+
+                SelectQuery query = new SelectQuery(typeof(User));
+                DataTable dt = db.Query(query);
+
+                AccessControlPermission acpView = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "VIEW");
+                AccessControlPermission acpComment = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "COMMENT");
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    User user = new User(core, dr, UserLoadOptions.Key);
+
+                    AccessControlGrant.Create(core, new ItemKey(-1, ItemType.GetTypeId(typeof(Friend))), user.ItemKey, acpView.Id, AccessControlGrants.Allow);
+                    AccessControlGrant.Create(core, new ItemKey(-1, ItemType.GetTypeId(typeof(Friend))), user.ItemKey, acpComment.Id, AccessControlGrants.Allow);
+                    AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), user.ItemKey, acpView.Id, AccessControlGrants.Allow);
+                }
+
+                query = new SelectQuery(typeof(Page));
+                dt = db.Query(query);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Page page = new Page(core, null, dr);
+                }
+
+                return;
+            }
+
             if (argsList.Contains("--update") || argsList.Contains("u") && argsList.Count >= 2)
             {
                 Console.WriteLine("Please enter the root directory of the domain you want to use:");

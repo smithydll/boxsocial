@@ -305,19 +305,6 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <returns>A dictionary of Item Type with language keys</returns>
         public abstract List<PrimitivePermissionGroup> GetPrimitivePermissionGroups();
-
-        #region IPermissibleItem Members
-
-
-        public IPermissibleItem PermissiveParent
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        #endregion
     }
 
     /// <summary>

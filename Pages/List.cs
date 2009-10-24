@@ -506,14 +506,6 @@ namespace BoxSocial.Applications.Pages
         }
 
         #endregion
-        
-        public IPermissibleItem PermissiveParent
-        {
-            get
-            {
-                return Owner;
-            }
-        }
     }
 
     public class InvalidListException : Exception

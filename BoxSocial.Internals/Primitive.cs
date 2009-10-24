@@ -307,6 +307,8 @@ namespace BoxSocial.Internals
         public abstract List<PrimitivePermissionGroup> GetPrimitivePermissionGroups();
 
         public abstract bool GetIsMemberOfPrimitive(ItemKey primitiveKey);
+
+        public abstract bool CanEditPermissions();
     }
 
     /// <summary>

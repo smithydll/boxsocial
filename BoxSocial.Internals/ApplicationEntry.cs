@@ -1133,6 +1133,10 @@ namespace BoxSocial.Internals
             switch (primitiveKey.Id)
             {
                 case -1: // OWNER
+                    if (CreatorId == core.LoggedInMemberId)
+                    {
+                        return true;
+                    }
                     break;
                 case -2: // EVERYONE
                     if (core.LoggedInMemberId > 0)
@@ -1140,6 +1144,16 @@ namespace BoxSocial.Internals
                         return true;
                     }
                     break;
+            }
+
+            return false;
+        }
+
+        public override bool CanEditPermissions()
+        {
+            if (CreatorId == core.LoggedInMemberId)
+            {
+                return true;
             }
 
             return false;

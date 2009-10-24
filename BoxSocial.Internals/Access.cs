@@ -57,7 +57,28 @@ namespace BoxSocial.Internals
             bool allow = false;
             bool deny = false;
 
-            AccessControlPermission acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+            AccessControlPermission acp = null;
+
+            try
+            {
+                acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+            }
+            catch (InvalidAccessControlPermissionException)
+            {
+                acp = null;
+            }
+
+            if (acp == null && permission == "EDIT_PERMISSIONS")
+            {
+                IPermissibleItem pi = (IPermissibleItem)this.item;
+
+                return pi.Owner.CanEditPermissions();
+            }
+
+            if (acp == null)
+            {
+                throw new InvalidAccessControlPermissionException();
+            }
 
             /*foreach (AccessControlGrant grant in grants)
             {
@@ -124,6 +145,11 @@ namespace BoxSocial.Internals
             }
 
             return (allow && (!deny));
+        }
+
+        public static string BuildAclUri(Core core, IPermissibleItem item)
+        {
+            return core.Uri.AppendAbsoluteSid(string.Format("acl.aspx?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
         }
     }
 }

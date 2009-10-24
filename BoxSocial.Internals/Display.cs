@@ -651,6 +651,11 @@ namespace BoxSocial.Internals
             ParsePageList(core.template, "PAGE_LIST", owner, fragment);
         }
 
+        public void ParsePageList(Primitive owner, bool fragment, Page current)
+        {
+            ParsePageList(core.template, "PAGE_LIST", owner, fragment, current);
+        }
+
         public void ParsePageList(string templateVar, Primitive owner, bool fragment)
         {
             ParsePageList(core.template, templateVar, owner, fragment);
@@ -658,10 +663,20 @@ namespace BoxSocial.Internals
 
         public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment)
         {
-            template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment));
+            ParsePageList(template, templateVar, owner, fragment, null);
+        }
+
+        public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment, Page current)
+        {
+            template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment, current));
         }
 
         public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment)
+        {
+            return GeneratePageList(owner, loggedInMember, fragment, null);
+        }
+
+        public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment, Page current)
         {
             Database db = core.db;
 
@@ -674,6 +689,20 @@ namespace BoxSocial.Internals
             query.AddCondition("page_status", "PUBLISH");
             //QueryCondition qc1 = query.AddCondition(new QueryOperation("page_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
             //qc1.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            QueryCondition qc1 = query.AddCondition("page_parent_id", 0);
+            if (current != null)
+            {
+                ParentTree pt = current.GetParents();
+                if (pt != null)
+                {
+                    foreach (ParentTreeNode ptn in pt.Nodes)
+                    {
+                        qc1.AddCondition(ConditionRelations.Or, "page_parent_id", ptn.ParentId);
+                    }
+                }
+
+                qc1.AddCondition(ConditionRelations.Or, "page_parent_id", current.Id);
+            }
             query.AddSort(SortOrder.Ascending, "page_order");
 
             DataTable pagesTable = db.Query(query);
@@ -751,7 +780,22 @@ namespace BoxSocial.Internals
                 output.Append("<a href=\"");
                 output.Append(HttpUtility.HtmlEncode(pages[i].Uri));
                 output.Append("\">");
-                output.Append(HttpUtility.HtmlEncode(pages[i].Title));
+                if (current != null)
+                {
+                    if (pages[i].Id == current.Id)
+                    {
+                        output.Append("<b>");
+                    }
+                    output.Append(HttpUtility.HtmlEncode(pages[i].Title));
+                    if (pages[i].Id == current.Id)
+                    {
+                        output.Append("</b>");
+                    }
+                }
+                else
+                {
+                    output.Append(HttpUtility.HtmlEncode(pages[i].Title));
+                }
                 output.Append("</a>");
 
                 if (!hasChildren)

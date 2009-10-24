@@ -1017,7 +1017,17 @@ namespace BoxSocial.Networks
 
         public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsNetworkMember(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
+        public override bool CanEditPermissions()
+        {
+            return false;
         }
     }
 

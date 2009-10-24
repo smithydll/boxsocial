@@ -83,6 +83,7 @@ namespace BoxSocial.Applications.Pages
                 pagesVariableCollection.Parse("UPDATED", tz.DateTimeToString(page.GetModifiedDate(tz)));
                 pagesVariableCollection.Parse("U_VIEW", page.Uri);
                 pagesVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", page.Id));
+                pagesVariableCollection.Parse("U_PERMS", Access.BuildAclUri(core, page));
                 pagesVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", page.Id));
 
                 if (i % 2 == 0)

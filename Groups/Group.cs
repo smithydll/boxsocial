@@ -1566,7 +1566,22 @@ namespace BoxSocial.Groups
 
         public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsGroupMember(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
+        public override bool CanEditPermissions()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsGroupOperator(core.session.LoggedInMember);
+            }
+
+            return false;
         }
     }
 

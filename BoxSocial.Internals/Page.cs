@@ -480,6 +480,35 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Page(Core core, long pageId)
+            : base(core)
+        {
+            this.db = db;
+
+            ItemLoad += new ItemLoadHandler(Page_ItemLoad);
+
+            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            query.AddCondition("page_id", pageId);
+
+            DataTable pageTable = db.Query(query);
+
+            if (pageTable.Rows.Count == 1)
+            {
+                loadPageInfo(pageTable.Rows[0]);
+                try
+                {
+                    loadLicenseInfo(pageTable.Rows[0]);
+                }
+                catch (InvalidLicenseException)
+                {
+                }
+            }
+            else
+            {
+                throw new PageNotFoundException();
+            }
+        }
+
         public Page(Core core, Primitive owner, long pageId)
             : base(core)
         {
@@ -1142,7 +1171,7 @@ namespace BoxSocial.Internals
                 ((User)owner).LoadProfileInfo();
             }
 
-            core.Display.ParsePageList(owner, true);
+            core.Display.ParsePageList(owner, true, thePage);
 
             if (!thePage.Access.Can("VIEW"))
             {

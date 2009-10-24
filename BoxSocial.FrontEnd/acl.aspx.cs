@@ -67,7 +67,17 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
-            NumberedItem ni = NumberedItem.Reflect(core, itemKey);
+            NumberedItem ni = null;
+
+            try
+            {
+                ni = NumberedItem.Reflect(core, itemKey);
+            }
+            catch (MissingMethodException)
+            {
+                core.Functions.Generate404();
+                return;
+            }
 
             if (!(ni is IPermissibleItem))
             {
@@ -76,6 +86,12 @@ namespace BoxSocial.FrontEnd
             }
 
             IPermissibleItem pi = (IPermissibleItem)ni;
+
+            if (!pi.Access.Can("EDIT_PERMISSIONS"))
+            {
+                core.Functions.Generate403();
+                return;
+            }
             
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
             

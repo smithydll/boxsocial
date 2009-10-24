@@ -2283,6 +2283,16 @@ namespace BoxSocial.Internals
 
             return false;
         }
+
+        public override bool CanEditPermissions()
+        {
+            if (Id == core.LoggedInMemberId)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public class InvalidUserException : Exception

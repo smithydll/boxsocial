@@ -665,7 +665,22 @@ namespace BoxSocial.Musician
 
         public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsMusicianMember(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
+        public override bool CanEditPermissions()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsMusicianMember(core.session.LoggedInMember);
+            }
+
+            return false;
         }
     }
 

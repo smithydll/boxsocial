@@ -78,7 +78,7 @@ namespace BoxSocial.Internals
                 if (user == null || userId != user.Id)
                 {
                     core.LoadUserProfile(userId);
-                    user = core.UserProfiles[userId];
+                    user = core.PrimitiveCache[userId];
                     return user;
                 }
                 else

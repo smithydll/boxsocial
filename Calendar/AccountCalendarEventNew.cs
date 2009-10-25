@@ -266,7 +266,7 @@ namespace BoxSocial.Applications.Calendar
                     outputInviteesIds.Append(",");
                 }
 
-                outputInvitees.Append(core.UserProfiles[inviteeId].DisplayName);
+                outputInvitees.Append(core.PrimitiveCache[inviteeId].DisplayName);
                 outputInviteesIds.Append(inviteeId.ToString());
             }
 
@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
                 {
 					try
 					{
-						calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+						calendarEvent.Invite(core, core.PrimitiveCache[inviteeId]);
 					}
 					catch (CouldNotInviteEventException)
 					{
@@ -416,7 +416,7 @@ namespace BoxSocial.Applications.Calendar
                 {
 					try
 					{
-						calendarEvent.Invite(core, core.UserProfiles[inviteeId]);
+						calendarEvent.Invite(core, core.PrimitiveCache[inviteeId]);
 					}
 					catch (CouldNotInviteEventException)
 					{

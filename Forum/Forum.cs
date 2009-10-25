@@ -245,6 +245,14 @@ namespace BoxSocial.Applications.Forum
 			}
 		}
 
+        public long ParentTypeId
+        {
+            get
+            {
+                return ItemType.GetTypeId(typeof(Forum));
+            }
+        }
+
         public long ParentId
         {
             get
@@ -362,7 +370,7 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumAccess == null)
                 {
-                    forumAccess = new Access(core, this, Owner);
+                    forumAccess = new Access(core, this);
                     //forumAccess.SetSessionViewer(core.session);
                 }
                 return forumAccess;
@@ -1368,8 +1376,8 @@ namespace BoxSocial.Applications.Forum
                     topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
                     topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
 					topicVariableCollection.Parse("DATE", core.tz.DateTimeToString(topic.GetCreatedDate(core.tz)));
-					topicVariableCollection.Parse("USERNAME", core.UserProfiles[topic.PosterId].DisplayName);
-					topicVariableCollection.Parse("U_POSTER", core.UserProfiles[topic.PosterId].Uri);
+					topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
+					topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
 
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {
@@ -1510,8 +1518,8 @@ namespace BoxSocial.Applications.Forum
             {
                 if (owner == null || (ownerKey.Id != owner.Id && ownerKey.TypeId != owner.TypeId))
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -1561,6 +1569,18 @@ namespace BoxSocial.Applications.Forum
                     return new Forum(core, ParentId);
                 }
             }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            if (Owner is UserGroup)
+            {
+                if (((UserGroup)Owner).IsGroupMember(core.session.LoggedInMember))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

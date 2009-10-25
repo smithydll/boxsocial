@@ -88,7 +88,7 @@ namespace BoxSocial.Groups
             for (int i = 0; i < membershipGroupsTable.Rows.Count; i++)
             {
                 long groupId = (long)membershipGroupsTable.Rows[i]["group_id"];
-                core.UserProfiles.LoadPrimitiveProfile(groupId, groupTypeId);
+                core.PrimitiveCache.LoadPrimitiveProfile(groupId, groupTypeId);
                 groupIds.Add(groupId);
             }
 
@@ -101,7 +101,7 @@ namespace BoxSocial.Groups
 
                 try
                 {
-                    thisGroup = (UserGroup)core.UserProfiles[(long)membershipGroupsTable.Rows[i]["group_id"], groupTypeId];
+                    thisGroup = (UserGroup)core.PrimitiveCache[(long)membershipGroupsTable.Rows[i]["group_id"], groupTypeId];
                 }
                 catch
                 {

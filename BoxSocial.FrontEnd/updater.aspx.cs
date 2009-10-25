@@ -46,31 +46,31 @@ namespace BoxSocial.FrontEnd
                 {
                     ApplicationEntry ae = new ApplicationEntry(core, dr);
 
-                    ae.UpdateInstall(core, core.UserProfiles[userId]);
+                    ae.UpdateInstall(core, core.PrimitiveCache[userId]);
 
                     Response.Write(ae.AssemblyName + "<br />\n");
                 }
 
                 // Install a couple of applications
                 ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                    profileAe.Install(core, core.UserProfiles[userId]);
+                    profileAe.Install(core, core.PrimitiveCache[userId]);
 
 
                     ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
-                    galleryAe.Install(core, core.UserProfiles[userId]);
+                    galleryAe.Install(core, core.PrimitiveCache[userId]);
 
 
                     ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
-                    guestbookAe.Install(core, core.UserProfiles[userId]);
+                    guestbookAe.Install(core, core.PrimitiveCache[userId]);
 
                     ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
-                    groupsAe.Install(core, core.UserProfiles[userId]);
+                    groupsAe.Install(core, core.PrimitiveCache[userId]);
 
                     ApplicationEntry networksAe = new ApplicationEntry(core, null, "Networks");
-                    networksAe.Install(core, core.UserProfiles[userId]);
+                    networksAe.Install(core, core.PrimitiveCache[userId]);
 
                     ApplicationEntry calendarAe = new ApplicationEntry(core, null, "Calendar");
-                    calendarAe.Install(core, core.UserProfiles[userId]);
+                    calendarAe.Install(core, core.PrimitiveCache[userId]);
                 
             }
 

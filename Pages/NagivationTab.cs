@@ -85,8 +85,8 @@ namespace BoxSocial.Applications.Pages
             {
                 if (owner == null || ownerKey.Id != owner.ItemKey.Id || ownerKey.TypeId != owner.ItemKey.TypeId)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else

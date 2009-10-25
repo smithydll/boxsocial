@@ -2106,7 +2106,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -2189,11 +2189,6 @@ namespace BoxSocial.Internals
         #region IPermissibleItem Members
 
         Access IPermissibleItem.Access
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        Primitive IPermissibleItem.Owner
         {
             get { throw new NotImplementedException(); }
         }
@@ -2291,6 +2286,11 @@ namespace BoxSocial.Internals
                 return true;
             }
 
+            return false;
+        }
+
+        public override bool GetDefaultCan(string permission)
+        {
             return false;
         }
     }

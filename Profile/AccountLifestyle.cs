@@ -117,7 +117,7 @@ namespace BoxSocial.Applications.Profile
             {
                 core.LoadUserProfile(LoggedInMember.Profile.MaritialWithId);
 
-                template.Parse("S_RELATIONSHIP_WITH", core.UserProfiles[LoggedInMember.Profile.MaritialWithId].UserName);
+                template.Parse("S_RELATIONSHIP_WITH", core.PrimitiveCache[LoggedInMember.Profile.MaritialWithId].UserName);
             }
         }
 
@@ -131,7 +131,7 @@ namespace BoxSocial.Applications.Profile
             if (!string.IsNullOrEmpty(relationshipWith))
             {
                 long key = core.LoadUserProfile(relationshipWith);
-                relation = core.UserProfiles[key];
+                relation = core.PrimitiveCache[key];
             }
 
             string existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
@@ -175,7 +175,7 @@ namespace BoxSocial.Applications.Profile
                         if (existingMaritialWith > 0)
                         {
                             core.LoadUserProfile(existingMaritialWith);
-                            User oldRelation = core.UserProfiles[existingMaritialWith];
+                            User oldRelation = core.PrimitiveCache[existingMaritialWith];
 
                             oldRelation.Profile.MaritialWithId = 0;
                             oldRelation.Profile.MaritialWithConfirmed = false;
@@ -189,7 +189,7 @@ namespace BoxSocial.Applications.Profile
                         if (existingMaritialWith > 0)
                         {
                             core.LoadUserProfile(existingMaritialWith);
-                            User oldRelation = core.UserProfiles[existingMaritialWith];
+                            User oldRelation = core.PrimitiveCache[existingMaritialWith];
 
                             oldRelation.Profile.MaritialWithId = 0;
                             oldRelation.Profile.MaritialWithConfirmed = false;
@@ -207,7 +207,7 @@ namespace BoxSocial.Applications.Profile
                             if (existingMaritialWith > 0)
                             {
                                 core.LoadUserProfile(existingMaritialWith);
-                                relation = core.UserProfiles[existingMaritialWith];
+                                relation = core.PrimitiveCache[existingMaritialWith];
 
                                 LoggedInMember.Profile.MaritialWithId = 0;
                                 LoggedInMember.Profile.MaritialWithConfirmed = false;
@@ -244,7 +244,7 @@ namespace BoxSocial.Applications.Profile
 
             core.LoadUserProfile(id);
 
-            User relation = core.UserProfiles[id];
+            User relation = core.PrimitiveCache[id];
 
             Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
             hiddenFieldList.Add("module", ModuleKey);
@@ -271,7 +271,7 @@ namespace BoxSocial.Applications.Profile
 
             core.LoadUserProfile(id);
 
-            User relation = core.UserProfiles[id];
+            User relation = core.PrimitiveCache[id];
 
             if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {

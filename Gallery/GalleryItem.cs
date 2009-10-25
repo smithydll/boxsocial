@@ -321,8 +321,8 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else

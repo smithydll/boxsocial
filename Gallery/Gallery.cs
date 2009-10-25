@@ -254,7 +254,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (galleryAccess == null)
                 {
-                    galleryAccess = new Access(core, this, Owner);
+                    galleryAccess = new Access(core, this);
                 }
                 return galleryAccess;
             }
@@ -269,8 +269,8 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -1508,7 +1508,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("/acl.aspx?id={0}&type={1}", Id, ItemKey.TypeId), true);
+                return core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", Id, ItemKey.TypeId), true);
             }
         }
 
@@ -1518,7 +1518,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this.Owner);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -1544,6 +1544,11 @@ namespace BoxSocial.Applications.Gallery
             {
                 return Owner;
             }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
         }
     }
 

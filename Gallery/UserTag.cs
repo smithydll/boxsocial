@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Gallery
                 if (taggedMember == null || userId != taggedMember.Id)
                 {
                     core.LoadUserProfile(userId);
-                    taggedMember = core.UserProfiles[userId];
+                    taggedMember = core.PrimitiveCache[userId];
                     return taggedMember;
                 }
                 else
@@ -155,7 +155,7 @@ namespace BoxSocial.Applications.Gallery
         void UserTag_ItemLoad()
         {
             tagLocation = new Point(tagX, tagY);
-            core.UserProfiles.LoadUserProfile(userId);
+            core.PrimitiveCache.LoadUserProfile(userId);
         }
 
         /// <summary>

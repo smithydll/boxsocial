@@ -1441,7 +1441,7 @@ namespace BoxSocial.Internals
                 if (id > 0)
                 {
                     core.LoadUserProfile(id);
-                    User userUser = core.UserProfiles[id];
+                    User userUser = core.PrimitiveCache[id];
 
                     if (e.Attributes.HasAttribute("ownership") &&
                         e.Attributes.GetAttribute("ownership") == "true")
@@ -1490,7 +1490,7 @@ namespace BoxSocial.Internals
                     if (id > 0)
                     {
                         core.LoadUserProfile(id);
-                        User userUser = core.UserProfiles[id];
+                        User userUser = core.PrimitiveCache[id];
 
                         if (e.Attributes.HasAttribute("ownership") &&
                             e.Attributes.GetAttribute("ownership") == "true")

@@ -637,7 +637,7 @@ namespace BoxSocial.Musician
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this.Owner);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -680,6 +680,11 @@ namespace BoxSocial.Musician
                 return IsMusicianMember(core.session.LoggedInMember);
             }
 
+            return false;
+        }
+
+        public override bool GetDefaultCan(string permission)
+        {
             return false;
         }
     }

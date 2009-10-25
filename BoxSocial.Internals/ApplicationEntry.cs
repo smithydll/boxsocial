@@ -494,7 +494,7 @@ namespace BoxSocial.Internals
 
             if (installee != null)
             {
-                access = new Access(core, this, installee);
+                access = new Access(core, this);
             }
         }
 
@@ -995,8 +995,8 @@ namespace BoxSocial.Internals
 
             if (typeId > 0)
             {
-                core.UserProfiles.LoadPrimitiveProfile(id, typeId);
-                viewer = core.UserProfiles[id, typeId];
+                core.PrimitiveCache.LoadPrimitiveProfile(id, typeId);
+                viewer = core.PrimitiveCache[id, typeId];
             }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
@@ -1056,7 +1056,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this.Owner);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -1156,6 +1156,11 @@ namespace BoxSocial.Internals
                 return true;
             }
 
+            return false;
+        }
+
+        public override bool GetDefaultCan(string permission)
+        {
             return false;
         }
     }

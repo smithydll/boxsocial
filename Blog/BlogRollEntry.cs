@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.UserProfiles[userId];
+                return core.PrimitiveCache[userId];
             }
         }
 
@@ -187,7 +187,7 @@ namespace BoxSocial.Applications.Blog
                     if (userId > 0)
                     {
                         core.LoadUserProfile(userId);
-                        Blog.BuildUri(core, core.UserProfiles[userId]);
+                        Blog.BuildUri(core, core.PrimitiveCache[userId]);
                     }
                 }
                 else

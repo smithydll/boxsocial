@@ -73,13 +73,13 @@ namespace BoxSocial.FrontEnd
                 {
                     dr["user_id"] = dr["item_id"];
 					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
-                    core.UserProfiles.LoadPrimitiveProfile(itemKey);
+                    core.PrimitiveCache.LoadPrimitiveProfile(itemKey);
                 }
 
                 foreach (DataRow dr in userInfoTable.Rows)
                 {
 					ItemKey itemKey = new ItemKey((long)dr["item_id"], (long)dr["item_type_id"]);
-                    Primitive member = core.UserProfiles[itemKey];
+                    Primitive member = core.PrimitiveCache[itemKey];
                     //members.Add(member);
 
                     ApplicationEntry ae = new ApplicationEntry(core, member, dr);

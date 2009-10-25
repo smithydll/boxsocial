@@ -170,7 +170,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, Owner);
+                    access = new Access(core, this);
                 }
                 return access;
             }
@@ -182,8 +182,8 @@ namespace BoxSocial.Internals
             {
                 if (creator == null || creatorId != creator.Id)
                 {
-                    core.UserProfiles.LoadUserProfile(creatorId);
-                    creator = core.UserProfiles[creatorId];
+                    core.PrimitiveCache.LoadUserProfile(creatorId);
+                    creator = core.PrimitiveCache[creatorId];
                     return creator;
                 }
                 else
@@ -199,8 +199,8 @@ namespace BoxSocial.Internals
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -368,6 +368,14 @@ namespace BoxSocial.Internals
 				SetProperty("pageLevel", value);
 			}
 		}
+
+        public long ParentTypeId
+        {
+            get
+            {
+                return ItemType.GetTypeId(typeof(Page));
+            }
+        }
 
         public string ParentPath
         {
@@ -1310,8 +1318,6 @@ namespace BoxSocial.Internals
             return paths[paths.Length - 1];
         }
 
-        #region IPermissibleItem Members
-
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -1335,7 +1341,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            switch (permission)
+            {
+                case "VIEW":
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 
     public class PageNotFoundException : Exception

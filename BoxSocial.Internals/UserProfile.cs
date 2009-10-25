@@ -575,16 +575,16 @@ namespace BoxSocial.Internals
                         if (maritialWith > 0)
                         {
                             core.LoadUserProfile(maritialWith);
-                            ApplicationEntry aem = new ApplicationEntry(core, core.UserProfiles[maritialWith], "Profile");
+                            ApplicationEntry aem = new ApplicationEntry(core, core.PrimitiveCache[maritialWith], "Profile");
                             switch (maritialStatus)
                             {
                                 case "RELATIONSHIP":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
                                     break;
                                 case "MARRIED":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.UserProfiles[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.UserProfiles[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
                                     break;
                             }
                             break;

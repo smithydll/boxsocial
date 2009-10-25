@@ -80,5 +80,11 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        /// <summary>
+        /// When all fall throughs to parent levels fail, it uses the default
+        /// </summary>
+        /// <returns></returns>
+        bool GetDefaultCan(string permission);
     }
 }

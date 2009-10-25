@@ -41,6 +41,11 @@ namespace BoxSocial.Internals
 		{
 			get;
 		}
+
+        long ParentTypeId
+        {
+            get;
+        }
 		
 		ParentTree GetParents();
 		

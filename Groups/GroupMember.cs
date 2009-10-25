@@ -121,7 +121,7 @@ namespace BoxSocial.Groups
         {
             loadItemInfo(typeof(GroupMember), memberRow);
             core.LoadUserProfile(userId);
-            loadUserFromUser(core.UserProfiles[userId]);
+            loadUserFromUser(core.PrimitiveCache[userId]);
 
             /*try
             {*/

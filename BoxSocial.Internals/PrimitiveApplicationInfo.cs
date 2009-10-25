@@ -57,8 +57,8 @@ namespace BoxSocial.Internals
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -74,7 +74,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, Owner);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -142,8 +142,6 @@ namespace BoxSocial.Internals
             get { throw new NotImplementedException(); }
         }
 
-        #region IPermissibleItem Members
-
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -160,7 +158,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     public class InvalidPrimitiveAppInfoException : Exception

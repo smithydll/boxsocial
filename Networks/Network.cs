@@ -973,7 +973,7 @@ namespace BoxSocial.Networks
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, this.Owner);
+                    access = new Access(core, this);
                 }
 
                 return access;
@@ -1026,6 +1026,11 @@ namespace BoxSocial.Networks
         }
 
         public override bool CanEditPermissions()
+        {
+            return false;
+        }
+
+        public override bool GetDefaultCan(string permission)
         {
             return false;
         }

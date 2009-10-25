@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Pages
             {
                 if (listAccess == null)
                 {
-                    listAccess = new Access(core, this, Owner);
+                    listAccess = new Access(core, this);
                     //listAccess.SetSessionViewer(core.session);
                 }
                 return listAccess;
@@ -160,7 +160,7 @@ namespace BoxSocial.Applications.Pages
                 if (owner == null || ownerId != owner.Id)
                 {
                     core.LoadUserProfile(ownerId);
-                    owner = core.UserProfiles[ownerId];
+                    owner = core.PrimitiveCache[ownerId];
                     return owner;
                 }
                 else
@@ -494,9 +494,6 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        #region IPermissibleItem Members
-
-
         public IPermissibleItem PermissiveParent
         {
             get
@@ -505,7 +502,10 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     public class InvalidListException : Exception

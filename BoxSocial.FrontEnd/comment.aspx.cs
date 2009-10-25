@@ -214,7 +214,7 @@ namespace BoxSocial.FrontEnd
                     }
 
                     core.LoadUserProfile(thisComment.UserId);
-                    User poster = core.UserProfiles[thisComment.UserId];
+                    User poster = core.PrimitiveCache[thisComment.UserId];
                     Core.CommentDeleted(thisComment.ItemKey, thisComment, poster);
                     Core.AdjustCommentCount(thisComment.ItemKey, -1);
                 }

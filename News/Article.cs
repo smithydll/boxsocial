@@ -91,8 +91,8 @@ namespace BoxSocial.Applications.News
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -108,8 +108,8 @@ namespace BoxSocial.Applications.News
             {
                 if (poster == null || userId != poster.Id)
                 {
-                    core.UserProfiles.LoadUserProfile(userId);
-                    poster = core.UserProfiles[userId];
+                    core.PrimitiveCache.LoadUserProfile(userId);
+                    poster = core.PrimitiveCache[userId];
                     return poster;
                 }
                 else

@@ -122,12 +122,12 @@ namespace BoxSocial.Applications.GuestBook
 
             List<User> commenters = new List<User>();
             commenters.Add(page.User);
-            commenters.Add(core.UserProfiles[userId]);
+            commenters.Add(core.PrimitiveCache[userId]);
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] {"profile", "Profile"});
             breadCrumbParts.Add(new string[] {"comments", "Comments"});
-            breadCrumbParts.Add(new string[] {core.UserProfiles[userId].Key, core.UserProfiles[userId].DisplayName});
+            breadCrumbParts.Add(new string[] {core.PrimitiveCache[userId].Key, core.PrimitiveCache[userId].DisplayName});
 
             // Load the comment count
             long comments = 0;
@@ -156,7 +156,7 @@ namespace BoxSocial.Applications.GuestBook
             //page.template.Parse("PAGINATION", Display.GeneratePagination(Linker.BuildGuestBookUri(page.ProfileOwner, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0)));
             //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User, core.UserProfiles[userId]), p, (int)Math.Ceiling(comments / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), p, (int)Math.Ceiling(comments / 10.0));
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 

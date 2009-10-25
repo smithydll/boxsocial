@@ -84,7 +84,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Returns a list of user profiles cached in memory.
         /// </summary>
-        public PrimitivesCache UserProfiles
+        public PrimitivesCache PrimitiveCache
         {
             get
             {

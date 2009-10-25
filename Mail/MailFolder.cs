@@ -65,6 +65,13 @@ namespace BoxSocial.Applications.Mail
 			}
 		}
 
+        public long ParentTypeId
+        {
+            get
+            {
+                return ItemType.GetTypeId(typeof(MailFolder));
+            }
+        }
 		
 		public MailFolder(Core core, DataRow folderRow)
             : base (core)

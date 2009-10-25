@@ -166,8 +166,8 @@ namespace BoxSocial.Applications.Calendar
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -325,7 +325,7 @@ namespace BoxSocial.Applications.Calendar
         public void Invite(Core core, User invitee)
         {
             core.LoadUserProfile(userId);
-            User user = core.UserProfiles[userId];
+            User user = core.PrimitiveCache[userId];
             // only the person who created the event can invite people to it
             if (core.LoggedInMemberId == userId)
             {
@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
         public void Invite(Core core, List<User> invitees)
         {
             core.LoadUserProfile(userId);
-            User user = core.UserProfiles[userId];
+            User user = core.PrimitiveCache[userId];
             // only the person who created the event can invite people to it
             if (core.LoggedInMemberId == userId)
             {
@@ -589,7 +589,7 @@ namespace BoxSocial.Applications.Calendar
                         break;
                     }
                     VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
-                    User attendee = core.UserProfiles[attendeeId];
+                    User attendee = core.PrimitiveCache[attendeeId];
 
                     attendeesVariableCollection.Parse("U_PROFILE", attendee.Uri);
                     attendeesVariableCollection.Parse("USER_DISPLAY_NAME", attendee.DisplayName);
@@ -659,8 +659,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #region IComparable Members
-
         public int CompareTo(object obj)
         {
             if (obj is Event || obj is BirthdayEvent)
@@ -673,7 +671,10 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     public class InvalidEventException : Exception

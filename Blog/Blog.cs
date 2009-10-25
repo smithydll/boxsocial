@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.Blog
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, Owner);
+                    access = new Access(core, this);
                 }
                 return access;
             }
@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Blog
                 if (owner == null || userId != owner.Id)
                 {
                     core.LoadUserProfile(userId);
-                    owner = core.UserProfiles[userId];
+                    owner = core.PrimitiveCache[userId];
                     return owner;
                 }
                 else
@@ -863,8 +863,6 @@ namespace BoxSocial.Applications.Blog
                 member.UriStubAbsolute, year, month, postId));
         }
         
-        #region IPermissibleItem Members
-
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -881,7 +879,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     /// <summary>

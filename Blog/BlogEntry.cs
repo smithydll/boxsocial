@@ -112,7 +112,7 @@ namespace BoxSocial.Applications.Blog
                 if (owner == null || ownerId != owner.Id)
                 {
                     core.LoadUserProfile(ownerId);
-                    owner = core.UserProfiles[ownerId];
+                    owner = core.PrimitiveCache[ownerId];
                     return owner;
                 }
                 else

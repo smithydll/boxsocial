@@ -109,7 +109,7 @@ namespace BoxSocial.Groups
 
                 try
                 {
-                    User inviteMember = core.UserProfiles[core.LoadUserProfile(username)];
+                    User inviteMember = core.PrimitiveCache[core.LoadUserProfile(username)];
 
                     if (!thisGroup.IsGroupMember(LoggedInMember))
                     {

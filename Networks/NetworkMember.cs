@@ -130,7 +130,7 @@ namespace BoxSocial.Networks
             : base(core)
         {
             loadItemInfo(memberRow);
-            loadUserFromUser(core.UserProfiles[userId]);
+            loadUserFromUser(core.PrimitiveCache[userId]);
         }
 
         public NetworkMember(Core core, Network theNetwork, User member)

@@ -392,7 +392,7 @@ namespace BoxSocial.Applications.Forum
                 if (poster == null || userId != poster.Id)
                 {
                     core.LoadUserProfile(userId);
-                    poster = core.UserProfiles[userId];
+                    poster = core.PrimitiveCache[userId];
                     return poster;
                 }
                 else

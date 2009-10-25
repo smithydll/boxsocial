@@ -91,7 +91,7 @@ namespace BoxSocial.Internals
             {
                 foreach (AccessControlGrant itemGrant in itemGrants)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(itemGrant.PrimitiveKey);
+                    core.PrimitiveCache.LoadPrimitiveProfile(itemGrant.PrimitiveKey);
                 }
             }
 
@@ -127,7 +127,7 @@ namespace BoxSocial.Internals
                                 }
                                 else
                                 {
-                                    grantVariableCollection.Parse("DISPLAY_NAME", core.UserProfiles[itemGrant.PrimitiveKey].DisplayName);
+                                    grantVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[itemGrant.PrimitiveKey].DisplayName);
                                 }
         
                                 RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");

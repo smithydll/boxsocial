@@ -42,17 +42,22 @@ namespace BoxSocial.Internals
         private List<AccessControlGrant> grants;
         private NumberedItem item;
 
-        public Access(Core core, IPermissibleItem item, Primitive owner)
+        public Access(Core core, IPermissibleItem item)
         {
             this.core = core;
             this.item = (NumberedItem)item;
-            this.owner = owner;
+            this.owner = item.Owner;
             this.viewer = core.session.LoggedInMember;
 
             grants = AccessControlGrant.GetGrants(core, this.item);
         }
 
         public bool Can(string permission)
+        {
+            return Can(permission, (IPermissibleItem)item, false);
+        }
+
+        private bool Can(string permission, IPermissibleItem leaf, bool inherit)
         {
             bool allow = false;
             bool deny = false;
@@ -77,39 +82,49 @@ namespace BoxSocial.Internals
 
             if (acp == null)
             {
-                throw new InvalidAccessControlPermissionException();
+                if (inherit)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw new InvalidAccessControlPermissionException();
+                }
             }
 
-            /*foreach (AccessControlGrant grant in grants)
+            if (grants != null)
             {
-                if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
+                foreach (AccessControlGrant grant in grants)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(grant.PrimitiveKey);
-                }
-            }*/
-
-            foreach (AccessControlGrant grant in grants)
-            {
-                if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
-                {
-                    if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
+                    if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
                     {
-                        switch (grant.Allow)
+                        core.PrimitiveCache.LoadPrimitiveProfile(grant.PrimitiveKey);
+                    }
+                }
+
+                foreach (AccessControlGrant grant in grants)
+                {
+                    if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
+                    {
+                        if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
                         {
-                            case AccessControlGrants.Allow:
-                                allow = true;
-                                break;
-                            case AccessControlGrants.Deny:
-                                deny = true;
-                                break;
-                            case AccessControlGrants.Inherit:
-                                break;
+                            switch (grant.Allow)
+                            {
+                                case AccessControlGrants.Allow:
+                                    allow = true;
+                                    break;
+                                case AccessControlGrants.Deny:
+                                    deny = true;
+                                    break;
+                                case AccessControlGrants.Inherit:
+                                    break;
+                            }
                         }
                     }
                 }
             }
 
-            if (grants.Count == 0)
+            if (grants == null || grants.Count == 0)
             {
                 if (item.ItemKey.Equals(owner.ItemKey))
                 {
@@ -119,27 +134,28 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        return false;
+                        return leaf.GetDefaultCan(permission);
                     }
                 }
                 else
                 {
-                    /*if (item is INestableItem)
+                    if (item is INestableItem)
                     {
                         INestableItem ni = (INestableItem)item;
                         ParentTree parents = ni.GetParents();
-                        if (parents.Nodes.Count == 0)
+
+                        if (parents == null || parents.Nodes.Count == 0)
                         {
-                            return owner.Access.Can(permission);
+                            return owner.Access.Can(permission, leaf, true);
                         }
                         else
                         {
-                            return ((IPermissibleItem)NumberedItem.Reflect(core, parents.Nodes[parents.Nodes.Count - 1].ParentId))).Access.Can(permission);
+                            return ((IPermissibleItem)NumberedItem.Reflect(core, new ItemKey(parents.Nodes[parents.Nodes.Count - 1].ParentId, ni.ParentTypeId))).Access.Can(permission, leaf, true);
                         }
                     }
-                    else*/
+                    else
                     {
-                        return owner.Access.Can(permission);
+                        return owner.Access.Can(permission, leaf, true);
                     }
                 }
             }

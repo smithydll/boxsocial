@@ -80,7 +80,7 @@ namespace BoxSocial.Internals
             {
                 if (access == null)
                 {
-                    access = new Access(core, this, Owner);
+                    access = new Access(core, this);
                 }
                 return access;
             }
@@ -93,7 +93,7 @@ namespace BoxSocial.Internals
                 if (owner == null || userId != owner.Id)
                 {
                     core.LoadUserProfile(userId);
-                    owner = core.UserProfiles[userId];
+                    owner = core.PrimitiveCache[userId];
                     return owner;
                 }
                 else
@@ -240,9 +240,6 @@ namespace BoxSocial.Internals
             get { throw new NotImplementedException(); }
         }
 
-        #region IPermissibleItem Members
-
-
         Primitive IPermissibleItem.Owner
         {
             get
@@ -267,7 +264,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     public class InvalidUserEmailException : Exception

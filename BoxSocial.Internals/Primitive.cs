@@ -309,6 +309,8 @@ namespace BoxSocial.Internals
         public abstract bool GetIsMemberOfPrimitive(ItemKey primitiveKey);
 
         public abstract bool CanEditPermissions();
+
+        public abstract bool GetDefaultCan(string permission);
     }
 
     /// <summary>

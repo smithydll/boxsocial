@@ -218,8 +218,6 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        #region IPermissibleItem Members
-
         public Access Access
         {
             get
@@ -234,8 +232,8 @@ namespace BoxSocial.Applications.Forum
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -277,7 +275,10 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
     }
 
     public class InvalidForumSettingsException : Exception

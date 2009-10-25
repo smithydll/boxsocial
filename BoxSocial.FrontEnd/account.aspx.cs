@@ -236,7 +236,7 @@ namespace BoxSocial.FrontEnd
                         accountModule.DisplayError("");
 
                         core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.UserProfiles[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
+                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].AlternateEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
 
                     if (ae != null && ae.HasJavascript)

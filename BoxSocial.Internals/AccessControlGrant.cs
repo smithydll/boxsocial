@@ -86,8 +86,8 @@ namespace BoxSocial.Internals
             {
                 if (owner == null || primitiveKey.Id != owner.Id || primitiveKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(primitiveKey);
-                    owner = core.UserProfiles[primitiveKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(primitiveKey);
+                    owner = core.PrimitiveCache[primitiveKey];
                     return owner;
                 }
                 else

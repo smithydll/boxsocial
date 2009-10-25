@@ -143,8 +143,8 @@ namespace BoxSocial.Musician
                 ItemKey ownerKey = new ItemKey(musicianId, ItemKey.GetTypeId(typeof(Musician)));
                 if (musician == null || ownerKey.Id != musician.Id || ownerKey.Type != musician.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    musician = (Musician)core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    musician = (Musician)core.PrimitiveCache[ownerKey];
                     return musician;
                 }
                 else

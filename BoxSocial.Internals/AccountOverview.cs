@@ -76,7 +76,7 @@ namespace BoxSocial.Internals
 
                 notificationVariableCollection.Parse("DATE", tz.DateTimeToString(notification.GetTime(tz)));
                 core.Display.ParseBbcode(notificationVariableCollection, "ACTION", notification.Title);
-                core.Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.UserProfiles[core.LoggedInMemberId]);
+                core.Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.PrimitiveCache[core.LoggedInMemberId]);
 
                 if (notification.IsSeen)
                 {

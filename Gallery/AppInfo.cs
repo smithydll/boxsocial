@@ -252,8 +252,8 @@ namespace BoxSocial.Applications.Gallery
             {
                 ItemKey ik = new ItemKey((long)galleryItemTable.Rows[0]["gallery_item_item_Id"], (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"]);
 
-                core.UserProfiles.LoadPrimitiveProfile(ik);
-                Primitive owner = core.UserProfiles[ik];
+                core.PrimitiveCache.LoadPrimitiveProfile(ik);
+                Primitive owner = core.PrimitiveCache[ik];
 
                 /*switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
                 {
@@ -269,7 +269,7 @@ namespace BoxSocial.Applications.Gallery
                 }*/
 
                 GalleryItem gi = new GalleryItem(core, ik.Id);
-                Access photoAccess = new Access(core, new Gallery(core, gi.Owner, gi.ParentId), owner);
+                Access photoAccess = new Access(core, new Gallery(core, gi.Owner, gi.ParentId));
                 //photoAccess.SetViewer(member);
 
                 if (photoAccess.Can("COMMENT_ITEMS"))

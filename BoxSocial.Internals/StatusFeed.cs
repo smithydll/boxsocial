@@ -91,7 +91,7 @@ namespace BoxSocial.Internals
                 core.LoadUserProfiles(friendIds);
                 foreach (DataRow dr in feedTable.Rows)
                 {
-                    feedItems.Add(new StatusMessage(core, core.UserProfiles[(long)dr["user_id"]], dr));
+                    feedItems.Add(new StatusMessage(core, core.PrimitiveCache[(long)dr["user_id"]], dr));
                 }
             }
 

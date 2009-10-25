@@ -451,7 +451,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 if (taskAccess == null)
                 {
-                    taskAccess = new Access(core, this, Owner);
+                    taskAccess = new Access(core, this);
                 }
                 return taskAccess;
             }
@@ -463,8 +463,8 @@ namespace BoxSocial.Applications.Calendar
             {
                 if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
                 {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerKey);
-                    owner = core.UserProfiles[ownerKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else
@@ -482,9 +482,6 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #region IPermissibleItem Members
-
-
         public IPermissibleItem PermissiveParent
         {
             get
@@ -493,7 +490,10 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        #endregion
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
         
     }
 

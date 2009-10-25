@@ -178,7 +178,7 @@ namespace BoxSocial.Internals
             if (itemKey.Type == typeof(User).FullName)
             {
                 core.LoadUserProfile(itemKey.Id);
-                relations = core.UserProfiles[itemKey.Id].GetRelations(core.session.LoggedInMember);
+                relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.session.LoggedInMember);
             }
 
             core.db.BeginTransaction();

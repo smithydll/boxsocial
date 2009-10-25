@@ -451,7 +451,7 @@ namespace BoxSocial.Internals
 
                 try
                 {
-                    User commentPoster = core.UserProfiles[comment.UserId];
+                    User commentPoster = core.PrimitiveCache[comment.UserId];
 
                     commentsVariableCollection.Parse("ID", comment.CommentId.ToString());
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);

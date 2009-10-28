@@ -2,12 +2,15 @@
 <!-- INCLUDE forum_header -->
 	<h2>{TOPIC_TITLE}</h2>
 	<p>{BREADCRUMBS}</p>
-	<!-- IF U_NEW_REPLY -->
-	<div class="new-stuff">
-    <span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
-		<span class="new-reply post-button"><a href="{U_NEW_REPLY}">{L_POST_REPLY}</a></span>
-	</div>
-	<!-- ENDIF -->
+
+<div class="new-stuff">
+  <!-- IF U_NEW_TOPIC -->
+  <span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
+  <!-- ENDIF -->
+  <!-- IF U_NEW_REPLY -->
+	<span class="new-reply post-button"><a href="{U_NEW_REPLY}">{L_POST_REPLY}</a></span>
+  <!-- ENDIF -->
+</div>
 
 <p>{PAGINATION}</p>
 <!-- IF POSTS -->

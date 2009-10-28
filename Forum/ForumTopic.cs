@@ -865,9 +865,12 @@ namespace BoxSocial.Applications.Forum
                     thisTopic.Read(posts[posts.Count - 1]);
                 }
 
-                if (thisForum.Access.Can("POST_TOPIC"))
+                if (thisForum.ForumAccess.Can("CREATE_TOPICS"))
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                }
+                if (thisForum.ForumAccess.Can("REPLY_TOPICS"))
+                {
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 

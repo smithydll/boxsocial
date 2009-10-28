@@ -43,8 +43,10 @@ namespace BoxSocial.Applications.Forum
     [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements")]
     [Permission("CREATE_STICKY", "Can create sticky topics")]
     [Permission("REPORT_POSTS", "Can report posts")]
-    public class ForumSettings : Item, IPermissibleItem
+    public class ForumSettings : NumberedItem, IPermissibleItem
     {
+        [DataField("forum_settings_id", DataFieldKeys.Primary)]
+        private long settingsId;
         [DataField("forum_item", DataFieldKeys.Unique)]
         private ItemKey ownerKey;
         [DataField("forum_topics")]
@@ -59,6 +61,7 @@ namespace BoxSocial.Applications.Forum
         private bool allowTopicsAtRoot;
 
         private Primitive owner;
+        private Access access;
 
         public long Posts
         {
@@ -128,6 +131,21 @@ namespace BoxSocial.Applications.Forum
             }
 
             return ranks;
+        }
+
+        public ForumSettings(Core core, long settingsId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ForumSettings_ItemLoad);
+
+            try
+            {
+                LoadItem(settingsId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumSettingsException();
+            }
         }
 
         public ForumSettings(Core core, Primitive owner)
@@ -222,7 +240,11 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                throw new NotImplementedException();
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
             }
         }
 
@@ -259,25 +281,17 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public long Id
-        {
-            get
-            {
-                return ownerKey.Id;
-            }
-        }
-
-        public ItemKey ItemKey
-        {
-            get
-            {
-                return new ItemKey(ItemType.GetTypeId(typeof(ForumSettings)), ownerKey.Id);
-            }
-        }
-
         public bool GetDefaultCan(string permission)
         {
             return false;
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return settingsId;
+            }
         }
     }
 

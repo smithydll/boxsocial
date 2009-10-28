@@ -40,12 +40,12 @@ namespace BoxSocial.Internals
         private User viewer;
 
         private List<AccessControlGrant> grants;
-        private NumberedItem item;
+        private IPermissibleItem item;
 
         public Access(Core core, IPermissibleItem item)
         {
             this.core = core;
-            this.item = (NumberedItem)item;
+            this.item = item;
             this.owner = item.Owner;
             this.viewer = core.session.LoggedInMember;
 

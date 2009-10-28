@@ -116,6 +116,12 @@
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemTag.cs" />
+    <Compile Include="IUniqueKeyedItem.cs" />
+    <Compile Include="languages\Internals.en1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Internals.en.resx</DependentUpon>
+    </Compile>
     <Compile Include="License.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />

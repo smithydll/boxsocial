@@ -98,6 +98,19 @@ namespace BoxSocial.Applications.Forum
 
             if (thisForum != null)
             {
+                template.Parse("FORUM_TITLE", thisForum.Title);
+                template.Parse("U_FORUM", thisForum.Uri);
+
+                if (thisForum.Id == 0)
+                {
+                    ForumSettings settings = new ForumSettings(core, thisForum.Owner);
+                    template.Parse("U_PERMISSIONS", core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", settings.Id, ItemType.GetTypeId(typeof(ForumSettings))), true));
+                }
+                else
+                {
+                    template.Parse("U_PERMISSIONS", core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", thisForum.Id, ItemType.GetTypeId(typeof(Forum))), true));
+                }
+
                 List<Forum> forums = thisForum.GetForums();
 
                 foreach (Forum forum in forums)

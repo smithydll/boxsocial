@@ -53,7 +53,7 @@ namespace BoxSocial.Internals
 		[DataField("grant_allow")]
 		private sbyte grantAllow;
 		
-		private Item item;
+		private IPermissibleItem item;
 		private Primitive owner;
 
         public ItemKey PrimitiveKey
@@ -98,7 +98,7 @@ namespace BoxSocial.Internals
         }
 
 		
-		private AccessControlGrant(Core core, Item item, DataRow grantRow)
+		private AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
 			: base(core)
 		{
 			this.item = item;
@@ -169,7 +169,7 @@ namespace BoxSocial.Internals
 			return (!isDenied && isAllowed);
 		}
 		
-		public static List<AccessControlGrant> GetGrants(Core core, NumberedItem item)
+		public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item)
 		{
 			List<AccessControlGrant> grants = new List<AccessControlGrant>();
 			
@@ -187,7 +187,7 @@ namespace BoxSocial.Internals
 			return grants;
 		}
 
-        public static List<AccessControlGrant> GetGrants(Core core, NumberedItem item, long permissionId)
+        public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item, long permissionId)
         {
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 

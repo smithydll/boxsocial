@@ -80,7 +80,7 @@ namespace BoxSocial.Internals
             }
             if (itemGrants == null)
             {
-                itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
+                itemGrants = AccessControlGrant.GetGrants(core, item);
             }
             if (unsavedGrants == null)
             {
@@ -359,7 +359,7 @@ namespace BoxSocial.Internals
             }
             if (itemGrants == null)
             {
-                itemGrants = AccessControlGrant.GetGrants(core, (NumberedItem)item);
+                itemGrants = AccessControlGrant.GetGrants(core, item);
             }
             if (unsavedGrants == null)
             {

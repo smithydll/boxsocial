@@ -159,6 +159,9 @@
   <data name="EDIT" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="EDIT_PERMISSIONS" xml:space="preserve">
+    <value>Edit Permissions</value>
+  </data>
   <data name="EVERYONE" xml:space="preserve">
     <value>Everyone</value>
   </data>

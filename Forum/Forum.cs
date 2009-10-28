@@ -386,6 +386,7 @@ namespace BoxSocial.Applications.Forum
             forumLocked = false;
 			forumLevel = 0;
 			permissions = 0x1111;
+            forumTitle = "Forums";
         }
 
         public Forum(Core core, long forumId)
@@ -1508,7 +1509,15 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return ForumAccess;
+                if (Id == 0)
+                {
+                    ForumSettings settings = new ForumSettings(core, Owner);
+                    return settings.Access;
+                }
+                else
+                {
+                    return ForumAccess;
+                }
             }
         }
 
@@ -1573,13 +1582,16 @@ namespace BoxSocial.Applications.Forum
 
         public bool GetDefaultCan(string permission)
         {
+            /*switch (permission)
+            {
+                case "
             if (Owner is UserGroup)
             {
                 if (((UserGroup)Owner).IsGroupMember(core.session.LoggedInMember))
                 {
                     return true;
                 }
-            }
+            }*/
             return false;
         }
     }

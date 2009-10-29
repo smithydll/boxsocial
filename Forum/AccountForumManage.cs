@@ -86,14 +86,7 @@ namespace BoxSocial.Applications.Forum
             }
             else
             {
-                if (Owner is UserGroup)
-                {
-                    thisForum = new Forum(core, (UserGroup)Owner, forumId);
-                }
-                else
-                {
-                    thisForum = new Forum(core, forumId);
-                }
+                thisForum = new Forum(core, forumId);
             }
 
             if (thisForum != null)
@@ -220,14 +213,7 @@ namespace BoxSocial.Applications.Forum
             }
             else
             {
-                if (Owner is UserGroup)
-                {
-                    parent = new Forum(core, (UserGroup)Owner, parentId);
-                }
-                else
-                {
-                    parent = new Forum(core, parentId);
-                }
+                parent = new Forum(core, parentId);
             }
 
             if (parent != null)
@@ -269,14 +255,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                if (Owner is UserGroup)
-                {
-                    forum = new Forum(core, (UserGroup)Owner, forumId);
-                }
-                else
-                {
-                    forum = new Forum(core, forumId);
-                }
+                forum = new Forum(core, forumId);
             }
             catch (InvalidForumException)
             {
@@ -319,14 +298,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                if (Owner is UserGroup)
-                {
-                    forum = new Forum(core, (UserGroup)Owner, forumId);
-                }
-                else
-                {
-                    forum = new Forum(core, forumId);
-                }
+                forum = new Forum(core, forumId);
             }
             catch (InvalidForumException)
             {

@@ -227,18 +227,12 @@ namespace BoxSocial.Applications.Forum
                     // Post Reply
                     try
                     {
+                        ForumSettings settings = new ForumSettings(core, ((PPage)page).Owner);
                         Forum forum;
 
-                        if (page is GPage)
+                        if (forumId == 0)
                         {
-                            if (forumId == 0)
-                            {
-                                forum = new Forum(core, ((GPage)page).Group);
-                            }
-                            else
-                            {
-                                forum = new Forum(core, ((GPage)page).Group, forumId);
-                            }
+                            forum = new Forum(core, settings);
                         }
                         else
                         {
@@ -270,16 +264,9 @@ namespace BoxSocial.Applications.Forum
                     {
                         Forum forum;
 
-                        if (page is GPage)
+                        if (forumId == 0 && page is PPage)
                         {
-                            if (forumId == 0)
-                            {
-                                forum = new Forum(core, ((GPage)page).Group);
-                            }
-                            else
-                            {
-                                forum = new Forum(core, ((GPage)page).Group, forumId);
-                            }
+                            forum = new Forum(core, ((PPage)page).Owner);
                         }
                         else
                         {

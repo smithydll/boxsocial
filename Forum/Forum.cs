@@ -86,6 +86,7 @@ namespace BoxSocial.Applications.Forum
         [DataField("forum_parents", MYSQL_TEXT)]
         private string parents;
 
+        private ForumSettings settings;
         private Primitive owner;
         private Access forumAccess;
         private ForumReadStatus readStatus = null;
@@ -266,14 +267,7 @@ namespace BoxSocial.Applications.Forum
                 Forum parent;
                 if (parentId > 0)
                 {
-                    if (Owner is UserGroup)
-                    {
-                        parent = new Forum(core, (UserGroup)Owner, parentId);
-                    }
-                    else
-                    {
-                        parent = new Forum(core, parentId);
-                    }
+                    parent = new Forum(core, parentId);
                 }
                 else
                 {
@@ -364,23 +358,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public Access ForumAccess
-        {
-            get
-            {
-                if (forumAccess == null)
-                {
-                    forumAccess = new Access(core, this);
-                    //forumAccess.SetSessionViewer(core.session);
-                }
-                return forumAccess;
-            }
-        }
-
-        public Forum(Core core, UserGroup owner)
+        public Forum(Core core, Primitive owner)
             : base(core)
         {
             this.owner = owner;
+            this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
+            forumId = 0;
+            forumLocked = false;
+            forumLevel = 0;
+            permissions = 0x1111;
+            forumTitle = "Forums";
+        }
+
+        public Forum(Core core, ForumSettings settings)
+            : base(core)
+        {
+            this.settings = settings;
+            this.owner = settings.Owner;
             this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             forumId = 0;
             forumLocked = false;
@@ -394,11 +388,9 @@ namespace BoxSocial.Applications.Forum
         {
         }
 
-        public Forum(Core core, UserGroup owner, long forumId)
+        public Forum(Core core, ForumSettings settings, long forumId)
             : base(core)
         {
-            this.owner = owner;
-
             ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
 
             SelectQuery query = Forum_GetSelectQueryStub(core);
@@ -908,14 +900,7 @@ namespace BoxSocial.Applications.Forum
 
             long forumId = core.db.Query(iquery);
 
-            if (parent.Owner is UserGroup)
-            {
-                return new Forum(core, (UserGroup)parent.Owner, forumId);
-            }
-            else
-            {
-                return new Forum(core, forumId);
-            }
+            return new Forum(core, forumId);
         }
 
         public void MoveUp()
@@ -1179,11 +1164,11 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId > 0)
                 {
-                    thisForum = new Forum(page.Core, page.Group, forumId);
+                    thisForum = new Forum(page.Core, settings, forumId);
                 }
                 else
                 {
-                    thisForum = new Forum(page.Core, page.Group);
+                    thisForum = new Forum(page.Core, settings);
                 }
             }
             catch (InvalidForumException)
@@ -1216,7 +1201,7 @@ namespace BoxSocial.Applications.Forum
 
             //thisForum.ForumAccess.SetSessionViewer(core.session);
 
-            if (!thisForum.ForumAccess.Can("VIEW"))
+            if (!thisForum.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -1470,7 +1455,7 @@ namespace BoxSocial.Applications.Forum
 					}
                 }
 
-                if (thisForum.ForumAccess.Can("CREATE_TOPICS"))
+                if (thisForum.Access.Can("CREATE_TOPICS"))
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }
@@ -1505,18 +1490,37 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ForumSettings Settings
+        {
+            get
+            {
+                if (settings == null)
+                {
+                    settings = new ForumSettings(core, Owner);
+                    return settings;
+                }
+                else
+                {
+                    return settings;
+                }
+            }
+        }
+
         public Access Access
         {
             get
             {
                 if (Id == 0)
                 {
-                    ForumSettings settings = new ForumSettings(core, Owner);
-                    return settings.Access;
+                    return Settings.Access;
                 }
                 else
                 {
-                    return ForumAccess;
+                    if (forumAccess == null)
+                    {
+                        forumAccess = new Access(core, this);
+                    }
+                    return forumAccess;
                 }
             }
         }

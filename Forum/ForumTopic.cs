@@ -102,24 +102,11 @@ namespace BoxSocial.Applications.Forum
                 {
                     if (forumId == 0)
                     {
+                        //forum = new Forum(core, forum.Owner);
                     }
                     else
                     {
-                        if (forum != null)
-                        {
-                            if (forum.Owner is UserGroup)
-                            {
-                                forum = new Forum(core, (UserGroup)forum.Owner, forumId);
-                            }
-                            else
-                            {
-                                forum = new Forum(core, forumId);
-                            }
-                        }
-                        else
-                        {
-                            forum = new Forum(core, forumId);
-                        }
+                        forum = new Forum(core, forumId);
                     }
                 }
                 return forum;
@@ -737,7 +724,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    thisForum = new Forum(page.Core, page.Group, forumId);
+                    thisForum = new Forum(page.Core, forumId);
                 }
             }
             catch (InvalidForumException)
@@ -865,11 +852,11 @@ namespace BoxSocial.Applications.Forum
                     thisTopic.Read(posts[posts.Count - 1]);
                 }
 
-                if (thisForum.ForumAccess.Can("CREATE_TOPICS"))
+                if (thisForum.Access.Can("CREATE_TOPICS"))
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }
-                if (thisForum.ForumAccess.Can("REPLY_TOPICS"))
+                if (thisForum.Access.Can("REPLY_TOPICS"))
                 {
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }

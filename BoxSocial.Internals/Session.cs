@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
                     query.AddJoin(JoinTypes.Inner, "session_keys", "user_id", "user_id");
                     query.AddCondition("user_keys.user_id", userId);
                     query.AddCondition("user_active", true);
-                    query.AddCondition("key_id", sessionData.autoLoginId);
+                    query.AddCondition("key_id", SessionState.SessionMd5(sessionData.autoLoginId));
 
                     DataTable userSessionTable = db.Query(query);
 
@@ -465,6 +465,7 @@ namespace BoxSocial.Internals
                             db.CloseConnection();
                         }
                         Response.End();
+                        return null;
                     }
                 }
                 else if (!autoCreate)
@@ -542,7 +543,7 @@ namespace BoxSocial.Internals
 
             if (changedRows == 0)
             {
-                Random rand = new Random((int)DateTime.Now.Ticks);
+                Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
                 sessionId = SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed").ToLower();
 
                 db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3})",

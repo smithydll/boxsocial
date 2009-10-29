@@ -547,6 +547,36 @@ namespace BoxSocial.IO
                             string value1 = null;
                             //if (variables.ContainsKey(rm.Groups[1].Value))
                             //if (variables.TryGetValue(rm.Groups[1].Value, out value1))
+
+                            // TODO: OR AND NOT
+                            /*bool conditionFlag = false;
+                            string[] conditionPhrases = condition.Split(new char[] { ' ' });
+                            string lastOperator = null;
+
+                            foreach (string phrase in condition)
+                            {
+                                value1 = null;
+
+                                if (phrase == "OR" || phrase == "AND")
+                                {
+                                    lastOperator = phrase;
+                                }
+                                else
+                                {
+                                    variables.TryGetValue(condition, out value1);
+                                    bool flag = (value1.ToLower() != "false" && value1 != "0" && value1 != String.Empty);
+                                    switch (lastOperator)
+                                    {
+                                        case "OR":
+                                            conditionFlag = (conditionFlag || flag);
+                                        case "AND":
+                                            conditionFlag = (conditionFlag && flag);
+                                        default:
+                                            conditionFlag = flag;
+                                    }
+                                }
+                            }*/
+
                             if (variables.TryGetValue(condition, out value1))
                             {
                                 //if (variables[rm.Groups[1].Value] != null)

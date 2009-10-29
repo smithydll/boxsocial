@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
                     query.AddJoin(JoinTypes.Inner, "session_keys", "user_id", "user_id");
                     query.AddCondition("user_keys.user_id", userId);
                     query.AddCondition("user_active", true);
-                    query.AddCondition("key_id", SessionState.SessionMd5(sessionData.autoLoginId));
+                    query.AddCondition("key_id", sessionData.autoLoginId);
 
                     DataTable userSessionTable = db.Query(query);
 
@@ -457,7 +457,8 @@ namespace BoxSocial.Internals
                             Response.Cookies.Add(sessionSidCookie);
                         }
 
-                        core.Display.ShowMessage("Error", "Error starting session");
+                        //core.Display.ShowMessage("Error", "Error starting session");
+                        Response.Write("Error starting session");
 
                         if (db != null)
                         {
@@ -485,7 +486,8 @@ namespace BoxSocial.Internals
                     else
                     {
                         // TODO: activation
-                        core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                        //core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                        Response.Write("You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
                         //Display.ShowMessage(this, "Error", "Error starting session");
                         //Response.Write("fail 1");
                         if (db != null)

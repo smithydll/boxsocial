@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("CREATE_ITEMS", "Can upload photos to gallery")]
     [Permission("EDIT_ITEMS", "Can edit photos")]
     [Permission("DELETE_ITEMS", "Can delete photos")]
-    public class Gallery : NumberedItem, IPermissibleItem
+    public class Gallery : NumberedItem, IPermissibleItem, INestableItem
     {
 
         /// <summary>
@@ -153,6 +153,18 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_level")]
+        private int galleryLevel;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_order")]
+        private int galleryOrder;
 
         /// <summary>
         /// Parent Tree
@@ -615,9 +627,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
-        /// <param name="core">Core token</param>
         /// <returns>A list of sub-galleries</returns>
-        public List<Gallery> GetGalleries(Core core)
+        public List<Gallery> GetGalleries()
 		{
 			List<Gallery> items = new List<Gallery>();
 
@@ -801,7 +812,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (owner is User)
             {
-                List<Gallery> galleries = ((Gallery)this).GetGalleries(core);
+                List<Gallery> galleries = ((Gallery)this).GetGalleries();
 
                 foreach (Gallery gallery in galleries)
                 {
@@ -957,7 +968,7 @@ namespace BoxSocial.Applications.Gallery
             long itemsDeleted = 0; // index 0
             long bytesDeleted = 0; // index 1
 
-            List<Gallery> galleries = gallery.GetGalleries(core);
+            List<Gallery> galleries = gallery.GetGalleries();
 
             foreach (Gallery galleryGallery in galleries)
             {
@@ -1412,7 +1423,7 @@ namespace BoxSocial.Applications.Gallery
 
             e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
-            List<Gallery> galleries = gallery.GetGalleries(e.Core);
+            List<Gallery> galleries = gallery.GetGalleries();
 
             e.Template.Parse("GALLERIES", galleries.Count.ToString());
 
@@ -1549,6 +1560,47 @@ namespace BoxSocial.Applications.Gallery
         public bool GetDefaultCan(string permission)
         {
             return false;
+        }
+
+        public int Order
+        {
+            get
+            {
+                return galleryOrder;
+            }
+        }
+
+        public int Level
+        {
+            get
+            {
+                return galleryLevel;
+            }
+        }
+
+        public long ParentTypeId
+        {
+            get
+            {
+                return ItemType.GetTypeId(typeof(Gallery));
+            }
+        }
+
+        public ParentTree GetParents()
+        {
+            return Parents;
+        }
+
+        public List<Item> GetChildren()
+        {
+            List<Item> ret = new List<Item>();
+
+            foreach (Item i in GetGalleries())
+            {
+                ret.Add(i);
+            }
+
+            return ret;
         }
     }
 

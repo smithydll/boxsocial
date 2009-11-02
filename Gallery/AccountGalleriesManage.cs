@@ -111,7 +111,7 @@ namespace BoxSocial.Applications.Gallery
                 template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", 0));
             }
 
-            List<Gallery> ugs = pg.GetGalleries(core);
+            List<Gallery> ugs = pg.GetGalleries();
 
             foreach (Gallery ug in ugs)
             {

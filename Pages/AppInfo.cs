@@ -137,8 +137,8 @@ namespace BoxSocial.Applications.Pages
 
         void core_LoadApplication(Core core, object sender)
         {
-            core.RegisterApplicationPage(@"^/lists(|/)$", showLists, 1);
-            core.RegisterApplicationPage(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", showList, 2);
+            //core.RegisterApplicationPage(@"^/lists(|/)$", showLists, 1);
+            //core.RegisterApplicationPage(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", showList, 2);
             core.RegisterApplicationPage(@"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue);
         }
 
@@ -154,6 +154,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        [Show(@"^/lists(|/)$", AppPrimitives.Member)]
         private void showLists(Core core, object sender)
         {
             if (sender is UPage)
@@ -162,11 +163,17 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        [Show(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member)]
         private void showList(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                List.Show(core, (UPage)sender, core.PagePathParts[1].Value);
+                List.Show(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
             }
         }
 

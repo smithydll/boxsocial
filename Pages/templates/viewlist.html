@@ -1,0 +1,65 @@
+﻿<!-- INCLUDE page_header.html -->
+<div id="pane-profile">
+  <div id="pane-pages" class="pane">
+    <h3>Pages</h3>
+    <ul>
+      {PAGE_LIST}
+    </ul>
+  </div>
+</div>
+<div id="profile">
+  <div id="pane-page" class="pane">
+    <p>{BREADCRUMBS}</p>
+	<h2>{LIST_TITLE}</h2>
+	<!-- IF LIST_ABSTRACT -->
+	<p>{LIST_ABSTRACT}</p>
+	<!-- ENDIF -->
+	<!-- IF NOT_EMPTY -->
+	<ul id="list-list">
+		<!-- BEGIN list_list -->
+		<li>
+		<!-- IF list_list.URI -->
+		<a href="{list_list.URI}">
+		<!-- ENDIF -->
+		{list_list.TITLE}
+		<!-- IF list_list.URI -->
+		</a>
+		<!-- ENDIF -->
+		<!-- IF LIST_LIST -->
+		<!-- IF OWNER -->
+		... (<a href="{list_list.U_DELETE}">Delete</a>)
+		<!-- ENDIF -->
+		<!-- ENDIF -->
+		</li>
+		<!-- END list_list -->
+	</ul>
+	<!-- ENDIF -->
+	<!-- IF LIST_LIST -->
+	<!-- IF NOT_EMPTY -->
+	<!-- ELSE -->
+	<ul id="list-list">
+		<li id="no-list-items">No items in list.</li>
+	</ul>
+	<!-- ENDIF -->
+	<!-- ENDIF -->
+	
+	<!-- IF LIST_LIST -->
+	<!-- IF OWNER -->
+	<form action="/account/" method="post" id="list-add-form">
+	<fieldset>
+		<legend>Add Item to List</legend>
+		<dl>
+			<dt><label for="text">Item Text</label></dt>
+			<dd><input type="text" id="text" name="text" value="{LIST_ITEM_TEXT}" style="width: 80%"/> <input type="submit" name="save" value="Add" onclick="return SubmitListItem({LIST_ID});" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="pages" />
+		<input type="hidden" name="sub" value="lists" />
+		<input type="hidden" name="mode" value="append" />
+		<input type="hidden" name="id" value="{LIST_ID}" />
+	</fieldset>
+	</form>
+	<!-- ENDIF -->
+	<!-- ENDIF -->
+  </div>
+</div>
+<!-- INCLUDE page_footer.html -->

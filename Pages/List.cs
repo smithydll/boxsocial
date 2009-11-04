@@ -29,12 +29,18 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("user_lists")]
+    [Permission("VIEW", "Can view the list")]
+    [Permission("APPEND", "Can add items to the list")]
+    [Permission("DELETE_ITEMS", "Can delete items from the list")]
     public class List : NumberedItem, IPermissibleItem
     {
         public const string LIST_FIELDS = "ul.list_id, ul.user_id, ul.list_type, ul.list_title, ul.list_items, ul.list_abstract, ul.list_path, ul.list_access";
@@ -399,58 +405,58 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public static void Show(Core core, UPage page, string listName)
+        //public static void Show(Core core, UPage page, string listName)
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
-            page.template.SetTemplate("viewlist.html");
+            e.Template.SetTemplate("Pages", "viewlist");
+            //page.template.SetTemplate("viewlist.html");
 
             try
             {
-                List list = new List(core, page.User, listName);
+                List list = new List(e.Core, (User)e.Page.Owner, e.Slug);
 
-                //list.ListAccess.SetSessionViewer(core.session);
-
-                if (!list.ListAccess.Can("VIEW"))
+                if (!list.Access.Can("VIEW"))
                 {
-                    core.Functions.Generate403();
+                    e.Core.Functions.Generate403();
                     return;
                 }
 
-                page.template.Parse("LIST_TITLE", list.title);
-                page.template.Parse("LIST_ID", list.ListId.ToString());
-                page.template.Parse("LIST_LIST", "TRUE");
+                e.Template.Parse("LIST_TITLE", list.title);
+                e.Template.Parse("LIST_ID", list.ListId.ToString());
+                e.Template.Parse("LIST_LIST", "TRUE");
 
                 if (!string.IsNullOrEmpty(list.Abstract))
                 {
-                    core.Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
+                    e.Core.Display.ParseBbcode("LIST_ABSTRACT", list.Abstract);
                 }
                 else
                 {
-                    page.template.Parse("LIST_ABSTRACT", "FALSE");
+                    e.Template.Parse("LIST_ABSTRACT", "FALSE");
                 }
 
                 List<ListItem> listItems = list.GetListItems();
 
                 if (listItems.Count > 0)
                 {
-                    page.template.Parse("NOT_EMPTY", "TRUE");
+                    e.Template.Parse("NOT_EMPTY", "TRUE");
                 }
 
                 foreach (ListItem listItem in listItems)
                 {
-                    VariableCollection listVariableCollection = page.template.CreateChild("list_list");
+                    VariableCollection listVariableCollection = e.Template.CreateChild("list_list");
 
                     listVariableCollection.Parse("TITLE", listItem.Text);
                     listVariableCollection.Parse("URI", "FALSE");
 
-                    if (list.Owner.Id == core.LoggedInMemberId)
+                    if (list.Owner.Id == e.Core.LoggedInMemberId)
                     {
-                        listVariableCollection.Parse("U_DELETE", core.Uri.BuildRemoveFromListUri(listItem.ListItemId));
+                        listVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildRemoveFromListUri(listItem.ListItemId));
                     }
                 }
             }
             catch (InvalidListException)
             {
-                core.Functions.Generate404();
+                e.Core.Functions.Generate404();
             }
         }
 

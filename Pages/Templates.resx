@@ -142,4 +142,7 @@
   <data name="header_navigation_tabs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\header_navigation_tabs.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="viewlist" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\viewlist.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

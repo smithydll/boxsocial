@@ -323,7 +323,7 @@ namespace BoxSocial.Install
             try
             {
                 ApplicationEntry profileAe = new ApplicationEntry(core, ae, "Profile");
-                profileAe.Install(core, ae);
+                profileAe.Install(core, owner, ae);
             }
             catch (Exception ex)
             {
@@ -334,7 +334,7 @@ namespace BoxSocial.Install
             try
             {
                 ApplicationEntry guestbookAe = new ApplicationEntry(core, ae, "GuestBook");
-                guestbookAe.Install(core, ae);
+                guestbookAe.Install(core, owner, ae);
             }
             catch (Exception ex)
             {

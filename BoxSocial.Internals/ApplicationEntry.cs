@@ -653,10 +653,20 @@ namespace BoxSocial.Internals
             return Install(core, viewer, true);
         }*/
 
-        // bool finaliseTransaction
-        public bool Install(Core core, Primitive viewer)
+        public bool Install(Core core, User owner)
         {
-            if (!HasInstalled(viewer))
+            return Install(core, owner, owner);
+        }
+
+        public bool Install(Core core, Primitive owner)
+        {
+            return Install(core, core.session.LoggedInMember, owner);
+        }
+
+        // bool finaliseTransaction
+        public bool Install(Core core, User viewer, Primitive owner)
+        {
+            if (!HasInstalled(owner))
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
@@ -667,7 +677,7 @@ namespace BoxSocial.Internals
                     foreach (string slug in slugs.Keys)
                     {
                         string tSlug = slug;
-                        Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                        Page myPage = Page.Create(core, false, owner, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
 
                         if (myPage != null)
                         {
@@ -681,7 +691,14 @@ namespace BoxSocial.Internals
                                 if (HasIcon)
                                 {
                                     myPage.Icon = Icon;
-                                    myPage.Update();
+                                    try
+                                    {
+                                        myPage.Update();
+                                    }
+                                    catch (UnauthorisedToUpdateItemException)
+                                    {
+                                        Console.WriteLine("Unauthorised");
+                                    }
                                 }
                             }
                         }
@@ -690,8 +707,8 @@ namespace BoxSocial.Internals
 
                 InsertQuery iQuery = new InsertQuery("primitive_apps");
                 iQuery.AddField("application_id", applicationId);
-                iQuery.AddField("item_id", viewer.Id);
-                iQuery.AddField("item_type_id", viewer.TypeId);
+                iQuery.AddField("item_id", owner.Id);
+                iQuery.AddField("item_type_id", owner.TypeId);
                 // TODO: ACLs
 
                 if (db.Query(iQuery) > 0)
@@ -1098,6 +1115,12 @@ namespace BoxSocial.Internals
                     break;
                 case -2: // EVERYONE
                     if (core.LoggedInMemberId > 0)
+                    {
+                        return true;
+                    }
+                    break;
+                default:
+                    if (primitiveKey.Id == CreatorId && viewer.Id == primitiveKey.Id)
                     {
                         return true;
                     }

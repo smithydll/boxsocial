@@ -97,7 +97,6 @@
     <Compile Include="Classification.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />
-    <Compile Include="CommentType.cs" />
     <Compile Include="Confirmation.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Country.cs" />

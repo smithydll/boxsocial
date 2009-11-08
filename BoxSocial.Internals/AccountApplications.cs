@@ -180,7 +180,7 @@ namespace BoxSocial.Internals
             /*try
             {*/
             ApplicationEntry ae = new ApplicationEntry(core, null, id);
-            ae.Install(core, Owner);
+            ae.Install(core, core.session.LoggedInMember, Owner);
             /*}
             catch
             {

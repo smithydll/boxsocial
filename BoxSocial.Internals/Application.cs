@@ -355,7 +355,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(ApplicationEntry)), "application_id", "application_id");
             query.AddCondition("item_id", owner.ItemKey.Id);
             query.AddCondition("item_type_id", owner.ItemKey.TypeId);
-            query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), true);
+            query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
 
             DataTable userApplicationsTable = core.db.Query(query);
 
@@ -424,7 +424,7 @@ namespace BoxSocial.Internals
 
                 SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
-                query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), true);
+                query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
                 DataTable applicationSlugsTable = core.db.Query(query);

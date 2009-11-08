@@ -194,6 +194,7 @@ namespace BoxSocial.Internals
             userProfileCache = new PrimitivesCache(this);
 
             AddPrimitiveType(typeof(User));
+            AddPrimitiveType(typeof(ApplicationEntry));
             FindAllPrimitivesLoaded();
         }
 

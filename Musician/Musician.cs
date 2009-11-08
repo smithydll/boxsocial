@@ -663,11 +663,11 @@ namespace BoxSocial.Musician
             return ppgs;
         }
 
-        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.session.LoggedInMember);
+                return IsMusicianMember(viewer);
             }
 
             return false;

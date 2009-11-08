@@ -343,13 +343,22 @@ namespace BoxSocial.Internals
             ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
             long loggedIdUid = core.LoggedInMemberId;
 			
-            DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
+            /*DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
                 FROM applications ap, primitive_apps pa
                 WHERE (pa.item_id = {2} AND pa.item_type_id = {5})
                     AND pa.application_id = ap.application_id
-                    AND ap.application_primitives & {6:0}
-                    AND (pa.app_access & {3:0} OR (pa.item_id = {4} AND pa.item_type_id = {7}))",
-                ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS, owner.Id, readAccessLevel, loggedIdUid, owner.TypeId, (byte)owner.AppPrimitive, ItemKey.GetTypeId(typeof(User))));
+                    AND ap.application_primitives & {6:0}",
+                ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS, owner.Id, readAccessLevel, loggedIdUid, owner.TypeId, (byte)owner.AppPrimitive, ItemKey.GetTypeId(typeof(User))));*/
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
+            query.AddFields(Item.GetFieldsPrefixed(typeof(ApplicationEntry)));
+            query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(ApplicationEntry)), "application_id", "application_id");
+            query.AddCondition("item_id", owner.ItemKey.Id);
+            query.AddCondition("item_type_id", owner.ItemKey.TypeId);
+            query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), true);
+
+            DataTable userApplicationsTable = core.db.Query(query);
+
             return userApplicationsTable;
         }
 
@@ -396,30 +405,29 @@ namespace BoxSocial.Internals
 
             if (userApplicationsTable.Rows.Count > 0)
             {
-                string applicationIds = "";
+                List<long> applicationIds = new List<long>();
                 foreach (DataRow applicationRow in userApplicationsTable.Rows)
                 {
                     ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
-                    if (applicationIds == "")
-                    {
-                        applicationIds = ae.ApplicationId.ToString();
-                    }
-                    else
-                    {
-                        applicationIds = string.Format("{0}, {1}",
-                            applicationIds, ae.ApplicationId);
-                    }
+                    applicationIds.Add(ae.ApplicationId);
                 }
 
-                DataTable applicationSlugsTable = core.db.Query(string.Format(@"SELECT {0}
+                /*DataTable applicationSlugsTable = core.db.Query(string.Format(@"SELECT {0}
                     FROM application_slugs al
                     WHERE application_id IN ({1})
                     AND slug_primitives & {2:0}
                     ORDER BY application_id;",
-                    ApplicationEntry.APPLICATION_SLUG_FIELDS, applicationIds, (byte)owner.AppPrimitive));
+                    ApplicationEntry.APPLICATION_SLUG_FIELDS, applicationIds, (byte)owner.AppPrimitive));*/
+
+                SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
+                query.AddCondition("application_id", ConditionEquality.In, applicationIds);
+                query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), true);
+                query.AddSort(SortOrder.Ascending, "application_id");
+
+                DataTable applicationSlugsTable = core.db.Query(query);
 
                 foreach (DataRow slugRow in applicationSlugsTable.Rows)
                 {
@@ -524,7 +532,8 @@ namespace BoxSocial.Internals
 					}
 					else
 					{
-						assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+						//assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
 					}
                 }
                 else
@@ -535,7 +544,8 @@ namespace BoxSocial.Internals
 					}
 					else
 					{
-						assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+						//assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
 					}
                 }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
@@ -557,6 +567,7 @@ namespace BoxSocial.Internals
             catch (Exception ex)
             {
                 // TODO DEBUG HERE
+                Console.WriteLine(ex.ToString());
             }
             return null;
         }

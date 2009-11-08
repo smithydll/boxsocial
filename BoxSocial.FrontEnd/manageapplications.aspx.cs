@@ -164,10 +164,15 @@ namespace BoxSocial.FrontEnd
                                 long updatedRaw = UnixTime.UnixTimeStamp();
                                 long applicationId = 0;
 
-                                DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
+                                SelectQuery query1 = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                                query1.AddCondition("application_assembly_name", assemblyName);
+
+                                /*DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
                             FROM applications ap
                             WHERE application_assembly_name = '{1}'",
-                                    ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));
+                                    ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(assemblyName)));*/
+
+                                DataTable applicationTable = db.Query(query1);
 
                                 if (applicationTable.Rows.Count == 1)
                                 {
@@ -242,8 +247,8 @@ namespace BoxSocial.FrontEnd
                                     try
                                     {
                                         ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
+                                            profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                     }
                                     catch
                                     {
@@ -252,8 +257,8 @@ namespace BoxSocial.FrontEnd
                                     try
                                     {
                                         ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
-                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                            guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
+                                        db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
+                                            guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                     }
                                     catch
                                     {

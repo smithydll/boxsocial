@@ -47,8 +47,6 @@ namespace BoxSocial.Internals
     [Permission("EDIT", "Can edit the page")]
     public class Page : NumberedItem, INestableItem, IPermissibleItem
     {
-        public const string PAGE_FIELDS = "pa.page_id, pa.user_id, pa.page_slug, pa.page_title, pa.page_text, pa.page_license, pa.page_views, pa.page_status, pa.page_ip, pa.page_parent_path, pa.page_order, pa.page_parent_id, pa.page_hierarchy, pa.page_date_ut, pa.page_modified_ut, pa.page_classification, pa.page_list_only, pa.page_application, pa.page_icon";
-
         [DataField("page_id", DataFieldKeys.Primary)]
         private long pageId;
         [DataField("user_id")]
@@ -80,7 +78,7 @@ namespace BoxSocial.Internals
         [DataField("page_application")]
         private long applicationId;
         [DataField("page_icon", 63)]
-        private string icon;
+        private string pageIcon;
         [DataField("page_date_ut")]
         private long createdRaw;
         [DataField("page_modified_ut")]
@@ -156,11 +154,11 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return icon;
+                return pageIcon;
             }
             set
             {
-                SetProperty("icon", value);
+                SetProperty("pageIcon", value);
             }
         }
 
@@ -871,7 +869,15 @@ namespace BoxSocial.Internals
 
             pageId = core.db.Query(iquery);
 
-            return new Page(core, owner, pageId);
+            Page page = new Page(core, owner, pageId);
+
+            /* LOAD THE DEFAULT ITEM PERMISSIONS */
+            AccessControlPermission acpEdit = new AccessControlPermission(core, page.ItemKey.TypeId, "EDIT");
+            AccessControlPermission acpView = new AccessControlPermission(core, page.ItemKey.TypeId, "VIEW");
+            AccessControlGrant.Create(core, owner.ItemKey, page.ItemKey, acpEdit.PermissionId, AccessControlGrants.Allow);
+            AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), page.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
+
+            return page;
         }
 
         public void Update(Core core, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification)

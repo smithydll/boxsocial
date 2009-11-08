@@ -39,7 +39,7 @@ namespace BoxSocial.IO
         public Http()
         {
             current = HttpContext.Current;
-            HttpContext.Current = null;
+            //HttpContext.Current = null;
         }
         
         public void SetToImageResponse(string contextType, DateTime lastModified)

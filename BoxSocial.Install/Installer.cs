@@ -249,6 +249,9 @@ namespace BoxSocial.Install
             InstallRepository(@"Networks");
             InstallApplication(@"Networks");
             /* ==================== */
+            InstallRepository(@"Musician");
+            InstallApplication(@"Musician");
+            /* ==================== */
             InstallRepository(@"Profile");
             InstallApplication(@"Profile");
             /* ==================== */
@@ -293,11 +296,51 @@ namespace BoxSocial.Install
 
             db.UpdateQuery("UPDATE applications SET user_id = " + adminId + ";");
 
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Groups");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Networks");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Musician");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Profile");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Calendar");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Gallery");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"GuestBook");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Pages");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Blog");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Forum");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"Mail");
+            FinaliseApplicationInstall(core, new User(core, adminId), @"News");
+
             // TODO:
             // Fill Countries
             // Fill Categories
 
             db.CloseConnection();
+        }
+
+        public static void FinaliseApplicationInstall(Core core, User owner, string app)
+        {
+            ApplicationEntry ae = new ApplicationEntry(core, owner, app);
+
+            try
+            {
+                ApplicationEntry profileAe = new ApplicationEntry(core, ae, "Profile");
+                profileAe.Install(core, ae);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Profile");
+                Console.WriteLine(ex.ToString());
+            }
+
+            try
+            {
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, ae, "GuestBook");
+                guestbookAe.Install(core, ae);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GuestBook");
+                Console.WriteLine(ex.ToString());
+            }
         }
 		
 		public static long CreateUser(Core core, string userName, string email, string password)
@@ -336,7 +379,8 @@ namespace BoxSocial.Install
 			
 			iQuery = new InsertQuery("user_profile");
 			iQuery.AddField("user_id", userId);
-			iQuery.AddField("profile_access", 0x3331);
+			//iQuery.AddField("profile_access", 0x3331);
+            // TODO: ACLs
 			
 			core.db.Query(iQuery);
 			
@@ -346,7 +390,7 @@ namespace BoxSocial.Install
 			iQuery.AddField("email_verified", 1);
 					
 			iQuery.AddField("email_time_ut", UnixTime.UnixTimeStamp().ToString());
-			iQuery.AddField("email_access", 0);
+			//iQuery.AddField("email_access", 0);
 						
 			core.db.Query(iQuery);
 			
@@ -361,6 +405,7 @@ namespace BoxSocial.Install
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Profile");
 				Console.WriteLine(ex.ToString());
             }
 
@@ -369,8 +414,10 @@ namespace BoxSocial.Install
                 ApplicationEntry galleryAe = new ApplicationEntry(core, newUser, "Gallery");
                 galleryAe.Install(core, newUser);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Gallery");
+                Console.WriteLine(ex.ToString());
             }
 
             try
@@ -378,8 +425,10 @@ namespace BoxSocial.Install
                 ApplicationEntry guestbookAe = new ApplicationEntry(core, newUser, "GuestBook");
                 guestbookAe.Install(core, newUser);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("GuestBook");
+                Console.WriteLine(ex.ToString());
             }
 
             try
@@ -387,8 +436,10 @@ namespace BoxSocial.Install
                 ApplicationEntry groupsAe = new ApplicationEntry(core, newUser, "Groups");
                 groupsAe.Install(core, newUser);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Groups");
+                Console.WriteLine(ex.ToString());
             }
 
             try
@@ -396,8 +447,10 @@ namespace BoxSocial.Install
                 ApplicationEntry networksAe = new ApplicationEntry(core, newUser, "Networks");
                 networksAe.Install(core, newUser);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Networks");
+                Console.WriteLine(ex.ToString());
             }
 
             try
@@ -405,8 +458,10 @@ namespace BoxSocial.Install
                 ApplicationEntry calendarAe = new ApplicationEntry(core, newUser, "Calendar");
                 calendarAe.Install(core, newUser);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine("Calendar");
+                Console.WriteLine(ex.ToString());
             }
 
             return userId;
@@ -430,6 +485,7 @@ namespace BoxSocial.Install
                 case "BoxSocial.IO":
                 case "Groups":
                 case "Networks":
+                case "Musician":
                     File.Copy(repo + ".dll", Path.Combine(binRoot, repo + ".dll"));
                     break;
                 default:
@@ -457,6 +513,7 @@ namespace BoxSocial.Install
                     break;
                 case "Groups":
                 case "Networks":
+                case "Musician":
                     assemblyPath = Path.Combine(binRoot, repo + ".dll");
                     isInternals = false;
                     isPrimitive = true;
@@ -517,10 +574,15 @@ namespace BoxSocial.Install
                             long updatedRaw = UnixTime.UnixTimeStamp();
                             long applicationId = 0;
 
-                            DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
+                            /*DataTable applicationTable = db.Query(string.Format(@"SELECT {0}
                             FROM applications ap
                             WHERE application_assembly_name = '{1}'",
-                                ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(repo)));
+                                ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(repo)));*/
+
+                            SelectQuery query1 = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                            query1.AddCondition("application_assembly_name", repo);
+
+                            DataTable applicationTable = db.Query(query1);
 
                             if (applicationTable.Rows.Count == 1)
                             {
@@ -579,14 +641,30 @@ namespace BoxSocial.Install
                             }
                             else
                             {
-                                applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
-                                    Mysql.Escape(repo), 0, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));
+                                InsertQuery query = new InsertQuery("applications");
+                                query.AddField("application_assembly_name", repo);
+                                query.AddField("user_id", 0);
+                                query.AddField("application_date_ut", UnixTime.UnixTimeStamp());
+                                query.AddField("application_title", newApplication.Title);
+                                query.AddField("application_description", newApplication.Description);
+                                query.AddField("application_primitive", isPrimitive);
+                                query.AddField("application_primitives", (byte)newApplication.GetAppPrimitiveSupport());
+                                query.AddField("application_comment", newApplication.UsesComments);
+                                query.AddField("application_rating", newApplication.UsesRatings);
+                                query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
+                                query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
+                                query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", repo));
 
-                                try
+                                /*applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
+                                    Mysql.Escape(repo), 0, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));*/
+
+                                applicationId = db.Query(query);
+
+                                /*try
                                 {
                                     ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
+                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
+                                        profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                 }
                                 catch
                                 {
@@ -595,12 +673,12 @@ namespace BoxSocial.Install
                                 try
                                 {
                                     ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
-                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id, app_access) VALUES ({0}, {1}, '{2}', {3});",
-                                        guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)), 0x1111));
+                                    db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
+                                        guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                 }
                                 catch
                                 {
-                                }
+                                }*/
                             }
 
                             if (applicationId > 0)

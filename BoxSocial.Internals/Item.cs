@@ -312,7 +312,7 @@ namespace BoxSocial.Internals
                 Type thisType = this.GetType();
                 FieldInfo fi = thisType.GetField(key, BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
-                if (!fi.GetValue(this).Equals(value))
+                if ((fi.GetValue(this) == null && value != null )|| (!fi.GetValue(this).Equals(value)))
                 {
                     fi.SetValue(this, value);
 
@@ -322,8 +322,9 @@ namespace BoxSocial.Internals
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
             }
         }
 

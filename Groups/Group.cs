@@ -1566,11 +1566,11 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupMember(core.session.LoggedInMember);
+                return IsGroupMember(viewer);
             }
 
             return false;

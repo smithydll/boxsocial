@@ -30,12 +30,21 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum ApplicationLoadOptions : byte
+    {
+        Key = 0x01,
+        Info = Key | 0x02,
+        Common = Key | Info,
+        All = Key | Info,
+    }
+
     [DataTable("applications", "APPLICATION")]
+    [Primitive("APPLICATION", ApplicationLoadOptions.All, "application_id", "application_assembly_name")]
     public class ApplicationEntry : Primitive, ICommentableItem, IPermissibleItem
     {
-        public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
-        public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.app_access, pa.item_id, pa.item_type_id";
-        public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
+        //public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
+        //public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.item_id, pa.item_type_id";
+        //public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
 
         [DataField("application_id", DataFieldKeys.Primary)]
         private long applicationId;
@@ -46,7 +55,7 @@ namespace BoxSocial.Internals
         [DataField("application_description", MYSQL_TEXT)]
         private string description;
         [DataField("application_icon", 63)]
-        private string icon;
+        private string applicationIcon;
         [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
         private string assemblyName;
         [DataField("application_primitive")]
@@ -270,11 +279,11 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return icon;
+                return applicationIcon;
             }
             set
             {
-                SetProperty("icon", value);
+                SetProperty("applicationIcon", value);
             }
         }
 
@@ -282,7 +291,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(icon))
+                if (string.IsNullOrEmpty(applicationIcon))
                 {
                     return false;
                 }
@@ -409,14 +418,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ApplicationEntry(Core core, ApplicationCommentType act)
+        /*public ApplicationEntry(Core core, ApplicationCommentType act)
             : base(core)
         {
-            DataTable assemblyTable = db.Query(string.Format(@"SELECT {0}
-                FROM applications ap
-                INNER JOIN comment_types ct ON ct.application_id = ap.application_id
-                WHERE ct.type_type = '{1}';",
-                ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(act.Type)));
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+            query.AddJoin(JoinTypes.Inner, "comment_types", "application_id", "application_id");
+            query.AddCondition("type_type", act.Type);
+
+            DataTable assemblyTable = db.Query(query);
 
             if (assemblyTable.Rows.Count == 1)
             {
@@ -431,7 +440,7 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidApplicationException();
             }
-        }
+        }*/
 
         public ApplicationEntry(Core core, Primitive owner, string assemblyName)
             : base(core)
@@ -498,6 +507,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ApplicationEntry(Core core, DataRow applicationRow, ApplicationLoadOptions loadOptions)
+            : this(core, applicationRow)
+        {
+        }
+
         public ApplicationEntry(Core core, DataRow applicationRow)
             : base(core)
         {
@@ -510,37 +524,10 @@ namespace BoxSocial.Internals
         {
         }
 
-        private void loadApplicationInfo(DataRow applicationRow)
-        {
-            applicationId = (int)applicationRow["application_id"];
-            creatorId = (int)applicationRow["user_id"];
-            if (!(applicationRow["application_title"] is DBNull))
-            {
-                title = (string)applicationRow["application_title"];
-            }
-            if (!(applicationRow["application_description"] is DBNull))
-            {
-                description = (string)applicationRow["application_description"];
-            }
-            if (!(applicationRow["application_icon"] is DBNull))
-            {
-                icon = (string)applicationRow["application_icon"];
-            }
-            assemblyName = (string)applicationRow["application_assembly_name"];
-            isPrimitive = ((byte)applicationRow["application_primitive"] > 0) ? true : false;
-            primitives = (byte)applicationRow["application_primitives"];
-            dateRaw = (long)applicationRow["application_date_ut"];
-            comments = (long)applicationRow["application_comments"];
-            usesComments = ((byte)applicationRow["application_comment"] > 0) ? true : false;
-            usesRatings = ((byte)applicationRow["application_rating"] > 0) ? true : false;
-            hasStyleSheet = ((byte)applicationRow["application_style"] > 0) ? true : false;
-            hasJavaScript = ((byte)applicationRow["application_script"] > 0) ? true : false;
-        }
-
         private void loadApplicationUserInfo(DataRow applicationRow)
         {
             itemId = (long)applicationRow["item_id"];
-            permissions = (ushort)applicationRow["app_access"];
+            //permissions = (ushort)applicationRow["app_access"];
         }
 
         public static ApplicationEntry Create()
@@ -675,19 +662,29 @@ namespace BoxSocial.Internals
 
                 Dictionary<string, string> slugs = newApplication.PageSlugs;
 
-                foreach (string slug in slugs.Keys)
+                if (slugs != null)
                 {
-                    string tSlug = slug;
-                    Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
-					
-					if (myPage.ListOnly)
+                    foreach (string slug in slugs.Keys)
                     {
-                        if (!string.IsNullOrEmpty(Icon))
-                        {
-                            myPage.Icon = Icon;
-                        }
+                        string tSlug = slug;
+                        Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
 
-                        myPage.Update();
+                        if (myPage != null)
+                        {
+                            if (viewer is User)
+                            {
+                                myPage.Access.Viewer = (User)viewer;
+                            }
+
+                            if (myPage.ListOnly)
+                            {
+                                if (HasIcon)
+                                {
+                                    myPage.Icon = Icon;
+                                    myPage.Update();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -695,7 +692,7 @@ namespace BoxSocial.Internals
                 iQuery.AddField("application_id", applicationId);
                 iQuery.AddField("item_id", viewer.Id);
                 iQuery.AddField("item_type_id", viewer.TypeId);
-                iQuery.AddField("app_access", 0x1111);
+                // TODO: ACLs
 
                 if (db.Query(iQuery) > 0)
                 {
@@ -1081,44 +1078,7 @@ namespace BoxSocial.Internals
             return ppgs;
         }
 
-        #region IPermissibleItem Members
-
-        Access IPermissibleItem.Access
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        Primitive IPermissibleItem.Owner
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        List<AccessControlPermission> IPermissibleItem.AclPermissions
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        long IPermissibleItem.Id
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        ItemKey IPermissibleItem.ItemKey
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        string IPermissibleItem.Namespace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        string IPermissibleItem.Uri
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        IPermissibleItem IPermissibleItem.PermissiveParent
+        public new IPermissibleItem PermissiveParent
         {
             get
             {
@@ -1126,14 +1086,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        #endregion
-
-        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
             switch (primitiveKey.Id)
             {
                 case -1: // OWNER
-                    if (CreatorId == core.LoggedInMemberId)
+                    if (CreatorId == viewer.Id)
                     {
                         return true;
                     }

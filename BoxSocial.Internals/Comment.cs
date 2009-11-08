@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         private long timeRaw;
         [DataField("comment_text", COMMENT_MAX_LENGTH)]
         private string body;
+        [DataField("comment_deleted")]
+        private bool deleted;
 
         public long CommentId
         {

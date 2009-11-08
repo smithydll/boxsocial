@@ -35,7 +35,8 @@ namespace BoxSocial.FrontEnd
                 Response.Write("User: " + userId + "<br />\n");
 				
                 query = new SelectQuery("primitive_apps pa");
-                query.AddFields(ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS);
+                //query.AddFields(ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS);
+                // TODO
                 query.AddJoin(JoinTypes.Inner, "applications ap", "pa.application_id", "ap.application_id");
                 query.AddCondition("pa.item_type_id", ItemKey.GetTypeId(typeof(BoxSocial.Internals.User)).ToString());
                 query.AddCondition("pa.item_id", userId);

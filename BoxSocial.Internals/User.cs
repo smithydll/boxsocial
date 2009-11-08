@@ -1238,12 +1238,12 @@ namespace BoxSocial.Internals
             query = new InsertQuery("user_profile");
             query.AddField("user_id", userId);
             query.AddField("profile_date_of_birth_ut", -30610224000L);
-            query.AddField("profile_access", 0x3331);
+            // TODO: ACLs
 
             db.Query(query);
 
             User newUser = new User(core, userId);
-            UserEmail registrationEmail = UserEmail.Create(core, newUser, eMail, 0x0000, true);
+            UserEmail registrationEmail = UserEmail.Create(core, newUser, eMail, true);
 
             // Install a couple of applications
             try
@@ -2186,39 +2186,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        #region IPermissibleItem Members
-
-        Access IPermissibleItem.Access
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        List<AccessControlPermission> IPermissibleItem.AclPermissions
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        long IPermissibleItem.Id
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        ItemKey IPermissibleItem.ItemKey
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        string IPermissibleItem.Namespace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        string IPermissibleItem.Uri
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        IPermissibleItem IPermissibleItem.PermissiveParent
+        private new IPermissibleItem PermissiveParent
         {
             get
             {
@@ -2226,28 +2194,26 @@ namespace BoxSocial.Internals
             }
         }
 
-        #endregion
-
-        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
             if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(Friend)))
             {
                 switch (primitiveKey.Id)
                 {
                     case -1:
-                        if (IsFriend(core.session.LoggedInMember))
+                        if (IsFriend(viewer))
                         {
                             return true;
                         }
                         break;
                     case -2:
-                        if (IsFamily(core.session.LoggedInMember))
+                        if (IsFamily(viewer))
                         {
                             return true;
                         }
                         break;
                     case -3:
-                        if (IsBlocked(core.session.LoggedInMember))
+                        if (IsBlocked(viewer))
                         {
                             return true;
                         }
@@ -2260,7 +2226,7 @@ namespace BoxSocial.Internals
                 switch (primitiveKey.Id)
                 {
                     case -1:
-                        if (Id == core.LoggedInMemberId)
+                        if (Id == viewer.Id)
                         {
                             return true;
                         }
@@ -2269,6 +2235,12 @@ namespace BoxSocial.Internals
                         return true;
                     case -3:
                         if (core.session.IsLoggedIn)
+                        {
+                            return true;
+                        }
+                        break;
+                    default:
+                        if (Id == viewer.Id && Id == primitiveKey.Id)
                         {
                             return true;
                         }

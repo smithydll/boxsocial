@@ -168,6 +168,38 @@ namespace BoxSocial.Internals
 			
 			return (!isDenied && isAllowed);
 		}
+
+        public static List<AccessControlGrant> GetGrants(Core core, List<IPermissibleItem> items)
+        {
+            List<AccessControlGrant> grants = new List<AccessControlGrant>();
+
+            Dictionary<long, IPermissibleItem> itemDictionary = new Dictionary<long, IPermissibleItem>();
+            List<long> itemIds = new List<long>();
+            long itemTypeId = 0;
+
+            foreach (IPermissibleItem item in items)
+            {
+                if (itemTypeId == item.ItemKey.TypeId || itemTypeId == 0)
+                {
+                    itemIds.Add(item.ItemKey.Id);
+                    itemTypeId = item.ItemKey.TypeId;
+                    itemDictionary.Add(item.ItemKey.Id, item);
+                }
+            }
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
+            sQuery.AddCondition("grant_item_type_id", itemTypeId);
+
+            DataTable grantsTable = core.db.Query(sQuery);
+
+            foreach (DataRow dr in grantsTable.Rows)
+            {
+                grants.Add(new AccessControlGrant(core, itemDictionary[(long)dr["grant_item_id"]], dr));
+            }
+
+            return grants;
+        }
 		
 		public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item)
 		{

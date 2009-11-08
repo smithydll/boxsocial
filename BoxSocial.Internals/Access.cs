@@ -48,8 +48,30 @@ namespace BoxSocial.Internals
             this.item = item;
             this.owner = item.Owner;
             this.viewer = core.session.LoggedInMember;
+        }
 
-            grants = AccessControlGrant.GetGrants(core, this.item);
+        internal User Viewer
+        {
+            get
+            {
+                return viewer;
+            }
+            set
+            {
+                viewer = value;
+            }
+        }
+
+        private List<AccessControlGrant> Grants
+        {
+            get
+            {
+                if (grants == null)
+                {
+                    grants = AccessControlGrant.GetGrants(core, this.item);
+                }
+                return grants;
+            }
         }
 
         public bool Can(string permission)
@@ -92,9 +114,9 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (grants != null)
+            if (Grants != null)
             {
-                foreach (AccessControlGrant grant in grants)
+                foreach (AccessControlGrant grant in Grants)
                 {
                     if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
                     {
@@ -102,11 +124,11 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                foreach (AccessControlGrant grant in grants)
+                foreach (AccessControlGrant grant in Grants)
                 {
                     if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
                     {
-                        if (owner.GetIsMemberOfPrimitive(grant.PrimitiveKey))
+                        if (owner.GetIsMemberOfPrimitive(viewer, grant.PrimitiveKey))
                         {
                             switch (grant.Allow)
                             {
@@ -124,7 +146,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (grants == null || grants.Count == 0)
+            if (Grants == null || Grants.Count == 0)
             {
                 if (item.ItemKey.Equals(owner.ItemKey))
                 {
@@ -166,6 +188,10 @@ namespace BoxSocial.Internals
         public static string BuildAclUri(Core core, IPermissibleItem item)
         {
             return core.Uri.AppendAbsoluteSid(string.Format("acl.aspx?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
+        }
+
+        public static void LoadGrants(Core core, List<IPermissibleItem> items)
+        {
         }
     }
 }

@@ -176,7 +176,8 @@ namespace BoxSocial.FrontEnd
 
                     try
                     {
-                        ApplicationEntry ae = new ApplicationEntry(core, new ApplicationCommentType(commentItemType));
+                        ItemType type = new ItemType(core, commentItemType);
+                        ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
 
                         BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
                     }

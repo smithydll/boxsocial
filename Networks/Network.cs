@@ -656,7 +656,7 @@ namespace BoxSocial.Networks
 
             if (networkInfo.RequireConfirmation)
             {
-                UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, 0x0000, true);
+                UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, true);
 
                 RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
 
@@ -1015,11 +1015,11 @@ namespace BoxSocial.Networks
             return ppgs;
         }
 
-        public override bool GetIsMemberOfPrimitive(ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsNetworkMember(core.session.LoggedInMember);
+                return IsNetworkMember(viewer);
             }
 
             return false;

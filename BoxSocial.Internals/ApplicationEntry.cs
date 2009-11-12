@@ -1105,26 +1105,32 @@ namespace BoxSocial.Internals
 
         public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
-            switch (primitiveKey.Id)
+            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(User)))
             {
-                case -1: // OWNER
-                    if (CreatorId == viewer.Id)
-                    {
-                        return true;
-                    }
-                    break;
-                case -2: // EVERYONE
-                    if (core.LoggedInMemberId > 0)
-                    {
-                        return true;
-                    }
-                    break;
-                default:
-                    if (primitiveKey.Id == CreatorId && viewer.Id == primitiveKey.Id)
-                    {
-                        return true;
-                    }
-                    break;
+
+                switch (primitiveKey.Id)
+                {
+                    case -1: // OWNER
+                        if (CreatorId == viewer.Id)
+                        {
+                            return true;
+                        }
+                        break;
+                    case -2: // EVERYONE
+                        if (core.LoggedInMemberId > 0)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
+            {
+                if (primitiveKey.Id == CreatorId)
+                {
+                    return true;
+                }
             }
 
             return false;

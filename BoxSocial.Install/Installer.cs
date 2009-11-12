@@ -312,8 +312,121 @@ namespace BoxSocial.Install
             // TODO:
             // Fill Countries
             // Fill Categories
+            InstallData(core);
 
             db.CloseConnection();
+        }
+
+        struct LicenseData
+        {
+            public string Title;
+            public string Uri;
+            public string Icon;
+
+            public LicenseData(string title, string uri, string icon)
+            {
+                this.Title = title;
+                this.Uri = uri;
+                this.Icon = icon;
+            }
+        }
+
+        public static void InstallData(Core core)
+        {
+            // Categories
+            Dictionary<string, string> categories = new Dictionary<string, string>();
+            categories.Add("uncategorised", "Uncategorised");
+            categories.Add("music", "Music");
+            categories.Add("cars-and-vehicles", "Cars and Vehicles");
+            categories.Add("travel-and-adventure", "Travel and Adventure");
+            categories.Add("art-and-culture", "Art and Culture");
+            categories.Add("friends-and-family", "Friends and Family");
+            categories.Add("people-and-society", "People and Society");
+            categories.Add("toys-and-gadgets", "Toys and Gadgets");
+            categories.Add("entertainment-and-comedy", "Entertainment and Comedy");
+            categories.Add("news-and-politicts", "News and Politicts");
+            categories.Add("opinion", "Opinion");
+            categories.Add("animals-and-pets", "Animals and Pets");
+            categories.Add("sports-and-games", "Sports and Games");
+            categories.Add("education", "Education");
+            categories.Add("computers-and-the-internet", "Computers and The Internet");
+            categories.Add("business-and-employment", "Business and Employment");
+            categories.Add("not-for-profit", "Not-for-profit");
+
+            // Countries
+            Dictionary<string, string> countries = new Dictionary<string, string>();
+            countries.Add("AD", "Andorra");
+            countries.Add("AE", "United Arab Emirates");
+            countries.Add("AF", "Afghanistan");
+            countries.Add("AG", "Antigua and Barbuda");
+            countries.Add("AI", "Anguilla");
+            countries.Add("AL", "Albania");
+            countries.Add("AM", "Armenia");
+            countries.Add("AN", "Netherlands Antilles");
+            countries.Add("AO", "Angola");
+            countries.Add("AQ", "Antartica");
+            countries.Add("AR", "Argentina");
+            countries.Add("AS", "American Samoa");
+            countries.Add("AT", "Austria");
+            countries.Add("AU", "Australia");
+
+            // Timezones
+
+            // List Types
+            List<string> listTypes = new List<string>();
+            listTypes.Add("Custom");
+            listTypes.Add("Music");
+            listTypes.Add("Movies");
+            listTypes.Add("TV");
+            listTypes.Add("Heroes");
+            listTypes.Add("Books");
+
+            // Licenses
+            List<LicenseData> licenses = new List<LicenseData>();
+            licenses.Add(new LicenseData("GNU Free Document License", "http://www.gnu.org/licenses/fdl.html", ""));
+            licenses.Add(new LicenseData("Creative Commons Attribution (3.0)", "http://creativecommons.org/licenses/by/3.0/", "cc-by.png"));
+            licenses.Add(new LicenseData("Creative Commons Attribution - Share Alike (3.0)", "http://creativecommons.org/licenses/by-sa/3.0/", "cc-by-sa.png"));
+            licenses.Add(new LicenseData("Creative Commons Attribution - Non-commercial (3.0)", "http://creativecommons.org/licenses/by-nc/3.0/", "cc-by-nc.png"));
+            licenses.Add(new LicenseData("Creative Commons Attribution - Non-commercial Share Alike (3.0)", "http://creativecommons.org/licenses/by-nc-sa/3.0/", "cc-by-nc-sa.png"));
+            licenses.Add(new LicenseData("Creative Commons Attribution - No Derivs (3.0)", "http://creativecommons.org/licenses/by-nd/3.0/", "cc-by-nd.png"));
+            licenses.Add(new LicenseData("Creative Commons Attribution - Non-commercial No Derivs (3.0)", "http://creativecommons.org/licenses/by-nc-nd/3.0/", "cc-by-nc-nd.png"));
+
+            /* Install */
+            foreach (string key in categories.Keys)
+            {
+                InsertQuery iQuery = new InsertQuery("global_categories");
+                iQuery.AddField("category_path", key);
+                iQuery.AddField("category_title", countries[key]);
+
+                core.db.Query(iQuery);
+            }
+
+            foreach (string key in countries.Keys)
+            {
+                InsertQuery iQuery = new InsertQuery("countries");
+                iQuery.AddField("country_iso", key);
+                iQuery.AddField("country_name", countries[key]);
+
+                core.db.Query(iQuery);
+            }
+
+            foreach (string type in listTypes)
+            {
+                InsertQuery iQuery = new InsertQuery("list_types");
+                iQuery.AddField("list_type_title", type);
+
+                core.db.Query(iQuery);
+            }
+
+            foreach (LicenseData license in licenses)
+            {
+                InsertQuery iQuery = new InsertQuery("licenses");
+                iQuery.AddField("license_title", license.Title);
+                iQuery.AddField("license_link", license.Uri);
+                iQuery.AddField("license_icon", license.Icon);
+
+                core.db.Query(iQuery);
+            }
         }
 
         public static void FinaliseApplicationInstall(Core core, User owner, string app)

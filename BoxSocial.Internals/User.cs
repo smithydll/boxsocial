@@ -2265,6 +2265,14 @@ namespace BoxSocial.Internals
         {
             return false;
         }
+
+        public override string DisplayTitle
+        {
+            get
+            {
+                return "User: " + DisplayName + " (" + UserName + ")";
+            }
+        }
     }
 
     public class InvalidUserException : Exception

@@ -311,6 +311,11 @@ namespace BoxSocial.Internals
         public abstract bool CanEditPermissions();
 
         public abstract bool GetDefaultCan(string permission);
+
+        public abstract string DisplayTitle
+        {
+            get;
+        }
     }
 
     /// <summary>

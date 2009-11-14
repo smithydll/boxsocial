@@ -1602,6 +1602,14 @@ namespace BoxSocial.Applications.Gallery
 
             return ret;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Gallery: " + GalleryTitle + " (" + FullPath + ")";
+            }
+        }
     }
 
     /// <summary>

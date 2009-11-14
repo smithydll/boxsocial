@@ -687,6 +687,14 @@ namespace BoxSocial.Musician
         {
             return false;
         }
+
+        public override string DisplayTitle
+        {
+            get
+            {
+                return "Musician: " + DisplayName;
+            }
+        }
     }
 
     public class InvalidMusicianException : Exception

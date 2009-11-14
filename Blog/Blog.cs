@@ -883,6 +883,14 @@ namespace BoxSocial.Applications.Blog
         {
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Blog: " + Owner.DisplayName + " (" + Owner.Key + ")";
+            }
+        }
     }
 
     /// <summary>

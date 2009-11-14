@@ -1598,6 +1598,14 @@ namespace BoxSocial.Applications.Forum
             }*/
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Forum: " + Title;
+            }
+        }
     }
 
     public class InvalidForumException : Exception

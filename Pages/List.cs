@@ -549,6 +549,14 @@ namespace BoxSocial.Applications.Pages
         {
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "List: " + Title;
+            }
+        }
     }
 
     public class InvalidListException : Exception

@@ -1153,6 +1153,14 @@ namespace BoxSocial.Internals
         {
             return false;
         }
+
+        public override string DisplayTitle
+        {
+            get
+            {
+                return "Application: " + Title;
+            }
+        }
     }
 
     public class InvalidApplicationException : Exception

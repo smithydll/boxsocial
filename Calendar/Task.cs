@@ -494,7 +494,14 @@ namespace BoxSocial.Applications.Calendar
         {
             return false;
         }
-        
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Task: " + Topic;
+            }
+        }
     }
 
     public class InvalidTaskException : Exception

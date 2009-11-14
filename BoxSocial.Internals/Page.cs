@@ -1357,6 +1357,14 @@ namespace BoxSocial.Internals
                     return false;
             }
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Page: " + FullPath;
+            }
+        }
     }
 
     public class PageNotFoundException : Exception

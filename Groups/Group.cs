@@ -1590,6 +1590,14 @@ namespace BoxSocial.Groups
         {
             return false;
         }
+
+        public override string DisplayTitle
+        {
+            get
+            {
+                return "Group: " + DisplayName;
+            }
+        }
     }
 
     public class InvalidGroupException : Exception

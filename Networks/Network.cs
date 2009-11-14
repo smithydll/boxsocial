@@ -1034,6 +1034,14 @@ namespace BoxSocial.Networks
         {
             return false;
         }
+
+        public override string DisplayTitle
+        {
+            get
+            {
+                return "Network: " + DisplayName;
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

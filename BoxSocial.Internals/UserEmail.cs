@@ -268,6 +268,14 @@ namespace BoxSocial.Internals
         {
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Email (" + Email + ")";
+            }
+        }
     }
 
     public class InvalidUserEmailException : Exception

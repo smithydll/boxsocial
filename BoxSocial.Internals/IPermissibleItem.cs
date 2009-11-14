@@ -81,6 +81,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        string DisplayTitle
+        {
+            get;
+        }
+
         /// <summary>
         /// When all fall throughs to parent levels fail, it uses the default
         /// </summary>

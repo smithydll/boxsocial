@@ -293,6 +293,14 @@ namespace BoxSocial.Applications.Forum
                 return settingsId;
             }
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Forum Settings: " + Owner.DisplayName + " (" + Owner.Key + ")";
+            }
+        }
     }
 
     public class InvalidForumSettingsException : Exception

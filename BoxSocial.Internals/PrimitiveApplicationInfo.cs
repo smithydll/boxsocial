@@ -162,6 +162,14 @@ namespace BoxSocial.Internals
         {
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Application (" + Owner.DisplayTitle + ")";
+            }
+        }
     }
 
     public class InvalidPrimitiveAppInfoException : Exception

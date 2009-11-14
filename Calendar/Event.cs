@@ -675,6 +675,14 @@ namespace BoxSocial.Applications.Calendar
         {
             return false;
         }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Event: " + Subject;
+            }
+        }
     }
 
     public class InvalidEventException : Exception

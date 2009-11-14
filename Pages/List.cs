@@ -39,6 +39,7 @@ namespace BoxSocial.Applications.Pages
 {
     [DataTable("user_lists")]
     [Permission("VIEW", "Can view the list")]
+    [Permission("EDIT", "Can edit the list")]
     [Permission("APPEND", "Can add items to the list")]
     [Permission("DELETE_ITEMS", "Can delete items from the list")]
     public class List : NumberedItem, IPermissibleItem
@@ -173,6 +174,21 @@ namespace BoxSocial.Applications.Pages
                 {
                     return owner;
                 }
+            }
+        }
+
+        public List(Core core, long listId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(List_ItemLoad);
+
+            try
+            {
+                LoadItem(listId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidListException();
             }
         }
 
@@ -374,7 +390,22 @@ namespace BoxSocial.Applications.Pages
 
                 long listId = core.db.Query(iQuery);
 
-                return new List(core, core.session.LoggedInMember, listId);
+                List list = new List(core, core.session.LoggedInMember, listId);
+
+                /* LOAD THE DEFAULT ITEM PERMISSIONS */
+                /*AccessControlPermission acpEdit = new AccessControlPermission(core, list.ItemKey.TypeId, "EDIT");
+                AccessControlPermission acpView = new AccessControlPermission(core, list.ItemKey.TypeId, "VIEW");
+                AccessControlPermission acpAppend = new AccessControlPermission(core, list.ItemKey.TypeId, "APPEND");
+                AccessControlPermission acpDeleteItems = new AccessControlPermission(core, list.ItemKey.TypeId, "DELETE_ITEMS");
+                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpEdit.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), list.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpAppend.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpDeleteItems.PermissionId, AccessControlGrants.Allow);*/
+
+                Access.CreateAllGrantsForOwner(core, list);
+                Access.CreateGrantForPrimitive(core, list, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
+
+                return list;
             }
             catch (PageSlugNotUniqueException)
             {
@@ -382,37 +413,41 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public static void ShowLists(Core core, UPage page)
+        //public static void ShowLists(Core core, UPage page)
+        public static void ShowLists(object sender, ShowPPageEventArgs e)
         {
-            page.template.SetTemplate("viewlist.html");
+            e.Template.SetTemplate("Pages", "viewlist");
 
-            page.template.Parse("LIST_TITLE", string.Format("{0} Lists", page.User.DisplayNameOwnership));
-            page.template.Parse("LIST_ABSTRACT", "FALSE");
+            Page page = new Page(e.Core, e.Page.Owner, "lists");
 
-            List<List> lists = List.GetLists(core, page.User);
+            e.Core.Display.ParsePageList(e.Page.Owner, true, page);
+
+            e.Template.Parse("LIST_TITLE", string.Format("{0} Lists", e.Page.Owner.DisplayNameOwnership));
+            e.Template.Parse("LIST_ABSTRACT", "FALSE");
+
+            List<List> lists = List.GetLists(e.Core, (User)e.Page.Owner);
 
             if (lists.Count > 0)
             {
-                page.template.Parse("NOT_EMPTY", "TRUE");
+                e.Template.Parse("NOT_EMPTY", "TRUE");
             }
 
             foreach (List list in lists)
             {
-                VariableCollection listVariableCollection = page.template.CreateChild("list_list");
+                VariableCollection listVariableCollection = e.Template.CreateChild("list_list");
 
                 listVariableCollection.Parse("TITLE", list.Title);
-                listVariableCollection.Parse("URI", List.BuildListUri(core, list));
+                listVariableCollection.Parse("URI", List.BuildListUri(e.Core, list));
             }
         }
 
-        //public static void Show(Core core, UPage page, string listName)
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.Template.SetTemplate("Pages", "viewlist");
-            //page.template.SetTemplate("viewlist.html");
 
             try
             {
+                Page page = new Page(e.Core, e.Page.Owner, "lists/" + e.Slug);
                 List list = new List(e.Core, (User)e.Page.Owner, e.Slug);
 
                 if (!list.Access.Can("VIEW"))
@@ -420,6 +455,8 @@ namespace BoxSocial.Applications.Pages
                     e.Core.Functions.Generate403();
                     return;
                 }
+
+                e.Core.Display.ParsePageList(e.Page.Owner, true, page);
 
                 e.Template.Parse("LIST_TITLE", list.title);
                 e.Template.Parse("LIST_ID", list.ListId.ToString());

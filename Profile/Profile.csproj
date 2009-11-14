@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BC7327B8-F476-409B-BEFD-5E1C1D417A79}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -72,7 +72,9 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Templates.Designer.cs">
+    <Compile Include="Templates1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -117,6 +119,7 @@
     <Content Include="templates\account_friends_manage.html" />
     <Content Include="templates\account_friend_invite.html" />
     <Content Include="templates\account_lifestyle.html" />
+    <Content Include="templates\account_name.html" />
     <Content Include="templates\account_style.html" />
     <Content Include="templates\viewstatusfeed.html" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -126,6 +129,7 @@
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

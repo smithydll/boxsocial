@@ -729,8 +729,8 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_id", galleryId);
             query.AddCondition("gallery_item_item_id", owner.Id);
             QueryCondition qc1 = query.AddCondition("gallery_item_item_type_id", owner.TypeId);
-            QueryCondition qc2 = qc1.AddCondition(new QueryOperation("gallery_item_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
-            qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            //QueryCondition qc2 = qc1.AddCondition(new QueryOperation("gallery_item_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
+            //qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;
 

@@ -61,7 +61,7 @@ namespace BoxSocial.Applications.Profile
         {
 			Save(new EventHandler(AccountProfileName_Save));
 			
-            template.SetTemplate("account_name.html");
+            SetTemplate("account_name");
 
             LoggedInMember.LoadProfileInfo();
 
@@ -72,38 +72,45 @@ namespace BoxSocial.Applications.Profile
             template.Parse("SUFFIX", LoggedInMember.Suffix);
 
             string selected = " selected=\"selected\"";
-            switch (LoggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
+            if (LoggedInMember.Title != null)
             {
-                default:
-                    template.Parse("TITLE_NONE", selected);
-                    break;
-                case "master":
-                    template.Parse("TITLE_MASTER", selected);
-                    break;
-                case "mr":
-                    template.Parse("TITLE_MR", selected);
-                    break;
-                case "miss":
-                    template.Parse("TITLE_MISS", selected);
-                    break;
-                case "ms":
-                    template.Parse("TITLE_MS", selected);
-                    break;
-                case "mrs":
-                    template.Parse("TITLE_MRS", selected);
-                    break;
-                case "fr":
-                    template.Parse("TITLE_FR", selected);
-                    break;
-                case "sr":
-                    template.Parse("TITLE_SR", selected);
-                    break;
-                case "prof":
-                    template.Parse("TITLE_PROF", selected);
-                    break;
-                case "lord":
-                    template.Parse("TITLE_LORD", selected);
-                    break;
+                switch (LoggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
+                {
+                    default:
+                        template.Parse("TITLE_NONE", selected);
+                        break;
+                    case "master":
+                        template.Parse("TITLE_MASTER", selected);
+                        break;
+                    case "mr":
+                        template.Parse("TITLE_MR", selected);
+                        break;
+                    case "miss":
+                        template.Parse("TITLE_MISS", selected);
+                        break;
+                    case "ms":
+                        template.Parse("TITLE_MS", selected);
+                        break;
+                    case "mrs":
+                        template.Parse("TITLE_MRS", selected);
+                        break;
+                    case "fr":
+                        template.Parse("TITLE_FR", selected);
+                        break;
+                    case "sr":
+                        template.Parse("TITLE_SR", selected);
+                        break;
+                    case "prof":
+                        template.Parse("TITLE_PROF", selected);
+                        break;
+                    case "lord":
+                        template.Parse("TITLE_LORD", selected);
+                        break;
+                }
+            }
+            else
+            {
+                template.Parse("TITLE_NONE", selected);
             }
         }
 

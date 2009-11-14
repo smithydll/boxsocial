@@ -396,7 +396,7 @@ namespace BoxSocial.Install
             {
                 InsertQuery iQuery = new InsertQuery("global_categories");
                 iQuery.AddField("category_path", key);
-                iQuery.AddField("category_title", countries[key]);
+                iQuery.AddField("category_title", categories[key]);
 
                 core.db.Query(iQuery);
             }
@@ -773,6 +773,8 @@ namespace BoxSocial.Install
 
                                 applicationId = db.Query(query);
 
+                                ApplicationEntry updateApplication = new ApplicationEntry(core, applicationId);
+
                                 /*try
                                 {
                                     ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
@@ -792,6 +794,40 @@ namespace BoxSocial.Install
                                 catch
                                 {
                                 }*/
+
+                                //
+                                // Save Icon
+                                //
+                                if (newApplication.Icon != null)
+                                {
+                                    if (!Directory.Exists(Path.Combine(imagesRoot, updateApplication.Key)))
+                                    {
+                                        Directory.CreateDirectory(Path.Combine(imagesRoot, updateApplication.Key));
+                                    }
+
+                                    newApplication.Icon.Save(Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon.png"), System.Drawing.Imaging.ImageFormat.Png);
+                                }
+
+                                //
+                                // Save StyleSheet
+                                //
+                                if (!string.IsNullOrEmpty(newApplication.StyleSheet))
+                                {
+                                    if (!Directory.Exists(stylesRoot))
+                                    {
+                                        Directory.CreateDirectory(stylesRoot);
+                                    }
+
+                                    SaveTextFile(newApplication.StyleSheet, Path.Combine(stylesRoot, updateApplication.Key + ".css"));
+                                }
+
+                                //
+                                // Save JavaScript
+                                //
+                                if (!string.IsNullOrEmpty(newApplication.JavaScript))
+                                {
+                                    SaveTextFile(newApplication.JavaScript, Path.Combine(scriptsRoot, updateApplication.Key + ".js"));
+                                }
                             }
 
                             if (applicationId > 0)

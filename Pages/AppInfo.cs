@@ -157,9 +157,10 @@ namespace BoxSocial.Applications.Pages
         [Show(@"^/lists(|/)$", AppPrimitives.Member)]
         private void showLists(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                List.ShowLists(core, (UPage)sender);
+                //List.ShowLists(core, (UPage)sender);
+                List.ShowLists(sender, new ShowPPageEventArgs((PPage)sender));
             }
         }
 

@@ -87,6 +87,7 @@ namespace BoxSocial.Applications.Pages
 
                 listVariableCollection.Parse("U_VIEW", core.Uri.BuildListUri(LoggedInMember, l.Path));
                 listVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteListUri(l.Id));
+                listVariableCollection.Parse("U_PERMISSIONS", l.Access.AclUri);
                 listVariableCollection.Parse("U_EDIT", core.Uri.BuildEditListUri(l.Id));
             }
 

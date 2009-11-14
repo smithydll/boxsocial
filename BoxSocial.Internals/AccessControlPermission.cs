@@ -19,8 +19,10 @@
  */
 
 using System;
-using System.Data;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Reflection;
 using System.Web;
 using BoxSocial.IO;
@@ -173,6 +175,23 @@ namespace BoxSocial.Internals
                                                                                new FieldValuePair("permission_description", permissionDescription));
 
             return acp;
+        }
+
+        public static List<AccessControlPermission> GetPermissions(Core core, IPermissibleItem item)
+        {
+            List<AccessControlPermission> permissions = new List<AccessControlPermission>();
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            sQuery.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
+
+            DataTable permissionsTable = core.db.Query(sQuery);
+
+            foreach (DataRow dr in permissionsTable.Rows)
+            {
+                permissions.Add(new AccessControlPermission(core, dr));
+            }
+
+            return permissions;
         }
 		
 		public new void Delete()

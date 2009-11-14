@@ -74,6 +74,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string AclUri
+        {
+            get
+            {
+                return BuildAclUri(core, item);
+            }
+        }
+
         public bool Can(string permission)
         {
             return Can(permission, (IPermissibleItem)item, false);
@@ -128,18 +136,21 @@ namespace BoxSocial.Internals
                 {
                     if (grant.PermissionId > 0 && grant.PermissionId == acp.Id)
                     {
-                        if (owner.GetIsMemberOfPrimitive(viewer, grant.PrimitiveKey))
+                        if (owner != null)
                         {
-                            switch (grant.Allow)
+                            if (owner.GetIsMemberOfPrimitive(viewer, grant.PrimitiveKey))
                             {
-                                case AccessControlGrants.Allow:
-                                    allow = true;
-                                    break;
-                                case AccessControlGrants.Deny:
-                                    deny = true;
-                                    break;
-                                case AccessControlGrants.Inherit:
-                                    break;
+                                switch (grant.Allow)
+                                {
+                                    case AccessControlGrants.Allow:
+                                        allow = true;
+                                        break;
+                                    case AccessControlGrants.Deny:
+                                        deny = true;
+                                        break;
+                                    case AccessControlGrants.Inherit:
+                                        break;
+                                }
                             }
                         }
                     }
@@ -148,9 +159,20 @@ namespace BoxSocial.Internals
 
             if (Grants == null || Grants.Count == 0)
             {
-                if (item.ItemKey.Equals(owner.ItemKey))
+                if (owner == null && viewer != null)
                 {
-                    if (owner.ItemKey.Equals(viewer.ItemKey))
+                    if (viewer.ItemKey.Equals(leaf.ItemKey))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return leaf.GetDefaultCan(permission);
+                    }
+                }
+                else if (item.ItemKey.Equals(owner.ItemKey))
+                {
+                    if (viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
                     {
                         return true;
                     }
@@ -192,6 +214,22 @@ namespace BoxSocial.Internals
 
         public static void LoadGrants(Core core, List<IPermissibleItem> items)
         {
+        }
+
+        public static void CreateAllGrantsForOwner(Core core, IPermissibleItem item)
+        {
+            List<AccessControlPermission> permissions = AccessControlPermission.GetPermissions(core, item);
+
+            foreach (AccessControlPermission permission in permissions)
+            {
+                AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
+        public static void CreateGrantForPrimitive(Core core, IPermissibleItem item, ItemKey grantee, string permissionName)
+        {
+            AccessControlPermission permission = new AccessControlPermission(core, item.ItemKey.TypeId, permissionName);
+            AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
         }
     }
 }

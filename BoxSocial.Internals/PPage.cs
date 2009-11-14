@@ -113,6 +113,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ShowPPageEventArgs(PPage page)
+            : base(page)
+        {
+        }
+
         public ShowPPageEventArgs(PPage page, long itemId)
             : base(page)
         {

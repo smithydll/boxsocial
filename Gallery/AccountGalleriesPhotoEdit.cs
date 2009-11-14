@@ -91,12 +91,12 @@ namespace BoxSocial.Applications.Gallery
 
             SetTemplate("account_galleries_photo_edit");
 
-            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_access,gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
+            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
                 LoggedInMember.UserId, photoId));
 
             if (photoTable.Rows.Count == 1)
             {
-                ushort photoAccess = (ushort)photoTable.Rows[0]["gallery_item_access"];
+                //ushort photoAccess = (ushort)photoTable.Rows[0]["gallery_item_access"];
                 byte license = (byte)photoTable.Rows[0]["gallery_item_license"];
                 string title = (string)photoTable.Rows[0]["gallery_item_title"];
                 string description = "";

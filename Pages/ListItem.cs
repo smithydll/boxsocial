@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Pages
                 normalisedText = text;
             }
 
-            if (!list.Access.Can("CREATE"))
+            if (!list.Access.Can("APPEND"))
             {
                 throw new UnauthorisedToCreateItemException();
             }

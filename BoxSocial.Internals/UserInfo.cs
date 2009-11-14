@@ -121,7 +121,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (userDisplayName == "")
+                if (string.IsNullOrEmpty(userDisplayName))
                 {
                     return userName;
                 }

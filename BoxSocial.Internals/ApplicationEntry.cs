@@ -1127,9 +1127,12 @@ namespace BoxSocial.Internals
 
             if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
             {
-                if (primitiveKey.Id == CreatorId)
+                if (primitiveKey.Id == Id)
                 {
-                    return true;
+                    if (CreatorId == viewer.Id)
+                    {
+                        return true;
+                    }
                 }
             }
 

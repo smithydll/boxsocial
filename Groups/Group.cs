@@ -1586,6 +1586,26 @@ namespace BoxSocial.Groups
             return false;
         }
 
+        public override bool CanEditItem()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsGroupOperator(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
+        public override bool CanDeleteItem()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsGroupOperator(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
         public override bool GetDefaultCan(string permission)
         {
             return false;

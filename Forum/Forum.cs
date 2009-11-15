@@ -1468,9 +1468,12 @@ namespace BoxSocial.Applications.Forum
 					}
                 }
 
-                if (thisForum.Access.Can("CREATE_TOPICS"))
+                if (!thisForum.IsCategory)
                 {
-                    page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                    if (thisForum.Access.Can("CREATE_TOPICS"))
+                    {
+                        page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                    }
                 }
             }
 

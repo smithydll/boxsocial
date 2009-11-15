@@ -683,6 +683,26 @@ namespace BoxSocial.Musician
             return false;
         }
 
+        public override bool CanEditItem()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsMusicianMember(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
+        public override bool CanDeleteItem()
+        {
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsMusicianMember(core.session.LoggedInMember);
+            }
+
+            return false;
+        }
+
         public override bool GetDefaultCan(string permission)
         {
             return false;

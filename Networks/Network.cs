@@ -1030,6 +1030,16 @@ namespace BoxSocial.Networks
             return false;
         }
 
+        public override bool CanEditItem()
+        {
+            return false;
+        }
+
+        public override bool CanDeleteItem()
+        {
+            return false;
+        }
+
         public override bool GetDefaultCan(string permission)
         {
             return false;

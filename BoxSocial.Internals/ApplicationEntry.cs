@@ -1149,6 +1149,26 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public override bool CanEditItem()
+        {
+            if (CreatorId == core.LoggedInMemberId)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override bool CanDeleteItem()
+        {
+            if (CreatorId == core.LoggedInMemberId)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public override bool GetDefaultCan(string permission)
         {
             return false;

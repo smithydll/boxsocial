@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Forum
         private long forumRank;
         [DataField("signature", 255)]
         private string forumSignature;
-		
+
 		public long ForumRankId
 		{
 			get
@@ -87,6 +87,8 @@ namespace BoxSocial.Applications.Forum
         public ForumMember(Core core, Primitive owner, User user)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
+
             // load the info into a the new object being created
             this.userInfo = user.Info;
             this.userProfile = user.Profile;
@@ -114,12 +116,16 @@ namespace BoxSocial.Applications.Forum
         public ForumMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
+            ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
+
             loadItemInfo(typeof(ForumMember), memberRow);
         }
 
         public ForumMember(Core core, Primitive owner, long userId, UserLoadOptions loadOptions)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
+
             SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("item_id", owner.Id);
@@ -140,6 +146,11 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidUserException();
             }
+        }
+
+        void ForumMember_ItemLoad()
+        {
+            base.userId = this.userId;
         }
 		
 		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)

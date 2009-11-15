@@ -175,6 +175,7 @@ namespace BoxSocial.Applications.Forum
 
                         template.Parse("S_TITLE", forum.Title);
                         template.Parse("S_DESCRIPTION", forum.Description);
+                        template.Parse("S_RULES", forum.Rules);
                         template.Parse("S_ID", forum.Id.ToString());
 
                         List<string> disabledItems = new List<string>();
@@ -259,6 +260,7 @@ namespace BoxSocial.Applications.Forum
             long forumId = core.Functions.FormLong("id", 0);
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
+            string rules = core.Http.Form["rules"];
             string type = core.Http.Form["type"];
 
             Forum forum;
@@ -275,6 +277,7 @@ namespace BoxSocial.Applications.Forum
 
             forum.Title = title;
             forum.Description = description;
+            forum.Rules = rules;
 			//forum.Permissions = Functions.GetPermission();
 
             try

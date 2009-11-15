@@ -144,6 +144,9 @@
   <data name="FORUM_RANK" xml:space="preserve">
     <value>Forum Rank</value>
   </data>
+  <data name="FORUM_RULES" xml:space="preserve">
+    <value>Forum Rules</value>
+  </data>
   <data name="FORUM_SETTINGS" xml:space="preserve">
     <value>Forum Settings</value>
   </data>

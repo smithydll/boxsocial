@@ -83,6 +83,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void CachePermissions()
+        {
+            FillPermissions();
+        }
+
         public bool Can(string permission)
         {
             return Can(permission, (IPermissibleItem)item, false);
@@ -95,13 +100,27 @@ namespace BoxSocial.Internals
 
             AccessControlPermission acp = null;
 
-            try
+            if (permissions == null)
             {
-                acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+                try
+                {
+                    acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+                }
+                catch (InvalidAccessControlPermissionException)
+                {
+                    acp = null;
+                }
             }
-            catch (InvalidAccessControlPermissionException)
+            else
             {
-                acp = null;
+                if (permissions.ContainsKey(permission))
+                {
+                    acp = permissions[permission];
+                }
+                else
+                {
+                    acp = null;
+                }
             }
 
             if (acp == null && permission == "EDIT_PERMISSIONS")
@@ -109,6 +128,22 @@ namespace BoxSocial.Internals
                 IPermissibleItem pi = (IPermissibleItem)this.item;
 
                 return pi.Owner.CanEditPermissions();
+            }
+
+            // Fall back if no overriding permission attribute for edit exists in the database
+            if (acp == null && permission == "EDIT")
+            {
+                IPermissibleItem pi = (IPermissibleItem)this.item;
+
+                return pi.Owner.CanEditItem();
+            }
+
+            // Fall back if no overriding permission attribute for delete exists in the database
+            if (acp == null && permission == "DELETE")
+            {
+                IPermissibleItem pi = (IPermissibleItem)this.item;
+
+                return pi.Owner.CanDeleteItem();
             }
 
             if (acp == null)

@@ -47,6 +47,8 @@ namespace BoxSocial.Groups
         private string groupDescription;
         [DataField("group_reg_date_ut")]
         private long timestampCreated;
+        [DataField("group_reg_ip", 50)]
+        private string registrationIp;
         [DataField("group_operators")]
         private long groupOperators;
         [DataField("group_officers")]

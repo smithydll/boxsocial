@@ -169,9 +169,9 @@ namespace BoxSocial.Applications.Forum
         {
         }
 
-        public static void Create(Core core, UserGroup thisGroup)
+        public static ForumSettings Create(Core core, Primitive owner)
         {
-            if (!thisGroup.IsGroupOperator(core.session.LoggedInMember))
+            //if (!thisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 // todo: throw new exception
                 // commented out due to errors on live site
@@ -179,15 +179,25 @@ namespace BoxSocial.Applications.Forum
             }
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumSettings)));
-            iQuery.AddField("forum_item_id", thisGroup.Id);
-            iQuery.AddField("forum_item_type_id", thisGroup.TypeId);
+            iQuery.AddField("forum_item_id", owner.Id);
+            iQuery.AddField("forum_item_type_id", owner.TypeId);
             iQuery.AddField("forum_topics", 0);
             iQuery.AddField("forum_posts", 0);
             iQuery.AddField("forum_topics_per_page", 10);
             iQuery.AddField("forum_posts_per_page", 10);
             iQuery.AddField("forum_allow_topics_root", true);
 
-            core.db.Query(iQuery);
+            long settingsId = core.db.Query(iQuery);
+
+            ForumSettings settings = new ForumSettings(core, settingsId);
+
+            if (owner is UserGroup)
+            {
+                settings.Access.CreateAllGrantsForPrimitive(UserGroup.GroupOperatorsGroupKey);
+                settings.Access.CreateGrantForPrimitive(UserGroup.GroupMembersGroupKey, "VIEW", "VIEW_TOPICS", "REPLY_TOPICS", "CREATE_TOPICS");
+            }
+
+            return settings;
         }
 
         public new long Update()

@@ -204,7 +204,21 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    UserGroup newGroup = UserGroup.Create(core, Request.Form["title"], slug, Request.Form["description"], category, Request.Form["type"]);
+                    UserGroup newGroup = null;
+                    try
+                    {
+                        newGroup = UserGroup.Create(core, Request.Form["title"], slug, Request.Form["description"], category, Request.Form["type"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Response.Write(core.db.QueryList);
+                        Response.End();
+                    }
+                    catch (InvalidGroupException)
+                    {
+                        Response.Write(core.db.QueryList);
+                        Response.End();
+                    }
 
                     if (newGroup == null)
                     {

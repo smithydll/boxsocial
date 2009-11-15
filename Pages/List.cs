@@ -393,17 +393,10 @@ namespace BoxSocial.Applications.Pages
                 List list = new List(core, core.session.LoggedInMember, listId);
 
                 /* LOAD THE DEFAULT ITEM PERMISSIONS */
-                /*AccessControlPermission acpEdit = new AccessControlPermission(core, list.ItemKey.TypeId, "EDIT");
-                AccessControlPermission acpView = new AccessControlPermission(core, list.ItemKey.TypeId, "VIEW");
-                AccessControlPermission acpAppend = new AccessControlPermission(core, list.ItemKey.TypeId, "APPEND");
-                AccessControlPermission acpDeleteItems = new AccessControlPermission(core, list.ItemKey.TypeId, "DELETE_ITEMS");
-                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpEdit.PermissionId, AccessControlGrants.Allow);
-                AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), list.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
-                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpAppend.PermissionId, AccessControlGrants.Allow);
-                AccessControlGrant.Create(core, core.session.LoggedInMember.ItemKey, list.ItemKey, acpDeleteItems.PermissionId, AccessControlGrants.Allow);*/
-
-                Access.CreateAllGrantsForOwner(core, list);
-                Access.CreateGrantForPrimitive(core, list, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
+                list.Access.CreateAllGrantsForOwner();
+                list.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+                //Access.CreateAllGrantsForOwner(core, list);
+                //Access.CreateGrantForPrimitive(core, list, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
 
                 return list;
             }
@@ -439,6 +432,11 @@ namespace BoxSocial.Applications.Pages
                 listVariableCollection.Parse("TITLE", list.Title);
                 listVariableCollection.Parse("URI", List.BuildListUri(e.Core, list));
             }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "lists", "Lists" });
+
+            page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }
 
         public static void Show(object sender, ShowPPageEventArgs e)
@@ -490,6 +488,12 @@ namespace BoxSocial.Applications.Pages
                         listVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildRemoveFromListUri(listItem.ListItemId));
                     }
                 }
+
+                List<string[]> breadCrumbParts = new List<string[]>();
+                breadCrumbParts.Add(new string[] { "lists", "Lists" });
+                breadCrumbParts.Add(new string[] { list.Path, list.Title });
+
+                page.Owner.ParseBreadCrumbs(breadCrumbParts);
             }
             catch (InvalidListException)
             {

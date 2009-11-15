@@ -1503,11 +1503,11 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -3, "REGISTERED_USERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOperator)), -1, "OPERATORS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupOfficer)), -1, "OFFICERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(GroupMember)), -1, "MEMBERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOperatorsGroupKey, "OPERATORS", null));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOfficersGroupKey, "OFFICERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupMembersGroupKey, "MEMBERS", null));
 
             return ppgs;
         }
@@ -1596,6 +1596,30 @@ namespace BoxSocial.Groups
             get
             {
                 return "Group: " + DisplayName;
+            }
+        }
+
+        public static ItemKey GroupOperatorsGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupOperator)));
+            }
+        }
+
+        public static ItemKey GroupOfficersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupOfficer)));
+            }
+        }
+
+        public static ItemKey GroupMembersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember)));
             }
         }
     }

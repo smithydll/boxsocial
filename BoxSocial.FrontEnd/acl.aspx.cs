@@ -101,6 +101,8 @@ namespace BoxSocial.FrontEnd
             {
                 acl_Save(acl);
             }
+
+            template.Parse("ITEM_TITLE", pi.DisplayTitle);
             
             acl.ParseACL(template, pi.Owner, "S_PERMISSIONS");
             

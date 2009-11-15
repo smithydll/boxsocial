@@ -900,7 +900,20 @@ namespace BoxSocial.Applications.Forum
 
             long forumId = core.db.Query(iquery);
 
-            return new Forum(core, forumId);
+            Forum forum = new Forum(core, forumId);
+
+            /* LOAD THE DEFAULT ITEM PERMISSIONS */
+            /*Access.CreateAllGrantsForOwner(core, forum);
+
+            if (parent.Owner is UserGroup)
+            {
+                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "VIEW");
+                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "VIEW_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "REPLY_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "CREATE_TOPICS");
+            }*/
+
+            return forum;
         }
 
         public void MoveUp()
@@ -1573,9 +1586,9 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (forumId == 0)
+                if (parentId == 0)
                 {
-                    return new ForumSettings(core, Owner);
+                    return Settings;
                 }
                 else
                 {

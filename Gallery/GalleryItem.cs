@@ -126,6 +126,9 @@ namespace BoxSocial.Applications.Gallery
         [DataField("gallery_item_abstract", MYSQL_TEXT)]
         protected string itemAbstract;
 
+        [DataField("gallery_item_date_ut")]
+        private long itemCreatedRaw;
+
         /// <summary>
         /// 
         /// </summary>
@@ -277,6 +280,16 @@ namespace BoxSocial.Applications.Gallery
             {
                 return itemAbstract;
             }
+        }
+
+        /// <summary>
+        /// Gets the date the gallery item was uploaded.
+        /// </summary>
+        /// <param name="tz">Timezone</param>
+        /// <returns>DateTime object</returns>
+        public DateTime GetCreatedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(itemCreatedRaw);
         }
 
         /// <summary>

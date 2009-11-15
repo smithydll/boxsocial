@@ -2125,9 +2125,9 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "CREATOR", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -3, "REGISTERED_USERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -1, "FRIENDS", null));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -2, "FAMILY_MEMBERS", null));
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -3, "BLOCKED_USERS", null));
@@ -2271,6 +2271,30 @@ namespace BoxSocial.Internals
             get
             {
                 return "User: " + DisplayName + " (" + UserName + ")";
+            }
+        }
+
+        public static ItemKey CreatorKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(User)));
+            }
+        }
+
+        public static ItemKey EveryoneGroupKey
+        {
+            get
+            {
+                return new ItemKey(-2, ItemType.GetTypeId(typeof(User)));
+            }
+        }
+
+        public static ItemKey RegisteredUsersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-3, ItemType.GetTypeId(typeof(User)));
             }
         }
     }

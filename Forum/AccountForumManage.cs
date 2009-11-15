@@ -96,7 +96,17 @@ namespace BoxSocial.Applications.Forum
 
                 if (thisForum.Id == 0)
                 {
-                    ForumSettings settings = new ForumSettings(core, thisForum.Owner);
+                    ForumSettings settings;
+                    try
+                    {
+                        settings = new ForumSettings(core, thisForum.Owner);
+                    }
+                    catch (InvalidForumSettingsException)
+                    {
+                        ForumSettings.Create(core, thisForum.Owner);
+                        settings = new ForumSettings(core, thisForum.Owner);
+                    }
+                    //ForumSettings settings = new ForumSettings(core, thisForum.Owner);
                     template.Parse("U_PERMISSIONS", core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", settings.Id, ItemType.GetTypeId(typeof(ForumSettings))), true));
                 }
                 else

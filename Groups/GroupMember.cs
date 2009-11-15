@@ -53,6 +53,8 @@ namespace BoxSocial.Groups
         private long groupId;
         [DataField("group_member_date_ut")]
         private long memberJoinDateRaw;
+        [DataField("group_member_ip", 50)]
+        private string memberJoinIp;
         [DataField("group_member_approved")]
         private byte memberApproval;
 

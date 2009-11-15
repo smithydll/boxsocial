@@ -64,7 +64,17 @@ namespace BoxSocial.Applications.Forum
 			
 			Save(new EventHandler(AccountForumSettings_Save));
 
-            ForumSettings settings = new ForumSettings(core, Owner);
+            ForumSettings settings;
+            try
+            {
+                settings = new ForumSettings(core, Owner);
+            }
+            catch (InvalidForumSettingsException)
+            {
+                ForumSettings.Create(core, Owner);
+                settings = new ForumSettings(core, Owner);
+            }
+            //ForumSettings settings = new ForumSettings(core, Owner);
 
             template.Parse("S_TOPICS_PER_PAGE", settings.TopicsPerPage.ToString());
             template.Parse("S_POSTS_PER_PAGE", settings.PostsPerPage.ToString());

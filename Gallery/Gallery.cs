@@ -935,8 +935,14 @@ namespace BoxSocial.Applications.Gallery
 
             long galleryId = core.db.Query(iQuery);
 
-            //return galleryId;
-            return new Gallery(core, owner, galleryId);
+            Gallery gallery = new Gallery(core, owner, galleryId);
+
+            /* LOAD THE DEFAULT ITEM PERMISSIONS */
+            Access.CreateAllGrantsForOwner(core, gallery);
+            Access.CreateGrantForPrimitive(core, gallery, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
+            Access.CreateGrantForPrimitive(core, gallery, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW_ITEMS");
+
+            return gallery;
         }
 
         /// <summary>

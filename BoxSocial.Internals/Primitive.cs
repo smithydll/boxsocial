@@ -367,6 +367,11 @@ namespace BoxSocial.Internals
             this.languageKey = null;
             this.displayName = displayName;
         }
+
+        public PrimitivePermissionGroup(ItemKey item, string displayName)
+            : this(item.TypeId, item.Id, displayName)
+        {
+        }
         
         public PrimitivePermissionGroup(long typeId, long id, string languageKey, string displayName)
         {
@@ -374,6 +379,11 @@ namespace BoxSocial.Internals
             this.itemId = id;
             this.languageKey = languageKey;
             this.displayName = displayName;
+        }
+
+        public PrimitivePermissionGroup(ItemKey item, string languageKey, string displayName)
+            : this(item.TypeId, item.Id, languageKey, displayName)
+        {
         }
     }
 }

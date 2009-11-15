@@ -40,6 +40,7 @@ namespace BoxSocial.Internals
         private User viewer;
 
         private List<AccessControlGrant> grants;
+        private Dictionary<string, AccessControlPermission> permissions;
         private IPermissibleItem item;
 
         public Access(Core core, IPermissibleItem item)
@@ -190,7 +191,14 @@ namespace BoxSocial.Internals
 
                         if (parents == null || parents.Nodes.Count == 0)
                         {
-                            return owner.Access.Can(permission, leaf, true);
+                            if (item.PermissiveParent == null)
+                            {
+                                return owner.Access.Can(permission, leaf, true);
+                            }
+                            else
+                            {
+                                return item.PermissiveParent.Access.Can(permission, leaf, true);
+                            }
                         }
                         else
                         {
@@ -226,10 +234,64 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static void CreateGrantForPrimitive(Core core, IPermissibleItem item, ItemKey grantee, string permissionName)
+        public static void CreateGrantForPrimitive(Core core, IPermissibleItem item, ItemKey grantee, params string[] permissionNames)
         {
-            AccessControlPermission permission = new AccessControlPermission(core, item.ItemKey.TypeId, permissionName);
-            AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
+            query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
+
+            DataTable permissionDataTable = core.db.Query(query);
+
+            foreach (DataRow dr in permissionDataTable.Rows)
+            {
+                AccessControlPermission permission = new AccessControlPermission(core, dr);
+                AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
+        private void FillPermissions()
+        {
+            if (permissions == null)
+            {
+                List<AccessControlPermission> permissionsList = AccessControlPermission.GetPermissions(core, item);
+                permissions = new Dictionary<string, AccessControlPermission>();
+
+                foreach (AccessControlPermission permission in permissionsList)
+                {
+                    permissions.Add(permission.Name, permission);
+                }
+            }
+        }
+
+        public void CreateAllGrantsForOwner()
+        {
+            FillPermissions();
+
+            foreach (AccessControlPermission permission in permissions.Values)
+            {
+                AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
+        public void CreateAllGrantsForPrimitive(ItemKey grantee)
+        {
+            FillPermissions();
+
+            foreach (AccessControlPermission permission in permissions.Values)
+            {
+                AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
+        public void CreateGrantForPrimitive(ItemKey grantee, params string[] permissionNames)
+        {
+            FillPermissions();
+
+            foreach (string permissionName in permissionNames)
+            {
+                AccessControlPermission permission = permissions[permissionName];
+                AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
         }
     }
 }

@@ -143,6 +143,7 @@ namespace BoxSocial.Applications.Forum
 
             member.ForumSignature = core.Http.Form["signature"];
             member.ForumRankId = rankId;
+
             member.Update(typeof(ForumMember));
 			
 			SetRedirectUri(BuildUri());

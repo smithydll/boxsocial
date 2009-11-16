@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -161,7 +162,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public ItemKey ItemKey
+        public new ItemKey ItemKey
         {
             get
             {

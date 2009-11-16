@@ -146,11 +146,26 @@ namespace BoxSocial.Applications.Forum
 
             long id = core.Functions.RequestLong("id", 0);
 
+            /* Forum Types SelectBox*/
             SelectBox forumTypesSelectBox = new SelectBox("type");
             Dictionary<string, string> forumTypes = new Dictionary<string, string>();
             forumTypesSelectBox.Add(new SelectBoxItem("FORUM", "Forum"));
             forumTypesSelectBox.Add(new SelectBoxItem("CAT", "Category"));
             //forumTypes.Add("LINK", "Link");
+
+            /* Title TextBox */
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 127;
+
+            /* Description TextBox */
+            TextBox descriptionTextBox = new TextBox("description");
+            descriptionTextBox.IsFormatted = true;
+            descriptionTextBox.Lines = 6;
+
+            /* Rules TextBox */
+            TextBox rulesTextBox = new TextBox("rules");
+            rulesTextBox.IsFormatted = true;
+            rulesTextBox.Lines = 6;
 
             switch (e.Mode)
             {
@@ -158,7 +173,6 @@ namespace BoxSocial.Applications.Forum
                     forumTypesSelectBox.SelectedKey = "FORUM";
 
                     template.Parse("S_ID", id.ToString());
-                    template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
 				
                     break;
                 case "edit":
@@ -173,9 +187,10 @@ namespace BoxSocial.Applications.Forum
                             type = "CAT";
                         }
 
-                        template.Parse("S_TITLE", forum.Title);
-                        template.Parse("S_DESCRIPTION", forum.Description);
-                        template.Parse("S_RULES", forum.Rules);
+                        titleTextBox.Value = forum.Title;
+                        descriptionTextBox.Value = forum.Description;
+                        rulesTextBox.Value = forum.Rules;
+
                         template.Parse("S_ID", forum.Id.ToString());
 
                         List<string> disabledItems = new List<string>();
@@ -185,10 +200,6 @@ namespace BoxSocial.Applications.Forum
 
                         forumTypesSelectBox.SelectedKey = type;
 
-                        template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
-					
-					    //Display.ParsePermissionsBox(template, "S_FORUM_PERMS", forum.Permissions, forum.PermissibleActions);
-
                         template.Parse("EDIT", "TRUE");
                     }
                     catch (InvalidForumException)
@@ -197,6 +208,11 @@ namespace BoxSocial.Applications.Forum
                     }
                     break;
             }
+
+            template.Parse("S_TITLE", titleTextBox);
+            template.Parse("S_DESCRIPTION", descriptionTextBox);
+            template.Parse("S_RULES", rulesTextBox);
+            template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
         }
 
         void AccountForumManage_New_Save(object sender, EventArgs e)

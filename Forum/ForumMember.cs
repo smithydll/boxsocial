@@ -48,6 +48,8 @@ namespace BoxSocial.Applications.Forum
         [DataField("signature", 255)]
         private string forumSignature;
 
+        private Access access;
+
 		public long ForumRankId
 		{
 			get
@@ -83,6 +85,19 @@ namespace BoxSocial.Applications.Forum
 				SetProperty("forumSignature", value);
 			}
 		}
+
+        public override Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+
+                return access;
+            }
+        }
 
         public ForumMember(Core core, Primitive owner, User user)
             : base(core)
@@ -168,6 +183,20 @@ namespace BoxSocial.Applications.Forum
 			
 			return new ForumMember(core, owner, user);
 		}
+
+        public override bool CanEditItem()
+        {
+            if (userId == core.LoggedInMemberId)
+            {
+                return true;
+            }
+            if (Owner != null && Owner.CanEditItem())
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         // cannot use this method for conversion because we do not have public
         // access to the core token

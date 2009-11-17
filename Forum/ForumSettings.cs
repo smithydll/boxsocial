@@ -194,7 +194,13 @@ namespace BoxSocial.Applications.Forum
             if (owner is UserGroup)
             {
                 settings.Access.CreateAllGrantsForPrimitive(UserGroup.GroupOperatorsGroupKey);
-                settings.Access.CreateGrantForPrimitive(UserGroup.GroupMembersGroupKey, "VIEW", "VIEW_TOPICS", "REPLY_TOPICS", "CREATE_TOPICS");
+                settings.Access.CreateGrantForPrimitive(UserGroup.GroupMembersGroupKey, "VIEW", "VIEW_TOPICS", "LIST_TOPICS", "REPLY_TOPICS", "CREATE_TOPICS");
+                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_TOPICS", "LIST_TOPICS");
+            }
+            if (owner is ApplicationEntry)
+            {
+                settings.Access.CreateGrantForPrimitive(User.RegisteredUsersGroupKey, "VIEW", "VIEW_TOPICS", "LIST_TOPICS", "REPLY_TOPICS", "CREATE_TOPICS");
+                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_TOPICS", "LIST_TOPICS");
             }
 
             return settings;

@@ -73,10 +73,6 @@ namespace BoxSocial.Applications.Forum
         private long lastPostTimeRaw;
         [DataField("forum_last_post_id")]
         private long lastPostId;
-        /*[DataField("forum_item_id")]
-        private long ownerId;
-        [DataField("forum_item_type", 63)]
-        private string ownerType;*/
 		[DataField("forum_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("forum_order")]
@@ -1504,6 +1500,45 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("FORUM_TOPICS", core.Functions.LargeIntegerToString(settings.Topics));
                 page.template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.Group.Members));
             }
+
+            PermissionsList permissions = new PermissionsList(core);
+            bool flagPermissionsBlock = false;
+
+            if (thisForum.Access.Can("CREATE_TOPICS"))
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_CREATE_TOPICS"), true);
+                flagPermissionsBlock = true;
+            }
+            else
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_CREATE_TOPICS"), false);
+                flagPermissionsBlock = true;
+            }
+            if (thisForum.Access.Can("REPLY_TOPICS"))
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_POST_REPLIES"), true);
+                flagPermissionsBlock = true;
+            }
+            else
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_POST_REPLIES"), false);
+                flagPermissionsBlock = true;
+            }
+            if (thisForum.Access.Can("EDIT_OWN_POSTS"))
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_EDIT_YOUR_POSTS"), true);
+                flagPermissionsBlock = true;
+            }
+            if (thisForum.Access.Can("DELETE_OWN_POSTS"))
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_DELETE_YOUR_POSTS"), true);
+                flagPermissionsBlock = true;
+            }
+
+            if (flagPermissionsBlock)
+            {
+                permissions.Parse("PERMISSION_BLOCK");
+            }
         }
 
         public ForumSettings Settings
@@ -1602,16 +1637,6 @@ namespace BoxSocial.Applications.Forum
 
         public bool GetDefaultCan(string permission)
         {
-            /*switch (permission)
-            {
-                case "
-            if (Owner is UserGroup)
-            {
-                if (((UserGroup)Owner).IsGroupMember(core.session.LoggedInMember))
-                {
-                    return true;
-                }
-            }*/
             return false;
         }
 

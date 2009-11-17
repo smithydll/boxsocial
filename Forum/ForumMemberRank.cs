@@ -33,7 +33,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_ranks")]
-    public class ForumMemberRank : NumberedItem
+    public class ForumMemberRank : NumberedItem, IPermissibleItem
     {
         [DataField("rank_id", DataFieldKeys.Primary)]
         private long rankId;
@@ -49,6 +49,9 @@ namespace BoxSocial.Applications.Forum
         private bool rankSpecial;
         [DataField("rank_image_id")]
         private long rankImageId;
+
+        private Primitive owner;
+        private Access access;
 
         public long RankId
         {
@@ -111,6 +114,36 @@ namespace BoxSocial.Applications.Forum
             set
             {
                 SetProperty("rankSpecial", value);
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+
+                return access;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || (rankOwner.Id != owner.Id && rankOwner.TypeId != owner.TypeId))
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(rankOwner);
+                    owner = core.PrimitiveCache[rankOwner];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -212,6 +245,35 @@ namespace BoxSocial.Applications.Forum
             }
 
             return ranks;
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Forum Rank: " + RankTitleText;
+            }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
         }
     }
 

@@ -41,8 +41,6 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_topics")]
     public class ForumTopic : NumberedItem
     {
-        //public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
-
         [DataField("topic_id", DataFieldKeys.Primary)]
         private long topicId;
         [DataField("forum_id", typeof(Forum))]
@@ -504,6 +502,57 @@ namespace BoxSocial.Applications.Forum
                 core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
+            /*uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
+            uQuery.AddField("posts", new QueryOperation("posts", QueryOperations.Addition, 1));
+            uQuery.AddCondition("user_id", core.session.LoggedInMember.Id);
+            uQuery.AddCondition("item_id", forum.Owner.Id);
+            uQuery.AddCondition("item_type_id", forum.Owner.TypeId);
+
+            rowsUpdated = core.db.Query(uQuery);
+
+            if (rowsUpdated == 0)
+            {
+                ForumMember fm = ForumMember.Create(core, forum.Owner, core.session.LoggedInMember, true);
+
+                uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
+                uQuery.AddField("posts", new QueryOperation("posts", QueryOperations.Addition, 1));
+                uQuery.AddCondition("user_id", core.session.LoggedInMember.Id);
+                uQuery.AddCondition("item_id", forum.Owner.Id);
+                uQuery.AddCondition("item_type_id", forum.Owner.TypeId);
+
+                core.db.Query(uQuery);
+            }*/
+
+            ForumMember fm = null;
+
+            try
+            {
+                fm = new ForumMember(core, forum.Owner, core.session.LoggedInMember);
+            }
+            catch (InvalidForumMemberException)
+            {
+                fm = ForumMember.Create(core, forum.Owner, core.session.LoggedInMember, true);
+            }
+
+            fm.ForumPosts += 1;
+
+            Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, forum.Owner);
+
+            if (!(ranks.ContainsKey(fm.ForumRankId) && ranks[fm.ForumRankId].RankSpecial))
+            {
+                int rankLastMin = 0;
+                foreach (ForumMemberRank rank in ranks.Values)
+                {
+                    if ((!rank.RankSpecial) && fm.ForumPosts >= rank.RankPosts && rank.RankPosts > rankLastMin)
+                    {
+                        fm.ForumRankId = rank.Id;
+                        rankLastMin = rank.RankPosts;
+                    }
+                }
+            }
+
+            fm.Update(typeof(ForumMember));
+
             return topic;
         }
 
@@ -570,7 +619,7 @@ namespace BoxSocial.Applications.Forum
                 core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 			
-			uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
+			/*uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
             uQuery.AddField("posts", new QueryOperation("posts", QueryOperations.Addition, 1));
 			uQuery.AddCondition("user_id", core.session.LoggedInMember.Id);
             uQuery.AddCondition("item_id", Forum.Owner.Id);
@@ -581,7 +630,45 @@ namespace BoxSocial.Applications.Forum
 			if (rowsUpdated == 0)
 			{
 				ForumMember fm = ForumMember.Create(core, Forum.Owner, core.session.LoggedInMember, true);
-			}
+
+                uQuery = new UpdateQuery(ForumMember.GetTable(typeof(ForumMember)));
+                uQuery.AddField("posts", new QueryOperation("posts", QueryOperations.Addition, 1));
+                uQuery.AddCondition("user_id", core.session.LoggedInMember.Id);
+                uQuery.AddCondition("item_id", Forum.Owner.Id);
+                uQuery.AddCondition("item_type_id", Forum.Owner.TypeId);
+
+                db.Query(uQuery);
+			}*/
+
+            ForumMember fm = null;
+
+            try
+            {
+                fm = new ForumMember(core, Forum.Owner, core.session.LoggedInMember);
+            }
+            catch (InvalidForumMemberException)
+            {
+                fm = ForumMember.Create(core, Forum.Owner, core.session.LoggedInMember, true);
+            }
+
+            fm.ForumPosts += 1;
+
+            Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, Forum.Owner);
+
+            if (!(ranks.ContainsKey(fm.ForumRankId) && ranks[fm.ForumRankId].RankSpecial))
+            {
+                int rankLastMin = 0;
+                foreach (ForumMemberRank rank in ranks.Values)
+                {
+                    if ((!rank.RankSpecial) && fm.ForumPosts >= rank.RankPosts && rank.RankPosts > rankLastMin)
+                    {
+                        fm.ForumRankId = rank.Id;
+                        rankLastMin = rank.RankPosts;
+                    }
+                }
+            }
+
+            fm.Update(typeof(ForumMember));
 
             return post;
         }

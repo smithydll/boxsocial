@@ -572,6 +572,17 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
         }
 
+        protected Dictionary<string, string> GetModeHiddenFieldList()
+        {
+            Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
+            
+            hiddenFieldList.Add("module", this.ModuleKey);
+            hiddenFieldList.Add("sub", this.Key);
+            hiddenFieldList.Add("mode", core.Http["mode"]);
+
+            return hiddenFieldList;
+        }
+
     }
 
     public class ModuleModeEventArgs : EventArgs

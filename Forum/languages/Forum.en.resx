@@ -198,14 +198,6 @@
   <data name="NO_TOPICS_FORUM" xml:space="preserve">
     <value>There are no topics in this forum.</value>
   </data>
-  <data name="PERMISSION_POST_TOPIC" xml:space="preserve">
-    <value>You [b]{0}[/b] post new topics</value>
-    <comment>You can post new topics</comment>
-  </data>
-  <data name="PERMISSION_REPLY_TOPIC" xml:space="preserve">
-    <value>You [b]{0}[/b] reply to topics</value>
-    <comment>You can reply to topics</comment>
-  </data>
   <data name="POST" xml:space="preserve">
     <value>Post</value>
   </data>
@@ -256,5 +248,17 @@
   </data>
   <data name="VIEWS" xml:space="preserve">
     <value>Views</value>
+  </data>
+  <data name="YOU_CAN_CREATE_TOPICS" xml:space="preserve">
+    <value>You [b]{0}[/b] start new topics in this forum</value>
+  </data>
+  <data name="YOU_CAN_DELETE_YOUR_POSTS" xml:space="preserve">
+    <value>You [b]{0}[/b] delete your posts in this forum</value>
+  </data>
+  <data name="YOU_CAN_EDIT_YOUR_POSTS" xml:space="preserve">
+    <value>You [b]{0}[/b] edit your posts in this forum</value>
+  </data>
+  <data name="YOU_CAN_POST_REPLIES" xml:space="preserve">
+    <value>You [b]{0}[/b] post replies to topics in this forum</value>
   </data>
 </root>

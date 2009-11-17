@@ -84,8 +84,11 @@ namespace BoxSocial.Applications.Forum
 
             if (string.IsNullOrEmpty(topicState))
             {
-                topicState = TopicStates.Normal.ToString();
+                topicState = ((byte)TopicStates.Normal).ToString();
             }
+
+            List<SelectBoxItem> sbis = new List<SelectBoxItem>();
+            sbis.Add(new SelectBoxItem(((byte)TopicStates.Normal).ToString(), "Topic"));
 
             if (page is GPage)
             {
@@ -94,14 +97,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (((GPage)page).Group.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
                 {
-                    
-                    List<SelectBoxItem> sbis = new List<SelectBoxItem>();
-                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Normal).ToString(), "Topic"));
-                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Sticky).ToString(), "Sticky"));
-                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
                     // TODO: Global, remember to update columns to 4
-
-                    core.Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", 3, sbis, topicState);
                 }
             }
 
@@ -147,6 +143,33 @@ namespace BoxSocial.Applications.Forum
                         }
                     }
                 }
+
+                if (thisTopic.Forum.Access.Can("CREATE_STICKY"))
+                {
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Sticky).ToString(), "Sticky"));
+                }
+                if (thisTopic.Forum.Access.Can("CREATE_ANNOUNCEMENTS"))
+                {
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
+                }
+            }
+            else if (forumId > 0)
+            {
+                Forum forum = new Forum(core, forumId);
+                if (!forum.Access.Can("CREATE_TOPICS"))
+                {
+                    core.Display.ShowMessage("Cannot create new topic", "Not authorised to create a new topic");
+                    return;
+                }
+
+                if (forum.Access.Can("CREATE_STICKY"))
+                {
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Sticky).ToString(), "Sticky"));
+                }
+                if (forum.Access.Can("CREATE_ANNOUNCEMENTS"))
+                {
+                    sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
+                }
             }
 
             page.template.Parse("S_MODE", mode);
@@ -182,6 +205,11 @@ namespace BoxSocial.Applications.Forum
             if (!string.IsNullOrEmpty(text))
             {
                 page.template.Parse("S_POST_TEXT", text);
+            }
+
+            if (sbis.Count > 1)
+            {
+                core.Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", sbis.Count, sbis, topicState);
             }
 
             if (submitMode != "none")
@@ -281,7 +309,24 @@ namespace BoxSocial.Applications.Forum
 
                         /*try
                         {*/
-                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text, (TopicStates)core.Functions.FormByte("topic-state", (byte)TopicStates.Normal));
+                        TopicStates topicState = 0;
+
+                        if (core.Http["topic-state"] != null)
+                        {
+                            topicState = (TopicStates)core.Functions.FormByte("topic-state", (byte)TopicStates.Normal);
+                        }
+
+                        if (topicState == TopicStates.Announcement && (!forum.Access.Can("CREATE_ANNOUNCEMENTS")))
+                        {
+                            topicState = TopicStates.Normal;
+                        }
+
+                        if (topicState == TopicStates.Sticky && (!forum.Access.Can("CREATE_STICKY")))
+                        {
+                            topicState = TopicStates.Normal;
+                        }
+
+                        ForumTopic topic = ForumTopic.Create(core, forum, subject, text, topicState);
 
                         page.template.Parse("REDIRECT_URI", topic.Uri);
                         core.Display.ShowMessage("Topic Posted", "Topic has been posted");

@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Forum
 
             long id = core.Functions.RequestLong("id", 0);
 
-            /* Forum Types SelectBox*/
+            /* Forum Types SelectBox */
             SelectBox forumTypesSelectBox = new SelectBox("type");
             Dictionary<string, string> forumTypes = new Dictionary<string, string>();
             forumTypesSelectBox.Add(new SelectBoxItem("FORUM", "Forum"));
@@ -209,6 +209,7 @@ namespace BoxSocial.Applications.Forum
                     break;
             }
 
+            /* Parse the form fields */
             template.Parse("S_TITLE", titleTextBox);
             template.Parse("S_DESCRIPTION", descriptionTextBox);
             template.Parse("S_RULES", rulesTextBox);

@@ -86,6 +86,14 @@ namespace BoxSocial.Applications.Forum
             long id = core.Functions.RequestLong("id", 0);
             ForumMember member = null;
 
+            /* Signature TextBox */
+            TextBox signatureTextBox = new TextBox("signature");
+            signatureTextBox.IsDisabled = true;
+            signatureTextBox.Lines = 7;
+
+            /* Ranks SelectBox */
+            SelectBox ranksSelectBox = new SelectBox("ranks");
+
             try
             {
                 member = new ForumMember(core, Owner, id, UserLoadOptions.All);
@@ -99,7 +107,6 @@ namespace BoxSocial.Applications.Forum
                 core.Functions.Generate404();
             }
 
-            SelectBox ranksSelectBox = new SelectBox("ranks");
             ranksSelectBox.Add(new SelectBoxItem("0", "None"));
 
             Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, Owner);
@@ -114,9 +121,12 @@ namespace BoxSocial.Applications.Forum
                 ranksSelectBox.SelectedKey = member.ForumRankId.ToString();
             }
 
+            signatureTextBox.Value = member.ForumSignature;
+
+            /* Parse the form fields */
             template.Parse("S_USERNAME", member.UserName);
             template.Parse("S_RANK", ranksSelectBox);
-            template.Parse("S_SIGNATURE", member.ForumSignature);
+            template.Parse("S_SIGNATURE", signatureTextBox);
 			template.Parse("S_ID", id.ToString());
         }
 

@@ -40,7 +40,9 @@ namespace BoxSocial.Internals
         private User viewer;
 
         private List<AccessControlGrant> grants;
+        private List<long> permissionsEnacted;
         private Dictionary<string, AccessControlPermission> permissions;
+        private Dictionary<string, bool> cachedPermissions;
         private IPermissibleItem item;
 
         public Access(Core core, IPermissibleItem item)
@@ -69,7 +71,17 @@ namespace BoxSocial.Internals
             {
                 if (grants == null)
                 {
+                    permissionsEnacted = new List<long>();
+
                     grants = AccessControlGrant.GetGrants(core, this.item);
+
+                    foreach (AccessControlGrant grant in grants)
+                    {
+                        if (!permissionsEnacted.Contains(grant.PermissionId))
+                        {
+                            permissionsEnacted.Add(grant.PermissionId);
+                        }
+                    }
                 }
                 return grants;
             }
@@ -88,6 +100,25 @@ namespace BoxSocial.Internals
             FillPermissions();
         }
 
+        private bool CachePermission(string permission, bool access)
+        {
+            if (cachedPermissions == null)
+            {
+                cachedPermissions = new Dictionary<string, bool>();
+            }
+
+            if (cachedPermissions.ContainsKey(permission))
+            {
+                cachedPermissions[permission] = access;
+            }
+            else
+            {
+                cachedPermissions.Add(permission, access);
+            }
+
+            return access;
+        }
+
         public bool Can(string permission)
         {
             return Can(permission, (IPermissibleItem)item, false);
@@ -97,6 +128,12 @@ namespace BoxSocial.Internals
         {
             bool allow = false;
             bool deny = false;
+            long permissionId = 0;
+
+            if (cachedPermissions != null && cachedPermissions.ContainsKey(permission))
+            {
+                return cachedPermissions[permission];
+            }
 
             AccessControlPermission acp = null;
 
@@ -127,7 +164,7 @@ namespace BoxSocial.Internals
             {
                 IPermissibleItem pi = (IPermissibleItem)this.item;
 
-                return pi.Owner.CanEditPermissions();
+                return CachePermission(permission, pi.Owner.CanEditPermissions());
             }
 
             // Fall back if no overriding permission attribute for edit exists in the database
@@ -135,7 +172,7 @@ namespace BoxSocial.Internals
             {
                 IPermissibleItem pi = (IPermissibleItem)this.item;
 
-                return pi.Owner.CanEditItem();
+                return CachePermission(permission, pi.Owner.CanEditItem());
             }
 
             // Fall back if no overriding permission attribute for delete exists in the database
@@ -143,20 +180,22 @@ namespace BoxSocial.Internals
             {
                 IPermissibleItem pi = (IPermissibleItem)this.item;
 
-                return pi.Owner.CanDeleteItem();
+                return CachePermission(permission, pi.Owner.CanDeleteItem());
             }
 
             if (acp == null)
             {
                 if (inherit)
                 {
-                    return false;
+                    return CachePermission(permission, false);
                 }
                 else
                 {
                     throw new InvalidAccessControlPermissionException();
                 }
             }
+
+            permissionId = acp.Id;
 
             if (Grants != null)
             {
@@ -193,28 +232,28 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (Grants == null || Grants.Count == 0)
+            if (Grants == null || Grants.Count == 0 || (!permissionsEnacted.Contains(permissionId)))
             {
                 if (owner == null && viewer != null)
                 {
                     if (viewer.ItemKey.Equals(leaf.ItemKey))
                     {
-                        return true;
+                        return CachePermission(permission, true);
                     }
                     else
                     {
-                        return leaf.GetDefaultCan(permission);
+                        return CachePermission(permission, leaf.GetDefaultCan(permission));
                     }
                 }
                 else if (item.ItemKey.Equals(owner.ItemKey))
                 {
                     if (viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
                     {
-                        return true;
+                        return CachePermission(permission, true);
                     }
                     else
                     {
-                        return leaf.GetDefaultCan(permission);
+                        return CachePermission(permission, leaf.GetDefaultCan(permission));
                     }
                 }
                 else
@@ -228,26 +267,26 @@ namespace BoxSocial.Internals
                         {
                             if (item.PermissiveParent == null)
                             {
-                                return owner.Access.Can(permission, leaf, true);
+                                return CachePermission(permission, owner.Access.Can(permission, leaf, true));
                             }
                             else
                             {
-                                return item.PermissiveParent.Access.Can(permission, leaf, true);
+                                return CachePermission(permission, item.PermissiveParent.Access.Can(permission, leaf, true));
                             }
                         }
                         else
                         {
-                            return ((IPermissibleItem)NumberedItem.Reflect(core, new ItemKey(parents.Nodes[parents.Nodes.Count - 1].ParentId, ni.ParentTypeId))).Access.Can(permission, leaf, true);
+                            return CachePermission(permission, ((IPermissibleItem)NumberedItem.Reflect(core, new ItemKey(parents.Nodes[parents.Nodes.Count - 1].ParentId, ni.ParentTypeId))).Access.Can(permission, leaf, true));
                         }
                     }
                     else
                     {
-                        return owner.Access.Can(permission, leaf, true);
+                        return CachePermission(permission, owner.Access.Can(permission, leaf, true));
                     }
                 }
             }
 
-            return (allow && (!deny));
+            return CachePermission(permission, (allow && (!deny)));
         }
 
         public static string BuildAclUri(Core core, IPermissibleItem item)

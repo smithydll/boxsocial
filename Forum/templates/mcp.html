@@ -1,11 +1,49 @@
 ﻿<!-- INCLUDE page_header.html -->
 <!-- INCLUDE forum_header -->
-<h2>Moderator Control Panel</h2>
-
+<h2>{ACCOUNT_TITLE}</h2>
 <!-- IF ERROR -->
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
+<!-- IF INFO -->
+<p class="information">{INFO}</p>
+<!-- ENDIF -->
+<!-- IF NO_PERMISSIONS -->
+<p class="no-permissions">{NO_PERMISSIONS}</p>
+<!-- ENDIF -->
+<!-- IF NO_CUSTOM_STYLE -->
+<p class="no-permissions">{NO_CUSTOM_STYLE}</p>
+<!-- ENDIF -->
 
-{MODULE_CONTENT}
+<div id="tabs">
+  <ul>
+    <!-- BEGIN module_list -->
+    <li>
+      <a href="{module_list.URI}">
+        <span>{module_list.NAME}</span>
+      </a>
+    </li>
+    <!-- END module_list -->
+    <!--li><a href="/account/?module=preferences"><span>Preferences</span></a></li-->
+    <!--li><a href="/account/?module=networks"><span>Networks</span></a></li-->
+  </ul>
+</div>
+<div id="account-panel">
+  <ul id="account-links">
+    <!-- BEGIN account_links -->
+    <li>
+      <a href="{account_links.URI}">
+        <span>{account_links.TITLE}</span>
+      </a>
+    </li>
+    <!-- END account_links -->
+  </ul>
+  <div class="account-pane">
+
+
+    {MODULE_CONTENT}
+
+</div>
+  <div class="cheat-clear"></div>
+</div>
 
 <!-- INCLUDE page_footer.html -->

@@ -127,6 +127,7 @@ namespace BoxSocial.Applications.Forum
             aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 			aii.AddSlug("forum", @"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 			aii.AddSlug("forum", @"^/forum/memberlist(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+            aii.AddSlug("forum", @"^/forum/mcp(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddModule("forum");
 
@@ -207,18 +208,27 @@ namespace BoxSocial.Applications.Forum
         [Show(@"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showPoster(Core core, object sender)
         {
-            if (sender is GPage)
+            if (sender is PPage)
             {
-                Poster.Show(core, (GPage)sender);
+                Poster.Show(sender, new ShowPPageEventArgs((PPage)sender));
             }
         }
 
         [Show(@"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
         private void showUCP(Core core, object sender)
         {
-            if (sender is GPage)
+            if (sender is PPage)
             {
-                ForumMember.ShowUCP(core, (GPage)sender);
+                ForumMember.ShowUCP(sender, new ShowPPageEventArgs((PPage)sender));
+            }
+        }
+
+        [Show(@"^/forum/mcp(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showModeratorControlPanel(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                ModeratorControlPanel.Show(sender, new ShowPPageEventArgs((PPage)sender));
             }
         }
 

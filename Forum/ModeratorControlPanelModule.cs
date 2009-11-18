@@ -27,11 +27,18 @@ using BoxSocial.IO;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 
-namespace BoxSocial.Internals
+namespace BoxSocial.Applications.Forum
 {
-    public abstract class AccountSubModule : ControlPanelSubModule
+    public abstract class ModeratorControlPanelModule : ControlPanelModule
     {
-        public abstract override string Title
+        public ModeratorControlPanelModule(Account account)
+            : base(account)
+        {
+        }
+
+        protected abstract override void RegisterModule(Core core, EventArgs e);
+
+        public abstract override string Name
         {
             get;
         }

@@ -44,6 +44,7 @@ namespace BoxSocial.Applications.Forum
     [Permission("EDIT_OWN_POSTS", "Can edit own posts")]
     [Permission("DELETE_OWN_POSTS", "Can delete own posts")]
     [Permission("DELETE_TOPICS", "Can delete topics")]
+    [Permission("LOCK_TOPICS", "Can lock topics")]
     [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements")]
     [Permission("CREATE_STICKY", "Can create sticky topics")]
     [Permission("REPORT_POSTS", "Can report posts")]
@@ -1114,6 +1115,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public string ModeratorControlPanelUri
+        {
+            get
+            {
+                if (forumId == 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/mcp",
+                        Owner.UriStub), true);
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?f={1}",
+                        Owner.UriStub, forumId), true);
+                }
+            }
+        }
+
         public void ReadAll()
         {
             ReadAll(false);
@@ -1532,6 +1550,11 @@ namespace BoxSocial.Applications.Forum
             if (thisForum.Access.Can("DELETE_OWN_POSTS"))
             {
                 permissions.Add(core.prose.GetString("YOU_CAN_DELETE_YOUR_POSTS"), true);
+                flagPermissionsBlock = true;
+            }
+            if (thisForum.Access.Can("DELETE_TOPICS") || thisForum.Access.Can("LOCK_TOPICS"))
+            {
+                permissions.Add(core.prose.GetString("YOU_CAN_MODERATE_FORUM"), true, core.Uri.AppendAbsoluteSid(thisForum.ModeratorControlPanelUri));
                 flagPermissionsBlock = true;
             }
 

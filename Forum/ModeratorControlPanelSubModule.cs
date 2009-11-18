@@ -27,9 +27,9 @@ using BoxSocial.IO;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 
-namespace BoxSocial.Internals
+namespace BoxSocial.Applications.Forum
 {
-    public abstract class AccountSubModule : ControlPanelSubModule
+    public abstract class ModeratorControlPanelSubModule : ControlPanelSubModule
     {
         public abstract override string Title
         {

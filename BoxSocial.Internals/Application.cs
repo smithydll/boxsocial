@@ -381,7 +381,7 @@ namespace BoxSocial.Internals
                     applicationIds.Add(ae.Id);
                 }
 
-                SelectQuery query = AccountModuleRegister.GetSelectQueryStub(typeof(AccountModuleRegister));
+                SelectQuery query = ControlPanelModuleRegister.GetSelectQueryStub(typeof(ControlPanelModuleRegister));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddSort(SortOrder.Ascending, "application_id");
 

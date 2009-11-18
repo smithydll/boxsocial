@@ -536,7 +536,7 @@ namespace BoxSocial.Applications.Forum
 
             fm.ForumPosts += 1;
 
-            Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, forum.Owner);
+            /*Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, forum.Owner);
 
             if (!(ranks.ContainsKey(fm.ForumRankId) && ranks[fm.ForumRankId].RankSpecial))
             {
@@ -549,7 +549,7 @@ namespace BoxSocial.Applications.Forum
                         rankLastMin = rank.RankPosts;
                     }
                 }
-            }
+            }*/
 
             fm.Update(typeof(ForumMember));
 
@@ -653,7 +653,7 @@ namespace BoxSocial.Applications.Forum
 
             fm.ForumPosts += 1;
 
-            Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, Forum.Owner);
+            /*Dictionary<long, ForumMemberRank> ranks = ForumMemberRank.GetRanks(core, Forum.Owner);
 
             if (!(ranks.ContainsKey(fm.ForumRankId) && ranks[fm.ForumRankId].RankSpecial))
             {
@@ -666,7 +666,7 @@ namespace BoxSocial.Applications.Forum
                         rankLastMin = rank.RankPosts;
                     }
                 }
-            }
+            }*/
 
             fm.Update(typeof(ForumMember));
 
@@ -877,7 +877,7 @@ namespace BoxSocial.Applications.Forum
 					}
 				}
 				
-				Dictionary<long, ForumMemberRank> ranksList = null;
+				/*Dictionary<long, ForumMemberRank> ranksList = null;
 				
 				if (rankIds.Count > 0)
 				{
@@ -886,7 +886,25 @@ namespace BoxSocial.Applications.Forum
 				else
 				{
 					ranksList = new Dictionary<long, ForumMemberRank>();
-				}
+				}*/
+
+                Dictionary<long, ForumMemberRank> ranksList = ForumMemberRank.GetRanks(core, thisForum.Owner);
+
+                foreach (ForumMember fm in postersList.Values)
+                {
+                    if (!(ranksList.ContainsKey(fm.ForumRankId) && ranksList[fm.ForumRankId].RankSpecial))
+                    {
+                        int rankLastMin = 0;
+                        foreach (ForumMemberRank rank in ranksList.Values)
+                        {
+                            if ((!rank.RankSpecial) && fm.ForumPosts >= rank.RankPosts && rank.RankPosts > rankLastMin)
+                            {
+                                fm.ForumRankId = rank.Id;
+                                rankLastMin = rank.RankPosts;
+                            }
+                        }
+                    }
+                }
 
                 foreach (TopicPost post in posts)
                 {

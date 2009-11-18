@@ -42,22 +42,22 @@ namespace BoxSocial.Applications.Forum
             this.page = page;
         }
 
-        public static void Show(Core core, GPage page)
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
-            Poster poster = new Poster(core, page);
+            Poster poster = new Poster(e.Core, e.Page);
 
-            page.template.SetTemplate("Forum", "post");
-            ForumSettings.ShowForumHeader(core, page);
+            e.Page.template.SetTemplate("Forum", "post");
+            ForumSettings.ShowForumHeader(e.Core, e.Page);
 
-            if (core.Http.Form["save"] != null) // DRAFT
+            if (e.Core.Http.Form["save"] != null) // DRAFT
             {
                 poster.ShowPostingScreen("draft");
             }
-            else if (core.Http.Form["preview"] != null) // PREVIEW
+            else if (e.Core.Http.Form["preview"] != null) // PREVIEW
             {
                 poster.ShowPostingScreen("preview");
             }
-            else if (core.Http.Form["submit"] != null) // POST
+            else if (e.Core.Http.Form["submit"] != null) // POST
             {
                 poster.ShowPostingScreen("post");
             }

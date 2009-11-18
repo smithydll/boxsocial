@@ -48,6 +48,24 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void Add(string permission, bool can, params string[] args)
+        {
+            List<string> newArgs = new List<string>();
+
+            if (can)
+            {
+                newArgs.Add(core.prose.GetString("CAN"));
+                
+            }
+            else
+            {
+                newArgs.Add(core.prose.GetString("CANNOT"));
+            }
+
+            newArgs.AddRange(args);
+            permissions.Add(core.Bbcode.Parse(string.Format(permission, newArgs.ToArray())));
+        }
+
         public void Parse(string variable)
         {
             core.template.ParseRaw(variable, this.ToString());

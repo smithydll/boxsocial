@@ -233,22 +233,25 @@ namespace BoxSocial.Applications.Forum
             get { throw new NotImplementedException(); }
         }
 
-        public static void ShowForumHeader(Core core, GPage page)
+        public static void ShowForumHeader(Core core, PPage page)
         {
             page.template.Parse("U_FORUM_INDEX", core.Uri.AppendSid(string.Format("{0}forum",
-                ((GPage)page).Group.UriStub)));
+                page.Owner.UriStub)));
             page.template.Parse("U_UCP", core.Uri.AppendSid(string.Format("{0}forum/ucp",
-                ((GPage)page).Group.UriStub)));
+                page.Owner.UriStub)));
             page.template.Parse("U_MEMBERS", core.Uri.AppendSid(string.Format("{0}forum/memberlist",
-                ((GPage)page).Group.UriStub)));
+                page.Owner.UriStub)));
 
-            if (core.session.IsLoggedIn && page.Group.IsGroupMember(core.session.LoggedInMember))
+            if (page is GPage)
             {
-                page.template.Parse("IS_FORUM_MEMBER", "TRUE");
-            }
-            else
-            {
-                page.template.Parse("IS_FORUM_MEMBER", "FALSE");
+                if (core.session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.session.LoggedInMember))
+                {
+                    page.template.Parse("IS_FORUM_MEMBER", "TRUE");
+                }
+                else
+                {
+                    page.template.Parse("IS_FORUM_MEMBER", "FALSE");
+                }
             }
         }
 

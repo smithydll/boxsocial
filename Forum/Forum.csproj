@@ -63,15 +63,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Forum.en.resx</DependentUpon>
     </Compile>
+    <Compile Include="ModeratorControlPanel.cs" />
+    <Compile Include="ModeratorControlPanelModule.cs" />
+    <Compile Include="ModeratorControlPanelSubModule.cs" />
     <Compile Include="Poster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Templates1.Designer.cs">
-      <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="TopicPost.cs" />
     <Compile Include="TopicReadStatus.cs" />
@@ -108,6 +108,7 @@
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="languages\Forum.en.resx">
       <SubType>Designer</SubType>
@@ -127,6 +128,7 @@
     <Content Include="templates\account_forum_rank_edit.html" />
     <Content Include="templates\account_forum_settings.html" />
     <Content Include="templates\forum_header.html" />
+    <Content Include="templates\mcp.html" />
     <Content Include="templates\memberlist.html" />
     <Content Include="templates\post.html" />
     <Content Include="templates\ucp.html" />

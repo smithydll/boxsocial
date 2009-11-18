@@ -301,21 +301,21 @@ namespace BoxSocial.Applications.Forum
                 primitive.UriStub, filter));
         }
 
-        public static void ShowUCP(Core core, GPage page)
+        public static void ShowUCP(object sender, ShowPPageEventArgs e)
         {
-            page.template.SetTemplate("Forum", "ucp");
-            ForumSettings.ShowForumHeader(core, page);
+            e.Template.SetTemplate("Forum", "ucp");
+            ForumSettings.ShowForumHeader(e.Core, e.Page);
 
-            if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
+            if (e.Core.session.IsLoggedIn && e.Core.session.LoggedInMember != null)
             {
-                page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/ucp",
-                    ((GPage)page).Group.UriStub), true));
+                e.Template.Parse("S_POST", e.Core.Uri.AppendSid(string.Format("{0}forum/ucp",
+                    e.Page.Owner.UriStub), true));
 				
 				try
 				{
-                    ForumMember member = new ForumMember(core, page.Group, core.session.LoggedInMember);
+                    ForumMember member = new ForumMember(e.Core, e.Page.Owner, e.Core.session.LoggedInMember);
 
-                	page.template.Parse("S_SIGNATURE", member.forumSignature);
+                	e.Template.Parse("S_SIGNATURE", member.forumSignature);
 				}
 				catch (InvalidForumMemberException)
 				{
@@ -324,13 +324,13 @@ namespace BoxSocial.Applications.Forum
             }
             else
             {
-                core.Functions.Generate403();
+                e.Core.Functions.Generate403();
                 return;
             }
 
-            if (!string.IsNullOrEmpty(core.Http.Form["submit"]))
+            if (!string.IsNullOrEmpty(e.Core.Http.Form["submit"]))
             {
-                Save(core, page);
+                Save(e.Core, e.Page);
             }
         }
 
@@ -382,7 +382,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        private static void Save(Core core, GPage page)
+        private static void Save(Core core, PPage page)
         {
             AccountSubModule.AuthoriseRequestSid(core);
 

@@ -59,7 +59,7 @@ namespace BoxSocial.Applications.Forum
 
         void AccountOverview_Show(object sender, EventArgs e)
         {
-            template.SetTemplate("account_landing.html");
+            SetTemplate("mcp_main");
 
         }
     }

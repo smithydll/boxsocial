@@ -75,6 +75,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Templates.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
     <Compile Include="TopicPost.cs" />
     <Compile Include="TopicReadStatus.cs" />
     <Compile Include="AccountForumMemberManage.cs" />
@@ -131,6 +136,7 @@
     <Content Include="templates\account_forum_settings.html" />
     <Content Include="templates\forum_header.html" />
     <Content Include="templates\mcp.html" />
+    <Content Include="templates\mcp_main.html" />
     <Content Include="templates\memberlist.html" />
     <Content Include="templates\post.html" />
     <Content Include="templates\ucp.html" />

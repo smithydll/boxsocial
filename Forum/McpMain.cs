@@ -59,8 +59,152 @@ namespace BoxSocial.Applications.Forum
 
         void AccountOverview_Show(object sender, EventArgs e)
         {
+            //AuthoriseRequestSid();
+
+            int p = core.Functions.RequestInt("p", 1);
             SetTemplate("mcp_main");
 
+            long forumId = core.Functions.RequestLong("fid", 0);
+            Forum thisForum = null;
+            ForumSettings settings = null;
+
+            try
+            {
+                settings = new ForumSettings(core, Owner);
+                if (forumId > 0)
+                {
+                    thisForum = new Forum(core, settings, forumId);
+                }
+                else
+                {
+                    thisForum = new Forum(core, settings);
+                }
+            }
+            catch (InvalidForumSettingsException)
+            {
+                core.Functions.Generate404();
+            }
+            catch (InvalidForumException)
+            {
+                core.Functions.Generate404();
+            }
+
+            List<ForumTopic> announcements = thisForum.GetAnnouncements();
+            List<ForumTopic> topics = thisForum.GetTopics(p, settings.TopicsPerPage);
+            List<ForumTopic> allTopics = new List<ForumTopic>();
+            allTopics.AddRange(announcements);
+            allTopics.AddRange(topics);
+
+            Dictionary<long, TopicPost> topicLastPosts;
+
+            topicLastPosts = TopicPost.GetTopicLastPosts(core, allTopics);
+
+            foreach (ForumTopic topic in allTopics)
+            {
+                core.LoadUserProfile(topic.PosterId);
+            }
+
+            foreach (ForumTopic topic in allTopics)
+            {
+                VariableCollection topicVariableCollection = template.CreateChild("topic_list");
+
+                topicVariableCollection.Parse("TITLE", topic.Title);
+                topicVariableCollection.Parse("URI", topic.Uri);
+                topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
+                topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
+                topicVariableCollection.Parse("DATE", core.tz.DateTimeToString(topic.GetCreatedDate(core.tz)));
+                topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
+                topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
+
+                if (topicLastPosts.ContainsKey(topic.LastPostId))
+                {
+                    core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                        topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
+                }
+                else
+                {
+                    topicVariableCollection.Parse("LAST_POST", "No posts");
+                }
+
+                switch (topic.Status)
+                {
+                    case TopicStates.Normal:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+                        break;
+                    case TopicStates.Sticky:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+
+                        break;
+                    case TopicStates.Announcement:
+                    case TopicStates.Global:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+
+                        break;
+                }
+            }
         }
     }
 }

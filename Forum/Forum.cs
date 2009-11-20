@@ -1126,7 +1126,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?f={1}",
+                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?fid={1}",
                         Owner.UriStub, forumId), true);
                 }
             }

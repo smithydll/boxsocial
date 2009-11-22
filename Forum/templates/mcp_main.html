@@ -1,1 +1,73 @@
 ﻿<h3>Main</h3>
+
+	<!-- IF TOPICS -->
+  <p>
+    {PAGINATION}
+  </p>
+			<ul id="topics" class="pane">
+    <li id="topic-head">
+					<dl class="title-row">
+						<dt><div>&nbsp;</div></dt>
+						<dd><div>{L_VIEWS}</div></dd>
+						<dd><div>{L_REPLIES}</div></dd>
+						<dd><div>{L_LAST_POST}</div></dd>
+            <dd></dd>
+      </dl>
+    </li>
+    <!-- BEGIN topic_list -->
+    <li>
+					<dl class="icon">
+        <dt>
+    <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med_announce.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med_announce.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+
+          <a href="{topic_list.URI}">{topic_list.TITLE}</a><br />
+          by <a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE}
+          </div>
+        </dt>
+        <dd><div>{topic_list.VIEWS}</div></dd>
+        <dd><div>{topic_list.REPLIES}</div></dd>
+        <dd><div>{topic_list.LAST_POST}</div></dd>
+        <dd><div>{topic_list.S_CHECK}</div></dd>
+      </dl>
+    </li>
+    <!-- END topic_list -->
+	</ul>
+  <p>{PAGINATION}</p>
+  <!-- ELSE -->
+  <p>{L_NO_TOPICS_FORUM}</p>
+	<!-- ENDIF -->

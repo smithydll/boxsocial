@@ -42,6 +42,7 @@ namespace BoxSocial.Install
         private static string imagesRoot;
         private static string stylesRoot;
         private static string scriptsRoot;
+        private static string languageRoot;
         private static string domain;
         private static string mysqlRootPassword;
         private static string mysqlWebUser;
@@ -62,6 +63,14 @@ namespace BoxSocial.Install
             else
             {
                 binary = true;
+            }
+
+            if (argsList.Contains("--install-lang") || argsList.Contains("-il") && argsList.Count >= 3)
+            {
+                string lang = string.Empty;
+                string repo = string.Empty;
+                int langIndex = Math.Max(argsList.IndexOf("-l"), argsList.IndexOf("--lang"));
+                int repoIndex = Math.Max(argsList.IndexOf("-r"), argsList.IndexOf("--repo"));
             }
 
             if (argsList.Contains("--sync") || argsList.Contains("s") && argsList.Count >= 2)
@@ -113,7 +122,7 @@ namespace BoxSocial.Install
                     Page page = new Page(core, null, dr);
 
                     // EVERYONE
-                    AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), page.ItemKey, acpView.Id, AccessControlGrants.Allow);
+                    AccessControlGrant.Create(core, User.EveryoneGroupKey, page.ItemKey, acpView.Id, AccessControlGrants.Allow);
                 }
 
                 return;
@@ -127,6 +136,7 @@ namespace BoxSocial.Install
                 imagesRoot = Path.Combine(root, "images");
                 stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
                 scriptsRoot = Path.Combine(root, "scripts");
+                languagesRoot = Path.Combine(root, "language");
 
                 Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
                 domain = Console.ReadLine();
@@ -314,7 +324,35 @@ namespace BoxSocial.Install
             // Fill Categories
             InstallData(core);
 
+            InstallLanguage("en", @"Internals");
+            InstallLanguage("en", @"Networks");
+            InstallLanguage("en", @"Musician");
+            InstallLanguage("en", @"Profile");
+            InstallLanguage("en", @"Calendar");
+            InstallLanguage("en", @"Gallery");
+            InstallLanguage("en", @"GuestBook");
+            InstallLanguage("en", @"Pages");
+            InstallLanguage("en", @"Blog");
+            InstallLanguage("en", @"Forum");
+            InstallLanguage("en", @"Mail");
+            InstallLanguage("en", @"News");
+
             db.CloseConnection();
+        }
+
+        public static void InstallLanguage(string lang, string repo)
+        {
+            try
+            {
+                if (File.Exists(string.Format("{0}.{1}.resources", repo, lang)))
+                {
+                    File.Copy(string.Format("{0}.{1}.resources", repo, lang),
+                        Path.Combine(Path.Combine(Installer.languageRoot, repo), string.Format("{0}.{1}.resources", repo, lang)));
+                }
+            }
+            catch
+            {
+            }
         }
 
         struct LicenseData
@@ -369,6 +407,92 @@ namespace BoxSocial.Install
             countries.Add("AS", "American Samoa");
             countries.Add("AT", "Austria");
             countries.Add("AU", "Australia");
+            countries.Add("AW", "Aruba");
+            countries.Add("AZ", "Azerbaijan");
+            countries.Add("BA", "Bosnia and Herzegovina");
+            countries.Add("BB", "Barbados");
+            countries.Add("BD", "Bangladesh");
+            countries.Add("BE", "Belgium");
+            countries.Add("BF", "Burkina Faso");
+            countries.Add("BG", "Bulgaria");
+            countries.Add("BH", "Bahrain");
+            countries.Add("BI", "Burundi");
+            countries.Add("BJ", "Benin");
+            countries.Add("BM", "Bermuda");
+            countries.Add("BN", "Brunei");
+            countries.Add("BO", "Bolivia");
+            countries.Add("BR", "Brazil");
+            countries.Add("BS", "The Bahamas");
+            countries.Add("BT", "Bhutan");
+            countries.Add("BV", "Bouvet Island");
+            countries.Add("BW", "Botswana");
+            countries.Add("BY", "Belarus");
+            countries.Add("BZ", "Belize");
+            countries.Add("CA", "Canada");
+            countries.Add("CC", "Cocos (Keeling) Islands");
+            countries.Add("CD", "Congo, Democratic Republic of the");
+            countries.Add("CF", "Central African Republic");
+            countries.Add("CG", "Congo, Republic of the");
+            countries.Add("CH", "Switzerland");
+            countries.Add("CI", "Cote d'Ivoire");
+            countries.Add("CK", "Cook Islands");
+            countries.Add("CL", "Chile");
+            countries.Add("CM", "Cameroon");
+            countries.Add("CN", "China");
+            countries.Add("CO", "Colombia");
+            countries.Add("CR", "Costa Rica");
+            countries.Add("CU", "Cuba");
+            countries.Add("CV", "Cape Verde");
+            countries.Add("CX", "Christmas Island");
+            countries.Add("CY", "Cyprus");
+            countries.Add("CZ", "Czech Republic");
+            countries.Add("DE", "Germany");
+            countries.Add("DJ", "Djibouti");
+            countries.Add("DK", "Denmark");
+            countries.Add("DM", "Dominica");
+            countries.Add("DO", "Dominican Republic");
+            countries.Add("DZ", "Algeria");
+            countries.Add("EC", "Ecuador");
+            countries.Add("EE", "Estonia");
+            countries.Add("EG", "Egypt");
+            countries.Add("EH", "Western Sahara");
+            countries.Add("ER", "Eritrea");
+            countries.Add("ES", "Spain");
+            countries.Add("ET", "Ethiopia");
+            countries.Add("FI", "Finland");
+            countries.Add("FJ", "Fiji");
+            countries.Add("FK", "Falkland Islands (Islas Malvinas)");
+            countries.Add("FM", "Federated States of Micronesia");
+            countries.Add("FO", "Faroe Islands");
+            countries.Add("FR", "France");
+            countries.Add("FX", "France, Metropolitan");
+            countries.Add("GA", "Gabon");
+            countries.Add("GB", "United Kingdom");
+            countries.Add("GD", "Grenada");
+            countries.Add("GE", "Georgia");
+            countries.Add("GF", "French Guiana");
+            countries.Add("GG", "Guernsey");
+            countries.Add("GH", "Ghana");
+            countries.Add("GI", "Gibraltar");
+            countries.Add("GL", "Greenland");
+            countries.Add("GM", "The Gambia");
+            countries.Add("GN", "Guinea");
+            countries.Add("GP", "Guadeloupe");
+            countries.Add("GQ", "Equatorial Guinea");
+            countries.Add("GR", "Greece");
+            countries.Add("GS", "South Georgia and the Islands");
+            countries.Add("GT", "Guatemala");
+            countries.Add("GU", "Guam");
+            countries.Add("GW", "Guinea-Bissau");
+            countries.Add("GY", "Guyana");
+            countries.Add("HK", "Hong Kong");
+            countries.Add("HM", "Heard Island and McDonald Islands");
+            countries.Add("HN", "Honduras");
+            countries.Add("HR", "Croatia");
+            countries.Add("HT", "Haiti");
+            countries.Add("HU", "Hungary");
+            countries.Add("ID", "Indonesia");
+            countries.Add("IE", "Isle of Man");
 
             // Timezones
 

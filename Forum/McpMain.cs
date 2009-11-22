@@ -49,15 +49,17 @@ namespace BoxSocial.Applications.Forum
 
         public McpMain()
         {
-            this.Load += new EventHandler(AccountOverview_Load);
-            this.Show += new EventHandler(AccountOverview_Show);
+            this.Load += new EventHandler(McpMain_Load);
+            this.Show += new EventHandler(McpMain_Show);
         }
 
-        void AccountOverview_Load(object sender, EventArgs e)
+        void McpMain_Load(object sender, EventArgs e)
         {
+            this.AddModeHandler("lock", new ModuleModeHandler(McpMain_Lock));
+            this.AddModeHandler("delete", new ModuleModeHandler(McpMain_Delete));
         }
 
-        void AccountOverview_Show(object sender, EventArgs e)
+        void McpMain_Show(object sender, EventArgs e)
         {
             //AuthoriseRequestSid();
 
@@ -205,6 +207,16 @@ namespace BoxSocial.Applications.Forum
                         break;
                 }
             }
+        }
+
+        void McpMain_Lock(object sender, ModuleModeHandler e)
+        {
+            AuthoriseRequestSid();
+        }
+
+        void McpMain_Delete(object sender, ModuleModeHandler e)
+        {
+            AuthoriseRequestSid();
         }
     }
 }

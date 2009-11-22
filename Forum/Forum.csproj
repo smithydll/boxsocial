@@ -109,7 +109,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="languages\Forum.en.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Forum.en.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

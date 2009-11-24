@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="AccountBlocklistManage.cs" />
     <Compile Include="AccountDisplayPic.cs" />
+    <Compile Include="AccountContactManage.cs" />
     <Compile Include="AccountFamilyManage.cs" />
     <Compile Include="AccountFriendInvite.cs" />
     <Compile Include="AccountFriendManage.cs" />
@@ -103,14 +104,18 @@
     <None Include="resources\profile.png" />
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_address_edit.html" />
     <Content Include="templates\account_blocklist_manage.html" />
     <Content Include="templates\account_contact.html" />
+    <Content Include="templates\account_contact_manage.html" />
     <Content Include="templates\account_display_picture.html" />
+    <Content Include="templates\account_email_edit.html" />
     <Content Include="templates\account_family_manage.html" />
     <Content Include="templates\account_friends_manage.html" />
     <Content Include="templates\account_friend_invite.html" />
     <Content Include="templates\account_lifestyle.html" />
     <Content Include="templates\account_name.html" />
+    <Content Include="templates\account_phone_edit.html" />
     <Content Include="templates\account_style.html" />
     <Content Include="templates\viewstatusfeed.html" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -119,7 +124,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>

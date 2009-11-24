@@ -136,7 +136,7 @@ namespace BoxSocial.Install
                 imagesRoot = Path.Combine(root, "images");
                 stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
                 scriptsRoot = Path.Combine(root, "scripts");
-                languagesRoot = Path.Combine(root, "language");
+                languageRoot = Path.Combine(root, "language");
 
                 Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
                 domain = Console.ReadLine();

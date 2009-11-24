@@ -1,1 +1,26 @@
-﻿
+﻿<h3>My Address</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>My Address</legend>
+		<dl>
+			<dt><label for="address-1">Address Line 1</label></dt>
+			<dd>{S_ADDRESS_LINE_1}</dd>
+			<dt><label for="address-2">Address Line 2</label></dt>
+			<dd>{S_ADDRESS_LINE_2}</dd>
+			<dt><label for="town">Suburb/Town/City</label></dt>
+			<dd>{S_TOWN}</dd>
+			<dt><label for="state">State/Province</label></dt>
+			<dd>{S_STATE}</dd>
+			<dt><label for="post-code">Post/Zip Code</label></dt>
+			<dd>{S_POST_CODE}</dd>
+			<dt><label for="country">Country</label></dt>
+			<dd>{S_COUNTRY}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+		<input type="hidden" name="mode" value="edit-address" />
+	</fieldset>
+</form>

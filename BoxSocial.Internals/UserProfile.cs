@@ -62,8 +62,6 @@ namespace BoxSocial.Internals
         private uint hometown;
         [DataField("profile_views")]
         private long profileViews;
-        [DataField("profile_country", 2)]
-        private string country;
         [DataField("profile_height")]
         private byte height;
         [DataField("profile_weight")]
@@ -78,6 +76,19 @@ namespace BoxSocial.Internals
         private byte dateofBirthMonthRaw;
         [DataField("profile_date_of_birth_day_cache")]
         private byte dateofBirthDayRaw;
+        /* Address */
+        [DataField("profile_country", 2)]
+        private string country;
+        [DataField("profile_address_line_1", 127)]
+        private string addressLine1;
+        [DataField("profile_address_line_2", 127)]
+        private string addressLine2;
+        [DataField("profile_address_town", 63)]
+        private string addressTown;
+        [DataField("profile_address_state", 31)]
+        private string addressState;
+        [DataField("profile_address_post_code", 6)]
+        private string addressPostCode;
 
         private string countryName;
         private string religionTitle;
@@ -416,6 +427,66 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("country", value);
+            }
+        }
+
+        public string AddressLine1
+        {
+            get
+            {
+                return addressLine1;
+            }
+            set
+            {
+                SetProperty("addressLine1", value);
+            }
+        }
+
+        public string AddressLine2
+        {
+            get
+            {
+                return addressLine2;
+            }
+            set
+            {
+                SetProperty("addressLine2", value);
+            }
+        }
+
+        public string AddressTown
+        {
+            get
+            {
+                return addressTown;
+            }
+            set
+            {
+                SetProperty("addressTown", value);
+            }
+        }
+
+        public string AddressState
+        {
+            get
+            {
+                return addressState;
+            }
+            set
+            {
+                SetProperty("addressState", value);
+            }
+        }
+
+        public string AddressPostCode
+        {
+            get
+            {
+                return addressPostCode;
+            }
+            set
+            {
+                SetProperty("addressPostCode", value);
             }
         }
 

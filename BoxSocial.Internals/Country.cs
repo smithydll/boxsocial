@@ -51,6 +51,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Country(Core core, DataRow countryRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Country_ItemLoad);
+
+            try
+            {
+                loadItemInfo(countryRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidCountryException();
+            }
+        }
+
         public Country(Core core, string iso)
             : base(core)
         {

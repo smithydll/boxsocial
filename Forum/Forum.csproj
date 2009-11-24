@@ -73,6 +73,7 @@
     <Compile Include="TopicPost.cs" />
     <Compile Include="TopicReadStatus.cs" />
     <Compile Include="AccountForumMemberManage.cs" />
+    <Compile Include="TopicReplied.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
@@ -116,6 +117,9 @@
     <Content Include="resources\forum.png" />
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_address_edit.html" />
+    <Content Include="templates\account_contact_manage.html" />
+    <Content Include="templates\account_email_edit.html" />
     <Content Include="templates\account_forum_edit.html" />
     <Content Include="templates\account_forum_manage.html" />
     <Content Include="templates\account_forum_member_edit.html" />
@@ -123,6 +127,7 @@
     <Content Include="templates\account_forum_ranks.html" />
     <Content Include="templates\account_forum_rank_edit.html" />
     <Content Include="templates\account_forum_settings.html" />
+    <Content Include="templates\account_phone_edit.html" />
     <Content Include="templates\forum_header.html" />
     <Content Include="templates\mcp.html" />
     <Content Include="templates\mcp_main.html" />

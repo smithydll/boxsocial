@@ -209,14 +209,51 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        void McpMain_Lock(object sender, ModuleModeHandler e)
+        void McpMain_Lock(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
+
+            long topicId = core.Functions.FormLong("t", 0);
+            ForumTopic topic = null;
+
+            try
+            {
+                topic = new ForumTopic(core, topicId);
+            }
+            catch (InvalidTopicException)
+            {
+                return;
+            }
+
+            if (topic.Forum.Access.Can("LOCK_TOPICS"))
+            {
+                topic.IsLocked = true;
+
+                topic.Update();
+            }
         }
 
-        void McpMain_Delete(object sender, ModuleModeHandler e)
+        void McpMain_Delete(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
+
+            long topicId = core.Functions.FormLong("t", 0);
+            ForumTopic topic = null;
+
+            try
+            {
+                topic = new ForumTopic(core, topicId);
+            }
+            catch (InvalidTopicException)
+            {
+                return;
+            }
+
+            if (topic.Forum.Access.Can("DELETE_TOPICS"))
+            {
+                // TODO: statistics updating
+                //topic.Delete();
+            }
         }
     }
 }

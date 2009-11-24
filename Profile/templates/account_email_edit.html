@@ -1,1 +1,20 @@
-﻿
+﻿<h3>My Email</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>My Email</legend>
+		<dl>
+			<dt><label for="email-address">Email Address</label></dt>
+			<dd>{S_EMAIL}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+		<!-- IF EDIT -->
+		<input type="hidden" name="mode" value="edit-email" />
+		<!-- ELSE -->
+		<input type="hidden" name="mode" value="add-email" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

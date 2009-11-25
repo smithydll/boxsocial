@@ -1,1 +1,22 @@
-﻿
+﻿<h3>My Phone Number</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>My Phone Number</legend>
+		<dl>
+			<dt><label for="phone-number">Phone Number</label></dt>
+			<dd>{S_PHONE_NUMBER}</dd>
+			<dt><label for="phone-type">Type</label></dt>
+			<dd>{S_PHONE_TYPE}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+		<!-- IF EDIT -->
+		<input type="hidden" name="mode" value="edit-phone" />
+		<!-- ELSE -->
+		<input type="hidden" name="mode" value="add-phone" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

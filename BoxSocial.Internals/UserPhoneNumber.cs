@@ -29,6 +29,17 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum PhoneNumberTypes : byte
+    {
+        Home = 0x01,
+        Mobile = 0x02,
+        VoIP = 0x04,
+        Business = 0x11,
+        BusinessMobile = 0x12,
+        Fax = 0x15,
+        Other = 0xFF,
+    }
+
     [DataTable("user_phone")]
     [Permission("VIEW", "Can view the phone number")]
     public class UserPhoneNumber : NumberedItem, IPermissibleItem
@@ -39,6 +50,8 @@ namespace BoxSocial.Internals
         private long userId;
         [DataField("phone_number", 15)]
         private string phoneNumber;
+        [DataField("phone_type")]
+        private byte phoneType;
         [DataField("phone_time_ut")]
         private long phoneTimeRaw;
 
@@ -58,6 +71,18 @@ namespace BoxSocial.Internals
             get
             {
                 return phoneNumber;
+            }
+        }
+
+        public PhoneNumberTypes PhoneType
+        {
+            get
+            {
+                return (PhoneNumberTypes)phoneType;
+            }
+            set
+            {
+                SetProperty("phoneType", (byte)value);
             }
         }
 
@@ -132,7 +157,18 @@ namespace BoxSocial.Internals
         {
         }
 
-        /* TODO: CREATE */
+        public static UserPhoneNumber Create(Core core, string phoneNumber, PhoneNumberTypes phoneType)
+        {
+            InsertQuery iquery = new InsertQuery(UserPhoneNumber.GetTable(typeof(UserPhoneNumber)));
+            iquery.AddField("phone_user_id", core.session.LoggedInMember.Id);
+            iquery.AddField("phone_number", phoneNumber);
+            iquery.AddField("phone_type", (byte)phoneType);
+            iquery.AddField("phone_time_ut", UnixTime.UnixTimeStamp());
+
+            long phoneId = core.db.Query(iquery);
+
+            return new UserPhoneNumber(core, phoneId);
+        }
 
         public override long Id
         {

@@ -1,1 +1,49 @@
-﻿
+﻿<h3>{L_MY_CONTACT_DETAILS}</h3>
+<p>{L_CONTACT_DETAILS_INFO}</p>
+
+<!-- IF ADDRESS -->
+<!-- ENDIF -->
+
+<h2>E-mail Addresses</h2>
+<table style="width: 100%">
+<tr>
+	<th>Address</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN email_list -->
+<!-- IF email_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{email_list.EMAIL}</td>
+	<td><a href="{email_list.U_EDIT}">{L_EDIT}</a></td>
+	<td><a href="{email_list.U_DELETE}">{L_DELETE}</a></td>
+	<td><a href="{email_list.U_PRIVATE}">Privacy</a></td>
+</tr>
+<!-- END email_list -->
+</table>
+
+<h2>Phone Numbers</h2>
+<table style="width: 100%">
+<tr>
+	<th>Number</th>
+	<th></th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN phone_list -->
+<!-- IF phone_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{phone_list.EMAIL}</td>
+	<td><a href="{phone_list.U_EDIT}">{L_EDIT}</a></td>
+	<td><a href="{phone_list.U_DELETE}">{L_DELETE}</a></td>
+	<td><a href="{phone_list.U_PRIVATE}">Privacy</a></td>
+</tr>
+<!-- END phone_list -->
+</table>

@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -62,6 +63,44 @@ namespace BoxSocial.Musician
         {
             SetTemplate("account_profile");
 
+            Musician musician = (Musician)Owner;
+
+            /* */
+            TextBox biographyTextBox = new TextBox("biography");
+            biographyTextBox.IsFormatted = true;
+            biographyTextBox.Lines = 7;
+
+            /* */
+            TextBox homepageTextBox = new TextBox("homepage");
+            homepageTextBox.MaxLength = 1024;
+
+            TextBox nameTextBox = new TextBox("name");
+            nameTextBox.IsDisabled = true;
+            nameTextBox.MaxLength = 63;
+
+            biographyTextBox.Value = musician.Biography;
+            homepageTextBox.Value = musician.Homepage;
+            nameTextBox.Value = musician.TitleName;
+
+            template.Parse("S_BIOGRAPHY", biographyTextBox);
+            template.Parse("S_HOMEPAGE", homepageTextBox);
+            template.Parse("S_NAME", nameTextBox);
+
+            Save(AccountProfileManage_Save);
+        }
+
+        void AccountProfileManage_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+            Musician musician = (Musician)Owner;
+
+            musician.Biography = core.Http.Form["biography"];
+            musician.Homepage = core.Http.Form["homepage"];
+
+            musician.Update();
+
+            SetRedirectUri(BuildUri());
+            core.Display.ShowMessage("Profile Updated", "Your musician profile has been updated.");
         }
     }
 }

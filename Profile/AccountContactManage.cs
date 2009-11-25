@@ -66,6 +66,8 @@ namespace BoxSocial.Applications.Profile
             AddSaveHandler("edit-address", new EventHandler(AccountContactManage_EditAddress_save));
             AddSaveHandler("add-email", new EventHandler(AccountContactManage_AddEmail_save));
             AddSaveHandler("edit-email", new EventHandler(AccountContactManage_AddEmail_save));
+            AddSaveHandler("add-phone", new EventHandler(AccountContactManage_AddPhone_save));
+            AddSaveHandler("edit-phone", new EventHandler(AccountContactManage_AddPhone_save));
         }
 
         void AccountContactManage_Show(object sender, EventArgs e)
@@ -73,6 +75,17 @@ namespace BoxSocial.Applications.Profile
             SetTemplate("account_contact_manage");
 
             List<UserEmail> emails = core.session.LoggedInMember.GetEmailAddresses();
+            List<UserPhoneNumber> phoneNumbers = new List<UserPhoneNumber>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(UserPhoneNumber));
+            query.AddCondition("phone_user_id", core.LoggedInMemberId);
+
+            DataTable phoneNumbersDataTable = db.Query(query);
+
+            foreach (DataRow dr in phoneNumbersDataTable.Rows)
+            {
+                phoneNumbers.Add(new UserPhoneNumber(core, dr));
+            }
 
             foreach (UserEmail email in emails)
             {
@@ -84,7 +97,18 @@ namespace BoxSocial.Applications.Profile
                 emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, email));
             }
 
-            template.Parse("ADD_EMAIL", BuildUri("add-email"));
+            foreach (UserPhoneNumber phoneNumber in phoneNumbers)
+            {
+                VariableCollection emailsVariableCollection = template.CreateChild("phone_list");
+
+                emailsVariableCollection.Parse("PHONE_ID", phoneNumber.Id.ToString());
+                emailsVariableCollection.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
+                emailsVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-phone", phoneNumber.Id));
+                emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
+            }
+
+            template.Parse("U_ADD_EMAIL", BuildUri("add-email"));
+            template.Parse("U_ADD_PHONE", BuildUri("add-phone"));
         }
 
         void AccountContactManage_EditAddress(object sender, ModuleModeEventArgs e)
@@ -93,7 +117,7 @@ namespace BoxSocial.Applications.Profile
 
             User user = LoggedInMember;
 
-            /**/
+            /* */
             TextBox addressLine1TextBox = new TextBox("address-1");
             addressLine1TextBox.Value = user.Profile.AddressLine1;
 
@@ -189,6 +213,50 @@ namespace BoxSocial.Applications.Profile
         void AccountContactManage_AddPhone(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_phone_edit");
+
+            /**/
+            TextBox phoneNumberTextBox = new TextBox("phone-number");
+
+            /* */
+            SelectBox phoneTypeSelectBox = new SelectBox("phone-type");
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.Home).ToString(), "Home"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.Mobile).ToString(), "Mobile"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.Business).ToString(), "Business"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.BusinessMobile).ToString(), "BusinessMobile"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.VoIP).ToString(), "VoIP"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.Fax).ToString(), "Fax"));
+            phoneTypeSelectBox.Add(new SelectBoxItem(((byte)PhoneNumberTypes.Other).ToString(), "Other"));
+
+            switch (e.Mode)
+            {
+                case "add-phone":
+                    break;
+                case "edit-phone":
+                    long phoneNumberId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+                    UserPhoneNumber phoneNumber = null;
+
+                    if (phoneNumberId > 0)
+                    {
+                        try
+                        {
+                            phoneNumber = new UserPhoneNumber(core, phoneNumberId);
+
+                            phoneNumberTextBox.IsDisabled = true;
+                            phoneNumberTextBox.Value = phoneNumber.PhoneNumber;
+
+                            if (phoneTypeSelectBox.ContainsKey(((byte)phoneNumber.PhoneType).ToString()))
+                            {
+                                phoneTypeSelectBox.SelectedKey = ((byte)phoneNumber.PhoneType).ToString();
+                            }
+                        }
+                        catch (InvalidUserPhoneNumberException)
+                        {
+                        }
+                    }
+                    break;
+            }
+
+            template.Parse("S_PHONE_NUMBER", phoneNumberTextBox);
         }
 
         void AccountContactManage_EditAddress_save(object sender, EventArgs e)
@@ -223,24 +291,53 @@ namespace BoxSocial.Applications.Profile
                 case "add":
                     string emailAddress = core.Http.Form["email-address"];
 
-                    if (!User.CheckEmailUnique(core, emailAddress))
-                    {
-                        this.SetError("E-mail address has been registered with zinzam before, please add another address");
-                        return;
-                    }
-
-                    if (!User.CheckEmailValid(emailAddress))
-                    {
-                        this.SetError("E-mail address is not valid");
-                        return;
-                    }
-
                     try
                     {
                         UserEmail.Create(core, emailAddress);
 
                         SetRedirectUri(BuildUri());
                         core.Display.ShowMessage("E-mail address Saved", "Your e-mail address has been saved in the database. Before your e-mail can be used it will need to be validated. A validation code has been sent to the e-mail address along with validation instructions.");
+                        return;
+                    }
+                    catch (InvalidUserEmailException)
+                    {
+                    }
+                    catch (EmailInvalidException)
+                    {
+                        this.SetError("E-mail address is not valid");
+                        return;
+                    }
+                    catch (EmailAlreadyRegisteredException)
+                    {
+                        this.SetError("E-mail address has been registered with zinzam before, please add another address");
+                        return;
+                    }
+                    return;
+                case "edit":
+                    // do nothing
+                    return;
+                default:
+                    DisplayError("Error - no mode selected");
+                    return;
+            }
+        }
+
+        void AccountContactManage_AddPhone_save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            switch (core.Http.Form["mode"])
+            {
+                case "add":
+                    string phoneNumber = core.Http.Form["phone-number"];
+                    PhoneNumberTypes phoneType = (PhoneNumberTypes)core.Functions.FormByte("phone-type", 0);
+
+                    try
+                    {
+                        UserPhoneNumber.Create(core, phoneNumber, phoneType);
+
+                        SetRedirectUri(BuildUri());
+                        core.Display.ShowMessage("Phone Number Saved", "Your phone number has been saved in the database.");
                     }
                     catch (InvalidUserEmailException)
                     {

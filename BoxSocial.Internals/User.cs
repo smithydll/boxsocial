@@ -62,7 +62,7 @@ namespace BoxSocial.Internals
     [Permission("COMMENT", "Can write on the guest book")]
     [Permission("VIEW_NAME", "Can see your real name")]
     [Permission("VIEW_SEXUALITY", "Can see your sexuality")]
-    [Permission("VIEW_CONTACT_INFO", "Can see your contact information (does not include e-mail addresses)")]
+    [Permission("VIEW_CONTACT_INFO", "Can see your contact information (does not include e-mail addresses and phone numbers)")]
     [PermissionGroup]
     public class User : Primitive, ICommentableItem, IPermissibleItem
     {

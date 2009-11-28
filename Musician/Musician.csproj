@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -100,7 +100,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -109,9 +108,11 @@
     <Content Include="resources\style.css" />
     <Content Include="templates\account_discography.html" />
     <Content Include="templates\account_gigs_manage.html" />
+    <Content Include="templates\account_gig_edit.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_songs.html" />
     <Content Include="templates\account_song_edit.html" />
+    <Content Include="templates\account_tour_edit.html" />
     <Content Include="templates\account_tour_manage.html" />
     <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />

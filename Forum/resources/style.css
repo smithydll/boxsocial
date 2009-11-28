@@ -238,3 +238,11 @@ dl.title-row {
 	height: 1%;
 	overflow: hidden;
 }
+
+div#forum-head {
+	text-align: right;
+}
+
+div#forum-head a {
+	padding-left: 16px;
+}

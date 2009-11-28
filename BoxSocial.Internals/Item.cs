@@ -54,13 +54,14 @@ namespace BoxSocial.Internals
 
         public delegate void ItemLoadHandler();
         public delegate void ItemChangeAuthenticationProviderHandler(object sender, ItemChangeAuthenticationProviderEventArgs e);
+        public delegate void ItemDeletedEventHandler(object sender, ItemDeletedEventArgs e);
 
         public event ItemLoadHandler ItemLoad;
         public event ItemChangeAuthenticationProviderHandler ItemChangeAuthenticationProvider;
         public event EventHandler OnUpdate;
         public event EventHandler OnDelete;
         public event EventHandler ItemUpdated;
-        public event EventHandler ItemDeleted;
+        public event ItemDeletedEventHandler ItemDeleted;
 
         public Bbcode Bbcode
         {
@@ -904,6 +905,11 @@ namespace BoxSocial.Internals
 
         public long Delete()
         {
+            return Delete(false);
+        }
+
+        public long Delete(bool parentDeleted)
+        {
             if (this is IPermissibleItem)
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;
@@ -917,17 +923,6 @@ namespace BoxSocial.Internals
             AuthenticateAction(ItemChangeAction.Delete);
 
             db.BeginTransaction();
-
-            /*List<Type> subTypes = getSubTypes();
-            foreach (Type subType in subTypes)
-            {
-                List<Item> subItems = getSubItems(subType);
-
-                foreach (Item item in subItems)
-                {
-                    item.Delete();
-                }
-            }*/
 
             DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
 
@@ -955,7 +950,7 @@ namespace BoxSocial.Internals
             {
                 if (ItemDeleted != null)
                 {
-                    ItemDeleted(this, new EventArgs());
+                    ItemDeleted(this, new ItemDeletedEventArgs(parentDeleted));
                 }
             }
 
@@ -1294,6 +1289,24 @@ namespace BoxSocial.Internals
         public ItemChangeAuthenticationProviderEventArgs(ItemChangeAction action)
         {
             this.action = action;
+        }
+    }
+
+    public class ItemDeletedEventArgs : EventArgs
+    {
+        private bool parentDeleted;
+
+        public bool ParentDeleted
+        {
+            get
+            {
+                return parentDeleted;
+            }
+        }
+
+        public ItemDeletedEventArgs(bool parentDeleted)
+        {
+            this.parentDeleted = parentDeleted;
         }
     }
 

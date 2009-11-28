@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -83,12 +84,59 @@ namespace BoxSocial.Musician
 
         void AccountTourManage_Edit(object sender, ModuleModeEventArgs e)
         {
+            SetTemplate("account_tour_edit");
+
+            /* */
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 127;
+
+            /* */
+            SelectBox yearSelectBox = new SelectBox("year");
+
+            for (int i = 1990; i < DateTime.UtcNow.Year + 5; i++)
+            {
+                yearSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+
+            switch (e.Mode)
+            {
+                case "add":
+                    break;
+                case "edit":
+                    long tourId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+                    Tour tour = null;
+
+                    try
+                    {
+                        tour = new Tour(core, tourId);
+                    }
+                    catch (InvalidTourException)
+                    {
+                        return;
+                    }
+
+                    titleTextBox.Value = tour.Title;
+
+                    if (yearSelectBox.ContainsKey(tour.StartYear.ToString()))
+                    {
+                        yearSelectBox.SelectedKey = tour.StartYear.ToString();
+                    }
+
+                    template.Parse("EDIT", "TRUE");
+
+                    break;
+            }
+
+            template.Parse("S_TITLE", titleTextBox);
+            template.Parse("S_YEAR", yearSelectBox);
 
             SaveMode(AccountTourManage_EditSave);
         }
 
         void AccountTourManage_EditSave(object sender, ModuleModeEventArgs e)
         {
+            AuthoriseRequestSid();
 
         }
     }

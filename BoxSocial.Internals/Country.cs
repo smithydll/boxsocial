@@ -73,6 +73,12 @@ namespace BoxSocial.Internals
 
             this.countryIso = iso;
 
+            if (core.prose.ContainsKey("Internals", "COUNTRY_" + iso))
+            {
+                countryName = core.prose.GetString("Internals", "COUNTRY_" + iso);
+                return;
+            }
+
             /* We cache this as it's quite static */
             switch (iso)
             {
@@ -123,6 +129,18 @@ namespace BoxSocial.Internals
                     break;
                 case "AZ":
                     countryName = "Azerbaijan";
+                    break;
+                case "BA":
+                    countryName = "Bosnia and Herzegovina";
+                    break;
+                case "BB":
+                    countryName = "Barbados";
+                    break;
+                case "BD":
+                    countryName = "Bangladesh";
+                    break;
+                case "BE":
+                    countryName = "Belgium";
                     break;
                     /* And a few select countries that have registered */
                 case "CA":

@@ -368,8 +368,19 @@ namespace BoxSocial.Applications.Forum
 
         void Topic_ItemLoad()
         {
+            ItemDeleted += new ItemDeletedEventHandler(ForumTopic_ItemDeleted);
         }
 
+        void ForumTopic_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            /* */
+        }
+
+        public new long Delete()
+        {
+            /* Do not delete sub items, post delete method will update post counts in a more efficient manner */
+            ((Item)this.Delete());
+        }
 
         public static SelectQuery ForumTopic_GetSelectQueryStub(Core core)
         {

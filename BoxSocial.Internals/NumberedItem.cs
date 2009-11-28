@@ -147,7 +147,12 @@ namespace BoxSocial.Internals
             return items;
         }
 
-        public new long Delete()
+        public long Delete()
+        {
+            return Delete(false);
+        }
+
+        public new long Delete(bool parentDeleted)
         {
             if (this is IPermissibleItem)
             {
@@ -169,7 +174,7 @@ namespace BoxSocial.Internals
 
                 foreach (Item item in subItems)
                 {
-                    item.Delete();
+                    item.Delete(true);
                 }
             }
 

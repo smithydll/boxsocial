@@ -135,6 +135,12 @@
   <data name="FORUM_DESCRIPTION" xml:space="preserve">
     <value>Forum Description</value>
   </data>
+  <data name="FORUM_HELP" xml:space="preserve">
+    <value>Forum Help</value>
+  </data>
+  <data name="FORUM_INDEX" xml:space="preserve">
+    <value>Forum Index</value>
+  </data>
   <data name="FORUM_MEMBER" xml:space="preserve">
     <value>Forum Member</value>
   </data>

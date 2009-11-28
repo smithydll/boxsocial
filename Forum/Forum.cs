@@ -472,6 +472,81 @@ namespace BoxSocial.Applications.Forum
 
         void Forum_ItemLoad()
         {
+            ItemDeleted += new ItemDeletedEventHandler(Forum_ItemDeleted);
+        }
+
+        void Forum_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            long postAdjust = forumPosts;
+            long topicAdjust = forumTopics;
+            List<long> parentIds = new List<long>();
+
+            if (!e.ParentDeleted)
+            {
+                foreach (ParentTreeNode parent in Parents.Nodes)
+                {
+                    parentIds.Add(parent.ParentId);
+                }
+
+                /* Update parent forums */
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                    uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Subtraction, postAdjust));
+                    uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Subtraction, topicAdjust));
+                    uQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+
+                    db.Query(uQuery);
+                }
+
+                /* Update forum statistics */
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(ForumSettings));
+                    uQuery.AddField("settings_posts", new QueryOperation("settings_posts", QueryOperations.Subtraction, postAdjust));
+                    uQuery.AddField("settings_topics", new QueryOperation("settings_topics", QueryOperations.Subtraction, topicAdjust));
+                    uQuery.AddCondition("forum_item_id", ownerKey.Id);
+                    uQuery.AddCondition("forum_item_type_id", ownerKey.TypeId);
+
+                    db.Query(uQuery);
+                }
+
+                /* Delete topics */
+                {
+                    DeleteQuery dQuery = new DeleteQuery(typeof(ForumTopic));
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+
+                    db.Query(uQuery);
+                }
+
+                /* Delete posts and update post counts */
+                {
+                    DeleteQuery dQuery = new DeleteQuery(typeof(TopicPost));
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+
+                    db.Query(uQuery);
+                }
+
+                /* */
+                {
+                    DeleteQuery dQuery = new DeleteQuery(typeof(TopicReadStatus));
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+
+                    db.Query(uQuery);
+                }
+
+                /* */
+                {
+                    DeleteQuery dQuery = new DeleteQuery(typeof(ForumReadStatus));
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+
+                    db.Query(uQuery);
+                }
+            }
+        }
+
+        public new long Delete()
+        {
+            /* Do not delete sub items, post delete method will update post counts in a more efficient manner */
+            ((Item)this.Delete());
         }
 
         public static SelectQuery Forum_GetSelectQueryStub(Core core)

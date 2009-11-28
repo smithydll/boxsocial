@@ -144,6 +144,165 @@
   <data name="COMMENTS" xml:space="preserve">
     <value>Comments</value>
   </data>
+  <data name="COUNTRY_AD" xml:space="preserve">
+    <value>Andorra</value>
+  </data>
+  <data name="COUNTRY_AE" xml:space="preserve">
+    <value>United Arab Emirates</value>
+  </data>
+  <data name="COUNTRY_AF" xml:space="preserve">
+    <value>Afghanistan</value>
+  </data>
+  <data name="COUNTRY_AG" xml:space="preserve">
+    <value>Antigua and Barbuda</value>
+  </data>
+  <data name="COUNTRY_AI" xml:space="preserve">
+    <value>Anguilla</value>
+  </data>
+  <data name="COUNTRY_AL" xml:space="preserve">
+    <value>Albania</value>
+  </data>
+  <data name="COUNTRY_AM" xml:space="preserve">
+    <value>Armenia</value>
+  </data>
+  <data name="COUNTRY_AN" xml:space="preserve">
+    <value>Netherlands Antilles</value>
+  </data>
+  <data name="COUNTRY_AO" xml:space="preserve">
+    <value>Angola</value>
+  </data>
+  <data name="COUNTRY_AQ" xml:space="preserve">
+    <value>Antartica</value>
+  </data>
+  <data name="COUNTRY_AR" xml:space="preserve">
+    <value>Argentina</value>
+  </data>
+  <data name="COUNTRY_AS" xml:space="preserve">
+    <value>American Samoa</value>
+  </data>
+  <data name="COUNTRY_AT" xml:space="preserve">
+    <value>Austria</value>
+  </data>
+  <data name="COUNTRY_AU" xml:space="preserve">
+    <value>Australia</value>
+  </data>
+  <data name="COUNTRY_AW" xml:space="preserve">
+    <value>Aruba</value>
+  </data>
+  <data name="COUNTRY_AZ" xml:space="preserve">
+    <value>Azerbaijan</value>
+  </data>
+  <data name="COUNTRY_BA" xml:space="preserve">
+    <value>Bosnia and Herzegovina</value>
+  </data>
+  <data name="COUNTRY_BB" xml:space="preserve">
+    <value>Barbados</value>
+  </data>
+  <data name="COUNTRY_BD" xml:space="preserve">
+    <value>Bangladesh</value>
+  </data>
+  <data name="COUNTRY_BE" xml:space="preserve">
+    <value>Belgium</value>
+  </data>
+  <data name="COUNTRY_BF" xml:space="preserve">
+    <value>Burkina Faso</value>
+  </data>
+  <data name="COUNTRY_BG" xml:space="preserve">
+    <value>Bulgaria</value>
+  </data>
+  <data name="COUNTRY_BH" xml:space="preserve">
+    <value>Bahrain</value>
+  </data>
+  <data name="COUNTRY_BI" xml:space="preserve">
+    <value>Burundi</value>
+  </data>
+  <data name="COUNTRY_BJ" xml:space="preserve">
+    <value>Benin</value>
+  </data>
+  <data name="COUNTRY_BM" xml:space="preserve">
+    <value>Bermuda</value>
+  </data>
+  <data name="COUNTRY_BN" xml:space="preserve">
+    <value>Brunei</value>
+  </data>
+  <data name="COUNTRY_BO" xml:space="preserve">
+    <value>Bolivia</value>
+  </data>
+  <data name="COUNTRY_BR" xml:space="preserve">
+    <value>Brazil</value>
+  </data>
+  <data name="COUNTRY_BS" xml:space="preserve">
+    <value>The Bahamas</value>
+  </data>
+  <data name="COUNTRY_BT" xml:space="preserve">
+    <value>Bhutan</value>
+  </data>
+  <data name="COUNTRY_BV" xml:space="preserve">
+    <value>Bouvet Island</value>
+  </data>
+  <data name="COUNTRY_BW" xml:space="preserve">
+    <value>Botswana</value>
+  </data>
+  <data name="COUNTRY_BY" xml:space="preserve">
+    <value>Belarus</value>
+  </data>
+  <data name="COUNTRY_BZ" xml:space="preserve">
+    <value>Belize</value>
+  </data>
+  <data name="COUNTRY_CA" xml:space="preserve">
+    <value>Canada</value>
+  </data>
+  <data name="COUNTRY_CC" xml:space="preserve">
+    <value>Cocos (Keeling) Islands</value>
+  </data>
+  <data name="COUNTRY_CD" xml:space="preserve">
+    <value>Congo, Democratic Republic of the</value>
+  </data>
+  <data name="COUNTRY_CF" xml:space="preserve">
+    <value>Central African Republic</value>
+  </data>
+  <data name="COUNTRY_CG" xml:space="preserve">
+    <value>Congo, Republic of the</value>
+  </data>
+  <data name="COUNTRY_CH" xml:space="preserve">
+    <value>Switzerland</value>
+  </data>
+  <data name="COUNTRY_CI" xml:space="preserve">
+    <value>Cote d'Ivoire</value>
+  </data>
+  <data name="COUNTRY_CK" xml:space="preserve">
+    <value>Cook Islands</value>
+  </data>
+  <data name="COUNTRY_CL" xml:space="preserve">
+    <value>Chile</value>
+  </data>
+  <data name="COUNTRY_CM" xml:space="preserve">
+    <value>Cameroon</value>
+  </data>
+  <data name="COUNTRY_CN" xml:space="preserve">
+    <value>China</value>
+  </data>
+  <data name="COUNTRY_CO" xml:space="preserve">
+    <value>Colombia</value>
+  </data>
+  <data name="COUNTRY_CR" xml:space="preserve">
+    <value>Costa Rica</value>
+  </data>
+  <data name="COUNTRY_CU" xml:space="preserve">
+    <value>Cuba</value>
+  </data>
+  <data name="COUNTRY_CV" xml:space="preserve">
+    <value>Cape Verde</value>
+  </data>
+  <data name="COUNTRY_CX" xml:space="preserve">
+    <value>Christmas Island</value>
+  </data>
+  <data name="COUNTRY_CY" xml:space="preserve">
+    <value>Cyprus</value>
+  </data>
+  <data name="COUNTRY_CZ" xml:space="preserve">
+    <value>Czech Republic</value>
+  </data>
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>

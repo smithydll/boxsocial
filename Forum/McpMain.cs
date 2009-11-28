@@ -57,6 +57,8 @@ namespace BoxSocial.Applications.Forum
         {
             this.AddModeHandler("lock", new ModuleModeHandler(McpMain_Lock));
             this.AddModeHandler("delete", new ModuleModeHandler(McpMain_Delete));
+            this.AddModeHandler("move", new ModuleModeHandler(McpMain_Move));
+            this.AddModeHandler("delete-post", new ModuleModeHandler(McpMain_DeletePost));
         }
 
         void McpMain_Show(object sender, EventArgs e)
@@ -254,6 +256,111 @@ namespace BoxSocial.Applications.Forum
                 // TODO: statistics updating
                 //topic.Delete();
             }
+        }
+
+        void McpMain_Move(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long topicId = core.Functions.FormLong("t", 0);
+            long forumId = core.Functions.FormLong("f", 0);
+
+            ForumTopic topic = null;
+            Forum newForum = null;
+            Forum oldForum = null;
+
+            try
+            {
+                topic = new ForumTopic(core, topicId);
+                oldForum = topic.Forum;
+            }
+            catch (InvalidTopicException)
+            {
+                return;
+            }
+
+            try
+            {
+                if (forumId > 0)
+                {
+                    newForum = new Forum(core, forumId);
+                }
+                else
+                {
+                    newForum = new Forum(core, Owner);
+                }
+            }
+            catch (InvalidTopicException)
+            {
+                return;
+            }
+
+            /* Cannot move topics outside the forum to another owner's forum */
+            if (newForum.Owner.Id != Owner.Id || newForum.Owner.TypeId != Owner.TypeId)
+            {
+                return;
+            }
+
+            /* Attempting to move to the same forum (not a move, ignore) */
+            if (oldForum.Id == newForum.Id)
+            {
+                return;
+            }
+
+            db.BeginTransaction();
+
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+                uQuery.AddField("forum_id", newForum.Id);
+                uQuery.AddCondition("topic_id", topic.Id);
+
+                db.Query(uQuery);
+            }
+
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(TopicPost));
+                uQuery.AddField("forum_id", newForum.Id);
+                uQuery.AddCondition("topic_id", topic.Id);
+
+                db.Query(uQuery);
+            }
+
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(TopicReadStatus));
+                uQuery.AddField("forum_id", newForum.Id);
+                uQuery.AddCondition("topic_id", topic.Id);
+
+                db.Query(uQuery);
+            }
+
+            {
+                if (oldForum.Id > 0)
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                    uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Subtraction, topic.Posts + 1));
+                    uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Subtraction, 1));
+                    uQuery.AddCondition("forum_id", oldForum.Id);
+
+                    db.Query(uQuery);
+                }
+            }
+
+            {
+                if (newForum.Id > 0)
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                    uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, topic.Posts + 1));
+                    uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Addition, 1));
+                    uQuery.AddCondition("forum_id", newForum.Id);
+
+                    db.Query(uQuery);
+                }
+            }
+        }
+
+        void McpMain_DeletePost(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
         }
     }
 }

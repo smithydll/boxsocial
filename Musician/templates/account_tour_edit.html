@@ -1,0 +1,22 @@
+﻿<h3>Edit Tour</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Edit Tour</legend>
+		<dl>
+			<dt><label for="title">Tour Title</label></dt>
+			<dd>{S_TITLE}</dd>
+			<dt><label for="year">Tour Year</label></dt>
+			<dd>{S_YEAR}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="music" />
+		<input type="hidden" name="sub" value="tour" />
+		<!-- IF EDIT -->
+		<input type="hidden" name="mode" value="edit" />
+		<!-- ELSE -->
+		<input type="hidden" name="mode" value="add" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

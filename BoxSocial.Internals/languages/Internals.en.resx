@@ -303,6 +303,24 @@
   <data name="COUNTRY_CZ" xml:space="preserve">
     <value>Czech Republic</value>
   </data>
+  <data name="COUNTRY_DE" xml:space="preserve">
+    <value>Germany</value>
+  </data>
+  <data name="COUNTRY_DJ" xml:space="preserve">
+    <value>Djibouti</value>
+  </data>
+  <data name="COUNTRY_DK" xml:space="preserve">
+    <value>Denmark</value>
+  </data>
+  <data name="COUNTRY_DM" xml:space="preserve">
+    <value>Dominica</value>
+  </data>
+  <data name="COUNTRY_DO" xml:space="preserve">
+    <value>Dominican Republic</value>
+  </data>
+  <data name="COUNTRY_DZ" xml:space="preserve">
+    <value>Algeria</value>
+  </data>
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>

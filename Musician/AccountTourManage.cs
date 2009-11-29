@@ -57,7 +57,7 @@ namespace BoxSocial.Musician
 
         void AccountTourManage_Load(object sender, EventArgs e)
         {
-            this.AddModeHandler("add", AccountTourManage_Edit);
+            this.AddModeHandler("new", AccountTourManage_Edit);
             this.AddModeHandler("edit", AccountTourManage_Edit);
         }
 
@@ -85,6 +85,8 @@ namespace BoxSocial.Musician
         void AccountTourManage_Edit(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_tour_edit");
+            
+            Tour tour = null;
 
             /* */
             TextBox titleTextBox = new TextBox("title");
@@ -98,14 +100,12 @@ namespace BoxSocial.Musician
                 yearSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-
             switch (e.Mode)
             {
-                case "add":
+                case "new":
                     break;
                 case "edit":
                     long tourId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
-                    Tour tour = null;
 
                     try
                     {
@@ -123,21 +123,56 @@ namespace BoxSocial.Musician
                         yearSelectBox.SelectedKey = tour.StartYear.ToString();
                     }
 
-                    template.Parse("EDIT", "TRUE");
+                    template.Parse("S_ID", "TRUE");
+                    template.Parse("EDIT", tour.Id.ToString());
 
                     break;
             }
 
+            if (core.Http.Form["title"] != null)
+            {
+                titleTextBox.Value = core.Http.Form["title"];
+            }
+            yearSelectBox.SelectedKey = core.Functions.FormShort("year", short.Parse(yearSelectBox.SelectedKey)).ToString();
+
             template.Parse("S_TITLE", titleTextBox);
             template.Parse("S_YEAR", yearSelectBox);
 
-            SaveMode(AccountTourManage_EditSave);
+            SaveItemMode(AccountTourManage_EditSave, tour);
         }
 
-        void AccountTourManage_EditSave(object sender, ModuleModeEventArgs e)
+        void AccountTourManage_EditSave(object sender, ItemModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
+            string title = core.Http.Form["title"];
+            short year = core.Functions.FormShort("year", (short)DateTime.UtcNow.Year);
 
+            switch (e.Mode)
+            {
+                case "new":
+                    try
+                    {
+                        Tour.Create(core, (Musician)Owner, title, year);
+                    }
+                    catch (InvalidTourException)
+                    {
+                    }
+
+                    break;
+                case "edit":
+                    Tour tour = (Tour)e.Item;
+
+                    if (tour == null)
+                    {
+                        return;
+                    }
+
+                    tour.Title = title;
+                    tour.StartYear = year;
+
+                    tour.Update();
+                    break;
+            }
         }
     }
 }

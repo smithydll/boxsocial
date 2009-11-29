@@ -42,8 +42,36 @@ namespace BoxSocial.Musician
         private bool leadVocalist;
         [DataField("member_instruments")]
         private long instruments;
+        [DataField("member_stage_name", 63)]
+        private string stageName;
+        [DataField("member_biography", MYSQL_TEXT)]
+        private string biography;
 
         private Musician musician;
+
+        public string StageName
+        {
+            get
+            {
+                return stageName;
+            }
+            set
+            {
+                SetProperty("stageName", value);
+            }
+        }
+
+        public string Biography
+        {
+            get
+            {
+                return biography;
+            }
+            set
+            {
+                SetProperty("biography", value);
+            }
+        }
 
         public DateTime GetMemberDate(UnixTime tz)
         {

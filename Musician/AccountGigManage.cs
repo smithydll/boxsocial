@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -88,10 +89,41 @@ namespace BoxSocial.Musician
 
         void AccountGigManage_Edit(object sender, ModuleModeEventArgs e)
         {
+            SetTemplate("account_gig_edit");
+
+            /* */
+            CheckBox allAgesCheckBox = new CheckBox("all-ages");
+            allAgesCheckBox.Caption = core.prose.GetString("Musician", "IS_ALL_AGES");
+
+            switch (e.Mode)
+            {
+                case "add":
+                    break;
+                case "edit":
+                    long gigId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+                    Gig gig = null;
+
+                    try
+                    {
+                        gig = new Gig(core, gigId);
+
+                        allAgesCheckBox.IsChecked = gig.AllAges;
+                    }
+                    catch (InvalidGigException)
+                    {
+                        return;
+                    }
+                    break;
+            }
+
+            template.Parse("S_ALLAGES", allAgesCheckBox);
+
+            SaveMode(AccountGigManage_EditSave);
         }
 
         void AccountGigManage_EditSave(object sender, ModuleModeEventArgs e)
         {
+            AuthoriseRequestSid();
 
         }
     }

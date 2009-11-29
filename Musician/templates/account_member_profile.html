@@ -1,0 +1,17 @@
+﻿<h3>Member Profile</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Musician Profile</legend>
+		<dl>
+			<dt><label for="stage-name">Stage Name</label></dt>
+			<dd>{S_STAGENAME}</dd>
+			<dt><label for="biography">Biography</label></dt>
+			<dd>{S_BIOGRAPHY}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="music" />
+		<input type="hidden" name="sub" value="my-profile" />
+	</fieldset>
+</form>

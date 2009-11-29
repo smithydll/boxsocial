@@ -79,6 +79,10 @@ namespace BoxSocial.Musician
             {
                 return tourStartYear;
             }
+            set
+            {
+                SetProperty("tourStartYear", value);
+            }
         }
 
         public Musician Musician

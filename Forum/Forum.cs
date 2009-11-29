@@ -514,7 +514,7 @@ namespace BoxSocial.Applications.Forum
                     DeleteQuery dQuery = new DeleteQuery(typeof(ForumTopic));
                     dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
 
-                    db.Query(uQuery);
+                    db.Query(dQuery);
                 }
 
                 /* Delete posts and update post counts */
@@ -522,7 +522,7 @@ namespace BoxSocial.Applications.Forum
                     DeleteQuery dQuery = new DeleteQuery(typeof(TopicPost));
                     dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
 
-                    db.Query(uQuery);
+                    db.Query(dQuery);
                 }
 
                 /* */
@@ -530,7 +530,7 @@ namespace BoxSocial.Applications.Forum
                     DeleteQuery dQuery = new DeleteQuery(typeof(TopicReadStatus));
                     dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
 
-                    db.Query(uQuery);
+                    db.Query(dQuery);
                 }
 
                 /* */
@@ -538,7 +538,7 @@ namespace BoxSocial.Applications.Forum
                     DeleteQuery dQuery = new DeleteQuery(typeof(ForumReadStatus));
                     dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
 
-                    db.Query(uQuery);
+                    db.Query(dQuery);
                 }
             }
         }
@@ -546,7 +546,7 @@ namespace BoxSocial.Applications.Forum
         public new long Delete()
         {
             /* Do not delete sub items, post delete method will update post counts in a more efficient manner */
-            ((Item)this.Delete());
+            return ((Item)this).Delete();
         }
 
         public static SelectQuery Forum_GetSelectQueryStub(Core core)

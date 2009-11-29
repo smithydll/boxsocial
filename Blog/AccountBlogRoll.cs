@@ -104,7 +104,9 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_blog_roll_new");
 
-            long id = core.Functions.RequestLong("id", core.Functions.FormLong("id", 0));
+            BlogRollEntry bre = null;
+
+            long id = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
             string title = core.Http.Form["title"];
             string uri = core.Http.Form["uri"];
 
@@ -115,8 +117,6 @@ namespace BoxSocial.Applications.Blog
             {
                 if (id > 0)
                 {
-                    BlogRollEntry bre = null;
-
                     try
                     {
                         bre = new BlogRollEntry(core, id);
@@ -143,10 +143,10 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_TITLE", title);
             template.Parse("S_URI", uri);
 
-            SaveMode(new ModuleModeHandler(AccountBlogRoll_SaveNew));
+            SaveItemMode(new ItemModuleModeHandler(AccountBlogRoll_SaveNew), bre);
         }
 
-        void AccountBlogRoll_SaveNew(object sender, ModuleModeEventArgs e)
+        void AccountBlogRoll_SaveNew(object sender, ItemModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
             string title = core.Http.Form["title"];
@@ -174,13 +174,9 @@ namespace BoxSocial.Applications.Blog
             else if (e.Mode == "edit")
             {
                 long id = core.Functions.FormLong("id", 0);
-                BlogRollEntry bre = null;
+                BlogRollEntry bre = (BlogRollEntry)e.Item;
 
-                try
-                {
-                    bre = new BlogRollEntry(core, id);
-                }
-                catch (InvalidBlogEntryException)
+                if (bre == null)
                 {
                     DisplayGenericError();
                     return;

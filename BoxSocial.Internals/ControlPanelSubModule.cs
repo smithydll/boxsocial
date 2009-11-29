@@ -223,6 +223,7 @@ namespace BoxSocial.Internals
         }
 
         public delegate void ModuleModeHandler(object sender, ModuleModeEventArgs e);
+        public delegate void ItemModuleModeHandler(object sender, ItemModuleModeEventArgs e);
 
         private bool HasModeHandler(string mode)
         {
@@ -274,6 +275,17 @@ namespace BoxSocial.Internals
                 if (core.Http.Form["mode"] != null)
                 {
                     saveHandler(this, new ModuleModeEventArgs(core.Http.Form["mode"]));
+                }
+            }
+        }
+
+        protected void SaveItemMode(ItemModuleModeHandler saveHandler, NumberedItem item)
+        {
+            if (core.Http.Form["save"] != null)
+            {
+                if (core.Http.Form["mode"] != null)
+                {
+                    saveHandler(this, new ItemModuleModeEventArgs(core.Http.Form["mode"], item));
                 }
             }
         }
@@ -600,6 +612,34 @@ namespace BoxSocial.Internals
         public ModuleModeEventArgs(string mode)
         {
             this.mode = mode;
+        }
+    }
+
+    public class ItemModuleModeEventArgs : EventArgs
+    {
+        private string mode;
+        private NumberedItem item;
+
+        public string Mode
+        {
+            get
+            {
+                return mode;
+            }
+        }
+
+        public NumberedItem Item
+        {
+            get
+            {
+                return item;
+            }
+        }
+
+        public ItemModuleModeEventArgs(string mode, NumberedItem item)
+        {
+            this.mode = mode;
+            this.item = item;
         }
     }
 }

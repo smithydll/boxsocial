@@ -49,7 +49,7 @@ namespace BoxSocial.Musician
         private string releaseTitle;
         [DataField("release_date_ut")]
         private long releaseDateRaw;
-        [DataField("release_cover_art", 63)]
+        [DataField("release_cover_art")]
         private long releaseCoverArt;
         [DataField("release_comments")]
         private long releaseComments;
@@ -153,6 +153,17 @@ namespace BoxSocial.Musician
         public Track convertToTrack(Item input)
         {
             return (Track)input;
+        }
+
+        public static Release Create(Core core, Musician musician, string title, long coverId)
+        {
+            // TODO: fix this
+            Item item = Item.Create(core, typeof(Release), new FieldValuePair("musician_id", musician.Id),
+                new FieldValuePair("release_title", title),
+                new FieldValuePair("release_date_ut", UnixTime.UnixTimeStamp()),
+                new FieldValuePair("release_cover_art", coverId));
+
+            return (Release)item;
         }
 
         public override long Id

@@ -139,6 +139,73 @@ namespace BoxSocial.Musician
             }
         }
 
+        public List<MusicianMember> GetMembers()
+        {
+            List<MusicianMember> members = new List<MusicianMember>();
+
+            SelectQuery query = new SelectQuery(typeof(MusicianMember));
+            query.AddField(new DataField(typeof(MusicianMember), "user_id"));
+            query.AddCondition("musician_id", musicianId);
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                members.Add(new MusicianMember(core, dr));
+            }
+
+            return members;
+        }
+
+        public List<Fan> GetFans(int page, int perPage)
+		{
+            return GetFans(page, perPage, null);
+		}
+
+        public List<Fan> GetFans(int page, int perPage, string filter)
+        {
+            List<Fan> fans = new List<Fan>();
+
+            SelectQuery query = new SelectQuery(typeof(Fan));
+            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddFields(Fan.GetFieldsPrefixed(typeof(Fan)));
+            query.AddCondition("musician_id", musicianId);
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition("user_keys.user_name_first", filter);
+            }
+            query.AddSort(SortOrder.Ascending, "fan_date_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable fansTable = db.Query(query);
+
+            List<long> fanIds = new List<long>();
+
+            foreach (DataRow dr in fansTable.Rows)
+            {
+                fanIds.Add((long)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(fanIds);
+
+            foreach (DataRow dr in fansTable.Rows)
+            {
+                fans.Add(new Fan(core, dr));
+            }
+
+            return fans;
+        }
+
         public List<Tour> GetTours()
         {
             return getSubItems(typeof(Tour), true).ConvertAll<Tour>(new Converter<Item, Tour>(convertToTour));
@@ -530,6 +597,20 @@ namespace BoxSocial.Musician
             {
                 return core.Uri.AppendSid(UriStub);
             }
+        }
+
+        public string FansUri
+        {
+            get
+            {
+                return core.Uri.AppendSid(string.Format("{0}fans",
+                    UriStub));
+            }
+        }
+        public string GetFansUri(string filter)
+        {
+            return core.Uri.AppendSid(string.Format("{0}fans?filter={1}",
+                    UriStub, filter));
         }
 
         public override string TitleName

@@ -72,6 +72,7 @@
     <Compile Include="Templates.Designer.cs">
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
+    <Compile Include="AccountMemberProfile.cs" />
     <Compile Include="Tour.cs" />
     <Compile Include="Track.cs" />
   </ItemGroup>
@@ -109,11 +110,13 @@
     <Content Include="templates\account_discography.html" />
     <Content Include="templates\account_gigs_manage.html" />
     <Content Include="templates\account_gig_edit.html" />
+    <Content Include="templates\account_member_profile.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_songs.html" />
     <Content Include="templates\account_song_edit.html" />
     <Content Include="templates\account_tour_edit.html" />
     <Content Include="templates\account_tour_manage.html" />
+    <Content Include="templates\viewfans.html" />
     <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />
     <Content Include="templates\viewsong.html" />

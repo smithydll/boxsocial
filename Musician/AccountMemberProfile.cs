@@ -76,7 +76,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                member = new MusicianMember(core, Owner, LoggedInMember);
+                member = new MusicianMember(core, (Musician)Owner, LoggedInMember);
 
                 stageNameTextBox.Value = member.StageName;
                 biographyTextBox.Value = member.Biography;

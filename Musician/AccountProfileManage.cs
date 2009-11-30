@@ -74,9 +74,20 @@ namespace BoxSocial.Musician
             TextBox homepageTextBox = new TextBox("homepage");
             homepageTextBox.MaxLength = 1024;
 
+            /* */
             TextBox nameTextBox = new TextBox("name");
             nameTextBox.IsDisabled = true;
             nameTextBox.MaxLength = 63;
+
+            /* */
+            SelectBox genreSelectBox = new SelectBox("genre");
+
+            List<MusicGenre> genres = MusicGenre.GetGenres(core);
+
+            foreach (MusicGenre genre in genres)
+            {
+                genreSelectBox.Add(new SelectBoxItem(genre.Id.ToString(), genre.Name));
+            }
 
             biographyTextBox.Value = musician.Biography;
             homepageTextBox.Value = musician.Homepage;

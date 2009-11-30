@@ -144,5 +144,10 @@ namespace BoxSocial.Musician
             : base(page, itemId)
         {
         }
+
+        public ShowMPageEventArgs(MPage page)
+            : base(page)
+        {
+        }
     }
 }

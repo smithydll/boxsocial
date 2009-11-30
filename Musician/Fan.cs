@@ -120,8 +120,63 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static void ShowAll(Core core, PPage page)
+        public Fan(Core core, DataRow memberRow)
+            : base(core)
         {
+            loadItemInfo(typeof(Fan), memberRow);
+            core.LoadUserProfile(userId);
+            loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
+        public static Fan Create(Core core)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void ShowAll(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("viewfans");
+
+            int p = e.Core.Functions.RequestInt("p", 1);
+
+            Musician musician = (Musician)e.Page.Owner;
+
+            e.Template.Parse("U_FILTER_ALL", musician.FansUri);
+            e.Template.Parse("U_FILTER_BEGINS_A", musician.GetFansUri("a"));
+            e.Template.Parse("U_FILTER_BEGINS_B", musician.GetFansUri("b"));
+            e.Template.Parse("U_FILTER_BEGINS_C", musician.GetFansUri("c"));
+            e.Template.Parse("U_FILTER_BEGINS_D", musician.GetFansUri("d"));
+            e.Template.Parse("U_FILTER_BEGINS_E", musician.GetFansUri("e"));
+            e.Template.Parse("U_FILTER_BEGINS_F", musician.GetFansUri("f"));
+            e.Template.Parse("U_FILTER_BEGINS_G", musician.GetFansUri("g"));
+            e.Template.Parse("U_FILTER_BEGINS_H", musician.GetFansUri("h"));
+            e.Template.Parse("U_FILTER_BEGINS_I", musician.GetFansUri("i"));
+            e.Template.Parse("U_FILTER_BEGINS_J", musician.GetFansUri("j"));
+            e.Template.Parse("U_FILTER_BEGINS_K", musician.GetFansUri("k"));
+            e.Template.Parse("U_FILTER_BEGINS_L", musician.GetFansUri("l"));
+            e.Template.Parse("U_FILTER_BEGINS_M", musician.GetFansUri("m"));
+            e.Template.Parse("U_FILTER_BEGINS_N", musician.GetFansUri("n"));
+            e.Template.Parse("U_FILTER_BEGINS_O", musician.GetFansUri("o"));
+            e.Template.Parse("U_FILTER_BEGINS_P", musician.GetFansUri("p"));
+            e.Template.Parse("U_FILTER_BEGINS_Q", musician.GetFansUri("q"));
+            e.Template.Parse("U_FILTER_BEGINS_R", musician.GetFansUri("r"));
+            e.Template.Parse("U_FILTER_BEGINS_S", musician.GetFansUri("s"));
+            e.Template.Parse("U_FILTER_BEGINS_T", musician.GetFansUri("t"));
+            e.Template.Parse("U_FILTER_BEGINS_U", musician.GetFansUri("u"));
+            e.Template.Parse("U_FILTER_BEGINS_V", musician.GetFansUri("v"));
+            e.Template.Parse("U_FILTER_BEGINS_W", musician.GetFansUri("w"));
+            e.Template.Parse("U_FILTER_BEGINS_X", musician.GetFansUri("x"));
+            e.Template.Parse("U_FILTER_BEGINS_Y", musician.GetFansUri("y"));
+            e.Template.Parse("U_FILTER_BEGINS_Z", musician.GetFansUri("z"));
+
+            List<Fan> fans = musician.GetFans(p, 20, e.Core.Functions.GetFilter());
+
+            foreach (Fan fan in fans)
+            {
+                VariableCollection fanVariableCollection = e.Template.CreateChild("fan_list");
+
+                fanVariableCollection.Parse("DISPLAY_NAME", fan.DisplayName);
+            }
         }
     }
 

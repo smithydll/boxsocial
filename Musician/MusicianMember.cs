@@ -153,6 +153,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public MusicianMember(Core core, DataRow memberRow)
+            : base(core)
+        {
+            loadItemInfo(typeof(MusicianMember), memberRow);
+            core.LoadUserProfile(userId);
+            loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
         public List<Instrument> GetInstruments()
         {
             List<Instrument> instruments = new List<Instrument>();
@@ -195,8 +203,10 @@ namespace BoxSocial.Musician
             {
                 VariableCollection instrumentVariableCollection = e.Template.CreateChild("instrument_list");
 
-
+                instrumentVariableCollection.Parse("NAME", instrument.Name);
             }
+
+            e.Core.Display.ParseBbcode("BIOGRAPHY", member.Biography);
         }
     }
 

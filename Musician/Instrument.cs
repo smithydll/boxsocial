@@ -55,6 +55,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public long Musicians
+        {
+            get
+            {
+                return instrumentMusicians;
+            }
+        }
+
         public Instrument(Core core, long instrumentId)
             : base(core)
         {

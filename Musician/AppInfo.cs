@@ -188,7 +188,7 @@ namespace BoxSocial.Musician
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
             aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Musician);
-            //aii.AddSlug("fans", @"^/fans(|/)$", AppPrimitives.Musician);
+            aii.AddSlug("fans", @"^/fans(|/)$", AppPrimitives.Musician);
 
             aii.AddModule("music");
 
@@ -313,7 +313,7 @@ namespace BoxSocial.Musician
         {
             if (sender is MPage)
             {
-                Fan.ShowAll(core, (MPage)sender);
+                Fan.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
             }
         }
 

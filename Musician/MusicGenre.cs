@@ -53,6 +53,46 @@ namespace BoxSocial.Musician
             }
         }
 
+        public bool IsSubGenre
+        {
+            get
+            {
+                return isSubGenre;
+            }
+        }
+
+        public long ParentId
+        {
+            get
+            {
+                return parentGenreId;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+
+        public long Musicians
+        {
+            get
+            {
+                return musicians;
+            }
+        }
+
+        public long Recordings
+        {
+            get
+            {
+                return recordings;
+            }
+        }
+
         public MusicGenre(Core core, long genreId)
             : base(core)
         {
@@ -85,6 +125,41 @@ namespace BoxSocial.Musician
 
         void MusicGenre_ItemLoad()
         {
+        }
+
+        public static List<MusicGenre> GetGenres(Core core)
+        {
+            List<MusicGenre> genres = new List<MusicGenre>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            query.AddCondition("genre_is_sub", false);
+
+            DataTable genresDataTable = core.db.Query(query);
+
+            foreach (DataRow dr in genresDataTable.Rows)
+            {
+                genres.Add(new MusicGenre(core, dr));
+            }
+
+            return genres;
+        }
+
+        public List<MusicGenre> GetSubGenres(Core core)
+        {
+            List<MusicGenre> genres = new List<MusicGenre>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            query.AddCondition("genre_is_sub", true);
+            query.AddCondition("parent_id", genreId);
+
+            DataTable genresDataTable = core.db.Query(query);
+
+            foreach (DataRow dr in genresDataTable.Rows)
+            {
+                genres.Add(new MusicGenre(core, dr));
+            }
+
+            return genres;
         }
 
         public override long Id

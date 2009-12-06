@@ -139,6 +139,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the owner of the blog
+        /// </summary>
         public Primitive Owner
         {
             get
@@ -177,6 +180,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// ItemLoad event
+        /// </summary>
         private void Blog_ItemLoad()
         {
             core.LoadUserProfile(userId);
@@ -771,6 +777,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the blog.
+        /// </summary>
         public override long Id
         {
             get
@@ -779,6 +788,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Gets the URI of the blog.
+        /// </summary>
         public override string Uri
         {
             get
@@ -787,6 +799,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Build the blog URI.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="member">The owner of the blog</param>
+        /// <returns>The URI</returns>
         public static string BuildUri(Core core, User member)
         {
             if (member.ProfileHomepage == "/blog")
@@ -801,6 +819,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Build an absolute URI to a blog.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="member">The owner of the blog</param>
+        /// <returns>The URI</returns>
         public static string BuildAbsoluteUri(Core core, User member)
         {
             if (member.ProfileHomepage == "/blog")
@@ -815,54 +839,119 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public static string BuildUri(Core core, User member, string category)
         {
             return core.Uri.AppendSid(string.Format("{0}blog/category/{1}",
                 member.UriStub, category));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, string category)
         {
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/category/{1}",
                 member.UriStubAbsolute, category));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
         public static string BuildUri(Core core, User member, int year)
         {
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}",
                 member.UriStub, year));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year)
         {
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}",
                 member.UriStubAbsolute, year));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
         public static string BuildUri(Core core, User member, int year, int month)
         {
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStub, year, month));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year, int month)
         {
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStubAbsolute, year, month));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         public static string BuildUri(Core core, User member, int year, int month, long postId)
         {
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStub, year, month, postId));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="member"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="postId"></param>
+        /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year, int month, long postId)
         {
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStubAbsolute, year, month, postId));
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -871,6 +960,9 @@ namespace BoxSocial.Applications.Blog
             }
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public IPermissibleItem PermissiveParent
         {
             get
@@ -879,11 +971,19 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="permission"></param>
+        /// <returns></returns>
         public bool GetDefaultCan(string permission)
         {
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DisplayTitle
         {
             get

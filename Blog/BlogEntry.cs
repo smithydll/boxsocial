@@ -282,6 +282,9 @@ namespace BoxSocial.Applications.Blog
             loadItemInfo(postEntryRow);
         }
 
+        /// <summary>
+        /// ItemLoad event
+        /// </summary>
         void BlogEntry_ItemLoad()
         {
         }
@@ -393,7 +396,9 @@ namespace BoxSocial.Applications.Blog
 
         #region IPermissibleItem Members
 
-
+        /// <summary>
+        /// Returns the parent object for ACLs.
+        /// </summary>
         public IPermissibleItem PermissiveParent
         {
             get

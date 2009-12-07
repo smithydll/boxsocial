@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="./xsl/boxsocial.xsl" ?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <info>
+        <title>The Box Social Book</title>
+        <authorgroup>
+        <author>
+            <orgname>Box Social</orgname>
+            <orgdiv>Development Team</orgdiv>
+            <address>
+                <city>Maryborough</city>
+                <postcode>4650</postcode>
+                <state>Queensland</state>
+                <country>Australia</country>
+            </address>
+            <email>contact@boxsocial.net</email>
+        </author>
+            <author>
+                <personname>David Lachlan Smith</personname>
+            </author>
+        </authorgroup>
+        <legalnotice>
+            <para>GFDL 1.1</para>
+        </legalnotice>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="standard_includes\logo.png" width="6.0cm">
+                </imagedata>
+            </imageobject>
+        </mediaobject>
+        <pubdate>December 6, 2009</pubdate>
+    </info>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="R/R1/R1.1-2008.xml"/>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D1/D1.1-2008.xml"/>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D4/D4.D0-2008.xml"/>
+</book>

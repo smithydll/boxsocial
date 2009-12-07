@@ -1,0 +1,57 @@
+\makeatletter
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{setspace}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{floatflt}
+\usepackage{natbib}
+\usepackage[a4paper=true,pdftex=true,pdfhighlight=/N,bookmarks=true,bookmarksopen=true,colorlinks=true,linkcolor=black,citecolor=black]{hyperref}
+\def\maketitle{%
+  \null
+  \thispagestyle{empty}%
+  \vfill
+  \begin{center}\leavevmode
+    \normalfont
+    \includegraphics[width=0.35\textwidth]{../../standard_includes/logo.png}\\[1cm]
+    {\LARGE \@title\par\@docnum\par}%
+    %\vskip 1cm
+    %{\Large \@author\par}%
+    \vskip 1cm
+    {\Large \@date\par}%
+  \end{center}%
+  \vfill
+  \null
+  \cleardoublepage
+  \newpage
+  \null
+  \vfill
+Copyright (c) 2008, David Lachlan Smith
+\newline
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+as published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+  \vfill
+  \null
+  \newpage
+	\tableofcontents
+	\newpage
+  }
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\oddsidemargin  -0.2in
+\evensidemargin 0.0in
+\textwidth      6.6in
+\headheight     12.0pt
+\topmargin      -0.4in
+\textheight=9.7in
+\parindent=0in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{4}

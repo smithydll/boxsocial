@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xsl/thesis.xsl" ?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook">
+    <info>
+        <title>D4.D0-2008 Manual of Style</title>
+        <author>
+            <personname>
+                <firstname>David</firstname>
+                <othername>Lachlan</othername>
+                <surname>Smith</surname>
+            </personname>
+        </author>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="standard_includes\logo.png" width="6.0cm">
+                </imagedata>
+            </imageobject>
+        </mediaobject>
+    </info>
+    <section>
+        <title>Introduction</title>
+        <para role="clause">The manual of style is the Box Social `coding guidelines`. These guidelines cover the
+            production of C# code, HTML, English language files, and graphical elements.</para>
+        <para role="clause">This guide exists to keep the style of the project in sync and manageable such that
+            anyone familiar with the style can understand the project sources.</para>
+    </section>
+    <section>
+        <title>C# Coding Guidelines</title>
+        <para role="clause">Most of the layout guidelines are Visual Studio defaults.</para>
+        <section>
+            <title>Standard C# File Header</title>
+            <programlisting>
+<code>/*
+ * Box Social™
+ * http://boxsocial.net/
+ * Copyright © 2007, David Lachlan Smith
+ * 
+ * $Id:$
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */</code>
+            </programlisting>
+        </section>
+        <section>
+            <title>Indentation</title>
+            <para role="clause">Indented sections are indented by four spaces per indent, always. You should set
+                your editor up to translate the tab key to indenting by four characters.</para>
+            <para role="clause">Indent block contents by a single indentation.</para>
+            <para role="clause">Do not indent braces.</para>
+            <para role="clause">Indent case contents. This includes the break keyword.</para>
+            <para role="clause">Indent case labels.</para>
+        </section>
+        <section>
+            <title>New Lines</title>
+            <para>New lines in files are the "Windows" CR+LF combination.</para>
+            <para>The keywords, else, catch, and finally are to be placed on new lines by
+                themselves.</para>
+            <para>The base keyword shall be on a new line (including the preceding colon).</para>
+        </section>
+        <section>
+            <title>Braces</title>
+            <para>Opening braces go on a new line.</para>
+            <example>
+                <title>Example brace usage</title>
+                <programlisting>
+<code>            public override string Name
+            {
+                get
+                {
+                    return "Networks";
+                }
+            }</code>
+                </programlisting>
+            </example>
+        </section>
+        <section>
+            <title>Spacing</title>
+            <para>There shall no space in between the function name, and the opening bracket of the
+                parameter.</para>
+            <para>There shall no space in between empty parentheses.</para>
+            <para>There shall no space in between an enumerated variable, and the enumerated item
+                accessor (opening square bracket).</para>
+            <para>There shall be no space in between the opening, and closing bracket and
+                parenthesised contents.</para>
+            <para>There shall be no space in between the opening, and closing square bracket and
+                square bracketed contents.</para>
+            <para>There shall be a space in between the opening, and closing brace and brace
+                enclosed contents.</para>
+            <para>There shall be a space in between a control flow statement and parentheses, such
+                as if, else if, for, where, and catch.</para>
+            <para>There shall be a space after a comma.</para>
+            <para>There shall be no space before a comma.</para>
+            <para>There shall be a space before and after the interface colon on class definitions.</para>
+            <para>There shall be a space after the base colon on constructor method definitions.</para>
+            <para>There shall be a space after the semi colon in for statements.</para>
+            <para>There shall be no space before the semi colon in for statements.</para>
+            <para>There shall be a space before and after a binary operator (+, *, -, /,
+                &amp;&amp;, ||, etc...)</para>
+        </section>
+        <section>
+            <title>Parenthesising Complex Expressions</title>
+            <para>Always parenthesise complex boolean logic expressions. A complex expression is one
+                that consists of more than one comparison operator.</para>
+        </section>
+        <section>
+            <title>Naming</title>
+            <para>All members are to be named using camel case. To remove confusion, camel case
+                shall either be referred to as upper camel case (UpperCamelCase) or lower camel case
+                (lowerCamelCase), example in part.</para>
+            <para>Public members of a class, structure, or enumeration are always written in upper
+                camel case.</para>
+            <para>Private members (e.g. local variables) of a class, or structure are always written
+                in lower camel case.</para>
+            <para>Undefined and non-standard abbreviations are to be avoided.</para>
+            <para>Internal members are treated as public members.</para>
+            <para>Protected members are treated as private members.</para>
+            <para>A member is a function, procedure, property, or variable.</para>
+            <para>Constants are to be named using underscore separated words written in upper
+            case.</para>
+        </section>
+    </section>
+    <section>
+        <title>Use of Language</title>
+        <section>
+            <title>General</title>
+        <para>The default language used throughout Box Social is English. It is preferred to use a
+            formal international dialect in the default distribution as opposed to any regional
+            dialect. The exception is the inclusion of Australianisms where suited. Regionalisms are
+            not to be abused, and an abundance will cause them to be removed in favour of a more
+            universal style of expression.</para>
+        <para>There are a number of conventions that are to be followed to make this easier:</para>
+        <itemizedlist>
+            <listitem>
+                <para>Words ending in -ise not -ize.</para>
+            </listitem>
+            <listitem>
+                <para>Words ending in -our not -or.</para>
+            </listitem>
+            <listitem>
+                <para>Programme not program.</para>
+            </listitem>
+            <listitem>
+                <para>Singular of data is datum.</para>
+            </listitem>
+            <listitem>
+                <para>Plural of forum is fora.</para>
+            </listitem>
+        </itemizedlist>
+        <para>Comments, class, and variable names are to always be spelt correctly. If a spelling
+            mistake is found, refactoring is to take place to correct it.</para>
+        <para>Unless stating a measurement, numbers below 10 are to be written out in full. For
+            example, "I have two tickets to the concert" (quantity), versus "I bought a 2 l bottle
+            of milk" (measurement). A count of an item reported by the software is to always be
+            reported in arabic numerals.</para>
+        <para>A list written in-line of a body of text is to always have a comma precede the 'or' or
+            'and' adjoining the last item of the list.</para>
+        <para>The definition of 'or' is to be taken as exclusive or. Where an inclusive or is
+            intended 'and/or' is to be written.</para>
+        <para>Conventions in technologies developed by a United States majority may require these
+            conventions to not be upheld, for instance referencing 'background-color' in CSS. These
+            are considered proper names which are always referred to in their original sense.</para>
+        <para>All technical writing shall be written in the past tense, written in third person.</para>
+        <para>The referencing standard shall be the IEEE style.</para>
+        </section>
+    </section>
+</article>

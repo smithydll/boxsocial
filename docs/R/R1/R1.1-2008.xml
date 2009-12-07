@@ -1,0 +1,1651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xsl/thesis.xsl" ?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook">
+    <info>
+        <title>R1.D0-2008 [DRAFT] Box Social Rules of Incorporation</title>
+        <author>
+            <personname>
+                <firstname>David</firstname>
+                <othername>Lachlan</othername>
+                <surname>Smith</surname>
+            </personname>
+        </author>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="standard_includes\logo.png" width="6.0cm">
+                </imagedata>
+            </imageobject>
+        </mediaobject>
+    </info>
+    <section>
+        <title>Interpretation</title>
+        <orderedlist>
+            <listitem>
+                <para>In these rules-</para>
+                <para><emphasis>Act</emphasis> means the Associations Incorporation Act 1981.</para>
+                <para>
+                    <emphasis>present-</emphasis>
+                </para>
+                <orderedlist>
+                    <listitem>
+                        <para>at a management committee meeting; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>at a general meeting,</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A word or expression that is not defined in these model rules, but is defined
+                    in the Act has, if the context permits, the meaning given in the Act.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Name</title>
+        <para>The name of the incorporated association is Box Social Incorporated (<emphasis>the
+                association</emphasis>).</para>
+    </section>
+    <section>
+        <title>Objects</title>
+        <para>The object of the association are-</para>
+        <orderedlist>
+            <listitem>
+                <para>to promote the global community; and</para>
+            </listitem>
+            <listitem>
+                <para>to promote community development of the Box Social software; and</para>
+            </listitem>
+            <listitem>
+                <para>to maintain an active installation of the Box Social software on the internet; and</para>
+            </listitem>
+            <listitem>
+                <para>to do so in the spirit of the Free Software Foundation.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Powers</title>
+        <orderedlist>
+            <listitem>
+                <para>The association has the powers of an individual.</para>
+            </listitem>
+            <listitem>
+                <para>The association may, for example-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>enter into contracts; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>acquire, hold, deal with, and dispose of property; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>make charges for services and facilities it supplies; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>do other things necessary of convenient to be done in carrying out its
+                            affairs.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The association make take over the funds and other assets and liabilities of
+                    the present unincorporated association known as Box Social (the
+                        <emphasis>unincorporated association</emphasis>).</para>
+            </listitem>
+            <listitem>
+                <para>The association may also issue secured and unsecured notes, debentures and
+                    debenture stock for the association.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Classes of members</title>
+        <orderedlist>
+            <listitem>
+                <para>The membership of the association consists of ordinary members, and any of the
+                    following classes of members-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>Community member</para>
+                    </listitem>
+                    <listitem>
+                        <para>Developer</para>
+                    </listitem>
+                    <listitem>
+                        <para>Translator</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The number of ordinary members is unlimited. Acceptance as an ordinary member
+                    requires payment of the membership fee.</para>
+            </listitem>
+            <listitem>
+                <para>The number of community members is unlimited. A community member is one who
+                    has joined http://boxsocial.net and has not paid a membership fee, and does not
+                    belong to another class of members.</para>
+            </listitem>
+            <listitem>
+                <para>Membership level of developer is open to those who have source control commit
+                    access to Box Social internals, or any application whose Intellectual Property
+                    belongs to the association, and does not solely make language contributions.</para>
+                <para>Acceptance to this level of membership is by application to the Lead
+                    Developer. Approval shall be granted or denied by the Lead Developer.</para>
+            </listitem>
+            <listitem>
+                <para>Membership level of translator is open to those who make language
+                    contributions.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Automatic membership</title>
+        <para>A person who, on the day the association is incorporated, was a member of the
+            unincorporated association and who, on or before a day fixed by the management
+            committee, agrees in writing to become a member of the incorporated association, must be
+            admitted by the management committee-</para>
+        <orderedlist numeration="loweralpha">
+            <listitem>
+                <para>to the equivalent class of membership of the association as the member held in
+                    the unincorporated association; or</para>
+            </listitem>
+            <listitem>
+                <para>if there is no equivalent class of membership-as an ordinary member.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>New membership</title>
+        <orderedlist>
+            <listitem>
+                <para>An applicant for ordinary membership of the association must be proposed by 1
+                    member of the association (the proposer) and seconded by another member (the
+                    seconder).</para>
+            </listitem>
+            <listitem>
+                <para>An application for membership must be-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>in writing; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>signed by the applicant and the applicant's proposer and seconder;
+                        and</para>
+                    </listitem>
+                    <listitem>
+                        <para>in the form decided by the management committee.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Membership fees</title>
+        <orderedlist>
+            <listitem>
+                <para>The membership fee for each ordinary membership and for each other class of
+                    membership (if any)-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>is the amount decided by the members from time to time at a general
+                            meeting; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>is payable when, and in the way, the management committee
+                        decides.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A member of the incorporated association who, before becoming a member, has
+                    paid the member’s annual subscription for membership of the unincorporated
+                    association on or before a day fixed by the management committee, is not liable
+                    to pay a further amount of annual subscription for the period before the day
+                    fixed by the management committee as the day on which the next annual
+                    subscription is payable.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Admission and rejection of new members</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee must consider an application for membership at the
+                    next committee meeting held after it receives-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the application for membership; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the appropriate membership fee for the application.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The management committee must ensure that, as soon as possible after the
+                    person applies to become a member of the association, and before the management
+                    committee considers the person's application, the person is advised-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>whether or not the association has public liability insurance;
+                        and</para>
+                    </listitem>
+                    <listitem>
+                        <para>if the association has public liability insurance-the amount of the
+                            insurance.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The management committee must decide at the meeting whether to accept or
+                    reject the application.</para>
+            </listitem>
+            <listitem>
+                <para>If a majority of the members of the management committee present at the
+                    meeting vote to accept the applicant as a member, the application must be
+                    accepted as a member for the class of membership applied for.</para>
+            </listitem>
+            <listitem>
+                <para>The secretary of the association must, as soon as practicable after the
+                    management committee decides to accept or reject an application, give the
+                    application a written notice of the decision.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>When membership ends</title>
+        <orderedlist>
+            <listitem>
+                <para>A member may resign from the association by giving a written notice of
+                    resignation to the secretary.</para>
+            </listitem>
+            <listitem>
+                <para>The resignation takes effect at-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the time the notice is received by the secretary; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>if a later time is stated in the notice-the later time.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The management committee may terminate a member's membership if the member-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>is convicted of an indictable office; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>does not comply with any of the provisions of these rules; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>has membership fees in arrears for at least 2 months; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>conducts himself or herself in a way considered to be injurious or
+                            prejudicial to the character or interests of the association.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>Before the management committee terminates a member's membership, the
+                    committee must give the member a full and fair opportunity to show why the
+                    membership should not be terminated.</para>
+            </listitem>
+            <listitem>
+                <para>If, after considering all representations made by the member, the management
+                    committee decides to terminate the membership, the secretary of the committee
+                    must give the member a written notice of the decision.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Appeal against rejection or termination of membership</title>
+        <orderedlist>
+            <listitem>
+                <para>A person whose application for membership has been rejected, or whose
+                    membership has been terminated, may give the secretary written notice of the
+                    person's intention to appeal against the decision.</para>
+            </listitem>
+            <listitem>
+                <para>A notice of intention to appeal must be given to the secretary within 1 month
+                    after the person receives written notice of the decision.</para>
+            </listitem>
+            <listitem>
+                <para>If the secretary receives a notice of intention to appeal, the secretary must,
+                    within 1 month after receiving the notice, call a general meeting to decide the
+                    appeal.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>General meeting to decide appeal</title>
+        <orderedlist>
+            <listitem>
+                <para>The general meeting to decide an appeal must be held within 3 months after the
+                    secretary receives the notice of intention to appeal.</para>
+            </listitem>
+            <listitem>
+                <para>At the meeting, the applicant must be given a full and fair opportunity to
+                    show why the application should not be rejected or the membership should not be
+                    terminated.</para>
+            </listitem>
+            <listitem>
+                <para>Also, the management committee and the members of the committee who rejected
+                    the application or terminated the membership must be given a full and fair
+                    opportunity to show why the application should be rejected or the membership
+                    should be terminated.</para>
+            </listitem>
+            <listitem>
+                <para>An appeal must be decided by a majority vote of the members present and
+                    eligible to vote at the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>If a person whose application for membership has been rejected does not appeal
+                    against the decision within 1 month after receiving written notice of the
+                    decision, or the person appeals but the appeal is unsuccessful, the secretary
+                    must, as soon as practicable, refund the membership fee paid by the
+                person.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Register of members</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee must keep a register of members of the
+                association.</para>
+            </listitem>
+            <listitem>
+                <para>THe register must include the following particulars for each member-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the full name of the member;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the postal or residential address of the member;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the date of admission as a member;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the date of death or time of resignation of the member;</para>
+                    </listitem>
+                    <listitem>
+                        <para>details about the termination or reinstatement of membership;</para>
+                    </listitem>
+                    <listitem>
+                        <para>any other particulars the management committee or the members at a
+                            general meeting decide.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The register must be open for inspection by members of the association at all
+                    reasonable times.</para>
+            </listitem>
+            <listitem>
+                <para>A member must contact the secretary to arrange an inspection of the
+                register.</para>
+            </listitem>
+            <listitem>
+                <para>However, the management committee may, on the application of a member of the
+                    association withhold information about the member (other than the member's full
+                    name) from the register available for inspection if the management committee has
+                    reasonable grounds for believing the disclosure of the information would put the
+                    member at risk of harm.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Prohibition on use of information on register of members</title>
+        <orderedlist>
+            <listitem>
+                <para>A member of the association must not-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>use information obtained from the register of members of the
+                            association to contact, or send material to, another member of the
+                            association for the purpose of advertising for political, religions,
+                            charitable, or commercial purposes; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>disclose information obtained from the register to someone else,
+                            knowing that the information is likely to be used to contact, or send
+                            material to, another member of the association for the purpose of
+                            advertising for political, religious, charitable or commercial
+                        purposes.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>Subrule (1) does not apply if the use of disclosure of the information is
+                    approved by the association.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Appointment or election of secretary</title>
+        <orderedlist>
+            <listitem>
+                <para>The secretary must be an individual residing in Queensland, or in another
+                    State but not more than 65 km from the Queensland border, who is-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>a member of the association elected by the association as secretary;
+                            or</para>
+                    </listitem>
+                    <listitem>
+                        <para>any of the following persons appointed by the management committee as
+                            secretary-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>a member of the association's management committee;</para>
+                            </listitem>
+                            <listitem>
+                                <para>another member of the association;</para>
+                            </listitem>
+                            <listitem>
+                                <para>another person.</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>If the association has not elected an interim officer as secretary for the
+                    association before its incorporation, the members of the management committee
+                    must ensure a secretary is appointed or elected for the association within 1
+                    month after incorporation.</para>
+            </listitem>
+            <listitem>
+                <para>If a vacancy happens in the office of secretary, the members of the management
+                    committee must ensure a secretary is appointed or elected for the association
+                    within 1 month after the vacancy happens.</para>
+            </listitem>
+            <listitem>
+                <para>If the management committee appoints a person mentioned in subrule (1)(b)(ii)
+                    as secretary, other than to fill a casual vacancy on the management committee,
+                    the person does not become a member of the management committee.</para>
+            </listitem>
+            <listitem>
+                <para>However, if the management committee appoints person mentioned in subrule
+                    (1)(b)(ii) as secretary to fill a casual vacancy on the management committee,
+                    the person becomes a member of the management committee.</para>
+            </listitem>
+            <listitem>
+                <para>If the management committee appoints a person mentioned in subrule (1)(b)(iii)
+                    as secretary, the person does not become a member of the management
+                committee.</para>
+            </listitem>
+            <listitem>
+                <para>In this rule-</para>
+                <para>casual vacancy, on a management committee, means a vacancy that happens when
+                    an elected member of the management committee resigns, dies, or otherwise stops
+                    holding office.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Removal of secretary</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee of the association may at any time remove a person
+                    appointed by the committee as the secretary.</para>
+            </listitem>
+            <listitem>
+                <para>If the management committee removes a secretary who is a person mentioned in
+                    rule 15(1)(b)(i), the person remains a member of the management
+                committee.</para>
+            </listitem>
+            <listitem>
+                <para>If the management committee removes a secretary who is a person mentioned in
+                    rule 15(1)(b)(ii) and who has been appointed to a casual vacancy on the
+                    management committee under rule 15(5), the person remains a member of the
+                    management committee.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Functions of secretary</title>
+        <para>The secretary's functions include, but are not limited to-</para>
+        <orderedlist>
+            <listitem>
+                <para>calling meetings of the association, including preparing notices of a meeting
+                    and of the business to be conducted at a meeting in consultation with the
+                    president of the association; and</para>
+            </listitem>
+            <listitem>
+                <para>keeping minutes of each meeting; and</para>
+            </listitem>
+            <listitem>
+                <para>keeping copies of all correspondence and other documents relation to the
+                    association; and</para>
+            </listitem>
+            <listitem>
+                <para>maintaining the register of members of the association.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Membership of management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee of the association consists of a president,
+                    treasurer, and any other members the association members elect at a general
+                    meeting.</para>
+            </listitem>
+            <listitem>
+                <para>A member of the management committee, other than a secretary appointed by the
+                    management committee under rule 15(1)(b)(iii), must be a member of the
+                    association.</para>
+            </listitem>
+            <listitem>
+                <para>At each annual general meeting of the association, the members of the
+                    management committee must retire from office, but are eligible on nomination,
+                    for re-election.</para>
+            </listitem>
+            <listitem>
+                <para>A member of the association may be appointed to a casual vacancy on the
+                    management committee under rule 21.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Electing the management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>A member of the management committee may only be elected as follows-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>any 2 members of the association may nominate another member (the
+                            candidate) to serve as a member of the management committee;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the nomination must be-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>in writing; and</para>
+                            </listitem>
+                            <listitem>
+                                <para>signed by the candidate and the members who nominated him or
+                                    her; and</para>
+                            </listitem>
+                            <listitem>
+                                <para>given to the secretary at least 14 days before the annual
+                                    general meeting at which the election is to be held;</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                    <listitem>
+                        <para>each member of the association present and eligible to vote at the
+                            annual general meeting may vote for 1 candidate for each vacant position
+                            on the management committee;</para>
+                    </listitem>
+                    <listitem>
+                        <para>if, at the start of the meeting, there are not enough candidates
+                            nominated, nominations may be taken from the floor of the
+                        meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A person may be a candidate only if the person-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>is an adult; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>is not ineligible to be elected as a member under section 61A of the
+                            Act.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A list of the candidates' names in alphabetic order, with the name of the
+                    members who nominated each candidate, must be posted in a conspicuous place in
+                    the office or usual place of meeting os the association for at least 7 days
+                    immediately preceding the annual general meeting.</para>
+            </listitem>
+            <listitem>
+                <para>If required by the management committee, balloting lists must be prepared
+                    containing the names of the candidates in alphabetical order.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee must ensure that, before a candidate is elected as a
+                    member of the management committee, the candidate is advised-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>whether or not the association has public liability insurance;
+                        and</para>
+                    </listitem>
+                    <listitem>
+                        <para>if the association has public liability insurance-the amount of the
+                            insurance.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Resignation, removal, or vacation of office of management committee member</title>
+        <orderedlist>
+            <listitem>
+                <para>A member of the management committee may resign from the committee by giving
+                    written notice of resignation to the secretary.</para>
+            </listitem>
+            <listitem>
+                <para>The resignation takes effect at-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the time the notice is received by the secretary; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>if a later time is stated in the notice-the later time.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A member may be removed from office at a general meeting of the association if
+                    a majority of the members present and eligible to vote at the meeting vote in
+                    favour of removing the member.</para>
+            </listitem>
+            <listitem>
+                <para>Before a vote of members is taken about removing the member from office, the
+                    member must be given a full and fair opportunity to show cause why he or she
+                    should not be removed from office.</para>
+            </listitem>
+            <listitem>
+                <para>A member has not right of appeal against the member's removal from office
+                    under this rule.</para>
+            </listitem>
+            <listitem>
+                <para>A member immediately vacates the office of member in the circumstances
+                    mentioned in section 64(s) of the Act.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Vacancies on the management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>If a casual vacancy happens on the management committee, the continuing
+                    members of the committee may appoint another member of the association to fill
+                    the vacancy until the next annual general meeting.</para>
+            </listitem>
+            <listitem>
+                <para>The continuing members of the management committee may act despite a casual
+                    vacancy on the management committee.</para>
+            </listitem>
+            <listitem>
+                <para>However, if the number of committee members is less than the number fixed
+                    under rule 24(1) as a quorum of the management committee, the continuing members
+                    may act only to-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>increase the number of management committee members to the number
+                            required for quorum; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>call a general meeting of the association.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Functions of management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>Subject to these rules or a resolution of the members of the association
+                    carried at a general meeting, the management committee has the general control
+                    and management of the administration of the affairs, property and funds of the
+                    association.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee has authority to interpret the meaning of these rules
+                    and any matter relating to the association on which the rules are silent, but
+                    any interpretation must have regard to the Act, including any regulation made
+                    under the Act.</para>
+                <note>
+                    <para>The Act prevails if the association's rules are inconsistent with the
+                        Act-see section 1B of the Act.</para>
+                </note>
+            </listitem>
+            <listitem>
+                <para>The management committee may exercise the powers of the association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>to borrow, raise or secure payment of amounts in a way members of the
+                            association decide; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to secure the amounts mentioned in paragraph (a) or the payment or
+                            performance of any debt, liability, contract, guarantee or other
+                            engagement incurred or to be entered into by the association in any way,
+                            including by the issue of debentures (perpetual or otherwise) charged
+                            upon the whole or part of the association's property, both present and
+                            future; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to purchase, redeem or pay off any securities issued; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to borrow amounts from members and pay interest on the amounts
+                            borrowed; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to mortgage or charge the whole or part of its property; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to issue debentures and other securities, whether outright or as
+                            security for any debt, liability or obligation of the association;
+                        and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to provide and pay off any securities issued; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>to invest in a way the members of the association may from time to
+                            time decide.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>For subrule (3)(d), the rate of interest must not be more than the current
+                    rate being charged for overdrawn accounts on money lent (regardless of the term
+                    of the load) by-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the financial institution for the association; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>if there is more than 1 financial institution for the association-the
+                            financial institution nominated by the management committee.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Meetings of management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>Subject to this rule, the management committee may meet and conduct its
+                    proceedings as it considers appropriate.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee must meet at least once every 4 months to exercise
+                    its functions.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee must decide how a meeting is to be called.</para>
+            </listitem>
+            <listitem>
+                <para>Notice of a meeting is to be given in the way decided by the management
+                    committee.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee may hold meetings, or permit a committee member to
+                    take part in its meetings, by using any technology that reasonably allows the
+                    member to hear and take part in discussions as they happen.</para>
+            </listitem>
+            <listitem>
+                <para>A committee member who participates in the meeting as mentioned in subrule (5)
+                    is taken to be present at the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>A question arising at a committee meeting is to be decided by a majority vote
+                    of members of the committee present at the meeting and, if the votes are equal,
+                    the question is decided in the negative.</para>
+            </listitem>
+            <listitem>
+                <para>A member of the management committee must not vote on a question about a
+                    contract or proposed contract with the association if the member has an interest
+                    in the contract or proposed contract and, if the member does vote, the member's
+                    vote must not be counted.</para>
+            </listitem>
+            <listitem>
+                <para>The president is to preside as chairperson at a management committee
+                meeting.</para>
+            </listitem>
+            <listitem>
+                <para>If there is no president or if the president is not present within 10 minutes
+                    after the time fixed for a management committee meeting, the members may choose
+                    1 of their number to preside as chairperson at the meeting.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Quorum for, and adjournment of, management committee meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>At a management committee meeting, more than 50% of the members elected to the
+                    committee as at the close of the last general meeting of the members form a
+                    quorum.</para>
+            </listitem>
+            <listitem>
+                <para>If there is no quorum within 30 minutes after the time fixed for management
+                    committee meeting called on the request of members of the committee, the meeting
+                    lapses.</para>
+            </listitem>
+            <listitem>
+                <para>If there is no quorum within 30 minutes after the time fixed for a management
+                    committee meeting called other than on the request of the members of the
+                    committee-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the meeting is to be adjourned for at least 1 day; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the members of the management committee who are present are to decide
+                            the day, time, and place of the adjourned meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>If, at an adjourned meeting mentioned in subrule (3), there is no quorum
+                    within 30 minutes after the time fixed for the meeting, the meeting
+                lapses.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Special meeting of management committee</title>
+        <orderedlist>
+            <listitem>
+                <para>If the secretary receives a written request signed by at least 33% of the
+                    members of the management committee, the secretary must call a special meeting
+                    of the committee by giving each member of the committee notice of the meeting
+                    within 14 days after the secretary receives the request.</para>
+            </listitem>
+            <listitem>
+                <para>If the secretary is unable or unwilling to call the special meeting, the
+                    president must call the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>A request for a special meeting must state-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>why the special meeting is called; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the business to be conducted at the meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A notice of a special meeting must state-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the day, time, and place of the meeting; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the business to be conducted at the meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A special meeting of the management committee must be held within 14 days
+                    after notice of the meeting is given to the members of the management
+                committee.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Minutes of management committee meetings</title>
+        <orderedlist>
+            <listitem>
+                <para>The secretary must ensure full accurate minutes of all questions, matters,
+                    resolutions, and other proceedings of each management committee meeting are
+                    entered in a minute book.</para>
+            </listitem>
+            <listitem>
+                <para>To ensure the accuracy of the minutes, the minutes of each management
+                    committee meeting must be signed by the chairperson of the meeting, or the
+                    chairperson of the next management committee meeting, verifying their
+                accuracy.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Appointment of subcommittees</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee may appoint a subcommittee consisting of members of
+                    the association considered appropriate by the committee to help with the conduct
+                    of the association's operations.</para>
+            </listitem>
+            <listitem>
+                <para>A member of the subcommittee who is not a member of the management committee
+                    is not entitled to vote at a management committee meeting.</para>
+            </listitem>
+            <listitem>
+                <para>A subcommittee may elect a chairperson of its meetings.</para>
+            </listitem>
+            <listitem>
+                <para>If a chairperson is not elected, or if the chairperson is not present within
+                    10 minutes after the time fixed for a meeting, the members present may choose 1
+                    of their number to be chairperson of the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>A subcommittee may meet and adjourn as it considers appropriate.</para>
+            </listitem>
+            <listitem>
+                <para>A question arising at a subcommittee meeting is to be decided by a majority
+                    vote of the members present at the meeting and, if the votes are equal, the
+                    question is decided in the negative.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Acts not affected by defects or disqualifications</title>
+        <orderedlist>
+            <listitem>
+                <para>An act performed by the management committee, a subcommittee or a person
+                    acting as a member of the management committee is taken to have been validly
+                    performed.</para>
+            </listitem>
+            <listitem>
+                <para>Subrule (1) applies even if the act was performed when-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>there was a defect in the appointment of a member of the management
+                            committee, subcommittee or person acting as a member of the management
+                            committee; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>a management committee member, subcommittee member or person acting as
+                            a member of the management committee was disqualified from being a
+                            member.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Resolutions of management committee without meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>A written resolution signed by each member of the management committee is as
+                    valid and effectual as if it had been passed at a committee meeting that was
+                    properly called and held.</para>
+            </listitem>
+            <listitem>
+                <para>A resolution mentioned in subrule (1) may consist of several documents in like
+                    form, each signed by 1 or more members of the committee.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>First annual general meeting</title>
+        <para>The first annual general meeting must be held within 6 months after the end date of
+            the association's first reportable financial year.</para>
+    </section>
+    <section>
+        <title>Subsequent annual general meetings</title>
+        <para>Each subsequent annual general meeting must be held-</para>
+        <orderedlist numeration="loweralpha">
+            <listitem>
+                <para>at least once each year; and</para>
+            </listitem>
+            <listitem>
+                <para>within 6 months after the end date of the association's reportable financial
+                    year.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Business to be conducted at annual general meeting of level 1 incorporated
+            associations and particular level 2 and level 3 incorporated associations</title>
+        <orderedlist>
+            <listitem>
+                <para>This rule applies only if the association is-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>a level 1 incorporated association; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>a level 2 incorporated association to which section 59 of the Act
+                            applies; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>a level 3 incorporated association to which section 59 of the Act
+                            applies.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The following business must be conducted at each annual general meeting of the
+                    association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>receiving the association's financial statement, and audit report, for
+                            the last reportable financial year;</para>
+                    </listitem>
+                    <listitem>
+                        <para>presenting the financial statement and audit report to the meeting for
+                            adoption;</para>
+                    </listitem>
+                    <listitem>
+                        <para>electing members of the management committee;</para>
+                    </listitem>
+                    <listitem>
+                        <para>for a level 1 incorporated association-appointing an auditor or an
+                            accountant for the present financial year;</para>
+                    </listitem>
+                    <listitem>
+                        <para>for a level 2 incorporated association, or a level 3 incorporated
+                            association, to which section 59 of the Act applies-appointing an
+                            auditor, an accountant or an approved person for the present financial
+                            year.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Business to be conducted at annual general meeting of other level 2 incorporated
+            associations</title>
+        <orderedlist>
+            <listitem>
+                <para>This rule applies only if the association is a level 2 incorporated
+                    association to which section 59A of the Act applies.</para>
+            </listitem>
+            <listitem>
+                <para>The following business must be conducted at each annual general meeting of the
+                    association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>receiving the association's financial statement, and signed statement,
+                            for the last reportable financial year;</para>
+                    </listitem>
+                    <listitem>
+                        <para>presenting the financial statement and signed statement to the meeting
+                            for adoption;</para>
+                    </listitem>
+                    <listitem>
+                        <para>electing members of the management committee;</para>
+                    </listitem>
+                    <listitem>
+                        <para>appointing an auditor, an accountant or an approved person for the
+                            present financial year.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Business to be conducted at annual general meeting of other level 3 incorporated
+            associations</title>
+        <orderedlist>
+            <listitem>
+                <para>This rule applies only if the association is a level 3 incorporated
+                    association to which section 59B of the Act applies.</para>
+            </listitem>
+            <listitem>
+                <para>The following business must be conducted at each annual general meeting of the
+                    association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>receiving the association's financial statement, and signed statement,
+                            for the last reportable financial year;</para>
+                    </listitem>
+                    <listitem>
+                        <para>presenting the financial statement and signed statement to the meeting
+                            for adoption;</para>
+                    </listitem>
+                    <listitem>
+                        <para>electing members of the management committee.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Notice of general meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>The secretary may call a general meeting of the association.</para>
+            </listitem>
+            <listitem>
+                <para>The secretary must give at least 14 days notice of the meeting to each member
+                    of the association.</para>
+            </listitem>
+            <listitem>
+                <para>If the secretary is unable or unwilling to call the meeting, the president
+                    must call the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>The management committee may decide the way in which the notice must be
+                given.</para>
+            </listitem>
+            <listitem>
+                <para>However, notice of the following meetings must be given in writing-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>a meeting called to hear and decide the appeal of a person against the
+                            management committee's decision-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>to reject the person's application for membership of the
+                                    association; or</para>
+                            </listitem>
+                            <listitem>
+                                <para>to terminate the person's membership of the
+                                association;</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                    <listitem>
+                        <para>a meeting called to hear and decide a proposed special resolution of
+                            the association.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A notice of a general meeting must state the business to be conducted at the
+                    meeting.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Quorum for, and adjournment of, general meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>The quorum for a general meeting is at least the number of members elected or
+                    appointed to the management committee at the close of the association's last
+                    general meeting plus 1.</para>
+            </listitem>
+            <listitem>
+                <para>However, if all the members of the association are members of the management
+                    committee, the quorum is the total number of members less 1.</para>
+            </listitem>
+            <listitem>
+                <para>No business may be conducted at a general meeting unless there is a quorum of
+                    members when the meeting proceeds to business.</para>
+            </listitem>
+            <listitem>
+                <para>If there is no quorum within 30 minutes after the time fixed for a general
+                    meeting called on the request of members of the management committee of the
+                    association, the meeting lapses.</para>
+            </listitem>
+            <listitem>
+                <para>If there is no quorum within 40 minutes after the time fixed for a general
+                    meeting called other than on request of members of the management committee or
+                    the association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the meeting is to be adjourned for at least 7 days; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the management committee is to decide the day, time, and place of the
+                            adjourned meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The chairperson may, with the consent of any meeting at which there is a
+                    quorum, and must if directed by the meeting, adjourn the meeting from time to
+                    time and from place to place.</para>
+            </listitem>
+            <listitem>
+                <para>If a meeting is adjourned under subrule (6), only the business left unfinished
+                    at the meeting from which adjournment took place may be conducted at the
+                    adjourned meeting.</para>
+            </listitem>
+            <listitem>
+                <para>The secretary is not required to give the members notice of an adjournment or
+                    of the business to be conducted at an adjourned meeting unless a meeting is
+                    adjourned for at least 30 days.</para>
+            </listitem>
+            <listitem>
+                <para>If a meeting is adjourned for at least 30 days, notice of the adjourned
+                    meeting must be given in the same way notice is given for an original
+                meeting.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Procedure at general meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>A member may take part and vote in a general meeting in person, by proxy, by
+                    attorney, or by using any technology that reasonably allows the member to hear
+                    and take part in discussions as they happen.</para>
+            </listitem>
+            <listitem>
+                <para>A member who participates in a meeting as mentioned in subrule (1) is taken to
+                    be present at the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>At each general meeting-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the president is to preside as chairperson; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>if there is no president or if the president is not present within 15
+                            minutes after the time fixed for the meeting or is unwilling to act, the
+                            members present must elect 1 of their number to be chairperson of the
+                            meeting; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the chairperson must conduct the meeting in a proper and orderly
+                        way.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Voting at a general meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>At a general meeting, each question, matter or resolution, other than a
+                    special resolution, must be decided by a majority of votes of the members
+                    present.</para>
+            </listitem>
+            <listitem>
+                <para>Each member present and eligible to vote is entitled to 1 vote only and, if
+                    the votes are equal, the chairperson has a casting vote as well as a primary
+                    vote.</para>
+            </listitem>
+            <listitem>
+                <para>A member is not entitled to vote at a general meeting if the member's annual
+                    subscription is in arrears at the date of the meeting.</para>
+            </listitem>
+            <listitem>
+                <para>The method of voting is to be decided by the management committee.</para>
+            </listitem>
+            <listitem>
+                <para>However, if at least 20% of the members present demand a secret ballot, voting
+                    must be by secret ballot.</para>
+            </listitem>
+            <listitem>
+                <para>If a secret ballot is held, the chairperson must appoint 2 members to conduct
+                    the secret ballot in the way the chairperson decides.</para>
+            </listitem>
+            <listitem>
+                <para>The result of a secret ballot as declared by the chairperson is taken to be a
+                    resolution of the meeting at which the ballot was held.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Special general meeting</title>
+        <orderedlist>
+            <listitem>
+                <para>The secretary must call a special general meeting by giving each member of the
+                    association notice of the meeting within 14 days after-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>being directed to call the meeting by the management committee;
+                        or</para>
+                    </listitem>
+                    <listitem>
+                        <para>being given a written request signed by-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>at least 33% of the number of members of the management
+                                    committee when the request is signed; or</para>
+                            </listitem>
+                            <listitem>
+                                <para>at least the number of ordinary members of the association
+                                    equal to double the number of members of the association on the
+                                    management committee when the request is signed plus 1;
+                                or</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                    <listitem>
+                        <para>being given a written notice of an intention to appeal against the
+                            decision of the management committee-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>to reject an application for membership; or</para>
+                            </listitem>
+                            <listitem>
+                                <para>to terminate a person’s membership.</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A request mentioned in subrule (1)(b) must state-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>why the special general meeting is being called; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the business to be conducted at the meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A special general meeting must be held within 3 months after the secretary-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>is directed to call the meeting by the management committee; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>is given the written request mentioned in subrule (1)(b); or</para>
+                    </listitem>
+                    <listitem>
+                        <para>is given the written notice of an intention to appeal mentioned in
+                            subrule (1)(c).</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>If the secretary is unable or unwilling to call the special meeting, the
+                    president must call the meeting.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Proxies</title>
+        <orderedlist>
+            <listitem>
+                <para>An instrument appointing a proxy must be in writing and be in the following or
+                    similar form-</para>
+                <blockquote>
+                    <para>[Name of association]:</para>
+                    <para>I, .................... of .................... being ....................
+                        of .................... as my proxy to vote for me on behalf at the (annual)
+                        general meeting of the association, to be held on the .... day of .... and
+                        at any adjournment of the meeting.</para>
+                    <para>Signed .... day of ....</para>
+                    <para>Signature</para>
+                </blockquote>
+            </listitem>
+            <listitem>
+                <para>The instrument appointing a proxy must-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>if the appointer is an individual-be signed by the appointer or the
+                            appointer's attorney properly authorised in writing; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>if the appointer is a corporation-</para>
+                        <orderedlist>
+                            <listitem>
+                                <para>be under seal; or</para>
+                            </listitem>
+                            <listitem>
+                                <para>be signed by a properly authorised officer or attorney of the
+                                    corporation.</para>
+                            </listitem>
+                        </orderedlist>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>A proxy may be a member of the association or another person.</para>
+            </listitem>
+            <listitem>
+                <para>The instrument appointing a proxy is taken to confer authority to demand or
+                    join in demanding a secret ballot.</para>
+            </listitem>
+            <listitem>
+                <para>Each instrument appointing a proxy must be given to the secretary before the
+                    start of the meeting or adjourned meeting at which the person named in the
+                    instrument proposes to vote.</para>
+            </listitem>
+            <listitem>
+                <para>Unless otherwise instructed by the appointer, the proxy may vote as the proxy
+                    considers appropriate.</para>
+            </listitem>
+            <listitem>
+                <para>If a member wants a proxy to vote for or against a resolution, the instrument
+                    appointing the proxy must be in the following or similar form-</para>
+                <blockquote>
+                    <para>[Name of association]:</para>
+                    <para>I, .................... of .................... being a member of the
+                        association appoint .................... of .................... as my proxy
+                        to vote for me on behalf at the (annual) general meeting of the association,
+                        to be held on the .... day of .... and at any adjournment of the meeting.</para>
+                    <para>Signed .... day of ....</para>
+                    <para>Signature</para>
+                    <para>This form is to be used *in favour of/*against [strike out whichever is
+                        not wanted] the following resolutions-</para>
+                    <para>[List relevant resolutions]</para>
+                </blockquote>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Minutes of general meetings</title>
+        <orderedlist>
+            <listitem>
+                <para>The secretary must ensure full and accurate minutes of all questions, matters,
+                    resolutions and other proceedings of each general meeting are entered in a
+                    minute book.</para>
+            </listitem>
+            <listitem>
+                <para>To ensure the accuracy of the minutes-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the minutes of each general meeting must be signed by the chairperson
+                            of the meeting, or the chairperson of the next general meeting,
+                            verifying their accuracy; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the minutes of each annual general meeting must be signed by the
+                            chairperson of the meeting, or the chairperson of the next meeting of
+                            the association that is a general meeting or annual general meeting,
+                            verifying their accuracy.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>If asked by a member of the association, the secretary must, within 28 days
+                    after the request is made</para>
+                <orderedlist>
+                    <listitem>
+                        <para>make the minute book for a particular general meeting available for
+                            inspection by the member at a mutually agreed time and place; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>give the member copies of the minutes of the meeting.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The association may require the member to pay the reasonable costs of
+                    providing copies of the minutes.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>By-laws</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee may make, amend or repeal by-laws, not inconsistent
+                    with these rules, for the internal management of the association.</para>
+            </listitem>
+            <listitem>
+                <para>A by-law may be set aside by a vote of members at a general meeting of the
+                    association.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Alteration of rules</title>
+        <orderedlist>
+            <listitem>
+                <para>Subject to the Act, these rules may be amended, repealed or added to by a
+                    special resolution carried at a general meeting.</para>
+            </listitem>
+            <listitem>
+                <para>However an amendment, repeal or addition is valid only if it is registered by
+                    the chief executive.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Common seal</title>
+        <orderedlist>
+            <listitem>
+                <para>The management committee must ensure the association has a common seal.</para>
+            </listitem>
+            <listitem>
+                <para>The common seal must be-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>kept securely by the management committee; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>used only under the authority of the management committee.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>Each instrument to which the seal is attached must be signed by a member of
+                    the management committee and countersigned by-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the secretary; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>another member of the management committee; or</para>
+                    </listitem>
+                    <listitem>
+                        <para>someone authorised by the management committee.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Funds and accounts</title>
+        <orderedlist>
+            <listitem>
+                <para>The funds of the association must be kept in an account in the name of the
+                    association in a financial institution decided by the management
+                committee.</para>
+            </listitem>
+            <listitem>
+                <para>Records and accounts must be kept in the English language showing full and
+                    accurate particulars of the financial affairs of the association.</para>
+            </listitem>
+            <listitem>
+                <para>All amounts must be deposited in the financial institution account as soon as
+                    practicable after receipt.</para>
+            </listitem>
+            <listitem>
+                <para>A payment by the association of $100 or more must be made by cheque or
+                    electronic funds transfer.</para>
+            </listitem>
+            <listitem>
+                <para>If a payment of $100 or more is made by cheque, the cheque must be signed by
+                    any 2 of the following-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>the president;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the secretary;</para>
+                    </listitem>
+                    <listitem>
+                        <para>the treasurer;</para>
+                    </listitem>
+                    <listitem>
+                        <para>any 1 of 3 other members of the association who have been authorised
+                            by the management committee to sign cheques issued by the
+                        association.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>However, 1 of the persons who signs the cheque must be the president, the
+                    secretary or the treasurer.</para>
+            </listitem>
+            <listitem>
+                <para>Cheques, other than cheques for wages, allowances or petty cash recoupment,
+                    must be crossed 'not negotiable'.</para>
+            </listitem>
+            <listitem>
+                <para>A petty cash account must be kept on the imprest system, and the management
+                    committee must decide the amount of petty cash to be kept in the account.</para>
+            </listitem>
+            <listitem>
+                <para>All expenditure must be approved or ratified at a management committee
+                    meeting.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>General financial matters</title>
+        <orderedlist>
+            <listitem>
+                <para>On behalf of the management committee, the treasurer must, as soon as
+                    practicable after the end date of each financial year, ensure a financial
+                    statement for its last reportable financial year is prepared.</para>
+            </listitem>
+            <listitem>
+                <para>The income and property of the association must be used solely in promoting
+                    the association’s objects and exercising the association’s powers.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Documents</title>
+        <para>The management committee must ensure the safe custody of books, documents, instruments
+            of title and securities of the association.</para>
+    </section>
+    <section>
+        <title>Financial Year</title>
+        <para>The end date of the association’s financial year is <emphasis>the last day of
+            June</emphasis> in each year.</para>
+    </section>
+    <section>
+        <title>Distribution of surplus assets to another entity</title>
+        <orderedlist>
+            <listitem>
+                <para>This rule applies if the association-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>is wound-up under part 10 of the Act; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>has surplus assets</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>The surplus assets must not be distributed among the members of the
+                    association.</para>
+            </listitem>
+            <listitem>
+                <para>The surplus assets must be given to another entity-</para>
+                <orderedlist>
+                    <listitem>
+                        <para>having objects similar to the association’s objects; and</para>
+                    </listitem>
+                    <listitem>
+                        <para>the rules of which prohibit the distribution of the entity’s income
+                            and assets to its members.</para>
+                    </listitem>
+                </orderedlist>
+            </listitem>
+            <listitem>
+                <para>In this rule</para>
+                <para><emphasis>surplus assets</emphasis> see section 92(3) of the Act.</para>
+            </listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Association to be not-for-profit</title>
+        <para>The properties, assets, and income of the association shall be solely used to further
+            the objects of the association, and no portion shall be distributed either directly or
+            indirectly to the members of the association except as bona fide compensation for
+            services rendered or expenses incurred on behalf of the association.</para>
+        <para>The association shall comply with the Australian Tax Office requirements of
+            not-for-profit associations in its actions.</para>
+    </section>
+</article>

@@ -22,19 +22,20 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Web;
-using BoxSocial;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
 using BoxSocial.IO;
 
-namespace BoxSocial.FrontEnd
+namespace BoxSocial.Documentation.FrontEnd
 {
-    public partial class _default : System.Web.UI.Page
+    public partial class _04 : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Template template = new Template(Server.MapPath("./templates/"), "default.html");
+            Template template = new Template(Server.MapPath("./templates/"), "404.html");
 
             Response.Write(template);
 

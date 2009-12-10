@@ -54,13 +54,118 @@ namespace BoxSocial.Documentation.FrontEnd
             string[] redir = httpContext.Request.RawUrl.Split(';');
             string host = httpContext.Request.Url.Host.ToLower();
 
-            if (host == "www." + Linker.Domain)
+            if (host == "www." + Domain)
             {
-                Response.Redirect(Linker.Uri);
+                Response.Redirect(Uri);
                 return;
             }
 
 
+            string currentURI = null;
+            Uri cUri = null;
+            if (httpContext.Request.RawUrl.Contains(";http://") || httpContext.Request.RawUrl.Contains("?http://"))
+            {
+                if (redir.Length > 1)
+                // Apache2/IIS
+                {
+                    currentURI = redir[1];
+                    cUri = new Uri(currentURI);
+                    currentURI = cUri.AbsolutePath;
+
+                    if (currentURI.EndsWith("index.php"))
+                    {
+                        currentURI = currentURI.Substring(0, currentURI.Length - 9);
+                        Response.Redirect(currentURI, true);
+                        Response.End();
+                        return;
+                    }
+
+                    if (currentURI.EndsWith(".php"))
+                    {
+                        currentURI = currentURI.Substring(0, currentURI.Length - 4);
+                        Response.Redirect(currentURI, true);
+                        Response.End();
+                        return;
+                    }
+                }
+                else
+                // NGINX
+                {
+                    int i = httpContext.Request.RawUrl.IndexOf('?');
+                    if (httpContext.Request.RawUrl.Length >= i)
+                    {
+                        currentURI = httpContext.Request.RawUrl.Substring(i + 1);
+                    }
+                    cUri = new Uri(currentURI);
+                    currentURI = cUri.AbsolutePath;
+                }
+            }
+
+            if (!httpContext.Request.RawUrl.Contains("404.aspx"))
+            {
+                if (host == Domain)
+                {
+                    return;
+                }
+                else
+                {
+                    if (httpContext.Request.RawUrl.Contains("default.aspx"))
+                    {
+                        cUri = httpContext.Request.Url;
+                        currentURI = "/";
+                    }
+                }
+            }
+
+            if (currentURI != null)
+            {
+                List<string[]> patterns = new List<string[]>();
+                patterns.Add(new string[] { @"^/about(/|)$", @"/about.aspx" });
+
+
+                // full catch all
+                foreach (string[] pattern in patterns)
+                {
+                    if (Regex.IsMatch(currentURI, pattern[0]))
+                    {
+                        Regex rex = new Regex(pattern[0]);
+                        currentURI = rex.Replace(currentURI, pattern[1]);
+                        if (currentURI.Contains("?"))
+                        {
+                            httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + "&" + cUri.Query.TrimStart(new char[] { '?' }));
+                            return;
+                        }
+                        else
+                        {
+                            httpContext.RewritePath(currentURI.TrimEnd(new char[] { '/' }) + cUri.Query);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static string Domain
+        {
+            get
+            {
+                if (WebConfigurationManager.AppSettings != null && WebConfigurationManager.AppSettings.HasKeys())
+                {
+                    return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
+                }
+                else
+                {
+                    return "zinzam.com";
+                }
+            }
+        }
+
+        public static string Uri
+        {
+            get
+            {
+                return string.Format("http://{0}/", Domain);
+            }
         }
     }
 }

@@ -63,6 +63,13 @@ namespace BoxSocial.Internals
     [Permission("VIEW_NAME", "Can see your real name")]
     [Permission("VIEW_SEXUALITY", "Can see your sexuality")]
     [Permission("VIEW_CONTACT_INFO", "Can see your contact information (does not include e-mail addresses and phone numbers)")]
+    [Permission("VIEW_BIOGRAPHY", "Can see your biography")]
+    [Permission("VIEW_HOMEPAGE", "Can see the link to your homepage")]
+    [Permission("VIEW_GROUPS", "Can see your group memberships")]
+    [Permission("VIEW_NETWORKS", "Can see your network memberships")]
+    [Permission("VIEW_FRIENDS", "Can see your friends")]
+    [Permission("VIEW_FAMILY", "Can see your family")]
+    [Permission("VIEW_COLLEAGUES", "Can see your colleagues")]
     [PermissionGroup]
     public class User : Primitive, ICommentableItem, IPermissibleItem
     {
@@ -1941,6 +1948,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string GenerateFriendsUri(Core core, User primitive)
+        {
+            return core.Uri.AppendSid(string.Format("{0}friends",
+                primitive.UriStub));
+        }
+
+        public static string GenerateFriendsUri(Core core, User primitive, string filter)
+        {
+            return core.Uri.AppendSid(string.Format("{0}friends?filter={1}",
+                primitive.UriStub, filter));
+        }
+
         public static long GetMemberId(User member)
         {
             long loggedIdUid = 0;
@@ -2054,6 +2073,74 @@ namespace BoxSocial.Internals
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));
 
             page.User.ProfileViewed(core.session.LoggedInMember);
+        }
+
+        public static void ShowFriends(object sender, ShowUPageEventArgs e)
+        {
+            e.Template.SetTemplate("viewfriends.html");
+
+            if (!e.Page.User.Access.Can("VIEW_FRIENDS"))
+            {
+                e.Core.Functions.Generate403();
+            }
+
+            string langFriends = (e.Page.User.Friends != 1) ? "friends" : "friend";
+
+            e.Template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
+            e.Template.Parse("U_FILTER_BEGINS_A", GenerateFriendsUri(e.Core, e.Page.User, "a"));
+            e.Template.Parse("U_FILTER_BEGINS_B", GenerateFriendsUri(e.Core, e.Page.User, "b"));
+            e.Template.Parse("U_FILTER_BEGINS_C", GenerateFriendsUri(e.Core, e.Page.User, "c"));
+            e.Template.Parse("U_FILTER_BEGINS_D", GenerateFriendsUri(e.Core, e.Page.User, "d"));
+            e.Template.Parse("U_FILTER_BEGINS_E", GenerateFriendsUri(e.Core, e.Page.User, "e"));
+            e.Template.Parse("U_FILTER_BEGINS_F", GenerateFriendsUri(e.Core, e.Page.User, "f"));
+            e.Template.Parse("U_FILTER_BEGINS_G", GenerateFriendsUri(e.Core, e.Page.User, "g"));
+            e.Template.Parse("U_FILTER_BEGINS_H", GenerateFriendsUri(e.Core, e.Page.User, "h"));
+            e.Template.Parse("U_FILTER_BEGINS_I", GenerateFriendsUri(e.Core, e.Page.User, "i"));
+            e.Template.Parse("U_FILTER_BEGINS_J", GenerateFriendsUri(e.Core, e.Page.User, "j"));
+            e.Template.Parse("U_FILTER_BEGINS_K", GenerateFriendsUri(e.Core, e.Page.User, "k"));
+            e.Template.Parse("U_FILTER_BEGINS_L", GenerateFriendsUri(e.Core, e.Page.User, "l"));
+            e.Template.Parse("U_FILTER_BEGINS_M", GenerateFriendsUri(e.Core, e.Page.User, "m"));
+            e.Template.Parse("U_FILTER_BEGINS_N", GenerateFriendsUri(e.Core, e.Page.User, "n"));
+            e.Template.Parse("U_FILTER_BEGINS_O", GenerateFriendsUri(e.Core, e.Page.User, "o"));
+            e.Template.Parse("U_FILTER_BEGINS_P", GenerateFriendsUri(e.Core, e.Page.User, "p"));
+            e.Template.Parse("U_FILTER_BEGINS_Q", GenerateFriendsUri(e.Core, e.Page.User, "q"));
+            e.Template.Parse("U_FILTER_BEGINS_R", GenerateFriendsUri(e.Core, e.Page.User, "r"));
+            e.Template.Parse("U_FILTER_BEGINS_S", GenerateFriendsUri(e.Core, e.Page.User, "s"));
+            e.Template.Parse("U_FILTER_BEGINS_T", GenerateFriendsUri(e.Core, e.Page.User, "t"));
+            e.Template.Parse("U_FILTER_BEGINS_U", GenerateFriendsUri(e.Core, e.Page.User, "u"));
+            e.Template.Parse("U_FILTER_BEGINS_V", GenerateFriendsUri(e.Core, e.Page.User, "v"));
+            e.Template.Parse("U_FILTER_BEGINS_W", GenerateFriendsUri(e.Core, e.Page.User, "w"));
+            e.Template.Parse("U_FILTER_BEGINS_X", GenerateFriendsUri(e.Core, e.Page.User, "x"));
+            e.Template.Parse("U_FILTER_BEGINS_Y", GenerateFriendsUri(e.Core, e.Page.User, "y"));
+            e.Template.Parse("U_FILTER_BEGINS_Z", GenerateFriendsUri(e.Core, e.Page.User, "z"));
+
+            e.Template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", e.Page.User.DisplayNameOwnership));
+
+            e.Template.Parse("FRIENDS", e.Page.User.Friends.ToString());
+            e.Template.Parse("L_FRIENDS", langFriends);
+
+            List<Friend> friends = e.Page.User.GetFriends(e.Page.page, 18);
+            foreach (UserRelation friend in friends)
+            {
+                VariableCollection friendVariableCollection = e.Template.CreateChild("friend_list");
+
+                friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
+                friendVariableCollection.Parse("U_PROFILE", friend.Uri);
+                friendVariableCollection.Parse("ICON", friend.UserIcon);
+            }
+
+            string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
+            e.Core.Display.ParsePagination(pageUri, e.Page.page, (int)Math.Ceiling(e.Page.User.Friends / 18.0));
+        }
+
+        public static void ShowFamily(object sender, ShowUPageEventArgs e)
+        {
+            e.Template.SetTemplate("viewfamily.html");
+
+            if (!e.Page.User.Access.Can("VIEW_FRIENDS"))
+            {
+                e.Core.Functions.Generate403();
+            }
         }
 
         public override string AccountUriStub

@@ -145,4 +145,25 @@ namespace BoxSocial.Internals
             }
         }
     }
+
+    public class ShowUPageEventArgs : ShowPPageEventArgs
+    {
+        public new UPage Page
+        {
+            get
+            {
+                return (UPage)page;
+            }
+        }
+
+        public ShowUPageEventArgs(UPage page, long itemId)
+            : base(page, itemId)
+        {
+        }
+
+        public ShowUPageEventArgs(UPage page)
+            : base(page)
+        {
+        }
+    }
 }

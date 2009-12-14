@@ -79,8 +79,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gallery", "Gallery\Gallery.
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Documentation.FrontEnd", "BoxSocial.Documentation.FrontEnd\BoxSocial.Documentation.FrontEnd.csproj", "{3E892EFF-D7D7-4E32-8834-A26BD99C4D99}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,10 +161,6 @@ Global
 		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E892EFF-D7D7-4E32-8834-A26BD99C4D99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E892EFF-D7D7-4E32-8834-A26BD99C4D99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E892EFF-D7D7-4E32-8834-A26BD99C4D99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E892EFF-D7D7-4E32-8834-A26BD99C4D99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

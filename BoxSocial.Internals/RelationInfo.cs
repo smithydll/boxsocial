@@ -29,6 +29,7 @@ namespace BoxSocial.Internals
         Partner,
         Friend,
         Family,
+        Colleague,
     }
 
     public class RelationInfo

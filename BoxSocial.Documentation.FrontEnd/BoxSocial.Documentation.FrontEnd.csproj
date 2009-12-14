@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoxSocial.Documentation.FrontEnd</RootNamespace>
     <AssemblyName>BoxSocial.Documentation.FrontEnd</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,13 +32,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="404.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -46,6 +47,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BoxSocial.Documentation.Internals\BoxSocial.Documentation.Internals.csproj">
+      <Project>{AF698A23-90DF-42AA-BDBE-0F8B5EA961F0}</Project>
+      <Name>BoxSocial.Documentation.Internals</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>

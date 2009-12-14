@@ -305,6 +305,26 @@ namespace BoxSocial.IO
             this.groupings.AddRange(fields);
         }
 
+        public QueryCondition AddBitFieldCondition(string field, byte bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, ushort bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, uint bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, ulong bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
         public QueryCondition AddCondition(string field, object value)
         {
             if (conditions.Count == 0)

@@ -52,6 +52,26 @@ namespace BoxSocial.IO
             this.value = value;
         }
 
+        public QueryCondition AddBitFieldCondition(string field, byte bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, ushort bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, uint bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
+        public QueryCondition AddBitFieldCondition(string field, ulong bitmap)
+        {
+            return AddCondition(new QueryOperation(field, QueryOperations.BinaryAnd, bitmap), ConditionEquality.NotEqual, false);
+        }
+
         public QueryCondition AddCondition(QueryOperation field, object value)
         {
             return AddCondition(field.ToString(), value);

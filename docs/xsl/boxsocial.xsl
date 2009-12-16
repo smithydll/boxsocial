@@ -12,6 +12,7 @@
     <xsl:param name="shade.verbatim">1</xsl:param>
     <xsl:param name="use.svg">1</xsl:param>
     <xsl:param name="xep.extensions">1</xsl:param>
+    <xsl:param name="admon.graphics">1</xsl:param>
     
     <xsl:param name="title.margin.left">0cm</xsl:param>
     
@@ -329,6 +330,135 @@
         </fo:list-item>
         </fo:list-block>
     </xsl:template>
+    
+<xsl:template match="orderedlist">
+  <xsl:variable name="id">
+    <xsl:call-template name="object.id"/>
+  </xsl:variable>
+
+  <xsl:variable name="pi-label-width">
+    <xsl:call-template name="dbfo-attribute">
+      <xsl:with-param name="pis"
+                      select="processing-instruction('dbfo')"/>
+      <xsl:with-param name="attribute" select="'label-width'"/>
+    </xsl:call-template>
+  </xsl:variable>
+
+  <xsl:variable name="label-width">
+    <xsl:choose>
+      <xsl:when test="$pi-label-width = ''">
+	<xsl:value-of select="$orderedlist.label.width"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$pi-label-width"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:if test="title">
+    <xsl:apply-templates select="title" mode="list.title.mode"/>
+  </xsl:if>
+
+  <!-- Preserve order of PIs and comments -->
+  <xsl:apply-templates 
+      select="*[not(self::listitem
+                or self::title
+                or self::titleabbrev)]
+              |comment()[not(preceding-sibling::listitem)]
+              |processing-instruction()[not(preceding-sibling::listitem)]"/>
+
+  <xsl:variable name="content">
+    <xsl:apply-templates 
+          select="listitem
+                  |comment()[preceding-sibling::listitem]
+                  |processing-instruction()[preceding-sibling::listitem]"/>
+  </xsl:variable>
+
+  <!-- nested lists don't add extra list-block spacing -->
+  <xsl:choose>
+    <xsl:when test="ancestor::listitem">
+      <fo:list-block id="{$id}" xsl:use-attribute-sets="orderedlist.properties">
+	<xsl:attribute name="provisional-distance-between-starts">
+	  <xsl:value-of select="$label-width"/>
+	</xsl:attribute>
+        <xsl:copy-of select="$content"/>
+      </fo:list-block>
+    </xsl:when>
+    <xsl:otherwise>
+      <fo:list-block id="{$id}" start-indent="50pt" xsl:use-attribute-sets="list.block.spacing orderedlist.properties">
+	<xsl:attribute name="provisional-distance-between-starts">
+	  <xsl:value-of select="$label-width"/>
+	</xsl:attribute>
+        <xsl:copy-of select="$content"/>
+      </fo:list-block>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="itemizedlist">
+  <xsl:variable name="id">
+    <xsl:call-template name="object.id"/>
+  </xsl:variable>
+
+  <xsl:variable name="pi-label-width">
+    <xsl:call-template name="dbfo-attribute">
+      <xsl:with-param name="pis"
+                      select="processing-instruction('dbfo')"/>
+      <xsl:with-param name="attribute" select="'label-width'"/>
+    </xsl:call-template>
+  </xsl:variable>
+
+  <xsl:variable name="label-width">
+    <xsl:choose>
+      <xsl:when test="$pi-label-width = ''">
+	<xsl:value-of select="$itemizedlist.label.width"/>
+      </xsl:when>
+      <xsl:otherwise>
+	<xsl:value-of select="$pi-label-width"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:if test="title">
+    <xsl:apply-templates select="title" mode="list.title.mode"/>
+  </xsl:if>
+
+  <!-- Preserve order of PIs and comments -->
+  <xsl:apply-templates 
+      select="*[not(self::listitem
+                or self::title
+                or self::titleabbrev)]
+              |comment()[not(preceding-sibling::listitem)]
+              |processing-instruction()[not(preceding-sibling::listitem)]"/>
+
+  <xsl:variable name="content">
+    <xsl:apply-templates 
+          select="listitem
+                  |comment()[preceding-sibling::listitem]
+                  |processing-instruction()[preceding-sibling::listitem]"/>
+  </xsl:variable>
+
+  <!-- nested lists don't add extra list-block spacing -->
+  <xsl:choose>
+    <xsl:when test="ancestor::listitem">
+      <fo:list-block id="{$id}" xsl:use-attribute-sets="itemizedlist.properties">
+	<xsl:attribute name="provisional-distance-between-starts">
+	  <xsl:value-of select="$label-width"/>
+	</xsl:attribute>
+        <xsl:copy-of select="$content"/>
+      </fo:list-block>
+    </xsl:when>
+    <xsl:otherwise>
+      <fo:list-block id="{$id}" start-indent="50pt" xsl:use-attribute-sets="list.block.spacing itemizedlist.properties">
+	<xsl:attribute name="provisional-distance-between-starts">
+	  <xsl:value-of select="$label-width"/>
+	</xsl:attribute>
+	<xsl:copy-of select="$content"/>
+      </fo:list-block>
+    </xsl:otherwise>
+  </xsl:choose>
+
+</xsl:template>
        
     <xsl:template name="header.content">
         <xsl:param name="pageclass" select="''"/>
@@ -374,5 +504,71 @@
             <xsl:otherwise>auto-odd</xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+    <xsl:attribute-set name="monospace.verbatim.properties">
+      <xsl:attribute name="color">green</xsl:attribute>
+    </xsl:attribute-set>
+    
+    <xsl:attribute-set name="monospace.verbatim.incorrect.properties">
+          <xsl:attribute name="color">red</xsl:attribute>
+    </xsl:attribute-set>
+    
+<xsl:template match="programlisting[@role = 'incorrect']">
+  <xsl:param name="suppress-numbers" select="'0'"/>
+  <xsl:variable name="id"><xsl:call-template name="object.id"/></xsl:variable>
+
+  <xsl:variable name="content">
+    <xsl:choose>
+      <xsl:when test="$suppress-numbers = '0'
+                      and @linenumbering = 'numbered'
+                      and $use.extensions != '0'
+                      and $linenumbering.extension != '0'">
+        <xsl:call-template name="number.rtf.lines">
+          <xsl:with-param name="rtf">
+            <xsl:apply-templates/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:choose>
+    <xsl:when test="$shade.verbatim != 0">
+      <fo:block id="{$id}"
+                white-space-collapse='false'
+                white-space-treatment='preserve'
+                linefeed-treatment='preserve'
+                xsl:use-attribute-sets="monospace.verbatim.incorrect.properties shade.verbatim.style">
+        <xsl:choose>
+          <xsl:when test="$hyphenate.verbatim != 0 and function-available('exsl:node-set')">
+            <xsl:apply-templates select="exsl:node-set($content)" mode="hyphenate.verbatim"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy-of select="$content"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </fo:block>
+    </xsl:when>
+    <xsl:otherwise>
+      <fo:block id="{$id}"
+                white-space-collapse='false'
+                white-space-treatment='preserve'
+                linefeed-treatment="preserve"
+                xsl:use-attribute-sets="monospace.verbatim.incorrect.properties">
+        <xsl:choose>
+          <xsl:when test="$hyphenate.verbatim != 0 and function-available('exsl:node-set')">
+            <xsl:apply-templates select="exsl:node-set($content)" mode="hyphenate.verbatim"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:copy-of select="$content"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </fo:block>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
 
 </xsl:stylesheet>

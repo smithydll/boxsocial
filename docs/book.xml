@@ -21,7 +21,7 @@
             </author>
         </authorgroup>
         <legalnotice>
-            <para>GFDL 1.1</para>
+            <para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.2 as published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in the section entitled "GNU Free Documentation License".</para>
         </legalnotice>
         <mediaobject>
             <imageobject>
@@ -33,5 +33,7 @@
     </info>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="R/R1/R1.1-2008.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D1/D1.1-2008.xml"/>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D2/D2.D0-2008.xml"/>
+    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D3/D3.D0-2008.xml"/>
     <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="D/D4/D4.D0-2008.xml"/>
 </book>

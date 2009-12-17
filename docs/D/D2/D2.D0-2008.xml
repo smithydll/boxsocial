@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xsl/thesis.xsl" ?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook">
+    <info>
+        <title>D2.D0-2008 Document Numbering System</title>
+        <author>
+            <personname>
+                <firstname>David</firstname>
+                <othername>Lachlan</othername>
+                <surname>Smith</surname>
+            </personname>
+        </author>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="standard_includes\logo.png" width="6.0cm">
+                </imagedata>
+            </imageobject>
+        </mediaobject>
+    </info>
+    <section>
+        <title>Introduction</title>
+        <para></para>
+    </section>
+    <section><title>Numbering</title>
+        <para>Document numbering in general follows the form XNNNN.R-YYYY, where X is the document type, NNNN is the document number, R is the revision, and YYYY is the year. However some types of documents are numbered differently.</para>
+        <para>The first release of a document is revision 1 with the initial draft prior to release being revision 0. The revision number is then incremented for each time the document is revised. A change table noting the changes made in a revision is required to be maintained for all documents that carry a revision status.</para>
+    </section>
+    <section>
+        <title>Document Types</title>
+        <para></para>
+        <orderedlist numeration="loweralpha">
+            <listitem><para>D - Document</para></listitem>
+            <listitem><para>F - Form</para></listitem>
+            <listitem><para>K - Knowledge base article</para></listitem>
+            <listitem><para>R - Rule or bye-law</para></listitem>
+            <listitem><para>A - Meeting agenda</para></listitem>
+            <listitem><para>M - Meeting minutes (must have same number as agenda for same meeting)</para></listitem>
+        </orderedlist>
+    </section>
+    <section>
+        <title>Meetings</title>
+        <para>Meetings are labelled as XAYYYYMM-N, where X is the type (M or A), A is the group meeting (for example B for board of directors, A for an AGM etc...), YYYY is the year, MM is the month (with leading zero), and N is the meeting sequence number (not zero padded). For example MB200808-1 would be the minutes of first meeting of the board of directors and was held in August 2008. Where an agenda is proposed, the agenda is dated to when the meeting is proposed to occur, rather than when the agenda was published (i.e. the same as the minutes).</para>
+    </section>
+</article>

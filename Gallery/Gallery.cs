@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("CREATE_ITEMS", "Can upload photos to gallery")]
     [Permission("EDIT_ITEMS", "Can edit photos")]
     [Permission("DELETE_ITEMS", "Can delete photos")]
-    public class Gallery : NumberedItem, IPermissibleItem, INestableItem
+    public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem
     {
 
         /// <summary>
@@ -79,11 +79,6 @@ namespace BoxSocial.Applications.Gallery
         protected long parentId;
 
         /// <summary>
-        /// Access object for the gallery
-        /// </summary>
-        protected Access galleryAccess;
-
-        /// <summary>
         /// Gallery title
         /// </summary>
         [DataField("gallery_title", 31)]
@@ -100,6 +95,18 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_path", 31)]
         protected string path;
+
+        /// <summary>
+        /// Number of gallery comments
+        /// </summary>
+        [DataField("gallery_comments")]
+        protected long galleryComments;
+
+        /// <summary>
+        /// Number of gallery items comments
+        /// </summary>
+        [DataField("gallery_Item_comments")]
+        protected long galleryItemComments;
 
         /// <summary>
         /// Number of visits made to the gallery
@@ -171,6 +178,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         private ParentTree parentTree;
 
+        /// <summary>
+        /// Access object for the gallery
+        /// </summary>
         Access access;
         List<AccessControlPermission> permissionsList;
 
@@ -254,21 +264,6 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 return parentTree;
-            }
-        }
-
-        /// <summary>
-        /// Gets the access object for the gallery
-        /// </summary>
-        public Access GalleryAccess
-        {
-            get
-            {
-                if (galleryAccess == null)
-                {
-                    galleryAccess = new Access(core, this);
-                }
-                return galleryAccess;
             }
         }
 
@@ -930,6 +925,8 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
             iQuery.AddField("gallery_bytes", 0);
             iQuery.AddField("gallery_items", 0);
+            iQuery.AddField("gallery_comments", 0);
+            iQuery.AddField("gallery_item_comments", 0);
             iQuery.AddField("gallery_visits", 0);
             iQuery.AddField("gallery_hierarchy", parents);
 
@@ -939,8 +936,11 @@ namespace BoxSocial.Applications.Gallery
 
             /* LOAD THE DEFAULT ITEM PERMISSIONS */
             Access.CreateAllGrantsForOwner(core, gallery);
-            Access.CreateGrantForPrimitive(core, gallery, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
-            Access.CreateGrantForPrimitive(core, gallery, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, User.EveryoneGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "COMMENT");
+            Access.CreateGrantForPrimitive(core, gallery, User.EveryoneGroupKey, "VIEW_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "COMMENT_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "RATE_ITEMS");
 
             return gallery;
         }
@@ -1325,6 +1325,11 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.Template.SetTemplate("Gallery", "viewgallery");
@@ -1366,11 +1371,11 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (gallery.Access.Can("CREATE_ITEMS"))
                         {
-                            e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(gallery.GalleryId));
+                            e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
                         }
                         if (gallery.Access.Can("CREATE_CHILD"))
                         {
-                            e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(gallery.GalleryId));
+                            e.Template.Parse("U_NEW_GALLERY", gallery.NewGalleryUri);
                         }
                     }
                     catch (InvalidAccessControlPermissionException)
@@ -1393,7 +1398,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (gallery.Access.Can("CREATE_CHILD"))
                     {
-                        e.Template.Parse("U_NEW_GALLERY", e.Core.Uri.BuildNewGalleryUri(0));
+                        e.Template.Parse("U_NEW_GALLERY", gallery.NewGalleryUri);
                     }
                 }
                 catch (InvalidAccessControlPermissionException)
@@ -1520,7 +1525,32 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string NewGalleryUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string PhotoUploadUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
+            }
+        }
         
+        /// <summary>
+        /// 
+        /// </summary>
         public string AclUri
         {
             get
@@ -1529,6 +1559,9 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        /// <summary>
+        /// Gets the access object for the gallery
+        /// </summary>
         public Access Access
         {
             get
@@ -1609,11 +1642,47 @@ namespace BoxSocial.Applications.Gallery
             return ret;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string DisplayTitle
         {
             get
             {
                 return "Gallery: " + GalleryTitle + " (" + FullPath + ")";
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public long Comments
+        {
+            get
+            {
+                return galleryComments;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
     }

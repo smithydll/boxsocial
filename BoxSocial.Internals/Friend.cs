@@ -38,5 +38,37 @@ namespace BoxSocial.Internals
 			: base(core, userRow, loadOptions)
 		{
 		}
+
+        public static ItemKey FriendsGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(Friend)));
+            }
+        }
+
+        public static ItemKey FamilyGroupKey
+        {
+            get
+            {
+                return new ItemKey(-2, ItemType.GetTypeId(typeof(Friend)));
+            }
+        }
+
+        public static ItemKey BlockedGroupKey
+        {
+            get
+            {
+                return new ItemKey(-3, ItemType.GetTypeId(typeof(Friend)));
+            }
+        }
+
+        public static ItemKey ColleaguesGroupKey
+        {
+            get
+            {
+                return new ItemKey(-4, ItemType.GetTypeId(typeof(Friend)));
+            }
+        }
 	}
 }

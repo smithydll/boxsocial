@@ -100,11 +100,6 @@ namespace BoxSocial.Applications.Gallery
         protected float itemRating;
 
         /// <summary>
-        /// Gallery photo access information
-        /// </summary>
-        protected Access itemAccess;
-
-        /// <summary>
         /// Gallery photo content (MIME) type
         /// </summary>
         [DataField("gallery_item_content_type", 31)]
@@ -781,7 +776,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="permissions"></param>
         /// <param name="license"></param>
         /// <param name="classification"></param>
-        public void Update(string title, string description, byte license, Classifications classification)
+        /*public void Update(string title, string description, byte license, Classifications classification)
         {
             long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_license = {4}, gallery_item_classification = {7} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {5} AND gallery_item_item_type_id = {6};",
                 core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), license, owner.Id, owner.TypeId, (byte)classification));
@@ -790,7 +785,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 throw new GalleryItemNotFoundException();
             }
-        }
+        }*/
 
         /// <summary>
         /// Rotate the gallery item
@@ -958,12 +953,13 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
+                Gallery gallery = new Gallery(Core, galleryItem.parentId);
 
-                /*if (galleryItem.Access.Can("READ"))
+                if (gallery.Access.Can("VIEW_ITEMS"))
                 {
                     e.Core.Functions.Generate403();
                     return;
-                }*/
+                }
 
                 galleryItem.Viewed(e.Core.session.LoggedInMember);
 
@@ -972,10 +968,9 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("PHOTO_DISPLAY", displayUri);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
-                //page.template.ParseRaw("PHOTO_DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(galleryItem.ItemAbstract), core.session.LoggedInMember));
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
                 e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
-                e.Template.Parse("U_UPLOAD_PHOTO", e.Core.Uri.BuildPhotoUploadUri(galleryItem.ParentId));
+                e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
 
                 switch (galleryItem.Classification)
                 {
@@ -1025,10 +1020,10 @@ namespace BoxSocial.Applications.Gallery
                 {
                 }
 
-                /*if (galleryItem.Access.Can("COMMENT"))
+                if (gallery.Access.Can("COMMENT_ITEMS"))
                 {
                     e.Template.Parse("CAN_COMMENT", "TRUE");
-                }*/
+                }
 
                 e.Core.Display.DisplayComments(e.Template, e.Page.Owner, galleryItem);
 

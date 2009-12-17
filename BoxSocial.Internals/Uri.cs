@@ -215,10 +215,10 @@ namespace BoxSocial.Internals
             return BuildAccountSubModuleUri("galleries", "galleries", "delete", galleryId, true);
         }
 
-        public string BuildPhotoUploadUri(long galleryId)
+        /*public string BuildPhotoUploadUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
-        }
+        }*/
 
         public string BuildPhotoEditUri(long photoId)
         {
@@ -235,10 +235,10 @@ namespace BoxSocial.Internals
             return BuildAccountSubModuleUri("galleries", "rotate-photo", true, string.Format("id={0}", photoId), "rotation=right");
         }
 
-        public string BuildNewGalleryUri(long galleryId)
+        /*public string BuildNewGalleryUri(long galleryId)
         {
             return BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
-        }
+        }*/
 
         public string BuildLogoutUri()
         {

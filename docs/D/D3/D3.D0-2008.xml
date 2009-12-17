@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xsl/thesis.xsl" ?>
+<?oxygen RNGSchema="http://www.oasis-open.org/docbook/xml/5.0b5/rng/docbookxi.rng" type="xml"?>
+<article xmlns="http://docbook.org/ns/docbook">
+    <info>
+        <title>D3.D0-2008 Setting up Ubuntu</title>
+        <author>
+            <personname>
+                <firstname>David</firstname>
+                <othername>Lachlan</othername>
+                <surname>Smith</surname>
+            </personname>
+        </author>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="standard_includes\logo.png" width="6.0cm">
+                </imagedata>
+            </imageobject>
+        </mediaobject>
+    </info>
+    <section>
+        <title>Introduction</title>
+        <para>Box Social uses Ubuntu 7.10 LTS server for all web serving infrastructure employed. This document details the instructions for setting up a server running Ubuntu to Box Social specifications.</para>
+    </section>
+    <section>
+        <title>Instructions</title>
+        <orderedlist numeration="arabic">
+            <listitem><para>apt-get update</para></listitem>
+            <listitem><para></para></listitem>
+        </orderedlist>
+    </section>
+</article>

@@ -2086,7 +2086,7 @@ namespace BoxSocial.Internals
 
             string langFriends = (e.Page.User.Friends != 1) ? "friends" : "friend";
 
-            e.Template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
+            e.Template.Parse("U_FILTER_ALL", GenerateFriendsUri(e.Core, e.Page.User));
             e.Template.Parse("U_FILTER_BEGINS_A", GenerateFriendsUri(e.Core, e.Page.User, "a"));
             e.Template.Parse("U_FILTER_BEGINS_B", GenerateFriendsUri(e.Core, e.Page.User, "b"));
             e.Template.Parse("U_FILTER_BEGINS_C", GenerateFriendsUri(e.Core, e.Page.User, "c"));

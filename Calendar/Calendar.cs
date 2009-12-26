@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (DataRow dr in eventsTable.Rows)
             {
-                events.Add(new Event(core, owner, dr));
+                events.Add(new Event(core, dr));
             }
 
             if (owner.TypeId == ItemKey.GetTypeId(typeof(User)))
@@ -88,7 +88,7 @@ namespace BoxSocial.Applications.Calendar
 
                 foreach (DataRow dr in eventsTable.Rows)
                 {
-                    events.Add(new Event(core, owner, dr));
+                    events.Add(new Event(core, dr));
                 }
 
 

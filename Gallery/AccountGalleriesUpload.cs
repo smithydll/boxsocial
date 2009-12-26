@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.Gallery
                         core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicense(), core.Functions.GetClassification());
+                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");

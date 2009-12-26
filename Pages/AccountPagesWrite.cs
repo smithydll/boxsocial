@@ -78,7 +78,7 @@ namespace BoxSocial.Applications.Pages
             {
                 if (core.Http.Form["license"] != null)
                 {
-                    licenseId = core.Functions.GetLicense();
+                    licenseId = core.Functions.GetLicenseId();
                 }
                 if (core.Http.Form["id"] != null)
                 {
@@ -206,7 +206,7 @@ namespace BoxSocial.Applications.Pages
                     {
                         Page page = new Page(core, Owner, pageId);
 
-                        page.Update(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicense(), core.Functions.GetClassification());
+                        page.Update(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicenseId(), core.Functions.GetClassification());
                     }
                     catch (PageNotFoundException)
                     {
@@ -215,7 +215,7 @@ namespace BoxSocial.Applications.Pages
                 }
                 else
                 {
-                    Page.Create(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicense(), core.Functions.GetClassification());
+                    Page.Create(core, Owner, title, ref slug, parent, pageBody, status, core.Functions.GetLicenseId(), core.Functions.GetClassification());
                 }
             }
             catch (PageTitleNotValidException)

@@ -73,7 +73,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (eventId > 0)
             {
-                Event calendarEvent = new Event(core, null, eventId);
+                Event calendarEvent = new Event(core, eventId);
                 UpdateQuery uQuery = new UpdateQuery("event_invites");
 
                 UpdateQuery uEventQuery = new UpdateQuery("events");

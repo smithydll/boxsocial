@@ -269,7 +269,7 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
-        public byte GetLicense()
+        public byte GetLicenseId()
         {
             return byte.Parse(core.Http.Form["license"]);
         }

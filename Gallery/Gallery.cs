@@ -653,10 +653,11 @@ namespace BoxSocial.Applications.Gallery
             qc1.AddCondition(ConditionRelations.Or, "`user_galleries`.`user_id`", loggedIdUid);*/
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
-            // TODO: permissions
 
             /*DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
                 ((User)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));*/
+            /*HttpContext.Current.Response.Write(query.ToString());
+            HttpContext.Current.Response.End();*/
             return core.db.Query(query).Rows;
         }
 

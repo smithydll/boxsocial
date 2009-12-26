@@ -135,7 +135,7 @@ namespace BoxSocial.Musician
 
                 song.Title = core.Http.Form["title"];
                 song.Lyrics = core.Http.Form["lyrics"];
-                song.LicenseId = core.Functions.GetLicense();
+                song.LicenseId = core.Functions.GetLicenseId();
 
                 try
                 {
@@ -151,7 +151,7 @@ namespace BoxSocial.Musician
             }
             else
             {
-                Song song = Song.Create(core, (Musician)Owner, core.Http.Form["title"], core.Http.Form["lyrics"], core.Functions.GetLicense());
+                Song song = Song.Create(core, (Musician)Owner, core.Http.Form["title"], core.Http.Form["lyrics"], core.Functions.GetLicenseId());
 
                 this.SetRedirectUri(BuildUri("songs"));
             }

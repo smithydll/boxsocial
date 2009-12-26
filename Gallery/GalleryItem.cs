@@ -172,6 +172,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 return itemTitle;
             }
+            set
+            {
+                SetProperty("itemTitle", value);
+            }
         }
 
         /// <summary>
@@ -275,6 +279,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 return itemAbstract;
             }
+            set
+            {
+                SetProperty("itemAbstract", value);
+            }
         }
 
         /// <summary>
@@ -309,6 +317,18 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public byte LicenseId
+        {
+            get
+            {
+                return license;
+            }
+            set
+            {
+                SetProperty("license", value);
+            }
+        }
+
         /// <summary>
         /// Returns the gallery item classification
         /// </summary>
@@ -317,6 +337,10 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return (Classifications)classification;
+            }
+            set
+            {
+                SetProperty("classification", value);
             }
         }
 
@@ -953,7 +977,7 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
-                Gallery gallery = new Gallery(Core, galleryItem.parentId);
+                Gallery gallery = new Gallery(e.Core, galleryItem.parentId);
 
                 if (gallery.Access.Can("VIEW_ITEMS"))
                 {

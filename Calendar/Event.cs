@@ -73,7 +73,7 @@ namespace BoxSocial.Applications.Calendar
         protected string location;
         #endregion
 
-        protected Access eventAccess;
+        protected Access access;
         protected Primitive owner;
 
         public long EventId
@@ -133,14 +133,6 @@ namespace BoxSocial.Applications.Calendar
             set
             {
                 SetProperty("permissions", value);
-            }
-        }
-
-        public Access EventAccess
-        {
-            get
-            {
-                return eventAccess;
             }
         }
 
@@ -248,10 +240,9 @@ namespace BoxSocial.Applications.Calendar
         {
         }
 
-        public Event(Core core, Primitive owner, long eventId)
+        public Event(Core core, long eventId)
             : base(core)
         {
-            this.owner = owner;
             ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
             try
@@ -264,10 +255,9 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public Event(Core core, Primitive owner, DataRow eventRow)
+        public Event(Core core, DataRow eventRow)
             : base(core)
         {
-            this.owner = owner;
             ItemLoad += new ItemLoadHandler(Event_ItemLoad);
 
             loadItemInfo(eventRow);
@@ -282,7 +272,7 @@ namespace BoxSocial.Applications.Calendar
             long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type_id, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut) VALUES ({0}, {1}, {2}, '{3}', '{4}', '{5}', {6}, {7})",
                 creator.UserId, owner.Id, owner.TypeId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp));
 
-            Event myEvent = new Event(core, owner, eventId);
+            Event myEvent = new Event(core, eventId);
 
             /*if (Access.FriendsCanRead(myEvent.Permissions))
             {
@@ -503,7 +493,7 @@ namespace BoxSocial.Applications.Calendar
         public static string BuildEventUri(Core core, Event calendarEvent)
         {
             return core.Uri.AppendSid(string.Format("{0}calendar/event/{1}",
-                calendarEvent.owner.Uri, calendarEvent.EventId));
+                calendarEvent.Owner.Uri, calendarEvent.EventId));
         }
 
         public static string BuildEventAcceptUri(Core core, Event calendarEvent)
@@ -530,76 +520,69 @@ namespace BoxSocial.Applications.Calendar
                 page.template.Parse("U_DELETE_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", eventId, true));
             }
 
-            try
+            Event calendarEvent = new Event(core, eventId);
+
+            /*calendarEvent.Subject = "Hi";
+            calendarEvent.Update();*/
+
+            //calendarEvent.EventAccess.SetSessionViewer(core.session);
+
+            if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(core.session.LoggedInMember))
             {
-                Event calendarEvent = new Event(core, owner, eventId);
-
-                /*calendarEvent.Subject = "Hi";
-                calendarEvent.Update();*/
-
-                //calendarEvent.EventAccess.SetSessionViewer(core.session);
-
-                if (!calendarEvent.EventAccess.Can("VIEW") && !calendarEvent.IsInvitee(core.session.LoggedInMember))
-                {
-                    core.Functions.Generate403();
-                    return;
-                }
-
-                page.template.Parse("SUBJECT", calendarEvent.Subject);
-                page.template.Parse("LOCATION", calendarEvent.Location);
-                page.template.Parse("DESCRIPTION", calendarEvent.Description);
-                page.template.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString());
-                page.template.Parse("END_TIME", calendarEvent.GetEndTime(core.tz).ToString());
-
-                List<string[]> calendarPath = new List<string[]>();
-                calendarPath.Add(new string[] { "calendar", "Calendar" });
-                //calendarPath.Add(new string[] { "events", "Events" });
-                calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
-                //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
-                owner.ParseBreadCrumbs(calendarPath);
-
-                if (calendarEvent.EventAccess.Can("COMMENT"))
-                {
-                    page.template.Parse("CAN_COMMENT", "TRUE");
-                }
-                core.Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
-
-                List<long> attendees = calendarEvent.GetAttendees();
-                core.LoadUserProfiles(attendees);
-
-                page.template.Parse("ATTENDEES", calendarEvent.Attendees.ToString());
-                page.template.Parse("INVITEES", calendarEvent.Invitees.ToString());
-                if (attendees.Count > 1)
-                {
-                    page.template.Parse("L_IS_ARE", "is");
-                    page.template.Parse("L_ATTENDEES", "attendees");
-                }
-                else
-                {
-                    page.template.Parse("L_IS_ARE", "are");
-                    page.template.Parse("L_ATTENDEES", "attendee");
-                }
-
-                int i = 0;
-                foreach (long attendeeId in attendees)
-                {
-                    i++;
-                    if (i > 4)
-                    {
-                        break;
-                    }
-                    VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
-                    User attendee = core.PrimitiveCache[attendeeId];
-
-                    attendeesVariableCollection.Parse("U_PROFILE", attendee.Uri);
-                    attendeesVariableCollection.Parse("USER_DISPLAY_NAME", attendee.DisplayName);
-                    attendeesVariableCollection.Parse("ICON", attendee.UserTile);
-                    attendeesVariableCollection.Parse("ICON", attendee.UserTile);
-                }
+                core.Functions.Generate403();
+                return;
             }
-            catch (Exception ex)
+
+            page.template.Parse("SUBJECT", calendarEvent.Subject);
+            page.template.Parse("LOCATION", calendarEvent.Location);
+            page.template.Parse("DESCRIPTION", calendarEvent.Description);
+            page.template.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString());
+            page.template.Parse("END_TIME", calendarEvent.GetEndTime(core.tz).ToString());
+
+            List<string[]> calendarPath = new List<string[]>();
+            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            //calendarPath.Add(new string[] { "events", "Events" });
+            calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
+            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+            owner.ParseBreadCrumbs(calendarPath);
+
+            if (calendarEvent.Access.Can("COMMENT"))
             {
-                core.Display.ShowMessage("Invalid event", "The event does not exist. " + ex.ToString());
+                page.template.Parse("CAN_COMMENT", "TRUE");
+            }
+            core.Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
+
+            List<long> attendees = calendarEvent.GetAttendees();
+            core.LoadUserProfiles(attendees);
+
+            page.template.Parse("ATTENDEES", calendarEvent.Attendees.ToString());
+            page.template.Parse("INVITEES", calendarEvent.Invitees.ToString());
+            if (attendees.Count > 1)
+            {
+                page.template.Parse("L_IS_ARE", "is");
+                page.template.Parse("L_ATTENDEES", "attendees");
+            }
+            else
+            {
+                page.template.Parse("L_IS_ARE", "are");
+                page.template.Parse("L_ATTENDEES", "attendee");
+            }
+
+            int i = 0;
+            foreach (long attendeeId in attendees)
+            {
+                i++;
+                if (i > 4)
+                {
+                    break;
+                }
+                VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
+                User attendee = core.PrimitiveCache[attendeeId];
+
+                attendeesVariableCollection.Parse("U_PROFILE", attendee.Uri);
+                attendeesVariableCollection.Parse("USER_DISPLAY_NAME", attendee.DisplayName);
+                attendeesVariableCollection.Parse("ICON", attendee.UserTile);
+                attendeesVariableCollection.Parse("ICON", attendee.UserTile);
             }
         }
 
@@ -639,7 +622,11 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return EventAccess;
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
             }
         }
 

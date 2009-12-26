@@ -153,7 +153,13 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 GalleryItem galleryItem = new GalleryItem(core, LoggedInMember, photoId);
-                galleryItem.Update(title, description, core.Functions.GetLicense(), core.Functions.GetClassification());
+                //galleryItem.Update(title, description, core.Functions.GetLicense(), core.Functions.GetClassification());
+                galleryItem.ItemTitle = title;
+                galleryItem.ItemAbstract = description;
+                galleryItem.LicenseId = core.Functions.GetLicenseId();
+                galleryItem.Classification = core.Functions.GetClassification();
+
+                galleryItem.Update();
 
                 SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
                 core.Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");

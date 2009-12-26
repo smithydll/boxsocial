@@ -137,7 +137,7 @@ namespace BoxSocial.Applications.Calendar
 
                 try
                 {
-                    Event calendarEvent = new Event(core, Owner, id);
+                    Event calendarEvent = new Event(core, id);
                     inviteeIds.AddRange(calendarEvent.GetInvitees());
 
                     template.Parse("EDIT", "TRUE");
@@ -389,7 +389,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                Event calendarEvent = new Event(core, Owner, eventId);
+                Event calendarEvent = new Event(core, eventId);
                 calendarEvent.Location = location;
                 calendarEvent.Subject = subject;
                 calendarEvent.Description = description;

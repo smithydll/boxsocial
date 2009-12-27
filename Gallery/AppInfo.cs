@@ -243,7 +243,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool photoCanPostComment(ItemKey itemKey, User member)
         {
-            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
+            /*SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
             query.AddCondition("gallery_item_id", itemKey.Id);
 
             DataTable galleryItemTable = core.db.Query(query);
@@ -254,19 +254,6 @@ namespace BoxSocial.Applications.Gallery
 
                 core.PrimitiveCache.LoadPrimitiveProfile(ik);
                 Primitive owner = core.PrimitiveCache[ik];
-
-                /*switch ((string)galleryItemTable.Rows[0]["gallery_item_item_type"])
-                {
-                    case "USER":
-                        owner = new User(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
-                        break;
-                    case "GROUP":
-                        owner = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
-                        break;
-                    case "NETWORK":
-                        owner = new Network(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
-                        break;
-                }*/
 
                 GalleryItem gi = new GalleryItem(core, ik.Id);
                 Access photoAccess = new Access(core, new Gallery(core, gi.Owner, gi.ParentId));
@@ -284,7 +271,25 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 throw new InvalidItemException();
-            }
+            }*/
+
+            GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
+            Gallery gallery = new Gallery(core, galleryItem.ParentId);
+
+            return gallery.Access.Can("COMMENT_ITEMS");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="itemKey"></param>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        private bool galleryCanPostComment(ItemKey itemKey, User member)
+        {
+            Gallery gallery = new Gallery(core, itemKey.Id);
+
+            return gallery.Access.Can("COMMENT");
         }
 
         /// <summary>
@@ -295,7 +300,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool photoCanDeleteComment(ItemKey itemKey, User member)
         {
-            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
+            /*SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
             query.AddCondition("gallery_item_id", itemKey.Id);
 
             DataTable galleryItemTable = core.db.Query(query);
@@ -335,7 +340,10 @@ namespace BoxSocial.Applications.Gallery
             else
             {
                 throw new InvalidItemException();
-            }
+            }*/
+
+            GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
+            return galleryItem.Owner.CanDeleteItem();
         }
 
         /// <summary>
@@ -346,6 +354,15 @@ namespace BoxSocial.Applications.Gallery
         private void photoAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
+                itemKey.Id, adjustment));
+
+            core.db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_id = (SELECT gallery_id FROM gallery_items WHERE gallery_item_id = {0});",
+                itemKey.Id, adjustment));
+        }
+
+        private void galleryAdjustCommentCount(ItemKey itemKey, int adjustment)
+        {
+            core.db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_comments = gallery_comments + {1} WHERE gallery_id = {0};",
                 itemKey.Id, adjustment));
         }
         

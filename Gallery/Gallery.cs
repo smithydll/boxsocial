@@ -105,7 +105,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Number of gallery items comments
         /// </summary>
-        [DataField("gallery_Item_comments")]
+        [DataField("gallery_item_comments")]
         protected long galleryItemComments;
 
         /// <summary>
@@ -362,6 +362,17 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return items;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public long ItemComment
+        {
+            get
+            {
+                return galleryItemComments;
             }
         }
 
@@ -1493,7 +1504,14 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("S_RATEBAR", "TRUE");
             }
 
-            e.Template.Parse("COMMENTS", galleryComments.ToString());
+            if (gallery.Access.Can("COMMENT"))
+            {
+                e.Template.Parse("CAN_COMMENT", "TRUE");
+            }
+
+            e.Core.Display.DisplayComments(e.Template, e.Page.Owner, gallery);
+
+            e.Template.Parse("COMMENTS", gallery.Comments.ToString());
             e.Template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
             e.Template.Parse("U_COMMENTS", e.Core.Uri.BuildGalleryCommentsUri(e.Page.Owner, galleryPath));
         }

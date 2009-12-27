@@ -21,20 +21,22 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using BoxSocial.Internals;
 using BoxSocial.IO;
-using System.IO.Compression;
-using System.Diagnostics;
 
 namespace BoxSocial.Install
 {
     public static class Installer
     {
+        static object displayUpdateLock;
 
         private static bool binary;
         private static string root;
@@ -54,6 +56,406 @@ namespace BoxSocial.Install
         private static long adminUid;
 
         static void Main(string[] args)
+        {
+            displayUpdateLock = new object();
+
+            ThreadStart threadStart = new ThreadStart(updateDisplayedTime);
+            Thread thread = new Thread(threadStart);
+            thread.Start();
+
+            PollMenu();
+
+            /* Exit Application */
+            thread.Abort();
+        }
+
+        static void PollMenu()
+        {
+            while (true)
+            {
+                lock (displayUpdateLock)
+                {
+                    ShowMainMenu();
+                    Console.CursorVisible = false;
+                }
+
+                ConsoleKeyInfo menuKey = Console.ReadKey(false);
+
+                switch (menuKey.Key)
+                {
+                    case ConsoleKey.A: // Update Application
+                        EnterUpdateApplication();
+                        break;
+                    case ConsoleKey.B: // Sync Application
+                        break;
+                    case ConsoleKey.C: // Install Application
+                        break;
+                    case ConsoleKey.D: // Install Box Social
+                        EnterInstallBoxSocial();
+                        break;
+                    case ConsoleKey.E: // Exit
+                        Console.Clear();
+                        return;
+                }
+            }
+        }
+
+        static void ShowMainMenu()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.SetCursorPosition(5, 5);
+            Console.Write("a) Update Application");
+            Console.SetCursorPosition(5, 7);
+            Console.Write("b) Sync Application");
+            Console.SetCursorPosition(5, 9);
+            Console.Write("c) Install Application");
+            Console.SetCursorPosition(5, 11);
+            Console.Write("d) Install Box Social");
+            Console.SetCursorPosition(5, 13);
+            Console.Write("e) Exit");
+        }
+
+        static void EnterUpdateApplication()
+        {
+            lock (displayUpdateLock)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.SetCursorPosition(5, 5);
+                Console.Write("Application: ________________");
+
+                Console.SetCursorPosition(5, 7);
+                Console.Write("MySQL Root Password: ________________");
+
+                Console.SetCursorPosition(5, 9);
+                Console.Write("WWW Root: ________________");
+
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.SetCursorPosition(5, 21);
+                Console.Write(" Enter ");
+                Console.BackgroundColor = ConsoleColor.Black;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+
+            lock (displayUpdateLock)
+            {
+                Console.SetCursorPosition(18, 5);
+            }
+            string repo = getField(false);
+
+            lock (displayUpdateLock)
+            {
+                Console.SetCursorPosition(26, 7);
+            }
+            string password = getField(true);
+
+            lock (displayUpdateLock)
+            {
+                Console.SetCursorPosition(15, 9);
+            }
+            string root = getField(false);
+
+            Console.SetCursorPosition(5, 21);
+            Console.Write(" Enter ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\t- Begin update process");
+
+            Console.ReadKey(false);
+        }
+
+        static void EnterInstallBoxSocial()
+        {
+            lock (displayUpdateLock)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.SetCursorPosition(5, 5);
+                Console.Write("WWW Root: ________________");
+
+                Console.SetCursorPosition(5, 7);
+                Console.Write("Domain: ________________");
+
+                Console.SetCursorPosition(5, 9);
+                Console.Write("Mysql root password: ________________");
+
+                Console.SetCursorPosition(5, 11);
+                Console.Write("Mysql User: ________________");
+
+                Console.SetCursorPosition(5, 13);
+                Console.Write("Mysql User password: ________________");
+
+                Console.SetCursorPosition(5, 15);
+                Console.Write("Administrator username: ________________");
+
+                Console.SetCursorPosition(5, 17);
+                Console.Write("Administrator password: ________________");
+
+                Console.SetCursorPosition(5, 17);
+                Console.Write("Administrator email: ________________");
+
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.SetCursorPosition(5, 21);
+                Console.Write(" Enter ");
+                Console.BackgroundColor = ConsoleColor.Black;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+
+            ConsoleKey begin;
+            string root = string.Empty;
+            string domain = string.Empty;
+            string mysqlRootPassword = string.Empty;
+            string mysqlUser = string.Empty;
+            string mysqlUserPassword = string.Empty;
+            string administrationUserName = string.Empty;
+            string administrationPassword = string.Empty;
+            string administrationEmail = string.Empty;
+            do
+            {
+                lock (displayUpdateLock)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(15, 5);
+                }
+                root = getField(false, root);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(13, 7);
+                }
+                domain = getField(false, domain);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(26, 9);
+                }
+                mysqlRootPassword = getField(true, mysqlRootPassword);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(17, 11);
+                }
+                mysqlUser = getField(false, mysqlUser);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(26, 13);
+                }
+                mysqlUserPassword = getField(true, mysqlUserPassword);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(29, 15);
+                }
+                administrationUserName = getField(false, administrationUserName);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(29, 17);
+                }
+                administrationPassword = getField(true, administrationPassword);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(26, 19);
+                }
+                administrationEmail = getField(false, administrationEmail);
+
+                Console.SetCursorPosition(5, 21);
+                Console.Write(" Enter ");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("\t- Begin installation");
+
+                while (true)
+                {
+                    begin = Console.ReadKey(false).Key;
+                    if (begin == ConsoleKey.Enter)
+                    {
+                        Console.Clear();
+
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        Console.SetCursorPosition(5, 5);
+                        Console.Write("Installing...");
+
+                        Installer.root = root;
+                        Installer.domain = domain;
+                        Installer.mysqlRootPassword = mysqlRootPassword;
+                        Installer.mysqlWebUser = mysqlUser;
+                        Installer.mysqlWebPassword = mysqlUserPassword;
+                        Installer.adminUsername = administrationUserName;
+                        Installer.adminPassword = administrationPassword;
+                        Installer.adminEmail = administrationEmail;
+
+                        doInstall();
+                        Console.WriteLine("Box Social Installed");
+                        Console.WriteLine("Press Enter to continue");
+                        while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                        {
+                            Thread.Sleep(100);
+                        }
+                        return;
+                    }
+                    else if (begin == ConsoleKey.Escape)
+                    {
+                        return;
+                    }
+                    else if (begin == ConsoleKey.Tab)
+                    {
+                        break;
+                    }
+                }
+            }
+            while (begin == ConsoleKey.Tab);
+        }
+
+        #region Time Thread
+        static void updateDisplayedTime()
+        {
+            while (true)
+            {
+                lock (displayUpdateLock)
+                {
+                    int left = Console.CursorLeft;
+                    int top = Console.CursorTop;
+                    ConsoleColor colour = Console.ForegroundColor;
+                    bool cursor = Console.CursorVisible;
+
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    Console.SetCursorPosition(0, 0);
+                    Console.Write("Box Social Installer");
+                    Console.SetCursorPosition(0, 1);
+                    for (int i = 0; i < Console.WindowWidth; i++)
+                    {
+                        Console.Write("-");
+                    }
+
+                    Console.SetCursorPosition(0, Console.WindowHeight - 2);
+
+                    for (int i = 0; i < Console.WindowWidth; i++)
+                    {
+                        Console.Write("-");
+                    }
+
+                    Console.SetCursorPosition(Console.WindowWidth - 10, 0);
+                    Console.Write(DateTime.Now.ToShortTimeString());
+
+                    Console.SetCursorPosition(left, top);
+                    Console.ForegroundColor = colour;
+                    Console.CursorVisible = cursor;
+                }
+                Thread.Sleep(100);
+            }
+        }
+        #endregion
+
+        static string getField(bool isPasswordField)
+        {
+            return getField(isPasswordField, string.Empty);
+        }
+
+        static string getField(bool isPasswordField, string currentValue)
+        {
+            lock (displayUpdateLock)
+            {
+                Console.CursorVisible = true;
+            }
+
+            string field = currentValue;
+            if (isPasswordField)
+            {
+                for (int i = 0; i < field.Length; i++)
+                {
+                    Console.Write("*");
+                }
+            }
+            else
+            {
+                Console.Write(field);
+            }
+
+            ConsoleKeyInfo key;
+            while ((key = Console.ReadKey(true)) != null)
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKey.Enter:
+                        lock (displayUpdateLock)
+                        {
+                            Console.CursorVisible = false;
+                        }
+                        return field;
+                    case ConsoleKey.Backspace:
+                        field = field.Substring(0, field.Length - 1);
+                        lock (displayUpdateLock)
+                        {
+                            Console.CursorLeft = Console.CursorLeft - 1;
+                            Console.Write(" ");
+                            Console.CursorLeft = Console.CursorLeft - 1;
+                        }
+                        break;
+                    default:
+                        if (!Char.IsControl(key.KeyChar))
+                        {
+                            field += key.KeyChar;
+                            if (isPasswordField)
+                            {
+                                lock (displayUpdateLock)
+                                {
+                                    Console.Write("*");
+                                }
+                            }
+                            else
+                            {
+                                lock (displayUpdateLock)
+                                {
+                                    Console.Write(key.KeyChar);
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+
+            lock (displayUpdateLock)
+            {
+                Console.CursorVisible = false;
+            }
+
+            return field;
+        }
+
+        static void doInstall()
+        {
+            binRoot = Path.Combine(root, "bin");
+            imagesRoot = Path.Combine(root, "images");
+            stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
+            scriptsRoot = Path.Combine(root, "scripts");
+
+            PerformInstall();
+
+            Console.WriteLine("Reloading apache");
+            Process p1 = new Process();
+            p1.StartInfo.FileName = "/etc/init.d/apache2";
+            p1.StartInfo.Arguments = "force-reload";
+            p1.Start();
+
+            p1.WaitForExit();
+        }
+
+        static void goAway(string[] args)
         {
             List<string> argsList = new List<string>(args);
             if (argsList.Contains("--source") || argsList.Contains("-S"))

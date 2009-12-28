@@ -106,12 +106,12 @@ namespace BoxSocial.Applications.Gallery
                     galleryParentPath = "";
                 }
 
-                DataTable galleryTable = db.Query(string.Format("SELECT gallery_id, gallery_access FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
+                DataTable galleryTable = db.Query(string.Format("SELECT gallery_id FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
                     LoggedInMember.UserId, Mysql.Escape(galleryPath), Mysql.Escape(galleryParentPath)));
 
                 if (galleryTable.Rows.Count == 1)
                 {
-                    ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
+                    //ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
 
                     // only worry about view permissions, don't worry about comment permissions
                     if (true)

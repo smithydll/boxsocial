@@ -303,6 +303,7 @@ namespace BoxSocial.Applications.Calendar
             string inviteeIdList = core.Http.Form["inviteeses"];
             string inviteeUsernameList = core.Http.Form["invitees"];
             List<long> inviteeIds = new List<long>();
+            List<string> inviteesEmailsList = new List<string>();
 
             if (!(string.IsNullOrEmpty(inviteeIdList)))
             {
@@ -328,7 +329,14 @@ namespace BoxSocial.Applications.Calendar
                 {
                     if (!string.IsNullOrEmpty(inviteeUsername))
                     {
-                        inviteesUsernamesList.Add(inviteeUsername);
+                        if (Email.IsEmailAddress(inviteeUsername))
+                        {
+                            inviteesEmailsList.Add(inviteeUsername);
+                        }
+                        else
+                        {
+                            inviteesUsernamesList.Add(inviteeUsername);
+                        }
                     }
                 }
 
@@ -421,6 +429,42 @@ namespace BoxSocial.Applications.Calendar
 					catch (CouldNotInviteEventException)
 					{
 					}
+                }
+
+                foreach (string email in inviteesEmailsList)
+                {
+                    try
+                    {
+                        string emailKey = User.GenerateActivationSecurityToken(); ;
+
+                        InsertQuery iQuery = new InsertQuery("event_email_invites");
+                        iQuery.AddField("event_id", calendarEvent.Id);
+                        iQuery.AddField("invite_email", email);
+                        iQuery.AddField("invite_key", emailKey);
+                        iQuery.AddField("inviter_id", core.session.LoggedInMember.Id);
+                        iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
+                        iQuery.AddField("invite_accepted", false);
+                        iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
+
+                        core.db.Query(iQuery);
+
+                        RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_event_invite.eml");
+
+                        emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);
+                        emailTemplate.Parse("FROM_EMAIL", core.session.LoggedInMember.AlternateEmail);
+                        emailTemplate.Parse("FROM_NAMES", core.session.LoggedInMember.DisplayNameOwnership);
+                        emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
+                        /* TODO: KEY PERMS */
+                        emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, calendarEvent)));
+                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, calendarEvent)));
+                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, calendarEvent)));
+
+                        core.Email.SendEmail(email, string.Format("{0} has invited you to {1}.",
+                            core.session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate.ToString());
+                    }
+                    catch (CouldNotInviteEventException)
+                    {
+                    }
                 }
 
                 SetRedirectUri(Event.BuildEventUri(core, calendarEvent));

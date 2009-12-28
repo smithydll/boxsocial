@@ -1319,6 +1319,8 @@ namespace BoxSocial.Internals
 
             core.Email.SendEmail(eMail, "Welcome to ZinZam (Account Activation E-mail)", emailTemplate.ToString());
 
+            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
+
             return newUser;
         }
 

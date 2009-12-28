@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.GuestBook
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "profile", "Profile" });
-            breadCrumbParts.Add(new string[] { "comments", "Comments" });
+            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
 
             core.Display.DisplayComments(page.template, page.User, page.User, UserGuestBookHook);
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");

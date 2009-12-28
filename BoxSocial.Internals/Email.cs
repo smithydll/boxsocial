@@ -97,5 +97,10 @@ namespace BoxSocial.Internals
         public Email()
         {
         }
+
+        public static bool IsEmailAddress(string inviteeUsername)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

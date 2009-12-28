@@ -506,66 +506,61 @@ namespace BoxSocial.Applications.Calendar
             return core.Uri.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
         }
 
-        public static void Show(Core core, TPage page, Primitive owner, long eventId)
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
-            page.template.SetTemplate("Calendar", "viewcalendarevent");
+            e.Template.SetTemplate("Calendar", "viewcalendarevent");
 
-            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
+            Event calendarEvent = new Event(e.Core, e.ItemId);
+
+            if (e.Core.LoggedInMemberId == e.Page.Owner.Id && e.Page.Owner.GetType() == typeof(User))
             {
-                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
-                    string.Format("year={0}", core.tz.Now.Year),
-                    string.Format("month={0}", core.tz.Now.Month),
-                    string.Format("day={0}", core.tz.Now.Day)));
-                page.template.Parse("U_EDIT_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", eventId, true));
-                page.template.Parse("U_DELETE_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", eventId, true));
+                e.Template.Parse("U_NEW_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
+                    string.Format("year={0}", e.Core.tz.Now.Year),
+                    string.Format("month={0}", e.Core.tz.Now.Month),
+                    string.Format("day={0}", e.Core.tz.Now.Day)));
+                e.Template.Parse("U_EDIT_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", e.ItemId, true));
+                e.Template.Parse("U_DELETE_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", e.ItemId, true));
+                e.Template.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(e.Core, calendarEvent));
             }
 
-            Event calendarEvent = new Event(core, eventId);
-
-            /*calendarEvent.Subject = "Hi";
-            calendarEvent.Update();*/
-
-            //calendarEvent.EventAccess.SetSessionViewer(core.session);
-
-            if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(core.session.LoggedInMember))
+            if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.session.LoggedInMember))
             {
-                core.Functions.Generate403();
+                e.Core.Functions.Generate403();
                 return;
             }
 
-            page.template.Parse("SUBJECT", calendarEvent.Subject);
-            page.template.Parse("LOCATION", calendarEvent.Location);
-            page.template.Parse("DESCRIPTION", calendarEvent.Description);
-            page.template.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString());
-            page.template.Parse("END_TIME", calendarEvent.GetEndTime(core.tz).ToString());
+            e.Template.Parse("SUBJECT", calendarEvent.Subject);
+            e.Template.Parse("LOCATION", calendarEvent.Location);
+            e.Template.Parse("DESCRIPTION", calendarEvent.Description);
+            e.Template.Parse("START_TIME", calendarEvent.GetStartTime(e.Core.tz).ToString());
+            e.Template.Parse("END_TIME", calendarEvent.GetEndTime(e.Core.tz).ToString());
 
             List<string[]> calendarPath = new List<string[]>();
             calendarPath.Add(new string[] { "calendar", "Calendar" });
             //calendarPath.Add(new string[] { "events", "Events" });
             calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
-            //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
-            owner.ParseBreadCrumbs(calendarPath);
+            e.Page.Owner.ParseBreadCrumbs(calendarPath);
 
             if (calendarEvent.Access.Can("COMMENT"))
             {
-                page.template.Parse("CAN_COMMENT", "TRUE");
+                e.Template.Parse("CAN_COMMENT", "TRUE");
             }
-            core.Display.DisplayComments(page.template, calendarEvent.owner, calendarEvent);
+            e.Core.Display.DisplayComments(e.Template, calendarEvent.owner, calendarEvent);
 
             List<long> attendees = calendarEvent.GetAttendees();
-            core.LoadUserProfiles(attendees);
+            e.Core.LoadUserProfiles(attendees);
 
-            page.template.Parse("ATTENDEES", calendarEvent.Attendees.ToString());
-            page.template.Parse("INVITEES", calendarEvent.Invitees.ToString());
+            e.Template.Parse("ATTENDEES", calendarEvent.Attendees.ToString());
+            e.Template.Parse("INVITEES", calendarEvent.Invitees.ToString());
             if (attendees.Count > 1)
             {
-                page.template.Parse("L_IS_ARE", "is");
-                page.template.Parse("L_ATTENDEES", "attendees");
+                e.Template.Parse("L_IS_ARE", "is");
+                e.Template.Parse("L_ATTENDEES", "attendees");
             }
             else
             {
-                page.template.Parse("L_IS_ARE", "are");
-                page.template.Parse("L_ATTENDEES", "attendee");
+                e.Template.Parse("L_IS_ARE", "are");
+                e.Template.Parse("L_ATTENDEES", "attendee");
             }
 
             int i = 0;
@@ -576,8 +571,8 @@ namespace BoxSocial.Applications.Calendar
                 {
                     break;
                 }
-                VariableCollection attendeesVariableCollection = page.template.CreateChild("attendee_list");
-                User attendee = core.PrimitiveCache[attendeeId];
+                VariableCollection attendeesVariableCollection = e.Template.CreateChild("attendee_list");
+                User attendee = e.Core.PrimitiveCache[attendeeId];
 
                 attendeesVariableCollection.Parse("U_PROFILE", attendee.Uri);
                 attendeesVariableCollection.Parse("USER_DISPLAY_NAME", attendee.DisplayName);
@@ -667,7 +662,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "Event: " + Subject;
+                return "Event: " + Subject + " (" + core.tz.DateTimeToString(GetStartTime(core.tz),false) + ")";
             }
         }
     }

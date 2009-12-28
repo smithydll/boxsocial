@@ -363,6 +363,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 return items;
             }
+            /*set
+            {
+                SetProperty("items", value);
+            }*/
         }
 
         /// <summary>
@@ -384,6 +388,10 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return bytes;
+            }
+            set
+            {
+                SetProperty("bytes", value);
             }
         }
 
@@ -1255,15 +1263,21 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="itemId">If greater than 0, the index of new gallery cover photo</param>
         /// <param name="items">Number of items added to the gallery</param>
         /// <param name="bytes">Number of bytes added to the gallery</param>
-        public static void UpdateGalleryInfo(Mysql db, Primitive owner, Gallery parent, long itemId, int items, long bytes)
+        public static void UpdateGalleryInfo(Core core, Gallery parent, long itemId, int items, long bytes)
         {
-            throw new Exception("Use on inherited types only");
+            UpdateQuery uQuery = new UpdateQuery("user_galleries");
+            uQuery.AddField("gallery_items", new QueryOperation("gallery_items", QueryOperations.Addition, items));
+            uQuery.AddField("gallery_bytes", new QueryOperation("gallery_bytes", QueryOperations.Addition, bytes));
+            uQuery.AddCondition("gallery_id", parent.GalleryId);
+
+            core.db.Query(uQuery);
         }
 
         /// <summary>
         /// Generates a URI pointing to a gallery photo from a given photo path
         /// </summary>
-        /// <param name="member">Photo owner</param>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Photo owner</param>
         /// <param name="galleryPath">Gallery path</param>
         /// <param name="photoPath">Photo slug</param>
         /// <returns>URI pointing to the photo</returns>

@@ -93,6 +93,8 @@ namespace BoxSocial.Install
                     case ConsoleKey.D: // Install Box Social
                         EnterInstallBoxSocial();
                         break;
+                    case ConsoleKey.Escape:
+                    case ConsoleKey.Q:
                     case ConsoleKey.E: // Exit
                         Console.Clear();
                         return;
@@ -174,11 +176,14 @@ namespace BoxSocial.Install
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
 
-                Console.SetCursorPosition(5, 5);
+                Console.SetCursorPosition(5, 3);
                 Console.Write("WWW Root: ________________");
 
-                Console.SetCursorPosition(5, 7);
+                Console.SetCursorPosition(5, 5);
                 Console.Write("Domain: ________________");
+
+                Console.SetCursorPosition(5, 7);
+                Console.Write("Database: ________________");
 
                 Console.SetCursorPosition(5, 9);
                 Console.Write("Mysql root password: ________________");
@@ -195,7 +200,7 @@ namespace BoxSocial.Install
                 Console.SetCursorPosition(5, 17);
                 Console.Write("Administrator password: ________________");
 
-                Console.SetCursorPosition(5, 17);
+                Console.SetCursorPosition(5, 19);
                 Console.Write("Administrator email: ________________");
 
                 Console.BackgroundColor = ConsoleColor.White;
@@ -210,6 +215,7 @@ namespace BoxSocial.Install
             ConsoleKey begin;
             string root = string.Empty;
             string domain = string.Empty;
+            string database = string.Empty;
             string mysqlRootPassword = string.Empty;
             string mysqlUser = string.Empty;
             string mysqlUserPassword = string.Empty;
@@ -225,15 +231,21 @@ namespace BoxSocial.Install
 
                 lock (displayUpdateLock)
                 {
-                    Console.SetCursorPosition(15, 5);
+                    Console.SetCursorPosition(15, 3);
                 }
                 root = getField(false, root);
 
                 lock (displayUpdateLock)
                 {
-                    Console.SetCursorPosition(13, 7);
+                    Console.SetCursorPosition(13, 5);
                 }
                 domain = getField(false, domain);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(15, 7);
+                }
+                database = getField(false, database);
 
                 lock (displayUpdateLock)
                 {
@@ -290,6 +302,7 @@ namespace BoxSocial.Install
 
                         Installer.root = root;
                         Installer.domain = domain;
+                        Installer.mysqlDatabase = database;
                         Installer.mysqlRootPassword = mysqlRootPassword;
                         Installer.mysqlWebUser = mysqlUser;
                         Installer.mysqlWebPassword = mysqlUserPassword;
@@ -1245,6 +1258,8 @@ namespace BoxSocial.Install
                 Console.WriteLine("Calendar");
                 Console.WriteLine(ex.ToString());
             }
+
+            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
 
             return userId;
 		}

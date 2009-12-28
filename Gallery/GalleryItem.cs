@@ -96,6 +96,12 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery photo rating
         /// </summary>
+        [DataField("gallery_item_bytes")]
+        protected long itemBytes;
+
+        /// <summary>
+        /// Gallery photo rating
+        /// </summary>
         [DataField("gallery_item_rating")]
         protected float itemRating;
 
@@ -234,6 +240,17 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return itemViews;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of bytes consumed by the gallery item
+        /// </summary>
+        public long ItemBytes
+        {
+            get
+            {
+                return itemBytes;
             }
         }
 
@@ -661,7 +678,7 @@ namespace BoxSocial.Applications.Gallery
                 if (owner is User)
                 {
                     Gallery parent = new Gallery(core, (User)owner, parentId);
-                    Gallery.UpdateGalleryInfo(db, (Primitive)owner, parent, (long)itemId, -1, -fi.Length);
+                    Gallery.UpdateGalleryInfo(core, parent, (long)itemId, -1, -fi.Length);
                 }
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
@@ -772,8 +789,11 @@ namespace BoxSocial.Applications.Gallery
                 //owner.UpdateGalleryInfo(parent, itemId, 1, (long)bytes);
                 if (owner is User)
                 {
-                    Gallery.UpdateGalleryInfo(db, owner, parent, itemId, 1, (long)bytes);
+                    Gallery.UpdateGalleryInfo(core, parent, itemId, 1, (long)bytes);
                 }
+                /*parent.Bytes += (long)bytes;
+                parent.Items += 1;
+                parent.Update();*/
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
                 uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Addition, 1));
@@ -979,7 +999,7 @@ namespace BoxSocial.Applications.Gallery
                 GalleryItem galleryItem = new GalleryItem(e.Core, e.Page.Owner, e.Slug);
                 Gallery gallery = new Gallery(e.Core, galleryItem.parentId);
 
-                if (gallery.Access.Can("VIEW_ITEMS"))
+                if (!gallery.Access.Can("VIEW_ITEMS"))
                 {
                     e.Core.Functions.Generate403();
                     return;
@@ -995,6 +1015,12 @@ namespace BoxSocial.Applications.Gallery
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
                 e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
                 e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
+                e.Template.Parse("U_EDIT", galleryItem.EditUri);
+                e.Template.Parse("U_MARK_DISPLAY_PIC", galleryItem.MakeDisplayPicUri);
+                e.Template.Parse("U_MARK_GALLERY_COVER", galleryItem.SetGalleryCoverUri);
+                e.Template.Parse("U_ROTATE_LEFT", galleryItem.RotateLeftUri);
+                e.Template.Parse("U_ROTATE_RIGHT", galleryItem.RotateRightUri);
+                e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
 
                 switch (galleryItem.Classification)
                 {
@@ -1543,6 +1569,66 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return BuildUri();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string EditUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "edit-photo", itemId, true);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string MakeDisplayPicUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "display-pic", itemId, true);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SetGalleryCoverUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "gallery-cover", itemId, true);
+            }
+        }
+
+        public string RotateLeftUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString() , "rotation=left" });
+            }
+        }
+
+        public string RotateRightUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString(), "rotation=right" });
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DeleteUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "delete", itemId, true);
             }
         }
 

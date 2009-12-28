@@ -268,8 +268,7 @@ namespace BoxSocial.Applications.Calendar
         {
             if (sender is UPage)
             {
-                UPage page = (UPage)sender;
-                Event.Show(core, page, page.User, long.Parse(core.PagePathParts[1].Value));
+                Event.Show(sender, new ShowPPageEventArgs((PPage)sender, long.Parse(core.PagePathParts[1].Value)));
             }
         }
 

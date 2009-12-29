@@ -88,6 +88,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override string StyleSheet
         {
             get

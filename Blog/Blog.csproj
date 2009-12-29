@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -114,6 +114,7 @@
     <Content Include="templates\account_post.html" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\blog.svg" />
     <None Include="templates\user_blog_notification.eml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

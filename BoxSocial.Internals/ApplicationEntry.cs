@@ -56,6 +56,10 @@ namespace BoxSocial.Internals
         private string description;
         [DataField("application_icon", 63)]
         private string applicationIcon;
+        [DataField("application_thumb", 63)]
+        private string applicationThumb;
+        [DataField("application_tile", 63)]
+        private string applicationTile;
         [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
         private string assemblyName;
         [DataField("application_primitive")]
@@ -284,6 +288,30 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("applicationIcon", value);
+            }
+        }
+
+        public string Thumbnail
+        {
+            get
+            {
+                return applicationThumb;
+            }
+            set
+            {
+                SetProperty("applicationThumb", value);
+            }
+        }
+
+        public string Tile
+        {
+            get
+            {
+                return applicationTile;
+            }
+            set
+            {
+                SetProperty("applicationTile", value);
             }
         }
 
@@ -1005,12 +1033,26 @@ namespace BoxSocial.Internals
             long typeId = core.Functions.RequestLong("type", 0);
             long id = core.Functions.RequestLong("id", 0);
 
-            Primitive viewer = core.session.LoggedInMember;
-
-            if (typeId > 0)
+            if (core.session.IsLoggedIn)
             {
-                core.PrimitiveCache.LoadPrimitiveProfile(id, typeId);
-                viewer = core.PrimitiveCache[id, typeId];
+                Primitive viewer = core.session.LoggedInMember;
+
+                if (typeId > 0)
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(id, typeId);
+                    viewer = core.PrimitiveCache[id, typeId];
+                }
+
+                if (page.AnApplication.HasInstalled(viewer))
+                {
+                    core.template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                        page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                }
+                else
+                {
+                    core.template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                        page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                }
             }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
@@ -1019,17 +1061,12 @@ namespace BoxSocial.Internals
             core.template.Parse("U_APPLICATION", page.AnApplication.Uri);
             core.template.Parse("DESCRIPTION", page.AnApplication.Description);
             core.template.Parse("CREATOR_DISPLAY_NAME", Creator.DisplayName);
+            if (page.AnApplication.Thumbnail != null)
+            {
+                core.template.Parse("I_THUMBNAIL", page.AnApplication.Thumbnail);
+            }
 
-            if (page.AnApplication.HasInstalled(viewer))
-            {
-                core.template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
-                    page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
-            }
-            else
-            {
-                core.template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
-                    page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
-            }
+            
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Application, page.AnApplication));
         }

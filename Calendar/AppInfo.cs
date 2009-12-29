@@ -83,7 +83,15 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return Properties.Resources.calendar;
+                return Properties.Resources.icon;
+            }
+        }
+
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return Properties.Resources.svgIcon;
             }
         }
 

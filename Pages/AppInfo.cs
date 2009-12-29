@@ -89,6 +89,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override string StyleSheet
         {
             get

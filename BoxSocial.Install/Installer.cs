@@ -129,10 +129,16 @@ namespace BoxSocial.Install
                 Console.Write("Application: ________________");
 
                 Console.SetCursorPosition(5, 7);
-                Console.Write("MySQL Root Password: ________________");
+                Console.Write("WWW Root: ________________");
 
                 Console.SetCursorPosition(5, 9);
-                Console.Write("WWW Root: ________________");
+                Console.Write("Domain: ________________");
+
+                Console.SetCursorPosition(5, 11);
+                Console.Write("Database: ________________");
+
+                Console.SetCursorPosition(5, 13);
+                Console.Write("MySQL Root Password: ________________");
 
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.Black;
@@ -143,30 +149,87 @@ namespace BoxSocial.Install
                 Console.ForegroundColor = ConsoleColor.Green;
             }
 
+            ConsoleKey begin;
+            string repo = string.Empty;
+            string root = string.Empty;
+            string domain = string.Empty;
+            string database = string.Empty;
+            string mysqlRootPassword = string.Empty;
+
+            do
+            {
             lock (displayUpdateLock)
             {
                 Console.SetCursorPosition(18, 5);
             }
-            string repo = getField(false);
+            repo = getField(false, repo);
 
             lock (displayUpdateLock)
             {
-                Console.SetCursorPosition(26, 7);
+                Console.SetCursorPosition(15, 7);
             }
-            string password = getField(true);
+            root = getField(false, root);
 
             lock (displayUpdateLock)
             {
-                Console.SetCursorPosition(15, 9);
+                Console.SetCursorPosition(13, 9);
             }
-            string root = getField(false);
+            domain = getField(false, domain);
+
+            lock (displayUpdateLock)
+            {
+                Console.SetCursorPosition(15, 11);
+            }
+            database = getField(false, database);
+
+            lock (displayUpdateLock)
+            {
+                Console.SetCursorPosition(26, 13);
+            }
+            mysqlRootPassword = getField(true, mysqlRootPassword);
 
             Console.SetCursorPosition(5, 21);
             Console.Write(" Enter ");
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("\t- Begin update process");
 
-            Console.ReadKey(false);
+            while (true)
+            {
+                begin = Console.ReadKey(false).Key;
+                if (begin == ConsoleKey.Enter)
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.White;
+
+                    Console.SetCursorPosition(5, 5);
+                    Console.Write("Installing...");
+
+                    Installer.root = root;
+                    Installer.mysqlDatabase = database;
+                    Installer.mysqlRootPassword = mysqlRootPassword;
+
+                    doUpdate(repo);
+                    Console.WriteLine("Application Updated");
+                    Console.WriteLine("Press Enter to continue");
+                    while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                    {
+                        Thread.Sleep(100);
+                    }
+                    return;
+                }
+                else if (begin == ConsoleKey.Escape)
+                {
+                    return;
+                }
+                else if (begin == ConsoleKey.Tab)
+                {
+                    break;
+                }
+            }
+            }
+            while (begin == ConsoleKey.Tab);
+
         }
 
         static void EnterInstallBoxSocial()
@@ -448,6 +511,25 @@ namespace BoxSocial.Install
             }
 
             return field;
+        }
+
+        static void doUpdate(string repo)
+        {
+            binRoot = Path.Combine(root, "bin");
+            imagesRoot = Path.Combine(root, "images");
+            stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
+            scriptsRoot = Path.Combine(root, "scripts");
+
+            InstallRepository(repo);
+            InstallApplication(repo);
+
+            Console.WriteLine("Reloading apache");
+            Process p1 = new Process();
+            p1.StartInfo.FileName = "/etc/init.d/apache2";
+            p1.StartInfo.Arguments = "force-reload";
+            p1.Start();
+
+            p1.WaitForExit();
         }
 
         static void doInstall()
@@ -752,7 +834,66 @@ namespace BoxSocial.Install
             InstallLanguage("en", @"Mail");
             InstallLanguage("en", @"News");
 
+            InstallGDK();
+
             db.CloseConnection();
+        }
+
+        private static void InstallGDK()
+        {
+            List<string> images = new List<string>();
+            images.Add("add-friend");
+            images.Add("background-bottom-centre");
+            images.Add("background-bottom-left");
+            images.Add("background-bottom-right");
+            images.Add("background-middle-centre");
+            images.Add("background-middle-left");
+            images.Add("background-middle-right");
+            images.Add("background-no-repeat");
+            images.Add("background-repeat");
+            images.Add("background-repeat-x");
+            images.Add("background-repeat-y");
+            images.Add("background-top-centre");
+            images.Add("background-top-left");
+            images.Add("background-top-right");
+            images.Add("block-user");
+            images.Add("move-down");
+            images.Add("move-up");
+            images.Add("no_picture");
+            images.Add("permissions");
+            images.Add("posticon_read_med");
+            images.Add("posticon_read_med_announce");
+            images.Add("posticon_read_med_sticky");
+            images.Add("posticon_read_sml");
+            images.Add("posticon_unread_med");
+            images.Add("posticon_unread_med_announce");
+            images.Add("posticon_unread_med_sticky");
+            images.Add("posticon_unread_sml");
+            images.Add("rating_15");
+            images.Add("rating_18");
+            images.Add("rating_e");
+            images.Add("rotate_left");
+            images.Add("rotate_right");
+
+            foreach (string image in images)
+            {
+                string input = Path.Combine("GDK", image + ".svg");
+                string output = Path.Combine(imagesRoot, image + ".png");
+                if (File.Exists(input))
+                {
+                    if (File.Exists(output))
+                    {
+                        File.Delete(output);
+                    }
+
+                    Process p1 = new Process();
+                    p1.StartInfo.FileName = "rsvg-convert";
+                    p1.StartInfo.Arguments = input + " -o " + output;
+                    p1.Start();
+
+                    p1.WaitForExit();
+                }
+            }
         }
 
         public static void InstallLanguage(string lang, string repo)
@@ -1274,6 +1415,7 @@ namespace BoxSocial.Install
 
         private static void InstallRepository(string repo)
         {
+            string filePath = string.Empty;
             switch (repo)
             {
                 case "BoxSocial.Forms":
@@ -1283,12 +1425,18 @@ namespace BoxSocial.Install
                 case "Groups":
                 case "Networks":
                 case "Musician":
-                    File.Copy(repo + ".dll", Path.Combine(binRoot, repo + ".dll"));
+                    filePath = Path.Combine(binRoot, repo + ".dll");
                     break;
                 default:
-                    File.Copy(repo + ".dll", Path.Combine(Path.Combine(binRoot, "applications"), repo + ".dll"));
+                    filePath = Path.Combine(Path.Combine(binRoot, "applications"), repo + ".dll");
                     break;
             }
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.Copy(repo + ".dll", filePath);
         }
 
         private static void InstallApplication(string repo)
@@ -1400,6 +1548,59 @@ namespace BoxSocial.Install
                                 }
 
                                 //
+                                // Render SVG base Icon and thumbnail
+                                //
+                                if (newApplication.SvgIcon != null)
+                                {
+                                    if (!Directory.Exists(Path.Combine(imagesRoot, updateApplication.Key)))
+                                    {
+                                        Directory.CreateDirectory(Path.Combine(imagesRoot, updateApplication.Key));
+                                    }
+
+                                    string input = Path.Combine("GDK", updateApplication.Key + ".svg");
+                                    string output = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon.png");
+                                    string thumbOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "thumb.png");
+                                    string tileOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "tile.png");
+
+                                    FileStream fs = new FileStream(input, FileMode.Create);
+                                    fs.Write(newApplication.SvgIcon, 0, newApplication.SvgIcon.Length);
+                                    fs.Close();
+
+                                    if (File.Exists(input))
+                                    {
+                                        if (File.Exists(output))
+                                        {
+                                            File.Delete(output);
+                                        }
+                                        if (File.Exists(thumbOutput))
+                                        {
+                                            File.Delete(thumbOutput);
+                                        }
+
+                                        Process p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -o " + output;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 160 -d 160 -o " + thumbOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 50 -d 50 -o " + tileOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+                                    }
+                                }
+
+                                //
                                 // Save StyleSheet
                                 //
                                 if (!string.IsNullOrEmpty(newApplication.StyleSheet))
@@ -1430,6 +1631,8 @@ namespace BoxSocial.Install
                                 query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
                                 query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
                                 query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
+                                query.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", updateApplication.Key));
+                                query.AddField("application_tile", string.Format(@"/images/{0}/tile.png", updateApplication.Key));
                                 query.AddCondition("application_assembly_name", repo);
 
                                 db.BeginTransaction();
@@ -1451,6 +1654,8 @@ namespace BoxSocial.Install
                                 query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
                                 query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
                                 query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", repo));
+                                query.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", repo));
+                                query.AddField("application_tile", string.Format(@"/images/{0}/tile.png", repo));
 
                                 /*applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
                                     Mysql.Escape(repo), 0, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));*/
@@ -1490,6 +1695,59 @@ namespace BoxSocial.Install
                                     }
 
                                     newApplication.Icon.Save(Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon.png"), System.Drawing.Imaging.ImageFormat.Png);
+                                }
+
+                                //
+                                // Render SVG base Icon and thumbnail
+                                //
+                                if (newApplication.SvgIcon != null)
+                                {
+                                    if (!Directory.Exists(Path.Combine(imagesRoot, updateApplication.Key)))
+                                    {
+                                        Directory.CreateDirectory(Path.Combine(imagesRoot, updateApplication.Key));
+                                    }
+
+                                    string input = Path.Combine("GDK", updateApplication.Key + ".svg");
+                                    string output = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon.png");
+                                    string thumbOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "thumb.png");
+                                    string tileOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "tile.png");
+
+                                    FileStream fs = new FileStream(input, FileMode.Create);
+                                    fs.Write(newApplication.SvgIcon, 0, newApplication.SvgIcon.Length);
+                                    fs.Close();
+
+                                    if (File.Exists(input))
+                                    {
+                                        if (File.Exists(output))
+                                        {
+                                            File.Delete(output);
+                                        }
+                                        if (File.Exists(thumbOutput))
+                                        {
+                                            File.Delete(thumbOutput);
+                                        }
+
+                                        Process p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -o " + output;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 160 -d 160 -o " + thumbOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 50 -d 50 -o " + tileOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+                                    }
                                 }
 
                                 //

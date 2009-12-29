@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BC7327B8-F476-409B-BEFD-5E1C1D417A79}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -67,7 +67,9 @@
     <Compile Include="AccountStyle.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -102,6 +104,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="resources\profile.png" />
+    <None Include="resources\profile.svg" />
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
     <Content Include="templates\account_address_edit.html" />
@@ -121,6 +124,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>

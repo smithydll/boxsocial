@@ -88,6 +88,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override string StyleSheet
         {
             get

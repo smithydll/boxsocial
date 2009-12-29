@@ -83,7 +83,15 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return Properties.Resources.profile;
+                return Properties.Resources.icon;
+            }
+        }
+
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return Properties.Resources.svgIcon;
             }
         }
 

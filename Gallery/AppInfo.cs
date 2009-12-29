@@ -112,7 +112,15 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return Properties.Resources.gallery;
+                return Properties.Resources.icon;
+            }
+        }
+
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return Properties.Resources.svgIcon;
             }
         }
 

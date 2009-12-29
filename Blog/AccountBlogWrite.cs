@@ -209,7 +209,7 @@ namespace BoxSocial.Applications.Blog
         {
             string title = core.Http.Form["title"];
             string postBody = core.Http.Form["post"];
-            short license = 0;
+            byte license = 0;
             short category = 1;
             long postId = 0;
             string status = "PUBLISH";
@@ -242,7 +242,7 @@ namespace BoxSocial.Applications.Blog
             }
 
             postId = core.Functions.FormLong("id", 0);
-            license = core.Functions.FormShort("license", license);
+            license = core.Functions.FormByte("license", license);
             category = core.Functions.FormShort("category", category);
 
             try
@@ -279,51 +279,52 @@ namespace BoxSocial.Applications.Blog
             // update, must happen before save new because it populates postId
             if (postId > 0)
             {
+                UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
+                uQuery.AddCondition("post_title", title);
+                uQuery.AddCondition("post_modified_ut", UnixTime.UnixTimeStamp());
+                uQuery.AddCondition("post_ip", session.IPAddress.ToString());
+                uQuery.AddCondition("post_text", postBody);
+                uQuery.AddCondition("post_license", license);
+                uQuery.AddCondition("post_status", status);
+                uQuery.AddCondition("post_category", category);
                 if (postEditTimestamp)
                 {
-                    sqlPostTime = string.Format(", post_time_ut = {0}",
-                        tz.GetUnixTimeStamp(postTime));
+                    uQuery.AddCondition("post_time_ut", tz.GetUnixTimeStamp(postTime));
                 }
-                else
-                {
-                    sqlPostTime = "";
-                }
+                uQuery.AddCondition("post_id", postId);
 
-                db.UpdateQuery(string.Format("UPDATE blog_postings SET post_title = '{0}', post_modified_ut = UNIX_TIMESTAMP(), post_ip = '{1}', post_text = '{2}', post_license = {3}, post_access = {4}, post_status = '{5}', post_category = {8}{9} WHERE user_id = {6} AND post_id = {7}",
-                    Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, status, LoggedInMember.UserId, postId, category, sqlPostTime));
+                db.Query(uQuery);
 
                 /* do not count edits as new postings*/
             }
             else if (postId == 0) // else if to make sure only one triggers
             {
+                long postTimeRaw;
                 // save new
                 if (postEditTimestamp)
                 {
-                    sqlPostTime = string.Format("{0}",
-                        tz.GetUnixTimeStamp(postTime));
+                    postTimeRaw = tz.GetUnixTimeStamp(postTime);
                 }
                 else
                 {
-                    sqlPostTime = "UNIX_TIMESTAMP()";
+                    postTimeRaw = UnixTime.UnixTimeStamp();
                 }
 
                 db.BeginTransaction();
-                postId = db.UpdateQuery(string.Format("INSERT INTO blog_postings (user_id, post_time_ut, post_title, post_modified_ut, post_ip, post_text, post_license, post_status, post_category) VALUES ({0}, {8}, '{1}', UNIX_TIMESTAMP(), '{2}', '{3}', {4}, '{5}', {6})",
-                    LoggedInMember.UserId, Mysql.Escape(title), session.IPAddress.ToString(), Mysql.Escape(postBody), license, status, category, sqlPostTime));
+
+                BlogEntry myBlogEntry = BlogEntry.Create(core, core.session.LoggedInMember, title, postBody, license, status, category, postTimeRaw);
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
 
-                db.UpdateQuery(string.Format("UPDATE blog_postings SET post_guid = '{0}' WHERE post_id = {1} and user_id = {2}",
-                    Mysql.Escape(postGuid), postId, LoggedInMember.UserId));
+                myBlogEntry.Guid = postGuid;
+                myBlogEntry.Update();
 
                 db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
                     LoggedInMember.UserId));
 
                 if (status == "PUBLISH")
                 {
-                    BlogEntry myBlogEntry = new BlogEntry(core, postId);
-
                     // TODO Permissions
                     //if (Access.FriendsCanRead(myBlogEntry.Permissions))
                     {
@@ -363,13 +364,25 @@ namespace BoxSocial.Applications.Blog
             long postId = core.Functions.RequestLong("id", 0);
 
             db.BeginTransaction();
-            db.UpdateQuery(string.Format("DELETE FROM blog_postings WHERE post_id = {0} AND user_id = {1}",
-                postId, LoggedInMember.UserId));
+            /*db.UpdateQuery(string.Format("DELETE FROM blog_postings WHERE post_id = {0} AND user_id = {1}",
+                postId, LoggedInMember.UserId));*/
 
-            db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries - 1 WHERE user_id = {0}",
-                LoggedInMember.UserId));
+            try
+            {
+                BlogEntry post = new BlogEntry(core, postId);
+                if (post.Delete() > 0)
+                {
+                    db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries - 1 WHERE user_id = {0}",
+                        LoggedInMember.UserId));
+                }
+            }
+            catch (InvalidBlogEntryException)
+            {
+                DisplayError("Blog entry does not exist.");
+                return;
+            }
 
-            SetRedirectUri(BuildUri());
+            SetRedirectUri(BuildUri("manage"));
             core.Display.ShowMessage("Blog Post Deleted", "The blog post has been deleted from the database.");
             return;
         }

@@ -111,7 +111,18 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return Properties.Resources.blog;
+                return Properties.Resources.icon;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return Properties.Resources.svgIcon;
             }
         }
 

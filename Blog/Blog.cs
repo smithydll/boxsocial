@@ -368,9 +368,9 @@ namespace BoxSocial.Applications.Blog
             string status = (drafts) ? "DRAFT" : "PUBLISH";
 
             query.AddCondition("post_status", status);
-            QueryCondition qc1 = query.AddCondition("user_id", Owner.Id);
-            QueryCondition qc2 = qc1.AddCondition(new QueryOperation("post_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
-            qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
+            //QueryCondition qc1 = query.AddCondition("user_id", Owner.Id);
+            //QueryCondition qc2 = qc1.AddCondition(new QueryOperation("post_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
+            //qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
 
             query.AddSort(SortOrder.Descending, "post_time_ut");
             query.LimitStart = (bpage - 1) * 10;
@@ -541,8 +541,8 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
-                    page.User.UserId, core.LoggedInMemberId, readAccessLevel));
+                DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
+                    page.User.UserId, core.LoggedInMemberId));
 
                 page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
 
@@ -556,8 +556,8 @@ namespace BoxSocial.Applications.Blog
                     archiveVariableCollection.Parse("URL", Blog.BuildUri(core, page.User, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
                 }
 
-                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND (post_access & {2:0} OR user_id = {1}) AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
-                    page.User.UserId, core.LoggedInMemberId, readAccessLevel));
+                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
+                    page.User.UserId, core.LoggedInMemberId));
 
                 page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 

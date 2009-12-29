@@ -1,10 +1,11 @@
 <!-- INCLUDE page_header.html -->
 <h2>Applications</h2>
 
-<ul>
+<dl id="app-list">
 	<!-- BEGIN application_list -->
-	<li><a href="{application_list.URI}">{application_list.TITLE}</a></li>
+	<dt><a href="{application_list.URI}"><img src="{application_list.I_TILE}" alt="{application_list.TITLE} Tile" /></a></dt>
+	<dd><a href="{application_list.URI}">{application_list.TITLE}</a></dd>
 	<!-- END application_list -->
-</ul>
+</dl>
 
 <!-- INCLUDE page_footer.html -->

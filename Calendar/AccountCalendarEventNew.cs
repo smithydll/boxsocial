@@ -454,7 +454,7 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_EMAIL", core.session.LoggedInMember.AlternateEmail);
                         emailTemplate.Parse("FROM_NAMES", core.session.LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
-                        /* TODO: KEY PERMS */
+                        /* TODO: EMAIL KEY PERMS */
                         emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, calendarEvent)));
                         emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, calendarEvent)));
                         emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, calendarEvent)));

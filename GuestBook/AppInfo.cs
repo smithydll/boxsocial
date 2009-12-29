@@ -105,6 +105,14 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        public override byte[] SvgIcon
+        {
+            get
+            {
+                return null;
+            }
+        }
+
         public override string StyleSheet
         {
             get

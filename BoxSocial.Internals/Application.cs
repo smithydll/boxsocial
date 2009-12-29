@@ -288,6 +288,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract byte[] SvgIcon
+        {
+            get;
+        }
+
         /// <summary>
         /// A stylesheet for the application
         /// </summary>

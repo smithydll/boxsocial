@@ -47,7 +47,6 @@ namespace BoxSocial.Applications.Blog
         /// <remarks>
         /// A blog entry uses the table prefix be.
         /// </remarks>
-        //public const string BLOG_ENTRY_FIELDS = "be.post_id, be.user_id, be.post_title, be.post_text, be.post_views, be.post_trackbacks, be.post_comments, be.post_access, be.post_status, be.post_license, be.post_category, be.post_guid, be.post_ip, be.post_time_ut, be.post_modified_ut";
 
         [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
@@ -226,6 +225,10 @@ namespace BoxSocial.Applications.Blog
             {
                 return guid;
             }
+            set
+            {
+                SetProperty("guid", value);
+            }
         }
 
         /// <summary>
@@ -347,6 +350,21 @@ namespace BoxSocial.Applications.Blog
             }
 
             return trackBacks;
+        }
+
+        public static BlogEntry Create(Core core, Primitive owner, string title, string body, byte license, string status, short category, long postTime)
+        {
+            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", core.session.LoggedInMember.Id),
+                new FieldValuePair("post_time_ut", postTime),
+                new FieldValuePair("post_title", title),
+                new FieldValuePair("post_modified_ut", postTime),
+                new FieldValuePair("post_ip", core.session.IPAddress.ToString()),
+                new FieldValuePair("post_text", body),
+                new FieldValuePair("post_license", license),
+                new FieldValuePair("post_status", status),
+                new FieldValuePair("post_category", category));
+
+            return (BlogEntry)item;
         }
 
         /// <summary>

@@ -65,7 +65,9 @@
     <Compile Include="EventEmailInvite.cs" />
     <Compile Include="EventInvite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Task.cs" />
@@ -116,6 +118,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
@@ -123,6 +126,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\calendar.svg" />
     <None Include="templates\email_event_invite.eml" />
     <None Include="templates\user_event_notification.eml" />
   </ItemGroup>

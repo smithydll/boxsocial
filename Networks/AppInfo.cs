@@ -91,7 +91,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

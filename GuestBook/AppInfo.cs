@@ -109,7 +109,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

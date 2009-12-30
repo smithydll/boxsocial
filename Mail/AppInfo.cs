@@ -91,7 +91,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

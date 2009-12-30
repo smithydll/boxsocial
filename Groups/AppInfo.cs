@@ -93,7 +93,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

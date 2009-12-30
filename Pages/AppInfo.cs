@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

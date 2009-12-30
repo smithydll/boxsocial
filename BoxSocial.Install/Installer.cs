@@ -522,6 +522,7 @@ namespace BoxSocial.Install
 
             InstallRepository(repo);
             InstallApplication(repo);
+            InstallLanguage("en", repo);
 
             Console.WriteLine("Reloading apache");
             Process p1 = new Process();
@@ -902,8 +903,14 @@ namespace BoxSocial.Install
             {
                 if (File.Exists(string.Format("{0}.{1}.resources", repo, lang)))
                 {
+                    string dir = Path.Combine(Installer.languageRoot, repo);
+
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
                     File.Copy(string.Format("{0}.{1}.resources", repo, lang),
-                        Path.Combine(Path.Combine(Installer.languageRoot, repo), string.Format("{0}.{1}.resources", repo, lang)));
+                        Path.Combine(dir, string.Format("{0}.{1}.resources", repo, lang)));
                 }
             }
             catch

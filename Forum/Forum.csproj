@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -137,6 +137,9 @@
     <Content Include="templates\viewforum.html" />
     <Content Include="templates\viewprofileforum.html" />
     <Content Include="templates\viewtopic.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\forum.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

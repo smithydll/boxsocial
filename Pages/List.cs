@@ -44,8 +44,6 @@ namespace BoxSocial.Applications.Pages
     [Permission("DELETE_ITEMS", "Can delete items from the list")]
     public class List : NumberedItem, IPermissibleItem
     {
-        public const string LIST_FIELDS = "ul.list_id, ul.user_id, ul.list_type, ul.list_title, ul.list_items, ul.list_abstract, ul.list_path, ul.list_access";
-
         [DataField("list_id", DataFieldKeys.Primary)]
         private long listId;
         [DataField("user_id", DataFieldKeys.Unique, "u_user_path")]
@@ -60,8 +58,6 @@ namespace BoxSocial.Applications.Pages
         private string listAbstract;
         [DataField("list_path", DataFieldKeys.Unique, "u_user_path", 31)]
         private string path;
-        [DataField("list_access")]
-        private ushort permissions;
 
         private User owner;
         private Access listAccess;
@@ -132,18 +128,6 @@ namespace BoxSocial.Applications.Pages
             set
             {
                 SetProperty("path", value);
-            }
-        }
-
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-            set
-            {
-                SetProperty("permissions", value);
             }
         }
 
@@ -265,11 +249,10 @@ namespace BoxSocial.Applications.Pages
         {
             List<List> lists = new List<List>();
 
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            SelectQuery query = Item.GetSelectQueryStub(typeof(List));
+            query.AddCondition("user_id", owner.Id);
 
-            DataTable listsTable = core.db.Query(string.Format("SELECT {0} FROM user_keys uk INNER JOIN user_lists ul ON ul.user_id = uk.user_id WHERE uk.user_id = {1} AND (list_access & {3:0} OR ul.user_id = {2})",
-                List.LIST_FIELDS, owner.UserId, loggedIdUid, readAccessLevel));
+            DataTable listsTable = core.db.Query(query);
 
             foreach (DataRow dr in listsTable.Rows)
             {

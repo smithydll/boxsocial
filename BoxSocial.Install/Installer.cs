@@ -1322,7 +1322,6 @@ namespace BoxSocial.Install
 			
 			iQuery = new InsertQuery("user_profile");
 			iQuery.AddField("user_id", userId);
-			//iQuery.AddField("profile_access", 0x3331);
             // TODO: ACLs
 			
 			core.db.Query(iQuery);
@@ -1333,7 +1332,6 @@ namespace BoxSocial.Install
 			iQuery.AddField("email_verified", 1);
 					
 			iQuery.AddField("email_time_ut", UnixTime.UnixTimeStamp().ToString());
-			//iQuery.AddField("email_access", 0);
 						
 			core.db.Query(iQuery);
 			

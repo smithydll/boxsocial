@@ -144,8 +144,6 @@ namespace BoxSocial.Applications.Calendar
 
                     dueDate = calendarTask.GetDueTime(core.tz);
 
-                    taskAccess = calendarTask.Permissions;
-
                     topic = calendarTask.Topic;
                     description = calendarTask.Description;
 

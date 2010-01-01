@@ -47,10 +47,6 @@ namespace BoxSocial.Internals
         private string slug;
         [DataField("page_title", 63)]
         private string title;
-        /*[DataField("page_text", MYSQL_MEDIUM_TEXT)]
-        private string body;*/
-        [DataField("page_access")]
-        private ushort permissions;
         [DataField("page_license")]
         private byte licenseId;
         [DataField("page_views")]

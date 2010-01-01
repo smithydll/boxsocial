@@ -192,7 +192,6 @@ namespace BoxSocial.Internals
             }
             iquery.AddField("email_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("email_activate_code", activateKey);
-            //iquery.AddField("email_access", permissions);
 
             long emailId = core.db.Query(iquery);
 

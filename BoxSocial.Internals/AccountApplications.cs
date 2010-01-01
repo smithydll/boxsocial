@@ -150,7 +150,6 @@ namespace BoxSocial.Internals
             }
 
             UpdateQuery uquery = new UpdateQuery("primitive_apps");
-            //uquery.AddField("app_access", core.Functions.GetPermission());
             uquery.AddCondition("item_id", Owner.Id);
             uquery.AddCondition("item_type_id", Owner.TypeId);
             uquery.AddCondition("application_id", id);

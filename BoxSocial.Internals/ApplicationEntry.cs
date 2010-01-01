@@ -555,7 +555,6 @@ namespace BoxSocial.Internals
         private void loadApplicationUserInfo(DataRow applicationRow)
         {
             itemId = (long)applicationRow["item_id"];
-            //permissions = (ushort)applicationRow["app_access"];
         }
 
         public static ApplicationEntry Create()

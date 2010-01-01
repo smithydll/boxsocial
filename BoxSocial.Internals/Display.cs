@@ -687,8 +687,6 @@ namespace BoxSocial.Internals
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);
             query.AddCondition("page_status", "PUBLISH");
-            //QueryCondition qc1 = query.AddCondition(new QueryOperation("page_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
-            //qc1.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
             QueryCondition qc1 = query.AddCondition("page_parent_id", 0);
             if (current != null)
             {

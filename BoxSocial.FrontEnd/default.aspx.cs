@@ -120,25 +120,6 @@ namespace BoxSocial.FrontEnd
                 }
 
                 template.Parse("U_FORGOT_PASSWORD", core.Uri.AppendSid("/sign-in/?mode=reset-password"));
-
-                // new_points
-
-                /*DataTable newUsers = db.Query(string.Format("SELECT {0}, {1}, {2} FROM user_info ui INNER JOIN user_profile up ON ui.user_id = up.user_id LEFT JOIN (countries c, gallery_items gi) ON (c.country_iso = up.profile_country AND gi.gallery_item_id = ui.user_icon) WHERE up.profile_access & 4369 = 4369 AND gi.gallery_item_uri IS NOT NULL ORDER BY user_reg_date_ut DESC LIMIT 3",
-                    BoxSocial.Internals.User.USER_PROFILE_FIELDS, BoxSocial.Internals.User.USER_INFO_FIELDS, BoxSocial.Internals.User.USER_ICON_FIELDS));
-
-                for (int i = 0; i < newUsers.Rows.Count; i++)
-                {
-                    User newMember = new User(core, newUsers.Rows[i], UserLoadOptions.All);
-
-                    VariableCollection newPointsVariableCollection = template.CreateChild("new_points");
-
-                    newPointsVariableCollection.Parse("USER_DISPLAY_NAME", newMember.DisplayName));
-                    newPointsVariableCollection.Parse("USER_AGE", newMember.AgeString));
-                    newPointsVariableCollection.Parse("USER_COUNTRY", newMember.Country));
-                    newPointsVariableCollection.Parse("USER_CAPTION", "");
-                    newPointsVariableCollection.Parse("U_PROFILE", Linker.BuildHomepageUri(newMember)));
-                    newPointsVariableCollection.Parse("ICON", newMember.UserIcon));
-                }*/
             }
             EndResponse();
         }

@@ -68,8 +68,6 @@ namespace BoxSocial.Applications.Forum
         private long forumTopics;
         [DataField("forum_posts")]
         private long forumPosts;
-        [DataField("forum_access")]
-        private ushort permissions;
         [DataField("forum_last_post_time_ut")]
         private long lastPostTimeRaw;
         [DataField("forum_last_post_id")]
@@ -200,18 +198,6 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 return forumPosts;
-            }
-        }
-
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-            set
-            {
-                SetProperty("permissions", value);
             }
         }
 
@@ -363,7 +349,6 @@ namespace BoxSocial.Applications.Forum
             forumId = 0;
             forumLocked = false;
             forumLevel = 0;
-            permissions = 0x1111;
             forumTitle = "Forums";
         }
 
@@ -376,7 +361,6 @@ namespace BoxSocial.Applications.Forum
             forumId = 0;
             forumLocked = false;
 			forumLevel = 0;
-			permissions = 0x1111;
             forumTitle = "Forums";
         }
 
@@ -957,7 +941,6 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("forum_parent_id", parent.Id);
             iquery.AddField("forum_title", title);
             iquery.AddField("forum_description", description);
-            iquery.AddField("forum_access", permissions);
             iquery.AddField("forum_order", order);
 			iquery.AddField("forum_level", level);
             iquery.AddField("forum_category", isCategory);

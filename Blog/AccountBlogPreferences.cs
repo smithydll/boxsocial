@@ -91,7 +91,6 @@ namespace BoxSocial.Applications.Blog
             UpdateQuery uQuery = new UpdateQuery("user_blog");
             uQuery.AddCondition("user_id", core.LoggedInMemberId);
             uQuery.AddField("blog_title", title);
-            //uQuery.AddField("blog_access", core.Functions.GetPermission());
 
             db.Query(uQuery);
 

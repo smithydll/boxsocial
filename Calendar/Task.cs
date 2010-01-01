@@ -51,8 +51,6 @@ namespace BoxSocial.Applications.Calendar
     [Permission("COMMENT", "Can comment on the task")]
     public class Task : NumberedItem, ICommentableItem, IPermissibleItem
     {
-        //public const string TASK_INFO_FIELDS = "tk.task_id, tk.task_topic, tk.task_description, tk.task_views, tk.task_comments, tk.task_access, tk.user_id, tk.task_due_date_ut, tk.task_category, tk.task_item_id, tk.task_item_type, tk.task_status, tk.task_percent_complete, tk.task_priority, tk.task_time_completed_ut";
-
         #region Data Fields
         [DataField("task_id", DataFieldKeys.Primary)]
         private long taskId;
@@ -64,12 +62,6 @@ namespace BoxSocial.Applications.Calendar
         private long views;
         [DataField("task_comments")]
         private long comments;
-        [DataField("task_access")]
-        private ushort permissions;
-        /*[DataField("task_item_id")]
-        private long ownerId;
-        [DataField("task_item_type", 31)]
-        private string ownerType;*/
         [DataField("task_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("user_id")]
@@ -128,14 +120,6 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return comments;
-            }
-        }
-
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
             }
         }
 

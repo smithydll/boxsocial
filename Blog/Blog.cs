@@ -46,15 +46,6 @@ namespace BoxSocial.Applications.Blog
     [Permission("RATE_ITEMS", "Can rate your blog entries")]
     public class Blog : NumberedItem, IPermissibleItem
     {
-
-        /// <summary>
-        /// A list of database fields associated with a blog.
-        /// </summary>
-        /// <remarks>
-        /// A blog uses the table prefix ub.
-        /// </remarks>
-        public const string BLOG_FIELDS = "ub.user_id, ub.blog_title, ub.blog_entries, ub.blog_comments, ub.blog_visits, ub.blog_access";
-
         [DataField("user_id", DataFieldKeys.Primary)]
         private long userId;
         [DataField("blog_title", 63)]
@@ -368,10 +359,6 @@ namespace BoxSocial.Applications.Blog
             string status = (drafts) ? "DRAFT" : "PUBLISH";
 
             query.AddCondition("post_status", status);
-            //QueryCondition qc1 = query.AddCondition("user_id", Owner.Id);
-            //QueryCondition qc2 = qc1.AddCondition(new QueryOperation("post_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
-            //qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
-
             query.AddSort(SortOrder.Descending, "post_time_ut");
             query.LimitStart = (bpage - 1) * 10;
             query.LimitCount = 10;

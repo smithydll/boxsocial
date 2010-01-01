@@ -96,7 +96,6 @@ namespace BoxSocial.Applications.Gallery
 
             if (photoTable.Rows.Count == 1)
             {
-                //ushort photoAccess = (ushort)photoTable.Rows[0]["gallery_item_access"];
                 byte license = (byte)photoTable.Rows[0]["gallery_item_license"];
                 string title = (string)photoTable.Rows[0]["gallery_item_title"];
                 string description = "";

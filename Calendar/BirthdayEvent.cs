@@ -60,7 +60,6 @@ namespace BoxSocial.Applications.Calendar
             this.description = string.Empty;
             this.views = 0;
             this.attendees = 0;
-            this.permissions = 0;
             this.comments = 0;
             this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.userId = user.Id;

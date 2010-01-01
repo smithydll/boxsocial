@@ -668,15 +668,9 @@ namespace BoxSocial.Applications.Gallery
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
             query.AddJoin(JoinTypes.Left, new DataField(typeof(Gallery), "gallery_highlight_id"), new DataField(typeof(GalleryItem), "gallery_item_id"));
             query.AddCondition("gallery_parent_id", Id);
-            /*QueryCondition qc1 = query.AddCondition(new QueryOperation("gallery_access", QueryOperations.BinaryAnd, readAccessLevel).ToString(), ConditionEquality.NotEqual, 0);
-            qc1.AddCondition(ConditionRelations.Or, "`user_galleries`.`user_id`", loggedIdUid);*/
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
 
-            /*DataTable galleriesTable = core.db.Query(string.Format("SELECT {1}, {2} FROM user_galleries ug LEFT JOIN gallery_items gi ON ug.gallery_highlight_id = gi.gallery_item_id WHERE (ug.gallery_access & {4:0} OR ug.user_id = {5}) AND ug.user_id = {0} AND ug.gallery_parent_path = '{3}';",
-                ((User)owner).UserId, Gallery.GALLERY_INFO_FIELDS, Gallery.GALLERY_ICON_FIELDS, Mysql.Escape(FullPath), readAccessLevel, loggedIdUid));*/
-            /*HttpContext.Current.Response.Write(query.ToString());
-            HttpContext.Current.Response.End();*/
             return core.db.Query(query).Rows;
         }
 
@@ -744,8 +738,6 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_id", galleryId);
             query.AddCondition("gallery_item_item_id", owner.Id);
             QueryCondition qc1 = query.AddCondition("gallery_item_item_type_id", owner.TypeId);
-            //QueryCondition qc2 = qc1.AddCondition(new QueryOperation("gallery_item_access", QueryOperations.BinaryAnd, readAccessLevel), ConditionEquality.NotEqual, false);
-            //qc2.AddCondition(ConditionRelations.Or, "user_id", loggedIdUid);
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;
 

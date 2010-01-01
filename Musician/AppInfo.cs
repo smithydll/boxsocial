@@ -92,7 +92,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

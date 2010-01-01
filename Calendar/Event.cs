@@ -34,8 +34,6 @@ namespace BoxSocial.Applications.Calendar
     [Permission("COMMENT", "Can leave comments on the event")]
     public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable
     {
-        //public const string EVENT_INFO_FIELDS = "ev.event_id, ev.event_subject, ev.event_description, ev.event_views, ev.event_attendees, ev.event_access, ev.event_comments, ev.event_item_id, ev.event_item_type, ev.user_id, ev.event_time_start_ut, ev.event_time_end_ut, ev.event_all_day, ev.event_invitees, ev.event_category, ev.event_location";
-
         #region Data Fields
         [DataField("event_id", DataFieldKeys.Primary)]
         protected long eventId;
@@ -47,14 +45,8 @@ namespace BoxSocial.Applications.Calendar
         protected long views;
         [DataField("event_attendees")]
         protected long attendees;
-        [DataField("event_access")]
-        protected ushort permissions;
         [DataField("event_comments")]
         protected long comments;
-        //[DataField("event_item_id")]
-        //protected long ownerId;
-        //[DataField("event_item_type", 63)]
-        //protected string ownerType;
         [DataField("event_item", DataFieldKeys.Index)]
         protected ItemKey ownerKey;
         [DataField("user_id")]
@@ -121,18 +113,6 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 return attendees;
-            }
-        }
-
-        public ushort Permissions
-        {
-            get
-            {
-                return permissions;
-            }
-            set
-            {
-                SetProperty("permissions", value);
             }
         }
 
@@ -267,20 +247,24 @@ namespace BoxSocial.Applications.Calendar
         {
         }
 
-        public static Event Create(Core core, User creator, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
+        public static Event Create(Core core, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
         {
-            long eventId = core.db.UpdateQuery(string.Format("INSERT INTO events (user_id, event_item_id, event_item_type_id, event_subject, event_location, event_description, event_time_start_ut, event_time_end_ut) VALUES ({0}, {1}, {2}, '{3}', '{4}', '{5}', {6}, {7})",
-                creator.UserId, owner.Id, owner.TypeId, Mysql.Escape(subject), Mysql.Escape(location), Mysql.Escape(description), startTimestamp, endTimestamp));
+            Item item = Item.Create(core, typeof(Event), new FieldValuePair("user_id", core.session.LoggedInMember.Id),
+                new FieldValuePair("event_item_id", owner.Id),
+                new FieldValuePair("event_item_type_id", owner.TypeId),
+                new FieldValuePair("event_subject", subject),
+                new FieldValuePair("event_location", location),
+                new FieldValuePair("event_description", description),
+                new FieldValuePair("event_time_start_ut", startTimestamp),
+                new FieldValuePair("event_time_end_ut", endTimestamp));
 
-            Event myEvent = new Event(core, eventId);
+            return (Event)item;
 
             /*if (Access.FriendsCanRead(myEvent.Permissions))
             {
                 core.CallingApplication.PublishToFeed(creator, "created a new event", string.Format("[iurl={0}]{1}[/iurl]",
                     Event.BuildEventUri(core, myEvent), myEvent.subject));
             }*/
-
-            return myEvent;
         }
 
         public void Delete(Core core)

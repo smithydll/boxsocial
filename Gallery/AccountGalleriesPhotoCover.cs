@@ -111,8 +111,6 @@ namespace BoxSocial.Applications.Gallery
 
                 if (galleryTable.Rows.Count == 1)
                 {
-                    //ushort galleryAccess = (ushort)galleryTable.Rows[0]["gallery_access"];
-
                     // only worry about view permissions, don't worry about comment permissions
                     if (true)
                     {

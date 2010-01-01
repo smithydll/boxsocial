@@ -61,8 +61,21 @@ namespace BoxSocial.Applications.Calendar
 				first = false;
 			}
 			
-            DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events WHERE (event_access & {5:0} OR user_id = {6}) AND event_item_id = {1} AND event_item_type_id = {2} AND ((event_time_start_ut >= {3} AND event_time_start_ut <= {4}) OR (event_time_end_ut >= {3} AND event_time_end_ut <= {4}) OR (event_time_start_ut < {3} AND event_time_end_ut > {4})) ORDER BY event_time_start_ut ASC;",
-                fieldsSb, owner.Id, owner.TypeId, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));
+            /*DataTable eventsTable = db.Query(string.Format("SELECT {0} FROM events WHERE (event_access & {5:0} OR user_id = {6}) AND event_item_id = {1} AND event_item_type_id = {2} AND ((event_time_start_ut >= {3} AND event_time_start_ut <= {4}) OR (event_time_end_ut >= {3} AND event_time_end_ut <= {4}) OR (event_time_start_ut < {3} AND event_time_end_ut > {4})) ORDER BY event_time_start_ut ASC;",
+                fieldsSb, owner.Id, owner.TypeId, startTimeRaw, endTimeRaw, readAccessLevel, loggedIdUid));*/
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(Event));
+            sQuery.AddCondition("event_item_id", owner.Id);
+            sQuery.AddCondition("event_item_type_id", owner.TypeId);
+            QueryCondition sqc2 = sQuery.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+            sqc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+            QueryCondition sqc3 = sqc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
+            sqc3.AddCondition("event_time_end_ut", ConditionEquality.LessThanEqual, endTimeRaw);
+            QueryCondition sqc4 = sqc3.AddCondition(ConditionRelations.Or, "event_time_start_ut", ConditionEquality.LessThan, startTimeRaw);
+            sqc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
+            sQuery.AddSort(SortOrder.Ascending, "event_time_start_ut");
+
+            DataTable eventsTable = db.Query(sQuery);
 
             foreach (DataRow dr in eventsTable.Rows)
             {

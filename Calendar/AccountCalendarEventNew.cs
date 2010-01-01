@@ -146,8 +146,6 @@ namespace BoxSocial.Applications.Calendar
                     startDate = calendarEvent.GetStartTime(core.tz);
                     endDate = calendarEvent.GetEndTime(core.tz);
 
-                    eventAccess = calendarEvent.Permissions;
-
                     subject = calendarEvent.Subject;
                     location = calendarEvent.Location;
                     description = calendarEvent.Description;
@@ -379,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Event calendarEvent = Event.Create(core, LoggedInMember, Owner, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime));
+                Event calendarEvent = Event.Create(core, Owner, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime));
 
                 foreach (long inviteeId in inviteeIds)
                 {

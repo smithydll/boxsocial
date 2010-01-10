@@ -29,6 +29,7 @@ namespace BoxSocial.Internals
     {
         private string permissionKey;
         private string permissionDescription;
+        private PermissionTypes permissionType;
         
         public string Key
         {
@@ -45,11 +46,20 @@ namespace BoxSocial.Internals
                 return permissionDescription;
             }
         }
+
+        public PermissionTypes Type
+        {
+            get
+            {
+                return permissionType;
+            }
+        }
         
-        public PermissionAttribute(string key, string description)
+        public PermissionAttribute(string key, string description, PermissionTypes type)
         {
             this.permissionKey = key;
             this.permissionDescription = description;
+            this.permissionType = type;
         }
     }
 }

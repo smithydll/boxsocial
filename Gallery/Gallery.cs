@@ -43,15 +43,15 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery
     /// </summary>
     [DataTable("user_galleries")]
-    [Permission("VIEW", "Can view the gallery")]
-    [Permission("COMMENT", "Can comment on the gallery")]
-    [Permission("CREATE_CHILD", "Can create child galleries")]
-    [Permission("VIEW_ITEMS", "Can view gallery photos")]
-    [Permission("COMMENT_ITEMS", "Can comment on the photos")]
-    [Permission("RATE_ITEMS", "Can rate the photos")]
-    [Permission("CREATE_ITEMS", "Can upload photos to gallery")]
-    [Permission("EDIT_ITEMS", "Can edit photos")]
-    [Permission("DELETE_ITEMS", "Can delete photos")]
+    [Permission("VIEW", "Can view the gallery", PermissionTypes.View)]
+    [Permission("COMMENT", "Can comment on the gallery", PermissionTypes.Interact)]
+    [Permission("CREATE_CHILD", "Can create child galleries", PermissionTypes.CreateAndEdit)]
+    [Permission("VIEW_ITEMS", "Can view gallery photos", PermissionTypes.View)]
+    [Permission("COMMENT_ITEMS", "Can comment on the photos", PermissionTypes.Interact)]
+    [Permission("RATE_ITEMS", "Can rate the photos", PermissionTypes.Interact)]
+    [Permission("CREATE_ITEMS", "Can upload photos to gallery", PermissionTypes.CreateAndEdit)]
+    [Permission("EDIT_ITEMS", "Can edit photos", PermissionTypes.CreateAndEdit)]
+    [Permission("DELETE_ITEMS", "Can delete photos", PermissionTypes.Delete)]
     public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem
     {
 

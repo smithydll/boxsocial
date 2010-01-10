@@ -30,8 +30,8 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_emails")]
-    [Permission("VIEW", "Can view the e-mail address")]
-    [Permission("RECIEVE_FROM", "Can receive e-mail from")]
+    [Permission("VIEW", "Can view the e-mail address", PermissionTypes.View)]
+    [Permission("RECIEVE_FROM", "Can receive e-mail from", PermissionTypes.Interact)]
     public sealed class UserEmail : NumberedItem, IPermissibleItem
     {
         [DataField("email_id", DataFieldKeys.Primary)]
@@ -209,7 +209,11 @@ namespace BoxSocial.Internals
                 core.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
             }
 
-            return new UserEmail(core, emailId);
+            UserEmail newEmail = new UserEmail(core, emailId);
+
+            Access.CreateGrantForPrimitive(core, newEmail, User.EveryoneGroupKey, "VIEW", "RECIEVE_FROM");
+
+            return newEmail;
         }
 
         public bool Activate(string activationCode)

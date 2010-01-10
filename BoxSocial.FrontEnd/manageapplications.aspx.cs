@@ -139,7 +139,7 @@ namespace BoxSocial.FrontEnd
                                 }
                                 catch (InvalidAccessControlPermissionException)
                                 {
-                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
+                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description, pi.PermissionType);
                                 }
                             }
                             catch (InvalidItemTypeException)
@@ -354,7 +354,7 @@ namespace BoxSocial.FrontEnd
                                                 }
                                                 catch (InvalidAccessControlPermissionException)
                                                 {
-                                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description);
+                                                    AccessControlPermission.Create(core, it.Id, pi.Key, pi.Description, pi.PermissionType);
                                                 }
                                             }
                                             catch (InvalidItemTypeException)

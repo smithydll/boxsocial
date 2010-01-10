@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_phone")]
-    [Permission("VIEW", "Can view the phone number")]
+    [Permission("VIEW", "Can view the phone number", PermissionTypes.View)]
     public class UserPhoneNumber : NumberedItem, IPermissibleItem
     {
         [DataField("phone_id", DataFieldKeys.Primary)]

@@ -38,10 +38,10 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("user_lists")]
-    [Permission("VIEW", "Can view the list")]
-    [Permission("EDIT", "Can edit the list")]
-    [Permission("APPEND", "Can add items to the list")]
-    [Permission("DELETE_ITEMS", "Can delete items from the list")]
+    [Permission("VIEW", "Can view the list", PermissionTypes.View)]
+    [Permission("EDIT", "Can edit the list", PermissionTypes.CreateAndEdit)]
+    [Permission("APPEND", "Can add items to the list", PermissionTypes.CreateAndEdit)]
+    [Permission("DELETE_ITEMS", "Can delete items from the list", PermissionTypes.Delete)]
     public class List : NumberedItem, IPermissibleItem
     {
         [DataField("list_id", DataFieldKeys.Primary)]

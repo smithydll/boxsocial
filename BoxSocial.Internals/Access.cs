@@ -313,6 +313,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
+            query.AddSort(SortOrder.Ascending, "permission_type");
 
             DataTable permissionDataTable = core.db.Query(query);
 

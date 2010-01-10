@@ -91,44 +91,19 @@ namespace BoxSocial.Applications.Gallery
 
             SetTemplate("account_galleries_photo_edit");
 
-            DataTable photoTable = db.Query(string.Format("SELECT gallery_item_abstract, gallery_item_title, gallery_item_license, gallery_item_classification FROM gallery_items WHERE user_id = {0} AND gallery_item_id = {1};",
-                LoggedInMember.UserId, photoId));
-
-            if (photoTable.Rows.Count == 1)
+            try
             {
-                byte license = (byte)photoTable.Rows[0]["gallery_item_license"];
-                string title = (string)photoTable.Rows[0]["gallery_item_title"];
-                string description = "";
+                GalleryItem photo = new GalleryItem(core, photoId);
 
-                GalleryItem photo = null;
-                try
-                {
-                    photo = new GalleryItem(core, photoTable.Rows[0]);
-                }
-                catch
-                {
-                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
-                    return;
-                }
+                core.Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", photo.LicenseId);
 
-                if (!(photoTable.Rows[0]["gallery_item_abstract"] is DBNull))
-                {
-                    description = (string)photoTable.Rows[0]["gallery_item_abstract"];
-                }
-
-                List<string> permissions = new List<string>();
-                permissions.Add("Can Read");
-                permissions.Add("Can Comment");
-
-                core.Display.ParseLicensingBox(template, "S_PHOTO_LICENSE", license);
-
-                template.Parse("S_PHOTO_TITLE", title);
-                template.Parse("S_PHOTO_DESCRIPTION", description);
+                template.Parse("S_PHOTO_TITLE", photo.ItemTitle);
+                template.Parse("S_PHOTO_DESCRIPTION", photo.ItemAbstract);
                 template.Parse("S_PHOTO_ID", photoId.ToString());
 
-                core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", (Classifications)(byte)photoTable.Rows[0]["gallery_item_classification"]);
+                core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", photo.Classification);
             }
-            else
+            catch (GalleryItemNotFoundException)
             {
                 core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
                 return;

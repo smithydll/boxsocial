@@ -29,15 +29,25 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum PermissionTypes : byte
+    {
+        View = 0x0,
+        Interact = 0x02,
+        CreateAndEdit = 0x04,
+        Delete = 0x08,
+    }
+
     public struct PermissionInfo
     {
         public string Key;
         public string Description;
-        
-        public PermissionInfo(string key, string description)
+        public PermissionTypes PermissionType;
+
+        public PermissionInfo(string key, string description, PermissionTypes type)
         {
             this.Key = key;
             this.Description = description;
+            this.PermissionType = type;
         }
     }
     
@@ -52,8 +62,11 @@ namespace BoxSocial.Internals
 		long itemTypeId;
 		[DataField("permission_description", 63)]
 		string permissionDescription;
+        [DataField("permission_type")]
+        byte permissionType;
 
         private string permissionAssembly;
+        private string permissionDescriptionCache;
 		
 		public long PermissionId
 		{
@@ -69,7 +82,23 @@ namespace BoxSocial.Internals
 			{
 				return permissionName;
 			}
+            set
+            {
+                SetProperty("permissionName", value);
+            }
 		}
+
+        public PermissionTypes PermissionType
+        {
+            get
+            {
+                return (PermissionTypes)permissionType;
+            }
+            set
+            {
+                SetProperty("permissionType", (byte)value);
+            }
+        }
 		
 		public long ItemTypeId
 		{
@@ -96,14 +125,22 @@ namespace BoxSocial.Internals
                     string key = permissionDescription.Substring(3, permissionDescription.Length - 4);
                     if (core.prose.ContainsKey(key))
                     {
-                        permissionDescription = core.prose.GetString(key);
+                        permissionDescriptionCache = core.prose.GetString(key);
                     }
                     else if ((!string.IsNullOrEmpty(permissionAssembly)) && core.prose.ContainsKey(permissionAssembly, key))
                     {
-                        permissionDescription = core.prose.GetString(permissionAssembly, key);
+                        permissionDescriptionCache = core.prose.GetString(permissionAssembly, key);
                     }
                 }
-                return permissionDescription;
+                else
+                {
+                    permissionDescriptionCache = permissionDescription;
+                }
+                return permissionDescriptionCache;
+            }
+            set
+            {
+                SetProperty("permissionType", value);
             }
         }
 		
@@ -161,18 +198,19 @@ namespace BoxSocial.Internals
 		private void AccessControlPermission_ItemLoad()
         {
         }
-		
-		public static AccessControlPermission Create(Core core, ItemType type, string permissionName, string permissionDescription)
+
+        public static AccessControlPermission Create(Core core, ItemType type, string permissionName, string permissionDescription, PermissionTypes permissionType)
 		{
-            return Create(core, type.TypeId, permissionName, permissionDescription);
+            return Create(core, type.TypeId, permissionName, permissionDescription, permissionType);
 		}
 
-        public static AccessControlPermission Create(Core core, long typeId, string permissionName, string permissionDescription)
+        public static AccessControlPermission Create(Core core, long typeId, string permissionName, string permissionDescription, PermissionTypes permissionType)
         {
             AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
                                                                                new FieldValuePair("permission_item_type_id", typeId),
                                                                                new FieldValuePair("permission_name", permissionName),
-                                                                               new FieldValuePair("permission_description", permissionDescription));
+                                                                               new FieldValuePair("permission_description", permissionDescription),
+                                                                               new FieldValuePair("permission_type", (byte)permissionType));
 
             return acp;
         }
@@ -183,6 +221,7 @@ namespace BoxSocial.Internals
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlPermission));
             sQuery.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
+            sQuery.AddSort(SortOrder.Ascending, "permission_type");
 
             DataTable permissionsTable = core.db.Query(sQuery);
 

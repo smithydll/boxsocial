@@ -47,8 +47,8 @@ namespace BoxSocial.Applications.Calendar
     }
 
     [DataTable("tasks")]
-    [Permission("VIEW", "Can view the task")]
-    [Permission("COMMENT", "Can comment on the task")]
+    [Permission("VIEW", "Can view the task", PermissionTypes.View)]
+    [Permission("COMMENT", "Can comment on the task", PermissionTypes.Interact)]
     public class Task : NumberedItem, ICommentableItem, IPermissibleItem
     {
         #region Data Fields

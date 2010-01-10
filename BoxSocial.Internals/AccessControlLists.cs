@@ -300,6 +300,7 @@ namespace BoxSocial.Internals
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", itemKey.TypeId);
+            query.AddSort(SortOrder.Ascending, "permission_type");
 
             DataTable permissionsDataTable = core.db.Query(query);
 
@@ -342,7 +343,7 @@ namespace BoxSocial.Internals
                 {
                     if (pattr.Key != null)
                     {
-                        permissions.Add(new PermissionInfo(pattr.Key, pattr.Description));
+                        permissions.Add(new PermissionInfo(pattr.Key, pattr.Description, pattr.Type));
                     }
                     attributeFound = true;
                 }

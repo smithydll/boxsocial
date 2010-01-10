@@ -42,9 +42,9 @@ namespace BoxSocial.Groups
 
     [DataTable("group_keys", "GROUP")]
     [Primitive("GROUP", UserGroupLoadOptions.All, "group_id", "group_name")]
-    [Permission("VIEW", "Can view the group")]
-    [Permission("COMMENT", "Can write on the guest book")]
-    [Permission("VIEW_MEMBERS", "Can view the group members")]
+    [Permission("VIEW", "Can view the group", PermissionTypes.View)]
+    [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
+    [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
         public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";

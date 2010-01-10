@@ -1021,6 +1021,7 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("U_ROTATE_LEFT", galleryItem.RotateLeftUri);
                 e.Template.Parse("U_ROTATE_RIGHT", galleryItem.RotateRightUri);
                 e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
+                e.Template.Parse("U_TAG", galleryItem.TagUri);
 
                 switch (galleryItem.Classification)
                 {
@@ -1629,6 +1630,14 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return core.Uri.BuildAccountSubModuleUri("galleries", "delete", itemId, true);
+            }
+        }
+
+        public string TagUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "tag", itemId, true);
             }
         }
 

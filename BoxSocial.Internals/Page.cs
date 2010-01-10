@@ -43,8 +43,8 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_pages", "PAGE")]
-    [Permission("VIEW", "Can view the page")]
-    [Permission("EDIT", "Can edit the page")]
+    [Permission("VIEW", "Can view the page", PermissionTypes.View)]
+    [Permission("EDIT", "Can edit the page", PermissionTypes.CreateAndEdit)]
     public class Page : NumberedItem, INestableItem, IPermissibleItem
     {
         [DataField("page_id", DataFieldKeys.Primary)]

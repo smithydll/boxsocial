@@ -30,8 +30,8 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Calendar
 {
     [DataTable("events", "EVENT")]
-    [Permission("VIEW", "Can view the event")]
-    [Permission("COMMENT", "Can leave comments on the event")]
+    [Permission("VIEW", "Can view the event", PermissionTypes.View)]
+    [Permission("COMMENT", "Can leave comments on the event", PermissionTypes.Interact)]
     public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable
     {
         #region Data Fields

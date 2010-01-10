@@ -44,8 +44,8 @@ namespace BoxSocial.Musician
     }
 
     [DataTable("musicians", "MUSIC")]
-    [Permission("VIEW", "Can view the musician's profile")]
-    [Permission("COMMENT", "Can write on the guest book")]
+    [Permission("VIEW", "Can view the musician's profile", PermissionTypes.View)]
+    [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     public class Musician : Primitive, IPermissibleItem
     {
         [DataField("musician_id")]

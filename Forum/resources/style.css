@@ -175,21 +175,6 @@ ul#posts dl.profile {
 	width: 25%;
 }
 
-ul#posts .corners-top {
-	display: block;
-	height: 5px;
-	background-image: url('http://zinzam.com/images/corners-top-ffffff-900-5.png');
-	background-repeat: no-repeat;
-}
-
-ul#posts .corners-bottom {
-	display: block;
-	height: 5px;
-	background-image: url('http://zinzam.com/images/corners-bottom-ffffff-900-5.png');
-	background-repeat: no-repeat;
-}
-
-
 ul#posts div.top {
 	clear: both;
 	text-align: right;
@@ -245,4 +230,21 @@ div#forum-head {
 
 div#forum-head a {
 	padding-left: 16px;
+}
+
+/* colours */
+ul#posts .corners-top, ul#posts .corners-top > span {
+    background-image: url('/images/corners-top-eeeeee-18-9.png');
+}
+
+ul#posts .corners-top > span + span, ul#posts .corners-bottom > span + span {
+    background-color: #EEEEEE;
+}
+
+ul#posts .corners-bottom, ul#posts .corners-bottom > span {
+    background-image: url('/images/corners-bottom-eeeeee-18-9.png');
+}
+
+ul#posts div.post {
+    background-color: #EEEEEE;
 }

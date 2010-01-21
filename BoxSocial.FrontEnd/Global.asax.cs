@@ -198,6 +198,9 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).png$", @"/corners.aspx?location=$1&width=$3&roundness=$4&colour=$2&ext=png" });
                     patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).gif$", @"/corners.aspx?location=$1&width=$3&roundness=$4&colour=$2&ext=gif" });
 
+                    patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-(left|right|centre)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).png$", @"/corners.aspx?location=$1,$2&width=$4&roundness=$5&colour=$3&ext=png" });
+                    patterns.Add(new string[] { @"^/images/corners-(top|bottom|middle)-(left|right|centre)-([0-9a-f\-_]{6})-([0-9\-_]+)-([0-9\-_]+).gif$", @"/corners.aspx?location=$1,$2&width=$4&roundness=$5&colour=$3&ext=gif" });
+
                     patterns.Add(new string[] { @"^/about(/|)$", @"/about.aspx" });
                     patterns.Add(new string[] { @"^/opensource(/|)$", @"/opensource.aspx" });
                     patterns.Add(new string[] { @"^/safety(/|)$", @"/safety.aspx" });

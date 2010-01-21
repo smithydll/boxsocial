@@ -693,7 +693,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post > 0)
                 {
-                    if (myBlog.Access.Can("COMMENT"))
+                    if (myBlog.Access.Can("COMMENT_ITEMS"))
                     {
                         page.template.Parse("CAN_COMMENT", "TRUE");
                     }

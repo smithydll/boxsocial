@@ -1,58 +1,58 @@
 erase /F /Q "Package"
-copy Blog\bin\Release\Blog.dll Package\
-copy Blog\bin\Release\Blog.pdb Package\
-copy Blog\languages\Blog.en.resources Package\
+copy "%1"Blog\bin\Release\Blog.dll "%1"Package\
+copy "%1"Blog\bin\Release\Blog.pdb "%1"Package\
+copy "%1"Blog\languages\Blog.en.resources "%1"Package\
 
-copy GuestBook\bin\Release\GuestBook.dll Package\
-copy GuestBook\bin\Release\GuestBook.pdb Package\
-copy GuestBook\languages\GuestBook.en.resources Package\
+copy "%1"GuestBook\bin\Release\GuestBook.dll "%1"Package\
+copy "%1"GuestBook\bin\Release\GuestBook.pdb "%1"Package\
+copy "%1"GuestBook\languages\GuestBook.en.resources "%1"Package\
 
-copy Profile\bin\Release\Profile.dll Package\
-copy Profile\bin\Release\Profile.pdb Package\
-copy Profile\languages\Profile.en.resources Package\
+copy "%1"Profile\bin\Release\Profile.dll "%1"Package\
+copy "%1"Profile\bin\Release\Profile.pdb "%1"Package\
+copy "%1"Profile\languages\Profile.en.resources "%1"Package\
 
-copy Calendar\bin\Release\Calendar.dll Package\
-copy Calendar\bin\Release\Calendar.pdb Package\
-copy Calendar\languages\Calendar.en.resources Package\
+copy "%1"Calendar\bin\Release\Calendar.dll "%1"Package\
+copy "%1"Calendar\bin\Release\Calendar.pdb "%1"Package\
+copy "%1"Calendar\languages\Calendar.en.resources "%1"Package\
 
-copy Gallery\bin\Release\Gallery.dll Package\
-copy Gallery\bin\Release\Gallery.pdb Package\
-copy Gallery\languages\Gallery.en.resources Package\
+copy "%1"Gallery\bin\Release\Gallery.dll "%1"Package\
+copy "%1"Gallery\bin\Release\Gallery.pdb "%1"Package\
+copy "%1"Gallery\languages\Gallery.en.resources "%1"Package\
 
-copy Pages\bin\Release\Pages.dll Package\
-copy Pages\bin\Release\Pages.pdb Package\
-copy Pages\languages\Pages.en.resources Package\
+copy "%1"Pages\bin\Release\Pages.dll "%1"Package\
+copy "%1"Pages\bin\Release\Pages.pdb "%1"Package\
+copy "%1"Pages\languages\Pages.en.resources "%1"Package\
 
-copy Forum\bin\Release\Forum.dll Package\
-copy Forum\bin\Release\Forum.pdb Package\
-copy Forum\languages\Forum.en.resources Package\
+copy "%1"Forum\bin\Release\Forum.dll "%1"Package\
+copy "%1"Forum\bin\Release\Forum.pdb "%1"Package\
+copy "%1"Forum\languages\Forum.en.resources "%1"Package\
 
-copy News\bin\Release\News.dll Package\
-copy News\bin\Release\News.pdb Package\
-copy News\languages\News.en.resources Package\
+copy "%1"News\bin\Release\News.dll "%1"Package\
+copy "%1"News\bin\Release\News.pdb "%1"Package\
+copy "%1"News\languages\News.en.resources "%1"Package\
 
-copy Mail\bin\Release\Mail.dll Package\
-copy Mail\bin\Release\Mail.pdb Package\
-copy Mail\languages\Mail.en.resources Package\
+copy "%1"Mail\bin\Release\Mail.dll "%1"Package\
+copy "%1"Mail\bin\Release\Mail.pdb "%1"Package\
+copy "%1"Mail\languages\Mail.en.resources "%1"Package\
 
-copy BoxSocial.Forms\bin\Release\BoxSocial.Forms.dll Package\
-copy BoxSocial.Forms\bin\Release\BoxSocial.Forms.pdb Package\
-copy BoxSocial.IO\bin\Release\BoxSocial.IO.dll Package\
-copy BoxSocial.IO\bin\Release\BoxSocial.IO.pdb Package\
-copy Groups\bin\Release\Groups.dll Package\
-copy Groups\bin\Release\Groups.pdb Package\
-copy Networks\bin\Release\Networks.dll Package\
-copy Networks\bin\Release\Networks.pdb Package\
-copy Musician\bin\Release\Musician.dll Package\
-copy Musician\bin\Release\Musician.pdb Package\
-copy BoxSocial.Internals\bin\Release\BoxSocial.Internals.dll Package\
-copy BoxSocial.Internals\bin\Release\BoxSocial.Internals.pdb Package\
-copy BoxSocial.Internals\languages\Internals.en.resources Package\
+copy "%1"BoxSocial.Forms\bin\Release\BoxSocial.Forms.dll "%1"Package\
+copy "%1"BoxSocial.Forms\bin\Release\BoxSocial.Forms.pdb "%1"Package\
+copy "%1"BoxSocial.IO\bin\Release\BoxSocial.IO.dll "%1"Package\
+copy "%1"BoxSocial.IO\bin\Release\BoxSocial.IO.pdb "%1"Package\
+copy "%1"Groups\bin\Release\Groups.dll "%1"Package\
+copy "%1"Groups\bin\Release\Groups.pdb "%1"Package\
+copy "%1"Networks\bin\Release\Networks.dll "%1"Package\
+copy "%1"Networks\bin\Release\Networks.pdb "%1"Package\
+copy "%1"Musician\bin\Release\Musician.dll "%1"Package\
+copy "%1"Musician\bin\Release\Musician.pdb "%1"Package\
+copy "%1"BoxSocial.Internals\bin\Release\BoxSocial.Internals.dll "%1"Package\
+copy "%1"BoxSocial.Internals\bin\Release\BoxSocial.Internals.pdb "%1"Package\
+copy "%1"BoxSocial.Internals\languages\Internals.en.resources "%1"Package\
 
-copy BoxSocial.FrontEnd\bin\Release\BoxSocial.FrontEnd.dll Package\
-copy BoxSocial.FrontEnd\bin\Release\BoxSocial.FrontEnd.pdb Package\
+copy "%1"BoxSocial.FrontEnd\bin\Release\BoxSocial.FrontEnd.dll "%1"Package\
+copy "%1"BoxSocial.FrontEnd\bin\Release\BoxSocial.FrontEnd.pdb "%1"Package\
 
-copy BoxSocial\bin\MySql.Data.dll Package\
+copy "%1"BoxSocial\bin\MySql.Data.dll "%1"Package\
 
-copy BoxSocial.Install\bin\Release\BoxSocial.Install.exe Package\
-copy BoxSocial.Install\bin\Release\BoxSocial.Install.pdb Package\
+copy "%1"BoxSocial.Install\bin\Release\BoxSocial.Install.exe "%1"Package\
+copy "%1"BoxSocial.Install\bin\Release\BoxSocial.Install.pdb "%1"Package\

@@ -35,8 +35,8 @@ a {
 }
 
 p {
-	padding: 0px;
-	margin: 6px 0;
+	padding: 6px 0;
+	margin: 0 0;
 }
 
 #head h1 {
@@ -205,15 +205,15 @@ a img {
 }
 
 #pane-profile div.pane {
-	border: solid 1px black;
+	border: solid 2px #333333;
 	margin-bottom: 5px;
 }
 
 #pane-profile div.pane h3 {
-	border-bottom: solid 1px black;
 	padding: 1px 5px;
 	margin: 0px;
-	background-color: #CCCCCC;
+	background-color: #333333;
+	color: #FFFFFF;
 	font-size: 140%;
 }
 
@@ -295,15 +295,15 @@ li.empty {
 }
 
 #profile div.pane {
-	border: solid 1px black;
+	border: solid 2px #333333;
 	margin-bottom: 5px;
 }
 
 #profile div.pane h3 {
-	border-bottom: solid 1px black;
 	padding: 1px 5px;
 	margin: 0px;
-	background-color: #CCCCCC;
+	background-color: #333333;
+	color: #FFFFFF;
 	font-size: 140%;
 }
 
@@ -776,16 +776,21 @@ ul#group-members li.member div.frame ul.actions li {
 }
 
 #overview-profile {
-	border: solid 1px black;
+	border: solid 2px #333333;
 	margin-bottom: 5px;
 	background-color: white;
 }
 
 #overview-profile div.info {
 	padding: 5px;
-	border-bottom: solid 1px black;
-	background-color: #CCCCCC;
+	background-color: #333333;
+	color: #FFFFFF;
 	padding-left: 180px;
+}
+
+#overview-profile div.info a {
+	color: #FFFFFF;
+	text-decoration: none;
 }
 
 #overview-profile h2, #overview-profile p {
@@ -992,4 +997,42 @@ dl#app-list {
 	margin: 0 0 0 25%;
 	height: 60px;
 	padding: 0.5em 0 0.5em 0;
+}
+
+/* markup */
+.corners-top, .corners-top span, .corners-bottom, .corners-bottom span {
+    display: block;
+    height: 9px;
+    background-repeat: no-repeat;
+}
+
+.corners-top, .corners-bottom {
+    padding-left: 9px;
+}
+
+.corners-top > span + span, .corners-bottom > span + span {
+    background-image: none !important;
+    margin-right: 9px;
+    float: none;
+    width: auto;
+}
+
+.corners-top > span, .corners-bottom > span {
+    float: right;
+    width: 9px;
+    background-position: -9px 0;
+}
+
+/* colours */
+/* head */
+.head.corners-top, .head.corners-top > span {
+    background-image: url('/images/corners-top-ffffff-18-9.png');
+}
+
+.head.corners-top > span + span, .head.corners-bottom > span + span {
+    background-color: #FFFFFF;
+}
+
+.head.corners-bottom, .head.corners-bottom > span {
+    background-image: url('/images/corners-bottom-ffffff-18-9.png');
 }

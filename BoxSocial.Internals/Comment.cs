@@ -52,8 +52,12 @@ namespace BoxSocial.Internals
         private byte spamScore;
         [DataField("comment_time_ut")]
         private long timeRaw;
+        [DataField("comment_ip", IP)]
+        private string commentIp;
         [DataField("comment_text", COMMENT_MAX_LENGTH)]
         private string body;
+        [DataField("comment_hash", 128)]
+        private string commentHash;
         [DataField("comment_deleted")]
         private bool deleted;
 

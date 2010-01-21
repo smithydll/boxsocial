@@ -1,8 +1,13 @@
-<div>
+{HACK}Hack<div id="acl-list"><!-- BEGIN permision_types -->
+  <h3>{permision_types.TITLE}</h3>
+  <div class="perm-type">
+  <div class="permission-type-simple">
+  </div>
+  <div class="permission-type-detailed">
   <ul id="permission-list">
-    <!-- BEGIN permission -->
+    <!-- BEGIN permision_types.permission -->
     <li class="permission-titles">
-      <p><strong>{permission.DESCRIPTION}</strong></p>
+      <p><strong>{permision_types.permission.DESCRIPTION}</strong></p>
       <!-- XXIF grant -->
       <dl class="permission-titles">
         <dt>&nbsp;</dt>
@@ -17,37 +22,40 @@
         </dd>
       </dl>
       <ul class="permission-grant-list">
-        <!-- BEGIN permission.grant -->
+        <!-- BEGIN permision_types.permission.grant -->
         <li class="permission-grant">
           <dl>
             <dt>
-              {permission.grant.DISPLAY_NAME}
-		<!-- IF permission.grant.IS_NEW -->
-              <input type="hidden" name="new-grant[{permission.grant.PERMISSION_ID},{permission.grant.ID}]" value="true" />
+              {permision_types.permission.grant.DISPLAY_NAME}
+		<!-- IF permision_types.permission.grant.IS_NEW -->
+              <input type="hidden" name="new-grant[{permision_types.permission.grant.PERMISSION_ID},{permision_types.permission.grant.ID}]" value="true" />
 		<!-- ENDIF -->
             </dt>
             <dd>
-              {permission.grant.S_ALLOW}
+              {permision_types.permission.grant.S_ALLOW}
             </dd>
             <dd>
-              {permission.grant.S_DENY}
+              {permision_types.permission.grant.S_DENY}
             </dd>
             <dd>
-              {permission.grant.S_INHERIT}
+              {permision_types.permission.grant.S_INHERIT}
             </dd>
           </dl>
         </li>
-        <!-- END permission.grant -->
+        <!-- END permision_types.permission.grant -->
       </ul>
       <!-- XXENDIF -->
       <div>
-        {permission.S_PERMISSION_GROUPS}
-      	<input type="submit" name="add-permission[{permission.ID}]" value="{L_ADD_PERMISSION}" />
+        {permision_types.permission.S_PERMISSION_GROUPS}
+      	<input type="submit" name="add-permission[{permision_types.permission.ID}]" value="{L_ADD_PERMISSION}" />
       </div>
     </li>
-    <!-- END permission -->
+    <!-- END permision_types.permission -->
   </ul>
-  <!-- BEGIN grants -->
-  <input type="hidden" name="{grants.S_GRANT_INDEX}" value="{grants.S_GRANT_KEY}" />
-  <!-- END grants -->
+  </div>
+  <!-- BEGIN permision_types.grants -->
+  <input type="hidden" name="{permision_types.grants.S_GRANT_INDEX}" value="{permision_types.grants.S_GRANT_KEY}" />
+  <!-- END permision_types.grants -->
+</div>
+<!-- END permision_types -->
 </div>

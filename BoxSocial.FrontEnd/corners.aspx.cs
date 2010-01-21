@@ -91,13 +91,49 @@ namespace BoxSocial.FrontEnd
                 g.FillEllipse(new SolidBrush(headColour), width - cornerSize * 2 - 1, 0, cornerSize * 2, cornerSize * 2);
                 g.FillRectangle(new SolidBrush(headColour), cornerSize, -1, width - cornerSize * 2 - 1, cornerSize + 2);
             }
+            else if (Request["location"] == "top,left")
+            {
+                g.FillEllipse(new SolidBrush(headColour), 0, 0, cornerSize * 2, cornerSize * 2);
+            }
+            else if (Request["location"] == "top,right")
+            {
+                g.FillEllipse(new SolidBrush(headColour), -cornerSize, 0, cornerSize * 2, cornerSize * 2);
+            }
             else if (Request["location"] == "bottom")
             {
                 g.FillEllipse(new SolidBrush(headColour), 0, -cornerSize, cornerSize * 2, cornerSize * 2 - 1);
                 g.FillEllipse(new SolidBrush(headColour), width - cornerSize * 2 - 1, -cornerSize - 1, cornerSize * 2, cornerSize * 2);
                 g.FillRectangle(new SolidBrush(headColour), cornerSize, -1, width - cornerSize * 2, cornerSize + 2);
             }
+            else if (Request["location"] == "bottom,left")
+            {
+                g.FillEllipse(new SolidBrush(headColour), 0, -cornerSize, cornerSize * 2, cornerSize * 2 - 1);
+            }
+            else if (Request["location"] == "bottom,right")
+            {
+                g.FillEllipse(new SolidBrush(headColour), -cornerSize, -cornerSize - 1, cornerSize * 2, cornerSize * 2);
+            }
             else if (Request.QueryString["location"] == "middle")
+            {
+                g.Clear(headColour);
+            }
+            else if (Request.QueryString["location"] == "middle,centre")
+            {
+                g.Clear(headColour);
+            }
+            else if (Request.QueryString["location"] == "middle,left")
+            {
+                g.Clear(headColour);
+            }
+            else if (Request.QueryString["location"] == "middle,right")
+            {
+                g.Clear(headColour);
+            }
+            else if (Request.QueryString["location"] == "top,centre")
+            {
+                g.Clear(headColour);
+            }
+            else if (Request.QueryString["location"] == "bottom,centre")
             {
                 g.Clear(headColour);
             }

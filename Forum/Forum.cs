@@ -860,7 +860,7 @@ namespace BoxSocial.Applications.Forum
             return topics;
         }
 
-        public static Forum Create(Core core, Forum parent, string title, string description, ushort permissions, bool isCategory)
+        public static Forum Create(Core core, Forum parent, string title, string description, string rules, ushort permissions, bool isCategory)
         {
             string parents;
             int order = 0;
@@ -941,6 +941,7 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("forum_parent_id", parent.Id);
             iquery.AddField("forum_title", title);
             iquery.AddField("forum_description", description);
+            iquery.AddField("forum_rules", rules);
             iquery.AddField("forum_order", order);
 			iquery.AddField("forum_level", level);
             iquery.AddField("forum_category", isCategory);

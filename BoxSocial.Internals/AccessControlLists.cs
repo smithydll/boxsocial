@@ -95,11 +95,24 @@ namespace BoxSocial.Internals
                 }
             }
 
+            bool first = true;
+            PermissionTypes lastType = PermissionTypes.View;
+            VariableCollection permissionTypeVariableCollection = null;
+
             if (itemPermissions != null)
             {
                 foreach (AccessControlPermission itemPermission in itemPermissions)
                 {
-                    VariableCollection permissionVariableCollection = aclTemplate.CreateChild("permission");
+                    if (first || itemPermission.PermissionType != lastType)
+                    {
+                        permissionTypeVariableCollection = aclTemplate.CreateChild("permision_types");
+
+                        permissionTypeVariableCollection.Parse("TITLE", AccessControlLists.PermissionTypeToString(itemPermission.PermissionType));
+
+                        first = false;
+                        lastType = itemPermission.PermissionType;
+                    }
+                    VariableCollection permissionVariableCollection = permissionTypeVariableCollection.CreateChild("permission");
                     permissionVariableCollection.Parse("ID", itemPermission.Id.ToString());
                     permissionVariableCollection.Parse("TITLE", itemPermission.Name);
                     permissionVariableCollection.Parse("DESCRIPTION", itemPermission.Description);
@@ -287,6 +300,23 @@ namespace BoxSocial.Internals
             }
 
             template.ParseRaw(variable, aclTemplate.ToString());
+        }
+
+        private static string PermissionTypeToString(PermissionTypes permissionTypes)
+        {
+            switch (permissionTypes)
+            {
+                case PermissionTypes.View:
+                    return "View";
+                case PermissionTypes.Interact:
+                    return "Interact";
+                case PermissionTypes.CreateAndEdit:
+                    return "Create and Edit";
+                case PermissionTypes.Delete:
+                    return "Delete";
+                default:
+                    return "Other";
+            }
         }
         
         public static List<AccessControlPermission> GetPermissions(Core core, IPermissibleItem item)

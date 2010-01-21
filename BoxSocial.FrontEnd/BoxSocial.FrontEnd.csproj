@@ -214,8 +214,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>$(SolutionDir)package.bat "$(SolutionDir)"</PostBuildEvent>
     <ProjectGuid>{24606021-8412-4668-8404-5BF5CB1D7E7C}</ProjectGuid>
     <RootNamespace>BoxSocial.FrontEnd</RootNamespace>
   </PropertyGroup>

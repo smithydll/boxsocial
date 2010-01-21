@@ -1,1 +1,16 @@
-﻿
+﻿/* colours */
+#page-body .corners-top, #page-body .corners-top > span {
+    background-image: url('/images/corners-top-eeeeee-18-9.png');
+}
+
+#page-body .corners-top > span + span, #page-body .corners-bottom > span + span {
+    background-color: #EEEEEE;
+}
+
+#page-body .corners-bottom, #page-body .corners-bottom > span {
+    background-image: url('/images/corners-bottom-eeeeee-18-9.png');
+}
+
+.blog-post {
+    background-color: #EEEEEE;
+}

@@ -223,6 +223,7 @@ namespace BoxSocial.Applications.Forum
             long parentId = core.Functions.FormLong("id", 0);
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
+            string rules = core.Http.Form["rules"];
             string type = core.Http.Form["type"];
             bool isCategory = (type == "CAT");
 
@@ -248,7 +249,7 @@ namespace BoxSocial.Applications.Forum
             {
                 try
                 {
-                    Forum forum = Forum.Create(core, parent, title, description, 0x1111, isCategory);
+                    Forum forum = Forum.Create(core, parent, title, description, rules, 0x1111, isCategory);
                     if (parentId == 0)
                     {
                         SetRedirectUri(BuildUri("forum"));

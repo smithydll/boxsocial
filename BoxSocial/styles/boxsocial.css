@@ -1,7 +1,8 @@
-﻿html, body {
+html, body {
 	margin: 0px;
 	padding: 0px;
 	font-size: 100%;
+	background: #000000;
 }
 
 body {
@@ -13,7 +14,8 @@ body {
 
 #page {
 	width: 900px;
-	margin: 10px auto;
+	margin: 0 auto;
+	padding: 10px 0;
 	text-align: left;
 }
 
@@ -115,6 +117,11 @@ div#rc-bottom {
 #foot {
 	clear: both;
 	border-top: solid 1px #D7D7D7;
+	background-color: #000000;
+}
+
+#foot * {
+	color: #FFFFFF;
 }
 
 #body {
@@ -1002,31 +1009,31 @@ dl#app-list {
 /* markup */
 .corners-top, .corners-top span, .corners-bottom, .corners-bottom span {
     display: block;
-    height: 9px;
+    height: 5px;
     background-repeat: no-repeat;
 }
 
 .corners-top, .corners-bottom {
-    padding-left: 9px;
+    padding-left: 5px;
 }
 
 .corners-top > span + span, .corners-bottom > span + span {
     background-image: none !important;
-    margin-right: 9px;
+    margin-right: 5px;
     float: none;
     width: auto;
 }
 
 .corners-top > span, .corners-bottom > span {
     float: right;
-    width: 9px;
-    background-position: -9px 0;
+    width: 5px;
+    background-position: -5px 0;
 }
 
 /* colours */
 /* head */
 .head.corners-top, .head.corners-top > span {
-    background-image: url('/images/corners-top-ffffff-18-9.png');
+    background-image: url('/images/corners-top-ffffff-18-5.png');
 }
 
 .head.corners-top > span + span, .head.corners-bottom > span + span {
@@ -1034,5 +1041,35 @@ dl#app-list {
 }
 
 .head.corners-bottom, .head.corners-bottom > span {
-    background-image: url('/images/corners-bottom-ffffff-18-9.png');
+    background-image: url('/images/corners-bottom-ffffff-18-5.png');
+}
+
+/* markup */
+#foot-nav {
+	margin: 0 auto;
+	padding: 0;
+	list-style: none;
+	width: 900px;
+	text-align: left;
+}
+
+#foot-nav > li {
+	width: 20%;
+	float: left;
+	list-style: none;
+	font-weight: bold;
+}
+
+#foot-nav > li > p {
+	color: #999999;
+}
+
+.foot-nav {
+	list-style: none;
+	font-weight: normal;
+	padding: 0;
+}
+
+.foot-nav li {
+	list-style: none;
 }

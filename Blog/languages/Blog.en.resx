@@ -129,13 +129,46 @@
   <data name="BLOG_POST" xml:space="preserve">
     <value>Blog Post</value>
   </data>
+  <data name="BLOG_PREFERENCES" xml:space="preserve">
+    <value>Blog Preferences</value>
+  </data>
+  <data name="BLOG_TITLE" xml:space="preserve">
+    <value>Blog Title</value>
+  </data>
+  <data name="EDIT_BLOG_ROLL" xml:space="preserve">
+    <value>Edit Blog Roll</value>
+  </data>
+  <data name="EDIT_TIMESTAMP" xml:space="preserve">
+    <value>Edit Timestamp</value>
+  </data>
+  <data name="FEED" xml:space="preserve">
+    <value>Feed</value>
+  </data>
+  <data name="MANAGE_BLOG" xml:space="preserve">
+    <value>Manage Blog</value>
+  </data>
   <data name="NEW_BLOG_POST" xml:space="preserve">
     <value>New Blog Post</value>
+  </data>
+  <data name="NEW_BLOG_ROLL" xml:space="preserve">
+    <value>New Blog Roll Entry</value>
   </data>
   <data name="NO_BLOG_POSTS" xml:space="preserve">
     <value>No blog posts.</value>
   </data>
+  <data name="POST_CATEGORY" xml:space="preserve">
+    <value>Post Category</value>
+  </data>
+  <data name="POST_LICENSE" xml:space="preserve">
+    <value>Post License</value>
+  </data>
+  <data name="POST_TEXT" xml:space="preserve">
+    <value>Post Text</value>
+  </data>
   <data name="RSS_FEED" xml:space="preserve">
     <value>RSS Feed</value>
+  </data>
+  <data name="WRITE_BLOG_POST" xml:space="preserve">
+    <value>Write Blog Post</value>
   </data>
 </root>

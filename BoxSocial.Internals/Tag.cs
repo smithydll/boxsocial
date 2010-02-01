@@ -39,6 +39,22 @@ namespace BoxSocial.Internals
         [DataField("tag_items")]
         private long tagItems;
 
+        public string TagText
+        {
+            get
+            {
+                return text;
+            }
+        }
+
+        public string TagTextNormalised
+        {
+            get
+            {
+                return textNormalised;
+            }
+        }
+
         public Tag(Core core, long tagId)
             : base(core)
         {
@@ -79,6 +95,188 @@ namespace BoxSocial.Internals
 
         private void Tag_ItemLoad()
         {
+        }
+
+        public static Tag Create(Core core, string tag)
+        {
+            string tagNormalised = string.Empty;
+            NormaliseTag(tag, ref tagNormalised);
+
+            Item newItem = Item.Create(core, typeof(Tag), new FieldValuePair("tag_text", tag),
+                new FieldValuePair("tag_text_normalised", tagNormalised),
+                new FieldValuePair("tag_items", 0));
+
+            return (Tag)newItem;
+        }
+
+        public static void NormaliseTag(string text, ref string normalisedText)
+        {
+            if (string.IsNullOrEmpty(normalisedText))
+            {
+                normalisedText = text;
+            }
+
+            // normalise slug if it has been fiddeled with
+            normalisedText = normalisedText.ToLower().Normalize(NormalizationForm.FormD);
+            string normalisedSlug = "";
+
+            for (int i = 0; i < normalisedText.Length; i++)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(normalisedText[i]) != UnicodeCategory.NonSpacingMark)
+                {
+                    normalisedSlug += normalisedText[i];
+                }
+            }
+            // we want to be a little less stringent with list items to allow for some punctuation of being of importance
+            normalisedText = Regex.Replace(normalisedSlug, @"([^\w\+\&\*\(\)\=\:\?\-\#\@\!\$]+)", "-");
+        }
+
+        public static List<Tag> GetTags(Core core, NumberedItem item)
+        {
+            List<Tag> tags = new List<Tag>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
+            query.AddCondition("item_id", item.Id);
+            query.AddCondition("item_type_id", item.ItemKey.TypeId);
+
+            DataTable tagsTable = core.db.Query(query);
+
+            foreach (DataRow dr in tagsTable.Rows)
+            {
+                tags.Add(new Tag(core, dr));
+            }
+
+            return tags;
+        }
+
+        public static List<Tag> GetTags(Core core, string[] tags)
+        {
+            List<Tag> tags = new List<Tag>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
+            query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
+
+            DataTable tagsTable = core.db.Query(query);
+
+            foreach (DataRow dr in tagsTable.Rows)
+            {
+                tags.Add(new Tag(core, dr));
+            }
+
+            return tags;
+        }
+
+        public static void LoadTagsIntoItem(Core core, NumberedItem item, string tagList)
+        {
+            List<Tag> itemTags = GetTags(core, item);
+            List<string> tagsListNormalised = new List<string>();
+            List<string> tagsNormalised = new List<string>();
+            List<string> tagsToAdd = new List<string>();
+            List<string> tagsToAddNormalised = new List<string>();
+            List<string> tagsToRemoveNormalised = new List<string>();
+            List<string> tagsToLoad = new List<string>();
+
+            int totalTags = 0;
+
+            foreach (Tag tag in itemTags)
+            {
+                tagsListNormalised.Add(tag.TagTextNormalised);
+            }
+
+            string[] tags = tagList.Split(new char[] {' '});
+
+            foreach (string tag in tags)
+            {
+                tag = tag.Trim(new char[] { ',', ';', ' ' });
+                string tagNormalised = string.Empty;
+                NormaliseTag(tag, ref tagNormalised);
+
+                if (!tagsListNormalised.Contains(tagNormalised))
+                {
+                    tagsListNormalised.Add(tagNormalised);
+                    tagsToAddNormalised.Add(tagNormalised);
+                    tagsToAdd.Add(tag);
+                }
+                
+                tagsNormalised.Add(tagNormalised);
+
+                totalTags++;
+                /* Limit to 10 tags per item */
+                if (totalTags == 10)
+                {
+                    break;
+                }
+            }
+
+            foreach (Tag tag in itemTags)
+            {
+                if (!tagsNormalised.Contains(tag.TagTextNormalised))
+                {
+                    tagsToRemoveNormalised.Add(tag.TagTextNormalised);
+                }
+            }
+
+            foreach (string tag in tagsToAddNormalised)
+            {
+                tagsToLoad.Add(tag);
+            }
+
+            foreach (string tag in tagsToRemoveNormalised)
+            {
+                tagsToLoad.Add(tag);
+            }
+
+            List<Tag> tagIds = GetTags(core, tagsToLoad.ToArray());
+            Dictionary<string, Tag> tagIdsNormalised = new Dictionary<string, Tag>();
+
+            foreach (Tag tag in tagIds)
+            {
+                tagIdsNormalised.Add(tag.TagTextNormalised, tag);
+            }
+
+            if (tagsToAddNormalised.Count > 0)
+            {
+                for (int i = 0; i < tagsToAddNormalised.Count; i++)
+                {
+                    if (!tagIdsNormalised.ContainsKey(tag))
+                    {
+                        Tag newTag = Tag.Create(core, tagsToAdd[i]);
+                        ItemTag.Create(core, item, newTag);
+                    }
+                    else
+                    {
+                        ItemTag.Create(core, item, tagIdsNormalised[tagsToAddNormalised[i]]);
+                    }
+                }
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(Tag));
+                uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Addition, 1));
+                uQuery.AddCondition("tag_text_normalised", ConditionEquality.In, tagsToAddNormalised.ToArray());
+
+                core.db.Query(uQuery);
+            }
+
+            if (tagsToRemoveNormalised.Count > 0)
+            {
+                List<long> tagToRemoveIds = new List<long>();
+                foreach (string tag in tagsToRemoveNormalised)
+                {
+                    tagToRemoveIds.Add(tagIdsNormalised[tag]);
+                }
+
+                DeleteQuery dQuery = new DeleteQuery(typeof(ItemTag));
+                dQuery.AddCondition("tag_id", ConditionEquality.In, tagToRemoveIds.ToArray());
+                dQuery.AddCondition("item_id", item.Id);
+                dQuery.AddCondition("item_type_id", item.ItemKey.TypeId);
+
+                core.db.Query(dQuery);
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(Tag));
+                uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("tag_id", ConditionEquality.In, tagToRemoveIds.ToArray());
+
+                core.db.Query(uQuery);
+            }
         }
 
         public override long Id

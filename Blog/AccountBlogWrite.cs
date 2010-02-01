@@ -87,13 +87,23 @@ namespace BoxSocial.Applications.Blog
         void AccountBlogWrite_Show(object sender, EventArgs e)
         {
             SetTemplate("account_post");
+
+            /* Title TextBox */
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 127;
+
+            /* Post TextBox */
+            TextBox postTextBox = new TextBox("post");
+            postTextBox.IsFormatted = true;
+            postTextBox.Lines = 15;
+
+            /* Tags TextBox */
+            TextBox tagsTextBox = new TextBox("tags");
+            tagsTextBox.MaxLength = 127;
 			
             long postId = core.Functions.RequestLong("id", 0);
-            ushort blogPermissions = (ushort)0x3333;
             byte licenseId = (byte)0;
             short categoryId = (short)1;
-            string postTitle = "";
-            string postText = "";
             DateTime postTime = DateTime.Now;
 
             SelectBox postYearsSelectBox = new SelectBox("post-year");
@@ -128,12 +138,28 @@ namespace BoxSocial.Applications.Blog
                     {
                         BlogEntry be = new BlogEntry(core, postId);
 
-                        postTitle = be.Title;
-                        postText = be.Body;
+                        titleTextBox.Value = be.Title;
+                        postTextBox.Value = be.Body;
+
                         licenseId = be.License;
                         categoryId = be.Category;
 
                         postTime = be.GetCreatedDate(tz);
+
+                        List<Tag> tags = Tag.GetTags(core, be);
+
+                        string tagList = string.Empty;
+
+                        foreach (Tag tag in tags)
+                        {
+                            if (tagList != string.Empty)
+                            {
+                                tagList += ", ";
+                            }
+                            tagList += tag.TagText;
+                        }
+
+                        tagsTextBox.Value = tagList;
 
                         if (be.OwnerId != core.LoggedInMemberId)
                         {
@@ -185,12 +211,15 @@ namespace BoxSocial.Applications.Blog
 
             categoriesSelectBox.SelectedKey = categoryId.ToString();
 
+
+            /* Parse the form fields */
+            template.Parse("S_TITLE", titleTextBox);
+            template.Parse("S_BLOG_TEXT", postTextBox);
+            template.Parse("S_TAGS", tagsTextBox);
+
             template.Parse("S_BLOG_LICENSE", licensesSelectBox);
             template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
-            //core.Display.ParsePermissionsBox(template, "S_BLOG_PERMS", blogPermissions, permissions);
 
-            template.Parse("S_TITLE", postTitle);
-            template.Parse("S_BLOG_TEXT", postText);
             template.Parse("S_ID", postId.ToString());
 
             Save(new EventHandler(AccountBlogWrite_Save));

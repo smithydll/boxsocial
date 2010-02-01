@@ -36,6 +36,21 @@ namespace BoxSocial.Applications.Blog
 {
 
     /// <summary>
+    /// 
+    /// </summary>
+    public enum PublishStatuses : byte
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        Publish = 0x00,
+        /// <summary>
+        /// 
+        /// </summary>
+        Draft = 0x01,
+    }
+
+    /// <summary>
     /// Represents a blog entry
     /// </summary>
     [DataTable("blog_postings", "BLOGPOST")]
@@ -62,8 +77,8 @@ namespace BoxSocial.Applications.Blog
         private long trackbacks;
         [DataField("post_comments")]
         private long comments;
-        [DataField("post_status", 15)]
-        private string status;
+        [DataField("post_status")]
+        private byte status;
         [DataField("post_license")]
         private byte license;
         [DataField("post_category")]
@@ -194,14 +209,15 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the status of the blog post.
         /// </summary>
-        /// <remarks>
-        /// Valid values are PUBLISH and DRAFT
-        /// </remarks>
-        public string Status
+        public PublishStatuses Status
         {
             get
             {
-                return status;
+                return (PublishStatuses)status;
+            }
+            set
+            {
+                SetProperty("status", (byte)value);
             }
         }
 
@@ -290,33 +306,6 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         void BlogEntry_ItemLoad()
         {
-        }
-
-        /// <summary>
-        /// Loads the database information into the BlogEntry class object.
-        /// </summary>
-        /// <param name="postEntryRow">Raw database information about the blog entry</param>
-        private void loadBlogEntryInfo(DataRow postEntryRow)
-        {
-            postId = (long)postEntryRow["post_id"];
-            ownerId = (int)postEntryRow["user_id"];
-            title = (string)postEntryRow["post_title"];
-            body = (string)postEntryRow["post_text"];
-            views = (uint)postEntryRow["post_views"];
-            trackbacks = (uint)postEntryRow["post_trackbacks"];
-            comments = (uint)postEntryRow["post_comments"];
-            status = (string)postEntryRow["post_status"];
-            license = (byte)postEntryRow["post_license"];
-            category = (short)postEntryRow["post_category"];
-            guid = (string)postEntryRow["post_guid"];
-            ip = (string)postEntryRow["post_ip"];
-            createdRaw = (long)postEntryRow["post_time_ut"];
-            modifiedRaw = (long)postEntryRow["post_modified_ut"];
-
-            if (owner == null)
-            {
-                owner = new User(core, OwnerId);
-            }
         }
 
         /// <summary>

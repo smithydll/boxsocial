@@ -324,6 +324,9 @@
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
+  <data name="DAY" xml:space="preserve">
+    <value>Day</value>
+  </data>
   <data name="DECEMBER" xml:space="preserve">
     <value>December</value>
   </data>
@@ -363,6 +366,9 @@
   <data name="FRIENDS" xml:space="preserve">
     <value>Friends</value>
   </data>
+  <data name="HOUR" xml:space="preserve">
+    <value>Hour</value>
+  </data>
   <data name="INHERIT" xml:space="preserve">
     <value>Inherit</value>
   </data>
@@ -378,6 +384,9 @@
   <data name="JUNE" xml:space="preserve">
     <value>June</value>
   </data>
+  <data name="LEARN_MORE" xml:space="preserve">
+    <value>Learn More...</value>
+  </data>
   <data name="MARCH" xml:space="preserve">
     <value>March</value>
   </data>
@@ -389,6 +398,12 @@
   </data>
   <data name="MEMBERS" xml:space="preserve">
     <value>Members</value>
+  </data>
+  <data name="MINUTE" xml:space="preserve">
+    <value>Minute</value>
+  </data>
+  <data name="MONTH" xml:space="preserve">
+    <value>Month</value>
   </data>
   <data name="MOVE_DOWN" xml:space="preserve">
     <value>Move Down</value>
@@ -417,8 +432,17 @@
   <data name="OWNER" xml:space="preserve">
     <value>Owner</value>
   </data>
+  <data name="PAGES" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="POSTED" xml:space="preserve">
+    <value>Posted</value>
+  </data>
   <data name="PREV" xml:space="preserve">
     <value>Prev</value>
+  </data>
+  <data name="PUBLISH" xml:space="preserve">
+    <value>Publish</value>
   </data>
   <data name="RATING" xml:space="preserve">
     <value>Rating</value>
@@ -429,8 +453,20 @@
   <data name="REGISTERED_USERS" xml:space="preserve">
     <value>Registered users</value>
   </data>
+  <data name="SAVE" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SAVE_DRAFT" xml:space="preserve">
+    <value>Save (Draft)</value>
+  </data>
+  <data name="SECOND" xml:space="preserve">
+    <value>Second</value>
+  </data>
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
+  </data>
+  <data name="SUBMIT" xml:space="preserve">
+    <value>Submit</value>
   </data>
   <data name="TAGS" xml:space="preserve">
     <value>Tags</value>
@@ -438,16 +474,28 @@
   <data name="THREE_STAR" xml:space="preserve">
     <value>Three stars</value>
   </data>
+  <data name="TIME" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="TITLE" xml:space="preserve">
+    <value>Title</value>
+  </data>
   <data name="TWO_STAR" xml:space="preserve">
     <value>Two stars</value>
   </data>
   <data name="UNRATED" xml:space="preserve">
     <value>Unrated</value>
   </data>
+  <data name="URI" xml:space="preserve">
+    <value>Uri</value>
+  </data>
   <data name="USERNAME" xml:space="preserve">
     <value>User name</value>
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="YEAR" xml:space="preserve">
+    <value>Year</value>
   </data>
 </root>

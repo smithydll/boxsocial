@@ -33,8 +33,8 @@ namespace BoxSocial.Internals
         private long itemTagId;
         [DataField("item_id")]
         private long itemId;
-        [DataField("item_type", 63)]
-        private string itemType;
+        [DataField("item_type_id")]
+        private long itemTypeId;
         [DataField("tag_id")]
         private long tagId;
 
@@ -56,11 +56,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string ItemType
+        public long ItemTypeId
         {
             get
             {
-                return itemType;
+                return itemTypeId;
             }
         }
 
@@ -93,6 +93,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemTag(Core core, DataRow itemTagRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemTag_ItemLoad);
+
+            loadItemInfo(itemTagRow);
+        }
+
         private void ItemTag_ItemLoad()
         {
         }
@@ -107,6 +115,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Ascending, "tag_text_normalised");
 
             return query;
+        }
+
+        public static ItemTag Create(Core core, NumberedItem item, Tag tag)
+        {
+            Item newItem = Item.Create(core, typeof(ItemTag), new FieldValuePair("item_id", item.Id),
+                new FieldValuePair("item_type_id", item.ItemKey.TypeId),
+                new FieldValuePair("tag_id", tag.Id));
+
+            return (ItemTag)newItem;
         }
 
         public override long Id

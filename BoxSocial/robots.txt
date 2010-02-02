@@ -1,0 +1,14 @@
+User-agent: Googlebot-Image
+Disallow: /
+
+User-agent: psbot
+Disallow: /
+
+User-agent: Yahoo-MMCrawler
+Disallow: /
+
+User-agent: *
+Disallow: /terms-of-service
+Disallow: /privacy
+Disallow: /site-map
+Disallow: /opensource

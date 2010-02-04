@@ -21,7 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial.IO;
 
@@ -151,7 +153,7 @@ namespace BoxSocial.Internals
 
         public static List<Tag> GetTags(Core core, string[] tags)
         {
-            List<Tag> tags = new List<Tag>();
+            List<Tag> tagList = new List<Tag>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
             query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
@@ -160,14 +162,32 @@ namespace BoxSocial.Internals
 
             foreach (DataRow dr in tagsTable.Rows)
             {
-                tags.Add(new Tag(core, dr));
+                tagList.Add(new Tag(core, dr));
             }
 
-            return tags;
+            return tagList;
         }
 
         public static void LoadTagsIntoItem(Core core, NumberedItem item, string tagList)
         {
+            LoadTagsIntoItem(core, item, tagList, false);
+        }
+
+        public static void LoadTagsIntoItem(Core core, NumberedItem item, string tagList, bool isNewItem)
+        {
+            if (isNewItem)
+            {
+                if (string.IsNullOrEmpty(tagList))
+                {
+                    return;
+                }
+
+                if (tagList.Trim(new char[] { ' ', '\t', ';', ',', ':', '.', '-', '(', ')', '<', '>', '[', ']', '{', '}', '|', '\\', '/' }).Length < 2)
+                {
+                    return;
+                }
+            }
+
             List<Tag> itemTags = GetTags(core, item);
             List<string> tagsListNormalised = new List<string>();
             List<string> tagsNormalised = new List<string>();
@@ -185,9 +205,9 @@ namespace BoxSocial.Internals
 
             string[] tags = tagList.Split(new char[] {' '});
 
-            foreach (string tag in tags)
+            for (int i = 0; i < tags.Length; i++)
             {
-                tag = tag.Trim(new char[] { ',', ';', ' ' });
+                string tag = tags[i].Trim(new char[] { ',', ';', ' ' });
                 string tagNormalised = string.Empty;
                 NormaliseTag(tag, ref tagNormalised);
 
@@ -238,7 +258,7 @@ namespace BoxSocial.Internals
             {
                 for (int i = 0; i < tagsToAddNormalised.Count; i++)
                 {
-                    if (!tagIdsNormalised.ContainsKey(tag))
+                    if (!tagIdsNormalised.ContainsKey(tagsToAddNormalised[i]))
                     {
                         Tag newTag = Tag.Create(core, tagsToAdd[i]);
                         ItemTag.Create(core, item, newTag);
@@ -261,7 +281,7 @@ namespace BoxSocial.Internals
                 List<long> tagToRemoveIds = new List<long>();
                 foreach (string tag in tagsToRemoveNormalised)
                 {
-                    tagToRemoveIds.Add(tagIdsNormalised[tag]);
+                    tagToRemoveIds.Add(tagIdsNormalised[tag].Id);
                 }
 
                 DeleteQuery dQuery = new DeleteQuery(typeof(ItemTag));

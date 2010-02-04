@@ -146,6 +146,10 @@ namespace BoxSocial.Applications.Blog
             {
                 return title;
             }
+            set
+            {
+                SetProperty("title", value);
+            }
         }
 
         /// <summary>
@@ -159,6 +163,10 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return body;
+            }
+            set
+            {
+                SetProperty("body", value);
             }
         }
 
@@ -204,6 +212,10 @@ namespace BoxSocial.Applications.Blog
             {
                 return category;
             }
+            set
+            {
+                SetProperty("category", value);
+            }
         }
 
         /// <summary>
@@ -230,6 +242,10 @@ namespace BoxSocial.Applications.Blog
             {
                 return license;
             }
+            set
+            {
+                SetProperty("license", value);
+            }
         }
 
         /// <summary>
@@ -244,6 +260,30 @@ namespace BoxSocial.Applications.Blog
             set
             {
                 SetProperty("guid", value);
+            }
+        }
+
+        public long PublishedDateRaw
+        {
+            get
+            {
+                return createdRaw;
+            }
+            set
+            {
+                SetProperty("createdRaw", value);
+            }
+        }
+
+        public long ModifiedDateRaw
+        {
+            get
+            {
+                return modifiedRaw;
+            }
+            set
+            {
+                SetProperty("modifiedRaw", value);
             }
         }
 

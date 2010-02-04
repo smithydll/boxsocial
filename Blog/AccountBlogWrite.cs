@@ -237,11 +237,13 @@ namespace BoxSocial.Applications.Blog
         void AccountBlogWrite_Save(object sender, EventArgs e)
         {
             string title = core.Http.Form["title"];
+            string tags = core.Http.Form["tags"];
             string postBody = core.Http.Form["post"];
             byte license = 0;
             short category = 1;
             long postId = 0;
             string status = "PUBLISH";
+            PublishStatuses publishStatus = PublishStatuses.Publish;
             string postGuid = "";
 
             /*
@@ -263,11 +265,13 @@ namespace BoxSocial.Applications.Blog
             if (core.Http.Form["publish"] != null)
             {
                 status = "PUBLISH";
+                publishStatus = PublishStatuses.Publish;
             }
 
             if (core.Http.Form["save"] != null)
             {
                 status = "DRAFT";
+                publishStatus = PublishStatuses.Draft;
             }
 
             postId = core.Functions.FormLong("id", 0);
@@ -308,7 +312,23 @@ namespace BoxSocial.Applications.Blog
             // update, must happen before save new because it populates postId
             if (postId > 0)
             {
-                UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
+                BlogEntry myBlogEntry = new BlogEntry(core, postId);
+                myBlogEntry.Title = title;
+                myBlogEntry.Body = postBody;
+                myBlogEntry.License = license;
+                myBlogEntry.Status = publishStatus;
+                myBlogEntry.Category = category;
+                myBlogEntry.ModifiedDateRaw = UnixTime.UnixTimeStamp();
+                if (postEditTimestamp)
+                {
+                    myBlogEntry.PublishedDateRaw = tz.GetUnixTimeStamp(postTime);
+                }
+
+                myBlogEntry.Update();
+
+                Tag.LoadTagsIntoItem(core, myBlogEntry, tags);
+
+                /*UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
                 uQuery.AddCondition("post_title", title);
                 uQuery.AddCondition("post_modified_ut", UnixTime.UnixTimeStamp());
                 uQuery.AddCondition("post_ip", session.IPAddress.ToString());
@@ -322,7 +342,7 @@ namespace BoxSocial.Applications.Blog
                 }
                 uQuery.AddCondition("post_id", postId);
 
-                db.Query(uQuery);
+                db.Query(uQuery);*/
 
                 /* do not count edits as new postings*/
             }
@@ -351,6 +371,8 @@ namespace BoxSocial.Applications.Blog
 
                 db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
                     LoggedInMember.UserId));
+
+                Tag.LoadTagsIntoItem(core, myBlogEntry, tags, true);
 
                 if (status == "PUBLISH")
                 {

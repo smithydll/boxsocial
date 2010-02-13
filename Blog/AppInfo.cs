@@ -350,6 +350,15 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [Show(@"^/blog/tag/([a-z0-9\-]+)(|/)$", AppPrimitives.Member)]
+        private void showBlogTag(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                Blog.Show(sender, new ShowBlogEventArgs((PPage)sender, BlogDisplayType.Tag, core.PagePathParts[1].Value));
+            }
+        }
+
         /// <summary>
         /// Provides a list of primitives the application supports.
         /// </summary>

@@ -675,5 +675,10 @@ namespace BoxSocial.Internals
             }
         }
 
+
+        public static int LimitPageToStart(int page, int perPage)
+        {
+            return (page - 1) * perPage;
+        }
     }
 }

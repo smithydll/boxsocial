@@ -45,6 +45,7 @@ namespace BoxSocial.Applications.Forum
     [Permission("DELETE_OWN_POSTS", "Can delete own posts", PermissionTypes.Delete)]
     [Permission("DELETE_TOPICS", "Can delete topics", PermissionTypes.Delete)]
     [Permission("LOCK_TOPICS", "Can lock topics", PermissionTypes.CreateAndEdit)]
+    [Permission("MOVE_TOPICS", "Can move topics to/from forum", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_STICKY", "Can create sticky topics", PermissionTypes.CreateAndEdit)]
     [Permission("REPORT_POSTS", "Can report posts", PermissionTypes.Interact)]
@@ -860,6 +861,26 @@ namespace BoxSocial.Applications.Forum
             return topics;
         }
 
+        public List<ForumTopic> GetTopicsFlat(params long[] topicIds)
+        {
+            List<ForumTopic> topics = new List<ForumTopic>();
+
+            SelectQuery query = new SelectQuery("forum_topics");
+            query.AddCondition("topic_id", ConditionEquality.In, topicIds);
+            query.AddCondition("topic_item_id", ownerKey.Id);
+            query.AddCondition("topic_item_type_id", ownerKey.TypeId);
+            query.AddSort(SortOrder.Descending, "topic_last_post_id");
+
+            DataTable topicsTable = db.Query(query);
+
+            foreach (DataRow dr in topicsTable.Rows)
+            {
+                topics.Add(new ForumTopic(core, dr));
+            }
+
+            return topics;
+        }
+
         public static Forum Create(Core core, Forum parent, string title, string description, string rules, ushort permissions, bool isCategory)
         {
             string parents;
@@ -1104,6 +1125,89 @@ namespace BoxSocial.Applications.Forum
 
                 db.Query(uQuery);
             }
+        }
+
+        public bool MoveTopics(long toForumId, params long[] topicIds)
+        {
+            if (!Access.Can("MOVE_TOPICS"))
+            {
+                return false;
+            }
+
+            Forum toForum = new Forum(core, toForumId);
+            if (!toForum.Access.Can("MOVE_TOPICS"))
+            {
+                return false;
+            }
+
+            if (toForum.ownerKey.Id != ownerKey.Id || toForum.ownerKey.TypeId != ownerKey.TypeId)
+            {
+                return false;
+            }
+
+            /* Can move the topics */
+
+            /* Validate the topics belong to the from forum */
+            List<ForumTopic> topics = GetTopicsFlat(topicIds);
+
+            if (topics.Count < topicIds.Length)
+            {
+                return false;
+            }
+
+            long posts = 0;
+            bool newerPosts = false;
+            long lastPost = toForum.LastPostId;
+            long lastPostTime = toForum.lastPostTimeRaw;
+
+            bool newestPost = false;
+
+            for (int i = 0; i < topics.Count; i++)
+            {
+                posts++;
+                posts += topics[i].Posts;
+                if (topics[i].TimeLastPostRaw > toForum.lastPostTimeRaw)
+                {
+                    lastPost = topics[i].LastPostId;
+                    lastPostTime = topics[i].TimeLastPostRaw;
+                }
+                if (topics[i].LastPostId == toForum.LastPostId)
+                {
+                    newestPost = true;
+                }
+            }
+
+            db.BeginTransaction();
+
+            UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+            uQuery.AddField("forum_id", toForumId);
+            uQuery.AddCondition("topic_id", ConditionEquality.In, topicIds);
+
+            db.Query(uQuery);
+
+            uQuery = new UpdateQuery(typeof(Forum));
+            uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Subtraction, topicIds.Length));
+            uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Subtraction, posts));
+            if (newestPost)
+            {
+            }
+            uQuery.AddCondition("forum_id", forumId);
+
+            db.Query(uQuery);
+
+            uQuery = new UpdateQuery(typeof(Forum));
+            uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Addition, topicIds.Length));
+            uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Addition, posts));
+            if (newerPosts)
+            {
+                uQuery.AddField("forum_last_post_id", lastPost);
+                uQuery.AddField("forum_last_post_time_ut", lastPostTime);
+            }
+            uQuery.AddCondition("forum_id", forumId);
+
+            db.Query(uQuery);
+
+            return true;
         }
 
         public override long Id

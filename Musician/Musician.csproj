@@ -52,6 +52,8 @@
     <Compile Include="AccountSongsManage.cs" />
     <Compile Include="AccountTourManage.cs" />
     <Compile Include="AppInfo.cs" />
+    <Compile Include="Default.cs" />
+    <Compile Include="Directory.cs" />
     <Compile Include="Fan.cs" />
     <Compile Include="Gig.cs" />
     <Compile Include="Instrument.cs" />
@@ -118,6 +120,8 @@
     <Content Include="templates\account_song_edit.html" />
     <Content Include="templates\account_tour_edit.html" />
     <Content Include="templates\account_tour_manage.html" />
+    <Content Include="templates\music_directory.html" />
+    <Content Include="templates\music_default.html" />
     <Content Include="templates\viewfans.html" />
     <Content Include="templates\viewgig.html" />
     <Content Include="templates\viewmusician.html" />

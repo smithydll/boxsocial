@@ -75,7 +75,7 @@ namespace BoxSocial.Applications.Blog
             }
 
             ushort readAccessLevel = 0x0000;
-            List<BlogEntry> blogEntries = myBlog.GetEntries(null, -1, -1, -1, p, 25, ref readAccessLevel);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, p, 25, ref readAccessLevel);
 
             int i = 0;
             foreach (BlogEntry be in blogEntries)

@@ -122,7 +122,7 @@ namespace BoxSocial.Applications.Forum
 
         public override ApplicationInstallationInfo Install()
         {
-            long forumTypeId = ItemKey.GetTypeId(typeof(Forum));
+            /*long forumTypeId = ItemKey.GetTypeId(typeof(Forum));
 
             ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
 
@@ -139,17 +139,15 @@ namespace BoxSocial.Applications.Forum
 
             aii.AddModule("forum");
 
-            /* Forum Permissions */
-            /*aii.AddItemAccessPermission(new ApplicationItemAccessPermissions("P_FORUM_VIEW", forumTypeId),
-                new ApplicationItemAccessPermissions("P_FORUM_READ", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_VIEW", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_READ", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_CREATE", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_REPLY", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_DELETE", forumTypeId),
-                new ApplicationItemAccessPermissions("P_TOPIC_MOVE", forumTypeId));*/
+            return aii;*/
+
+            ApplicationInstallationInfo aii = base.GetInstallInfo();
+
+            /* Hack to add Hooks until implement a better way with attributes */
+            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group);
 
             return aii;
+
         }
 
         public override Dictionary<string, string> PageSlugs
@@ -177,7 +175,7 @@ namespace BoxSocial.Applications.Forum
             return AppPrimitives.Group;
         }
 
-        [Show(@"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForums(Core core, object sender)
         {
             if (sender is GPage)
@@ -186,7 +184,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/([0-9]+)/topic\-([0-9]+)", AppPrimitives.Group | AppPrimitives.Network)]
         private void showTopic(Core core, object sender)
         {
             if (sender is GPage)
@@ -195,7 +193,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/topic\-([0-9]+)", AppPrimitives.Group | AppPrimitives.Network)]
         private void showRootTopic(Core core, object sender)
         {
             if (sender is GPage)
@@ -204,7 +202,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/([0-9]+)", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForum(Core core, object sender)
         {
             if (sender is GPage)
@@ -213,7 +211,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/post", AppPrimitives.Group | AppPrimitives.Network)]
         private void showPoster(Core core, object sender)
         {
             if (sender is PPage)
@@ -222,7 +220,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/ucp", AppPrimitives.Group | AppPrimitives.Network)]
         private void showUCP(Core core, object sender)
         {
             if (sender is PPage)
@@ -231,7 +229,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/mcp(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/mcp", AppPrimitives.Group | AppPrimitives.Network)]
         private void showModeratorControlPanel(Core core, object sender)
         {
             if (sender is PPage)
@@ -240,7 +238,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        [Show(@"^/forum/memberlist(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"forum/memberlist", AppPrimitives.Group | AppPrimitives.Network)]
         private void showMemberlist(Core core, object sender)
         {
             if (sender is GPage)

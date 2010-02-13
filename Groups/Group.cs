@@ -59,12 +59,12 @@ namespace BoxSocial.Groups
         private UserGroupInfo groupInfo;
         private Access access;
 
-        private Dictionary<User, bool> groupMemberCache = new Dictionary<User,bool>();
+        private Dictionary<User, bool> groupMemberCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupMemberBannedCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupMemberAbsoluteCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupOperatorCache = new Dictionary<User, bool>();
-		
+
         public long GroupId
         {
             get
@@ -246,163 +246,67 @@ namespace BoxSocial.Groups
             return groupInfo.DateCreated(tz);
         }
 
-            public UserGroup(Core core, long groupId)
-                : this(core, groupId, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
+        public UserGroup(Core core, long groupId)
+            : this(core, groupId, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
+        {
+        }
+
+        public UserGroup(Core core, long groupId, UserGroupLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == UserGroupLoadOptions.Key)
             {
-            }
-
-            public UserGroup(Core core, long groupId, UserGroupLoadOptions loadOptions)
-                : base(core)
-            {
-                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
-
-                bool containsInfoData = false;
-                bool containsIconData = false;
-
-                if (loadOptions == UserGroupLoadOptions.Key)
+                try
                 {
-                    try
-                    {
-                        LoadItem(groupId);
-                    }
-                    catch (InvalidItemException)
-                    {
-                        throw new InvalidGroupException();
-                    }
+                    LoadItem(groupId);
                 }
-                else
+                catch (InvalidItemException)
                 {
-                    SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
-                    query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
-                    query.AddCondition("`group_keys`.`group_id`", groupId);
-
-                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
-                    {
-                        containsInfoData = true;
-
-                        query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
-                        query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
-
-                        if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
-                        {
-                            containsIconData = true;
-
-                            query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
-                            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
-                            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-                        }
-                    }
-
-                    DataTable groupTable = db.Query(query);
-
-                    if (groupTable.Rows.Count > 0)
-                    {
-                        loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
-
-                        if (containsInfoData)
-                        {
-                            groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
-                        }
-
-                        if (containsIconData)
-                        {
-                            loadUserGroupIcon(groupTable.Rows[0]);
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidGroupException();
-                    }
+                    throw new InvalidGroupException();
                 }
             }
-
-            public UserGroup(Core core, string groupName)
-                : this (core, groupName, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
+            else
             {
-            }
+                SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
+                query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                query.AddCondition("`group_keys`.`group_id`", groupId);
 
-            public UserGroup(Core core, string groupName, UserGroupLoadOptions loadOptions)
-                : base(core)
-            {
-                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
-
-                bool containsInfoData = false;
-                bool containsIconData = false;
-
-                if (loadOptions == UserGroupLoadOptions.Key)
+                if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
                 {
-                    try
-                    {
-                        LoadItem("group_name", groupName);
-                    }
-                    catch (InvalidItemException)
-                    {
-                        throw new InvalidGroupException();
-                    }
-                }
-                else
-                {
-                    SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
-                    query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
-                    query.AddCondition("`group_keys`.`group_name`", groupName);
+                    containsInfoData = true;
 
-                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
-                    {
-                        containsInfoData = true;
-
-                        query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
-                        query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
-
-                        if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
-                        {
-                            containsIconData = true;
-
-                            query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
-                            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
-                            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-                        }
-                    }
-
-                    DataTable groupTable = db.Query(query);
-
-                    if (groupTable.Rows.Count > 0)
-                    {
-                        loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
-
-                        if (containsInfoData)
-                        {
-                            groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
-                        }
-
-                        if (containsIconData)
-                        {
-                            loadUserGroupIcon(groupTable.Rows[0]);
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidGroupException();
-                    }
-                }
-            }
-
-            public UserGroup(Core core, DataRow groupRow, UserGroupLoadOptions loadOptions)
-                : base(core)
-            {
-                ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
-
-                if (groupRow != null)
-                {
-                    loadItemInfo(typeof(UserGroup), groupRow);
-
-                    if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
-                    {
-                        groupInfo = new UserGroupInfo(core, groupRow);
-                    }
+                    query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
+                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
 
                     if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
                     {
-                        loadUserGroupIcon(groupRow);
+                        containsIconData = true;
+
+                        query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    }
+                }
+
+                DataTable groupTable = db.Query(query);
+
+                if (groupTable.Rows.Count > 0)
+                {
+                    loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
+
+                    if (containsInfoData)
+                    {
+                        groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
+                    }
+
+                    if (containsIconData)
+                    {
+                        loadUserGroupIcon(groupTable.Rows[0]);
                     }
                 }
                 else
@@ -410,6 +314,102 @@ namespace BoxSocial.Groups
                     throw new InvalidGroupException();
                 }
             }
+        }
+
+        public UserGroup(Core core, string groupName)
+            : this(core, groupName, UserGroupLoadOptions.Info | UserGroupLoadOptions.Icon)
+        {
+        }
+
+        public UserGroup(Core core, string groupName, UserGroupLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            bool containsInfoData = false;
+            bool containsIconData = false;
+
+            if (loadOptions == UserGroupLoadOptions.Key)
+            {
+                try
+                {
+                    LoadItem("group_name", groupName);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidGroupException();
+                }
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
+                query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                query.AddCondition("`group_keys`.`group_name`", groupName);
+
+                if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                {
+                    containsInfoData = true;
+
+                    query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
+                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+
+                    if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                    {
+                        containsIconData = true;
+
+                        query.AddJoin(JoinTypes.Left, new DataField("group_info", "group_icon"), new DataField("gallery_items", "gallery_item_id"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                        query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    }
+                }
+
+                DataTable groupTable = db.Query(query);
+
+                if (groupTable.Rows.Count > 0)
+                {
+                    loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
+
+                    if (containsInfoData)
+                    {
+                        groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
+                    }
+
+                    if (containsIconData)
+                    {
+                        loadUserGroupIcon(groupTable.Rows[0]);
+                    }
+                }
+                else
+                {
+                    throw new InvalidGroupException();
+                }
+            }
+        }
+
+        public UserGroup(Core core, DataRow groupRow, UserGroupLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            if (groupRow != null)
+            {
+                loadItemInfo(typeof(UserGroup), groupRow);
+
+                if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                {
+                    groupInfo = new UserGroupInfo(core, groupRow);
+                }
+
+                if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                {
+                    loadUserGroupIcon(groupRow);
+                }
+            }
+            else
+            {
+                throw new InvalidGroupException();
+            }
+        }
 
         void UserGroup_ItemLoad()
         {
@@ -418,18 +418,18 @@ namespace BoxSocial.Groups
         private void loadUserGroupIcon(DataRow groupRow)
         {
         }
-		
-		public List<GroupMember> GetMembers(int page, int perPage)
-		{
-			return GetMembers(page, perPage, null);
-		}
+
+        public List<GroupMember> GetMembers(int page, int perPage)
+        {
+            return GetMembers(page, perPage, null);
+        }
 
         public List<GroupMember> GetMembers(int page, int perPage, string filter)
         {
             List<GroupMember> members = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_members");
-			query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
             query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
             query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_members", "user_id"), new DataField("group_operators", "user_id"));
@@ -1393,7 +1393,7 @@ namespace BoxSocial.Groups
                 query.AddCondition("group_members.group_id", page.Group.Id);
                 query.AddCondition("group_member_approved", false);
                 query.AddSort(SortOrder.Ascending, "group_member_date_ut");
-                
+
                 DataTable approvalTable = core.db.Query(query);
 
                 if (approvalTable.Rows.Count > 0)
@@ -1528,7 +1528,7 @@ namespace BoxSocial.Groups
 
             return ppgs;
         }
-        
+
         public bool GetDefaultAccess(string permission)
         {
             switch (permission)
@@ -1562,7 +1562,7 @@ namespace BoxSocial.Groups
                     }
                     break;
             }
-            
+
             return false;
         }
 

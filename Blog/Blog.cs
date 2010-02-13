@@ -225,7 +225,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A blog entry as a list</returns>
         public List<BlogEntry> GetEntry(UPage page, int post, ref ushort readAccessLevel)
         {
-            return GetEntries(null, post, -1, -1, 1, 1, ref readAccessLevel);
+            return GetEntries(null, null, post, -1, -1, 1, 1, ref readAccessLevel);
         }
 
         /// <summary>
@@ -237,9 +237,9 @@ namespace BoxSocial.Applications.Blog
         /// <param name="perPage">Number to show on each page</param>
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(UPage page, string category, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, string category, string tag, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(category, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(category, tag, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A list of blog entries</returns>
         public List<BlogEntry> GetEntry(UPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>A list of blog entries</returns>
         public List<BlogEntry> GetEntry(UPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(null, -1, year, month, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, null, -1, year, month, currentPage, perPage, ref readAccessLevel);
         }
 
         /// <summary>
@@ -283,9 +283,9 @@ namespace BoxSocial.Applications.Blog
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        internal List<BlogEntry> GetDrafts(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        internal List<BlogEntry> GetDrafts(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(category, post, year, month, currentPage, perPage, ref readAccessLevel, true);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, ref readAccessLevel, true);
         }
 
         /// <summary>
@@ -300,9 +300,9 @@ namespace BoxSocial.Applications.Blog
         /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        internal List<BlogEntry> GetEntries(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
         {
-            return GetEntries(category, post, year, month, currentPage, perPage, ref readAccessLevel, false);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, ref readAccessLevel, false);
         }
 
         /// <summary>
@@ -318,17 +318,19 @@ namespace BoxSocial.Applications.Blog
         /// <param name="drafts">Flag to select draft posts or published posts (true for drafts)</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private List<BlogEntry> GetEntries(string category, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel, bool drafts)
+        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel, bool drafts)
         {
             List<BlogEntry> entries = new List<BlogEntry>();
 
             long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
             readAccessLevel = Owner.GetAccessLevel(core.session.LoggedInMember);
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(BlogEntry));
+            SelectQuery query = null;
 
-            if (string.IsNullOrEmpty(category))
+            if (string.IsNullOrEmpty(category) && string.IsNullOrEmpty(tag))
             {
+                query = Item.GetSelectQueryStub(typeof(BlogEntry));
+
                 if (post > 0)
                 {
                     query.AddCondition("post_id", post);
@@ -344,10 +346,20 @@ namespace BoxSocial.Applications.Blog
                     query.AddCondition("MONTH(FROM_UNIXTIME(post_time_ut))", month);
                 }
             }
-            else
+            else if (string.IsNullOrEmpty(tag))
             {
+                query = Item.GetSelectQueryStub(typeof(BlogEntry));
+
                 query.AddCondition("category_path", category);
                 query.AddJoin(JoinTypes.Inner, "global_categories", "post_category", "category_id");
+            }
+            else
+            {
+                query = Item.GetSelectQueryStub(typeof(ItemTag));
+
+                query.AddJoin(JoinTypes.Inner, new DataField(typeof(ItemTag), "tag_id"), new DataField(typeof(Tag), "tag_id"));
+                query.AddJoin(JoinTypes.Inner, new DataField(typeof(BlogEntry), "post_id"), new DataField(typeof(ItemTag), "item_id"));
+                query.AddCondition("item_type_id", ItemType.GetTypeId(typeof(BlogEntry)));
             }
 
             int bpage = currentPage;
@@ -401,7 +413,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="page">Page calling</param>
         public static void Show(Core core, UPage page)
         {
-            Show(core, page, null, -1, -1, -1);
+            Show(core, page, null, null, -1, -1, -1);
         }
 
         /// <summary>
@@ -412,7 +424,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="category">Category to show</param>
         public static void Show(Core core, UPage page, string category)
         {
-            Show(core, page, category, -1, -1, -1);
+            Show(core, page, category, null, -1, -1, -1);
         }
 
         /// <summary>
@@ -423,7 +435,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="year">Year to show</param>
         public static void Show(Core core, UPage page, int year)
         {
-            Show(core, page, null, -1, year, -1);
+            Show(core, page, null, null, -1, year, -1);
         }
 
         /// <summary>
@@ -435,7 +447,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="month">Month to show</param>
         public static void Show(Core core, UPage page, int year, int month)
         {
-            Show(core, page, null, -1, year, month);
+            Show(core, page, null, null, -1, year, month);
         }
 
         /// <summary>
@@ -448,7 +460,37 @@ namespace BoxSocial.Applications.Blog
         /// <param name="month">Month to show</param>
         public static void Show(Core core, UPage page, long post, int year, int month)
         {
-            Show(core, page, null, post, year, month);
+            Show(core, page, null, null, post, year, month);
+        }
+
+        /// <summary>
+        /// Show the blog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void Show(object sender, ShowBlogEventArgs e)
+        {
+            switch (e.Display)
+            {
+                case BlogDisplayType.All:
+                    Show(e.Core, (UPage)e.Page);
+                    break;
+                case BlogDisplayType.Year:
+                    Show(e.Core, (UPage)e.Page, e.Year);
+                    break;
+                case BlogDisplayType.Month:
+                    Show(e.Core, (UPage)e.Page, e.Year, e.Month);
+                    break;
+                case BlogDisplayType.Category:
+                    Show(e.Core, (UPage)e.Page, e.Category, null, -1, -1, -1);
+                    break;
+                case BlogDisplayType.Tag:
+                    Show(e.Core, (UPage)e.Page, null, e.Tag, -1, -1, -1);
+                    break;
+                case BlogDisplayType.Post:
+                    Show(e.Core, (UPage)e.Page, e.ItemId, e.Year, e.Month);
+                    break;
+            }
         }
 
         /// <summary>
@@ -461,7 +503,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="year">Year to show</param>
         /// <param name="month">Month to show</param>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private static void Show(Core core, UPage page, string category, long post, int year, int month)
+        private static void Show(Core core, UPage page, string category, string tag, long post, int year, int month)
         {
             page.template.SetTemplate("Blog", "viewblog");
 
@@ -522,7 +564,7 @@ namespace BoxSocial.Applications.Blog
                 }
             }
 
-            List<BlogEntry> blogEntries = myBlog.GetEntries(category, post, year, month, p, 10, ref readAccessLevel);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, p, 10, ref readAccessLevel);
 
             page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
 
@@ -992,6 +1034,106 @@ namespace BoxSocial.Applications.Blog
     /// </summary>
     public class CannotCreateBlogException : Exception
     {
+    }
+
+    public enum BlogDisplayType
+    {
+        All,
+        Category,
+        Tag,
+        Year,
+        Month,
+        Post,
+    }
+
+    public class ShowBlogEventArgs : ShowPPageEventArgs
+    {
+        private BlogDisplayType display;
+        private short year;
+        private short month;
+        private string category;
+        private string tag;
+
+        public BlogDisplayType Display
+        {
+            get
+            {
+                return display;
+            }
+        }
+
+        public short Year
+        {
+            get
+            {
+                return year;
+            }
+        }
+
+        public short Month
+        {
+            get
+            {
+                return month;
+            }
+        }
+
+        public string Category
+        {
+            get
+            {
+                return category;
+            }
+        }
+
+        public string Tag
+        {
+            get
+            {
+                return tag;
+            }
+        }
+
+        public ShowBlogEventArgs(PPage page)
+            : base (page)
+        {
+            this.display = BlogDisplayType.All;
+        }
+
+        public ShowBlogEventArgs(PPage page, BlogDisplayType display, string key)
+            : base(page)
+        {
+            if (display == BlogDisplayType.Category)
+            {
+                this.category = key;
+            }
+            else if (display == BlogDisplayType.Tag)
+            {
+                this.tag = key;
+            }
+            this.display = display;
+        }
+
+        public ShowBlogEventArgs(PPage page, short year)
+            : base(page)
+        {
+            this.year = year;
+            this.display = BlogDisplayType.Year;
+        }
+
+        public ShowBlogEventArgs(PPage page, short year, short month)
+            : base(page)
+        {
+            this.year = year;
+            this.month = month;
+            this.display = BlogDisplayType.Month;
+        }
+
+        public ShowBlogEventArgs(PPage page, long itemId)
+            : base(page, itemId)
+        {
+            this.display = BlogDisplayType.Post;
+        }
     }
 }
 

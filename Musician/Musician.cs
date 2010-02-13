@@ -30,6 +30,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
+    public enum MusicianLoadOptions : byte
+    {
+        Key = 0x01,
+        Info = Key | 0x02,
+        Icon = Key | 0x08,
+        Common = Key | Info,
+        All = Key | Info | Icon,
+    }
+
     public enum MusicianType
     {
         Musician = 1,
@@ -52,8 +61,10 @@ namespace BoxSocial.Musician
         private long musicianId;
         [DataField("musician_name", 63)]
         private string name;
-        [DataField("musician_slug", 63)]
+        [DataField("musician_slug", DataFieldKeys.Unique, 63)]
         private string slug;
+        [DataField("musician_name_first", DataFieldKeys.Index, 1)]
+        protected string nameFirstCharacter;
         [DataField("musician_bio", MYSQL_TEXT)]
         private string biography;
         [DataField("musician_songs")]
@@ -116,6 +127,8 @@ namespace BoxSocial.Musician
         public Musician(Core core, long musicianId)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(Musician_ItemLoad);
+
             try
             {
                 LoadItem(musicianId);
@@ -129,6 +142,8 @@ namespace BoxSocial.Musician
         public Musician(Core core, string slug)
             : base(core)
         {
+            ItemLoad += new ItemLoadHandler(Musician_ItemLoad);
+
             try
             {
                 LoadItem("musician_slug", slug);
@@ -137,6 +152,36 @@ namespace BoxSocial.Musician
             {
                 throw new InvalidMusicianException();
             }
+        }
+
+        public Musician(Core core, DataRow musicianRow, MusicianLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Musician_ItemLoad);
+
+            if (musicianRow != null)
+            {
+                loadItemInfo(typeof(Musician), musicianRow);
+
+                /* TODO */
+                /*if ((loadOptions & MusicianLoadOptions.Info) == MusicianLoadOptions.Info)
+                {
+                    musicianInfo = new UserGroupInfo(core, groupRow);
+                }
+
+                if ((loadOptions & MusicianLoadOptions.Icon) == MusicianLoadOptions.Icon)
+                {
+                    loadMusicianIcon(groupRow);
+                }*/
+            }
+            else
+            {
+                throw new InvalidMusicianException();
+            }
+        }
+
+        void Musician_ItemLoad()
+        {
         }
 
         public List<MusicianMember> GetMembers()
@@ -419,6 +464,12 @@ namespace BoxSocial.Musician
             disallowedNames.Add("sid");
             disallowedNames.Add("network");
             disallowedNames.Add("networks");
+            disallowedNames.Add("directory");
+            disallowedNames.Add("folder");
+            disallowedNames.Add("genre");
+            disallowedNames.Add("genres");
+            disallowedNames.Add("artist");
+            disallowedNames.Add("artists");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(musicianName.ToLower()) >= 0)
@@ -797,6 +848,48 @@ namespace BoxSocial.Musician
             {
                 return "Musician: " + DisplayName;
             }
+        }
+
+        public static List<Musician> GetMusicians(Core core, string firstLetter, int page)
+        {
+            return GetMusicians(core, firstLetter, null, page);
+        }
+
+        public static List<Musician> GetMusicians(Core core, string firstLetter, MusicGenre genre, int page)
+        {
+            List<Musician> musicians = new List<Musician>();
+
+            SelectQuery query = Musician.GetSelectQueryStub(typeof(Musician));
+            if (genre != null)
+            {
+                if (genre.IsSubGenre)
+                {
+                    query.AddCondition("musician_genre", genre.Id);
+                }
+                else
+                {
+                    query.AddCondition("musician_genre", genre.Id);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(firstLetter))
+            {
+                query.AddCondition("musician_name_first", firstLetter);
+            }
+
+            query.LimitCount = 10;
+            query.LimitStart = Functions.LimitPageToStart(page, 10);
+
+            query.AddSort(SortOrder.Ascending, "musician_slug");
+
+            DataTable musiciansTable = core.db.Query(query);
+
+            foreach (DataRow dr in musiciansTable.Rows)
+            {
+                musicians.Add(new Musician(core, dr, MusicianLoadOptions.Common));
+            }
+
+            return musicians;
         }
     }
 

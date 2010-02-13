@@ -52,12 +52,25 @@ namespace BoxSocial.Internals
 
             foreach (MemberInfo mi in type.GetMembers(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
-                    if (attr.GetType() == typeof(ShowAttribute))
-                    {
-                        slugs.Add(((ShowAttribute)attr).Slug);
-                    }
+                    slugs.Add(((ShowAttribute)attr).Slug);
+                }
+            }
+
+            return slugs;
+        }
+
+        public List<ApplicationSlugInfo> GetSlugInformation()
+        {
+            List<ApplicationSlugInfo> slugs = new List<ApplicationSlugInfo>();
+            Type type = this.GetType();
+
+            foreach (MemberInfo mi in type.GetMembers(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
+                {
+                    slugs.Add(new ApplicationSlugInfo(((ShowAttribute)attr)));
                 }
             }
 
@@ -218,10 +231,19 @@ namespace BoxSocial.Internals
 
             foreach (Type type in types)
             {
-                if (type.IsSubclassOf(typeof(ApplicationModule)))
+                if (type.IsSubclassOf(typeof(AccountModule)))
                 {
-                    
+                    foreach (Attribute attr in type.GetCustomAttributes(typeof(AccountModuleAttribute), false))
+                    {
+                        aii.AddModule(((AccountModuleAttribute)attr).Name);
+                    }
                 }
+            }
+
+            List<ApplicationSlugInfo> slugs = GetSlugInformation();
+            foreach (ApplicationSlugInfo slug in slugs)
+            {
+                aii.AddSlug(slug.Stub, slug.SlugEx, slug.Primitives);
             }
 
             return aii;

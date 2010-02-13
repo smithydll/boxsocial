@@ -277,10 +277,37 @@ namespace BoxSocial.Musician
         [StaticShow("music", @"^(|/)$")]
         private void showDefault(Core core, object sender)
         {
+            if (sender is TPage)
+            {
+                Default.Show(sender, new ShowPageEventArgs((TPage)sender));
+            }
         }
 
         [StaticShow("music", @"^/chart(|/)$")]
         private void showChart(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                Default.ShowChart(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("music", @"^/directory(|/)$")]
+        private void showDirectory(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                Directory.Show(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("music", @"^/directory/genres(|/)$")]
+        private void showGenres(Core core, object sender)
+        {
+        }
+
+        [StaticShow("music", @"^/directory/genre/([a-z0-9\-_\+]+)(|/)$")]
+        private void showGenre(Core core, object sender)
         {
         }
 

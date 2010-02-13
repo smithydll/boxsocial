@@ -81,10 +81,33 @@ namespace BoxSocial.Internals
 
         public ShowAttribute(string stub, string slug, AppPrimitives primitives, int order)
         {
+            bool pathIsRegex = false;
+            string path = slug;
+
+            if (path.StartsWith(@"^/") && path.EndsWith(@"(|/)$"))
+            {
+                path = path.Substring(2, path.Length - 7);
+                pathIsRegex = true;
+            }
+
             this.stub = stub;
             this.slug = slug;
             this.primitives = primitives;
             this.order = order;
+
+            if (string.IsNullOrEmpty(stub))
+            {
+                string[] parts = path.Split(new char[] {'/'});
+                if (parts.Length > 0)
+                {
+                    stub = parts[0];
+                }
+            }
+
+            if (!pathIsRegex)
+            {
+                slug = @"^/" + slug + @"(|/)$";
+            }
         }
     }
 }

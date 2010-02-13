@@ -17,6 +17,13 @@ namespace BoxSocial.Internals
             SlugEx = slugEx;
             Primitives = primitives;
         }
+
+        public ApplicationSlugInfo(ShowAttribute showattr)
+        {
+            Stub = showattr.Stub;
+            SlugEx = showattr.Slug;
+            Primitives = showattr.Primitives;
+        }
     }
 
     public struct ApplicationModule

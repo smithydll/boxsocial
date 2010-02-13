@@ -361,6 +361,18 @@ namespace BoxSocial.Applications.Forum
         void McpMain_DeletePost(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
+
+            Dictionary<string, string> fieldList = new Dictionary<string, string>();
+            fieldList.Add("module", "dashboard");
+            fieldList.Add("sub", "main");
+            fieldList.Add("mode", "delete");
+            fieldList.Add("m", core.Http.Query["id"]);
+
+            core.Display.ShowConfirmBox("", "Delete Post?", "Are you sure you want to delete this post?", fieldList);
+        }
+
+        void McpMain_DeletePostSave(object sender, ModuleModeEventArgs e)
+        {
         }
     }
 }

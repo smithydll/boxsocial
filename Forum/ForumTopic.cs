@@ -224,6 +224,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public long TimeLastPostRaw
+        {
+            get
+            {
+                return lastPostTimeRaw;
+            }
+        }
+
         public long LastPostId
         {
             get

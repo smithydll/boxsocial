@@ -120,7 +120,7 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                loadItemInfo(typeof(ForumMember), core.db.ReaderQuery(sQuery));
+                loadItemInfo(typeof(ForumMember), core.Db.ReaderQuery(sQuery));
             }
             catch (InvalidItemException)
             {
@@ -179,7 +179,7 @@ namespace BoxSocial.Applications.Forum
 			iQuery.AddField("signature", "");
 			
 			
-			core.db.Query(iQuery);
+			core.Db.Query(iQuery);
 			
 			return new ForumMember(core, owner, user);
 		}
@@ -245,7 +245,7 @@ namespace BoxSocial.Applications.Forum
 			sQuery.AddCondition("item_id", forumOwner.Id);
 			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
 			
-			DataTable membersTable = core.db.Query(sQuery);
+			DataTable membersTable = core.Db.Query(sQuery);
 			
 			foreach (DataRow dr in membersTable.Rows)
 			{
@@ -278,7 +278,7 @@ namespace BoxSocial.Applications.Forum
             sQuery.LimitCount = perPage;
             sQuery.LimitStart = (page - 1) * perPage;
 
-            DataTable membersTable = core.db.Query(sQuery);
+            DataTable membersTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in membersTable.Rows)
             {
@@ -306,14 +306,14 @@ namespace BoxSocial.Applications.Forum
             e.Template.SetTemplate("Forum", "ucp");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
-            if (e.Core.session.IsLoggedIn && e.Core.session.LoggedInMember != null)
+            if (e.Core.Session.IsLoggedIn && e.Core.Session.LoggedInMember != null)
             {
                 e.Template.Parse("S_POST", e.Core.Uri.AppendSid(string.Format("{0}forum/ucp",
                     e.Page.Owner.UriStub), true));
 				
 				try
 				{
-                    ForumMember member = new ForumMember(e.Core, e.Page.Owner, e.Core.session.LoggedInMember);
+                    ForumMember member = new ForumMember(e.Core, e.Page.Owner, e.Core.Session.LoggedInMember);
 
                 	e.Template.Parse("S_SIGNATURE", member.forumSignature);
 				}
@@ -386,17 +386,17 @@ namespace BoxSocial.Applications.Forum
         {
             AccountSubModule.AuthoriseRequestSid(core);
 
-            if (core.session.IsLoggedIn && core.session.LoggedInMember != null)
+            if (core.Session.IsLoggedIn && core.Session.LoggedInMember != null)
             {
                 ForumMember member = null;
 				
 				try
 				{
-                    member = new ForumMember(core, page.Owner, core.session.LoggedInMember);
+                    member = new ForumMember(core, page.Owner, core.Session.LoggedInMember);
 				}
 				catch (InvalidForumMemberException)
 				{
-                    member = ForumMember.Create(core, page.Owner, core.session.LoggedInMember, false);
+                    member = ForumMember.Create(core, page.Owner, core.Session.LoggedInMember, false);
 				}
                 member.ForumSignature = core.Http.Form["signature"];
 

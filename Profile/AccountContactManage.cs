@@ -74,7 +74,7 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_contact_manage");
 
-            List<UserEmail> emails = core.session.LoggedInMember.GetEmailAddresses();
+            List<UserEmail> emails = core.Session.LoggedInMember.GetEmailAddresses();
             List<UserPhoneNumber> phoneNumbers = new List<UserPhoneNumber>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(UserPhoneNumber));

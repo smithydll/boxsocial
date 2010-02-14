@@ -141,7 +141,7 @@ namespace BoxSocial.Internals
             query.AddCondition("item_type_id", itemTypeId);
             query.AddSort(SortOrder.Descending, "status_time_ut");
 
-            DataTable actionsTable = core.db.Query(query);
+            DataTable actionsTable = core.Db.Query(query);
 
             foreach (DataRow dr in actionsTable.Rows)
             {

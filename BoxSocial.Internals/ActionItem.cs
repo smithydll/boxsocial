@@ -96,7 +96,7 @@ namespace BoxSocial.Internals
             iquery.AddField("item_id", itemId);
             iquery.AddField("item_type_id", itemTypeId);
 
-            core.db.Query(iquery);
+            core.Db.Query(iquery);
         }
 
         public override string Uri

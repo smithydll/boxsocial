@@ -252,7 +252,7 @@ namespace BoxSocial.Applications.Pages
             SelectQuery query = Item.GetSelectQueryStub(typeof(List));
             query.AddCondition("user_id", owner.Id);
 
-            DataTable listsTable = core.db.Query(query);
+            DataTable listsTable = core.Db.Query(query);
 
             foreach (DataRow dr in listsTable.Rows)
             {
@@ -281,7 +281,7 @@ namespace BoxSocial.Applications.Pages
             query.AddFields("list_type_id");
             query.AddCondition("list_type_id", listType);
 
-            DataTable listTypeTable = core.db.Query(query);
+            DataTable listTypeTable = core.Db.Query(query);
 
             if (listTypeTable.Rows.Count == 1)
             {
@@ -299,7 +299,7 @@ namespace BoxSocial.Applications.Pages
             uQuery.AddField("list_items", new QueryOperation("list_items", QueryOperations.Addition, 1));
             uQuery.AddCondition("list_id", listId);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
 
             return item;
         }
@@ -321,7 +321,7 @@ namespace BoxSocial.Applications.Pages
 
         public static void Remove(Core core, ListItem item)
         {
-            core.db.BeginTransaction();
+            core.Db.BeginTransaction();
 
             item.Delete();
 
@@ -329,7 +329,7 @@ namespace BoxSocial.Applications.Pages
             uQuery.AddField("list_items", new QueryOperation("list_items", QueryOperations.Subtraction, 1));
             uQuery.AddCondition("list_id", item.ListId);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
         }
 
         public static List Create(Core core, string title, ref string slug, string listAbstract, short listType)
@@ -346,21 +346,21 @@ namespace BoxSocial.Applications.Pages
                 Page listPage;
                 try
                 {
-                    listPage = new Page(core, core.session.LoggedInMember, "lists");
+                    listPage = new Page(core, core.Session.LoggedInMember, "lists");
                 }
                 catch (PageNotFoundException)
                 {
                     string listsSlug = "lists";
                     try
                     {
-                        listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listsSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                        listPage = Page.Create(core, core.Session.LoggedInMember, "Lists", ref listsSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
                     }
                     catch (PageSlugNotUniqueException)
                     {
                         throw new Exception("Cannot create lists slug.");
                     }
                 }
-                Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
+                Page page = Page.Create(core, core.Session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
 
                 // Create list
 
@@ -371,9 +371,9 @@ namespace BoxSocial.Applications.Pages
                 iQuery.AddField("list_type", listType);
                 iQuery.AddField("list_abstract", listAbstract);
 
-                long listId = core.db.Query(iQuery);
+                long listId = core.Db.Query(iQuery);
 
-                List list = new List(core, core.session.LoggedInMember, listId);
+                List list = new List(core, core.Session.LoggedInMember, listId);
 
                 /* LOAD THE DEFAULT ITEM PERMISSIONS */
                 list.Access.CreateAllGrantsForOwner();

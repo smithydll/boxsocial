@@ -319,7 +319,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return userInfo.GetRegistrationDate(core.tz);
+                return userInfo.GetRegistrationDate(core.Tz);
             }
         }
 
@@ -327,7 +327,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return userInfo.GetLastOnlineDate(core.tz);
+                return userInfo.GetLastOnlineDate(core.Tz);
             }
         }
 
@@ -952,8 +952,8 @@ namespace BoxSocial.Internals
 
         public List<UserRelation> GetFriendsBirthdays(long startTimeRaw, long endTimeRaw)
         {
-            DateTime st = core.tz.DateTimeFromMysql(startTimeRaw - 24 * 60 * 60);
-            DateTime et = core.tz.DateTimeFromMysql(endTimeRaw + 48 * 60 * 60);
+            DateTime st = core.Tz.DateTimeFromMysql(startTimeRaw - 24 * 60 * 60);
+            DateTime et = core.Tz.DateTimeFromMysql(endTimeRaw + 48 * 60 * 60);
 
             List<UserRelation> friends = new List<UserRelation>();
 
@@ -1182,8 +1182,8 @@ namespace BoxSocial.Internals
         /// <returns>Null if registration failed</returns>
         public static User Register(Core core, string userName, string eMail, string password, string passwordConfirm)
         {
-            Mysql db = core.db;
-            SessionState session = core.session;
+            Mysql db = core.Db;
+            SessionState session = core.Session;
 
             string passwordClearText = password;
 
@@ -1226,7 +1226,7 @@ namespace BoxSocial.Internals
             query.AddField("user_name", userName);
             query.AddField("user_alternate_email", eMail);
             query.AddField("user_password", password);
-            query.AddField("user_reg_date_ut", core.tz.GetUnixTimeStamp(core.tz.Now));
+            query.AddField("user_reg_date_ut", core.Tz.GetUnixTimeStamp(core.Tz.Now));
             query.AddField("user_activate_code", activateKey);
             query.AddField("user_reg_ip", session.IPAddress.ToString());
             query.AddField("user_home_page", "/profile");
@@ -1974,7 +1974,7 @@ namespace BoxSocial.Internals
 
         public static void ShowProfile(Core core, UPage page)
         {
-            core.template.SetTemplate("viewprofile.html");
+            core.Template.SetTemplate("viewprofile.html");
             page.Signature = PageSignature.viewprofile;
 
             bool hasProfileInfo = false;
@@ -2000,23 +2000,23 @@ namespace BoxSocial.Internals
                 age = ageInt.ToString() + " years old";
             }
 
-            core.template.Parse("USER_SEXUALITY", page.User.Sexuality);
-            core.template.Parse("USER_GENDER", page.User.Gender);
+            core.Template.Parse("USER_SEXUALITY", page.User.Sexuality);
+            core.Template.Parse("USER_GENDER", page.User.Gender);
             core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Autobiography);
             core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.MaritialStatus);
-            core.template.Parse("USER_AGE", age);
-            core.template.Parse("USER_JOINED", core.tz.DateTimeToString(page.User.RegistrationDate));
-            core.template.Parse("USER_LAST_SEEN", core.tz.DateTimeToString(page.User.LastOnlineTime, true));
-            core.template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.ProfileViews));
-            core.template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.BlogSubscriptions));
-            core.template.Parse("USER_COUNTRY", page.User.Country);
-            core.template.Parse("USER_RELIGION", page.User.Profile.Religion);
-            core.template.Parse("USER_ICON", page.User.UserThumbnail);
+            core.Template.Parse("USER_AGE", age);
+            core.Template.Parse("USER_JOINED", core.Tz.DateTimeToString(page.User.RegistrationDate));
+            core.Template.Parse("USER_LAST_SEEN", core.Tz.DateTimeToString(page.User.LastOnlineTime, true));
+            core.Template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.ProfileViews));
+            core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.BlogSubscriptions));
+            core.Template.Parse("USER_COUNTRY", page.User.Country);
+            core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
+            core.Template.Parse("USER_ICON", page.User.UserThumbnail);
 
-            core.template.Parse("U_PROFILE", page.User.Uri);
-            core.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
+            core.Template.Parse("U_PROFILE", page.User.Uri);
+            core.Template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
-            core.template.Parse("IS_PROFILE", "TRUE");
+            core.Template.Parse("IS_PROFILE", "TRUE");
 
             if (page.User.MaritialStatusRaw != "UNDEF")
             {
@@ -2033,32 +2033,32 @@ namespace BoxSocial.Internals
 
             if (hasProfileInfo)
             {
-                core.template.Parse("HAS_PROFILE_INFO", "TRUE");
+                core.Template.Parse("HAS_PROFILE_INFO", "TRUE");
             }
 
             if (core.LoggedInMemberId > 0)
             {
-                core.template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.User.UserId));
-                core.template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
+                core.Template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.User.UserId));
+                core.Template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
             }
 
             string langFriends = (page.User.Friends != 1) ? "friends" : "friend";
 
-            core.template.Parse("FRIENDS", page.User.Friends.ToString());
-            core.template.Parse("L_FRIENDS", langFriends);
+            core.Template.Parse("FRIENDS", page.User.Friends.ToString());
+            core.Template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = page.User.GetFriends(1, 8);
             foreach (UserRelation friend in friends)
             {
-                VariableCollection friendVariableCollection = core.template.CreateChild("friend_list");
+                VariableCollection friendVariableCollection = core.Template.CreateChild("friend_list");
 
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
             }
 
-            ushort readAccessLevel = page.User.GetAccessLevel(core.session.LoggedInMember);
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
+            ushort readAccessLevel = page.User.GetAccessLevel(core.Session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
 
             /* pages */
             core.Display.ParsePageList(page.User, true);
@@ -2068,13 +2068,13 @@ namespace BoxSocial.Internals
 
             if (statusMessage != null)
             {
-                core.template.Parse("STATUS_MESSAGE", statusMessage.Message);
-                core.template.Parse("STATUS_UPDATED", core.tz.DateTimeToString(statusMessage.GetTime(core.tz)));
+                core.Template.Parse("STATUS_MESSAGE", statusMessage.Message);
+                core.Template.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(statusMessage.GetTime(core.Tz)));
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));
 
-            page.User.ProfileViewed(core.session.LoggedInMember);
+            page.User.ProfileViewed(core.Session.LoggedInMember);
         }
 
         public static void ShowFriends(object sender, ShowUPageEventArgs e)
@@ -2231,19 +2231,19 @@ namespace BoxSocial.Internals
                 switch (subType)
                 {
                     case -1:
-                        if (IsFriend(core.session.LoggedInMember))
+                        if (IsFriend(core.Session.LoggedInMember))
                         {
                             return true;
                         }
                         break;
                     case -2:
-                        if (IsFamily(core.session.LoggedInMember))
+                        if (IsFamily(core.Session.LoggedInMember))
                         {
                             return true;
                         }
                         break;
                     case -3:
-                        if (IsBlocked(core.session.LoggedInMember))
+                        if (IsBlocked(core.Session.LoggedInMember))
                         {
                             return true;
                         }
@@ -2264,7 +2264,7 @@ namespace BoxSocial.Internals
                     case -2:
                         return true;
                     case -3:
-                        if (core.session.IsLoggedIn)
+                        if (core.Session.IsLoggedIn)
                         {
                             return true;
                         }
@@ -2323,7 +2323,7 @@ namespace BoxSocial.Internals
                     case -2:
                         return true;
                     case -3:
-                        if (core.session.IsLoggedIn)
+                        if (core.Session.IsLoggedIn)
                         {
                             return true;
                         }

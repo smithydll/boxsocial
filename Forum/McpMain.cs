@@ -116,14 +116,14 @@ namespace BoxSocial.Applications.Forum
                 topicVariableCollection.Parse("URI", topic.Uri);
                 topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
                 topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
-                topicVariableCollection.Parse("DATE", core.tz.DateTimeToString(topic.GetCreatedDate(core.tz)));
+                topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
                 topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
                 topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
 
                 if (topicLastPosts.ContainsKey(topic.LastPostId))
                 {
                     core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                        topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
+                        topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
                 }
                 else
                 {

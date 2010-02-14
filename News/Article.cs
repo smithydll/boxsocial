@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.News
 			page.template.Parse("ARTICLE_U_POSTER", article.Poster.Uri);
 			page.template.Parse("ARTICLE_USERNAME", article.Poster.DisplayName);
 			page.template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
-			page.template.Parse("ARTICLE_DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
+			page.template.Parse("ARTICLE_DATE", core.Tz.DateTimeToString(article.GetCreatedDate(core.Tz)));
 
             core.Display.ParsePagination(page.template, "PAGINATION", article.Uri, p, (int)Math.Ceiling((double)article.Comments / 10), false);
 			

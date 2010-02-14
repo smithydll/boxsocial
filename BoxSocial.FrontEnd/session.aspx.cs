@@ -52,7 +52,7 @@ namespace BoxSocial.FrontEnd
                     core.session.SessionEnd(sessionId, 0, record);
                 }*/
 
-                string sessionId = core.session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
+                string sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 
                 Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + path, true));
             }

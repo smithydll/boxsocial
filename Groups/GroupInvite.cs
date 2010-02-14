@@ -99,7 +99,7 @@ namespace BoxSocial.Groups
 
         public GroupInvite Create(Core core, UserGroup group, User invitee)
         {
-            core.db.BeginTransaction();
+            core.Db.BeginTransaction();
 
             InsertQuery iQuery = new InsertQuery(Table);
             iQuery.AddField("group_id", group.Id);
@@ -119,7 +119,7 @@ namespace BoxSocial.Groups
             }
             else
             {
-                core.db.RollBackTransaction();
+                core.Db.RollBackTransaction();
                 throw new Exception("Cannot create a new GroupInvite");
             }
         }

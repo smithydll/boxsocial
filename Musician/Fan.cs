@@ -82,7 +82,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                loadItemInfo(typeof(Fan), core.db.ReaderQuery(sQuery));
+                loadItemInfo(typeof(Fan), core.Db.ReaderQuery(sQuery));
             }
             catch (InvalidItemException)
             {

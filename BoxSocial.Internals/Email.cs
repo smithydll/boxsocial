@@ -65,15 +65,15 @@ namespace BoxSocial.Internals
             newMessage.Headers.Add("X-AntiAbuse", "servername - zinzam.com");
             if (core != null)
             {
-                if (core.session.LoggedInMember != null)
+                if (core.Session.LoggedInMember != null)
                 {
-                    if (core.session.IsLoggedIn)
+                    if (core.Session.IsLoggedIn)
                     {
-                        newMessage.Headers.Add("X-AntiAbuse", "User_id - " + core.session.LoggedInMember.UserId.ToString());
-                        newMessage.Headers.Add("X-AntiAbuse", "Username - " + core.session.LoggedInMember.UserName);
+                        newMessage.Headers.Add("X-AntiAbuse", "User_id - " + core.Session.LoggedInMember.UserId.ToString());
+                        newMessage.Headers.Add("X-AntiAbuse", "Username - " + core.Session.LoggedInMember.UserName);
                     }
                 }
-                newMessage.Headers.Add("X-AntiAbuse", "User IP - " + core.session.IPAddress.ToString());
+                newMessage.Headers.Add("X-AntiAbuse", "User IP - " + core.Session.IPAddress.ToString());
             }
 
             try

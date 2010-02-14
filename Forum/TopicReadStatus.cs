@@ -129,7 +129,7 @@ namespace BoxSocial.Applications.Forum
                 iQuery.AddField("forum_id", topic.ForumId);
                 iQuery.AddField("read_time_ut", lastVisiblePost.TimeCreatedRaw);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
         }
 
@@ -143,7 +143,7 @@ namespace BoxSocial.Applications.Forum
                 iQuery.AddField("forum_id", topic.ForumId);
                 iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp()); // topic.LastPostTimRaw
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
         }
 

@@ -1228,7 +1228,7 @@ namespace BoxSocial.Install
                 iQuery.AddField("category_path", key);
                 iQuery.AddField("category_title", categories[key]);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
 
             foreach (string key in countries.Keys)
@@ -1237,7 +1237,7 @@ namespace BoxSocial.Install
                 iQuery.AddField("country_iso", key);
                 iQuery.AddField("country_name", countries[key]);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
 
             foreach (string type in listTypes)
@@ -1245,7 +1245,7 @@ namespace BoxSocial.Install
                 InsertQuery iQuery = new InsertQuery("list_types");
                 iQuery.AddField("list_type_title", type);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
 
             foreach (LicenseData license in licenses)
@@ -1255,7 +1255,7 @@ namespace BoxSocial.Install
                 iQuery.AddField("license_link", license.Uri);
                 iQuery.AddField("license_icon", license.Icon);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
         }
 
@@ -1293,7 +1293,7 @@ namespace BoxSocial.Install
             iQuery.AddField("user_name_lower", userName.ToLower());
             iQuery.AddField("user_name_first", userName.ToLower()[0]);
 
-            long userId = core.db.Query(iQuery);
+            long userId = core.Db.Query(iQuery);
 
 			iQuery = new InsertQuery("user_info");
             iQuery.AddField("user_id", userId);
@@ -1318,13 +1318,13 @@ namespace BoxSocial.Install
 			iQuery.AddField("user_show_bbcode", 0x07);
 			iQuery.AddField("user_bytes", 0);
 			
-			core.db.Query(iQuery);
+			core.Db.Query(iQuery);
 			
 			iQuery = new InsertQuery("user_profile");
 			iQuery.AddField("user_id", userId);
             // TODO: ACLs
 			
-			core.db.Query(iQuery);
+			core.Db.Query(iQuery);
 			
 			iQuery = new InsertQuery("user_emails");
 			iQuery.AddField("email_user_id", userId);
@@ -1333,10 +1333,10 @@ namespace BoxSocial.Install
 					
 			iQuery.AddField("email_time_ut", UnixTime.UnixTimeStamp().ToString());
 						
-			core.db.Query(iQuery);
+			core.Db.Query(iQuery);
 			
 			User newUser = new User(core, userId);
-			core.session = new SessionState(core, newUser);
+            core.CreateNewSession(newUser);
 			
 			// Install a couple of applications
             try

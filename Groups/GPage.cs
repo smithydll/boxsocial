@@ -85,13 +85,13 @@ namespace BoxSocial.Groups
                 core.PagePath = "/profile";
             }
 
-            if (Group.IsGroupMemberBanned(core.session.LoggedInMember))
+            if (Group.IsGroupMemberBanned(core.Session.LoggedInMember))
             {
                 core.Functions.Generate403();
                 return;
             }
 
-            if (!Group.IsGroupMember(core.session.LoggedInMember) && Group.GroupType == "PRIVATE")
+            if (!Group.IsGroupMember(core.Session.LoggedInMember) && Group.GroupType == "PRIVATE")
             {
                 core.Functions.Generate403();
                 return;
@@ -130,7 +130,7 @@ namespace BoxSocial.Groups
 
                 if (e.Owner.Type == "GROUP")
                 {
-                    if (((UserGroup)e.Owner).IsGroupOperator(core.session.LoggedInMember))
+                    if (((UserGroup)e.Owner).IsGroupOperator(core.Session.LoggedInMember))
                     {
                         template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
                     }

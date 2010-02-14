@@ -97,16 +97,16 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public void ShowMCP()
+        public void ShowMCP(string module, string submodule)
         {
-            string module = (!String.IsNullOrEmpty(core.Http.Form["module"])) ? core.Http.Form["module"] : core.Http.Query["module"];
-            string submodule = (!String.IsNullOrEmpty(core.Http.Form["sub"])) ? core.Http.Form["sub"] : core.Http.Query["sub"];
+            module = (!String.IsNullOrEmpty(core.Http.Form["module"])) ? core.Http.Form["module"] : module;
+            submodule = (!String.IsNullOrEmpty(core.Http.Form["sub"])) ? core.Http.Form["sub"] : submodule;
 
             module = (module == null) ? "" : module;
             module = (module == "") ? "dashboard" : module;
             submodule = (submodule == null) ? "" : submodule;
 
-            if (!core.session.IsLoggedIn)
+            if (!core.Session.IsLoggedIn)
             {
                 SessionState.RedirectAuthenticate();
             }
@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (module == accountModule.Key)
                 {
-                    accountModule.SetOwner = core.session.LoggedInMember;
+                    accountModule.SetOwner = core.Session.LoggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
                     try
@@ -199,7 +199,18 @@ namespace BoxSocial.Applications.Forum
             e.Page.template.SetTemplate("Forum", "mcp"); // account_master.html
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
-            mcp.ShowMCP();
+            if (e.Core.PagePathParts.Count == 3)
+            {
+                mcp.ShowMCP(e.Core.PagePathParts[1].Value, e.Core.PagePathParts[2].Value);
+            }
+            else if (e.Core.PagePathParts.Count == 2)
+            {
+                mcp.ShowMCP(e.Core.PagePathParts[1].Value, "");
+            }
+            else
+            {
+                mcp.ShowMCP("", "");
+            }
         }
     }
 }

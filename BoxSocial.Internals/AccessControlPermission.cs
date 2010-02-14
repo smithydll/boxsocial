@@ -123,13 +123,13 @@ namespace BoxSocial.Internals
                 if (permissionDescription.StartsWith("{L_") && permissionDescription.EndsWith("}"))
                 {
                     string key = permissionDescription.Substring(3, permissionDescription.Length - 4);
-                    if (core.prose.ContainsKey(key))
+                    if (core.Prose.ContainsKey(key))
                     {
-                        permissionDescriptionCache = core.prose.GetString(key);
+                        permissionDescriptionCache = core.Prose.GetString(key);
                     }
-                    else if ((!string.IsNullOrEmpty(permissionAssembly)) && core.prose.ContainsKey(permissionAssembly, key))
+                    else if ((!string.IsNullOrEmpty(permissionAssembly)) && core.Prose.ContainsKey(permissionAssembly, key))
                     {
-                        permissionDescriptionCache = core.prose.GetString(permissionAssembly, key);
+                        permissionDescriptionCache = core.Prose.GetString(permissionAssembly, key);
                     }
                 }
                 else
@@ -168,7 +168,7 @@ namespace BoxSocial.Internals
             query.AddCondition("permission_item_type_id", typeId);
             query.AddCondition("permission_name", permissionName);
             
-            DataTable dt = core.db.Query(query);
+            DataTable dt = core.Db.Query(query);
 
             if (dt.Rows.Count == 1)
             {
@@ -223,7 +223,7 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             sQuery.AddSort(SortOrder.Ascending, "permission_type");
 
-            DataTable permissionsTable = core.db.Query(sQuery);
+            DataTable permissionsTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in permissionsTable.Rows)
             {

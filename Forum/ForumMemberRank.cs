@@ -217,7 +217,7 @@ namespace BoxSocial.Applications.Forum
 			sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 			sQuery.AddCondition("rank_id", ConditionEquality.In, rankIds);
 			
-			DataTable ranksTable = core.db.Query(sQuery);
+			DataTable ranksTable = core.Db.Query(sQuery);
 			
 			foreach (DataRow dr in ranksTable.Rows)
 			{
@@ -236,7 +236,7 @@ namespace BoxSocial.Applications.Forum
             sQuery.AddCondition("rank_owner_id", forumOwner.Id);
             sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 
-            DataTable ranksTable = core.db.Query(sQuery);
+            DataTable ranksTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in ranksTable.Rows)
             {

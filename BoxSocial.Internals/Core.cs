@@ -32,26 +32,26 @@ namespace BoxSocial.Internals
 {
     public sealed class Core
     {
-        //internal Mysql DB;
-
-        public Http Http;
-        public Mysql db;
-        internal Template template;
-        public SessionState session;
-        public int PageNo;
-        public AppDomain CoreDomain;
-        public string PagePath;
-        public GroupCollection PagePathParts;
-        public UnixTime tz;
-        public Prose prose;
-        public Bbcode Bbcode;
-        public Functions Functions;
-        public Display Display;
-        public Email Email;
-        public Ajax Ajax;
-        public Linker Uri;
+        private Http http;
+        private Mysql db;
+        private Template template;
+        private SessionState session;
+        private int pageNo;
+        private AppDomain coreDomain;
+        private string pagePath;
+        private GroupCollection pagePathParts;
+        private UnixTime tz;
+        private Prose prose;
+        private Bbcode bbcode;
+        private Functions functions;
+        private Display display;
+        private Email email;
+        private Ajax ajax;
+        private Linker uri;
 
         internal TPage page;
+
+        private PrimitivesCache userProfileCache;
 
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
@@ -68,8 +68,8 @@ namespace BoxSocial.Internals
         public event LoadHandler LoadApplication;
         public event PermissionGroupHandler primitivePermissionGroupHook;
 
-        Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
-        Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
+        private Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
+        private Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
         private Dictionary<long, RatingHandler> ratingHandles = new Dictionary<long, RatingHandler>();
@@ -79,7 +79,251 @@ namespace BoxSocial.Internals
         /// </summary>
         private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>();
 
-        private PrimitivesCache userProfileCache;
+        /// <summary>
+        /// The applicaton domain from which the web application is executed.
+        /// </summary>
+        public AppDomain CoreDomain
+        {
+            get
+            {
+                return coreDomain;
+            }
+            internal set
+            {
+                coreDomain = value;
+            }
+        }
+
+        /// <summary>
+        /// Current path path
+        /// </summary>
+        public string PagePath
+        {
+            get
+            {
+                return pagePath;
+            }
+            /*internal*/ set /* TODO: make internal*/
+            {
+                pagePath = value;
+            }
+        }
+
+        /// <summary>
+        /// A collection of the structure of the current page
+        /// </summary>
+        public GroupCollection PagePathParts
+        {
+            get
+            {
+                return pagePathParts;
+            }
+            internal set
+            {
+                pagePathParts = value;
+            }
+        }
+
+        /// <summary>
+        /// Current page number for paginated pages
+        /// </summary>
+        public int PageNo
+        {
+            get
+            {
+                return pageNo;
+            }
+            internal set
+            {
+                pageNo = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the http object
+        /// </summary>
+        public Http Http
+        {
+            get
+            {
+                return http;
+            }
+            internal set
+            {
+                http = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the database abstraction object
+        /// </summary>
+        public Mysql Db
+        {
+            get
+            {
+                return db;
+            }
+        }
+
+        /// <summary>
+        /// Gets the page template
+        /// </summary>
+        public Template Template
+        {
+            get
+            {
+                return template;
+            }
+            internal set
+            {
+                template = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current user session
+        /// </summary>
+        public SessionState Session
+        {
+            get
+            {
+                return session;
+            }
+            internal set
+            {
+                session = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current timezone
+        /// </summary>
+        public UnixTime Tz
+        {
+            get
+            {
+                return tz;
+            }
+            internal set
+            {
+                tz = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Language prose class
+        /// </summary>
+        public Prose Prose
+        {
+            get
+            {
+                return prose;
+            }
+            internal set
+            {
+                prose = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the BBcode class
+        /// </summary>
+        public Bbcode Bbcode
+        {
+            get
+            {
+                return bbcode;
+            }
+            internal set
+            {
+                bbcode = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the generic Functions class
+        /// </summary>
+        public Functions Functions
+        {
+            get
+            {
+                return functions;
+            }
+            internal set
+            {
+                functions = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Display functions class
+        /// </summary>
+        public Display Display
+        {
+            get
+            {
+                return display;
+            }
+            internal set
+            {
+                display = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Email class
+        /// </summary>
+        public Email Email
+        {
+            get
+            {
+                return email;
+            }
+            internal set
+            {
+                email = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Ajax Interface
+        /// </summary>
+        public Ajax Ajax
+        {
+            get
+            {
+                return ajax;
+            }
+            internal set
+            {
+                ajax = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Uri Builder
+        /// </summary>
+        public Linker Uri
+        {
+            get
+            {
+                return uri;
+            }
+            internal set
+            {
+                uri = value;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new session and associates it with Core
+        /// </summary>
+        /// <param name="user"></param>
+        /// <remarks>Use by Installer to initiate a session into Core</remarks>
+        public void CreateNewSession(User user)
+        {
+            session = new SessionState(this, user);
+        }
 
         /// <summary>
         /// Returns a list of user profiles cached in memory.
@@ -427,19 +671,17 @@ namespace BoxSocial.Internals
 
             if (type.IsSubclassOf(typeof(Primitive)))
             {
-                foreach (object attr in type.GetCustomAttributes(false))
+                foreach (object attr in type.GetCustomAttributes(typeof(PrimitiveAttribute), false))
                 {
-                    if (attr.GetType() == typeof(PrimitiveAttribute))
+
+                    if (primitiveTypeId > 0)
                     {
-                        if (primitiveTypeId > 0)
+                        if (!primitiveTypes.ContainsKey(primitiveTypeId))
                         {
-                            if (!primitiveTypes.ContainsKey(primitiveTypeId))
-                            {
-                                primitiveAttributes.Add(primitiveTypeId, (PrimitiveAttribute)attr);
-                                primitiveTypes.Add(primitiveTypeId, type);
-                            }
-                            typeAdded = true;
+                            primitiveAttributes.Add(primitiveTypeId, (PrimitiveAttribute)attr);
+                            primitiveTypes.Add(primitiveTypeId, type);
                         }
+                        typeAdded = true;
                     }
                 }
 

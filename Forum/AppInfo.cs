@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return "Forum";
+                return core.Prose.GetString("FORUM");
             }
         }
 
@@ -155,7 +155,7 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("forum", "Forum");
+                slugs.Add("forum", core.Prose.GetString("FORUM"));
                 return slugs;
             }
         }
@@ -231,6 +231,24 @@ namespace BoxSocial.Applications.Forum
 
         [Show(@"forum/mcp", AppPrimitives.Group | AppPrimitives.Network)]
         private void showModeratorControlPanel(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                ModeratorControlPanel.Show(sender, new ShowPPageEventArgs((PPage)sender));
+            }
+        }
+
+        [Show(@"forum/mcp/([a-z\-]+)", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showModeratorControlPanelModule(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                ModeratorControlPanel.Show(sender, new ShowPPageEventArgs((PPage)sender));
+            }
+        }
+
+        [Show(@"forum/mcp/([a-z\-]+)/([a-z\-]+)", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showModeratorControlPanelSubModule(Core core, object sender)
         {
             if (sender is PPage)
             {

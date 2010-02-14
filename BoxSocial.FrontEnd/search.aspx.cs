@@ -192,7 +192,7 @@ namespace BoxSocial.FrontEnd
                 userVariableCollection.Parse("USER_AGE", user.AgeString);
                 userVariableCollection.Parse("USER_COUNTRY", user.Country);
 
-                if (core.session.IsLoggedIn)
+                if (core.Session.IsLoggedIn)
                 {
                     List<long> friendIds = loggedInMember.GetFriendIds();
                     if (!friendIds.Contains(user.Id))

@@ -137,9 +137,9 @@ namespace BoxSocial.Applications.Blog
             iquery.AddField("trackback_uri", uri);
             iquery.AddField("trackback_blurb", Functions.TrimStringToWord(blurb, 511));
             iquery.AddField("trackback_time_ut", UnixTime.UnixTimeStamp());
-            iquery.AddField("trackback_ip", core.session.IPAddress.ToString());
+            iquery.AddField("trackback_ip", core.Session.IPAddress.ToString());
 
-            long id = core.db.Query(iquery);
+            long id = core.Db.Query(iquery);
 
             return new TrackBack(core, id);
         }

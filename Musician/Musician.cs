@@ -283,10 +283,10 @@ namespace BoxSocial.Musician
 
         public static Musician Create(Core core, string title, string slug)
         {
-            Mysql db = core.db;
-            SessionState session = core.session;
+            Mysql db = core.Db;
+            SessionState session = core.Session;
 
-            if (core.session.LoggedInMember == null)
+            if (core.Session.LoggedInMember == null)
             {
                 return null;
             }
@@ -341,7 +341,7 @@ namespace BoxSocial.Musician
 
         public static bool CheckMusicianNameUnique(Core core, string musicianName)
         {
-            if (core.db.Query(string.Format("SELECT musician_slug FROM musicians WHERE LCASE(musician_slug) = '{0}';",
+            if (core.Db.Query(string.Format("SELECT musician_slug FROM musicians WHERE LCASE(musician_slug) = '{0}';",
                 Mysql.Escape(musicianName.ToLower()))).Rows.Count > 0)
             {
                 return false;
@@ -811,7 +811,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember);
             }
 
             return false;
@@ -821,7 +821,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember);
             }
 
             return false;
@@ -831,7 +831,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember);
             }
 
             return false;
@@ -882,7 +882,7 @@ namespace BoxSocial.Musician
 
             query.AddSort(SortOrder.Ascending, "musician_slug");
 
-            DataTable musiciansTable = core.db.Query(query);
+            DataTable musiciansTable = core.Db.Query(query);
 
             foreach (DataRow dr in musiciansTable.Rows)
             {

@@ -66,7 +66,7 @@ namespace BoxSocial.Internals
             switch (classification)
             {
                 case Classifications.Restricted:
-                    if (core.session.LoggedInMember.Age < 18)
+                    if (core.Session.LoggedInMember.Age < 18)
                     {
                         // TODO: Restricted content notice
                         core.Functions.Generate403();
@@ -74,13 +74,13 @@ namespace BoxSocial.Internals
                     }
                     break;
                 case Classifications.Mature:
-                    if (core.session.LoggedInMember.Age < 13)
+                    if (core.Session.LoggedInMember.Age < 13)
                     {
                         // TODO: Restricted content notice
                         core.Functions.Generate403();
                         return;
                     }
-                    else if (core.session.LoggedInMember.Age < 15)
+                    else if (core.Session.LoggedInMember.Age < 15)
                     {
                         // TODO: click-through message for 13/14 year olds
                         // TODO: Restricted content notice

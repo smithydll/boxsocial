@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
                 query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
                 query.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
 
-                DataTable feedTable = core.db.Query(query);
+                DataTable feedTable = core.Db.Query(query);
 
                 foreach (DataRow dr in feedTable.Rows)
                 {
@@ -69,15 +69,15 @@ namespace BoxSocial.Internals
             {
                 template.Parse("HAS_FEED_ITEMS", "TRUE");
                 VariableCollection feedDateVariableCollection = null;
-                string lastDay = core.tz.ToStringPast(core.tz.Now);
+                string lastDay = core.Tz.ToStringPast(core.Tz.Now);
 
                 foreach (Action feedAction in feedActions)
                 {
-                    DateTime feedItemDay = feedAction.GetTime(core.tz);
+                    DateTime feedItemDay = feedAction.GetTime(core.Tz);
 
-                    if (feedDateVariableCollection == null || lastDay != core.tz.ToStringPast(feedItemDay))
+                    if (feedDateVariableCollection == null || lastDay != core.Tz.ToStringPast(feedItemDay))
                     {
-                        lastDay = core.tz.ToStringPast(feedItemDay);
+                        lastDay = core.Tz.ToStringPast(feedItemDay);
                         feedDateVariableCollection = template.CreateChild("feed_days_list");
 
                         feedDateVariableCollection.Parse("DAY", lastDay);

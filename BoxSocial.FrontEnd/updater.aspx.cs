@@ -16,7 +16,7 @@ namespace BoxSocial.FrontEnd
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (core.session.LoggedInMember.UserName != "smithy_dll")
+            if (core.Session.LoggedInMember.UserName != "smithy_dll")
             {
                 return;
             }
@@ -25,7 +25,7 @@ namespace BoxSocial.FrontEnd
             query.AddFields("user_id");
             query.AddCondition("user_name", ConditionEquality.NotEqual, "Anonymous");
 
-            DataTable users = core.db.Query(query);
+            DataTable users = core.Db.Query(query);
 
             foreach (DataRow kr in users.Rows)
             {
@@ -41,7 +41,7 @@ namespace BoxSocial.FrontEnd
                 query.AddCondition("pa.item_type_id", ItemKey.GetTypeId(typeof(BoxSocial.Internals.User)).ToString());
                 query.AddCondition("pa.item_id", userId);
 
-                DataTable applications = core.db.Query(query);
+                DataTable applications = core.Db.Query(query);
 
                 foreach (DataRow dr in applications.Rows)
                 {

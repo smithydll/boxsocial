@@ -139,13 +139,13 @@ namespace BoxSocial.Internals
             query.AddCondition("rate_item_id", itemKey.Id);
             query.AddCondition("rate_item_type_id", itemKey.TypeId);
             QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);
-            QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.session.IPAddress.ToString());
+            QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "rate_ip", core.Session.IPAddress.ToString());
             qc2.AddCondition("rate_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24 * 7);
 
             /*DataTable ratingsTable = db.Query(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
                 itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));*/
 
-            DataTable ratingsTable = core.db.Query(query);
+            DataTable ratingsTable = core.Db.Query(query);
 
             if (ratingsTable.Rows.Count > 0)
             {
@@ -159,10 +159,10 @@ namespace BoxSocial.Internals
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
             iQuery.AddField("rate_rating", rating);
-            iQuery.AddField("rate_ip", core.session.IPAddress.ToString());
+            iQuery.AddField("rate_ip", core.Session.IPAddress.ToString());
 
             // commit the transaction
-            core.db.Query(iQuery);
+            core.Db.Query(iQuery);
 
             return;
         }

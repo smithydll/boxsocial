@@ -268,7 +268,7 @@ namespace BoxSocial.Internals
             tz = new UnixTime(core, UnixTime.UTC_CODE);
             core.Display.page = this;
 
-            core.session = session;
+            core.Session = session;
             core.CoreDomain = AppDomain.CurrentDomain;
 
             // Ensure that core applications are loaded
@@ -291,7 +291,7 @@ namespace BoxSocial.Internals
             }
 
             // move it here
-            core.tz = tz;
+            core.Tz = tz;
 
             isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
             
@@ -299,19 +299,19 @@ namespace BoxSocial.Internals
             // applications hijacking the response output
             core.Http = new Http();
             Template.Path = core.Http.TemplatePath;
-            core.prose = new Prose();
-            core.prose.Initialise(core, "en");
+            core.Prose = new Prose();
+            core.Prose.Initialise(core, "en");
             
             AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
 
             foreach (AssemblyName an in assemblies)
             {
-                core.prose.AddApplication(an.Name);
+                core.Prose.AddApplication(an.Name);
                 Assembly asm = Assembly.Load(an);
                 template.AddPageAssembly(asm);
             }
 
-            template.SetProse(core.prose);
+            template.SetProse(core.Prose);
             
             page = core.Functions.RequestInt("p", 1);
         }
@@ -320,7 +320,7 @@ namespace BoxSocial.Internals
             : this()
         {
             template.SetTemplate(templateFile);
-            core.template = template;
+            core.Template = template;
         }
 
         public void EndResponse()
@@ -348,7 +348,7 @@ namespace BoxSocial.Internals
                     db.CloseConnection();
                 }
 
-                core.prose.Close();
+                core.Prose.Close();
                 //core.Dispose();
                 //core = null;
 
@@ -365,7 +365,7 @@ namespace BoxSocial.Internals
                 db.CloseConnection();
             }
 
-            core.prose.Close();
+            core.Prose.Close();
             //core.Dispose();
             //core = null;
         }
@@ -388,7 +388,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.db;
+                return core.Db;
             }
         }
 
@@ -404,7 +404,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.template;
+                return core.Template;
             }
         }
 

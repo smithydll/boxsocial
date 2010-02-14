@@ -383,11 +383,11 @@ namespace BoxSocial.Applications.Blog
 
         public static BlogEntry Create(Core core, Primitive owner, string title, string body, byte license, string status, short category, long postTime)
         {
-            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", core.session.LoggedInMember.Id),
+            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", core.Session.LoggedInMember.Id),
                 new FieldValuePair("post_time_ut", postTime),
                 new FieldValuePair("post_title", title),
                 new FieldValuePair("post_modified_ut", postTime),
-                new FieldValuePair("post_ip", core.session.IPAddress.ToString()),
+                new FieldValuePair("post_ip", core.Session.IPAddress.ToString()),
                 new FieldValuePair("post_text", body),
                 new FieldValuePair("post_license", license),
                 new FieldValuePair("post_status", status),

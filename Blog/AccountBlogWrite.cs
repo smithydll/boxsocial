@@ -361,7 +361,7 @@ namespace BoxSocial.Applications.Blog
 
                 db.BeginTransaction();
 
-                BlogEntry myBlogEntry = BlogEntry.Create(core, core.session.LoggedInMember, title, postBody, license, status, category, postTimeRaw);
+                BlogEntry myBlogEntry = BlogEntry.Create(core, core.Session.LoggedInMember, title, postBody, license, status, category, postTimeRaw);
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
@@ -379,7 +379,7 @@ namespace BoxSocial.Applications.Blog
                     // TODO Permissions
                     //if (Access.FriendsCanRead(myBlogEntry.Permissions))
                     {
-                        DateTime postDateTime = myBlogEntry.GetCreatedDate(core.tz);
+                        DateTime postDateTime = myBlogEntry.GetCreatedDate(core.Tz);
 
                         string postUrl = HttpUtility.HtmlEncode(string.Format("/{0}/blog/{1}/{2:00}/{3}",
                             LoggedInMember.UserName, postDateTime.Year, postDateTime.Month, myBlogEntry.PostId));

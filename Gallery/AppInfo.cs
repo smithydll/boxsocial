@@ -230,8 +230,8 @@ namespace BoxSocial.Applications.Gallery
         {
             /*UpdateQuery uQuery = new UpdateQuery("gallery_items");
             uQuery.se*/
-            core.db.BeginTransaction();
-            core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
+            core.Db.BeginTransaction();
+            core.Db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
                 e.Rating, e.ItemId));
         }
 
@@ -361,16 +361,16 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void photoAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
                 itemKey.Id, adjustment));
 
-            core.db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_id = (SELECT gallery_id FROM gallery_items WHERE gallery_item_id = {0});",
+            core.Db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_id = (SELECT gallery_id FROM gallery_items WHERE gallery_item_id = {0});",
                 itemKey.Id, adjustment));
         }
 
         private void galleryAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_comments = gallery_comments + {1} WHERE gallery_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_comments = gallery_comments + {1} WHERE gallery_id = {0};",
                 itemKey.Id, adjustment));
         }
         
@@ -487,7 +487,7 @@ namespace BoxSocial.Applications.Gallery
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
 
-            if (!(!thisGroup.IsGroupMember(e.core.session.LoggedInMember) && thisGroup.GroupType == "CLOSED"))
+            if (!(!thisGroup.IsGroupMember(e.core.Session.LoggedInMember) && thisGroup.GroupType == "CLOSED"))
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 

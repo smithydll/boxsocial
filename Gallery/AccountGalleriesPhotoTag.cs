@@ -219,7 +219,7 @@ namespace BoxSocial.Applications.Gallery
 				
 				foreach (long uid in newTags.Keys)
 				{
-					UserTag ut = UserTag.Create(core, photo, core.session.LoggedInMember, core.PrimitiveCache[uid], newTags[uid]);
+					UserTag ut = UserTag.Create(core, photo, core.Session.LoggedInMember, core.PrimitiveCache[uid], newTags[uid]);
 				}
             }
             catch (GalleryItemNotFoundException)

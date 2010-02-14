@@ -134,7 +134,7 @@ namespace BoxSocial.Musician
             SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
             query.AddCondition("genre_is_sub", false);
 
-            DataTable genresDataTable = core.db.Query(query);
+            DataTable genresDataTable = core.Db.Query(query);
 
             foreach (DataRow dr in genresDataTable.Rows)
             {
@@ -152,7 +152,7 @@ namespace BoxSocial.Musician
             query.AddCondition("genre_is_sub", true);
             query.AddCondition("parent_id", genreId);
 
-            DataTable genresDataTable = core.db.Query(query);
+            DataTable genresDataTable = core.Db.Query(query);
 
             foreach (DataRow dr in genresDataTable.Rows)
             {

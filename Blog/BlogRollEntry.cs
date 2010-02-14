@@ -148,7 +148,7 @@ namespace BoxSocial.Applications.Blog
             iquery.AddField("user_id", core.LoggedInMemberId);
             iquery.AddField("entry_user_id", member.Id);
 
-            long blogRollEntryId = core.db.Query(iquery);
+            long blogRollEntryId = core.Db.Query(iquery);
 
             return new BlogRollEntry(core, blogRollEntryId);
         }
@@ -165,7 +165,7 @@ namespace BoxSocial.Applications.Blog
             iquery.AddField("entry_uri", uri);
             iquery.AddField("entry_title", title);
 
-            long blogRollEntryId = core.db.Query(iquery);
+            long blogRollEntryId = core.Db.Query(iquery);
 
             return new BlogRollEntry(core, blogRollEntryId);
         }

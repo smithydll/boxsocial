@@ -410,7 +410,7 @@ namespace BoxSocial.Applications.Forum
 
         public static ForumTopic Create(Core core, Forum forum, string subject, string text, TopicStates status)
         {
-            core.db.BeginTransaction();
+            core.Db.BeginTransaction();
 
             if (forum == null)
             {
@@ -432,7 +432,7 @@ namespace BoxSocial.Applications.Forum
                     throw new UnauthorisedToCreateItemException();
                 }
 
-                if (!((UserGroup)forum.Owner).IsGroupOperator(core.session.LoggedInMember))
+                if (!((UserGroup)forum.Owner).IsGroupOperator(core.Session.LoggedInMember))
                 {
                     status = TopicStates.Normal;
                 }
@@ -454,7 +454,7 @@ namespace BoxSocial.Applications.Forum
 			iquery.AddField("topic_item_id", forum.Owner.Id);
 			iquery.AddField("topic_item_type_id", forum.Owner.TypeId);
 
-            long topicId = core.db.Query(iquery);
+            long topicId = core.Db.Query(iquery);
 
             ForumTopic topic = new ForumTopic(core, forum, topicId);
 
@@ -466,7 +466,7 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddField("topic_last_post_time_ut", post.TimeCreatedRaw);
             uQuery.AddCondition("topic_id", topic.Id);
 
-            long rowsUpdated = core.db.Query(uQuery);
+            long rowsUpdated = core.Db.Query(uQuery);
 			
 			topic.firstPostId = post.Id;
 			topic.lastPostId = post.Id;
@@ -474,7 +474,7 @@ namespace BoxSocial.Applications.Forum
 
             if (rowsUpdated != 1)
             {
-                core.db.RollBackTransaction();
+                core.Db.RollBackTransaction();
                 core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
@@ -498,11 +498,11 @@ namespace BoxSocial.Applications.Forum
                 uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
                 uQuery.AddCondition("forum_id", ConditionEquality.In, parentForumIds);
 
-                rowsUpdated = core.db.Query(uQuery);
+                rowsUpdated = core.Db.Query(uQuery);
 
                 if (rowsUpdated < 1)
                 {
-                    core.db.RollBackTransaction();
+                    core.Db.RollBackTransaction();
                     core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
                 }
             }
@@ -513,11 +513,11 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("forum_item_id", forum.Owner.Id);
             uQuery.AddCondition("forum_item_type_id", forum.Owner.TypeId);
 
-            rowsUpdated = core.db.Query(uQuery);
+            rowsUpdated = core.Db.Query(uQuery);
 
             if (rowsUpdated != 1)
             {
-                core.db.RollBackTransaction();
+                core.Db.RollBackTransaction();
                 core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
             }
 
@@ -546,11 +546,11 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                fm = new ForumMember(core, forum.Owner, core.session.LoggedInMember);
+                fm = new ForumMember(core, forum.Owner, core.Session.LoggedInMember);
             }
             catch (InvalidForumMemberException)
             {
-                fm = ForumMember.Create(core, forum.Owner, core.session.LoggedInMember, true);
+                fm = ForumMember.Create(core, forum.Owner, core.Session.LoggedInMember, true);
             }
 
             fm.ForumPosts += 1;
@@ -663,11 +663,11 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                fm = new ForumMember(core, Forum.Owner, core.session.LoggedInMember);
+                fm = new ForumMember(core, Forum.Owner, core.Session.LoggedInMember);
             }
             catch (InvalidForumMemberException)
             {
-                fm = ForumMember.Create(core, Forum.Owner, core.session.LoggedInMember, true);
+                fm = ForumMember.Create(core, Forum.Owner, core.Session.LoggedInMember, true);
             }
 
             fm.ForumPosts += 1;
@@ -855,7 +855,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (page is GPage)
                 {
-                    if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.session.LoggedInMember)))
+                    if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember)))
                     {
                         page.template.Parse("U_JOIN", ((GPage)page).Group.JoinUri);
                     }
@@ -930,7 +930,7 @@ namespace BoxSocial.Applications.Forum
                     VariableCollection postVariableCollection = page.template.CreateChild("post_list");
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
-					postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
+					postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(post.GetCreatedDate(core.Tz)));
 					//postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
@@ -939,7 +939,7 @@ namespace BoxSocial.Applications.Forum
                         postVariableCollection.Parse("U_USER", post.Poster.Uri);
                         postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[post.UserId].Info.DisplayName);
                         postVariableCollection.Parse("USER_TILE", postersList[post.UserId].UserIcon);
-                        postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.tz)));
+                        postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.Tz)));
                         postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Country);
                         postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
                         postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);

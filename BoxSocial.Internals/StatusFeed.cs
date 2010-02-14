@@ -46,7 +46,7 @@ namespace BoxSocial.Internals
             query.LimitCount = 50;
             query.LimitStart = (page - 1) * 50;
 
-            DataTable feedTable = core.db.Query(query);
+            DataTable feedTable = core.Db.Query(query);
 
             foreach (DataRow dr in feedTable.Rows)
             {
@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
                     // WHERE current
                 }
 
-                DataTable feedTable = core.db.Query(query);
+                DataTable feedTable = core.Db.Query(query);
 
                 core.LoadUserProfiles(friendIds);
                 foreach (DataRow dr in feedTable.Rows)
@@ -105,7 +105,7 @@ namespace BoxSocial.Internals
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 1;
 
-            DataTable feedTable = core.db.Query(query);
+            DataTable feedTable = core.Db.Query(query);
 
             if (feedTable.Rows.Count == 1)
             {
@@ -119,10 +119,10 @@ namespace BoxSocial.Internals
 
         public static StatusMessage SaveMessage(Core core, string message)
         {
-            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
-            ae.PublishToFeed(core.session.LoggedInMember, message, "");
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+            ae.PublishToFeed(core.Session.LoggedInMember, message, "");
 
-            return StatusMessage.Create(core, core.session.LoggedInMember, message);
+            return StatusMessage.Create(core, core.Session.LoggedInMember, message);
         }
 
         /*
@@ -130,16 +130,16 @@ namespace BoxSocial.Internals
          */
         public static void Show(Core core, TPage page, User owner)
         {
-            core.template.SetTemplate("Profile", "viewstatusfeed");
+            core.Template.SetTemplate("Profile", "viewstatusfeed");
 
             List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.page);
 
             foreach (StatusMessage item in items)
             {
-                VariableCollection statusMessageVariableCollection = core.template.CreateChild("status_messages");
+                VariableCollection statusMessageVariableCollection = core.Template.CreateChild("status_messages");
 
                 statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
-                statusMessageVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(item.GetTime(core.tz)));
+                statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(item.GetTime(core.Tz)));
             }
 
             core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.StatusMessages / 10.0));

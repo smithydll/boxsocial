@@ -160,7 +160,7 @@ namespace BoxSocial.Networks
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 
-            DataTable userNetworks = core.db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
+            DataTable userNetworks = core.Db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
                 member.UserId, NetworkMember.USER_NETWORK_FIELDS));
 
             foreach (DataRow memberRow in userNetworks.Rows)

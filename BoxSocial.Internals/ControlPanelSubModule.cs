@@ -69,7 +69,7 @@ namespace BoxSocial.Internals
         /// <param name="core">Core token</param>
         public void ModuleVector(Core core)
         {
-            ModuleVector(core, core.session.LoggedInMember);
+            ModuleVector(core, core.Session.LoggedInMember);
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace BoxSocial.Internals
         public void ModuleVector(Core core, Primitive owner)
         {
             this.core = core;
-            this.db = core.db;
-            this.session = core.session;
-            this.tz = core.tz;
+            this.db = core.Db;
+            this.session = core.Session;
+            this.tz = core.Tz;
             this.Owner = owner;
             this.LoggedInMember = session.LoggedInMember;
 
@@ -306,7 +306,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
             }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
-            template.SetProse(core.prose);
+            template.SetProse(core.Prose);
         }
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace BoxSocial.Internals
         /// </summary>
         private void RenderTemplate()
         {
-            core.template.ParseRaw("MODULE_CONTENT", ((Template)template).ToString());
+            core.Template.ParseRaw("MODULE_CONTENT", ((Template)template).ToString());
         }
 
         /// <summary>
@@ -344,7 +344,7 @@ namespace BoxSocial.Internals
             template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetTemplate(Assembly.GetCallingAssembly().GetName().Name, templateName);
 
-            core.prose.AddApplication(Assembly.GetCallingAssembly().GetName().Name);
+            core.Prose.AddApplication(Assembly.GetCallingAssembly().GetName().Name);
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace BoxSocial.Internals
         /// <param name="uri">URI to redirect to</param>
         protected void SetRedirectUri(string uri)
         {
-            core.template.Parse("REDIRECT_URI", uri);
+            core.Template.Parse("REDIRECT_URI", uri);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace BoxSocial.Internals
         /// <param name="errorString">Error string to be displayed</param>
         protected void SetError(string errorString)
         {
-            core.template.Parse("ERROR", errorString);
+            core.Template.Parse("ERROR", errorString);
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace BoxSocial.Internals
         /// <param name="informationString">Information string to be displayed</param>
         protected void SetInformation(string informationString)
         {
-            core.template.Parse("INFO", informationString);
+            core.Template.Parse("INFO", informationString);
         }
 
         /// <summary>
@@ -474,7 +474,7 @@ namespace BoxSocial.Internals
         /// </summary>
         public static void AuthoriseRequestSid(Core core)
         {
-            if (core.Http.Query["sid"] != core.session.SessionId)
+            if (core.Http.Query["sid"] != core.Session.SessionId)
             {
                 if (string.IsNullOrEmpty(core.Http.Query["sid"]))
                 {
@@ -485,11 +485,11 @@ namespace BoxSocial.Internals
                 SelectQuery query = new SelectQuery("user_sessions");
                 query.AddFields("user_id");
                 query.AddCondition("session_string", core.Http.Query["sid"]);
-                query.AddCondition("user_id", core.session.LoggedInMember.Id);
+                query.AddCondition("user_id", core.Session.LoggedInMember.Id);
                 query.AddCondition("session_signed_in", true);
-                query.AddCondition("session_ip", core.session.IPAddress.ToString());
+                query.AddCondition("session_ip", core.Session.IPAddress.ToString());
 
-                if (core.db.Query(query).Rows.Count == 0)
+                if (core.Db.Query(query).Rows.Count == 0)
                 {
                     core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
                     return;
@@ -526,11 +526,11 @@ namespace BoxSocial.Internals
         {
             if (owner != null)
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner));
             }
             else
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember));
             }
         }
 
@@ -571,7 +571,7 @@ namespace BoxSocial.Internals
 
         protected void ParseLicensingBox(string templateVar, byte selectedLicense)
         {
-            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
+            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.Db, selectedLicense));
         }
 
         protected void ParseClassification(Core core, string templateVar, Classifications classification)

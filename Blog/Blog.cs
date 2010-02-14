@@ -203,12 +203,12 @@ namespace BoxSocial.Applications.Blog
             query.AddFields("ub.user_id");
             query.AddCondition("ub.user_id", core.LoggedInMemberId);
 
-            if (core.db.Query(query).Rows.Count == 0)
+            if (core.Db.Query(query).Rows.Count == 0)
             {
-                core.db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
+                core.Db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
                         core.LoggedInMemberId));
 
-                return new Blog(core, core.session.LoggedInMember);
+                return new Blog(core, core.Session.LoggedInMember);
             }
             else
             {
@@ -322,8 +322,8 @@ namespace BoxSocial.Applications.Blog
         {
             List<BlogEntry> entries = new List<BlogEntry>();
 
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
-            readAccessLevel = Owner.GetAccessLevel(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
+            readAccessLevel = Owner.GetAccessLevel(core.Session.LoggedInMember);
 
             SelectQuery query = null;
 
@@ -570,7 +570,7 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                DataTable archiveTable = core.db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
+                DataTable archiveTable = core.Db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
                     page.User.UserId, core.LoggedInMemberId));
 
                 page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
@@ -585,7 +585,7 @@ namespace BoxSocial.Applications.Blog
                     archiveVariableCollection.Parse("URL", Blog.BuildUri(core, page.User, (int)archiveTable.Rows[i]["year"], (int)archiveTable.Rows[i]["month"]));
                 }
 
-                DataTable categoriesTable = core.db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
+                DataTable categoriesTable = core.Db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
                     page.User.UserId, core.LoggedInMemberId));
 
                 page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
@@ -677,10 +677,10 @@ namespace BoxSocial.Applications.Blog
                 doc.channels[0].items = new RssDocumentItem[blogEntries.Count];
                 for (int i = 0; i < blogEntries.Count; i++)
                 {
-                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.tz);
+                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
 
                     doc.channels[0].items[i] = new RssDocumentItem();
-                    doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.User);
+                    doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.Session.LoggedInMember, page.User);
                     doc.channels[0].items[i].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
                     doc.channels[0].items[i].guid = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
@@ -693,9 +693,9 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 core.Http.WriteXml(serializer, doc);
-                if (core.db != null)
+                if (core.Db != null)
                 {
-                    core.db.CloseConnection();
+                    core.Db.CloseConnection();
                 }
                 core.Http.End();
             }
@@ -708,12 +708,12 @@ namespace BoxSocial.Applications.Blog
                     blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
                     blogPostVariableCollection.Parse("COMMENTS", blogEntries[i].Comments.ToString());
 
-                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.tz);
+                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
 
                     string postUrl = HttpUtility.HtmlEncode(string.Format("{0}blog/{1}/{2:00}/{3}",
                             page.User.UriStub, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
-                    blogPostVariableCollection.Parse("DATE", core.tz.DateTimeToString(postDateTime));
+                    blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
                     blogPostVariableCollection.Parse("URL", postUrl);
                     //blogPostVariableCollection.ParseRaw("POST", Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner));
                     core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);

@@ -221,6 +221,11 @@ namespace BoxSocial.Musician
                 VariableCollection gigVariableCollection = page.template.CreateChild("gig_list");
 
                 gigVariableCollection.Parse("ID", gig.Id.ToString());
+                gigVariableCollection.Parse("U_GIG", gig.Uri);
+                gigVariableCollection.Parse("DESCRIPTION", gig.Abstract);
+                gigVariableCollection.Parse("CITY", gig.City);
+                gigVariableCollection.Parse("VENUE", gig.Venue);
+                gigVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(gig.Comments));
             }
 
             List<string[]> tourPath = new List<string[]>();
@@ -237,7 +242,7 @@ namespace BoxSocial.Musician
             SelectQuery query = Tour.GetSelectQueryStub(typeof(Tour));
             query.AddCondition("musician_id", owner.Id);
 
-            DataTable tourTable = core.db.Query(query);
+            DataTable tourTable = core.Db.Query(query);
 
             foreach (DataRow dr in tourTable.Rows)
             {

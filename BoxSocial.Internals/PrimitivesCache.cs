@@ -35,7 +35,7 @@ namespace BoxSocial.Internals
         public PrimitivesCache(Core core)
         {
             this.core = core;
-            this.db = core.db;
+            this.db = core.Db;
         }
 
         /// <summary>

@@ -50,7 +50,7 @@ namespace BoxSocial.Internals
             this.core = core;
             this.item = item;
             this.owner = item.Owner;
-            this.viewer = core.session.LoggedInMember;
+            this.viewer = core.Session.LoggedInMember;
         }
 
         internal User Viewer
@@ -315,7 +315,7 @@ namespace BoxSocial.Internals
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
             query.AddSort(SortOrder.Ascending, "permission_type");
 
-            DataTable permissionDataTable = core.db.Query(query);
+            DataTable permissionDataTable = core.Db.Query(query);
 
             foreach (DataRow dr in permissionDataTable.Rows)
             {

@@ -135,7 +135,7 @@ namespace BoxSocial.Internals
 
                     try
                     {
-                        typesTable = core.db.Query(query);
+                        typesTable = core.Db.Query(query);
                     }
                     catch
                     {

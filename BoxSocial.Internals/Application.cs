@@ -84,19 +84,17 @@ namespace BoxSocial.Internals
             int i = 0;
             foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
-                    if (attr.GetType() == typeof(ShowAttribute))
+
+                    if (((ShowAttribute)attr).Order > 0)
                     {
-                        if (((ShowAttribute)attr).Order > 0)
-                        {
-                            core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
-                        }
-                        else
-                        {
-                            i++;
-                            core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
-                        }
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
+                    }
+                    else
+                    {
+                        i++;
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
                     }
                 }
             }
@@ -109,20 +107,16 @@ namespace BoxSocial.Internals
             int i = 0;
             foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(mi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
-                    if (attr.GetType() == typeof(ShowAttribute))
+                    i++;
+                    if (string.IsNullOrEmpty(((ShowAttribute)attr).Stub))
                     {
-                        i++;
-                        //core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
-                        if (string.IsNullOrEmpty(((ShowAttribute)attr).Stub))
-                        {
-                            aii.AddSlug(this.Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
-                        }
-                        else
-                        {
-                            aii.AddSlug(((ShowAttribute)attr).Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
-                        }
+                        aii.AddSlug(this.Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                    }
+                    else
+                    {
+                        aii.AddSlug(((ShowAttribute)attr).Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
                     }
                 }
             }
@@ -139,13 +133,13 @@ namespace BoxSocial.Internals
 					SelectQuery query = new SelectQuery(Item.GetTable(typeof(ItemType)));
 					query.AddCondition("type_namespace", type.FullName);
 					
-					if (core.db.Query(query).Rows.Count == 0)
+					if (core.Db.Query(query).Rows.Count == 0)
 					{
 						InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(ItemType)));
 						iQuery.AddField("type_namespace", type.FullName);
 						iQuery.AddField("type_application_id", applicationId);
 						
-						core.db.Query(iQuery);
+						core.Db.Query(iQuery);
 					}
 				}
 			}
@@ -164,9 +158,9 @@ namespace BoxSocial.Internals
                     if (!string.IsNullOrEmpty(table))
                     {
                         List<DataFieldInfo> dataFields = Item.GetFields(type);
-                        if (core.db.TableExists(table))
+                        if (core.Db.TableExists(table))
                         {
-                            Dictionary<string, DataFieldInfo> columns = core.db.GetColumns(table);
+                            Dictionary<string, DataFieldInfo> columns = core.Db.GetColumns(table);
 
                             List<DataFieldInfo> newFields = new List<DataFieldInfo>();
 
@@ -180,21 +174,21 @@ namespace BoxSocial.Internals
                                 {
                                     if ((!columns[field.Name].Type.Equals(field.Type)) || columns[field.Name].Length != field.Length)
                                     {
-                                        core.db.ChangeColumn(table, field);
+                                        core.Db.ChangeColumn(table, field);
                                     }
                                 }
                             }
 
                             if (newFields.Count > 0)
                             {
-                                core.db.AddColumns(table, newFields);
+                                core.Db.AddColumns(table, newFields);
                             }
 
-                            core.db.UpdateTableKeys(table, dataFields);
+                            core.Db.UpdateTableKeys(table, dataFields);
                         }
                         else
                         {
-                            core.db.CreateTable(table, dataFields);
+                            core.Db.CreateTable(table, dataFields);
                         }
                     }
                 }
@@ -367,7 +361,7 @@ namespace BoxSocial.Internals
 
         private static DataTable GetApplicationRows(Core core, Primitive owner)
         {
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
             long loggedIdUid = core.LoggedInMemberId;
 			
             /*DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
@@ -384,7 +378,7 @@ namespace BoxSocial.Internals
             query.AddCondition("item_type_id", owner.ItemKey.TypeId);
             query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
 
-            DataTable userApplicationsTable = core.db.Query(query);
+            DataTable userApplicationsTable = core.Db.Query(query);
 
             return userApplicationsTable;
         }
@@ -412,7 +406,7 @@ namespace BoxSocial.Internals
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
-                DataTable modulesTable = core.db.Query(query);
+                DataTable modulesTable = core.Db.Query(query);
 
                 foreach (DataRow moduleRow in modulesTable.Rows)
                 {
@@ -454,7 +448,7 @@ namespace BoxSocial.Internals
                 query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
-                DataTable applicationSlugsTable = core.db.Query(query);
+                DataTable applicationSlugsTable = core.Db.Query(query);
 
                 foreach (DataRow slugRow in applicationSlugsTable.Rows)
                 {
@@ -513,24 +507,24 @@ namespace BoxSocial.Internals
                                         || primitive == AppPrimitives.Any)
                                     {
                                         newApplication.Initialise(core);
-                                        core.template.AddPageAssembly(assembly);
+                                        core.Template.AddPageAssembly(assembly);
 
                                         if (ae.HasStyleSheet)
                                         {
-                                            VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
+                                            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
 
                                             styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
                                         }
 
                                         if (ae.HasJavascript)
                                         {
-                                            VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
+                                            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
 
                                             javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                                         }
 
                                         /* Initialise prose class for the application */
-                                        core.prose.AddApplication(ae.Key);
+                                        core.Prose.AddApplication(ae.Key);
                                     }
                                 }
                             }
@@ -622,20 +616,20 @@ namespace BoxSocial.Internals
 
                     if (ae.HasStyleSheet)
                     {
-                        VariableCollection styleSheetVariableCollection = core.template.CreateChild("style_sheet_list");
+                        VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
 
                         styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
                     }
 
                     if (ae.HasJavascript)
                     {
-                        VariableCollection javaScriptVariableCollection = core.template.CreateChild("javascript_list");
+                        VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
 
                         javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
 
                     /* Initialise prose class for the application */
-                    core.prose.AddApplication(ae.Key);
+                    core.Prose.AddApplication(ae.Key);
                 }
             }
         }

@@ -269,7 +269,7 @@ namespace BoxSocial.Applications.Forum
                 SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, topicLastPostIds);
 
-                DataTable postsTable = core.db.Query(query);
+                DataTable postsTable = core.Db.Query(query);
 
                 List<long> posterIds = new List<long>();
 
@@ -296,7 +296,7 @@ namespace BoxSocial.Applications.Forum
                 SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, postIds);
 
-                DataTable postsTable = core.db.Query(query);
+                DataTable postsTable = core.Db.Query(query);
 
                 List<long> posterIds = new List<long>();
 
@@ -370,9 +370,9 @@ namespace BoxSocial.Applications.Forum
             iQuery.AddField("post_text", text);
             iQuery.AddField("post_time_ut", UnixTime.UnixTimeStamp());
             iQuery.AddField("post_modified_ut", UnixTime.UnixTimeStamp());
-            iQuery.AddField("post_ip", core.session.IPAddress.ToString());
+            iQuery.AddField("post_ip", core.Session.IPAddress.ToString());
 
-            long postId = core.db.Query(iQuery);
+            long postId = core.Db.Query(iQuery);
 
             return new TopicPost(core, forum, topic, postId);
         }

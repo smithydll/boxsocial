@@ -163,7 +163,7 @@ namespace BoxSocial.Applications.Pages
                         // Update page
                         try
                         {
-                            Page listPage = new Page(core, core.session.LoggedInMember, oldSlug, "lists");
+                            Page listPage = new Page(core, core.Session.LoggedInMember, oldSlug, "lists");
 
                             listPage.Title = list.Title;
                             listPage.Slug = list.Path;
@@ -175,14 +175,14 @@ namespace BoxSocial.Applications.Pages
                             Page listPage;
                             try
                             {
-                                listPage = new Page(core, core.session.LoggedInMember, "lists");
+                                listPage = new Page(core, core.Session.LoggedInMember, "lists");
                             }
                             catch (PageNotFoundException)
                             {
                                 string listSlug = "lists";
                                 try
                                 {
-                                    listPage = Page.Create(core, core.session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                                    listPage = Page.Create(core, core.Session.LoggedInMember, "Lists", ref listSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
                                 }
                                 catch (PageSlugNotUniqueException)
                                 {
@@ -190,7 +190,7 @@ namespace BoxSocial.Applications.Pages
                                 }
                             }
                             slug = list.Path;
-                            Page page = Page.Create(core, core.session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
+                            Page page = Page.Create(core, core.Session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
                         }
 
                         SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
@@ -257,7 +257,7 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                List list = new List(core, core.session.LoggedInMember, listId);
+                List list = new List(core, core.Session.LoggedInMember, listId);
 
                 try
                 {
@@ -271,7 +271,7 @@ namespace BoxSocial.Applications.Pages
 
                 try
                 {
-                    Page listPage = new Page(core, core.session.LoggedInMember, list.Path, "lists");
+                    Page listPage = new Page(core, core.Session.LoggedInMember, list.Path, "lists");
 
                     listPage.Delete();
                 }

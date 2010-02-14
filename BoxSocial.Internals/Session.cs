@@ -299,7 +299,7 @@ namespace BoxSocial.Internals
 		public SessionState(Core core, User user)
 		{
 			this.core = core;
-			this.db = core.db;
+			this.db = core.Db;
 			isLoggedIn = true;
 			loggedInMember = user;
 			ipAddress = new IPAddress(0);
@@ -438,7 +438,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        core.template.Parse("REDIRECT_URI", "/");
+                        core.Template.Parse("REDIRECT_URI", "/");
 
                         if (record == null)
 						{

@@ -160,12 +160,12 @@ namespace BoxSocial.Internals
         public static UserPhoneNumber Create(Core core, string phoneNumber, PhoneNumberTypes phoneType)
         {
             InsertQuery iquery = new InsertQuery(UserPhoneNumber.GetTable(typeof(UserPhoneNumber)));
-            iquery.AddField("phone_user_id", core.session.LoggedInMember.Id);
+            iquery.AddField("phone_user_id", core.Session.LoggedInMember.Id);
             iquery.AddField("phone_number", phoneNumber);
             iquery.AddField("phone_type", (byte)phoneType);
             iquery.AddField("phone_time_ut", UnixTime.UnixTimeStamp());
 
-            long phoneId = core.db.Query(iquery);
+            long phoneId = core.Db.Query(iquery);
 
             return new UserPhoneNumber(core, phoneId);
         }

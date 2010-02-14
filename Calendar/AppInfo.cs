@@ -231,7 +231,7 @@ namespace BoxSocial.Applications.Calendar
         /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void eventAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
                 itemKey.Id, adjustment));
         }
 
@@ -320,7 +320,7 @@ namespace BoxSocial.Applications.Calendar
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todaymonthpanel");
 
-            Calendar.DisplayMiniCalendar(e.core, template, e.core.session.LoggedInMember, e.core.tz.Now.Year, e.core.tz.Now.Month);
+            Calendar.DisplayMiniCalendar(e.core, template, e.core.Session.LoggedInMember, e.core.Tz.Now.Year, e.core.Tz.Now.Month);
 
             e.core.AddSidePanel(template);
         }
@@ -329,17 +329,17 @@ namespace BoxSocial.Applications.Calendar
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todayupcommingevents");
 
-            long startTime = e.core.tz.GetUnixTimeStamp(new DateTime(e.core.tz.Now.Year, e.core.tz.Now.Month, e.core.tz.Now.Day, 0, 0, 0));
+            long startTime = e.core.Tz.GetUnixTimeStamp(new DateTime(e.core.Tz.Now.Year, e.core.Tz.Now.Month, e.core.Tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 7; // skip ahead one week into the future
 
             Calendar cal = new Calendar(e.core);
-            List<Event> events = cal.GetEvents(core, e.core.session.LoggedInMember, startTime, endTime);
+            List<Event> events = cal.GetEvents(core, e.core.Session.LoggedInMember, startTime, endTime);
 
             template.Parse("U_CALENDAR", core.Uri.AppendSid(string.Format("/{0}/calendar",
-                e.core.session.LoggedInMember.UserName)));
+                e.core.Session.LoggedInMember.UserName)));
 
             VariableCollection appointmentDaysVariableCollection = null;
-            DateTime lastDay = e.core.tz.Now;
+            DateTime lastDay = e.core.Tz.Now;
 
             if (events.Count > 0)
             {
@@ -348,8 +348,8 @@ namespace BoxSocial.Applications.Calendar
 
             foreach(Event calendarEvent in events)
             {
-                DateTime eventDay = calendarEvent.GetStartTime(e.core.tz);
-                DateTime eventEnd = calendarEvent.GetEndTime(e.core.tz);
+                DateTime eventDay = calendarEvent.GetStartTime(e.core.Tz);
+                DateTime eventEnd = calendarEvent.GetEndTime(e.core.Tz);
 
                 if (appointmentDaysVariableCollection == null || lastDay.Day != eventDay.Day)
                 {
@@ -374,21 +374,21 @@ namespace BoxSocial.Applications.Calendar
             //
 
             template = new Template(Assembly.GetExecutingAssembly(), "todaytaskspanel");
-            List<Task> tasks = cal.GetTasks(core, e.core.session.LoggedInMember, startTime, endTime, true);
+            List<Task> tasks = cal.GetTasks(core, e.core.Session.LoggedInMember, startTime, endTime, true);
 
             VariableCollection taskDaysVariableCollection = null;
-            lastDay = e.core.tz.Now;
+            lastDay = e.core.Tz.Now;
 
             if (tasks.Count > 0)
             {
                 template.Parse("HAS_TASKS", "TRUE");
             }
 
-            template.Parse("U_TASKS", Task.BuildTasksUri(e.core, e.core.session.LoggedInMember));
+            template.Parse("U_TASKS", Task.BuildTasksUri(e.core, e.core.Session.LoggedInMember));
 
             foreach (Task calendarTask in tasks)
             {
-                DateTime taskDue = calendarTask.GetDueTime(e.core.tz);
+                DateTime taskDue = calendarTask.GetDueTime(e.core.Tz);
 
                 if (taskDaysVariableCollection == null || lastDay.Day != taskDue.Day)
                 {

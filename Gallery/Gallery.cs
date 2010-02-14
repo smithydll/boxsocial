@@ -661,8 +661,8 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>Raw data for a list of sub-galleries</returns>
         protected DataRowCollection GetGalleryDataRows(Core core)
         {
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
 
             SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
@@ -671,7 +671,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
 
-            return core.db.Query(query).Rows;
+            return core.Db.Query(query).Rows;
         }
 
         /// <summary>
@@ -729,10 +729,10 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>Raw data for a list of gallery photos</returns>
         protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage)
         {
-            db = core.db;
+            db = core.Db;
 
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
 
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
             query.AddCondition("gallery_id", galleryId);
@@ -784,7 +784,7 @@ namespace BoxSocial.Applications.Gallery
                     throw new GallerySlugNotValidException();
                 }
 
-                if (!Gallery.CheckGallerySlugUnique(core.db, member, parentPath, slug))
+                if (!Gallery.CheckGallerySlugUnique(core.Db, member, parentPath, slug))
                 {
                     throw new GallerySlugNotUniqueException();
                 }
@@ -893,7 +893,7 @@ namespace BoxSocial.Applications.Gallery
                 throw new GallerySlugNotValidException();
             }
 
-            if (!Gallery.CheckGallerySlugUnique(core.db, parent.owner, parent.FullPath, slug))
+            if (!Gallery.CheckGallerySlugUnique(core.Db, parent.owner, parent.FullPath, slug))
             {
                 throw new GallerySlugNotUniqueException();
             }
@@ -942,7 +942,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_visits", 0);
             iQuery.AddField("gallery_hierarchy", parents);
 
-            long galleryId = core.db.Query(iQuery);
+            long galleryId = core.Db.Query(iQuery);
 
             Gallery gallery = new Gallery(core, owner, galleryId);
 
@@ -969,8 +969,8 @@ namespace BoxSocial.Applications.Gallery
             long bytesDeleted = stuffDeleted[1];
 
             // comitt the transaction
-            core.db.UpdateQuery(string.Format("UPDATE user_info SET user_gallery_items = user_gallery_items - {1}, user_bytes = user_bytes - {2} WHERE user_id = {1}",
-                core.session.LoggedInMember.UserId, itemsDeleted, bytesDeleted));
+            core.Db.UpdateQuery(string.Format("UPDATE user_info SET user_gallery_items = user_gallery_items - {1}, user_bytes = user_bytes - {2} WHERE user_id = {1}",
+                core.Session.LoggedInMember.UserId, itemsDeleted, bytesDeleted));
         }
 
         /// <summary>
@@ -995,7 +995,7 @@ namespace BoxSocial.Applications.Gallery
                 bytesDeleted += stuffDeleted[1];
             }
 
-            object objectsDeleted = core.db.Query(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
+            object objectsDeleted = core.Db.Query(string.Format("SELECT SUM(gallery_item_bytes) AS bytes_deleted FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}';",
                     core.LoggedInMemberId, Mysql.Escape(gallery.FullPath))).Rows[0]["bytes_deleted"];
 
             if (!(objectsDeleted is DBNull))
@@ -1003,12 +1003,12 @@ namespace BoxSocial.Applications.Gallery
                 bytesDeleted += (long)(decimal)objectsDeleted;
             }
 
-            core.db.BeginTransaction();
-            itemsDeleted += core.db.UpdateQuery(string.Format("DELETE FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}'",
-                core.session.LoggedInMember.UserId, Mysql.Escape(gallery.FullPath)));
+            core.Db.BeginTransaction();
+            itemsDeleted += core.Db.UpdateQuery(string.Format("DELETE FROM gallery_items WHERE user_id = {0} AND gallery_item_parent_path = '{1}'",
+                core.Session.LoggedInMember.UserId, Mysql.Escape(gallery.FullPath)));
 
-            core.db.UpdateQuery(string.Format("DELETE FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
-                core.session.LoggedInMember.UserId, gallery.GalleryId));
+            core.Db.UpdateQuery(string.Format("DELETE FROM user_galleries WHERE user_id = {0} AND gallery_id = {1}",
+                core.Session.LoggedInMember.UserId, gallery.GalleryId));
             return new long[] { itemsDeleted, bytesDeleted };
         }
 
@@ -1262,7 +1262,7 @@ namespace BoxSocial.Applications.Gallery
             uQuery.AddField("gallery_bytes", new QueryOperation("gallery_bytes", QueryOperations.Addition, bytes));
             uQuery.AddCondition("gallery_id", parent.GalleryId);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
         }
 
         /// <summary>

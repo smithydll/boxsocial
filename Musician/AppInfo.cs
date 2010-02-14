@@ -130,7 +130,7 @@ namespace BoxSocial.Musician
             SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
             query.AddCondition("gig_id", itemKey.Id);
 
-            DataTable gigTable = core.db.Query(query);
+            DataTable gigTable = core.Db.Query(query);
 
             if (gigTable.Rows.Count == 1)
             {
@@ -161,7 +161,7 @@ namespace BoxSocial.Musician
             SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
             query.AddCondition("gig_id", itemKey.Id);
 
-            DataTable gigTable = core.db.Query(query);
+            DataTable gigTable = core.Db.Query(query);
 
             if (gigTable.Rows.Count == 1)
             {

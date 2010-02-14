@@ -35,7 +35,7 @@ namespace BoxSocial.Applications.GuestBook
 
         public UserGuestBook(Core core, User owner) : base(core)
         {
-            this.db = core.db;
+            this.db = core.Db;
 
             this.owner = owner;
         }

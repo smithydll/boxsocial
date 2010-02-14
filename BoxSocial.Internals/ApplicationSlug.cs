@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("slug_primitives", (byte)primitives);
             iQuery.AddField("slug_updated_ut", UnixTime.UnixTimeStamp());
 
-            long slugId = core.db.Query(iQuery);
+            long slugId = core.Db.Query(iQuery);
 
             return new ApplicationSlug(core, slugId);
         }

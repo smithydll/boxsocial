@@ -129,6 +129,9 @@
   <data name="EDIT_FORUM" xml:space="preserve">
     <value>Edit Forum</value>
   </data>
+  <data name="FORUM" xml:space="preserve">
+    <value>Forum</value>
+  </data>
   <data name="FORUM_CATEGORY" xml:space="preserve">
     <value>Forum/Category</value>
   </data>

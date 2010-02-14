@@ -102,10 +102,10 @@ namespace BoxSocial.Internals
 
             core = account.core;
             page = account.core.page;
-            db = account.core.db;
-            loggedInMember = account.core.session.LoggedInMember;
-            tz = account.core.tz;
-            session = account.core.session;
+            db = account.core.Db;
+            loggedInMember = account.core.Session.LoggedInMember;
+            tz = account.core.Tz;
+            session = account.core.Session;
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
-                template.SetProse(core.prose);
+                template.SetProse(core.Prose);
             }
         }
 
@@ -128,7 +128,7 @@ namespace BoxSocial.Internals
         /// </summary>
         public void RenderTemplate()
         {
-            core.template.ParseRaw("MODULE_CONTENT", template.ToString());
+            core.Template.ParseRaw("MODULE_CONTENT", template.ToString());
         }
 
         /// <summary>
@@ -337,7 +337,7 @@ namespace BoxSocial.Internals
         /// <param name="uri">URI to redirect to</param>
         protected void SetRedirectUri(string uri)
         {
-            core.template.Parse("REDIRECT_URI", uri);
+            core.Template.Parse("REDIRECT_URI", uri);
         }
 
         /// <summary>
@@ -346,7 +346,7 @@ namespace BoxSocial.Internals
         /// <param name="errorString">String of error to be posted</param>
         protected void SetError(string errorString)
         {
-            core.template.Parse("ERROR", errorString);
+            core.Template.Parse("ERROR", errorString);
         }
 
         protected void AssertFormVariable(string var)

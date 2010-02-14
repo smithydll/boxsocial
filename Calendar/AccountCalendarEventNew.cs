@@ -143,8 +143,8 @@ namespace BoxSocial.Applications.Calendar
                     template.Parse("EDIT", "TRUE");
                     template.Parse("ID", calendarEvent.EventId.ToString());
 
-                    startDate = calendarEvent.GetStartTime(core.tz);
-                    endDate = calendarEvent.GetEndTime(core.tz);
+                    startDate = calendarEvent.GetStartTime(core.Tz);
+                    endDate = calendarEvent.GetEndTime(core.Tz);
 
                     subject = calendarEvent.Subject;
                     location = calendarEvent.Location;
@@ -439,18 +439,18 @@ namespace BoxSocial.Applications.Calendar
                         iQuery.AddField("event_id", calendarEvent.Id);
                         iQuery.AddField("invite_email", email);
                         iQuery.AddField("invite_key", emailKey);
-                        iQuery.AddField("inviter_id", core.session.LoggedInMember.Id);
+                        iQuery.AddField("inviter_id", core.Session.LoggedInMember.Id);
                         iQuery.AddField("invite_date_ut", UnixTime.UnixTimeStamp());
                         iQuery.AddField("invite_accepted", false);
                         iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
 
-                        core.db.Query(iQuery);
+                        core.Db.Query(iQuery);
 
                         RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_event_invite.eml");
 
-                        emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", core.session.LoggedInMember.AlternateEmail);
-                        emailTemplate.Parse("FROM_NAMES", core.session.LoggedInMember.DisplayNameOwnership);
+                        emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
+                        emailTemplate.Parse("FROM_EMAIL", core.Session.LoggedInMember.AlternateEmail);
+                        emailTemplate.Parse("FROM_NAMES", core.Session.LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
                         /* TODO: EMAIL KEY PERMS */
                         emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, calendarEvent)));
@@ -458,7 +458,7 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, calendarEvent)));
 
                         core.Email.SendEmail(email, string.Format("{0} has invited you to {1}.",
-                            core.session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate.ToString());
+                            core.Session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate.ToString());
                     }
                     catch (CouldNotInviteEventException)
                     {

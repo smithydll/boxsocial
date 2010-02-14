@@ -241,7 +241,7 @@ namespace BoxSocial.Applications.Calendar
             query.AddField("task_priority", (byte)priority);
             query.AddField("task_time_completed_ut", 0);
 
-            long taskId = core.db.Query(query);
+            long taskId = core.Db.Query(query);
 
             Task myTask = new Task(core, owner, taskId);
 
@@ -261,12 +261,12 @@ namespace BoxSocial.Applications.Calendar
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
                 page.template.Parse("U_NEW_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", true,
-                    string.Format("year={0}", core.tz.Now.Year),
-                    string.Format("month={0}", core.tz.Now.Month),
-                    string.Format("day={0}", core.tz.Now.Day)));
+                    string.Format("year={0}", core.Tz.Now.Year),
+                    string.Format("month={0}", core.Tz.Now.Month),
+                    string.Format("day={0}", core.Tz.Now.Day)));
             }
 
-            long startTime = core.tz.GetUnixTimeStamp(new DateTime(core.tz.Now.Year, core.tz.Now.Month, core.tz.Now.Day, 0, 0, 0)) - 60 * 60 * 24 * 7; // show tasks completed over the last week
+            long startTime = core.Tz.GetUnixTimeStamp(new DateTime(core.Tz.Now.Year, core.Tz.Now.Month, core.Tz.Now.Day, 0, 0, 0)) - 60 * 60 * 24 * 7; // show tasks completed over the last week
             long endTime = startTime + 60 * 60 * 24 * 7 * (8 + 1); // skip ahead eight weeks into the future
 
             Calendar cal = new Calendar(core);
@@ -274,7 +274,7 @@ namespace BoxSocial.Applications.Calendar
             List<Task> tasks = cal.GetTasks(core, owner, startTime, endTime, true);
 
             VariableCollection taskDaysVariableCollection = null;
-            string lastDay = core.tz.ToStringPast(core.tz.Now);
+            string lastDay = core.Tz.ToStringPast(core.Tz.Now);
 
             if (tasks.Count > 0)
             {
@@ -283,11 +283,11 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (Task calendarTask in tasks)
             {
-                DateTime taskDue = calendarTask.GetDueTime(core.tz);
+                DateTime taskDue = calendarTask.GetDueTime(core.Tz);
 
-                if (taskDaysVariableCollection == null || lastDay != core.tz.ToStringPast(taskDue))
+                if (taskDaysVariableCollection == null || lastDay != core.Tz.ToStringPast(taskDue))
                 {
-                    lastDay = core.tz.ToStringPast(taskDue);
+                    lastDay = core.Tz.ToStringPast(taskDue);
                     taskDaysVariableCollection = page.template.CreateChild("task_days");
 
                     taskDaysVariableCollection.Parse("DAY", lastDay);
@@ -340,9 +340,9 @@ namespace BoxSocial.Applications.Calendar
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
                 page.template.Parse("U_NEW_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", true,
-                    string.Format("year={0}", core.tz.Now.Year),
-                    string.Format("month={0}", core.tz.Now.Month),
-                    string.Format("day={0}", core.tz.Now.Day)));
+                    string.Format("year={0}", core.Tz.Now.Year),
+                    string.Format("month={0}", core.Tz.Now.Month),
+                    string.Format("day={0}", core.Tz.Now.Day)));
                 page.template.Parse("U_EDIT_TASK", core.Uri.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
             }
 
@@ -360,7 +360,7 @@ namespace BoxSocial.Applications.Calendar
 
                 page.template.Parse("TOPIC", calendarTask.Topic);
                 page.template.Parse("DESCRIPTION", calendarTask.Description);
-                page.template.Parse("DUE_DATE", calendarTask.GetDueTime(core.tz).ToString());
+                page.template.Parse("DUE_DATE", calendarTask.GetDueTime(core.Tz).ToString());
 
                 List<string[]> calendarPath = new List<string[]>();
                 calendarPath.Add(new string[] { "calendar", "Calendar" });

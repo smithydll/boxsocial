@@ -149,7 +149,7 @@ namespace BoxSocial.Applications.Pages
 
             NormaliseListItem(text, ref normalisedText);
 
-            core.db.BeginTransaction();
+            core.Db.BeginTransaction();
 
             ListItemText lit;
 
@@ -166,7 +166,7 @@ namespace BoxSocial.Applications.Pages
             iQuery.AddField("list_id", list.Id);
             iQuery.AddField("list_item_text_id", lit.Id);
 
-            long listItemId = core.db.Query(iQuery);
+            long listItemId = core.Db.Query(iQuery);
 
             return new ListItem(core, listItemId);
         }
@@ -294,7 +294,7 @@ namespace BoxSocial.Applications.Pages
             iQuery.AddField("list_item_text", text);
             iQuery.AddField("list_item_text_normalised", normalisedText);
 
-            long listItemTextId = core.db.Query(iQuery);
+            long listItemTextId = core.Db.Query(iQuery);
 
             return new ListItemText(core, listItemTextId);
         }

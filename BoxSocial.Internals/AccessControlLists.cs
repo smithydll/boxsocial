@@ -58,7 +58,7 @@ namespace BoxSocial.Internals
             {
                 if (!string.IsNullOrEmpty(ppg.LanguageKey))
                 {
-                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.prose.GetString(ppg.LanguageKey)));
+                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.Prose.GetString(ppg.LanguageKey)));
                 }
                 else
                 {
@@ -72,7 +72,7 @@ namespace BoxSocial.Internals
         public void ParseACL(Template template, Primitive owner, string variable)
         {
             Template aclTemplate = new Template(core.Http.TemplatePath, "std.acl.html");
-            aclTemplate.SetProse(core.prose);
+            aclTemplate.SetProse(core.Prose);
             
             if (itemPermissions == null)
             {
@@ -332,7 +332,7 @@ namespace BoxSocial.Internals
             query.AddCondition("permission_item_type_id", itemKey.TypeId);
             query.AddSort(SortOrder.Ascending, "permission_type");
 
-            DataTable permissionsDataTable = core.db.Query(query);
+            DataTable permissionsDataTable = core.Db.Query(query);
 
             foreach (DataRow permissionsDataRow in permissionsDataTable.Rows)
             {

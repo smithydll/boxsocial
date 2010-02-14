@@ -59,9 +59,9 @@ namespace BoxSocial.Internals
 
             core.Http.WriteXml(xs, am);
 
-            if (core.db != null)
+            if (core.Db != null)
             {
-                core.db.CloseConnection();
+                core.Db.CloseConnection();
             }
 
             core.Http.End();
@@ -87,9 +87,9 @@ namespace BoxSocial.Internals
 
             core.Http.WriteXml(xs, am);
 
-            if (core.db != null)
+            if (core.Db != null)
             {
-                core.db.CloseConnection();
+                core.Db.CloseConnection();
             }
 
             core.Http.End();
@@ -120,9 +120,9 @@ namespace BoxSocial.Internals
 
                 core.Http.WriteXml(xs, am);
 
-                if (core.db != null)
+                if (core.Db != null)
                 {
-                    core.db.CloseConnection();
+                    core.Db.CloseConnection();
                 }
 
                 core.Http.End();
@@ -153,9 +153,9 @@ namespace BoxSocial.Internals
 
             core.Http.WriteXml(xs, am);
 
-            if (core.db != null)
+            if (core.Db != null)
             {
-                core.db.CloseConnection();
+                core.Db.CloseConnection();
             }
 
             core.Http.End();
@@ -175,9 +175,9 @@ namespace BoxSocial.Internals
 
             core.Http.WriteXml(xs, am);
 
-            if (core.db != null)
+            if (core.Db != null)
             {
-                core.db.CloseConnection();
+                core.Db.CloseConnection();
             }
 
             core.Http.End();

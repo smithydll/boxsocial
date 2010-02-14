@@ -141,7 +141,7 @@ namespace BoxSocial.Internals
             query.AddCondition("item_id", item.Id);
             query.AddCondition("item_type_id", item.ItemKey.TypeId);
 
-            DataTable tagsTable = core.db.Query(query);
+            DataTable tagsTable = core.Db.Query(query);
 
             foreach (DataRow dr in tagsTable.Rows)
             {
@@ -158,7 +158,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
             query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
 
-            DataTable tagsTable = core.db.Query(query);
+            DataTable tagsTable = core.Db.Query(query);
 
             foreach (DataRow dr in tagsTable.Rows)
             {
@@ -273,7 +273,7 @@ namespace BoxSocial.Internals
                 uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Addition, 1));
                 uQuery.AddCondition("tag_text_normalised", ConditionEquality.In, tagsToAddNormalised.ToArray());
 
-                core.db.Query(uQuery);
+                core.Db.Query(uQuery);
             }
 
             if (tagsToRemoveNormalised.Count > 0)
@@ -289,13 +289,13 @@ namespace BoxSocial.Internals
                 dQuery.AddCondition("item_id", item.Id);
                 dQuery.AddCondition("item_type_id", item.ItemKey.TypeId);
 
-                core.db.Query(dQuery);
+                core.Db.Query(dQuery);
 
                 UpdateQuery uQuery = new UpdateQuery(typeof(Tag));
                 uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Subtraction, 1));
                 uQuery.AddCondition("tag_id", ConditionEquality.In, tagToRemoveIds.ToArray());
 
-                core.db.Query(uQuery);
+                core.Db.Query(uQuery);
             }
         }
 

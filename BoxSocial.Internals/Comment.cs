@@ -158,13 +158,13 @@ namespace BoxSocial.Internals
 
         public static Comment Create(Core core, ItemKey itemKey, string comment)
         {
-            if (!core.session.IsLoggedIn)
+            if (!core.Session.IsLoggedIn)
             {
                 throw new NotLoggedInException();
             }
 
-            if (core.db.Query(string.Format("SELECT user_id FROM comments WHERE (user_id = {0} OR comment_ip = '{1}') AND (UNIX_TIMESTAMP() - comment_time_ut) < 20",
-                    core.LoggedInMemberId, core.session.IPAddress.ToString())).Rows.Count > 0)
+            if (core.Db.Query(string.Format("SELECT user_id FROM comments WHERE (user_id = {0} OR comment_ip = '{1}') AND (UNIX_TIMESTAMP() - comment_time_ut) < 20",
+                    core.LoggedInMemberId, core.Session.IPAddress.ToString())).Rows.Count > 0)
             {
                 throw new CommentFloodException();
             }
@@ -184,19 +184,19 @@ namespace BoxSocial.Internals
             if (itemKey.Type == typeof(User).FullName)
             {
                 core.LoadUserProfile(itemKey.Id);
-                relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.session.LoggedInMember);
+                relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.Session.LoggedInMember);
             }
 
-            core.db.BeginTransaction();
-            long commentId = core.db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type_id, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
-                    itemKey.Id, itemKey.TypeId, core.LoggedInMemberId, Mysql.Escape(comment), core.session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
+            core.Db.BeginTransaction();
+            long commentId = core.Db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type_id, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
+                    itemKey.Id, itemKey.TypeId, core.LoggedInMemberId, Mysql.Escape(comment), core.Session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
 
             return new Comment(core, commentId);
         }
 
         public static List<Comment> GetComments(Core core, ItemKey itemKey, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)
         {
-            Mysql db = core.db;
+            Mysql db = core.Db;
             List<Comment> comments = new List<Comment>();
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
@@ -277,7 +277,7 @@ namespace BoxSocial.Internals
             bool hasMatchingHash = false;
             string messageMd5Hash = MessageMd5(message);
 
-            TimeSpan ts = DateTime.Now - core.session.LoggedInMember.RegistrationDate;
+            TimeSpan ts = DateTime.Now - core.Session.LoggedInMember.RegistrationDate;
 
             // registered last ...
             if (ts.TotalMinutes <= 10) // first 10 minutes
@@ -336,13 +336,13 @@ namespace BoxSocial.Internals
             //
             // select all threads that are related spam
             //
-            DataTable spamCommentsTable = core.db.Query(string.Format("SELECT comment_ip, comment_hash FROM comments WHERE ((comment_ip = '{0}' AND comment_time_ut + 86400 > UNIX_TIMESTAMP()) OR comment_hash = '{1}') AND comment_spam_score >= 10 GROUP BY comment_ip, comment_hash;",
-                core.session.IPAddress.ToString(), messageMd5Hash));
+            DataTable spamCommentsTable = core.Db.Query(string.Format("SELECT comment_ip, comment_hash FROM comments WHERE ((comment_ip = '{0}' AND comment_time_ut + 86400 > UNIX_TIMESTAMP()) OR comment_hash = '{1}') AND comment_spam_score >= 10 GROUP BY comment_ip, comment_hash;",
+                core.Session.IPAddress.ToString(), messageMd5Hash));
 
             // known spam IPs
             for (int i = 0; i < spamCommentsTable.Rows.Count; i++)
             {
-                if ((string)spamCommentsTable.Rows[i]["comment_ip"] == core.session.IPAddress.ToString())
+                if ((string)spamCommentsTable.Rows[i]["comment_ip"] == core.Session.IPAddress.ToString())
                 {
                     spamScore += 5;
                     break;
@@ -384,7 +384,7 @@ namespace BoxSocial.Internals
             {
                 if (hasMatchingHash)
                 {
-                    core.db.UpdateQuery(string.Format("UPDATE comments SET comment_spam_score = {0} WHERE comment_hash = '{1}'",
+                    core.Db.UpdateQuery(string.Format("UPDATE comments SET comment_spam_score = {0} WHERE comment_hash = '{1}'",
                         returnScore, messageMd5Hash));
                 }
             }

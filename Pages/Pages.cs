@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Pages
         {
             this.owner = owner;
             this.core = core;
-            this.db = core.db;
+            this.db = core.Db;
         }
 
         public List<Page> GetPages(bool draft)

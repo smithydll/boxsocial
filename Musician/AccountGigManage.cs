@@ -83,7 +83,7 @@ namespace BoxSocial.Musician
 
                 gigVariableCollection.Parse("CITY", gig.City);
                 gigVariableCollection.Parse("VENUE", gig.Venue);
-                gigVariableCollection.Parse("DATE", core.tz.DateTimeToString(gig.GetTime(core.tz)));
+                gigVariableCollection.Parse("DATE", core.Tz.DateTimeToString(gig.GetTime(core.Tz)));
             }
         }
 
@@ -93,7 +93,7 @@ namespace BoxSocial.Musician
 
             /* */
             CheckBox allAgesCheckBox = new CheckBox("all-ages");
-            allAgesCheckBox.Caption = core.prose.GetString("Musician", "IS_ALL_AGES");
+            allAgesCheckBox.Caption = core.Prose.GetString("Musician", "IS_ALL_AGES");
 
             switch (e.Mode)
             {

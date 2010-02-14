@@ -98,7 +98,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("confirm_code", code);
             iQuery.AddField("confirm_type", type);
 
-            long confirmId = core.db.Query(iQuery);
+            long confirmId = core.Db.Query(iQuery);
 
             return new Confirmation(core, confirmId);
         }
@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
             dQuery.AddCondition("confirm_type", type);
             dQuery.AddCondition("session_id", session);
 
-            core.db.Query(dQuery);
+            core.Db.Query(dQuery);
         }
 
         public override long Id

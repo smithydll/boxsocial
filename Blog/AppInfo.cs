@@ -54,7 +54,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "Blog";
+                return core.Prose.GetString("BLOG");
             }
         }
 
@@ -191,7 +191,7 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("blog", "Blog");
+                slugs.Add("blog", core.Prose.GetString("BLOG"));
                 return slugs;
             }
         }
@@ -281,7 +281,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="adjustment">Amount to adjust the comment count by</param>
         private void blogAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
                 itemKey.Id, adjustment));
         }
 

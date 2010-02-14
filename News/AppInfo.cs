@@ -132,7 +132,7 @@ namespace BoxSocial.Applications.News
             SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
             query.AddCondition("article_id", itemKey.Id);
 
-            DataTable articleTable = core.db.Query(query);
+            DataTable articleTable = core.Db.Query(query);
 
             if (articleTable.Rows.Count == 1)
             {
@@ -172,7 +172,7 @@ namespace BoxSocial.Applications.News
             SelectQuery query = Article.GetSelectQueryStub(typeof(Article), false);
             query.AddCondition("article_id", itemKey.Id);
 
-            DataTable articleTable = core.db.Query(query);
+            DataTable articleTable = core.Db.Query(query);
 
             if (articleTable.Rows.Count == 1)
             {
@@ -202,7 +202,7 @@ namespace BoxSocial.Applications.News
 
         private void articleAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE articles SET article_comments = article_comments + {1} WHERE article_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE articles SET article_comments = article_comments + {1} WHERE article_id = {0};",
                 itemKey.Id, adjustment));
         }
 

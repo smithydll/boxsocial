@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.GuestBook
                 return;
             }
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
                 if (page.User.Access.Can("COMMENT"))
                 {
@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.GuestBook
                 return;
             }
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
                 if (page.User.Access.Can("COMMENT"))
                 {
@@ -141,7 +141,7 @@ namespace BoxSocial.Applications.GuestBook
             QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "owner_id", commenters[1].Id);
             qc2.AddCondition("user_id", commenters[0].Id);
 
-            DataTable commentCountDataTable = core.db.Query(query);
+            DataTable commentCountDataTable = core.Db.Query(query);
 
             if (commentCountDataTable.Rows.Count > 0)
             {
@@ -180,9 +180,9 @@ namespace BoxSocial.Applications.GuestBook
 
             int p = core.Functions.RequestInt("p", 1);
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
-                if (page.Group.IsGroupMember(core.session.LoggedInMember))
+                if (page.Group.IsGroupMember(core.Session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -203,9 +203,9 @@ namespace BoxSocial.Applications.GuestBook
 
             int p = core.Functions.RequestInt("p", 1);
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
-                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.Session.LoggedInMember))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -225,7 +225,7 @@ namespace BoxSocial.Applications.GuestBook
 
             int p = core.Functions.RequestInt("p", 1);
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
                 page.template.Parse("CAN_COMMENT", "TRUE");
             }

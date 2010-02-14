@@ -223,14 +223,14 @@ namespace BoxSocial.Applications.GuestBook
             query.AddCondition("owner_id", userProfile.Id);
             query.AddCondition("user_id", e.Poster.Id);
 
-            if (core.db.Query(query).Rows.Count > 0)
+            if (core.Db.Query(query).Rows.Count > 0)
             {
                 UpdateQuery uquery = new UpdateQuery("guestbook_comment_counts");
                 uquery.AddField("comment_comments", new QueryOperation("comment_comments", QueryOperations.Addition, 1));
                 uquery.AddCondition("owner_id", userProfile.Id);
                 uquery.AddCondition("user_id", e.Poster.Id);
 
-                core.db.Query(uquery);
+                core.Db.Query(uquery);
             }
             else
             {
@@ -239,10 +239,10 @@ namespace BoxSocial.Applications.GuestBook
                 iquery.AddField("owner_id", userProfile.Id);
                 iquery.AddField("user_id", e.Poster.Id);
 
-                core.db.Query(iquery);
+                core.Db.Query(iquery);
             }
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "GuestBook");
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "GuestBook");
 
             Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
             notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(new UserGuestBook(core, userProfile)));
@@ -261,7 +261,7 @@ namespace BoxSocial.Applications.GuestBook
             uquery.AddCondition("owner_id", userProfile.Id);
             uquery.AddCondition("user_id", e.Poster.Id);
 
-            core.db.Query(uquery);
+            core.Db.Query(uquery);
         }
 
         private void groupCommentPosted(CommentPostedEventArgs e)
@@ -278,7 +278,7 @@ namespace BoxSocial.Applications.GuestBook
 
         private void userAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
                 itemKey.Id, adjustment));
         }
 
@@ -326,7 +326,7 @@ namespace BoxSocial.Applications.GuestBook
 
         private void groupAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE group_info SET group_comments = group_comments + {1} WHERE group_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE group_info SET group_comments = group_comments + {1} WHERE group_id = {0};",
                 itemKey.Id, adjustment));
         }
 
@@ -358,7 +358,7 @@ namespace BoxSocial.Applications.GuestBook
 
         private void networkAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE network_info SET network_comments = network_comments + {1} WHERE network_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE network_info SET network_comments = network_comments + {1} WHERE network_id = {0};",
                 itemKey.Id, adjustment));
         }
 
@@ -382,7 +382,7 @@ namespace BoxSocial.Applications.GuestBook
 
         private void applicationAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            core.db.UpdateQuery(string.Format("UPDATE applications SET application_comments = application_comments + {1} WHERE application_id = {0};",
+            core.Db.UpdateQuery(string.Format("UPDATE applications SET application_comments = application_comments + {1} WHERE application_id = {0};",
                 itemKey.Id, adjustment));
         }
 
@@ -451,7 +451,7 @@ namespace BoxSocial.Applications.GuestBook
 
             //profileOwner.Access.SetViewer(e.core.session.LoggedInMember);
 
-            if (e.core.session.IsLoggedIn)
+            if (e.core.Session.IsLoggedIn)
             {
                 template.Parse("LOGGED_IN", "TRUE");
                 if (profileOwner.Access.Can("COMMENT"))
@@ -474,9 +474,9 @@ namespace BoxSocial.Applications.GuestBook
             UserGroup thisGroup = (UserGroup)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
-            if (e.core.session.IsLoggedIn)
+            if (e.core.Session.IsLoggedIn)
             {
-                if (thisGroup.IsGroupMember(e.core.session.LoggedInMember))
+                if (thisGroup.IsGroupMember(e.core.Session.LoggedInMember))
                 {
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -493,9 +493,9 @@ namespace BoxSocial.Applications.GuestBook
             Network theNetwork = (Network)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
-            if (e.core.session.IsLoggedIn)
+            if (e.core.Session.IsLoggedIn)
             {
-                if (theNetwork.IsNetworkMember(e.core.session.LoggedInMember))
+                if (theNetwork.IsNetworkMember(e.core.Session.LoggedInMember))
                 {
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -512,7 +512,7 @@ namespace BoxSocial.Applications.GuestBook
             ApplicationEntry anApplication = (ApplicationEntry)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
 
-            if (e.core.session.IsLoggedIn)
+            if (e.core.Session.IsLoggedIn)
             {
                 template.Parse("CAN_COMMENT", "TRUE");
             }

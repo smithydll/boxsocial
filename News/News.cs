@@ -40,7 +40,7 @@ namespace BoxSocial.Applications.News
 		public News(Core core, Primitive owner)
 		{
 			this.core = core;
-			this.db = core.db;
+			this.db = core.Db;
 			this.owner = owner;
 		}
 		
@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.News
 				articleVariableCollection.Parse("U_POSTER", article.Poster.Uri);
 				articleVariableCollection.Parse("USERNAME", article.Poster.DisplayName);
 				articleVariableCollection.Parse("COMMENTS", article.Comments.ToString());
-				articleVariableCollection.Parse("DATE", core.tz.DateTimeToString(article.GetCreatedDate(core.tz)));
+				articleVariableCollection.Parse("DATE", core.Tz.DateTimeToString(article.GetCreatedDate(core.Tz)));
             }
 
             core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.Group.Info.NewsArticles / 10), false);

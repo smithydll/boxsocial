@@ -114,7 +114,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                loadItemInfo(typeof(MusicianMember), core.db.ReaderQuery(sQuery));
+                loadItemInfo(typeof(MusicianMember), core.Db.ReaderQuery(sQuery));
             }
             catch (InvalidItemException)
             {
@@ -171,7 +171,7 @@ namespace BoxSocial.Musician
             query.AddCondition("user_id", userId);
             query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(MusicianInstruments)), "instrument_id"), new DataField(Item.GetTable(typeof(Instrument)), "instrument_id"));
 
-            DataTable instrumentDataTable = core.db.Query(query);
+            DataTable instrumentDataTable = core.Db.Query(query);
 
             foreach (DataRow dr in instrumentDataTable.Rows)
             {

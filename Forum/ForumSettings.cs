@@ -124,7 +124,7 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("rank_owner_id", ownerKey.Id);
             query.AddCondition("rank_owner_type_id", ownerKey.TypeId);
 
-            DataTable ranksDataTable = core.db.Query(query);
+            DataTable ranksDataTable = core.Db.Query(query);
 
             foreach (DataRow dr in ranksDataTable.Rows)
             {
@@ -188,7 +188,7 @@ namespace BoxSocial.Applications.Forum
             iQuery.AddField("forum_posts_per_page", 10);
             iQuery.AddField("forum_allow_topics_root", true);
 
-            long settingsId = core.db.Query(iQuery);
+            long settingsId = core.Db.Query(iQuery);
 
             ForumSettings settings = new ForumSettings(core, settingsId);
 
@@ -211,7 +211,7 @@ namespace BoxSocial.Applications.Forum
         {
             if (owner is UserGroup)
             {
-                if (!((UserGroup)owner).IsGroupOperator(core.session.LoggedInMember))
+                if (!((UserGroup)owner).IsGroupOperator(core.Session.LoggedInMember))
                 {
                     // todo: throw new exception
                     throw new UnauthorisedToCreateItemException();
@@ -226,7 +226,7 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("forum_item_id", ownerKey.Id);
             uQuery.AddCondition("forum_item_type_id", ownerKey.TypeId);
 
-            return core.db.Query(uQuery);
+            return core.Db.Query(uQuery);
         }
 
         public override string Uri
@@ -245,7 +245,7 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                if (core.session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.session.LoggedInMember))
+                if (core.Session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember))
                 {
                     page.template.Parse("IS_FORUM_MEMBER", "TRUE");
                 }

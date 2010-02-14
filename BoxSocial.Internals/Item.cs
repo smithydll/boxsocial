@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
         protected Item(Core core)
         {
             this.core = core;
-            this.db = core.db;
+            this.db = core.Db;
             assembly = Assembly.GetCallingAssembly();
             updatedItems = new List<string>();
         }
@@ -157,7 +157,7 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 
-            loadItemInfo(type, core.db.ReaderQuery(query));
+            loadItemInfo(type, core.Db.ReaderQuery(query));
         }
 
         protected void LoadItem(string uniqueIndex, object value)
@@ -221,7 +221,7 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 			
-			loadItemInfo(this.GetType(), core.db.ReaderQuery(query));
+			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
         }
 
         protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner)
@@ -269,7 +269,7 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 			
-			loadItemInfo(this.GetType(), core.db.ReaderQuery(query));
+			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
         }
 
         protected List<Type> getSubTypes()
@@ -562,43 +562,40 @@ namespace BoxSocial.Internals
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
-                    if (attr is DataFieldAttribute)
+                    DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                    if (dfattr.FieldName != null)
                     {
-                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
-                        if (dfattr.FieldName != null)
+                        if ((fi.FieldType == typeof(ItemKey)) && (!getRawFields))
                         {
-							if ((fi.FieldType == typeof(ItemKey)) && (!getRawFields))
-							{
-								DataFieldInfo dfiId;
-								DataFieldInfo dfiTypeId;
+                            DataFieldInfo dfiId;
+                            DataFieldInfo dfiTypeId;
 
-                                dfiId = new DataFieldInfo(dfattr.FieldName + "_id", typeof(long), dfattr.MaxLength, dfattr.Index);
-                                dfiTypeId = new DataFieldInfo(dfattr.FieldName + "_type_id", typeof(long), dfattr.MaxLength, dfattr.Index);
+                            dfiId = new DataFieldInfo(dfattr.FieldName + "_id", typeof(long), dfattr.MaxLength, dfattr.Index);
+                            dfiTypeId = new DataFieldInfo(dfattr.FieldName + "_type_id", typeof(long), dfattr.MaxLength, dfattr.Index);
 
-                                dfiId.ParentType = dfattr.ParentType;
-                                dfiId.ParentFieldName = dfattr.ParentFieldName;
-                                dfiTypeId.ParentType = dfattr.ParentType;
-                                dfiTypeId.ParentFieldName = dfattr.ParentFieldName;
-								
-								returnValue.Add(dfiId);
-								returnValue.Add(dfiTypeId);
-							}
-							else
-							{
-	                            DataFieldInfo dfi;
-                                dfi = new DataFieldInfo(dfattr.FieldName, fi.FieldType, dfattr.MaxLength, dfattr.Index);
-                                dfi.ParentType = dfattr.ParentType;
-                                dfi.ParentFieldName = dfattr.ParentFieldName;
+                            dfiId.ParentType = dfattr.ParentType;
+                            dfiId.ParentFieldName = dfattr.ParentFieldName;
+                            dfiTypeId.ParentType = dfattr.ParentType;
+                            dfiTypeId.ParentFieldName = dfattr.ParentFieldName;
 
-	                            returnValue.Add(dfi);
-							}
+                            returnValue.Add(dfiId);
+                            returnValue.Add(dfiTypeId);
                         }
                         else
                         {
-                            returnValue.Add(new DataFieldInfo(fi.Name, fi.FieldType, 255));
+                            DataFieldInfo dfi;
+                            dfi = new DataFieldInfo(dfattr.FieldName, fi.FieldType, dfattr.MaxLength, dfattr.Index);
+                            dfi.ParentType = dfattr.ParentType;
+                            dfi.ParentFieldName = dfattr.ParentFieldName;
+
+                            returnValue.Add(dfi);
                         }
+                    }
+                    else
+                    {
+                        returnValue.Add(new DataFieldInfo(fi.Name, fi.FieldType, 255));
                     }
                 }
 
@@ -632,17 +629,14 @@ namespace BoxSocial.Internals
         {
             foreach (FieldInfo fi in item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
-                    if (attr is DataFieldAttribute)
+                    DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                    if (dfattr.FieldName != null)
                     {
-                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
-                        if (dfattr.FieldName != null)
+                        if (dfi.Name == dfattr.FieldName)
                         {
-                            if (dfi.Name == dfattr.FieldName)
-                            {
-                                return fi.GetValue(item);
-                            }
+                            return fi.GetValue(item);
                         }
                     }
                 }
@@ -741,22 +735,18 @@ namespace BoxSocial.Internals
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
-
                     if (updatedItems.Contains(fi.Name))
                     {
-                        if (attr is DataFieldAttribute)
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                        if (dfattr.FieldName != null)
                         {
-                            DataFieldAttribute dfattr = (DataFieldAttribute)attr;
-                            if (dfattr.FieldName != null)
-                            {
-                                uQuery.AddField(dfattr.FieldName, fi.GetValue(this));
-                            }
-                            else
-                            {
-                                uQuery.AddField(fi.Name, fi.GetValue(this));
-                            }
+                            uQuery.AddField(dfattr.FieldName, fi.GetValue(this));
+                        }
+                        else
+                        {
+                            uQuery.AddField(fi.Name, fi.GetValue(this));
                         }
                     }
                 }
@@ -873,7 +863,7 @@ namespace BoxSocial.Internals
 		
 		public static Item Create(Core core, Type type, bool suppress, params FieldValuePair[] fields)
 		{
-            core.db.BeginTransaction();
+            core.Db.BeginTransaction();
 			
 			InsertQuery iQuery = new InsertQuery(GetTable(type));
 			
@@ -882,7 +872,7 @@ namespace BoxSocial.Internals
 				iQuery.AddField(field.Field, field.Value);
 			}
 			
-			long id = core.db.Query(iQuery);
+			long id = core.Db.Query(iQuery);
 			
 			if (id > 0)
 			{
@@ -970,29 +960,26 @@ namespace BoxSocial.Internals
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
-                    if (attr is DataFieldAttribute)
+                    DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                    objectFields++;
+
+                    string columnPrefix;
+                    if (dfattr.FieldName != null)
                     {
-                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
-                        objectFields++;
+                        columnPrefix = dfattr.FieldName;
+                    }
+                    else
+                    {
+                        columnPrefix = fi.Name;
+                    }
 
-                        string columnPrefix;
-                        if (dfattr.FieldName != null)
-                        {
-                            columnPrefix = dfattr.FieldName;
-                        }
-                        else
-                        {
-                            columnPrefix = fi.Name;
-                        }
-
-                        fields.Add(columnPrefix, fi);
-                        if (fi.FieldType == typeof(ItemKey))
-                        {
-                            fields.Add(columnPrefix + "_id", fi);
-                            fields.Add(columnPrefix + "_type_id", fi);
-                        }
+                    fields.Add(columnPrefix, fi);
+                    if (fi.FieldType == typeof(ItemKey))
+                    {
+                        fields.Add(columnPrefix + "_id", fi);
+                        fields.Add(columnPrefix + "_type_id", fi);
                     }
                 }
             }
@@ -1233,7 +1220,7 @@ namespace BoxSocial.Internals
             uQuery.AddCondition(orderField, oItem.Order);
             oItem.AddSequenceConditon(uQuery);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
 
             oItem.Order--;
 
@@ -1250,7 +1237,7 @@ namespace BoxSocial.Internals
             uQuery.AddCondition(orderField, oItem.Order);
             oItem.AddSequenceConditon(uQuery);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
 
             oItem.Order++;
 
@@ -1263,7 +1250,7 @@ namespace BoxSocial.Internals
             uQuery.AddField(column, new QueryOperation(column, QueryOperations.Addition, value));
             uQuery.AddCondition(GetPrimaryKey(type), id);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
         }
     }
 

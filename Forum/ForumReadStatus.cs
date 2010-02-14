@@ -118,7 +118,7 @@ namespace BoxSocial.Applications.Forum
                 iQuery.AddField("user_id", core.LoggedInMemberId);
                 iQuery.AddField("read_time_ut", UnixTime.UnixTimeStamp()); // forum.LastPostTimeRaw
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
             }
         }
 

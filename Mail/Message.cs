@@ -129,7 +129,7 @@ namespace BoxSocial.Applications.Mail
 			                           new FieldValuePair("message_subject", subject),
 			                           new FieldValuePair("message_text", text),
 			                           new FieldValuePair("message_time_ut", UnixTime.UnixTimeStamp()),
-			                           new FieldValuePair("message_ip", core.session.IPAddress.ToString()));
+			                           new FieldValuePair("message_ip", core.Session.IPAddress.ToString()));
 			
 			foreach (User user in recipients.Keys)
 			{

@@ -171,7 +171,7 @@ namespace BoxSocial.Applications.Gallery
             SelectQuery query = UserTag.GetSelectQueryStub(typeof(UserTag));
             query.AddCondition("gallery_item_id", galleryItem.ItemId);
 
-            DataTable tagDataTable = core.db.Query(query);
+            DataTable tagDataTable = core.Db.Query(query);
 
             List<long> userIds = new List<long>();
             foreach (DataRow dr in tagDataTable.Rows)
@@ -202,7 +202,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("tag_id", tag.TagId);
             query.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (core.db.Query(query) == 1)
+            if (core.Db.Query(query) == 1)
             {
                 tag.tagApproved = true; // we can update private members
                 NotifyTag(core, tag);
@@ -226,7 +226,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("tag_id", tagId);
             query.AddCondition("user_id", core.LoggedInMemberId);
 
-            if (core.db.Query(query) == 1)
+            if (core.Db.Query(query) == 1)
             {
                 return true;
             }
@@ -262,7 +262,7 @@ namespace BoxSocial.Applications.Gallery
                 query.AddField("tag_approved", true);
             }
 
-            long tagId = core.db.Query(query);
+            long tagId = core.Db.Query(query);
 
             UserTag tag = new UserTag(core, galleryItem, tagId);
             NotifyTag(core, tag);
@@ -284,12 +284,12 @@ namespace BoxSocial.Applications.Gallery
                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "photo_tag_notification.eml");
 
                     emailTemplate.Parse("TO_NAME", tag.TaggedMember.DisplayName);
-                    emailTemplate.Parse("FROM_NAME", core.session.LoggedInMember.DisplayName);
-                    emailTemplate.Parse("FROM_USERNAME", core.session.LoggedInMember.UserName);
+                    emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
+                    emailTemplate.Parse("FROM_USERNAME", core.Session.LoggedInMember.UserName);
                     emailTemplate.Parse("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
 
                     core.Email.SendEmail(tag.TaggedMember.AlternateEmail, string.Format("{0} tagged you in a photo",
-                        core.session.LoggedInMember.DisplayName),
+                        core.Session.LoggedInMember.DisplayName),
                         emailTemplate.ToString());
                 }
             }

@@ -212,7 +212,7 @@ namespace BoxSocial.Applications.Pages
             query.AddSort(SortOrder.Descending, "tab_order");
             query.LimitCount = 1;
 
-            DataTable tabOrderTable = core.db.Query(query);
+            DataTable tabOrderTable = core.Db.Query(query);
 
             if (tabOrderTable.Rows.Count == 1)
             {
@@ -227,7 +227,7 @@ namespace BoxSocial.Applications.Pages
             iQuery.AddField("tab_item_type_id", page.Owner.TypeId);
             iQuery.AddField("tab_order", order);
 
-            long tabId = core.db.Query(iQuery);
+            long tabId = core.Db.Query(iQuery);
 
             return new NagivationTab(core, tabId);
         }
@@ -241,7 +241,7 @@ namespace BoxSocial.Applications.Pages
             query.AddCondition("tab_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "tab_order");
 
-            DataTable tabTable = core.db.Query(query);
+            DataTable tabTable = core.Db.Query(query);
 
             foreach (DataRow dr in tabTable.Rows)
             {

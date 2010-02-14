@@ -60,7 +60,7 @@ namespace BoxSocial.FrontEnd
             {
                 template.Parse("USER_DISPLAY_NAME", loggedInMember.DisplayName);
                 template.Parse("STATUS_MESSAGE", myStatusMessage.Message);
-                template.Parse("STATUS_UPDATED", core.tz.DateTimeToString(myStatusMessage.GetTime(core.tz)));
+                template.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(myStatusMessage.GetTime(core.Tz)));
             }
 
             /* Friends status */
@@ -73,7 +73,7 @@ namespace BoxSocial.FrontEnd
                 statusMessagesVariableCollection.Parse("USER_DISPLAY_NAME", statusMessage.Owner.DisplayName);
                 statusMessagesVariableCollection.Parse("USER_NAME", statusMessage.Owner.Key);
                 statusMessagesVariableCollection.Parse("STATUS_MESSAGE", statusMessage.Message);
-                statusMessagesVariableCollection.Parse("STATUS_UPDATED", core.tz.DateTimeToString(statusMessage.GetTime(core.tz)));
+                statusMessagesVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(statusMessage.GetTime(core.Tz)));
             }
 
             core.AddSidePanel(template);
@@ -98,7 +98,7 @@ namespace BoxSocial.FrontEnd
             {
                 core.InvokeHooks(new HookEventArgs(core, AppPrimitives.None, null));
 
-                Feed.Show(core, this, core.session.LoggedInMember);
+                Feed.Show(core, this, core.Session.LoggedInMember);
             }
             else
             {

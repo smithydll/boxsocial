@@ -419,7 +419,7 @@ namespace BoxSocial.Networks
             SelectQuery query = NetworkMember.GetSelectQueryStub(UserLoadOptions.Key);
             query.AddCondition("user_id", member.Id);
 
-            DataTable membershipsTable = core.db.Query(query);
+            DataTable membershipsTable = core.Db.Query(query);
 
             foreach (DataRow dr in membershipsTable.Rows)
             {
@@ -437,7 +437,7 @@ namespace BoxSocial.Networks
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(Network), "network_id"), new DataField(typeof(NetworkMember), "network_id"));
             query.AddCondition("user_id", member.Id);
 
-            DataTable networksTable = core.db.Query(query);
+            DataTable networksTable = core.Db.Query(query);
 
             foreach (DataRow dr in networksTable.Rows)
             {
@@ -474,7 +474,7 @@ namespace BoxSocial.Networks
             SelectQuery query = Network.GetSelectQueryStub(NetworkLoadOptions.All);
             query.AddCondition("network_type", typeString);
 
-            DataTable networksTable = core.db.Query(query);
+            DataTable networksTable = core.Db.Query(query);
 
             foreach (DataRow dr in networksTable.Rows)
             {
@@ -643,7 +643,7 @@ namespace BoxSocial.Networks
             iQuery.AddField("network_id", this.Id);
             iQuery.AddField("user_id", member.UserId);
             iQuery.AddField("member_join_date_ut", UnixTime.UnixTimeStamp());
-            iQuery.AddField("member_join_ip", core.session.IPAddress.ToString());
+            iQuery.AddField("member_join_ip", core.Session.IPAddress.ToString());
             iQuery.AddField("member_email", networkEmail);
             iQuery.AddField("member_active", isActive);
             iQuery.AddField("member_activate_code", activateKey);
@@ -858,9 +858,9 @@ namespace BoxSocial.Networks
             page.template.SetTemplate("Networks", "viewnetwork");
             page.Signature = PageSignature.viewnetwork;
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
-                if (page.Network.IsNetworkMember(core.session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.Session.LoggedInMember))
                 {
                     page.template.Parse("U_LEAVE", page.Network.BuildLeaveUri());
                 }

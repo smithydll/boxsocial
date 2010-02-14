@@ -211,12 +211,12 @@ namespace BoxSocial.FrontEnd
                     }
                     catch (InvalidOperationException)
                     {
-                        Response.Write(core.db.QueryList);
+                        Response.Write(core.Db.QueryList);
                         Response.End();
                     }
                     catch (InvalidGroupException)
                     {
-                        Response.Write(core.db.QueryList);
+                        Response.Write(core.Db.QueryList);
                         Response.End();
                     }
 

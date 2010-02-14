@@ -40,11 +40,11 @@ namespace BoxSocial.Internals
         {
             if (can)
             {
-                permissions.Add(core.Bbcode.Parse(string.Format(permission, core.prose.GetString("CAN"))));
+                permissions.Add(core.Bbcode.Parse(string.Format(permission, core.Prose.GetString("CAN"))));
             }
             else
             {
-                permissions.Add(core.Bbcode.Parse(string.Format(permission, core.prose.GetString("CANNOT"))));
+                permissions.Add(core.Bbcode.Parse(string.Format(permission, core.Prose.GetString("CANNOT"))));
             }
         }
 
@@ -54,12 +54,12 @@ namespace BoxSocial.Internals
 
             if (can)
             {
-                newArgs.Add(core.prose.GetString("CAN"));
+                newArgs.Add(core.Prose.GetString("CAN"));
                 
             }
             else
             {
-                newArgs.Add(core.prose.GetString("CANNOT"));
+                newArgs.Add(core.Prose.GetString("CANNOT"));
             }
 
             newArgs.AddRange(args);
@@ -68,7 +68,7 @@ namespace BoxSocial.Internals
 
         public void Parse(string variable)
         {
-            core.template.ParseRaw(variable, this.ToString());
+            core.Template.ParseRaw(variable, this.ToString());
         }
 
         public override string ToString()

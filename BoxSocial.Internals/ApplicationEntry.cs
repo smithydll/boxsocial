@@ -428,7 +428,7 @@ namespace BoxSocial.Internals
         public ApplicationEntry(Core core)
             : base(core)
         {
-            this.owner = core.session.LoggedInMember;
+            this.owner = core.Session.LoggedInMember;
 
             Assembly asm = Assembly.GetCallingAssembly();
 
@@ -687,7 +687,7 @@ namespace BoxSocial.Internals
 
         public bool Install(Core core, Primitive owner)
         {
-            return Install(core, core.session.LoggedInMember, owner);
+            return Install(core, core.Session.LoggedInMember, owner);
         }
 
         // bool finaliseTransaction
@@ -748,7 +748,7 @@ namespace BoxSocial.Internals
 
         public bool UpdateInstall(Core core, Primitive viewer)
         {
-            this.db = core.db;
+            this.db = core.Db;
 
             if (!HasInstalled(viewer))
             {
@@ -1026,15 +1026,15 @@ namespace BoxSocial.Internals
 
         public static void ShowPage(Core core, APage page)
         {
-            core.template.SetTemplate("viewapplication.html");
+            core.Template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 
             long typeId = core.Functions.RequestLong("type", 0);
             long id = core.Functions.RequestLong("id", 0);
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
-                Primitive viewer = core.session.LoggedInMember;
+                Primitive viewer = core.Session.LoggedInMember;
 
                 if (typeId > 0)
                 {
@@ -1044,25 +1044,25 @@ namespace BoxSocial.Internals
 
                 if (page.AnApplication.HasInstalled(viewer))
                 {
-                    core.template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                    core.Template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
                 }
                 else
                 {
-                    core.template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                    core.Template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
                 }
             }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);
 
-            core.template.Parse("APPLICATION_NAME", page.AnApplication.Title);
-            core.template.Parse("U_APPLICATION", page.AnApplication.Uri);
-            core.template.Parse("DESCRIPTION", page.AnApplication.Description);
-            core.template.Parse("CREATOR_DISPLAY_NAME", Creator.DisplayName);
+            core.Template.Parse("APPLICATION_NAME", page.AnApplication.Title);
+            core.Template.Parse("U_APPLICATION", page.AnApplication.Uri);
+            core.Template.Parse("DESCRIPTION", page.AnApplication.Description);
+            core.Template.Parse("CREATOR_DISPLAY_NAME", Creator.DisplayName);
             if (page.AnApplication.Thumbnail != null)
             {
-                core.template.Parse("I_THUMBNAIL", page.AnApplication.Thumbnail);
+                core.Template.Parse("I_THUMBNAIL", page.AnApplication.Thumbnail);
             }
 
             

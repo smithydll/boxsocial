@@ -278,7 +278,7 @@ namespace BoxSocial.Musician
 
             e.Template.Parse("CITY", gig.City);
             e.Template.Parse("VENUE", gig.Venue);
-            e.Template.Parse("TIME", e.Core.tz.DateTimeToString(gig.GetTime(e.Core.tz)));
+            e.Template.Parse("TIME", e.Core.Tz.DateTimeToString(gig.GetTime(e.Core.Tz)));
             e.Template.Parse("YEAR", gig.GetTime(gig.TimeZone).Year.ToString());
             e.Core.Display.ParseBbcode("ABSTRACT", gig.Abstract);
 
@@ -303,7 +303,7 @@ namespace BoxSocial.Musician
             SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig));
             query.AddCondition("musician_id", owner.Id);
 
-            DataTable gigTable = core.db.Query(query);
+            DataTable gigTable = core.Db.Query(query);
 
             foreach (DataRow dr in gigTable.Rows)
             {

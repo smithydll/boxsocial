@@ -495,9 +495,9 @@ namespace BoxSocial.Internals
 
         public string BuildAccountUri()
         {
-            if (core.session.LoggedInMember != null)
+            if (core.Session.LoggedInMember != null)
             {
-                return AppendCoreSid(core.session.LoggedInMember.AccountUriStub);
+                return AppendCoreSid(core.Session.LoggedInMember.AccountUriStub);
             }
             else
             {
@@ -514,12 +514,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountModuleUri(string key)
         {
-            return BuildAccountModuleUri(core.session.LoggedInMember, key);
+            return BuildAccountModuleUri(core.Session.LoggedInMember, key);
         }
 
         public string BuildAccountModuleUri(string key, bool appendSid)
         {
-            return BuildAccountModuleUri(core.session.LoggedInMember, key, appendSid);
+            return BuildAccountModuleUri(core.Session.LoggedInMember, key, appendSid);
         }
 
         public string BuildAccountModuleUri(Primitive owner, string key)
@@ -547,12 +547,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountSubModuleUri(string key, string sub)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub);
         }
 
         public string BuildAccountSubModuleUri(string key, string sub, bool appendSid)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, appendSid);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, appendSid);
         }
 
         public string BuildAccountSubModuleUri(Primitive owner, string key, string sub)
@@ -576,12 +576,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountSubModuleUri(string key, string sub, string mode)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, mode);
         }
 
         public string BuildAccountSubModuleUri(string key, string sub, string mode, bool appendSid)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, appendSid);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, mode, appendSid);
         }
 
         public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode)
@@ -605,12 +605,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountSubModuleUri(string key, string sub, string mode, long id)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, id);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, mode, id);
         }
 
         public string BuildAccountSubModuleUri(string key, string sub, string mode, long id, bool appendSid)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, mode, id, appendSid);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, mode, id, appendSid);
         }
 
         public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, string mode, long id)
@@ -634,12 +634,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountSubModuleUri(string key, string sub, long id)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, id);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, id);
         }
 
         public string BuildAccountSubModuleUri(string key, string sub, long id, bool appendSid)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, id, appendSid);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, id, appendSid);
         }
 
         public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, long id)
@@ -663,12 +663,12 @@ namespace BoxSocial.Internals
 
         public string BuildAccountSubModuleUri(string key, string sub, params string[] arguments)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, false, arguments);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, false, arguments);
         }
 
         public string BuildAccountSubModuleUri(string key, string sub, bool appendSid, params string[] arguments)
         {
-            return BuildAccountSubModuleUri(core.session.LoggedInMember, key, sub, appendSid, arguments);
+            return BuildAccountSubModuleUri(core.Session.LoggedInMember, key, sub, appendSid, arguments);
         }
 
         public string BuildAccountSubModuleUri(Primitive owner, string key, string sub, params string[] arguments)

@@ -123,7 +123,7 @@ namespace BoxSocial.Internals
                 iQuery.AddField("user_id", owner.Id);
                 iQuery.AddField("style_css", css);
 
-                core.db.Query(iQuery);
+                core.Db.Query(iQuery);
 
                 return new UserStyle(core, owner.Id);
             }

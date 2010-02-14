@@ -162,7 +162,7 @@ namespace BoxSocial.Internals
 
         public static UserEmail Create(Core core, string email)
         {
-            return Create(core, core.session.LoggedInMember, email, false);
+            return Create(core, core.Session.LoggedInMember, email, false);
         }
 
         public static UserEmail Create(Core core, User owner, string email, bool isRegistration)
@@ -193,7 +193,7 @@ namespace BoxSocial.Internals
             iquery.AddField("email_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("email_activate_code", activateKey);
 
-            long emailId = core.db.Query(iquery);
+            long emailId = core.Db.Query(iquery);
 
             if (!isRegistration)
             {

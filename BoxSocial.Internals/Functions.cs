@@ -490,38 +490,38 @@ namespace BoxSocial.Internals
             switch (month)
             {
                 case 1:
-                    return core.prose.GetString("JANUARY");
+                    return core.Prose.GetString("JANUARY");
                 case 2:
-                    return core.prose.GetString("FEBURARY");
+                    return core.Prose.GetString("FEBURARY");
                 case 3:
-                    return core.prose.GetString("MARCH");
+                    return core.Prose.GetString("MARCH");
                 case 4:
-                    return core.prose.GetString("APRIL");
+                    return core.Prose.GetString("APRIL");
                 case 5:
-                    return core.prose.GetString("MAY");
+                    return core.Prose.GetString("MAY");
                 case 6:
-                    return core.prose.GetString("JUNE");
+                    return core.Prose.GetString("JUNE");
                 case 7:
-                    return core.prose.GetString("JULY");
+                    return core.Prose.GetString("JULY");
                 case 8:
-                    return core.prose.GetString("AUGUST");
+                    return core.Prose.GetString("AUGUST");
                 case 9:
-                    return core.prose.GetString("SEPTEMBER");
+                    return core.Prose.GetString("SEPTEMBER");
                 case 10:
-                    return core.prose.GetString("OCTOBER");
+                    return core.Prose.GetString("OCTOBER");
                 case 11:
-                    return core.prose.GetString("NOVEMBER");
+                    return core.Prose.GetString("NOVEMBER");
                 case 12:
-                    return core.prose.GetString("DECEMBER");
+                    return core.Prose.GetString("DECEMBER");
                 default:
-                    return core.prose.GetString("INVALID");
+                    return core.Prose.GetString("INVALID");
             }
         }
 
         public void Generate404()
         {
             core.Http.StatusCode = 404;
-            core.template.SetTemplate("404.html");
+            core.Template.SetTemplate("404.html");
             core.EndResponse();
         }
 
@@ -534,14 +534,14 @@ namespace BoxSocial.Internals
             else
             {
                 core.Http.StatusCode = 404;
-                core.template.Parse("IS_404", "TRUE");
+                core.Template.Parse("IS_404", "TRUE");
             }
         }
 
         public void Generate403()
         {
             core.Http.StatusCode = 403;
-            core.template.SetTemplate("403.html");
+            core.Template.SetTemplate("403.html");
             core.EndResponse();
         }
 
@@ -554,13 +554,13 @@ namespace BoxSocial.Internals
             else
             {
                 core.Http.StatusCode = 403;
-                core.template.Parse("IS_403", "TRUE");
+                core.Template.Parse("IS_403", "TRUE");
             }
         }
 
         public void ThrowError()
         {
-            core.template.SetTemplate("1202.html");
+            core.Template.SetTemplate("1202.html");
             core.EndResponse();
         }
 

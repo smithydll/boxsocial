@@ -67,22 +67,22 @@ namespace BoxSocial.Internals
 
         public void ParsePagination(string baseUri, int currentPage, int maxPages)
         {
-            ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages);
+            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages);
         }
 
         public void ParsePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
         {
-            ParsePagination(core.template, "PAGINATION", baseUri, currentPage, maxPages, isBlog);
+            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages, isBlog);
         }
 
         public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
         {
-            ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages);
+            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages);
         }
 
         public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
         {
-            ParsePagination(core.template, templateVar, baseUri, currentPage, maxPages, isBlog);
+            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages, isBlog);
         }
 
         public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
@@ -267,19 +267,19 @@ namespace BoxSocial.Internals
 
         public void ShowMessage(string title, string message, ShowMessageOptions options)
         {
-            core.template.SetTemplate("std.message.html");
-            core.template.Parse("MESSAGE_TITLE", title);
+            core.Template.SetTemplate("std.message.html");
+            core.Template.Parse("MESSAGE_TITLE", title);
             switch (options)
             {
                 case ShowMessageOptions.Unprocessed:
-                    core.template.Parse("MESSAGE_BODY", message);
+                    core.Template.Parse("MESSAGE_BODY", message);
                     break;
                 case ShowMessageOptions.Bbcode:
                     core.Display.ParseBbcode("MESSAGE_BODY", message);
                     break;
                 case ShowMessageOptions.Stripped:
                     // TODO: stripped bbcode parse
-                    core.template.Parse("MESSAGE_BODY", core.Bbcode.Strip(message));
+                    core.Template.Parse("MESSAGE_BODY", core.Bbcode.Strip(message));
                     break;
             }
 
@@ -351,7 +351,7 @@ namespace BoxSocial.Internals
 
         public void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
-            Mysql db = core.db;
+            Mysql db = core.Db;
 
             int p = core.Functions.RequestInt("p", 1);
             long c = core.Functions.RequestLong("c", 0);
@@ -459,7 +459,7 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(comment.CommentId));
                     commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(comment.CommentId));
                     commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(comment.CommentId));
-                    commentsVariableCollection.Parse("TIME", core.tz.DateTimeToString(comment.GetTime(core.tz)));
+                    commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
 
                     if (hook != null)
@@ -467,7 +467,7 @@ namespace BoxSocial.Internals
                         hook(new DisplayCommentHookEventArgs(core, owner, commentPoster, commentsVariableCollection));
                     }
 
-                    if (owner.CanModerateComments(core.session.LoggedInMember))
+                    if (owner.CanModerateComments(core.Session.LoggedInMember))
                     {
                         commentsVariableCollection.Parse("MODERATE", "TRUE");
                     }
@@ -648,17 +648,17 @@ namespace BoxSocial.Internals
 
         public void ParsePageList(Primitive owner, bool fragment)
         {
-            ParsePageList(core.template, "PAGE_LIST", owner, fragment);
+            ParsePageList(core.Template, "PAGE_LIST", owner, fragment);
         }
 
         public void ParsePageList(Primitive owner, bool fragment, Page current)
         {
-            ParsePageList(core.template, "PAGE_LIST", owner, fragment, current);
+            ParsePageList(core.Template, "PAGE_LIST", owner, fragment, current);
         }
 
         public void ParsePageList(string templateVar, Primitive owner, bool fragment)
         {
-            ParsePageList(core.template, templateVar, owner, fragment);
+            ParsePageList(core.Template, templateVar, owner, fragment);
         }
 
         public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment)
@@ -668,7 +668,7 @@ namespace BoxSocial.Internals
 
         public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment, Page current)
         {
-            template.ParseRaw(templateVar, GeneratePageList(owner, core.session.LoggedInMember, fragment, current));
+            template.ParseRaw(templateVar, GeneratePageList(owner, core.Session.LoggedInMember, fragment, current));
         }
 
         public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment)
@@ -678,7 +678,7 @@ namespace BoxSocial.Internals
 
         public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment, Page current)
         {
-            Database db = core.db;
+            Database db = core.Db;
 
             ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = User.GetMemberId(loggedInMember);
@@ -838,7 +838,7 @@ namespace BoxSocial.Internals
 
         public void ParseBbcode(string templateVar, string input, User owner)
         {
-            ParseBbcode(core.template, templateVar, input, owner);
+            ParseBbcode(core.Template, templateVar, input, owner);
         }
 
         public void ParseBbcode(Template template, string templateVar, string input)
@@ -850,11 +850,11 @@ namespace BoxSocial.Internals
         {
             if (owner != null)
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner));
             }
             else
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember));
             }
         }
 
@@ -865,7 +865,7 @@ namespace BoxSocial.Internals
 
         public void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
         {
-            if (core.session.LoggedInMember == null)
+            if (core.Session.LoggedInMember == null)
             {
 
                 if (owner != null)
@@ -881,11 +881,11 @@ namespace BoxSocial.Internals
             {
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember, owner));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner));
                 }
                 else
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.session.LoggedInMember));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember));
                 }
             }
         }
@@ -902,7 +902,7 @@ namespace BoxSocial.Internals
 
         public void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {
-            ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem);
+            ParseRadioArray(core.Template, templateVar, name, columns, items, selectedItem);
         }
 
         public void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem)
@@ -912,7 +912,7 @@ namespace BoxSocial.Internals
 
         public void ParseRadioArray(string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
-            ParseRadioArray(core.template, templateVar, name, columns, items, selectedItem, disabledItems);
+            ParseRadioArray(core.Template, templateVar, name, columns, items, selectedItem, disabledItems);
         }
 
         public void ParseRadioArray(Template template, string templateVar, string name, int columns, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
@@ -922,7 +922,7 @@ namespace BoxSocial.Internals
 
         public void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
         {
-            ParseSelectBox(core.template, templateVar, name, items, selectedItem);
+            ParseSelectBox(core.Template, templateVar, name, items, selectedItem);
         }
 
         public void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem)
@@ -932,7 +932,7 @@ namespace BoxSocial.Internals
 
         public void ParseSelectBox(string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
         {
-            ParseSelectBox(core.template, templateVar, name, items, selectedItem, disabledItems);
+            ParseSelectBox(core.Template, templateVar, name, items, selectedItem, disabledItems);
         }
 
         public void ParseSelectBox(Template template, string templateVar, string name, List<SelectBoxItem> items, string selectedItem, List<string> disabledItems)
@@ -942,17 +942,17 @@ namespace BoxSocial.Internals
 
         public void ParseLicensingBox(string templateVar, byte selectedLicense)
         {
-            ParseLicensingBox(core.template, templateVar, selectedLicense);
+            ParseLicensingBox(core.Template, templateVar, selectedLicense);
         }
 
         public void ParseLicensingBox(Template template, string templateVar, byte selectedLicense)
         {
-            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.db, selectedLicense));
+            template.ParseRaw(templateVar, ContentLicense.BuildLicenseSelectBox(core.Db, selectedLicense));
         }
 
         public void ParseClassification(string templateVar, Classifications classification)
         {
-            ParseClassification(core.template, templateVar, classification);
+            ParseClassification(core.Template, templateVar, classification);
         }
 
         public void ParseClassification(Template template, string templateVar, Classifications classification)
@@ -962,7 +962,7 @@ namespace BoxSocial.Internals
 
         public void ParseTimeZoneBox(string templateVar, string timeZone)
         {
-            ParseTimeZoneBox(core.template, templateVar, timeZone);
+            ParseTimeZoneBox(core.Template, templateVar, timeZone);
         }
 
         public void ParseTimeZoneBox(Template template, string templateVar, string timeZone)

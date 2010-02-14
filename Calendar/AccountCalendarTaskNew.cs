@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Calendar
                     template.Parse("EDIT", "TRUE");
                     template.Parse("ID", calendarTask.TaskId.ToString());
 
-                    dueDate = calendarTask.GetDueTime(core.tz);
+                    dueDate = calendarTask.GetDueTime(core.Tz);
 
                     topic = calendarTask.Topic;
                     description = calendarTask.Description;

@@ -91,6 +91,16 @@ namespace BoxSocial.Applications.Mail
         void MailFolder_ItemLoad()
         {
         }
+
+        public MailFolder Create(Core core, MailFolder parent, string title)
+        {
+            /* TODO: Fix */
+            Item item = Item.Create(core, typeof(MailFolder), new FieldValuePair("owner_id", parent.ownerId),
+                new FieldValuePair("folder_parent", parent.Id),
+                new FieldValuePair("folder_name", title));
+
+            return (MailFolder)item;
+        }
 		
 		public override long Id
         {

@@ -494,7 +494,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (core.tz == null)
+                if (core.Tz == null)
                 {
                     if (user.Info != null)
                     {
@@ -508,7 +508,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return core.tz.DateTimeFromMysql(dateofBirthRaw);
+                    return core.Tz.DateTimeFromMysql(dateofBirthRaw);
                 }
             }
             set
@@ -576,7 +576,7 @@ namespace BoxSocial.Internals
 
         void UserProfile_ItemUpdated(object sender, EventArgs e)
         {
-            ApplicationEntry ae = new ApplicationEntry(core, core.session.LoggedInMember, "Profile");
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
 
             if (HasPropertyUpdated("sexuality"))
             {
@@ -584,11 +584,11 @@ namespace BoxSocial.Internals
                 {
                     if (GenderRaw == "MALE")
                     {
-                        ae.PublishToFeed(core.session.LoggedInMember, "changed his sexuality to " + Sexuality);
+                        ae.PublishToFeed(core.Session.LoggedInMember, "changed his sexuality to " + Sexuality);
                     }
                     else if (GenderRaw == "FEMALE")
                     {
-                        ae.PublishToFeed(core.session.LoggedInMember, "changed her sexuality to " + Sexuality);
+                        ae.PublishToFeed(core.Session.LoggedInMember, "changed her sexuality to " + Sexuality);
                     }
                 }
             }
@@ -621,11 +621,11 @@ namespace BoxSocial.Internals
                         default:
                             if (GenderRaw == "MALE")
                             {
-                                ae.PublishToFeed(core.session.LoggedInMember, "changed his relationship status to " + MaritialStatus.ToLower());
+                                ae.PublishToFeed(core.Session.LoggedInMember, "changed his relationship status to " + MaritialStatus.ToLower());
                             }
                             else if (GenderRaw == "FEMALE")
                             {
-                                ae.PublishToFeed(core.session.LoggedInMember, "changed her relationship status to " + MaritialStatus.ToLower());
+                                ae.PublishToFeed(core.Session.LoggedInMember, "changed her relationship status to " + MaritialStatus.ToLower());
                             }
                             break;
                     }
@@ -650,12 +650,12 @@ namespace BoxSocial.Internals
                             switch (maritialStatus)
                             {
                                 case "RELATIONSHIP":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.Session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;
                                 case "MARRIED":
-                                    ae.PublishToFeed(core.session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.session.LoggedInMember.Id + "[/user]");
+                                    ae.PublishToFeed(core.Session.LoggedInMember, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;
                             }
                             break;

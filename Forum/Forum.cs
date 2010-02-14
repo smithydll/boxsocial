@@ -598,7 +598,7 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.db.Query(query);
+            DataTable forumsTable = core.Db.Query(query);
 
             foreach (DataRow dr in forumsTable.Rows)
             {
@@ -623,7 +623,7 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_parent_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.db.Query(query);
+            DataTable forumsTable = core.Db.Query(query);
 
             foreach (DataRow dr in forumsTable.Rows)
             {
@@ -652,7 +652,7 @@ namespace BoxSocial.Applications.Forum
 			query.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, parent.Order);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.db.Query(query);
+            DataTable forumsTable = core.Db.Query(query);
 
 			bool isFirst = true;
 			long topLevelParent = -1;
@@ -710,7 +710,7 @@ namespace BoxSocial.Applications.Forum
 			query.AddCondition("forum_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "forum_order");
 			
-			DataTable forumsTable = core.db.Query(query);
+			DataTable forumsTable = core.Db.Query(query);
 			
 			foreach (DataRow dr in forumsTable.Rows)
             {
@@ -898,7 +898,7 @@ namespace BoxSocial.Applications.Forum
 
             if (parent.Owner is UserGroup)
             {
-                if (!((UserGroup)parent.Owner).IsGroupOperator(core.session.LoggedInMember))
+                if (!((UserGroup)parent.Owner).IsGroupOperator(core.Session.LoggedInMember))
                 {
                     // todo: throw new exception
                     throw new UnauthorisedToCreateItemException();
@@ -913,7 +913,7 @@ namespace BoxSocial.Applications.Forum
             query.AddSort(SortOrder.Descending, "forum_order");
             query.LimitCount = 1;
 
-            DataTable orderTable = core.db.Query(query);
+            DataTable orderTable = core.Db.Query(query);
 
             if (orderTable.Rows.Count == 1)
             {
@@ -931,7 +931,7 @@ namespace BoxSocial.Applications.Forum
             uQuery.AddCondition("forum_item_id", parent.Owner.Id);
             uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
 
             ParentTree parentTree = new ParentTree();
 
@@ -975,7 +975,7 @@ namespace BoxSocial.Applications.Forum
             iquery.AddField("forum_last_post_id", 0);
             iquery.AddField("forum_last_post_time_ut", UnixTime.UnixTimeStamp());
 
-            long forumId = core.db.Query(iquery);
+            long forumId = core.Db.Query(iquery);
 
             Forum forum = new Forum(core, forumId);
 
@@ -1062,7 +1062,7 @@ namespace BoxSocial.Applications.Forum
                 query.AddSort(SortOrder.Descending, "forum_order");
                 query.LimitCount = 1;
 
-                levelForumsDataTable = core.db.Query(query);
+                levelForumsDataTable = core.Db.Query(query);
 
                 Forum record = null;
                 if (levelForumsDataTable.Rows.Count == 1)
@@ -1103,7 +1103,7 @@ namespace BoxSocial.Applications.Forum
                     query.AddSort(SortOrder.Descending, "forum_order");
                     query.LimitCount = 1;
 
-                    levelForumsDataTable = core.db.Query(query);
+                    levelForumsDataTable = core.Db.Query(query);
 
                     Forum record = null;
                     if (levelForumsDataTable.Rows.Count == 1)
@@ -1382,7 +1382,7 @@ namespace BoxSocial.Applications.Forum
                 core.Functions.Generate403();
 			}
 
-            if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.session.LoggedInMember)))
+            if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.Session.LoggedInMember)))
             {
                 page.template.Parse("U_JOIN", page.Group.JoinUri);
             }
@@ -1472,7 +1472,7 @@ namespace BoxSocial.Applications.Forum
                 if (lastPosts.ContainsKey(forum.LastPostId))
                 {
                     core.Display.ParseBbcode(forumVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                        lastPosts[forum.LastPostId].Uri, Functions.TrimStringToWord(lastPosts[forum.LastPostId].Title, 20), core.tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.tz))));
+                        lastPosts[forum.LastPostId].Uri, Functions.TrimStringToWord(lastPosts[forum.LastPostId].Title, 20), core.Tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.Tz))));
                 }
                 else
                 {
@@ -1551,14 +1551,14 @@ namespace BoxSocial.Applications.Forum
                     topicVariableCollection.Parse("URI", topic.Uri);
                     topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
                     topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
-					topicVariableCollection.Parse("DATE", core.tz.DateTimeToString(topic.GetCreatedDate(core.tz)));
+					topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
 					topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
 					topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
 
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {
                         core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                            topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.tz))));
+                            topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
                     }
                     else
                     {
@@ -1687,37 +1687,37 @@ namespace BoxSocial.Applications.Forum
 
             if (thisForum.Access.Can("CREATE_TOPICS"))
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_CREATE_TOPICS"), true);
+                permissions.Add(core.Prose.GetString("YOU_CAN_CREATE_TOPICS"), true);
                 flagPermissionsBlock = true;
             }
             else
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_CREATE_TOPICS"), false);
+                permissions.Add(core.Prose.GetString("YOU_CAN_CREATE_TOPICS"), false);
                 flagPermissionsBlock = true;
             }
             if (thisForum.Access.Can("REPLY_TOPICS"))
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_POST_REPLIES"), true);
+                permissions.Add(core.Prose.GetString("YOU_CAN_POST_REPLIES"), true);
                 flagPermissionsBlock = true;
             }
             else
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_POST_REPLIES"), false);
+                permissions.Add(core.Prose.GetString("YOU_CAN_POST_REPLIES"), false);
                 flagPermissionsBlock = true;
             }
             if (thisForum.Access.Can("EDIT_OWN_POSTS"))
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_EDIT_YOUR_POSTS"), true);
+                permissions.Add(core.Prose.GetString("YOU_CAN_EDIT_YOUR_POSTS"), true);
                 flagPermissionsBlock = true;
             }
             if (thisForum.Access.Can("DELETE_OWN_POSTS"))
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_DELETE_YOUR_POSTS"), true);
+                permissions.Add(core.Prose.GetString("YOU_CAN_DELETE_YOUR_POSTS"), true);
                 flagPermissionsBlock = true;
             }
             if (thisForum.Access.Can("DELETE_TOPICS") || thisForum.Access.Can("LOCK_TOPICS"))
             {
-                permissions.Add(core.prose.GetString("YOU_CAN_MODERATE_FORUM"), true, core.Uri.AppendAbsoluteSid(thisForum.ModeratorControlPanelUri));
+                permissions.Add(core.Prose.GetString("YOU_CAN_MODERATE_FORUM"), true, core.Uri.AppendAbsoluteSid(thisForum.ModeratorControlPanelUri));
                 flagPermissionsBlock = true;
             }
 

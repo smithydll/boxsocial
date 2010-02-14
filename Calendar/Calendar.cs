@@ -37,15 +37,15 @@ namespace BoxSocial.Applications.Calendar
         public Calendar(Core core)
         {
             this.core = core;
-            this.db = core.db;
+            this.db = core.Db;
         }
 
         public List<Event> GetEvents(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
         {
             List<Event> events = new List<Event>();
 
-            long loggedIdUid = User.GetMemberId(core.session.LoggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
 			
 			string[] fields = Event.GetFieldsPrefixed(typeof(Event));
 			StringBuilder fieldsSb = new StringBuilder();
@@ -109,7 +109,7 @@ namespace BoxSocial.Applications.Calendar
                 {
                     try
                     {
-                        events.Add(new BirthdayEvent(core, user, friend, core.tz.DateTimeFromMysql(startTimeRaw).Year));
+                        events.Add(new BirthdayEvent(core, user, friend, core.Tz.DateTimeFromMysql(startTimeRaw).Year));
                     }
                     catch (InvalidEventException)
                     {
@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.Calendar
             List<Task> tasks = new List<Task>();
 
             long loggedIdUid = core.LoggedInMemberId;
-            ushort readAccessLevel = owner.GetAccessLevel(core.session.LoggedInMember);
+            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(Task));
             query.AddCondition("task_item_id", owner.Id);
@@ -367,7 +367,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner)
         {
-            Show(core, page, owner, core.tz.Now.Year, core.tz.Now.Month);
+            Show(core, page, owner, core.Tz.Now.Year, core.Tz.Now.Month);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, int year)
@@ -410,7 +410,7 @@ namespace BoxSocial.Applications.Calendar
                 page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
-                    string.Format("day={0}", ((month == core.tz.Now.Month) ? core.tz.Now.Day : 1))));
+                    string.Format("day={0}", ((month == core.Tz.Now.Month) ? core.Tz.Now.Day : 1))));
             }
 
             int days = DateTime.DaysInMonth(year, month);
@@ -423,12 +423,12 @@ namespace BoxSocial.Applications.Calendar
             if (offset > 0)
             {
                 // the whole month including entry days
-                startTime = core.tz.GetUnixTimeStamp(new DateTime(YearOfPreviousMonth(year, month), PreviousMonth(month), daysPrev - offset + 1, 0, 0, 0));
+                startTime = core.Tz.GetUnixTimeStamp(new DateTime(YearOfPreviousMonth(year, month), PreviousMonth(month), daysPrev - offset + 1, 0, 0, 0));
             }
             else
             {
                 // the whole month
-                startTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, 1, 0, 0, 0));
+                startTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, 1, 0, 0, 0));
             }
 
             // the whole month including exit days
@@ -530,7 +530,7 @@ namespace BoxSocial.Applications.Calendar
                     string.Format("day={0}", day)));
             }
 
-            long startTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
+            long startTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24;
 
             Calendar cal = new Calendar(core);
@@ -585,7 +585,7 @@ namespace BoxSocial.Applications.Calendar
             foreach (Event calendarEvent in events)
             {
                 // if the event starts after the end of the day, skip this day
-                if (calendarEvent.GetStartTime(core.tz).CompareTo(new DateTime(year, month, day, 23, 59, 59)) > 0)
+                if (calendarEvent.GetStartTime(core.Tz).CompareTo(new DateTime(year, month, day, 23, 59, 59)) > 0)
                 {
                     break;
                 }
@@ -593,13 +593,13 @@ namespace BoxSocial.Applications.Calendar
                 VariableCollection eventVariableCollection = dayVariableCollection.CreateChild("event");
 
                 eventVariableCollection.Parse("TITLE", calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length)));
-                if (calendarEvent.GetStartTime(core.tz).Day != day)
+                if (calendarEvent.GetStartTime(core.Tz).Day != day)
                 {
-                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("d MMMM h:mmt").ToLower());
+                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.Tz).ToString("d MMMM h:mmt").ToLower());
                 }
                 else
                 {
-                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.tz).ToString("h:mmt").ToLower());
+                    eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.Tz).ToString("h:mmt").ToLower());
                 }
                 eventVariableCollection.Parse("URI", calendarEvent.Uri);
 
@@ -613,7 +613,7 @@ namespace BoxSocial.Applications.Calendar
                 hasEvents = true;
 
                 // if the event ends before the end of the day, finish up the event
-                if (calendarEvent.GetEndTime(core.tz).CompareTo(new DateTime(year, month, day, 23, 59, 59)) <= 0)
+                if (calendarEvent.GetEndTime(core.Tz).CompareTo(new DateTime(year, month, day, 23, 59, 59)) <= 0)
                 {
                     expired.Add(calendarEvent);
                 }
@@ -634,7 +634,7 @@ namespace BoxSocial.Applications.Calendar
         {
             bool hasEvents = false;
 
-            long startOfDay = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
+            long startOfDay = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endOfDay = startOfDay + 60 * 60 * 24;
 
             List<Event> expired = new List<Event>();
@@ -658,7 +658,7 @@ namespace BoxSocial.Applications.Calendar
                     startTime = startOfDay;
                 }
 
-                long hourTime = core.tz.GetUnixTimeStamp(new DateTime(year, month, day, hour, 59, 59));
+                long hourTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, hour, 59, 59));
 
                 //if (calendarEvent.GetStartTime(core.tz).CompareTo(new DateTime(year, month, day, hour, 59, 59)) > 0)
                 if (startTime > hourTime)

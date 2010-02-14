@@ -708,10 +708,10 @@ namespace BoxSocial.Groups
 
         public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, long groupCategory, string groupType)
         {
-            Mysql db = core.db;
-            SessionState session = core.session;
+            Mysql db = core.Db;
+            SessionState session = core.Session;
 
-            if (core.session.LoggedInMember == null)
+            if (core.Session.LoggedInMember == null)
             {
                 return null;
             }
@@ -822,7 +822,7 @@ namespace BoxSocial.Groups
 
         public static bool CheckGroupNameUnique(Core core, string groupName)
         {
-            if (core.db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
+            if (core.Db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",
                 Mysql.Escape(groupName.ToLower()))).Rows.Count > 0)
             {
                 return false;
@@ -1234,7 +1234,7 @@ namespace BoxSocial.Groups
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddJoin(JoinTypes.Left, GetTable(typeof(GroupMember)), "group_id", "group_id");
             query.AddCondition("user_id", member.Id);
-            DataTable groupsTable = core.db.Query(query);
+            DataTable groupsTable = core.Db.Query(query);
 
             foreach (DataRow dr in groupsTable.Rows)
             {
@@ -1256,7 +1256,7 @@ namespace BoxSocial.Groups
 
             //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.ThisGroup.Description), core.session.LoggedInMember));
             core.Display.ParseBbcode("DESCRIPTION", page.Group.Description);
-            page.template.Parse("DATE_CREATED", core.tz.DateTimeToString(page.Group.DateCreated(core.tz)));
+            page.template.Parse("DATE_CREATED", core.Tz.DateTimeToString(page.Group.DateCreated(core.Tz)));
             page.template.Parse("CATEGORY", page.Group.Category);
 
             page.template.Parse("MEMBERS", page.Group.Members.ToString());
@@ -1266,33 +1266,33 @@ namespace BoxSocial.Groups
             page.template.Parse("L_IS_ARE", langIsAre);
             page.template.Parse("U_MEMBERLIST", page.Group.MemberlistUri);
 
-            if (page.Group.IsGroupOperator(core.session.LoggedInMember))
+            if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
                 page.template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(page.Group.AccountUriStub));
             }
 
-            if (core.session.IsLoggedIn)
+            if (core.Session.IsLoggedIn)
             {
-                if (!page.Group.IsGroupMemberAbsolute(core.session.LoggedInMember))
+                if (!page.Group.IsGroupMemberAbsolute(core.Session.LoggedInMember))
                 {
                     page.template.Parse("U_JOIN", page.Group.JoinUri);
                 }
                 else
                 {
-                    if (!page.Group.IsGroupOperator(core.session.LoggedInMember))
+                    if (!page.Group.IsGroupOperator(core.Session.LoggedInMember))
                     {
-                        if (page.Group.IsGroupMember(core.session.LoggedInMember))
+                        if (page.Group.IsGroupMember(core.Session.LoggedInMember))
                         {
                             page.template.Parse("U_LEAVE", page.Group.LeaveUri);
                         }
-                        else if (page.Group.IsGroupMemberPending(core.session.LoggedInMember))
+                        else if (page.Group.IsGroupMemberPending(core.Session.LoggedInMember))
                         {
                             page.template.Parse("U_CANCEL", page.Group.LeaveUri);
                         }
                     }
 
-                    if (page.Group.IsGroupMember(core.session.LoggedInMember))
+                    if (page.Group.IsGroupMember(core.Session.LoggedInMember))
                     {
                         page.template.Parse("U_INVITE", page.Group.InviteUri);
                     }
@@ -1318,9 +1318,9 @@ namespace BoxSocial.Groups
 
                 operatorsVariableCollection.Parse("USER_DISPLAY_NAME", groupOperator.DisplayName);
                 operatorsVariableCollection.Parse("U_PROFILE", groupOperator.Uri);
-                if (core.session.LoggedInMember != null)
+                if (core.Session.LoggedInMember != null)
                 {
-                    if (groupOperator.UserId == core.session.LoggedInMember.UserId)
+                    if (groupOperator.UserId == core.Session.LoggedInMember.UserId)
                     {
                         operatorsVariableCollection.Parse("U_RESIGN", page.Group.ResignOperatorUri);
                     }
@@ -1338,7 +1338,7 @@ namespace BoxSocial.Groups
                 officersVariableCollection.Parse("OFFICER_TITLE", groupOfficer.OfficeTitle);
                 if (core.LoggedInMemberId > 0)
                 {
-                    if (page.Group.IsGroupOperator(core.session.LoggedInMember))
+                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
                     {
                         officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
                     }
@@ -1385,7 +1385,7 @@ namespace BoxSocial.Groups
             page.template.Parse("U_FILTER_BEGINS_Y", page.Group.GetMemberlistUri("y"));
             page.template.Parse("U_FILTER_BEGINS_Z", page.Group.GetMemberlistUri("z"));
 
-            if (page.Group.IsGroupOperator(core.session.LoggedInMember))
+            if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
             {
                 page.template.Parse("GROUP_OPERATOR", "TRUE");
 
@@ -1394,7 +1394,7 @@ namespace BoxSocial.Groups
                 query.AddCondition("group_member_approved", false);
                 query.AddSort(SortOrder.Ascending, "group_member_date_ut");
 
-                DataTable approvalTable = core.db.Query(query);
+                DataTable approvalTable = core.Db.Query(query);
 
                 if (approvalTable.Rows.Count > 0)
                 {
@@ -1428,7 +1428,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 if (core.LoggedInMemberId > 0)
                 {
-                    if (page.Group.IsGroupOperator(core.session.LoggedInMember))
+                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
                     {
                         if (!member.IsOperator)
                         {
@@ -1539,7 +1539,7 @@ namespace BoxSocial.Groups
                         case "OPEN":
                             return true;
                         case "CLOSED":
-                            if (IsGroupMember(core.session.LoggedInMember))
+                            if (IsGroupMember(core.Session.LoggedInMember))
                             {
                                 return true;
                             }
@@ -1552,7 +1552,7 @@ namespace BoxSocial.Groups
                     }
                     break;
                 case "COMMENT":
-                    if (IsGroupMember(core.session.LoggedInMember))
+                    if (IsGroupMember(core.Session.LoggedInMember))
                     {
                         return true;
                     }
@@ -1580,7 +1580,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember);
             }
 
             return false;
@@ -1590,7 +1590,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember);
             }
 
             return false;
@@ -1600,7 +1600,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember);
             }
 
             return false;

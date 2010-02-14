@@ -95,7 +95,7 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/post",
                     ((GPage)page).Group.UriStub), true));
 
-                if (((GPage)page).Group.IsGroupOperator(core.session.LoggedInMember) && topicId == 0)
+                if (((GPage)page).Group.IsGroupOperator(core.Session.LoggedInMember) && topicId == 0)
                 {
                     // TODO: Global, remember to update columns to 4
                 }
@@ -117,14 +117,14 @@ namespace BoxSocial.Applications.Forum
                     VariableCollection postVariableCollection = page.template.CreateChild("post_list");
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
-                    postVariableCollection.Parse("POST_TIME", core.tz.DateTimeToString(post.GetCreatedDate(core.tz)));
+                    postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(post.GetCreatedDate(core.Tz)));
                     //postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
                     postVariableCollection.Parse("U_USER", post.Poster.Uri);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.Info.DisplayName);
                     postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
-                    postVariableCollection.Parse("USER_JOINED", core.tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.tz)));
+                    postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(post.Poster.Info.GetRegistrationDate(core.Tz)));
                     postVariableCollection.Parse("USER_COUNTRY", post.Poster.Country);
 
                     if (thisTopic.ReadStatus == null)

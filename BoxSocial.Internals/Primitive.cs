@@ -228,7 +228,7 @@ namespace BoxSocial.Internals
 
         public void ParseBreadCrumbs(string templateVar, string path)
         {
-            ParseBreadCrumbs(core.template, templateVar, path);
+            ParseBreadCrumbs(core.Template, templateVar, path);
         }
 
         public void ParseBreadCrumbs(Template template, string templateVar, string path)
@@ -243,7 +243,7 @@ namespace BoxSocial.Internals
 
         public void ParseBreadCrumbs(string templateVar, List<string[]> parts)
         {
-            ParseBreadCrumbs(core.template, templateVar, parts);
+            ParseBreadCrumbs(core.Template, templateVar, parts);
         }
 
         public void ParseBreadCrumbs(Template template, string templateVar, List<string[]> parts)

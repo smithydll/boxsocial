@@ -111,13 +111,13 @@ namespace BoxSocial.Internals
             iQuery.AddField("status_message", message);
             iQuery.AddField("status_time_ut", UnixTime.UnixTimeStamp());
 
-            long statusId = core.db.Query(iQuery);
+            long statusId = core.Db.Query(iQuery);
 
             UpdateQuery uQuery = new UpdateQuery("user_info");
             uQuery.AddField("user_status_messages", new QueryOperation("user_status_messages", QueryOperations.Addition, 1));
             uQuery.AddCondition("user_id", creator.Id);
 
-            core.db.Query(uQuery);
+            core.Db.Query(uQuery);
 
             return new StatusMessage(core, creator, statusId, message);
         }

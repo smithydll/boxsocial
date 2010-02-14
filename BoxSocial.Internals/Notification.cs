@@ -153,7 +153,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_seen", false);
             iQuery.AddField("notification_application", applicationId);
 
-            long notificationId = core.db.Query(iQuery);
+            long notificationId = core.Db.Query(iQuery);
 
             return new Notification(core, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
         }
@@ -170,11 +170,11 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Descending, "notification_time_ut");
             query.LimitCount = 128;
 
-            DataTable notificationsTable = core.db.Query(query);
+            DataTable notificationsTable = core.Db.Query(query);
 
             foreach (DataRow dr in notificationsTable.Rows)
             {
-                notificationItems.Add(new Notification(core, core.session.LoggedInMember, dr));
+                notificationItems.Add(new Notification(core, core.Session.LoggedInMember, dr));
             }
 
             return notificationItems;
@@ -192,7 +192,7 @@ namespace BoxSocial.Internals
             query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
 
-            DataTable notificationsTable = core.db.Query(query);
+            DataTable notificationsTable = core.Db.Query(query);
 
             return (long)notificationsTable.Rows[0]["total"];
         }

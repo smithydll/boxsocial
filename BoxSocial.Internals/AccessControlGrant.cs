@@ -120,7 +120,7 @@ namespace BoxSocial.Internals
             query.AddCondition("grant_item_type_id", item.TypeId);
             query.AddCondition("grant_permission_id", permissionId);
             
-            DataTable grantDataTable = core.db.Query(query);
+            DataTable grantDataTable = core.Db.Query(query);
             
             if (grantDataTable.Rows.Count == 1)
             {
@@ -156,7 +156,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("grant_permission_id", permissionId);
             iQuery.AddField("grant_allow", (sbyte)allow);
             
-            core.db.Query(iQuery);
+            core.Db.Query(iQuery);
 			
 			return new AccessControlGrant(core, primitive, item, permissionId);
 		}
@@ -191,7 +191,7 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
             sQuery.AddCondition("grant_item_type_id", itemTypeId);
 
-            DataTable grantsTable = core.db.Query(sQuery);
+            DataTable grantsTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in grantsTable.Rows)
             {
@@ -209,7 +209,7 @@ namespace BoxSocial.Internals
 			sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
 			sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
 			
-			DataTable grantsTable = core.db.Query(sQuery);
+			DataTable grantsTable = core.Db.Query(sQuery);
 			
 			foreach (DataRow dr in grantsTable.Rows)
 			{
@@ -228,7 +228,7 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);
 
-            DataTable grantsTable = core.db.Query(sQuery);
+            DataTable grantsTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in grantsTable.Rows)
             {

@@ -85,6 +85,29 @@ namespace BoxSocial.IO
             }
         }
 
+        public void Parse(string key, long value)
+        {
+            if (!variables.ContainsKey(key))
+            {
+                variables.Add(key, HttpUtility.HtmlEncode(value.ToString()));
+            }
+        }
+
+        public void Parse(string key, long value, bool longNumberFormat)
+        {
+            if (!variables.ContainsKey(key))
+            {
+                if (longNumberFormat)
+                {
+                    throw new NotImplementedException("Use Functions.LargeIntegerToString instead");
+                }
+                else
+                {
+                    variables.Add(key, HttpUtility.HtmlEncode(value.ToString()));
+                }
+            }
+        }
+
         public void Parse(string key, FormField formField)
         {
             if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms")

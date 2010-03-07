@@ -34,6 +34,8 @@ namespace BoxSocial.Musician
     {
         [DataField("genre_id", DataFieldKeys.Primary)]
         private long genreId;
+        [DataField("genre_slug", DataFieldKeys.Unique)]
+        private string genreSlug;
         [DataField("genre_is_sub")]
         private bool isSubGenre;
         [DataField("parent_id", typeof(MusicGenre))]
@@ -108,6 +110,21 @@ namespace BoxSocial.Musician
             }
         }
 
+        public MusicGenre(Core core, string genreSlug)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MusicGenre_ItemLoad);
+
+            try
+            {
+                LoadItem("genre_slug", genreSlug);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMusicGenreException();
+            }
+        }
+
         public MusicGenre(Core core, DataRow genreRow)
             : base(core)
         {
@@ -133,6 +150,8 @@ namespace BoxSocial.Musician
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
             query.AddCondition("genre_is_sub", false);
+            query.AddCondition("parent_id", 0);
+            query.AddSort(SortOrder.Ascending, "genre_slug");
 
             DataTable genresDataTable = core.Db.Query(query);
 
@@ -144,13 +163,14 @@ namespace BoxSocial.Musician
             return genres;
         }
 
-        public List<MusicGenre> GetSubGenres(Core core)
+        public static List<MusicGenre> GetAllGenres(Core core)
         {
             List<MusicGenre> genres = new List<MusicGenre>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
-            query.AddCondition("genre_is_sub", true);
-            query.AddCondition("parent_id", genreId);
+            query.AddCondition("genre_is_sub", false);
+            query.AddSort(SortOrder.Ascending, "parent_id");
+            query.AddSort(SortOrder.Ascending, "genre_slug");
 
             DataTable genresDataTable = core.Db.Query(query);
 
@@ -160,6 +180,69 @@ namespace BoxSocial.Musician
             }
 
             return genres;
+        }
+
+        public static List<MusicGenre> GetAllSubGenres(Core core)
+        {
+            List<MusicGenre> genres = new List<MusicGenre>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            query.AddCondition("genre_is_sub", true);
+            query.AddCondition("parent_id", ConditionEquality.GreaterThan, 0);
+            query.AddSort(SortOrder.Ascending, "parent_id");
+            query.AddSort(SortOrder.Ascending, "genre_slug");
+
+            DataTable genresDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in genresDataTable.Rows)
+            {
+                genres.Add(new MusicGenre(core, dr));
+            }
+
+            return genres;
+        }
+
+        public List<MusicGenre> GetSubGenres()
+        {
+            List<MusicGenre> genres = new List<MusicGenre>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            query.AddCondition("genre_is_sub", true);
+            query.AddCondition("parent_id", genreId);
+            query.AddSort(SortOrder.Ascending, "genre_slug");
+
+            DataTable genresDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in genresDataTable.Rows)
+            {
+                genres.Add(new MusicGenre(core, dr));
+            }
+
+            return genres;
+        }
+
+        public List<Musician> GetMuscians()
+        {
+            List<Musician> musicians = new List<Musician>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Musician));
+            if (ParentId == 0)
+            {
+                query.AddCondition("musician_genre", GenreId);
+            }
+            else
+            {
+                query.AddCondition("musician_subgenre", GenreId);
+            }
+
+            DataTable musiciansDataTable = db.Query(query);
+
+            foreach (DataRow dr in musiciansDataTable.Rows)
+            {
+                musicians.Add(new Musician(core, dr, MusicianLoadOptions.Common));
+            }
+
+            return musicians;
         }
 
         public override long Id

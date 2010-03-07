@@ -96,11 +96,68 @@ namespace BoxSocial.Musician
         {
             List<MusicGenre> genres = MusicGenre.GetGenres(e.Core);
 
+            for (int i = 0; i < genres.Count; i++)
+            {
+                MusicGenre genre = genres[i];
+                if (genre.ParentId == 0)
+                {
+                    VariableCollection genreVariableCollection = e.Template.CreateChild("genre_list");
+
+                    genreVariableCollection.Parse("U_GENRE", genre.Uri);
+                    genreVariableCollection.Parse("DIAPLAY_NAME", genre.Name);
+                    genreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(genre.Musicians));
+
+                    for (int j = i; j < genres.Count; j++)
+                    {
+                        MusicGenre subGenre = genres[j];
+                        if (subGenre.ParentId == genre.Id)
+                        {
+                            VariableCollection subGenreVariableCollection = genreVariableCollection.CreateChild("subgenre_list");
+
+                            subGenreVariableCollection.Parse("U_SUBGENRE", subGenre.Uri);
+                            subGenreVariableCollection.Parse("DIAPLAY_NAME", subGenre.Name);
+                            subGenreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(subGenre.Musicians));
+                        }
+                        else if (subGenre.ParentId < genre.Id)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            // gone past the end, start the next genre
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
         }
 
         public static void ShowGenre(object sender, ShowPageEventArgs e)
         {
             string genre = e.Core.PagePathParts[1].Value;
+            MusicGenre genreObject = null;
+
+            try
+            {
+                genreObject = new MusicGenre(e.Core, genre);
+            }
+            catch (InvalidMusicGenreException)
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
+
+            if (genreObject.ParentId == 0)
+            {
+                List<MusicGenre> subGenres = genreObject.GetSubGenres();
+            }
+
+            //List<Musician> musicians = genreObject.GetMusicians();
         }
     }
 }

@@ -315,11 +315,19 @@ namespace BoxSocial.Musician
         [StaticShow("music", @"^/music/directory/genres(|/)$")]
         private void showGenres(Core core, object sender)
         {
+            if (sender is TPage)
+            {
+                Directory.ShowGenres(sender, new ShowPageEventArgs((TPage)sender));
+            }
         }
 
         [StaticShow("music", @"^/music/directory/genre/([a-z0-9\-_\+]+)(|/)$")]
         private void showGenre(Core core, object sender)
         {
+            if (sender is TPage)
+            { 
+                Directory.ShowGenre(sender, new ShowPageEventArgs((TPage)sender));
+            }
         }
 
         [Show(@"^/profile(|/)$", AppPrimitives.Musician)]

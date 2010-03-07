@@ -48,7 +48,7 @@ namespace BoxSocial.FrontEnd
         protected void Page_Load(object sender, EventArgs e)
         {
             meter.Add("Begin Invoke Applications");
-            Core.InvokeApplication(this);
+            Core.InvokeApplication(AppPrimitives.Group, this);
 
             meter.Add("Begin End Response");
 

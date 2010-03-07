@@ -1,4 +1,5 @@
 ﻿var host = "/";
+var dtp = Array(); /* Date Time Pickers */
 
 function htmlEncode(i) {
 	i = i.replace("&","&amp;");
@@ -362,3 +363,32 @@ function FindFriendId()
 	return res;
 }
 
+function EnableDateTimePickers()
+{
+    for(i in dtp)
+    {
+        hide(i[0]);
+        show(i[1]);
+    }
+}
+
+function ParseDateTimePicker(n)
+{
+    var el = ge(n);
+    var val = LowerCase(el.Value);
+    switch (val)
+    {
+        case "yesterday":
+        case "tomorrow":
+        case "next week":
+        case "two weeks time":
+        case "tomorrow week":
+    }
+    
+    return PostToPage(SubmitedDate, "functions/", new Array(new Array("ajax", "true"), new Array("date", val)));
+}
+
+function SubmitedDate(r)
+{
+
+}

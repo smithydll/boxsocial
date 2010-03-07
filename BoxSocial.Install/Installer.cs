@@ -1623,6 +1623,11 @@ namespace BoxSocial.Install
                                 //
                                 if (!string.IsNullOrEmpty(newApplication.JavaScript))
                                 {
+                                    if (!Directory.Exists(scriptsRoot))
+                                    {
+                                        Directory.CreateDirectory(scriptsRoot);
+                                    }
+
                                     SaveTextFile(newApplication.JavaScript, Path.Combine(scriptsRoot, updateApplication.Key + ".js"));
                                 }
 
@@ -1773,6 +1778,11 @@ namespace BoxSocial.Install
                                 //
                                 if (!string.IsNullOrEmpty(newApplication.JavaScript))
                                 {
+                                    if (!Directory.Exists(scriptsRoot))
+                                    {
+                                        Directory.CreateDirectory(scriptsRoot);
+                                    }
+
                                     SaveTextFile(newApplication.JavaScript, Path.Combine(scriptsRoot, updateApplication.Key + ".js"));
                                 }
                             }
@@ -1785,12 +1795,21 @@ namespace BoxSocial.Install
                                 {
                                     foreach (ApplicationSlugInfo slug in aii.ApplicationSlugs)
                                     {
-                                        if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
-                                            (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId)) != 1)
+                                        UpdateQuery uQuery = new UpdateQuery(typeof(ApplicationSlug));
+                                        uQuery.AddField("slug_primitives", (byte)slug.Primitives);
+                                        uQuery.AddField("slug_updated_ut", updatedRaw);
+                                        uQuery.AddCondition("slug_stub", slug.Stub);
+                                        uQuery.AddCondition("slug_slug_ex", slug.SlugEx);
+                                        uQuery.AddCondition("slug_static", slug.IsStatic);
+                                        uQuery.AddCondition("application_id", applicationId);
+
+                                        /*if (db.UpdateQuery(string.Format(@"UPDATE application_slugs SET slug_primitives = {0}, slug_updated_ut = {1}, slug_static = {5} WHERE slug_stub = '{2}' AND slug_slug_ex = '{3}' AND application_id = {4}",
+                                            (byte)slug.Primitives, updatedRaw, Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, slug.IsStatic)) != 1)*/
+                                        if (db.Query(uQuery) != 1)
                                         {
                                             /*db.UpdateQuery(string.Format(@"INSERT INTO application_slugs (slug_stub, slug_slug_ex, application_id, slug_primitives, slug_updated_ut) VALUES ('{0}', '{1}', {2}, {3}, {4});",
                                                 Mysql.Escape(slug.Stub), Mysql.Escape(slug.SlugEx), applicationId, (byte)slug.Primitives, updatedRaw));*/
-                                            ApplicationSlug.Create(core, applicationId, slug);
+                                            ApplicationSlug.Create(core, applicationId, slug, updatedRaw);
                                         }
                                     }
                                 }

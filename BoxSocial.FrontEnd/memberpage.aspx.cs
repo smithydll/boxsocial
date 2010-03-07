@@ -41,7 +41,7 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Core.InvokeApplication(this);
+            Core.InvokeApplication(AppPrimitives.Member, this);
 
             EndResponse();
         }

@@ -56,6 +56,11 @@ namespace BoxSocial.Internals
                 {
                     slugs.Add(((ShowAttribute)attr).Slug);
                 }
+
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
+                {
+                    slugs.Add(((StaticShowAttribute)attr).Slug);
+                }
             }
 
             return slugs;
@@ -68,9 +73,16 @@ namespace BoxSocial.Internals
 
             foreach (MemberInfo mi in type.GetMembers(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
             {
+                // Show Attribute
                 foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
                     slugs.Add(new ApplicationSlugInfo(((ShowAttribute)attr)));
+                }
+
+                // Static Show Attribute
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
+                {
+                    slugs.Add(new ApplicationSlugInfo(((StaticShowAttribute)attr)));
                 }
             }
 
@@ -86,15 +98,31 @@ namespace BoxSocial.Internals
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
-
+                    /*if (((ShowAttribute)attr).Primitives & primitives != primitives)
+                    {
+                        continue;
+                    }*/
                     if (((ShowAttribute)attr).Order > 0)
                     {
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
                     }
                     else
                     {
                         i++;
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                    }
+                }
+
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
+                {
+                    if (((StaticShowAttribute)attr).Order > 0)
+                    {
+                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((StaticShowAttribute)attr).Order);
+                    }
+                    else
+                    {
+                        i++;
+                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
                     }
                 }
             }
@@ -112,12 +140,18 @@ namespace BoxSocial.Internals
                     i++;
                     if (string.IsNullOrEmpty(((ShowAttribute)attr).Stub))
                     {
-                        aii.AddSlug(this.Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                        aii.AddSlug(this.Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives, false);
                     }
                     else
                     {
-                        aii.AddSlug(((ShowAttribute)attr).Stub, ((ShowAttribute)attr).Slug, ((ShowAttribute)attr).Primitives);
+                        aii.AddSlug((ShowAttribute)attr);
                     }
+                }
+
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
+                {
+                    i++;
+                    aii.AddSlug((StaticShowAttribute)attr);
                 }
             }
         }
@@ -237,7 +271,7 @@ namespace BoxSocial.Internals
             List<ApplicationSlugInfo> slugs = GetSlugInformation();
             foreach (ApplicationSlugInfo slug in slugs)
             {
-                aii.AddSlug(slug.Stub, slug.SlugEx, slug.Primitives);
+                aii.AddSlug(slug.Stub, slug.SlugEx, slug.Primitives, slug.IsStatic);
             }
 
             return aii;
@@ -361,7 +395,7 @@ namespace BoxSocial.Internals
 
         private static DataTable GetApplicationRows(Core core, Primitive owner)
         {
-            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
+            //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
             long loggedIdUid = core.LoggedInMemberId;
 			
             /*DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
@@ -381,6 +415,15 @@ namespace BoxSocial.Internals
             DataTable userApplicationsTable = core.Db.Query(query);
 
             return userApplicationsTable;
+        }
+
+        private static DataTable GetStaticApplicationRows(Core core)
+        {
+            SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+
+            DataTable staticApplicationsTable = core.Db.Query(query);
+
+            return staticApplicationsTable;
         }
 
         public static List<ApplicationEntry> GetModuleApplications(Core core, Primitive owner)
@@ -446,6 +489,51 @@ namespace BoxSocial.Internals
                 SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
+                query.AddCondition("slug_static", false);
+                query.AddSort(SortOrder.Ascending, "application_id");
+
+                DataTable applicationSlugsTable = core.Db.Query(query);
+
+                foreach (DataRow slugRow in applicationSlugsTable.Rows)
+                {
+                    applicationsDictionary[(long)slugRow["application_id"]].LoadSlugEx((string)slugRow["slug_slug_ex"]);
+                }
+            }
+
+            return applicationsList;
+        }
+
+        public static List<ApplicationEntry> GetStaticApplications(Core core)
+        {
+            List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
+            Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
+
+            DataTable userApplicationsTable = GetStaticApplicationRows(core);
+
+            if (userApplicationsTable.Rows.Count > 0)
+            {
+                List<long> applicationIds = new List<long>();
+                foreach (DataRow applicationRow in userApplicationsTable.Rows)
+                {
+                    ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
+                    applicationsList.Add(ae);
+                    applicationsDictionary.Add(ae.ApplicationId, ae);
+
+                    applicationIds.Add(ae.ApplicationId);
+                }
+
+                /*DataTable applicationSlugsTable = core.db.Query(string.Format(@"SELECT {0}
+                    FROM application_slugs al
+                    WHERE application_id IN ({1})
+                    AND slug_primitives & {2:0}
+                    ORDER BY application_id;",
+                    ApplicationEntry.APPLICATION_SLUG_FIELDS, applicationIds, (byte)owner.AppPrimitive));*/
+
+                SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
+                query.AddCondition("application_id", ConditionEquality.In, applicationIds);
+                //query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)AppPrimitives.None), ConditionEquality.NotEqual, false);
+                // Zero anyway, could be anything
+                query.AddCondition("slug_static", true);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
                 DataTable applicationSlugsTable = core.Db.Query(query);

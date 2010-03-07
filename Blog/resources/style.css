@@ -1,6 +1,6 @@
 ﻿/* colours */
 #page-body .corners-top, #page-body .corners-top > span {
-    background-image: url('/images/corners-top-eeeeee-18-9.png');
+    background-image: url('/images/corners-top-eeeeee-10-5.png');
 }
 
 #page-body .corners-top > span + span, #page-body .corners-bottom > span + span {
@@ -8,7 +8,7 @@
 }
 
 #page-body .corners-bottom, #page-body .corners-bottom > span {
-    background-image: url('/images/corners-bottom-eeeeee-18-9.png');
+    background-image: url('/images/corners-bottom-eeeeee-10-5.png');
 }
 
 .blog-post {

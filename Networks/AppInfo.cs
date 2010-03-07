@@ -119,12 +119,12 @@ namespace BoxSocial.Networks
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Network);
+            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Network);
             aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Network);
 
-            aii.AddModule("networks");
+            aii.AddModule("networks");*/
 
             return aii;
         }
@@ -140,10 +140,11 @@ namespace BoxSocial.Networks
 
         void core_LoadApplication(Core core, object sender)
         {
-            core.RegisterApplicationPage(@"^/profile(|/)$", showNetwork);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
+            /*core.RegisterApplicationPage(@"^/profile(|/)$", showNetwork);
+            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
+        [Show("profile", AppPrimitives.Network)]
         private void showNetwork(Core core, object sender)
         {
             if (sender is NPage)
@@ -152,6 +153,7 @@ namespace BoxSocial.Networks
             }
         }
 
+        [Show("members", AppPrimitives.Network)]
         private void showMemberlist(Core core, object sender)
         {
             if (sender is NPage)

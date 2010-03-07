@@ -5,17 +5,19 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public struct ApplicationSlugInfo
+    public class ApplicationSlugInfo
     {
         public string Stub;
         public string SlugEx;
         public AppPrimitives Primitives;
+        public bool IsStatic;
 
-        public ApplicationSlugInfo(string stub, string slugEx, AppPrimitives primitives)
+        public ApplicationSlugInfo(string stub, string slugEx, AppPrimitives primitives, bool isStatic)
         {
             Stub = stub;
             SlugEx = slugEx;
             Primitives = primitives;
+            IsStatic = isStatic;
         }
 
         public ApplicationSlugInfo(ShowAttribute showattr)
@@ -23,6 +25,15 @@ namespace BoxSocial.Internals
             Stub = showattr.Stub;
             SlugEx = showattr.Slug;
             Primitives = showattr.Primitives;
+            IsStatic = false;
+        }
+
+        public ApplicationSlugInfo(StaticShowAttribute showattr)
+        {
+            Stub = showattr.Stub;
+            SlugEx = showattr.Slug;
+            Primitives = AppPrimitives.None;
+            IsStatic = true;
         }
     }
 
@@ -52,9 +63,44 @@ namespace BoxSocial.Internals
         private List<ApplicationModule> applicationModules = new List<ApplicationModule>();
         private List<ApplicationCommentType> applicationCommentTypes = new List<ApplicationCommentType>();
 
+        private void addSlug(ApplicationSlugInfo slugInfo)
+        {
+            bool found = false;
+            for (int i = 0; i < applicationSlugs.Count; i++)
+            {
+                if (applicationSlugs[i].Stub == slugInfo.Stub && applicationSlugs[i].SlugEx == slugInfo.SlugEx && applicationSlugs[i].IsStatic == slugInfo.IsStatic)
+                {
+                    found = true;
+                    ApplicationSlugInfo asi = applicationSlugs[i];
+                    asi.Primitives = asi.Primitives | slugInfo.Primitives;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                applicationSlugs.Add(slugInfo);
+            }
+        }
+
+        public void AddSlug(string stub, string slugEx, AppPrimitives primitives, bool isStatic)
+        {
+            addSlug(new ApplicationSlugInfo(stub, slugEx, primitives, isStatic));
+        }
+
         public void AddSlug(string stub, string slugEx, AppPrimitives primitives)
         {
-            applicationSlugs.Add(new ApplicationSlugInfo(stub, slugEx, primitives));
+            addSlug(new ApplicationSlugInfo(stub, slugEx, primitives, false));
+        }
+
+        public void AddSlug(ShowAttribute showAttr)
+        {
+            addSlug(new ApplicationSlugInfo(showAttr));
+        }
+
+        public void AddSlug(StaticShowAttribute showAttr)
+        {
+            addSlug(new ApplicationSlugInfo(showAttr));
         }
 
         public void AddModule(string slug)
@@ -90,6 +136,5 @@ namespace BoxSocial.Internals
                 return applicationCommentTypes;
             }
         }
-
     }
 }

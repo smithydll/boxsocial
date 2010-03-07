@@ -30,22 +30,6 @@ using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
 
-/*
- * 
- * TODO: SQL
-CREATE TABLE `zinzam0_zinzam`.`guestbook_comment_counts` (
-  `owner_id` BIGINT NOT NULL,
-  `user_id` BIGINT NOT NULL,
-  `comment_comments` BIGINT NOT NULL
-)
-ENGINE = InnoDB;
-
-ALTER TABLE `zinzam0_zinzam`.`guestbook_comment_counts` ADD UNIQUE INDEX `i_guestbook_count`(`owner_id`, `user_id`);
- 
-INSERT INTO guestbook_comment_counts (SELECT comment_item_id AS owner_id, user_id, COUNT(*) AS comment_comments FROM comments WHERE comment_item_type = 'USER' GROUP BY comment_item_id, user_id);
-
- */
-
 namespace BoxSocial.Applications.GuestBook
 {
     public class AppInfo : Application
@@ -144,12 +128,12 @@ namespace BoxSocial.Applications.GuestBook
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
-            aii.AddSlug("profile", @"^/profile/comments(|/)$", AppPrimitives.Member);
-            aii.AddSlug("profile", @"^/profile/comments/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
-            aii.AddSlug("comments", @"^/comments(|/)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
+            //aii.AddSlug("profile", @"^/profile/comments(|/)$", AppPrimitives.Member);
+            //aii.AddSlug("profile", @"^/profile/comments/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
+            //aii.AddSlug("comments", @"^/comments(|/)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
 
             aii.AddCommentType("USER");
             aii.AddCommentType("APPLICATION");
@@ -173,9 +157,9 @@ namespace BoxSocial.Applications.GuestBook
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/profile/comments(|/)$", showProfileGuestBook, 1);
-            core.RegisterApplicationPage(@"^/comments(|/)$", showGuestBook, 2);
-            core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
+            //core.RegisterApplicationPage(@"^/profile/comments(|/)$", showProfileGuestBook, 1);
+            //core.RegisterApplicationPage(@"^/comments(|/)$", showGuestBook, 2);
+            //core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
         }
 
         private bool userCanPostComment(ItemKey itemKey, User member)
@@ -386,6 +370,7 @@ namespace BoxSocial.Applications.GuestBook
                 itemKey.Id, adjustment));
         }
 
+        [Show(@"profile/comments", AppPrimitives.Member)]
         private void showProfileGuestBook(Core core, object sender)
         {
             if (sender is UPage)
@@ -394,6 +379,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        [Show(@"profile/comments/([A-Za-z0-9\-_]+)", AppPrimitives.Member)]
         private void showProfileGuestBookConversation(Core core, object sender)
         {
             if (sender is UPage)
@@ -403,6 +389,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        [Show(@"comments", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application)]
         private void showGuestBook(Core core, object sender)
         {
             if (sender is GPage)

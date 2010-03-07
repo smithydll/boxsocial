@@ -208,14 +208,14 @@ namespace BoxSocial.Applications.News
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 			
-			aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group | AppPrimitives.Network);
+			/*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
             aii.AddSlug("news", @"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("news", @"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
-            aii.AddModule("news");
+            aii.AddModule("news");*/
 
             return aii;
         }
@@ -234,7 +234,7 @@ namespace BoxSocial.Applications.News
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/news(|/)$", showNews, 1);
+            //core.RegisterApplicationPage(@"^/news(|/)$", showNews, 1);
             /*core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
             core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
@@ -245,7 +245,7 @@ namespace BoxSocial.Applications.News
             return AppPrimitives.Group;
         }
 
-        [Show(@"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"news", AppPrimitives.Group | AppPrimitives.Network)]
         private void showNews(Core core, object sender)
         {
             if (sender is GPage)
@@ -254,7 +254,7 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        [Show(@"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"news/([0-9]+)", AppPrimitives.Group | AppPrimitives.Network)]
         private void showNewsPost(Core core, object sender)
         {
             if (sender is GPage)

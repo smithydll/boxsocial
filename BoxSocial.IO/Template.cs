@@ -370,6 +370,7 @@ namespace BoxSocial.IO
                     {
                         case "Groups":
                         case "Networks":
+                        case "Musician":
                             rm = new ResourceManager("BoxSocial." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
                             break;
                         default:

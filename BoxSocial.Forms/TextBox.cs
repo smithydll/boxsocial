@@ -30,6 +30,7 @@ namespace BoxSocial.Forms
     {
         private string value;
         private bool disabled;
+        protected bool visible;
         private int maxLength;
         private bool isFormatted;
         private int lines;
@@ -55,6 +56,18 @@ namespace BoxSocial.Forms
             set
             {
                 disabled = value;
+            }
+        }
+
+        public bool IsVisible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                visible = false;
             }
         }
 
@@ -123,6 +136,7 @@ namespace BoxSocial.Forms
             this.name = name;
 
             disabled = false;
+            visible = true;
             maxLength = -1;
             lines = 1;
         }
@@ -131,20 +145,22 @@ namespace BoxSocial.Forms
         {
             if (isFormatted)
             {
-                return string.Format("<textarea id=\"{0}\" name=\"{0}\" style=\"margin: 0px; width: 100%; height: {3}px; border: solid 1px #666666;\" cols=\"70\" rows=\"{2}\"{4}>{1}</textarea><div style=\"background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;\"><div style=\"background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;\"></div></div>",
+                return string.Format("<textarea id=\"{0}\" name=\"{0}\" style=\"margin: 0px; width: 100%; height: {3}px; border: solid 1px #666666;{5}\" cols=\"70\" rows=\"{2}\"{4}>{1}</textarea><div style=\"background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;\"><div style=\"background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;\"></div></div>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     lines,
                     17 * lines,
-                    (IsDisabled) ? " disabled=\"disabled\"" : "");
+                    (IsDisabled) ? " disabled=\"disabled\"" : "",
+                    (!IsVisible) ? " display: none;" : "");
             }
             else
             {
-                return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;\"{2}{3}/>",
+                return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: 100%;{3}\"{2}{3}/>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     (IsDisabled) ? " disabled=\"disabled\"" : "",
-                    (MaxLength > -1) ? " maxlength=\"" + MaxLength + "\"" : "");
+                    (MaxLength > -1) ? " maxlength=\"" + MaxLength + "\"" : "",
+                    (!IsVisible) ? " display: none;" : "");
             }
         }
     }

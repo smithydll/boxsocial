@@ -487,21 +487,23 @@ namespace BoxSocial.Internals
             LoadApplication(this, sender);
         }
 
-        public void InvokeApplication(object sender)
+        public void InvokeApplication(AppPrimitives primitive, object sender)
         {
             LoadApplication(this, sender);
 
             pages.Sort();
-
             foreach (PageHandle page in pages)
             {
-                Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
-                Match pathMatch = rex.Match(PagePath);
-                if (pathMatch.Success)
+                if ((page.Primitives & primitive) == primitive || primitive == AppPrimitives.Any)
                 {
-                    PagePathParts = pathMatch.Groups;
-                    page.Execute(this, sender);
-                    return;
+                    Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
+                    Match pathMatch = rex.Match(PagePath);
+                    if (pathMatch.Success)
+                    {
+                        PagePathParts = pathMatch.Groups;
+                        page.Execute(this, sender);
+                        return;
+                    }
                 }
             }
             Functions.Generate404();
@@ -579,16 +581,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void RegisterApplicationPage(string expression, Core.PageHandler pageHandle)
+        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle)
         {
             // register with a moderately high priority leaving room for higher priority registration
             // it doesn't matter if two pages have the same priority
-            RegisterApplicationPage(expression, pageHandle, 8);
+            RegisterApplicationPage(primitives, expression, pageHandle, 8);
         }
 
-        public void RegisterApplicationPage(string expression, Core.PageHandler pageHandle, int order)
+        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order)
         {
-            pages.Add(new PageHandle(expression, pageHandle, order));
+            pages.Add(new PageHandle(primitives, expression, pageHandle, order));
         }
 
         public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)

@@ -40,12 +40,22 @@ namespace BoxSocial.Internals
         private byte slugPrimitives;
         [DataField("slug_updated_ut")]
         private long slugUpdatedTime;
+        [DataField("slug_static")]
+        private bool slugIsStatic;
 
         public long SlugId
         {
             get
             {
                 return slugId;
+            }
+        }
+
+        public bool IsStatic
+        {
+            get
+            {
+                return slugIsStatic;
             }
         }
 
@@ -68,23 +78,39 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static ApplicationSlug Create(Core core, long applicationId, string slug, string stub, AppPrimitives primitives)
+        public static ApplicationSlug Create(Core core, long applicationId, string slug, string stub, bool isStatic, AppPrimitives primitives, long updatedTime)
         {
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ApplicationSlug)));
             iQuery.AddField("slug_stub", stub);
             iQuery.AddField("slug_slug_ex", slug);
             iQuery.AddField("application_id", applicationId);
             iQuery.AddField("slug_primitives", (byte)primitives);
-            iQuery.AddField("slug_updated_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("slug_static", isStatic);
+            iQuery.AddField("slug_updated_ut", updatedTime);
 
             long slugId = core.Db.Query(iQuery);
 
             return new ApplicationSlug(core, slugId);
         }
 
+        public static ApplicationSlug Create(Core core, long applicationId, string slug, string stub, AppPrimitives primitives)
+        {
+            return Create(core, applicationId, slug, stub, false, primitives, UnixTime.UnixTimeStamp());
+        }
+
+        public static ApplicationSlug Create(Core core, long applicationId, string slug, string stub, bool isStatic)
+        {
+            return Create(core, applicationId, slug, stub, isStatic, AppPrimitives.None, UnixTime.UnixTimeStamp());
+        }
+
         public static ApplicationSlug Create(Core core, long applicationId, ApplicationSlugInfo slugInfo)
         {
-            return Create(core, applicationId, slugInfo.SlugEx, slugInfo.Stub, slugInfo.Primitives);
+            return Create(core, applicationId, slugInfo.SlugEx, slugInfo.Stub, slugInfo.IsStatic, slugInfo.Primitives, UnixTime.UnixTimeStamp());
+        }
+
+        public static ApplicationSlug Create(Core core, long applicationId, ApplicationSlugInfo slugInfo, long updatedTime)
+        {
+            return Create(core, applicationId, slugInfo.SlugEx, slugInfo.Stub, slugInfo.IsStatic, slugInfo.Primitives, updatedTime);
         }
 
         public override long Id

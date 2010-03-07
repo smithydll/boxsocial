@@ -29,6 +29,7 @@ using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
+using BoxSocial.Musician;
 
 namespace BoxSocial.Applications.Pages
 {
@@ -122,13 +123,13 @@ namespace BoxSocial.Applications.Pages
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("lists", @"^/lists(|/)$", AppPrimitives.Member);
-            aii.AddSlug("lists", @"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
-            aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group);
+            //aii.AddSlug("lists", @"^/lists(|/)$", AppPrimitives.Member);
+            //aii.AddSlug("lists", @"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
+            aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician);
 
-            aii.AddModule("pages");
+            //aii.AddModule("pages");
 
             return aii;
         }
@@ -147,7 +148,7 @@ namespace BoxSocial.Applications.Pages
         {
             //core.RegisterApplicationPage(@"^/lists(|/)$", showLists, 1);
             //core.RegisterApplicationPage(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", showList, 2);
-            core.RegisterApplicationPage(@"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue);
+            core.RegisterApplicationPage(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, @"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue);
         }
 
         private void showPage(Core core, object sender)
@@ -159,6 +160,10 @@ namespace BoxSocial.Applications.Pages
             else if (sender is GPage)
             {
                 Page.Show(core, ((GPage)sender).Group, core.PagePathParts[1].Value);
+            }
+            else if (sender is MPage)
+            {
+                Page.Show(core, ((MPage)sender).Musician, core.PagePathParts[1].Value);
             }
         }
 
@@ -188,7 +193,7 @@ namespace BoxSocial.Applications.Pages
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Group;
+            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician;
         }
 
         void core_PageHooks(HookEventArgs e)

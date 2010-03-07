@@ -356,10 +356,11 @@ namespace BoxSocial.Applications.Blog
             else
             {
                 query = Item.GetSelectQueryStub(typeof(ItemTag));
+                query.AddFields(Item.GetFieldsPrefixed(typeof(BlogEntry)));
 
-                query.AddJoin(JoinTypes.Inner, new DataField(typeof(ItemTag), "tag_id"), new DataField(typeof(Tag), "tag_id"));
-                query.AddJoin(JoinTypes.Inner, new DataField(typeof(BlogEntry), "post_id"), new DataField(typeof(ItemTag), "item_id"));
+                query.AddJoin(JoinTypes.Inner, new DataField(typeof(ItemTag), "item_id"), new DataField(typeof(BlogEntry), "post_id"));
                 query.AddCondition("item_type_id", ItemType.GetTypeId(typeof(BlogEntry)));
+                query.AddCondition("tag_text_normalised", tag);
             }
 
             int bpage = currentPage;
@@ -755,6 +756,12 @@ namespace BoxSocial.Applications.Blog
                     breadCrumbParts.Add(new string[] { "categories/" + category, cat.Title });
                     pageUri = Blog.BuildUri(core, page.User, category);
                 }
+                else if (!string.IsNullOrEmpty(tag))
+                {
+                    Tag currentTag = new Tag(core, tag);
+                    breadCrumbParts.Add(new string[] { "tag/" + tag, currentTag.TagText });
+                    pageUri = Blog.BuildTagUri(core, page.User, tag);
+                }
                 else
                 {
                     if (year > 0)
@@ -767,7 +774,7 @@ namespace BoxSocial.Applications.Blog
                     }
                     if (post > 0)
                     {
-                        
+
                         breadCrumbParts.Add(new string[] { post.ToString(), postTitle });
                     }
 
@@ -879,6 +886,12 @@ namespace BoxSocial.Applications.Blog
         {
             return core.Uri.AppendSid(string.Format("{0}blog/category/{1}",
                 member.UriStub, category));
+        }
+
+        public static string BuildTagUri(Core core, User member, string tag)
+        {
+            return core.Uri.AppendSid(string.Format("{0}blog/tag/{1}",
+                member.UriStub, tag));
         }
 
         /// <summary>

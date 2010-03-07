@@ -158,7 +158,6 @@ namespace BoxSocial.Applications.Forum
                     catch (Exception ex)
                     {
                         // TODO: e-mail application author of the error details
-                        ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
                         ApplicationEntry ae = new ApplicationEntry(core, this.page.Owner, accountModule.assembly.GetName().Name);

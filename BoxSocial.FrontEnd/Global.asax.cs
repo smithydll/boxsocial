@@ -252,10 +252,17 @@ namespace BoxSocial.FrontEnd
 
                     //patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?nn=$1&path=$2" });
 
-                    patterns.Add(new string[] { @"^/musicians/create(/|)$", @"/createmusician.aspx" });
-                    patterns.Add(new string[] { @"^/musicians(/|)$", @"/viewmusicians.aspx$1" });
-                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1" });
-                    patterns.Add(new string[] { @"^/musicians/([A-Za-z0-9\-_]+)(/|)([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1&sub=$2" });
+                    //patterns.Add(new string[] { @"^/musicians/create(/|)$", @"/createmusician.aspx" });
+                    //patterns.Add(new string[] { @"^/musicians(/|)$", @"/viewmusicians.aspx$1" });
+                    //patterns.Add(new string[] { @"^/musician/([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1" });
+                    //patterns.Add(new string[] { @"^/musician/([A-Za-z0-9\-_]+)(/|)([A-Za-z0-9\-_]+)(/|)$", @"/viewmusicians.aspx?genre=$1&sub=$2" });
+
+                    patterns.Add(new string[] { @"^/music/register(/|)$", @"/staticpage.aspx?path=music/register" });
+                    patterns.Add(new string[] { @"^/music(/|)$", @"/staticpage.aspx?path=music" });
+                    patterns.Add(new string[] { @"^/music/chart(/|)$", @"/staticpage.aspx?path=music/chart" });
+                    patterns.Add(new string[] { @"^/music/directory(/|)$", @"/staticpage.aspx?path=music/directory" });
+                    patterns.Add(new string[] { @"^/music/directory/genres(/|)$", @"/staticpage.aspx?path=music/directory/genres" });
+                    patterns.Add(new string[] { @"^/music/directory/genre/([a-z0-9\-_\+]+)(/|)$", @"/staticpage.aspx?path=music/directory/genres/$1" });
 
                     patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)(/|)$", @"/musicpage.aspx?mn=$1&path=" });
 
@@ -272,6 +279,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/(.+)(/|)$", @"/applicationpage.aspx?an=$1&path=$2" });
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/(.+)(/|)$", @"/grouppage.aspx?gn=$1&path=$2" });
                     patterns.Add(new string[] { @"^/network/([A-Za-z0-9\-_\.]+)/(.+)(/|)$", @"/networkpage.aspx?nn=$1&path=$2" });
+                    patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/(.+)(/|)$", @"/musicpage.aspx?mn=$1&path=$2" });
                     patterns.Add(new string[] { @"^/([A-Za-z0-9\-_\.]+)/(.+)(/|)$", @"/memberpage.aspx?un=$1&path=$2" });
 
                 }

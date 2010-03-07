@@ -123,12 +123,12 @@ namespace BoxSocial.Groups
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group);
-            aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Group);
+            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member);
+            /*aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Group);*/
 
-            aii.AddModule("groups");
+            //aii.AddModule("groups");
 
             return aii;
         }
@@ -145,10 +145,11 @@ namespace BoxSocial.Groups
 
         void core_LoadApplication(Core core, object sender)
         {
-            core.RegisterApplicationPage(@"^/profile(|/)$", showGroup);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
+            /*core.RegisterApplicationPage(@"^/profile(|/)$", showGroup);
+            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
+        [Show(@"profile", AppPrimitives.Group)]
         private void showGroup(Core core, object sender)
         {
             if (sender is GPage)
@@ -157,6 +158,7 @@ namespace BoxSocial.Groups
             }
         }
 
+        [Show(@"members", AppPrimitives.Group)]
         private void showMemberlist(Core core, object sender)
         {
             if (sender is GPage)

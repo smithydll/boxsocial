@@ -53,7 +53,7 @@ namespace BoxSocial.Groups
         private long groupId;
         [DataField("group_name", DataFieldKeys.Unique, 64)]
         private string slug;
-        [DataField("group_domain", DataFieldKeys.Unique, 63)]
+        [DataField("group_domain", DataFieldKeys.Index, 63)]
         private string domain;
 
         private UserGroupInfo groupInfo;
@@ -737,6 +737,7 @@ namespace BoxSocial.Groups
             }
 
             db.BeginTransaction();
+
             InsertQuery iQuery = new InsertQuery(UserGroup.GetTable(typeof(UserGroup)));
             iQuery.AddField("group_name", groupSlug);
             iQuery.AddField("group_domain", "");

@@ -302,8 +302,6 @@ namespace BoxSocial.Internals
             StackFrame sf = st.GetFrame(1);
 
             updatedItems.Add(sf.GetMethod().Name);
-
-            HttpContext.Current.Response.Write(sf.GetMethod().Name);
         }
 
         protected void SetProperty(string key, object value)
@@ -999,7 +997,7 @@ namespace BoxSocial.Internals
                         // Error
 						reader.Close();
                         reader.Dispose();
-                        throw new InvalidItemException(this.GetType().FullName);
+                        throw new InvalidItemException(this.GetType().FullName + " :: Row Count");
                     }
                     else
                     {
@@ -1086,7 +1084,7 @@ namespace BoxSocial.Internals
             {
 				reader.Close();
                 reader.Dispose();
-                throw new InvalidItemException(this.GetType().FullName);
+                throw new InvalidItemException(this.GetType().FullName + " :: fieldsLoaded != objectFields");
             }
 
 			reader.Close();

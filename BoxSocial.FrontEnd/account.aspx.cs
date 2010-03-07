@@ -232,7 +232,6 @@ namespace BoxSocial.FrontEnd
                     catch (Exception ex)
                     {
                         // TODO: e-mail application author of the error details
-                        ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
                         core.LoadUserProfile(ae.CreatorId);

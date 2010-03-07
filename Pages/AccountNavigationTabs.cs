@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    [AccountSubModule(AppPrimitives.Group, "pages", "nav")]
+    [AccountSubModule(AppPrimitives.Group | AppPrimitives.Musician, "pages", "nav")]
     public class AccountNavigationTabs : AccountSubModule
     {
         public override string Title

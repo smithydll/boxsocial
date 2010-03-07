@@ -59,6 +59,7 @@ namespace BoxSocial.Musician
         {
             this.AddModeHandler("add", AccountGigManage_Edit);
             this.AddModeHandler("edit", AccountGigManage_Edit);
+            this.AddModeHandler("delete", AccountGigManage_Delete);
         }
 
         void AccountGigManage_Show(object sender, EventArgs e)
@@ -92,8 +93,46 @@ namespace BoxSocial.Musician
             SetTemplate("account_gig_edit");
 
             /* */
+            TextBox cityTextBox = new TextBox("city");
+            cityTextBox.MaxLength = 31;
+            /* */
+            TextBox venueTextBox = new TextBox("venue");
+            venueTextBox.MaxLength = 63;
+            /* */
+            TextBox abstractTextBox = new TextBox("abstract");
+            abstractTextBox.Lines = 5;
+            /* */
             CheckBox allAgesCheckBox = new CheckBox("all-ages");
             allAgesCheckBox.Caption = core.Prose.GetString("Musician", "IS_ALL_AGES");
+            /* */
+            SelectBox tourSelectBox = new SelectBox("tour");
+            tourSelectBox.Add(new SelectBoxItem("0", "No Tour"));
+
+            SelectBox dateYearsSelectBox = new SelectBox("date-year");
+            SelectBox dateMonthsSelectBox = new SelectBox("date-month");
+            SelectBox dateDaysSelectBox = new SelectBox("date-day");
+
+            for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(-13).Year; i++)
+            {
+                dateYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            for (int i = 1; i < 13; i++)
+            {
+                dateMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
+            }
+
+            for (int i = 1; i < 32; i++)
+            {
+                dateDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            List<Tour> tours = Tour.GetAll(core, (Musician)Owner);
+
+            foreach (Tour tour in tours)
+            {
+                tourSelectBox.Add(new SelectBoxItem(tour.Id.ToString(), tour.Title));
+            }
 
             switch (e.Mode)
             {
@@ -107,7 +146,18 @@ namespace BoxSocial.Musician
                     {
                         gig = new Gig(core, gigId);
 
+                        cityTextBox.Value = gig.City;
+                        venueTextBox.Value = gig.Venue;
+                        abstractTextBox.Value = gig.Abstract;
                         allAgesCheckBox.IsChecked = gig.AllAges;
+                        dateYearsSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Year.ToString();
+                        dateMonthsSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Month.ToString();
+                        dateDaysSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Day.ToString();
+
+                        if (tourSelectBox.ContainsKey(gig.TourId.ToString()))
+                        {
+                            tourSelectBox.SelectedKey = gig.TourId.ToString();
+                        }
                     }
                     catch (InvalidGigException)
                     {
@@ -116,7 +166,11 @@ namespace BoxSocial.Musician
                     break;
             }
 
+            template.Parse("S_CITY", cityTextBox);
+            template.Parse("S_VENUE", venueTextBox);
+            template.Parse("S_ABSTRACT", abstractTextBox);
             template.Parse("S_ALLAGES", allAgesCheckBox);
+            template.Parse("S_TOURS", tourSelectBox);
 
             SaveMode(AccountGigManage_EditSave);
         }
@@ -125,6 +179,88 @@ namespace BoxSocial.Musician
         {
             AuthoriseRequestSid();
 
+            string city = Functions.TrimStringToWord(core.Http.Form["city"], 31);
+            string venue = Functions.TrimStringToWord(core.Http.Form["venue"], 63);
+            string gigAbstract = core.Http.Form["abstract"];
+            long tourId = core.Functions.FormLong("tour", 0);
+            bool allAges = true;
+
+            Tour tour = null;
+
+            if (tourId > 0)
+            {
+                try
+                {
+                    tour = new Tour(core, tourId);
+
+                    if (tour.Musician.Id != Owner.Id)
+                    {
+                        tour = null;
+                        tourId = 0;
+                        // TODO: throw exception
+                        return;
+                    }
+                }
+                catch (InvalidTourException)
+                {
+                    tour = null;
+                    tourId = 0;
+                    // TODO: throw exception
+                    return;
+                }
+            }
+
+            switch (e.Mode)
+            {
+                case "add":
+
+                    // TODO;
+                    //Gig gig = Gig.Create(core, (Musician)Owner, tour, time, timezone, city, venue, gigAbstract, allAges);
+
+                    core.Display.ShowMessage("Gig created", "Your gig has been created");
+                    SetRedirectUri(BuildUri());
+                    break;
+                case "edit":
+                    long gigId = core.Functions.FormLong("id", 0);
+
+                    Gig gig = null;
+
+                    try
+                    {
+                        gig = new Gig(core, gigId);
+                    }
+                    catch (InvalidGigException)
+                    {
+                        // TODO: throw exception
+                        return;
+                    }
+
+                    if (gig.Musician.Id != Owner.Id)
+                    {
+                        // TODO: throw exception
+                        return;
+                    }
+
+                    gig.City = city;
+                    gig.Venue = venue;
+                    gig.Abstract = gigAbstract;
+                    gig.AllAges = allAges;
+                    gig.TourId = tourId;
+
+                    gig.Update();
+
+                    SetInformation("Gig information updated");
+                    break;
+            }
+        }
+
+        void AccountGigManage_Delete(object sender, ModuleModeEventArgs e)
+        {
+        }
+
+        void AccountGigManage_DeleteSave(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
         }
     }
 }

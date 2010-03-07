@@ -73,10 +73,10 @@ namespace BoxSocial.Musician
             }
 
             // We do not have customised domains for musician
-            /*if (string.IsNullOrEmpty(mus.Domain) || Linker.Domain == core.Http.Domain)
+            if (/*string.IsNullOrEmpty(mus.Domain) ||*/ Linker.Domain == core.Http.Domain)
             {
-                core.PagePath = core.PagePath.Substring(thisGroup.Slug.Length + 1 + 6);
-            }*/
+                core.PagePath = core.PagePath.Substring(Musician.Key.Length + 1 + 6);
+            }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
                 core.PagePath = Musician.Homepage;
@@ -100,7 +100,7 @@ namespace BoxSocial.Musician
 
             if (!core.PagePath.StartsWith("/account"))
             {
-                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, primitive));
+                BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Musician, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, primitive));
 
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
                 HookEventArgs e = new HookEventArgs(core, AppPrimitives.Musician, primitive);

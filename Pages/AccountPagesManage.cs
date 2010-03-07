@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Pages
 {
-    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "pages", "manage", true)]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "pages", "manage", true)]
     public class AccountPagesManage : AccountSubModule
     {
         public override string Title

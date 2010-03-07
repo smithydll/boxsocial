@@ -1975,6 +1975,7 @@ namespace BoxSocial.Internals
         public static void ShowProfile(Core core, UPage page)
         {
             core.Template.SetTemplate("viewprofile.html");
+            //HttpContext.Current.Response.Write("I'm not here?<br />");
             page.Signature = PageSignature.viewprofile;
 
             bool hasProfileInfo = false;

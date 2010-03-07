@@ -54,7 +54,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.Prose.GetString("BLOG");
+                return "Blog";
             }
         }
 
@@ -168,15 +168,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>Installation information for the application</returns>
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
-
-            aii.AddSlug("blog", @"^/blog(|/)$", AppPrimitives.Member);
-            aii.AddSlug("blog", @"^/blog/category/([a-z0-9\-]+)(|/)$", AppPrimitives.Member);
-            aii.AddSlug("blog", @"^/blog/([0-9]{4})(|/)$", AppPrimitives.Member);
-            aii.AddSlug("blog", @"^/blog/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member);
-            aii.AddSlug("blog", @"^/blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)(|/)$", AppPrimitives.Member);
-
-            aii.AddModule("blog");
+            ApplicationInstallationInfo aii = GetInstallInfo();
 
             aii.AddCommentType("BLOGPOST");
 
@@ -191,7 +183,7 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("blog", core.Prose.GetString("BLOG"));
+                slugs.Add("blog", "Blog");
                 return slugs;
             }
         }
@@ -204,12 +196,6 @@ namespace BoxSocial.Applications.Blog
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            core.RegisterApplicationPage(@"^/blog(|/)$", showBlog, 1);
-            core.RegisterApplicationPage(@"^/blog/category/([a-z0-9\-]+)(|/)$", showBlogCategory, 2);
-            core.RegisterApplicationPage(@"^/blog/([0-9]{4})(|/)$", showBlogYear, 3);
-            core.RegisterApplicationPage(@"^/blog/([0-9]{4})/([0-9]{1,2})(|/)$", showBlogMonth, 4);
-            core.RegisterApplicationPage(@"^/blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)(|/)$", showBlogPost, 5);
         }
 
         /// <summary>
@@ -290,6 +276,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"blog", AppPrimitives.Member)]
         private void showBlog(Core core, object sender)
         {
             if (sender is UPage)
@@ -303,6 +290,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"blog/category/([a-z0-9\-]+)", AppPrimitives.Member)]
         private void showBlogCategory(Core core, object sender)
         {
             if (sender is UPage)
@@ -316,6 +304,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"blog/([0-9]{4})/([0-9]{1,2})", AppPrimitives.Member)]
         private void showBlogYear(Core core, object sender)
         {
             if (sender is UPage)
@@ -329,6 +318,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"blog/([0-9]{4})/([0-9]{1,2})", AppPrimitives.Member)]
         private void showBlogMonth(Core core, object sender)
         {
             if (sender is UPage)
@@ -342,6 +332,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
+        [Show(@"blog/([0-9]{4})/([0-9]{1,2})/([0-9]+)", AppPrimitives.Member)]
         private void showBlogPost(Core core, object sender)
         {
             if (sender is UPage)
@@ -350,12 +341,12 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        [Show(@"^/blog/tag/([a-z0-9\-]+)(|/)$", AppPrimitives.Member)]
+        [Show(@"blog/tag/([a-z0-9\-]+)", AppPrimitives.Member)]
         private void showBlogTag(Core core, object sender)
         {
-            if (sender is PPage)
+            if (sender is UPage)
             {
-                Blog.Show(sender, new ShowBlogEventArgs((PPage)sender, BlogDisplayType.Tag, core.PagePathParts[1].Value));
+                Blog.Show(sender, new ShowBlogEventArgs((UPage)sender, BlogDisplayType.Tag, core.PagePathParts[1].Value));
             }
         }
 

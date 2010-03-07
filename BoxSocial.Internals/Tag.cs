@@ -155,6 +155,11 @@ namespace BoxSocial.Internals
         {
             List<Tag> tagList = new List<Tag>();
 
+            if (tags.Length == 0)
+            {
+                return tagList;
+            }
+
             SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
             query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
 

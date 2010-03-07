@@ -31,7 +31,7 @@ namespace BoxSocial.Musician
 
         public static void Show(object sender, ShowPageEventArgs e)
         {
-            e.Template.SetTemplate("music_default");
+            e.Template.SetTemplate("Musician", "music_default");
 
 
         }

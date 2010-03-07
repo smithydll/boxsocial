@@ -330,7 +330,6 @@ namespace BoxSocial.FrontEnd
 
                 commentsVariableCollection.Parse("NORMAL", "TRUE");
 
-                //Response.Write(ct.ToString());
                 core.Ajax.SendRawText("comment", ct.ToString());
 
                 if (db != null)

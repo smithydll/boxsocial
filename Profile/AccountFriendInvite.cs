@@ -170,7 +170,6 @@ namespace BoxSocial.Applications.Profile
         {
             foreach (string friendEmail in friendEmails)
             {
-                //Response.Write(friendEmail + "<br />"); // DEBUG
                 if (User.CheckEmailValid(friendEmail))
                 {
                     if (User.CheckEmailUnique(core, friendEmail))

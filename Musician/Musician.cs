@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -53,11 +54,12 @@ namespace BoxSocial.Musician
     }
 
     [DataTable("musicians", "MUSIC")]
+    [Primitive("MUSIC", MusicianLoadOptions.All, "musician_id", "musician_slug")]
     [Permission("VIEW", "Can view the musician's profile", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     public class Musician : Primitive, IPermissibleItem
     {
-        [DataField("musician_id")]
+        [DataField("musician_id", DataFieldKeys.Primary)]
         private long musicianId;
         [DataField("musician_name", 63)]
         private string name;
@@ -148,7 +150,7 @@ namespace BoxSocial.Musician
             {
                 LoadItem("musician_slug", slug);
             }
-            catch (InvalidItemException)
+            catch (InvalidItemException ex)
             {
                 throw new InvalidMusicianException();
             }
@@ -300,19 +302,30 @@ namespace BoxSocial.Musician
             InsertQuery iQuery = new InsertQuery(Musician.GetTable(typeof(Musician)));
             iQuery.AddField("musician_name", title);
             iQuery.AddField("musician_slug", slug);
+            iQuery.AddField("musician_name_first", title.ToLower()[0]);
 
             long musicianId = db.Query(iQuery);
 
-            db.UpdateQuery(string.Format("INSERT INTO musician_members (user_id, musician_id, musician_member_date_ut) VALUES ({0}, {1}, UNIX_TIMESTAMP())",
+            db.UpdateQuery(string.Format("INSERT INTO musician_members (user_id, musician_id, member_date_ut) VALUES ({0}, {1}, UNIX_TIMESTAMP())",
                 session.LoggedInMember.UserId, musicianId));
 
             Musician newMusician = new Musician(core, musicianId);
 
             // Install a couple of applications
-            try
+            /*try
             {
                 ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
                 profileAe.Install(core, newMusician);
+            }
+            catch (Exception ex)
+            {
+                HttpContext.Current.Response.Write(ex.ToString());
+            }*/
+
+            try
+            {
+                ApplicationEntry musicianAe = new ApplicationEntry(core, null, "Musician");
+                musicianAe.Install(core, newMusician);
             }
             catch
             {
@@ -890,6 +903,123 @@ namespace BoxSocial.Musician
             }
 
             return musicians;
+        }
+
+        private static void prepareNewCaptcha(Core core)
+        {
+            // prepare the captcha
+            string captchaString = Captcha.GenerateCaptchaString();
+
+            // delete all existing for this session
+            // captcha is a use once thing, destroy all for this session
+            Confirmation.ClearStale(core, core.Session.SessionId, 3);
+
+            // create a new confimation code
+            Confirmation confirm = Confirmation.Create(core, core.Session.SessionId, captchaString, 3);
+
+            core.Template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+        }
+
+        internal static void ShowRegister(object sender, ShowPageEventArgs e)
+        {
+            e.Template.SetTemplate("createmuiscian.html");
+
+            if (e.Core.Session.IsLoggedIn == false)
+            {
+                e.Template.Parse("REDIRECT_URI", "/sign-in/?redirect=/music/register");
+                e.Core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new musician.");
+                return;
+            }
+
+            string slug = e.Core.Http.Form["slug"];
+            string title = e.Core.Http.Form["title"];
+
+            if (string.IsNullOrEmpty(slug))
+            {
+                slug = title;
+            }
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                // normalise slug if it has been fiddeled with
+                slug = slug.ToLower().Normalize(NormalizationForm.FormD);
+                string normalisedSlug = "";
+
+                for (int i = 0; i < slug.Length; i++)
+                {
+                    if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
+                    {
+                        normalisedSlug += slug[i];
+                    }
+                }
+                slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");
+            }
+
+            if (e.Core.Http.Form["submit"] == null)
+            {
+                prepareNewCaptcha(e.Core);
+            }
+            else
+            {
+                // submit the form
+                e.Template.Parse("MUSICIAN_TITLE", e.Core.Http.Form["title"]);
+                e.Template.Parse("MUSICIAN_NAME_SLUG", slug);
+
+                DataTable confirmTable = e.Db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 3 AND session_id = '{0}' LIMIT 1",
+                    Mysql.Escape(e.Core.Session.SessionId)));
+
+                if (confirmTable.Rows.Count != 1)
+                {
+                    e.Template.Parse("ERROR", "Captcha error, please try again.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != e.Core.Http.Form["captcha"].ToLower())
+                {
+                    e.Template.Parse("ERROR", "Captcha is invalid, please try again.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (!Musician.CheckMusicianNameValid(slug))
+                {
+                    e.Template.Parse("ERROR", "Musician slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (!Musician.CheckMusicianNameUnique(e.Core, slug))
+                {
+                    e.Template.Parse("ERROR", "Musician slug is already taken, please choose another one.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (e.Core.Http.Form["agree"] != "true")
+                {
+                    e.Template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create register a musician.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else
+                {
+                    Musician newMusician = Musician.Create(e.Core, e.Core.Http.Form["title"], slug);
+
+                    if (newMusician == null)
+                    {
+                        e.Template.Parse("ERROR", "Bad registration details");
+                        prepareNewCaptcha(e.Core);
+                    }
+                    else
+                    {
+                        // captcha is a use once thing, destroy all for this session
+                        e.Db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 3 AND session_id = '{0}'",
+                            Mysql.Escape(e.Core.Session.SessionId)));
+
+                        //Response.Redirect("/", true);
+                        e.Template.Parse("REDIRECT_URI", newMusician.Uri);
+                        e.Core.Display.ShowMessage("Musician Registered", "You have have registered a new musician. You will be redirected to the musician home page in a second.");
+                        return; /* stop processing the display of this page */
+                    }
+                }
+            }
+        }
+
+        internal static void ShowProfile(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("Musician", "viewmusician");
         }
     }
 

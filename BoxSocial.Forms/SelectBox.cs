@@ -35,6 +35,19 @@ namespace BoxSocial.Forms
         private List<SelectBoxItem> items;
         private Dictionary<string, SelectBoxItem> itemKeys;
         private string selectedKey;
+        protected bool visible;
+
+        public bool IsVisible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                visible = false;
+            }
+        }
 
         /// <summary>
         /// Selected item.
@@ -72,6 +85,7 @@ namespace BoxSocial.Forms
 
             items = new List<SelectBoxItem>();
             itemKeys = new Dictionary<string, SelectBoxItem>();
+            visible = true;
         }
 
         /// <summary>
@@ -117,8 +131,9 @@ namespace BoxSocial.Forms
         public override string ToString()
         {
             StringBuilder selectBox = new StringBuilder();
-            selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\">",
-                HttpUtility.HtmlEncode(name)));
+            selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\" style=\"{1}\">",
+                HttpUtility.HtmlEncode(name),
+                (!IsVisible) ? " display: none;" : ""));
 
             foreach (SelectBoxItem item in items)
             {

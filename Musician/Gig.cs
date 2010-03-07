@@ -74,6 +74,10 @@ namespace BoxSocial.Musician
             {
                 return tourId;
             }
+            set
+            {
+                SetProperty("tourId", value);
+            }
         }
 
         public long TimeRaw

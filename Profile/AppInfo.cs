@@ -121,12 +121,12 @@ namespace BoxSocial.Applications.Profile
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Application);
+            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Application);
             aii.AddSlug("profile", @"^/status-feed(|/)$", AppPrimitives.Member | AppPrimitives.Application);
 
-            aii.AddModule("profile");
+            aii.AddModule("profile");*/
 
             return aii;
         }
@@ -147,8 +147,8 @@ namespace BoxSocial.Applications.Profile
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/profile(|/)$", showProfile, 1);
-            core.RegisterApplicationPage(@"^/status-feed(|/)$", showStatusFeed, 1);
+            /*core.RegisterApplicationPage(@"^/profile(|/)$", showProfile, 1);
+            core.RegisterApplicationPage(@"^/status-feed(|/)$", showStatusFeed, 1);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()
@@ -156,6 +156,7 @@ namespace BoxSocial.Applications.Profile
             return AppPrimitives.Member | AppPrimitives.Application;
         }
 
+        [Show("profile", AppPrimitives.Member | AppPrimitives.Application)]
         private void showProfile(Core core, object sender)
         {
             if (sender is UPage)
@@ -168,6 +169,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        [Show("status-feed", AppPrimitives.Member | AppPrimitives.Application)]
         private void showStatusFeed(Core core, object sender)
         {
             if (sender is UPage)

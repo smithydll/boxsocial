@@ -30,7 +30,7 @@ namespace BoxSocial.Musician
     {
         public static void Show(object sender, ShowPageEventArgs e)
         {
-            e.Template.SetTemplate("music_directory");
+            e.Template.SetTemplate("Musician", "music_directory");
 
             //e.Template.Parse("U_FILTER_ALL", page.Group.MemberlistUri);
             e.Template.Parse("U_FILTER_BEGINS_A", GetDirectoryUri(e.Core, "a"));
@@ -65,6 +65,9 @@ namespace BoxSocial.Musician
             foreach (Musician musician in musicians)
             {
                 VariableCollection musicianVariableCollection = e.Template.CreateChild("musicians_list");
+
+                musicianVariableCollection.Parse("U_MUSICIAN", musician.Uri);
+                musicianVariableCollection.Parse("DISPLAY_NAME", musician.DisplayName);
             }
         }
 

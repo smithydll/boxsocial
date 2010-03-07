@@ -192,13 +192,13 @@ namespace BoxSocial.Musician
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
+            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
             aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Musician);
             aii.AddSlug("fans", @"^/fans(|/)$", AppPrimitives.Musician);
 
-            aii.AddModule("music");
+            aii.AddModule("music");*/
 
             return aii;
         }
@@ -215,10 +215,11 @@ namespace BoxSocial.Musician
 
         void core_LoadApplication(Core core, object sender)
         {
-            core.RegisterApplicationPage(@"^/profile(|/)$", showMusician);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);
+            /*core.RegisterApplicationPage(@"^/profile(|/)$", showMusician);
+            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
+        [Show("profile", AppPrimitives.Musician)]
         private void showMusician(Core core, object sender)
         {
             if (sender is MPage)
@@ -227,6 +228,7 @@ namespace BoxSocial.Musician
             }
         }
 
+        [Show("members", AppPrimitives.Musician)]
         private void showMemberlist(Core core, object sender)
         {
             if (sender is MPage)
@@ -237,7 +239,7 @@ namespace BoxSocial.Musician
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Musician;
+            return AppPrimitives.None | AppPrimitives.Member | AppPrimitives.Musician;
         }
 
         void core_PageHooks(HookEventArgs e)
@@ -274,7 +276,16 @@ namespace BoxSocial.Musician
             e.core.AddSidePanel(template);
         }
 
-        [StaticShow("music", @"^(|/)$")]
+        [StaticShow("music", @"^/music/register(|/)$")]
+        private void showCreateMusician(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                Musician.ShowRegister(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("music", @"^/music(|/)$")]
         private void showDefault(Core core, object sender)
         {
             if (sender is TPage)
@@ -283,7 +294,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [StaticShow("music", @"^/chart(|/)$")]
+        [StaticShow("music", @"^/music/chart(|/)$")]
         private void showChart(Core core, object sender)
         {
             if (sender is TPage)
@@ -292,7 +303,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [StaticShow("music", @"^/directory(|/)$")]
+        [StaticShow("music", @"^/music/directory(|/)$")]
         private void showDirectory(Core core, object sender)
         {
             if (sender is TPage)
@@ -301,14 +312,23 @@ namespace BoxSocial.Musician
             }
         }
 
-        [StaticShow("music", @"^/directory/genres(|/)$")]
+        [StaticShow("music", @"^/music/directory/genres(|/)$")]
         private void showGenres(Core core, object sender)
         {
         }
 
-        [StaticShow("music", @"^/directory/genre/([a-z0-9\-_\+]+)(|/)$")]
+        [StaticShow("music", @"^/music/directory/genre/([a-z0-9\-_\+]+)(|/)$")]
         private void showGenre(Core core, object sender)
         {
+        }
+
+        [Show(@"^/profile(|/)$", AppPrimitives.Musician)]
+        private void showProfile(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Musician.ShowProfile(sender, new ShowMPageEventArgs((MPage)sender));
+            }
         }
 
         [Show(@"^/tours(|/)$", AppPrimitives.Musician)]

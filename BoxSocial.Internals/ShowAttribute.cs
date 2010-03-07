@@ -84,16 +84,15 @@ namespace BoxSocial.Internals
             bool pathIsRegex = false;
             string path = slug;
 
-            if (path.StartsWith(@"^/") && path.EndsWith(@"(|/)$"))
+            if (path.StartsWith(@"^") && path.EndsWith(@"$"))
             {
-                path = path.Substring(2, path.Length - 7);
+                path = path.Substring(1, path.Length - 2).TrimStart(new char[] { '/' });
+                if (path.EndsWith("(|/)"))
+                {
+                    path = path.Substring(0, path.Length - 4);
+                }
                 pathIsRegex = true;
             }
-
-            this.stub = stub;
-            this.slug = slug;
-            this.primitives = primitives;
-            this.order = order;
 
             if (string.IsNullOrEmpty(stub))
             {
@@ -102,12 +101,21 @@ namespace BoxSocial.Internals
                 {
                     stub = parts[0];
                 }
+                else
+                {
+                    stub = string.Empty;
+                }
             }
 
             if (!pathIsRegex)
             {
                 slug = @"^/" + slug + @"(|/)$";
             }
+
+            this.stub = stub;
+            this.slug = slug;
+            this.primitives = primitives;
+            this.order = order;
         }
     }
 }

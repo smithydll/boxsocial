@@ -1033,7 +1033,7 @@ dl#app-list {
 /* colours */
 /* head */
 .head.corners-top, .head.corners-top > span {
-    background-image: url('/images/corners-top-ffffff-18-5.png');
+    background-image: url('/images/corners-top-ffffff-10-5.png');
 }
 
 .head.corners-top > span + span, .head.corners-bottom > span + span {
@@ -1041,7 +1041,7 @@ dl#app-list {
 }
 
 .head.corners-bottom, .head.corners-bottom > span {
-    background-image: url('/images/corners-bottom-ffffff-18-5.png');
+    background-image: url('/images/corners-bottom-ffffff-10-5.png');
 }
 
 /* markup */

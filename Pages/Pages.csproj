@@ -87,6 +87,10 @@
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Musician\Musician.csproj">
+      <Project>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</Project>
+      <Name>Musician</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

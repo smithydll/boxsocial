@@ -73,10 +73,12 @@
     <Compile Include="Recording.cs" />
     <Compile Include="Release.cs" />
     <Compile Include="Song.cs" />
-    <Compile Include="Templates.Designer.cs">
+    <Compile Include="AccountMemberProfile.cs" />
+    <Compile Include="Templates1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
-    <Compile Include="AccountMemberProfile.cs" />
     <Compile Include="Tour.cs" />
     <Compile Include="Track.cs" />
   </ItemGroup>
@@ -106,6 +108,7 @@
     <EmbeddedResource Include="Templates.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

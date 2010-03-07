@@ -30,6 +30,7 @@ namespace BoxSocial.Internals
 {
     public sealed class PageHandle : IComparable
     {
+        private AppPrimitives primitives;
         private int order;
         private string expression;
 
@@ -37,6 +38,14 @@ namespace BoxSocial.Internals
         /// The function that gets executed if a match
         /// </summary>
         private Core.PageHandler handler;
+
+        public AppPrimitives Primitives
+        {
+            get
+            {
+                return primitives;
+            }
+        }
 
         public string Expression
         {
@@ -46,11 +55,20 @@ namespace BoxSocial.Internals
             }
         }
 
-        public PageHandle(string expression, Core.PageHandler pageHandle, int order)
+        public string MethodName
+        {
+            get
+            {
+                return handler.Method.Name;
+            }
+        }
+
+        public PageHandle(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order)
         {
             this.order = order;
             this.handler = pageHandle;
             this.expression = expression;
+            this.primitives = primitives;
         }
 
         public void Execute(Core core, object sender)

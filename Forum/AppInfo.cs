@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return core.Prose.GetString("FORUM");
+                return "Forum";
             }
         }
 
@@ -122,25 +122,6 @@ namespace BoxSocial.Applications.Forum
 
         public override ApplicationInstallationInfo Install()
         {
-            /*long forumTypeId = ItemKey.GetTypeId(typeof(Forum));
-
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
-
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group);
-
-            aii.AddSlug("forum", @"^/forum(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([0-9]+)/topic\-([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/post(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-			aii.AddSlug("forum", @"^/forum/ucp(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-			aii.AddSlug("forum", @"^/forum/memberlist(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("forum", @"^/forum/mcp(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-
-            aii.AddModule("forum");
-
-            return aii;*/
-
             ApplicationInstallationInfo aii = base.GetInstallInfo();
 
             /* Hack to add Hooks until implement a better way with attributes */
@@ -155,7 +136,7 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("forum", core.Prose.GetString("FORUM"));
+                slugs.Add("forum", "Forum");
                 return slugs;
             }
         }
@@ -164,10 +145,6 @@ namespace BoxSocial.Applications.Forum
         {
             this.core = core;
 
-            /*core.RegisterApplicationPage(@"^/forum(|/)$", showForums, 1);
-            core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
-            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
-            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()

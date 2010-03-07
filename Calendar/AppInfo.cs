@@ -123,9 +123,9 @@ namespace BoxSocial.Applications.Calendar
 
         public override ApplicationInstallationInfo Install()
         {
-            ApplicationInstallationInfo aii = new ApplicationInstallationInfo();
+            ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("calendar", @"^/calendar(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
+            /*aii.AddSlug("calendar", @"^/calendar(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/([0-9]{4})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.Calendar
             aii.AddSlug("calendar", @"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
             aii.AddSlug("calendar", @"^/calendar/tasks(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
 
-            aii.AddModule("calendar");
+            aii.AddModule("calendar");*/
 
             aii.AddCommentType("EVENT");
 
@@ -154,13 +154,13 @@ namespace BoxSocial.Applications.Calendar
         {
             this.core = core;
 
-            core.RegisterApplicationPage(@"^/calendar(|/)$", showCalendar, 1);
+            /*core.RegisterApplicationPage(@"^/calendar(|/)$", showCalendar, 1);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})(|/)$", showCalendarYear, 2);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", showCalendarMonth, 3);
             core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", showCalendarDay, 4);
             //core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
             //core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
-            core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);
+            core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);*/
         }
 
         /// <summary>
@@ -235,6 +235,7 @@ namespace BoxSocial.Applications.Calendar
                 itemKey.Id, adjustment));
         }
 
+        [Show(@"calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendar(Core core, object sender)
         {
             if (sender is UPage)
@@ -244,6 +245,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"calendar/([0-9]{4})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarYear(Core core, object sender)
         {
             if (sender is UPage)
@@ -253,6 +255,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"calendar/([0-9]{4})/([0-9]{1,2})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarMonth(Core core, object sender)
         {
             if (sender is UPage)
@@ -262,6 +265,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarDay(Core core, object sender)
         {
             if (sender is UPage)
@@ -271,7 +275,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        [Show(@"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"calendar/event/([0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showEvent(Core core, object sender)
         {
             if (sender is UPage)
@@ -280,7 +284,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        [Show(@"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"calendar/task/([0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTask(Core core, object sender)
         {
             if (sender is UPage)
@@ -290,6 +294,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        [Show(@"calendar/tasks", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTasks(Core core, object sender)
         {
             if (sender is UPage)

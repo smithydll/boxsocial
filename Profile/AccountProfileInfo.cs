@@ -60,7 +60,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountProfileInfo_Show(object sender, EventArgs e)
         {
-            template.SetTemplate("account_profile.html");
+            SetTemplate("account_profile");
 
             string selected = " checked=\"checked\"";
             switch (LoggedInMember.GenderRaw)

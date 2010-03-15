@@ -42,6 +42,23 @@ namespace BoxSocial.IO
 
         public StringBuilder QueryList = new StringBuilder();
 
+        public long LastQueryRows
+        {
+            get
+            {
+                DataTable rowsDataTable = SelectQuery("SELECT FOUND_ROWS() as total_rows;");
+
+                if (rowsDataTable.Rows.Count == 1)
+                {
+                    return (long)rowsDataTable.Rows[0]["total_rows"];
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+
         public Mysql(string username, string database, string host)
         {
             queryCount = 0;
@@ -354,7 +371,9 @@ namespace BoxSocial.IO
 
         public override DataTable Query(SelectQuery query)
         {
-            return SelectQuery(query.ToString());
+            DataTable selectDataTable = SelectQuery(query.ToString());
+
+            return selectDataTable;
         }
 
         public override long Query(InsertQuery query)

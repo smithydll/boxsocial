@@ -76,6 +76,10 @@ namespace BoxSocial.Applications.Profile
                     break;
             }
 
+            TextBox heightTextBox = new TextBox("height");
+            heightTextBox.MaxLength = 3;
+            heightTextBox.Value = LoggedInMember.Profile.Height.ToString();
+
             SelectBox dobYearsSelectBox = new SelectBox("dob-year");
 
             for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(-13).Year; i++)
@@ -135,6 +139,7 @@ namespace BoxSocial.Applications.Profile
             template.Parse("S_DOB_MONTH", dobMonthsSelectBox);
             template.Parse("S_DOB_DAY", dobDaysSelectBox);
             template.Parse("S_COUNTRY", countriesSelectBox);
+            template.Parse("S_HEIGHT", heightTextBox);
 
             template.Parse("S_AUTO_BIOGRAPHY", LoggedInMember.Autobiography);
 
@@ -152,6 +157,7 @@ namespace BoxSocial.Applications.Profile
             LoggedInMember.Profile.CountryIso = core.Http.Form["country"];
             LoggedInMember.Profile.GenderRaw = core.Http.Form["gender"];
             LoggedInMember.Profile.Autobiography = core.Http.Form["auto-biography"];
+            LoggedInMember.Profile.Height = core.Functions.FormByte("height", 0);
 
             LoggedInMember.Profile.Update();
 

@@ -60,6 +60,7 @@
     <Compile Include="MPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="MusicianInfoView.cs" />
     <Compile Include="MusicianMember.cs" />
     <Compile Include="MusicGenre.cs" />
     <Compile Include="Musician.cs" />

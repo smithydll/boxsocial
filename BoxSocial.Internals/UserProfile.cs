@@ -249,6 +249,33 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// User's height in cm.
+        /// </summary>
+        public byte Height
+        {
+            get
+            {
+                return height;
+            }
+            set
+            {
+                SetProperty("height", value);
+            }
+        }
+
+        public uint Weight
+        {
+            get
+            {
+                return weight;
+            }
+            set
+            {
+                SetProperty("weight", value);
+            }
+        }
+
         public long ProfileViews
         {
             get

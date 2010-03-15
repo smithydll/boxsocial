@@ -213,6 +213,10 @@ namespace BoxSocial.IO
 
         public int LimitCount
         {
+            get
+            {
+                return limitCount;
+            }
             set
             {
                 limitCount = value;
@@ -221,6 +225,10 @@ namespace BoxSocial.IO
 
         public int LimitStart
         {
+            get
+            {
+                return limitStart;
+            }
             set
             {
                 limitStart = value;
@@ -452,6 +460,11 @@ namespace BoxSocial.IO
             if (isDistinct)
             {
                 query += " DISTINCT";
+            }
+
+            if (limitCount >= 0)
+            {
+                query += " SQL_CALC_FOUND_ROWS";
             }
 
             if (fields.Count > 0)

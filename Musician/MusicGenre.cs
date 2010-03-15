@@ -79,6 +79,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public string Slug
+        {
+            get
+            {
+                return genreSlug;
+            }
+        }
+
         public long Musicians
         {
             get
@@ -163,6 +171,39 @@ namespace BoxSocial.Musician
             return genres;
         }
 
+        public static Dictionary<long, MusicGenre> GetGenres(Core core, List<Musician> musicians)
+        {
+            Dictionary<long, MusicGenre> genres = new Dictionary<long, MusicGenre>();
+            List<long> genreIds = new List<long>();
+
+            foreach (Musician musician in musicians)
+            {
+                if (!genreIds.Contains(musician.GenreRaw))
+                {
+                    genreIds.Add(musician.GenreRaw);
+                }
+
+                if (!genreIds.Contains(musician.SubGenreRaw))
+                {
+                    genreIds.Add(musician.SubGenreRaw);
+                }
+            }
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            query.AddCondition("genre_id", ConditionEquality.In, genreIds);
+            query.AddSort(SortOrder.Ascending, "genre_id");
+
+            DataTable genresDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in genresDataTable.Rows)
+            {
+                MusicGenre genre = new MusicGenre(core, dr);
+                genres.Add(genre.Id, genre);
+            }
+
+            return genres;
+        }
+
         public static List<MusicGenre> GetAllGenres(Core core)
         {
             List<MusicGenre> genres = new List<MusicGenre>();
@@ -221,28 +262,14 @@ namespace BoxSocial.Musician
             return genres;
         }
 
-        public List<Musician> GetMuscians()
+        public List<Musician> GetMusicians()
         {
-            List<Musician> musicians = new List<Musician>();
+            return Musician.GetMusicians(core, null, this, -1);
+        }
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Musician));
-            if (ParentId == 0)
-            {
-                query.AddCondition("musician_genre", GenreId);
-            }
-            else
-            {
-                query.AddCondition("musician_subgenre", GenreId);
-            }
-
-            DataTable musiciansDataTable = db.Query(query);
-
-            foreach (DataRow dr in musiciansDataTable.Rows)
-            {
-                musicians.Add(new Musician(core, dr, MusicianLoadOptions.Common));
-            }
-
-            return musicians;
+        public List<Musician> GetMusicians(string firstLetter, int page)
+        {
+            return Musician.GetMusicians(core, firstLetter, this, page);
         }
 
         public override long Id

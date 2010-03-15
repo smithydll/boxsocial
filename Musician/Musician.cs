@@ -89,10 +89,13 @@ namespace BoxSocial.Musician
         private long subgenre;
         [DataField("musician_home_page", MYSQL_TEXT)]
         private string homepage;
+        [DataField("musician_icon")]
+        private long displayPictureId;
 
         private Access access;
 
         private Dictionary<User, bool> musicianMemberCache = new Dictionary<User, bool>();
+        private string iconUri = string.Empty;
 
         public long MusicianId
         {
@@ -123,6 +126,90 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("homepage", value);
+            }
+        }
+
+        public long DisplayPictureId
+        {
+            get
+            {
+                return displayPictureId;
+            }
+            set
+            {
+                SetProperty("displayPictureId", value);
+            }
+        }
+
+        public long GenreRaw
+        {
+            get
+            {
+                return genre;
+            }
+            set
+            {
+                SetProperty("genre", value);
+            }
+        }
+
+        public long SubGenreRaw
+        {
+            get
+            {
+                return subgenre;
+            }
+            set
+            {
+                SetProperty("subgenre", value);
+            }
+        }
+
+        public string Icon
+        {
+            get
+            {
+                if (iconUri != null)
+                {
+                    return string.Format("{0}images/_icon{1}",
+                        UriStub, iconUri);
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        public string Thumbnail
+        {
+            get
+            {
+                if (iconUri != null)
+                {
+                    return string.Format("{0}images/_thumb{1}",
+                        UriStub, iconUri);
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        public string Tile
+        {
+            get
+            {
+                if (iconUri != null)
+                {
+                    return string.Format("{0}images/_tile{1}",
+                        UriStub, iconUri);
+                }
+                else
+                {
+                    return "FALSE";
+                }
             }
         }
 
@@ -169,12 +256,12 @@ namespace BoxSocial.Musician
                 /*if ((loadOptions & MusicianLoadOptions.Info) == MusicianLoadOptions.Info)
                 {
                     musicianInfo = new UserGroupInfo(core, groupRow);
-                }
+                }/*/
 
                 if ((loadOptions & MusicianLoadOptions.Icon) == MusicianLoadOptions.Icon)
                 {
-                    loadMusicianIcon(groupRow);
-                }*/
+                    loadIcon(musicianRow);
+                }
             }
             else
             {
@@ -184,6 +271,15 @@ namespace BoxSocial.Musician
 
         void Musician_ItemLoad()
         {
+        }
+
+        protected void loadIcon(DataRow musicianRow)
+        {
+            if (!(musicianRow["gallery_item_uri"] is DBNull))
+            {
+                iconUri = string.Format("/{0}/{1}",
+                    (string)musicianRow["gallery_item_parent_path"], (string)musicianRow["gallery_item_uri"]);
+            }
         }
 
         public List<MusicianMember> GetMembers()
@@ -890,8 +986,11 @@ namespace BoxSocial.Musician
                 query.AddCondition("musician_name_first", firstLetter);
             }
 
-            query.LimitCount = 10;
-            query.LimitStart = Functions.LimitPageToStart(page, 10);
+            if (page >= -1)
+            {
+                query.LimitCount = 10;
+                query.LimitStart = Functions.LimitPageToStart(page, 10);
+            }
 
             query.AddSort(SortOrder.Ascending, "musician_slug");
 

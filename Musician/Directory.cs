@@ -61,6 +61,9 @@ namespace BoxSocial.Musician
             e.Template.Parse("U_FILTER_BEGINS_Z", GetDirectoryUri(e.Core, "z"));
 
             List<Musician> musicians = Musician.GetMusicians(e.Core, e.Core.Functions.GetFilter(), e.Page.page);
+            long musicianCount = e.Db.LastQueryRows;
+
+            Dictionary<long, MusicGenre> musicianGenres = MusicGenre.GetGenres(e.Core, musicians);
 
             foreach (Musician musician in musicians)
             {
@@ -68,7 +71,21 @@ namespace BoxSocial.Musician
 
                 musicianVariableCollection.Parse("U_MUSICIAN", musician.Uri);
                 musicianVariableCollection.Parse("DISPLAY_NAME", musician.DisplayName);
+                musicianVariableCollection.Parse("I_TILE", musician.Tile);
+                musicianVariableCollection.Parse("I_ICON", musician.Icon);
+
+                if (musician.GenreRaw > 0 && musicianGenres.ContainsKey(musician.GenreRaw))
+                {
+                    musicianVariableCollection.Parse("GENRE", musicianGenres[musician.GenreRaw].Name);
+                }
+
+                if (musician.SubGenreRaw > 0 && musicianGenres.ContainsKey(musician.SubGenreRaw))
+                {
+                    musicianVariableCollection.Parse("SUB_GENRE", musicianGenres[musician.SubGenreRaw].Name);
+                }
             }
+
+            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter()), e.Page.page, (int)(Math.Ceiling(musicianCount / 10.0)));
         }
 
         private static string GetDirectoryUri(Core core, string filter)
@@ -157,7 +174,33 @@ namespace BoxSocial.Musician
                 List<MusicGenre> subGenres = genreObject.GetSubGenres();
             }
 
-            //List<Musician> musicians = genreObject.GetMusicians();
+            List<Musician> musicians = genreObject.GetMusicians(e.Core.Functions.GetFilter(), e.Page.page);
+
+            long musicianCount = e.Db.LastQueryRows;
+
+            Dictionary<long, MusicGenre> musicianGenres = MusicGenre.GetGenres(e.Core, musicians);
+
+            foreach (Musician musician in musicians)
+            {
+                VariableCollection musicianVariableCollection = e.Template.CreateChild("musicians_list");
+
+                musicianVariableCollection.Parse("U_MUSICIAN", musician.Uri);
+                musicianVariableCollection.Parse("DISPLAY_NAME", musician.DisplayName);
+                musicianVariableCollection.Parse("I_TILE", musician.Tile);
+                musicianVariableCollection.Parse("I_ICON", musician.Icon);
+
+                if (musician.GenreRaw > 0 && musicianGenres.ContainsKey(musician.GenreRaw))
+                {
+                    musicianVariableCollection.Parse("GENRE", musicianGenres[musician.GenreRaw].Name);
+                }
+
+                if (musician.SubGenreRaw > 0 && musicianGenres.ContainsKey(musician.SubGenreRaw))
+                {
+                    musicianVariableCollection.Parse("SUB_GENRE", musicianGenres[musician.SubGenreRaw].Name);
+                }
+            }
+
+            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter(), genreObject.Slug), e.Page.page, (int)(Math.Ceiling(musicianCount / 10.0)));
         }
     }
 }

@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -56,12 +57,71 @@ namespace BoxSocial.Musician
 
         void AccountDiscographyManage_Load(object sender, EventArgs e)
         {
+            this.AddModeHandler("add", AccountDiscographyManage_Edit);
+            this.AddModeHandler("edit", AccountDiscographyManage_Edit);
+            this.AddModeHandler("delete", AccountDiscographyManage_Delete);
         }
 
         void AccountDiscographyManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_discography");
 
+        }
+
+        void AccountDiscographyManage_Edit(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_discography_album_edit");
+
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 63;
+
+            switch (e.Mode)
+            {
+                case "add":
+                    break;
+                case "edit":
+                    long releaseId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+
+                    Release release = null;
+
+                    try
+                    {
+                        release = new Release(core, releaseId);
+
+                        titleTextBox.Value = release.Title;
+                    }
+                    catch (InvalidReleaseException)
+                    {
+                        return;
+                    }
+                    break;
+            }
+
+            template.Parse("S_TITLE", titleTextBox);
+
+            SaveMode(AccountDiscographyManage_EditSave);
+        }
+
+        void AccountDiscographyManage_EditSave(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            string title = Functions.TrimStringToWord(core.Http.Form["title"], 63);
+
+            switch (e.Mode)
+            {
+                case "add":
+                    // TODO:
+                    Release release = Release.Create(core, (Musician)Owner, title, -1);
+                    SetRedirectUri(BuildUri());
+                    break;
+                case "edit":
+                    break;
+            }
+        }
+
+        void AccountDiscographyManage_Delete(object sender, ModuleModeEventArgs e)
+        {
         }
     }
 }

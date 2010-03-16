@@ -47,10 +47,18 @@
 	<dl class="musician-list">
 		<!-- BEGIN musicians_list -->
 		<dt>
-      <a href="{musicians_list.U_MUSICIAN}">{musicians_list.DISPLAY_NAME}</a>
+      <!-- IF musicians_list.I_TILE -->
+      <img src="{musicians_list.I_TILE}" alt="{musicians_list.DISPLAY_NAME}"/>
+      <!-- ELSE -->
+      <!-- ENDIF -->
     </dt>
-		<dd>
-		</dd>
+    <dd><a href="{musicians_list.U_MUSICIAN}">{musicians_list.DISPLAY_NAME}</a></dd>
+		<!-- IF musicians_list.GENRE -->
+    <dd>{musicians_list.GENRE}</dd>
+    <!-- ENDIF -->
+    <!-- IF musicians_list.SUB_GENRE -->
+    <dd>{musicians_list.SUB_GENRE}</dd>
+    <!-- ENDIF -->
 		<!-- END musicians_list -->
 	</dl>
 	<!-- ENDIF -->

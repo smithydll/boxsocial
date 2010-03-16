@@ -91,6 +91,12 @@ namespace BoxSocial.Musician
         private string homepage;
         [DataField("musician_icon")]
         private long displayPictureId;
+        [DataField("musician_reg_ip", 50)]
+        private string registrationIp;
+        [DataField("musician_reg_date_ut")]
+        private long registeredDate;
+        [DataField("musician_featured_date_ut")]
+        private long featuredDate;
 
         private Access access;
 
@@ -163,6 +169,40 @@ namespace BoxSocial.Musician
             {
                 SetProperty("subgenre", value);
             }
+        }
+
+        public long RegisteredDateRaw
+        {
+            get
+            {
+                return registeredDate;
+            }
+            set
+            {
+                SetProperty("registeredDate", value);
+            }
+        }
+
+        public long FeaturedDateRaw
+        {
+            get
+            {
+                return featuredDate;
+            }
+            set
+            {
+                SetProperty("featuredDate", value);
+            }
+        }
+
+        public DateTime GetRegisteredDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(registeredDate);
+        }
+
+        public DateTime GetFeaturedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(featuredDate);
         }
 
         public string Icon
@@ -399,6 +439,8 @@ namespace BoxSocial.Musician
             iQuery.AddField("musician_name", title);
             iQuery.AddField("musician_slug", slug);
             iQuery.AddField("musician_name_first", title.ToLower()[0]);
+            iQuery.AddField("musician_reg_id", session.IPAddress.ToString());
+            iQuery.AddField("musician_reg_date_ut", UnixTime.UnixTimeStamp());
 
             long musicianId = db.Query(iQuery);
 
@@ -957,6 +999,16 @@ namespace BoxSocial.Musician
             {
                 return "Musician: " + DisplayName;
             }
+        }
+
+        public static List<Musician> GetFeaturedMusicians(Core core)
+        {
+            List<Musician> musicians = new List<Musician>();
+
+            SelectQuery query = Musician.GetSelectQueryStub(typeof(Musician));
+            //query.AddSort(SortOrder.Ascending, "musician_slug");
+
+            return musicians;
         }
 
         public static List<Musician> GetMusicians(Core core, string firstLetter, int page)

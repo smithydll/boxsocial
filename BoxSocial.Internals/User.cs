@@ -1226,7 +1226,7 @@ namespace BoxSocial.Internals
             query.AddField("user_name", userName);
             query.AddField("user_alternate_email", eMail);
             query.AddField("user_password", password);
-            query.AddField("user_reg_date_ut", core.Tz.GetUnixTimeStamp(core.Tz.Now));
+            query.AddField("user_reg_date_ut", UnixTime.UnixTimeStamp());
             query.AddField("user_activate_code", activateKey);
             query.AddField("user_reg_ip", session.IPAddress.ToString());
             query.AddField("user_home_page", "/profile");

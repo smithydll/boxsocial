@@ -1,1 +1,53 @@
-﻿
+﻿<!-- INCLUDE page_header.html -->
+
+<p>{BREADCRUMBS}</p>
+
+<ul>
+	<li><a href="{U_MUSIC_ARTISTS}">{L_ALL_ARTISTS}</a></li>
+	<li><a href="{U_MUSIC_GENRES}">{L_GENRES}</a></li>
+</ul>
+
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+
+<ul>
+<!-- BEGIN genre_list -->
+  <li>
+    <p><a href="{genre_list.U_GENRE}">{genre_list.DISPLAY_NAME}</a></p>
+    <ul>
+<!-- BEGIN subgenre_list -->
+      <li><a href="{genre_list.subgenre_list.U_SUBGENRE}">{genre_list.subgenre_list.DISPLAY_NAME}</a></li>
+<!-- END subgenre_list -->
+    </ul>
+  </li>
+<!-- END genre_list -->
+</ul>
+
+<!-- IF ARTISTS -->
+<dl class="musician-list">
+  <!-- BEGIN musicians_list -->
+  <dt>
+    <!-- IF musicians_list.I_TILE -->
+    <img src="{musicians_list.I_TILE}" alt="{musicians_list.DISPLAY_NAME}"/>
+    <!-- ELSE -->
+    <!-- ENDIF -->
+  </dt>
+  <dd>
+    <a href="{musicians_list.U_MUSICIAN}">{musicians_list.DISPLAY_NAME}</a>
+  </dd>
+  <!-- IF musicians_list.GENRE -->
+  <dd>{musicians_list.GENRE}</dd>
+  <!-- ENDIF -->
+  <!-- IF musicians_list.SUB_GENRE -->
+  <dd>{musicians_list.SUB_GENRE}</dd>
+  <!-- ENDIF -->
+  <!-- END musicians_list -->
+</dl>
+<!-- ENDIF -->
+	
+		<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

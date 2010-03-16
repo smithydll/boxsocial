@@ -111,6 +111,8 @@ namespace BoxSocial.Musician
 
         public static void ShowGenres(object sender, ShowPageEventArgs e)
         {
+            e.Template.SetTemplate("Musician", "music_directory_genres");
+
             List<MusicGenre> genres = MusicGenre.GetGenres(e.Core);
 
             for (int i = 0; i < genres.Count; i++)
@@ -121,7 +123,7 @@ namespace BoxSocial.Musician
                     VariableCollection genreVariableCollection = e.Template.CreateChild("genre_list");
 
                     genreVariableCollection.Parse("U_GENRE", genre.Uri);
-                    genreVariableCollection.Parse("DIAPLAY_NAME", genre.Name);
+                    genreVariableCollection.Parse("DISPLAY_NAME", genre.Name);
                     genreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(genre.Musicians));
 
                     for (int j = i; j < genres.Count; j++)
@@ -132,7 +134,7 @@ namespace BoxSocial.Musician
                             VariableCollection subGenreVariableCollection = genreVariableCollection.CreateChild("subgenre_list");
 
                             subGenreVariableCollection.Parse("U_SUBGENRE", subGenre.Uri);
-                            subGenreVariableCollection.Parse("DIAPLAY_NAME", subGenre.Name);
+                            subGenreVariableCollection.Parse("DISPLAY_NAME", subGenre.Name);
                             subGenreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(subGenre.Musicians));
                         }
                         else if (subGenre.ParentId < genre.Id)
@@ -156,6 +158,8 @@ namespace BoxSocial.Musician
 
         public static void ShowGenre(object sender, ShowPageEventArgs e)
         {
+            e.Template.SetTemplate("Musician", "music_directory_genres");
+
             string genre = e.Core.PagePathParts[1].Value;
             MusicGenre genreObject = null;
 
@@ -169,9 +173,24 @@ namespace BoxSocial.Musician
                 return;
             }
 
+            VariableCollection genreVariableCollection = e.Template.CreateChild("genre_list");
+
+            genreVariableCollection.Parse("U_GENRE", genreObject.Uri);
+            genreVariableCollection.Parse("DISPLAY_NAME", genreObject.Name);
+            genreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(genreObject.Musicians));
+
             if (genreObject.ParentId == 0)
             {
                 List<MusicGenre> subGenres = genreObject.GetSubGenres();
+
+                foreach (MusicGenre subGenre in subGenres)
+                {
+                    VariableCollection subGenreVariableCollection = genreVariableCollection.CreateChild("subgenre_list");
+
+                    subGenreVariableCollection.Parse("U_SUBGENRE", subGenre.Uri);
+                    subGenreVariableCollection.Parse("DISPLAY_NAME", subGenre.Name);
+                    subGenreVariableCollection.Parse("MUSICIANS", e.Core.Functions.LargeIntegerToString(subGenre.Musicians));
+                }
             }
 
             List<Musician> musicians = genreObject.GetMusicians(e.Core.Functions.GetFilter(), e.Page.page);
@@ -199,6 +218,8 @@ namespace BoxSocial.Musician
                     musicianVariableCollection.Parse("SUB_GENRE", musicianGenres[musician.SubGenreRaw].Name);
                 }
             }
+
+            e.Template.Parse("ARTISTS", musicianCount.ToString());
 
             e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter(), genreObject.Slug), e.Page.page, (int)(Math.Ceiling(musicianCount / 10.0)));
         }

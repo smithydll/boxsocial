@@ -1,0 +1,28 @@
+﻿<h3>Manage Group Members</h3>
+
+<a href="{U_ADD_MEMBER}">Add Member</a>
+
+<table style="width: 100%">
+<tr>
+	<th>Title</th>
+	<th>Joined</th>
+	<th></th>
+</tr>
+<!-- BEGIN member_list -->
+<!-- IF member_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{member_list.DISPLAY_NAME}</td>
+	<td>{member_list.DATE_JOINED}</td>
+	<td>
+    <!-- IF member_list.U_LEAVE -->
+    <a href="{member_list.U_LEAVE}">{L_LEAVE}</a>
+    <!-- ELSE -->
+    {L_LEAVE}
+    <!-- ENDIF -->
+  </td>
+</tr>
+<!-- END member_list -->
+</table>

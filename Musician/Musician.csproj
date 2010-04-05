@@ -119,6 +119,7 @@
     <Content Include="templates\account_discography_album_edit.html" />
     <Content Include="templates\account_gigs_manage.html" />
     <Content Include="templates\account_gig_edit.html" />
+    <Content Include="templates\account_members_manage.html" />
     <Content Include="templates\account_member_profile.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_songs.html" />

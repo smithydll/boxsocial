@@ -9,6 +9,7 @@
 	<th>Gigs</th>
 	<th></th>
 	<th></th>
+  <th></th>
 </tr>
 <!-- BEGIN tour_list -->
 <!-- IF tour_list.INDEX_EVEN -->
@@ -16,7 +17,8 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<td>{song_list.TITLE}</td>
+	<td>{tour_list.TITLE}</td>
+  <td>{tour_list.YEAR}</td>
 	<td><a href="{tour_list.U_GIGS}">{tour_list.GIGS}</a></td>
 	<td><a href="{tour_list.U_ADD_GIG}">Add Gig</a></td>
 	<td><a href="{tour_list.U_EDIT}">{L_EDIT}</a></td>

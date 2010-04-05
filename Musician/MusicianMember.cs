@@ -32,9 +32,9 @@ namespace BoxSocial.Musician
     [DataTable("musician_members")]
     public class MusicianMember : User
     {
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Unique, "u_key")]
         private new long userId;
-        [DataField("musician_id")]
+        [DataField("musician_id", DataFieldKeys.Unique, "u_key")]
         private long musicianId;
         [DataField("member_date_ut")]
         private long memberDateRaw;
@@ -159,6 +159,20 @@ namespace BoxSocial.Musician
             loadItemInfo(typeof(MusicianMember), memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
+        public override bool CanEditItem()
+        {
+            if (userId == core.LoggedInMemberId)
+            {
+                return true;
+            }
+            if (Owner != null && Owner.CanEditItem())
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public List<Instrument> GetInstruments()

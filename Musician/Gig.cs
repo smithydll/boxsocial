@@ -54,6 +54,8 @@ namespace BoxSocial.Musician
         private float gigRating;
         [DataField("gig_ratings")]
         private long gigRatings;
+        [DataField("gig_title", 31)]
+        private string gigTitle;
         [DataField("gig_abstract", MYSQL_TEXT)]
         private string gigAbstract;
 
@@ -125,6 +127,18 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("gigAllAges", value);
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return gigTitle;
+            }
+            set
+            {
+                SetProperty("gigTitle", value);
             }
         }
 
@@ -261,7 +275,16 @@ namespace BoxSocial.Musician
                 new FieldValuePair("gig_abstract", gigAbstract),
                 new FieldValuePair("gig_all_ages", allAges));
 
-            return (Gig)item;
+            Gig gig = (Gig)item;
+
+            if (gig.TourId > 0)
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(Tour));
+                uQuery.AddField("tour_gigs", new QueryOperation("tour_gigs", QueryOperations.Addition, "1"));
+                uQuery.AddCondition("tour_id", gig.TourId);
+            }
+
+            return gig;
         }
 
         public static void Show(object sender, ShowMPageEventArgs e)

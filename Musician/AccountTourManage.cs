@@ -57,7 +57,7 @@ namespace BoxSocial.Musician
 
         void AccountTourManage_Load(object sender, EventArgs e)
         {
-            this.AddModeHandler("new", AccountTourManage_Edit);
+            this.AddModeHandler("add", AccountTourManage_Edit);
             this.AddModeHandler("edit", AccountTourManage_Edit);
         }
 
@@ -73,6 +73,7 @@ namespace BoxSocial.Musician
 
                 tourVariableCollection.Parse("ID", tour.Id.ToString());
                 tourVariableCollection.Parse("TITLE", tour.Title);
+                tourVariableCollection.Parse("YEAR", tour.StartYear.ToString());
                 tourVariableCollection.Parse("GIGS", tour.Gigs.ToString());
                 tourVariableCollection.Parse("U_EDIT", BuildUri("tour", "edit", tour.Id));
                 tourVariableCollection.Parse("U_ADD_GIG", BuildUri("gig", "add", tour.Id));
@@ -102,7 +103,7 @@ namespace BoxSocial.Musician
 
             switch (e.Mode)
             {
-                case "new":
+                case "add":
                     break;
                 case "edit":
                     long tourId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
@@ -123,17 +124,17 @@ namespace BoxSocial.Musician
                         yearSelectBox.SelectedKey = tour.StartYear.ToString();
                     }
 
-                    template.Parse("S_ID", "TRUE");
-                    template.Parse("EDIT", tour.Id.ToString());
+                    if (core.Http.Form["title"] != null)
+                    {
+                        titleTextBox.Value = core.Http.Form["title"];
+                    }
+                    yearSelectBox.SelectedKey = core.Functions.FormShort("year", short.Parse(yearSelectBox.SelectedKey)).ToString();
+
+                    template.Parse("S_ID", tour.Id.ToString());
+                    template.Parse("EDIT", "TRUE");
 
                     break;
             }
-
-            if (core.Http.Form["title"] != null)
-            {
-                titleTextBox.Value = core.Http.Form["title"];
-            }
-            yearSelectBox.SelectedKey = core.Functions.FormShort("year", short.Parse(yearSelectBox.SelectedKey)).ToString();
 
             template.Parse("S_TITLE", titleTextBox);
             template.Parse("S_YEAR", yearSelectBox);
@@ -149,14 +150,18 @@ namespace BoxSocial.Musician
 
             switch (e.Mode)
             {
-                case "new":
+                case "add":
                     try
                     {
                         Tour.Create(core, (Musician)Owner, title, year);
                     }
                     catch (InvalidTourException)
                     {
+                        return;
                     }
+
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Tour Added", "The tour has been saved in the database");
 
                     break;
                 case "edit":

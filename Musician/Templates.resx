@@ -172,4 +172,7 @@
   <data name="account_discography_album_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_discography_album_edit.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="account_members_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_members_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

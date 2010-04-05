@@ -62,6 +62,21 @@ namespace BoxSocial.Musician
         {
             SetTemplate("account_members_manage");
 
+            Musician musician = (Musician)Owner;
+            List<MusicianMember> members = musician.GetMembers();
+
+            foreach (MusicianMember member in members)
+            {
+                VariableCollection memberVariableCollection = template.CreateChild("member_list");
+
+                memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                memberVariableCollection.Parse("DATE_JOINED", core.Tz.DateTimeToString(member.GetMemberDate(core.Tz)));
+
+                if (member.Id == LoggedInMember.Id)
+                {
+                    memberVariableCollection.Parse("U_LEAVE", "{TODO}");
+                }
+            }
         }
     }
 }

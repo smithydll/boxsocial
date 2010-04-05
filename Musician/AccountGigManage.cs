@@ -64,6 +64,8 @@ namespace BoxSocial.Musician
 
         void AccountGigManage_Show(object sender, EventArgs e)
         {
+            SetTemplate("account_gigs_manage");
+
             List<Gig> gigs = null;
             long tourId = core.Functions.RequestLong("id", 0);
 
@@ -99,7 +101,11 @@ namespace BoxSocial.Musician
             TextBox venueTextBox = new TextBox("venue");
             venueTextBox.MaxLength = 63;
             /* */
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 31;
+            /* */
             TextBox abstractTextBox = new TextBox("abstract");
+            abstractTextBox.IsFormatted = true;
             abstractTextBox.Lines = 5;
             /* */
             CheckBox allAgesCheckBox = new CheckBox("all-ages");
@@ -137,6 +143,12 @@ namespace BoxSocial.Musician
             switch (e.Mode)
             {
                 case "add":
+                    long tourId = core.Functions.RequestLong("id", 0);
+
+                    if (tourSelectBox.ContainsKey(tourId.ToString()))
+                    {
+                        tourSelectBox.SelectedKey = tourId.ToString();
+                    }
                     break;
                 case "edit":
                     long gigId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
@@ -148,6 +160,7 @@ namespace BoxSocial.Musician
 
                         cityTextBox.Value = gig.City;
                         venueTextBox.Value = gig.Venue;
+                        titleTextBox.Value = gig.Title;
                         abstractTextBox.Value = gig.Abstract;
                         allAgesCheckBox.IsChecked = gig.AllAges;
                         dateYearsSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Year.ToString();
@@ -168,6 +181,7 @@ namespace BoxSocial.Musician
 
             template.Parse("S_CITY", cityTextBox);
             template.Parse("S_VENUE", venueTextBox);
+            template.Parse("S_TITLE", titleTextBox);
             template.Parse("S_ABSTRACT", abstractTextBox);
             template.Parse("S_ALLAGES", allAgesCheckBox);
             template.Parse("S_TOURS", tourSelectBox);

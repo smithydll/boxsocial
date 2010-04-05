@@ -102,6 +102,7 @@ namespace BoxSocial.Musician
                 template.Parse("S_TITLE", song.Title);
                 template.Parse("S_LYRICS", song.Lyrics);
                 template.Parse("S_MODE", "edit");
+                template.Parse("S_ID", song.Id.ToString());
 
                 core.Display.ParseLicensingBox(template, "S_LICENSE", song.LicenseId);
             }
@@ -125,7 +126,7 @@ namespace BoxSocial.Musician
 
                 try
                 {
-                    song = new Song(core, core.Functions.RequestLong("id", 0));
+                    song = new Song(core, core.Functions.FormLong("id", 0));
                 }
                 catch (InvalidSongException)
                 {
@@ -148,12 +149,14 @@ namespace BoxSocial.Musician
                 }
 
                 this.SetRedirectUri(BuildUri("songs"));
+                core.Display.ShowMessage("Song Saved", "The song has been updated in the database.");
             }
             else
             {
                 Song song = Song.Create(core, (Musician)Owner, core.Http.Form["title"], core.Http.Form["lyrics"], core.Functions.GetLicenseId());
 
                 this.SetRedirectUri(BuildUri("songs"));
+                core.Display.ShowMessage("Song Saved", "The song has been saved in the database.");
             }
         }
     }

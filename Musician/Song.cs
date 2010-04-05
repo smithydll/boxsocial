@@ -156,6 +156,22 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Song(Core core, Musician musician, DataRow songRow)
+            : base(core)
+        {
+            this.musician = musician;
+            ItemLoad += new ItemLoadHandler(Song_ItemLoad);
+
+            try
+            {
+                loadItemInfo(songRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidSongException();
+            }
+        }
+
         void Song_ItemLoad()
         {
         }

@@ -147,6 +147,15 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_members_manage {
+            get {
+                return ResourceManager.GetString("account_members_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Musician Profile&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
@@ -265,7 +274,7 @@ namespace BoxSocial.Musician {
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
-        ///	&lt;td&gt;{song_list.TITLE}&lt;/td&gt;
+        ///	&lt;td&gt;{tour_list.TITLE}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_GIGS}&quot;&gt;{tour_list.GIGS}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_ADD_GIG}&quot;&gt;Add Gig&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;&lt;/td&gt;

@@ -96,7 +96,15 @@ namespace BoxSocial.Musician
         {
             AuthoriseRequestSid();
 
+            MusicianMember member = new MusicianMember(core, (Musician)Owner, LoggedInMember);
 
+            member.StageName = core.Http.Form["stage-name"];
+            member.Biography = core.Http.Form["biography"];
+
+            member.Update(typeof(MusicianMember));
+
+            SetRedirectUri(BuildUri());
+            core.Display.ShowMessage("Profile Updated", "Your musician member profile has been updated.");
         }
     }
 }

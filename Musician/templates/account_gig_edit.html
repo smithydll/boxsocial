@@ -1,1 +1,29 @@
-﻿
+﻿<h3>Edit Gig</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Edit Gig</legend>
+		<dl>
+			<dt><label for="title">Gig Title</label></dt>
+			<dd>{S_TITLE}</dd>
+			<dt><label for="tour">Gig Tour</label></dt>
+			<dd>{S_TOURS}</dd>
+			<dt><label for="city">Gig City</label></dt>
+			<dd>{S_CITY}</dd>
+			<dt><label for="venue">Gig Venue</label></dt>
+			<dd>{S_VENUE}</dd>
+			<dt><label for="abstract">Gig Description</label></dt>
+			<dd>{S_ABSTRACT}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="music" />
+		<input type="hidden" name="sub" value="gig" />
+		<!-- IF EDIT -->
+		<input type="hidden" name="id" value="{S_ID}" />
+		<input type="hidden" name="mode" value="edit" />
+		<!-- ELSE -->
+		<input type="hidden" name="mode" value="add" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

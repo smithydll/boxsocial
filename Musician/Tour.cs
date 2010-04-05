@@ -133,6 +133,22 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Tour(Core core, Musician musician, DataRow tourRow)
+            : base(core)
+        {
+            this.musician = musician;
+            ItemLoad += new ItemLoadHandler(Tour_ItemLoad);
+
+            try
+            {
+                loadItemInfo(tourRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTourException();
+            }
+        }
+
         void Tour_ItemLoad()
         {
         }

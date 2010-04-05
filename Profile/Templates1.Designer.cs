@@ -344,6 +344,28 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Profile Permissions&lt;/h3&gt;
+        ///&lt;p&gt;You can make your profile private by unticking the `Other` box for read permissions.&lt;/p&gt;
+        ///&lt;p&gt;To have your profile featured on the home page, you need to make sure that your profile can be read by Friends, Family, Group and Other.&lt;/p&gt;
+        ///
+        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Profile Permissions&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label&gt;Permissions&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				{S_PROFILE_PERMS}
+        ///			&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; valu [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_permissions {
+            get {
+                return ResourceManager.GetString("account_permissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;My Phone Number&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;

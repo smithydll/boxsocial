@@ -225,6 +225,7 @@ namespace BoxSocial.Musician
             if (sender is MPage)
             {
                 //UserGroup.Show(core, (MPage)sender);
+                Musician.ShowProfile(sender, new ShowMPageEventArgs((MPage)sender));
             }
         }
 

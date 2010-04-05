@@ -116,6 +116,7 @@
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
     <Content Include="templates\account_discography.html" />
+    <Content Include="templates\account_discography_album_edit.html" />
     <Content Include="templates\account_gigs_manage.html" />
     <Content Include="templates\account_gig_edit.html" />
     <Content Include="templates\account_member_profile.html" />
@@ -145,4 +146,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Musician.en.resx"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

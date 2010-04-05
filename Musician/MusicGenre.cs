@@ -34,7 +34,7 @@ namespace BoxSocial.Musician
     {
         [DataField("genre_id", DataFieldKeys.Primary)]
         private long genreId;
-        [DataField("genre_slug", DataFieldKeys.Unique)]
+        [DataField("genre_slug", DataFieldKeys.Unique, 31)]
         private string genreSlug;
         [DataField("genre_is_sub")]
         private bool isSubGenre;

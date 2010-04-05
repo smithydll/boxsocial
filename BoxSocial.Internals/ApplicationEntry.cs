@@ -848,6 +848,7 @@ namespace BoxSocial.Internals
                 foreach (string slug in slugs.Keys)
                 {
                     Page page = new Page(core, viewer, slug, "");
+                    page.Delete();
                 }
 
                 DeleteQuery dQuery = new DeleteQuery("primitive_apps");

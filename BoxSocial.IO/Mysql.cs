@@ -41,6 +41,7 @@ namespace BoxSocial.IO
         private bool inTransaction = false;
 
         public StringBuilder QueryList = new StringBuilder();
+        public StringBuilder ErrorList = new StringBuilder();
 
         public long LastQueryRows
         {
@@ -240,25 +241,27 @@ namespace BoxSocial.IO
             }
             catch (System.Exception ex)
             {
-                try
+                ErrorList.AppendLine("Error in SQL statement:\n" + sqlquery + "\n\n" + ex.ToString() + "\n--------------------------------------------------------------------------------\n");
+
+                if (inTransaction)
                 {
-                    if (inTransaction)
+                    try
                     {
                         sqlTransaction.Rollback();
                     }
-                    else
+                    catch (MySql.Data.MySqlClient.MySqlException)
                     {
-                        throw new System.Exception(sqlquery + "\n\n" + ex.ToString());
+                        return TRANSACTION_ROLLBACK_FAIL; // failed rollback
                     }
+                    finally
+                    {
+                    }
+                    return TRANSACTION_ROLLBACK; // rollback
                 }
-                catch (MySql.Data.MySqlClient.MySqlException)
+                else
                 {
-                    return TRANSACTION_ROLLBACK_FAIL; // failed rollback
+                    throw new System.Exception(sqlquery + "\n\n" + ex.ToString());
                 }
-                finally
-                {
-                }
-                return TRANSACTION_ROLLBACK; // rollback
             }
 
             timer.Stop();

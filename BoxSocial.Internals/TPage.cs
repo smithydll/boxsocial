@@ -347,7 +347,7 @@ namespace BoxSocial.Internals
                     {
                         //HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                     }
-                    HttpContext.Current.Response.Write(db.QueryList.ToString());
+                    //HttpContext.Current.Response.Write(db.QueryList.ToString());
                 }
 
                 if (db != null)

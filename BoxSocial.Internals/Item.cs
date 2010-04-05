@@ -438,6 +438,39 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string GetParentField(Type parentType, Type childType)
+        {
+            string returnValue = null;
+
+            List<DataFieldInfo> fields = GetFields(childType);
+
+            foreach (DataFieldInfo field in fields)
+            {
+                if (field.ParentType == parentType)
+                {
+                    if (string.IsNullOrEmpty(returnValue))
+                    {
+                        returnValue = field.Name;
+                    }
+                    else
+                    {
+                        // TODO: create a new exception
+                        throw new Exception("Multiple children types.");
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(returnValue))
+            {
+                return returnValue;
+            }
+            else
+            {
+                // TODO: Exception
+                throw new Exception("No parent of type " + childType.Name + " found.");
+            }
+        }
+
         public SelectQuery GetSelectQueryStub()
         {
             return GetSelectQueryStub(this.GetType());
@@ -759,7 +792,8 @@ namespace BoxSocial.Internals
                 if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     sQuery.AddFields(field.Name);
-                    sQuery.AddCondition(field.Name, ConditionEquality.NotEqual, GetFieldValue(field, this));
+                    //sQuery.AddCondition(field.Name, ConditionEquality.NotEqual, GetFieldValue(field, this));
+                    sQuery.AddCondition(field.Name, GetFieldValue(field, this));
                     uQuery.AddCondition(field.Name, GetFieldValue(field, this));
                     foundKey = true;
                 }
@@ -829,6 +863,8 @@ namespace BoxSocial.Internals
 
                 if (uniqueness != 1)
                 {
+                                    HttpContext.Current.Response.Write(sQuery);
+                                    HttpContext.Current.Response.End();
                     throw new RecordNotUniqueException();
                 }
             }

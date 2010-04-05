@@ -146,8 +146,8 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string module = (!String.IsNullOrEmpty(Request.Form["module"])) ? Request.Form["module"] : Request.QueryString["module"];
-            string submodule = (!String.IsNullOrEmpty(Request.Form["sub"])) ? Request.Form["sub"] : Request.QueryString["sub"];
+            string module = (!String.IsNullOrEmpty(core.Http.Form["module"])) ? core.Http.Form["module"] : core.Http.Query["module"];
+            string submodule = (!String.IsNullOrEmpty(core.Http.Form["sub"])) ? core.Http.Form["sub"] : core.Http.Query["sub"];
 
             module = (module == null) ? "" : module;
             module = (module == "") ? "dashboard" : module;
@@ -265,7 +265,14 @@ namespace BoxSocial.FrontEnd
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core);
+                    try
+                    {
+                        asm.ModuleVector(core);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.ToString() + "\n\n\n" + db.ErrorList + "\n\n" + db.QueryList);
+                    }
                 }
             }
 

@@ -1,0 +1,19 @@
+<h3>Profile Permissions</h3>
+<p>You can make your profile private by unticking the `Other` box for read permissions.</p>
+<p>To have your profile featured on the home page, you need to make sure that your profile can be read by Friends, Family, Group and Other.</p>
+
+<form action="/account/" method="post">
+	<fieldset>
+		<legend>Profile Permissions</legend>
+		<dl>
+			<dt><label>Permissions</label></dt>
+			<dd>
+				{S_PROFILE_PERMS}
+			</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="permissions" />
+	</fieldset>
+</form>

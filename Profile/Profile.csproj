@@ -123,6 +123,7 @@
     <Content Include="templates\account_friend_invite.html" />
     <Content Include="templates\account_lifestyle.html" />
     <Content Include="templates\account_name.html" />
+    <Content Include="templates\account_permissions.html" />
     <Content Include="templates\account_phone_edit.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_style.html" />

@@ -322,6 +322,26 @@ namespace BoxSocial.Musician
             }
         }
 
+        public static SelectQuery GetSelectQueryStub(MusicianLoadOptions loadOptions)
+        {
+            SelectQuery query = new SelectQuery(GetTable(typeof(Musician)));
+            query.AddFields(Musician.GetFieldsPrefixed(typeof(Musician)));
+
+            if ((loadOptions & MusicianLoadOptions.Icon) == MusicianLoadOptions.Icon)
+            {
+                query.AddJoin(JoinTypes.Left, new DataField(typeof(Musician), "musician_icon"), new DataField("gallery_items", "gallery_item_id"));
+                query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            }
+
+            return query;
+        }
+
+        public static SelectQuery Musician_GetSelectQueryStub()
+        {
+            return GetSelectQueryStub(MusicianLoadOptions.All);
+        }
+
         public List<MusicianMember> GetMembers()
         {
             List<MusicianMember> members = new List<MusicianMember>();
@@ -439,7 +459,7 @@ namespace BoxSocial.Musician
             iQuery.AddField("musician_name", title);
             iQuery.AddField("musician_slug", slug);
             iQuery.AddField("musician_name_first", title.ToLower()[0]);
-            iQuery.AddField("musician_reg_id", session.IPAddress.ToString());
+            iQuery.AddField("musician_reg_ip", session.IPAddress.ToString());
             iQuery.AddField("musician_reg_date_ut", UnixTime.UnixTimeStamp());
 
             long musicianId = db.Query(iQuery);

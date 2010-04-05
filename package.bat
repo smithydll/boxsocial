@@ -41,10 +41,12 @@ copy "%1"BoxSocial.IO\bin\Release\BoxSocial.IO.dll "%1"Package\
 copy "%1"BoxSocial.IO\bin\Release\BoxSocial.IO.pdb "%1"Package\
 copy "%1"Groups\bin\Release\Groups.dll "%1"Package\
 copy "%1"Groups\bin\Release\Groups.pdb "%1"Package\
+copy "%1"Groups\languages\Groups.en.resources "%1"Package\
 copy "%1"Networks\bin\Release\Networks.dll "%1"Package\
 copy "%1"Networks\bin\Release\Networks.pdb "%1"Package\
 copy "%1"Musician\bin\Release\Musician.dll "%1"Package\
 copy "%1"Musician\bin\Release\Musician.pdb "%1"Package\
+copy "%1"Musician\languages\Musician.en.resources "%1"Package\
 copy "%1"BoxSocial.Internals\bin\Release\BoxSocial.Internals.dll "%1"Package\
 copy "%1"BoxSocial.Internals\bin\Release\BoxSocial.Internals.pdb "%1"Package\
 copy "%1"BoxSocial.Internals\languages\Internals.en.resources "%1"Package\

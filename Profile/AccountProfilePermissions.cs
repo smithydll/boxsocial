@@ -62,7 +62,7 @@ namespace BoxSocial.Applications.Profile
         {
 			Save(new EventHandler(AccountProfilePermissions_Save));
 			
-            template.SetTemplate("account_permissions.html");
+            template.SetTemplate("Profile", "account_permissions");
 
             /*List<string> permissions = new List<string>();
             permissions.Add("Can Read");

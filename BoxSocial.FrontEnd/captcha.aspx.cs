@@ -370,13 +370,13 @@ namespace BoxSocial.FrontEnd
                                     0, 1, 1, 1, 0};
                     break;
                 case '9':
-                    b = new byte[] {0, 1, 1, 1, 1,
+                    b = new byte[] {0, 1, 1, 1, 0,
                                     1, 0, 0, 0, 1,
                                     1, 0, 0, 0, 1,
                                     0, 1, 1, 1, 1,
                                     0, 0, 0, 0, 1,
                                     0, 0, 0, 0, 1,
-                                    0, 0, 0, 0, 1};
+                                    0, 0, 0, 1, 0};
                     break;
                 case 'A':
                     b = new byte[] {0, 1, 1, 1, 0,

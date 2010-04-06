@@ -48,6 +48,7 @@
     <Compile Include="AccountGigManage.cs" />
     <Compile Include="AccountMembersManage.cs" />
     <Compile Include="AccountMusician.cs" />
+    <Compile Include="AccountMyMusicians.cs" />
     <Compile Include="AccountProfileManage.cs" />
     <Compile Include="AccountSongsManage.cs" />
     <Compile Include="AccountTourManage.cs" />
@@ -121,6 +122,7 @@
     <Content Include="templates\account_gig_edit.html" />
     <Content Include="templates\account_members_manage.html" />
     <Content Include="templates\account_member_profile.html" />
+    <Content Include="templates\account_my_musicians.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_songs.html" />
     <Content Include="templates\account_song_edit.html" />

@@ -695,7 +695,7 @@ namespace BoxSocial.Internals
         {
             if (!HasInstalled(owner))
             {
-                Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+                Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
 
                 Dictionary<string, string> slugs = newApplication.PageSlugs;
 

@@ -1,0 +1,25 @@
+﻿<h3>Manage Musician Memberships</h3>
+
+<a href="{U_REGISTER_MUSICIAN}">Register Musician</a>
+
+<table style="width: 100%">
+<tr>
+	<th></th>
+	<th>Fans</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN musician_list -->
+<!-- IF musician_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{musician_list.U_MUSICIAN}">{musician_list.DISPLAY_NAME}</a></td>
+	<td>{musician_list.FANS}</td>
+	<td><a href="{musician_list.U_MANAGE}">{L_MANAGE}</a></td>
+	<td><a href="{musician_list.U_LEAVE}">{L_LEAVE}</a>
+  </td>
+</tr>
+<!-- END musician_list -->
+</table>

@@ -680,7 +680,7 @@ namespace BoxSocial.Internals
         {
             Database db = core.Db;
 
-            ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
+            //ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = User.GetMemberId(loggedInMember);
 
             SelectQuery query = Page.GetSelectQueryStub(typeof(Page));

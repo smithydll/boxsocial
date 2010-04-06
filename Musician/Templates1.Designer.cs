@@ -79,7 +79,24 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Edit Gig&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Edit Gig&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;title&quot;&gt;Gig Title&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_TITLE}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;tour&quot;&gt;Gig Tour&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_TOURS}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;city&quot;&gt;Gig City&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_CITY}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;venue&quot;&gt;Gig Venue&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_VENUE}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;abstract&quot;&gt;Gig Description&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_ABSTRACT}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;inpu [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_gig_edit {
             get {
@@ -147,11 +164,43 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Group Members&lt;/h3&gt;
+        ///
+        ///&lt;a href=&quot;{U_ADD_MEMBER}&quot;&gt;Add Member&lt;/a&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Title&lt;/th&gt;
+        ///	&lt;th&gt;Joined&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN member_list --&gt;
+        ///&lt;!-- IF member_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{member_list.DISPLAY_NAME}&lt;/td&gt;
+        ///	&lt;td&gt;{member_list.DATE_JOINED}&lt;/td&gt;
+        ///	&lt;td&gt;
+        ///    &lt;!-- IF member_list.U_LEAVE --&gt;
+        ///    &lt;a href=&quot;{member_list.U_LEAVE}&quot;&gt;{L_LEAVE}&lt;/a&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    {L_LEAVE}
+        ///    &lt;!-- EN [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_members_manage {
             get {
                 return ResourceManager.GetString("account_members_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_my_musicians {
+            get {
+                return ResourceManager.GetString("account_my_musicians", resourceCulture);
             }
         }
         
@@ -267,6 +316,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;Gigs&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
+        ///  &lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN tour_list --&gt;
         ///&lt;!-- IF tour_list.INDEX_EVEN --&gt;
@@ -275,10 +325,10 @@ namespace BoxSocial.Musician {
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
         ///	&lt;td&gt;{tour_list.TITLE}&lt;/td&gt;
+        ///  &lt;td&gt;{tour_list.YEAR}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_GIGS}&quot;&gt;{tour_list.GIGS}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_ADD_GIG}&quot;&gt;Add Gig&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a href=&quot;{tou [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_tour_manage {
             get {

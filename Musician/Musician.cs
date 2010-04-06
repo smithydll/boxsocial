@@ -111,6 +111,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public long Fans
+        {
+            get
+            {
+                return fans;
+            }
+            set
+            {
+                SetProperty("fans", value);
+            }
+        }
+
         public string Biography
         {
             get

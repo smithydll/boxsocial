@@ -111,6 +111,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public long Members
+        {
+            get
+            {
+                return members;
+            }
+            set
+            {
+                SetProperty("members", value);
+            }
+        }
+
         public long Fans
         {
             get
@@ -449,6 +461,16 @@ namespace BoxSocial.Musician
         public Song convertToSong(Item input)
         {
             return (Song)input;
+        }
+
+        public List<Instrument> GetInstruments()
+        {
+            return getSubItems(typeof(Instrument), true).ConvertAll<Instrument>(new Converter<Item, Instrument>(convertToInstrument));
+        }
+
+        public Instrument convertToInstrument(Item input)
+        {
+            return (Instrument)input;
         }
 
         public static Musician Create(Core core, string title, string slug)
@@ -1203,6 +1225,35 @@ namespace BoxSocial.Musician
         internal static void ShowProfile(object sender, ShowMPageEventArgs e)
         {
             e.Template.SetTemplate("Musician", "viewmusician");
+
+            e.Template.Parse("MUSICIAN_DISPLAY_NAME", e.Page.Musician.DisplayName);
+            e.Template.Parse("DATE_JOINED", e.Core.Tz.DateTimeToString(e.Page.Musician.GetRegisteredDate(e.Core.Tz)));
+            e.Template.Parse("BIOGRAPHY", e.Page.Musician.Biography);
+            e.Template.Parse("U_MUSICIAN", e.Page.Musician.Uri);
+            //e.Template.Parse("U_BECOME_FAN", e.Page.Musician.BecomeFanUri);
+
+            e.Template.Parse("U_MUSICIAN_ACCOUNT", e.Core.Uri.AppendSid(e.Page.Musician.AccountUriStub));
+
+            List<Instrument> instruments = e.Page.Musician.GetInstruments();
+
+            foreach (Instrument instrument in instruments)
+            {
+                VariableCollection instrumentVariableCollection = e.Template.CreateChild("instrument_list");
+
+                instrumentVariableCollection.Parse("NAME", instrument.Name);
+            }
+
+            if (e.Page.Musician.Members > 1)
+            {
+                e.Template.Parse("MEMBERS_PANE", "TRUE");
+
+                List<MusicianMember> members = e.Page.Musician.GetMembers();
+
+                foreach (MusicianMember member in members)
+                {
+                    VariableCollection memberVariableCollection = e.Template.CreateChild("member_list");
+                }
+            }
         }
     }
 

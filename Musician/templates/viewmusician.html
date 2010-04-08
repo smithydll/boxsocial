@@ -1,6 +1,30 @@
 ﻿<!-- INCLUDE page_header.html -->
 
-<h2>Musician</h2>
+<h2><a href="{U_MUSICIAN}">{MUSICIAN_DISPLAY_NAME}</a></h2>
+
+<div id="pane-profile">
+  <h3><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h3>
+  <dl>
+    <dt>{L_JOINED}:</dt>
+    <dd>{DATE_JOINED}</dd>
+  </dl>
+  <!-- IF U_BECOME_FAN -->
+			<p><span id="fan-musiciain" class="post-button"><a href="{U_BECOME_FAN}">Become a Fan</a></span></p>
+			<!-- ENDIF -->
+  <!-- IF U_MUSICIAN_ACCOUNT -->
+			<p><span id="account-musician" class="post-button"><a href="{U_MUSICIAN_ACCOUNT}">Musician Account Panel</a></span></p>
+			<!-- ENDIF -->
+</div>
+<!-- IF MEMBERS_PANE -->
+<div class="pane">
+  <h3>{L_GROUP_MEMBERS}</h3>
+  <ul>
+    <!-- BEGIN member_list -->
+    <li></li>
+    <!-- END member_list -->
+  </ul>
+</div>
+<!-- ENDIF -->
 
 <!-- IF BIOGRAPHY -->
 <p>{BIOGRAPHY}</p>

@@ -3,7 +3,7 @@
 <h2><a href="{U_MUSICIAN}">{MUSICIAN_DISPLAY_NAME}</a></h2>
 
 <div id="pane-profile">
-  <h3><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h3>
+  <h3><a href="{U_MUSICIAN}">{MUSICIAN_DISPLAY_NAME}</a></h3>
   <dl>
     <dt>{L_JOINED}:</dt>
     <dd>{DATE_JOINED}</dd>
@@ -20,23 +20,25 @@
   <h3>{L_GROUP_MEMBERS}</h3>
   <ul>
     <!-- BEGIN member_list -->
-    <li></li>
+    <li><a href="{member_list.U_MEMBER}">{member_list.STAGE_NAME}</a></li>
     <!-- END member_list -->
   </ul>
 </div>
 <!-- ENDIF -->
+	<div id="pane-profile">
+		<div id="pane-pages" class="pane">
+			<h3>Pages</h3>
+			<ul>
+				{PAGE_LIST}
+			</ul>
+		</div>
 
 <!-- IF BIOGRAPHY -->
 <p>{BIOGRAPHY}</p>
 <!-- ENDIF -->
 
-<!-- IF instrument_list -->
-<h3>{L_INSTRUMENTS}</h3>
-<ul>
-  <!-- BEGIN instrument_list -->
-  <li>{instrument_list.NAME}</li>
-  <!-- END instrument_list -->
-</ul>
-<!-- ENDIF -->
+<!-- BEGIN app_panel -->
+{app_panel.BODY}
+<!-- END app_panel -->
 
 <!-- INCLUDE page_footer.html -->

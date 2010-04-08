@@ -1,0 +1,18 @@
+﻿<!-- INCLUDE page_header.html -->
+
+<h2><a href="{U_MEMBER}">{MEMBER_DISPLAY_NAME}</a></h2>
+
+<!-- IF BIOGRAPHY -->
+<p>{BIOGRAPHY}</p>
+<!-- ENDIF -->
+
+<!-- IF instrument_list -->
+<h3>{L_INSTRUMENTS}</h3>
+<ul>
+  <!-- BEGIN instrument_list -->
+  <li>{instrument_list.NAME}</li>
+  <!-- END instrument_list -->
+</ul>
+<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

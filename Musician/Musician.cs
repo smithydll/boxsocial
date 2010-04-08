@@ -463,16 +463,6 @@ namespace BoxSocial.Musician
             return (Song)input;
         }
 
-        public List<Instrument> GetInstruments()
-        {
-            return getSubItems(typeof(Instrument), true).ConvertAll<Instrument>(new Converter<Item, Instrument>(convertToInstrument));
-        }
-
-        public Instrument convertToInstrument(Item input)
-        {
-            return (Instrument)input;
-        }
-
         public static Musician Create(Core core, string title, string slug)
         {
             Mysql db = core.Db;
@@ -1226,6 +1216,15 @@ namespace BoxSocial.Musician
         {
             e.Template.SetTemplate("Musician", "viewmusician");
 
+            if (!e.Page.Musician.Access.Can("VIEW"))
+            {
+                e.Core.Functions.Generate403();
+                return;
+            }
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.Musician, true);
+
             e.Template.Parse("MUSICIAN_DISPLAY_NAME", e.Page.Musician.DisplayName);
             e.Template.Parse("DATE_JOINED", e.Core.Tz.DateTimeToString(e.Page.Musician.GetRegisteredDate(e.Core.Tz)));
             e.Template.Parse("BIOGRAPHY", e.Page.Musician.Biography);
@@ -1233,15 +1232,6 @@ namespace BoxSocial.Musician
             //e.Template.Parse("U_BECOME_FAN", e.Page.Musician.BecomeFanUri);
 
             e.Template.Parse("U_MUSICIAN_ACCOUNT", e.Core.Uri.AppendSid(e.Page.Musician.AccountUriStub));
-
-            List<Instrument> instruments = e.Page.Musician.GetInstruments();
-
-            foreach (Instrument instrument in instruments)
-            {
-                VariableCollection instrumentVariableCollection = e.Template.CreateChild("instrument_list");
-
-                instrumentVariableCollection.Parse("NAME", instrument.Name);
-            }
 
             if (e.Page.Musician.Members > 1)
             {
@@ -1252,6 +1242,10 @@ namespace BoxSocial.Musician
                 foreach (MusicianMember member in members)
                 {
                     VariableCollection memberVariableCollection = e.Template.CreateChild("member_list");
+
+                    memberVariableCollection.Parse("STAGE_NAME", member.StageName);
+                    memberVariableCollection.Parse("U_MEMBER", member.Uri);
+                    memberVariableCollection.Parse("I_MEMBER", member.UserTile);
                 }
             }
         }

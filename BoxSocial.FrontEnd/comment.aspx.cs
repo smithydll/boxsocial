@@ -242,17 +242,23 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-				ItemType itemType = new ItemType(core, itemTypeId);
-
+                // This isn't the most elegant fix, but it works
                 ApplicationEntry ae = null;
-                // This isn't the most elegant fix, but it should work
-                if (itemType.ApplicationId == 0)
+                if (core.IsPrimitiveType(itemTypeId))
                 {
                     ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
                 }
                 else
                 {
-                    ae = new ApplicationEntry(core, itemType.ApplicationId);
+                    ItemType itemType = new ItemType(core, itemTypeId);
+                    if (itemType.ApplicationId == 0)
+                    {
+                        ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                    }
+                    else
+                    {
+                        ae = new ApplicationEntry(core, itemType.ApplicationId);
+                    }
                 }
 
                 BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);

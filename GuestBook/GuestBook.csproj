@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -81,6 +81,10 @@
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Musician\Musician.csproj">
+      <Project>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</Project>
+      <Name>Musician</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networks\Networks.csproj">
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>

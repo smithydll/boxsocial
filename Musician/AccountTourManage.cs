@@ -96,7 +96,12 @@ namespace BoxSocial.Musician
             /* */
             SelectBox yearSelectBox = new SelectBox("year");
 
-            for (int i = 1990; i < DateTime.UtcNow.Year + 5; i++)
+            /* */
+            TextBox abstractTextBox = new TextBox("abstract");
+            abstractTextBox.Lines = 5;
+            abstractTextBox.IsFormatted = true;
+
+            for (int i = 1980; i < DateTime.UtcNow.Year + 5; i++)
             {
                 yearSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
@@ -104,6 +109,7 @@ namespace BoxSocial.Musician
             switch (e.Mode)
             {
                 case "add":
+                    yearSelectBox.SelectedKey = core.Tz.Now.Year.ToString();
                     break;
                 case "edit":
                     long tourId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
@@ -118,6 +124,7 @@ namespace BoxSocial.Musician
                     }
 
                     titleTextBox.Value = tour.Title;
+                    abstractTextBox.Value = tour.TourAbstract;
 
                     if (yearSelectBox.ContainsKey(tour.StartYear.ToString()))
                     {
@@ -137,6 +144,7 @@ namespace BoxSocial.Musician
             }
 
             template.Parse("S_TITLE", titleTextBox);
+            template.Parse("S_ABSTRACT", abstractTextBox);
             template.Parse("S_YEAR", yearSelectBox);
 
             SaveItemMode(AccountTourManage_EditSave, tour);
@@ -147,13 +155,14 @@ namespace BoxSocial.Musician
             AuthoriseRequestSid();
             string title = core.Http.Form["title"];
             short year = core.Functions.FormShort("year", (short)DateTime.UtcNow.Year);
+            string tourAbstract = core.Http.Form["abstract"];
 
             switch (e.Mode)
             {
                 case "add":
                     try
                     {
-                        Tour.Create(core, (Musician)Owner, title, year);
+                        Tour.Create(core, (Musician)Owner, title, year, tourAbstract);
                     }
                     catch (InvalidTourException)
                     {
@@ -174,6 +183,7 @@ namespace BoxSocial.Musician
 
                     tour.Title = title;
                     tour.StartYear = year;
+                    tour.TourAbstract = tourAbstract;
 
                     tour.Update();
                     break;

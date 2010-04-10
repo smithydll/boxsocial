@@ -662,7 +662,7 @@ namespace BoxSocial.Applications.Gallery
         protected DataRowCollection GetGalleryDataRows(Core core)
         {
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
+            //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
 
             SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
@@ -731,7 +731,7 @@ namespace BoxSocial.Applications.Gallery
         {
             db = core.Db;
 
-            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
+            //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
 
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));

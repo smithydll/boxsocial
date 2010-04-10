@@ -243,6 +243,19 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
+        public ushort FormUShort(string var, ushort defaultValue)
+        {
+            ushort outValue = defaultValue;
+            try
+            {
+                outValue = ushort.Parse(core.Http.Form[var]);
+            }
+            catch
+            {
+            }
+            return outValue;
+        }
+
         public int FormInt(string var, int defaultValue)
         {
             int outValue = defaultValue;
@@ -685,15 +698,17 @@ namespace BoxSocial.Internals
         {
             switch (date.ToLower())
             {
+                case "today":
+                    return core.Tz.Now.ToString("dd/MM/yyyy hh:mm:ss");
                 case "tomorrow":
-                    return core.Tz.DateTimeToString(core.Tz.Now.AddDays(1), false);
+                    return core.Tz.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm:ss");
                 case "next week":
-                    return core.Tz.DateTimeToString(core.Tz.Now.AddDays(7), false);
+                    return core.Tz.Now.AddDays(7).ToString("dd/MM/yyyy hh:mm:ss");
                 case "two weeks time":
-                    return core.Tz.DateTimeToString(core.Tz.Now.AddDays(14), false);
+                    return core.Tz.Now.AddDays(14).ToString("dd/MM/yyyy hh:mm:ss");
             }
 
-            return core.Tz.DateTimeToString(core.Tz.Now, false);
+            return core.Tz.Now.ToString("dd/MM/yyyy hh:mm:ss");
         }
 
         public static int ParseNumber(string numeral)

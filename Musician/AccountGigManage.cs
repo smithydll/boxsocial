@@ -118,6 +118,14 @@ namespace BoxSocial.Musician
             SelectBox dateMonthsSelectBox = new SelectBox("date-month");
             SelectBox dateDaysSelectBox = new SelectBox("date-day");
 
+            /* */
+            DateTimePicker dateDateTimePicker = new DateTimePicker(core, "date");
+            dateDateTimePicker.ShowTime = true;
+            dateDateTimePicker.ShowSeconds = false;
+
+            /* */
+            SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
+
             for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(-13).Year; i++)
             {
                 dateYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
@@ -149,6 +157,10 @@ namespace BoxSocial.Musician
                     {
                         tourSelectBox.SelectedKey = tourId.ToString();
                     }
+
+                    dateDateTimePicker.Value = core.Tz.Now;
+                    timezoneSelectBox.SelectedKey = core.Tz.TimeZoneCode.ToString();
+
                     break;
                 case "edit":
                     long gigId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
@@ -166,6 +178,9 @@ namespace BoxSocial.Musician
                         dateYearsSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Year.ToString();
                         dateMonthsSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Month.ToString();
                         dateDaysSelectBox.SelectedKey = gig.GetTime(gig.TimeZone).Day.ToString();
+
+                        dateDateTimePicker.Value = gig.GetTime(gig.TimeZone);
+                        timezoneSelectBox.SelectedKey = gig.TimeZone.TimeZoneCode.ToString();
 
                         if (tourSelectBox.ContainsKey(gig.TourId.ToString()))
                         {
@@ -185,6 +200,8 @@ namespace BoxSocial.Musician
             template.Parse("S_ABSTRACT", abstractTextBox);
             template.Parse("S_ALLAGES", allAgesCheckBox);
             template.Parse("S_TOURS", tourSelectBox);
+            template.Parse("S_DATE", dateDateTimePicker);
+            template.Parse("S_TIMEZONE", timezoneSelectBox);
 
             SaveMode(AccountGigManage_EditSave);
         }
@@ -198,8 +215,11 @@ namespace BoxSocial.Musician
             string gigAbstract = core.Http.Form["abstract"];
             long tourId = core.Functions.FormLong("tour", 0);
             bool allAges = true;
+            ushort timezone = core.Functions.FormUShort("timezone", 1);
+            long time = DateTimePicker.FormDate(core, "date", timezone);
 
             Tour tour = null;
+            Gig gig = null;
 
             if (tourId > 0)
             {
@@ -229,15 +249,13 @@ namespace BoxSocial.Musician
                 case "add":
 
                     // TODO;
-                    //Gig gig = Gig.Create(core, (Musician)Owner, tour, time, timezone, city, venue, gigAbstract, allAges);
+                    gig = Gig.Create(core, (Musician)Owner, tour, time, timezone, city, venue, gigAbstract, allAges);
 
                     core.Display.ShowMessage("Gig created", "Your gig has been created");
                     SetRedirectUri(BuildUri());
                     break;
                 case "edit":
                     long gigId = core.Functions.FormLong("id", 0);
-
-                    Gig gig = null;
 
                     try
                     {

@@ -42,6 +42,8 @@ namespace BoxSocial.Musician
         private long tourGigCount;
         [DataField("tour_year")]
         private short tourStartYear;
+        [DataField("tour_abstract", MYSQL_MEDIUM_TEXT)]
+        private string tourAbstract;
 
         private Musician musician;
 
@@ -85,6 +87,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public string TourAbstract
+        {
+            get
+            {
+                return tourAbstract;
+            }
+            set
+            {
+                SetProperty("tourAbstract", value);
+            }
+        }
+
         public Musician Musician
         {
             get
@@ -111,6 +125,22 @@ namespace BoxSocial.Musician
             try
             {
                 LoadItem(tourId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTourException();
+            }
+        }
+
+        public Tour(Core core, Musician musician, long tourId)
+            : base(core)
+        {
+            this.musician = musician;
+            ItemLoad += new ItemLoadHandler(Tour_ItemLoad);
+
+            try
+            {
+                LoadItem(tourId, new FieldValuePair("musician_id", musician.Id));
             }
             catch (InvalidItemException)
             {
@@ -165,7 +195,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                throw new NotImplementedException();
+                return "";
             }
         }
 
@@ -179,12 +209,13 @@ namespace BoxSocial.Musician
             return (Gig)input;
         }
 
-        public static Tour Create(Core core, Musician owner, string title, short year)
+        public static Tour Create(Core core, Musician owner, string title, short year, string tourAbstract)
         {
             // TODO: fix this
             Item item = Item.Create(core, typeof(Tour), new FieldValuePair("musician_id", owner.Id),
                 new FieldValuePair("tour_title", title),
-                new FieldValuePair("tour_year", year));
+                new FieldValuePair("tour_year", year),
+                new FieldValuePair("tour_abstract", tourAbstract));
 
             return (Tour)item;
         }
@@ -206,6 +237,9 @@ namespace BoxSocial.Musician
                 VariableCollection tourVariableCollection = page.template.CreateChild("tour_list");
 
                 tourVariableCollection.Parse("ID", tour.Id.ToString());
+                tourVariableCollection.Parse("TITLE", tour.Title);
+                tourVariableCollection.Parse("YEAR", tour.StartYear.ToString());
+                tourVariableCollection.Parse("U_TOUR", tour.Uri);
             }
 
             List<string[]> tourPath = new List<string[]>();
@@ -222,13 +256,18 @@ namespace BoxSocial.Musician
 
             try
             {
-                tour = new Tour(core, tourId);
+                tour = new Tour(core, (Musician)page.Owner, tourId);
             }
             catch (InvalidTourException)
             {
                 core.Functions.Generate404();
                 return;
             }
+
+            page.template.Parse("TOUR_TITLE", tour.Title);
+            page.template.Parse("TOUR_YEAR", tour.StartYear.ToString());
+            page.template.Parse("U_TOUR", tour.Uri);
+            core.Display.ParseBbcode("TOUR_ABSTRACT", tour.TourAbstract);
 
             List<Gig> gigs = tour.GetGigs();
 
@@ -241,6 +280,7 @@ namespace BoxSocial.Musician
                 gigVariableCollection.Parse("DESCRIPTION", gig.Abstract);
                 gigVariableCollection.Parse("CITY", gig.City);
                 gigVariableCollection.Parse("VENUE", gig.Venue);
+                gigVariableCollection.Parse("DATE", core.Tz.DateTimeToDateString(gig.GetTime(core.Tz)));
                 gigVariableCollection.Parse("COMMENTS", core.Functions.LargeIntegerToString(gig.Comments));
             }
 

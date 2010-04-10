@@ -960,15 +960,15 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, Classification.BuildClassificationBox(core, classification));
         }
 
-        public void ParseTimeZoneBox(string templateVar, string timeZone)
+        /*public void ParseTimeZoneBox(string templateVar, string timeZone)
         {
             ParseTimeZoneBox(core.Template, templateVar, timeZone);
-        }
+        }*/
 
-        public void ParseTimeZoneBox(Template template, string templateVar, string timeZone)
+        /*public void ParseTimeZoneBox(Template template, string templateVar, string timeZone)
         {
             template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
-        }
+        }*/
 
         /// <summary>
         /// Algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV

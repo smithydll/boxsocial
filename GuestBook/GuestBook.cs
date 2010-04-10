@@ -27,6 +27,7 @@ using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
+using BoxSocial.Musician;
 
 namespace BoxSocial.Applications.GuestBook
 {
@@ -55,6 +56,12 @@ namespace BoxSocial.Applications.GuestBook
         {
             return core.Uri.AppendSid(string.Format("{0}comments",
                 anApplication.UriStub));
+        }
+
+        public static string Uri(Core core, Musician.Musician musician)
+        {
+            return core.Uri.AppendSid(string.Format("{0}comments",
+                musician.UriStub));
         }
 
         public static void Show(Core core, UPage page)
@@ -236,6 +243,29 @@ namespace BoxSocial.Applications.GuestBook
             page.template.Parse("L_GUESTBOOK", page.AnApplication.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination(GuestBook.Uri(core, page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0));
             page.AnApplication.ParseBreadCrumbs("comments");
+        }
+
+        public static void Show(Core core, MPage page)
+        {
+            page.template.SetTemplate("GuestBook", "viewguestbook");
+
+            int p = core.Functions.RequestInt("p", 1);
+
+            if (core.Session.IsLoggedIn)
+            {
+                if (page.Musician.Access.Can("COMMENT"))
+                {
+                    page.template.Parse("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            core.Display.DisplayComments(page.template, page.Musician, page.Musician);
+            //page.template.Parse("PAGINATION", Display.GeneratePagination(GuestBook.Uri(page.ThisGroup), p, (int)Math.Ceiling(page.ThisGroup.Comments / 10.0)));
+            //page.template.Parse("BREADCRUMBS", page.ThisGroup.GenerateBreadCrumbs("comments"));
+            page.template.Parse("L_GUESTBOOK", page.Musician.DisplayNameOwnership + " Guest Book");
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Musician), p, (int)Math.Ceiling(page.Musician.Comments / 10.0));
+            page.Musician.ParseBreadCrumbs("comments");
+            //Prose.GetString("GuestBook");
         }
     }
 }

@@ -1,11 +1,15 @@
 ﻿<!-- INCLUDE page_header.html -->
 
-<h2>Tour</h2>
+<h2>{TOUR_TITLE} ({TOUR_YEAR})</h2>
+
+<!-- IF TOUR_ABSTRACT -->
+<p>{TOUR_ABSTRACT}</p>
+<!-- ENDIF -->
 
 <!-- IF gig_list -->
 <ul>
   <!-- BEGIN gig_list -->
-  <li></li>
+  <li><a href="">{gig_list.CITY}, {gig_list.DATE}</a></li>
   <!-- END gig_list -->
 </ul>
 <!-- ENDIF -->

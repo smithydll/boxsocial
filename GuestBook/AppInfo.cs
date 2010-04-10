@@ -29,6 +29,7 @@ using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
 using BoxSocial.Networks;
+using BoxSocial.Musician;
 
 namespace BoxSocial.Applications.GuestBook
 {
@@ -124,13 +125,14 @@ namespace BoxSocial.Applications.GuestBook
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(ApplicationEntry)), applicationCanPostComment, applicationCanDeleteComment, applicationAdjustCommentCount, applicationCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGroup)), groupCanPostComment, groupCanDeleteComment, groupAdjustCommentCount, groupCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Network)), networkCanPostComment, networkCanDeleteComment, networkAdjustCommentCount, networkCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Musician.Musician)), musicianCanPostComment, musicianCanDeleteComment, musicianAdjustCommentCount, musicianCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
+            aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician);
             //aii.AddSlug("profile", @"^/profile/comments(|/)$", AppPrimitives.Member);
             //aii.AddSlug("profile", @"^/profile/comments/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
             //aii.AddSlug("comments", @"^/comments(|/)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
@@ -139,6 +141,7 @@ namespace BoxSocial.Applications.GuestBook
             aii.AddCommentType("APPLICATION");
             aii.AddCommentType("GROUP");
             aii.AddCommentType("NETWORK");
+            aii.AddCommentType("MUSIC");
 
             return aii;
         }
@@ -260,6 +263,10 @@ namespace BoxSocial.Applications.GuestBook
         {
         }
 
+        private void musicianCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
         private void userAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             core.Db.UpdateQuery(string.Format("UPDATE user_profile SET profile_comments = profile_comments + {1} WHERE user_id = {0};",
@@ -370,6 +377,54 @@ namespace BoxSocial.Applications.GuestBook
                 itemKey.Id, adjustment));
         }
 
+        private bool musicianCanPostComment(ItemKey itemKey, User member)
+        {
+            try
+            {
+                Musician.Musician owner = new Musician.Musician(core, itemKey.Id);
+
+                if (owner.Access.Can("COMMENT"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private bool musicianCanDeleteComment(ItemKey itemKey, User member)
+        {
+            try
+            {
+                Musician.Musician owner = new Musician.Musician(core, itemKey.Id);
+
+                if (owner.IsMusicianMember(member))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private void musicianAdjustCommentCount(ItemKey itemKey, int adjustment)
+        {
+            core.Db.UpdateQuery(string.Format("UPDATE musicians SET musician_comments = musician_comments + {1} WHERE musician_id = {0};",
+                itemKey.Id, adjustment));
+        }
+
         [Show(@"profile/comments", AppPrimitives.Member)]
         private void showProfileGuestBook(Core core, object sender)
         {
@@ -389,7 +444,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        [Show(@"comments", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application)]
+        [Show(@"comments", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician)]
         private void showGuestBook(Core core, object sender)
         {
             if (sender is GPage)
@@ -404,11 +459,15 @@ namespace BoxSocial.Applications.GuestBook
             {
                 GuestBook.Show(core, (APage)sender);
             }
+            else if (sender is MPage)
+            {
+                GuestBook.Show(core, (MPage)sender);
+            }
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application;
+            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician;
         }
 
         void core_PageHooks(HookEventArgs e)
@@ -428,6 +487,10 @@ namespace BoxSocial.Applications.GuestBook
             if (e.PageType == AppPrimitives.Application)
             {
                 ShowApplicationGuestBook(e);
+            }
+            if (e.PageType == AppPrimitives.Musician)
+            {
+                ShowMusicianGuestBook(e);
             }
         }
 
@@ -506,6 +569,26 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(template, anApplication, anApplication);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, anApplication));
+
+            e.core.AddMainPanel(template);
+        }
+
+        public void ShowMusicianGuestBook(HookEventArgs e)
+        {
+            Musician.Musician musician = (Musician.Musician)e.Owner;
+            Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+
+            if (e.core.Session.IsLoggedIn)
+            {
+                template.Parse("LOGGED_IN", "TRUE");
+                if (musician.Access.Can("COMMENT"))
+                {
+                    template.Parse("CAN_COMMENT", "TRUE");
+                }
+            }
+
+            core.Display.DisplayComments(template, musician, musician);
+            template.Parse("U_VIEW_ALL", GuestBook.Uri(core, musician));
 
             e.core.AddMainPanel(template);
         }

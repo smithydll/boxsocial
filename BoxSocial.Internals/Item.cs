@@ -109,12 +109,17 @@ namespace BoxSocial.Internals
             return keyField;
         }
 
-        protected void LoadItem(long primaryKey)
+        protected void LoadItem(long primaryKey, params FieldValuePair[] keyFields)
         {
-            LoadItem(this.GetType(), primaryKey);
+            LoadItem(this.GetType(), primaryKey, keyFields);
         }
 
-        protected void LoadItem(Type type, long primaryKey)
+        protected void LoadItem(long primaryKey)
+        {
+            LoadItem(this.GetType(), primaryKey, null);
+        }
+
+        protected void LoadItem(Type type, long primaryKey, params FieldValuePair[] keyFields)
         {
             // 1. Discover primary key
             // 2. Build query
@@ -144,6 +149,15 @@ namespace BoxSocial.Internals
             }
 
             query.AddCondition(keyField, primaryKey);
+
+
+            if (keyFields != null)
+            {
+                foreach (FieldValuePair fvp in keyFields)
+                {
+                    query.AddCondition(fvp.Field, fvp.Value);
+                }
+            }
 
             /*DataTable itemTable = Query(query);
 

@@ -57,7 +57,7 @@ namespace BoxSocial.Musician
     [Primitive("MUSIC", MusicianLoadOptions.All, "musician_id", "musician_slug")]
     [Permission("VIEW", "Can view the musician's profile", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
-    public class Musician : Primitive, IPermissibleItem
+    public class Musician : Primitive, IPermissibleItem, ICommentableItem
     {
         [DataField("musician_id", DataFieldKeys.Primary)]
         private long musicianId;
@@ -69,6 +69,12 @@ namespace BoxSocial.Musician
         protected string nameFirstCharacter;
         [DataField("musician_bio", MYSQL_TEXT)]
         private string biography;
+        [DataField("musician_comments")]
+        private long comments;
+        [DataField("musician_views")]
+        private long views;
+        [DataField("musician_ratings")]
+        private long ratings;
         [DataField("musician_songs")]
         private long songs;
         [DataField("musician_recordings")]
@@ -102,6 +108,7 @@ namespace BoxSocial.Musician
 
         private Dictionary<User, bool> musicianMemberCache = new Dictionary<User, bool>();
         private string iconUri = string.Empty;
+        private string displayNameOwnership;
 
         public long MusicianId
         {
@@ -120,6 +127,18 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("members", value);
+            }
+        }
+
+        public long Comments
+        {
+            get
+            {
+                return comments;
+            }
+            set
+            {
+                SetProperty("comments", value);
             }
         }
 
@@ -531,6 +550,9 @@ namespace BoxSocial.Musician
             {
             }
 
+            Access.CreateGrantForPrimitive(core, newMusician, User.EveryoneGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newMusician, User.RegisteredUsersGroupKey, "COMMENT");
+
             return newMusician;
         }
 
@@ -882,7 +904,23 @@ namespace BoxSocial.Musician
 
         public override string DisplayNameOwnership
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                if (displayNameOwnership == null)
+                {
+                    displayNameOwnership = (name != "") ? name : slug;
+
+                    if (displayNameOwnership.EndsWith("s"))
+                    {
+                        displayNameOwnership = displayNameOwnership + "'";
+                    }
+                    else
+                    {
+                        displayNameOwnership = displayNameOwnership + "'s";
+                    }
+                }
+                return displayNameOwnership;
+            }
         }
 
         public override bool CanModerateComments(User member)
@@ -1218,8 +1256,8 @@ namespace BoxSocial.Musician
 
             if (!e.Page.Musician.Access.Can("VIEW"))
             {
-                e.Core.Functions.Generate403();
-                return;
+                //e.Core.Functions.Generate403();
+                //return;
             }
 
             /* pages */
@@ -1247,6 +1285,25 @@ namespace BoxSocial.Musician
                     memberVariableCollection.Parse("U_MEMBER", member.Uri);
                     memberVariableCollection.Parse("I_MEMBER", member.UserTile);
                 }
+            }
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.Musician, true);
+        }
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
             }
         }
     }

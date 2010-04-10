@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -321,95 +322,103 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string BuildTimeZoneSelectBox(string selectedItem)
+        public static SelectBox BuildTimeZoneSelectBox(string name)
         {
-            Dictionary<string, string> timeZones = new Dictionary<string, string>();
-            timeZones.Add("1", UnixTime.GetOffsetString(1) + "International Date Line West");
-            timeZones.Add("2", UnixTime.GetOffsetString(2) + "Midway Island, Samoa");
-            timeZones.Add("3", UnixTime.GetOffsetString(3) + "Hawaii");
-            timeZones.Add("4", UnixTime.GetOffsetString(4) + "Alaska");
-            timeZones.Add("5", UnixTime.GetOffsetString(5) + "Pacific Time (US & Canada)");
-            timeZones.Add("6", UnixTime.GetOffsetString(6) + "Tijuana, Baja California");
-            timeZones.Add("7", UnixTime.GetOffsetString(7) + "Arizona");
-            timeZones.Add("8", UnixTime.GetOffsetString(8) + "Chihuahua, La Paz, Mazatlan");
-            timeZones.Add("9", UnixTime.GetOffsetString(9) + "Mountain Time (US & Canada)");
-            timeZones.Add("10", UnixTime.GetOffsetString(10) + "Central America");
-            timeZones.Add("11", UnixTime.GetOffsetString(11) + "Central Time (US & Canada)");
-            timeZones.Add("12", UnixTime.GetOffsetString(12) + "Guadalajara, Mexico City, Monterrey");
-            timeZones.Add("13", UnixTime.GetOffsetString(13) + "Saskatchewan");
-            timeZones.Add("14", UnixTime.GetOffsetString(14) + "Bogota, Lima, Quito, Rio Branco");
-            timeZones.Add("15", UnixTime.GetOffsetString(15) + "Eastern Time (US & Canada)");
-            timeZones.Add("16", UnixTime.GetOffsetString(16) + "Indiana (East)");
-            timeZones.Add("17", UnixTime.GetOffsetString(17) + "Atlantic Time (Canada)");
-            timeZones.Add("18", UnixTime.GetOffsetString(18) + "Caracas, La Paz");
-            timeZones.Add("19", UnixTime.GetOffsetString(19) + "Manaus");
-            timeZones.Add("20", UnixTime.GetOffsetString(20) + "Santiago");
-            timeZones.Add("21", UnixTime.GetOffsetString(21) + "Newfoundland");
-            timeZones.Add("22", UnixTime.GetOffsetString(22) + "Brasilia");
-            timeZones.Add("23", UnixTime.GetOffsetString(23) + "Bueno Aires, Georgetown");
-            timeZones.Add("24", UnixTime.GetOffsetString(24) + "Greenland");
-            timeZones.Add("25", UnixTime.GetOffsetString(25) + "Montevideo");
-            timeZones.Add("26", UnixTime.GetOffsetString(26) + "Mid-Atlantic");
-            timeZones.Add("27", UnixTime.GetOffsetString(27) + "Azores");
-            timeZones.Add("28", UnixTime.GetOffsetString(28) + "Cape Verde Is.");
-            timeZones.Add("29", UnixTime.GetOffsetString(29) + "Casablanca, Monrovia, Reykjavik");
-            timeZones.Add("30", UnixTime.GetOffsetString(30) + "Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London");
-            timeZones.Add("31", UnixTime.GetOffsetString(31) + "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna");
-            timeZones.Add("32", UnixTime.GetOffsetString(32) + "Belgrade, Bratislava, Budapest, Ljublijana, Prague");
-            timeZones.Add("33", UnixTime.GetOffsetString(33) + "Brussels, Copenhagen, Madrid, Paris");
-            timeZones.Add("34", UnixTime.GetOffsetString(34) + "Sarajevo, Skopje, Warsaw, Zagreb");
-            timeZones.Add("35", UnixTime.GetOffsetString(35) + "West Central Africa");
-            timeZones.Add("36", UnixTime.GetOffsetString(36) + "Amman");
-            timeZones.Add("37", UnixTime.GetOffsetString(37) + "Athens, Bucharest, Istanbul");
-            timeZones.Add("38", UnixTime.GetOffsetString(38) + "Beirut");
-            timeZones.Add("39", UnixTime.GetOffsetString(39) + "Cairo");
-            timeZones.Add("40", UnixTime.GetOffsetString(40) + "Harare, Pretoria");
-            timeZones.Add("41", UnixTime.GetOffsetString(41) + "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius");
-            timeZones.Add("42", UnixTime.GetOffsetString(42) + "Jerusalem");
-            timeZones.Add("43", UnixTime.GetOffsetString(43) + "Minsk");
-            timeZones.Add("44", UnixTime.GetOffsetString(44) + "Windhoek");
-            timeZones.Add("45", UnixTime.GetOffsetString(45) + "Baghdad");
-            timeZones.Add("46", UnixTime.GetOffsetString(46) + "Kuwait, Riyadh");
-            timeZones.Add("47", UnixTime.GetOffsetString(47) + "Moscow, St. Petersburg, Volgograd");
-            timeZones.Add("48", UnixTime.GetOffsetString(48) + "Nairobi");
-            timeZones.Add("49", UnixTime.GetOffsetString(49) + "Tbilisi");
-            timeZones.Add("50", UnixTime.GetOffsetString(50) + "Tehran");
-            timeZones.Add("51", UnixTime.GetOffsetString(51) + "Abu Dhabi, Muscat");
-            timeZones.Add("52", UnixTime.GetOffsetString(52) + "Baku");
-            timeZones.Add("53", UnixTime.GetOffsetString(53) + "Verevan");
-            timeZones.Add("54", UnixTime.GetOffsetString(54) + "Kabul");
-            timeZones.Add("55", UnixTime.GetOffsetString(55) + "Ekaterinburg");
-            timeZones.Add("56", UnixTime.GetOffsetString(56) + "Islamabed, Karachi, Tashkent");
-            timeZones.Add("57", UnixTime.GetOffsetString(57) + "Chennai, Kolata, Mumbai, New Delhi");
-            timeZones.Add("58", UnixTime.GetOffsetString(58) + "Sri Jayawardenepura");
-            timeZones.Add("59", UnixTime.GetOffsetString(59) + "Kathmandu");
-            timeZones.Add("60", UnixTime.GetOffsetString(60) + "Almaty, Novosibrisk");
-            timeZones.Add("61", UnixTime.GetOffsetString(61) + "Astana, Dhaka");
-            timeZones.Add("62", UnixTime.GetOffsetString(62) + "Yangon (Rangoon)");
-            timeZones.Add("63", UnixTime.GetOffsetString(63) + "Bangkok, Hanoi, Jakarta");
-            timeZones.Add("64", UnixTime.GetOffsetString(64) + "Krasnoyarsk");
-            timeZones.Add("65", UnixTime.GetOffsetString(65) + "Bejing, Chonqing, Hong Kong, Urumqi");
-            timeZones.Add("66", UnixTime.GetOffsetString(66) + "Irkutsk, Ulaan Bataar");
-            timeZones.Add("67", UnixTime.GetOffsetString(67) + "Kuala Lumpur, Singapore");
-            timeZones.Add("68", UnixTime.GetOffsetString(68) + "Perth");
-            timeZones.Add("69", UnixTime.GetOffsetString(69) + "Taipei");
-            timeZones.Add("70", UnixTime.GetOffsetString(70) + "Osaka, Sapporo, Tokyo");
-            timeZones.Add("71", UnixTime.GetOffsetString(71) + "Seoul");
-            timeZones.Add("72", UnixTime.GetOffsetString(72) + "Yakutsk");
-            timeZones.Add("73", UnixTime.GetOffsetString(73) + "Adelaide");
-            timeZones.Add("74", UnixTime.GetOffsetString(74) + "Darwin");
-            timeZones.Add("75", UnixTime.GetOffsetString(75) + "Brisbane");
-            timeZones.Add("76", UnixTime.GetOffsetString(76) + "Canberra, Melbourne, Sydney");
-            timeZones.Add("77", UnixTime.GetOffsetString(77) + "Guam, Port Moresby");
-            timeZones.Add("78", UnixTime.GetOffsetString(78) + "Hobart");
-            timeZones.Add("79", UnixTime.GetOffsetString(79) + "Vladivostok");
-            timeZones.Add("80", UnixTime.GetOffsetString(80) + "Magadan, Solomon Is., New Caledonia");
-            timeZones.Add("81", UnixTime.GetOffsetString(81) + "Auckland, Wellington");
-            timeZones.Add("82", UnixTime.GetOffsetString(82) + "Fiji, Kamchatka, Marshall Is.");
-            timeZones.Add("83", UnixTime.GetOffsetString(83) + "Nuku'alofa");
+            SelectBox dateTimeSelectBox = new SelectBox(name);
+
+            dateTimeSelectBox.Add(new SelectBoxItem("1", UnixTime.GetOffsetString(1) + "International Date Line West"));
+            dateTimeSelectBox.Add(new SelectBoxItem("2", UnixTime.GetOffsetString(2) + "Midway Island, Samoa"));
+            dateTimeSelectBox.Add(new SelectBoxItem("3", UnixTime.GetOffsetString(3) + "Hawaii"));
+            dateTimeSelectBox.Add(new SelectBoxItem("4", UnixTime.GetOffsetString(4) + "Alaska"));
+            dateTimeSelectBox.Add(new SelectBoxItem("5", UnixTime.GetOffsetString(5) + "Pacific Time (US & Canada)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("6", UnixTime.GetOffsetString(6) + "Tijuana, Baja California"));
+            dateTimeSelectBox.Add(new SelectBoxItem("7", UnixTime.GetOffsetString(7) + "Arizona"));
+            dateTimeSelectBox.Add(new SelectBoxItem("8", UnixTime.GetOffsetString(8) + "Chihuahua, La Paz, Mazatlan"));
+            dateTimeSelectBox.Add(new SelectBoxItem("9", UnixTime.GetOffsetString(9) + "Mountain Time (US & Canada)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("10", UnixTime.GetOffsetString(10) + "Central America"));
+            dateTimeSelectBox.Add(new SelectBoxItem("11", UnixTime.GetOffsetString(11) + "Central Time (US & Canada)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("12", UnixTime.GetOffsetString(12) + "Guadalajara, Mexico City, Monterrey"));
+            dateTimeSelectBox.Add(new SelectBoxItem("13", UnixTime.GetOffsetString(13) + "Saskatchewan"));
+            dateTimeSelectBox.Add(new SelectBoxItem("14", UnixTime.GetOffsetString(14) + "Bogota, Lima, Quito, Rio Branco"));
+            dateTimeSelectBox.Add(new SelectBoxItem("15", UnixTime.GetOffsetString(15) + "Eastern Time (US & Canada)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("16", UnixTime.GetOffsetString(16) + "Indiana (East)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("17", UnixTime.GetOffsetString(17) + "Atlantic Time (Canada)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("18", UnixTime.GetOffsetString(18) + "Caracas, La Paz"));
+            dateTimeSelectBox.Add(new SelectBoxItem("19", UnixTime.GetOffsetString(19) + "Manaus"));
+            dateTimeSelectBox.Add(new SelectBoxItem("20", UnixTime.GetOffsetString(20) + "Santiago"));
+            dateTimeSelectBox.Add(new SelectBoxItem("21", UnixTime.GetOffsetString(21) + "Newfoundland"));
+            dateTimeSelectBox.Add(new SelectBoxItem("22", UnixTime.GetOffsetString(22) + "Brasilia"));
+            dateTimeSelectBox.Add(new SelectBoxItem("23", UnixTime.GetOffsetString(23) + "Bueno Aires, Georgetown"));
+            dateTimeSelectBox.Add(new SelectBoxItem("24", UnixTime.GetOffsetString(24) + "Greenland"));
+            dateTimeSelectBox.Add(new SelectBoxItem("25", UnixTime.GetOffsetString(25) + "Montevideo"));
+            dateTimeSelectBox.Add(new SelectBoxItem("26", UnixTime.GetOffsetString(26) + "Mid-Atlantic"));
+            dateTimeSelectBox.Add(new SelectBoxItem("27", UnixTime.GetOffsetString(27) + "Azores"));
+            dateTimeSelectBox.Add(new SelectBoxItem("28", UnixTime.GetOffsetString(28) + "Cape Verde Is."));
+            dateTimeSelectBox.Add(new SelectBoxItem("29", UnixTime.GetOffsetString(29) + "Casablanca, Monrovia, Reykjavik"));
+            dateTimeSelectBox.Add(new SelectBoxItem("30", UnixTime.GetOffsetString(30) + "Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London"));
+            dateTimeSelectBox.Add(new SelectBoxItem("31", UnixTime.GetOffsetString(31) + "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"));
+            dateTimeSelectBox.Add(new SelectBoxItem("32", UnixTime.GetOffsetString(32) + "Belgrade, Bratislava, Budapest, Ljublijana, Prague"));
+            dateTimeSelectBox.Add(new SelectBoxItem("33", UnixTime.GetOffsetString(33) + "Brussels, Copenhagen, Madrid, Paris"));
+            dateTimeSelectBox.Add(new SelectBoxItem("34", UnixTime.GetOffsetString(34) + "Sarajevo, Skopje, Warsaw, Zagreb"));
+            dateTimeSelectBox.Add(new SelectBoxItem("35", UnixTime.GetOffsetString(35) + "West Central Africa"));
+            dateTimeSelectBox.Add(new SelectBoxItem("36", UnixTime.GetOffsetString(36) + "Amman"));
+            dateTimeSelectBox.Add(new SelectBoxItem("37", UnixTime.GetOffsetString(37) + "Athens, Bucharest, Istanbul"));
+            dateTimeSelectBox.Add(new SelectBoxItem("38", UnixTime.GetOffsetString(38) + "Beirut"));
+            dateTimeSelectBox.Add(new SelectBoxItem("39", UnixTime.GetOffsetString(39) + "Cairo"));
+            dateTimeSelectBox.Add(new SelectBoxItem("40", UnixTime.GetOffsetString(40) + "Harare, Pretoria"));
+            dateTimeSelectBox.Add(new SelectBoxItem("41", UnixTime.GetOffsetString(41) + "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"));
+            dateTimeSelectBox.Add(new SelectBoxItem("42", UnixTime.GetOffsetString(42) + "Jerusalem"));
+            dateTimeSelectBox.Add(new SelectBoxItem("43", UnixTime.GetOffsetString(43) + "Minsk"));
+            dateTimeSelectBox.Add(new SelectBoxItem("44", UnixTime.GetOffsetString(44) + "Windhoek"));
+            dateTimeSelectBox.Add(new SelectBoxItem("45", UnixTime.GetOffsetString(45) + "Baghdad"));
+            dateTimeSelectBox.Add(new SelectBoxItem("46", UnixTime.GetOffsetString(46) + "Kuwait, Riyadh"));
+            dateTimeSelectBox.Add(new SelectBoxItem("47", UnixTime.GetOffsetString(47) + "Moscow, St. Petersburg, Volgograd"));
+            dateTimeSelectBox.Add(new SelectBoxItem("48", UnixTime.GetOffsetString(48) + "Nairobi"));
+            dateTimeSelectBox.Add(new SelectBoxItem("49", UnixTime.GetOffsetString(49) + "Tbilisi"));
+            dateTimeSelectBox.Add(new SelectBoxItem("50", UnixTime.GetOffsetString(50) + "Tehran"));
+            dateTimeSelectBox.Add(new SelectBoxItem("51", UnixTime.GetOffsetString(51) + "Abu Dhabi, Muscat"));
+            dateTimeSelectBox.Add(new SelectBoxItem("52", UnixTime.GetOffsetString(52) + "Baku"));
+            dateTimeSelectBox.Add(new SelectBoxItem("53", UnixTime.GetOffsetString(53) + "Verevan"));
+            dateTimeSelectBox.Add(new SelectBoxItem("54", UnixTime.GetOffsetString(54) + "Kabul"));
+            dateTimeSelectBox.Add(new SelectBoxItem("55", UnixTime.GetOffsetString(55) + "Ekaterinburg"));
+            dateTimeSelectBox.Add(new SelectBoxItem("56", UnixTime.GetOffsetString(56) + "Islamabed, Karachi, Tashkent"));
+            dateTimeSelectBox.Add(new SelectBoxItem("57", UnixTime.GetOffsetString(57) + "Chennai, Kolata, Mumbai, New Delhi"));
+            dateTimeSelectBox.Add(new SelectBoxItem("58", UnixTime.GetOffsetString(58) + "Sri Jayawardenepura"));
+            dateTimeSelectBox.Add(new SelectBoxItem("59", UnixTime.GetOffsetString(59) + "Kathmandu"));
+            dateTimeSelectBox.Add(new SelectBoxItem("60", UnixTime.GetOffsetString(60) + "Almaty, Novosibrisk"));
+            dateTimeSelectBox.Add(new SelectBoxItem("61", UnixTime.GetOffsetString(61) + "Astana, Dhaka"));
+            dateTimeSelectBox.Add(new SelectBoxItem("62", UnixTime.GetOffsetString(62) + "Yangon (Rangoon)"));
+            dateTimeSelectBox.Add(new SelectBoxItem("63", UnixTime.GetOffsetString(63) + "Bangkok, Hanoi, Jakarta"));
+            dateTimeSelectBox.Add(new SelectBoxItem("64", UnixTime.GetOffsetString(64) + "Krasnoyarsk"));
+            dateTimeSelectBox.Add(new SelectBoxItem("65", UnixTime.GetOffsetString(65) + "Bejing, Chonqing, Hong Kong, Urumqi"));
+            dateTimeSelectBox.Add(new SelectBoxItem("66", UnixTime.GetOffsetString(66) + "Irkutsk, Ulaan Bataar"));
+            dateTimeSelectBox.Add(new SelectBoxItem("67", UnixTime.GetOffsetString(67) + "Kuala Lumpur, Singapore"));
+            dateTimeSelectBox.Add(new SelectBoxItem("68", UnixTime.GetOffsetString(68) + "Perth"));
+            dateTimeSelectBox.Add(new SelectBoxItem("69", UnixTime.GetOffsetString(69) + "Taipei"));
+            dateTimeSelectBox.Add(new SelectBoxItem("70", UnixTime.GetOffsetString(70) + "Osaka, Sapporo, Tokyo"));
+            dateTimeSelectBox.Add(new SelectBoxItem("71", UnixTime.GetOffsetString(71) + "Seoul"));
+            dateTimeSelectBox.Add(new SelectBoxItem("72", UnixTime.GetOffsetString(72) + "Yakutsk"));
+            dateTimeSelectBox.Add(new SelectBoxItem("73", UnixTime.GetOffsetString(73) + "Adelaide"));
+            dateTimeSelectBox.Add(new SelectBoxItem("74", UnixTime.GetOffsetString(74) + "Darwin"));
+            dateTimeSelectBox.Add(new SelectBoxItem("75", UnixTime.GetOffsetString(75) + "Brisbane"));
+            dateTimeSelectBox.Add(new SelectBoxItem("76", UnixTime.GetOffsetString(76) + "Canberra, Melbourne, Sydney"));
+            dateTimeSelectBox.Add(new SelectBoxItem("77", UnixTime.GetOffsetString(77) + "Guam, Port Moresby"));
+            dateTimeSelectBox.Add(new SelectBoxItem("78", UnixTime.GetOffsetString(78) + "Hobart"));
+            dateTimeSelectBox.Add(new SelectBoxItem("79", UnixTime.GetOffsetString(79) + "Vladivostok"));
+            dateTimeSelectBox.Add(new SelectBoxItem("80", UnixTime.GetOffsetString(80) + "Magadan, Solomon Is., New Caledonia"));
+            dateTimeSelectBox.Add(new SelectBoxItem("81", UnixTime.GetOffsetString(81) + "Auckland, Wellington"));
+            dateTimeSelectBox.Add(new SelectBoxItem("82", UnixTime.GetOffsetString(82) + "Fiji, Kamchatka, Marshall Is."));
+            dateTimeSelectBox.Add(new SelectBoxItem("83", UnixTime.GetOffsetString(83) + "Nuku'alofa"));
+
+            return dateTimeSelectBox;
+        }
+
+        /*public static string BuildTimeZoneSelectBox(string selectedItem)
+        {
+            
 
             return Functions.BuildSelectBox("timezone", timeZones, selectedItem);
-        }
+        }*/
 
         /*public bool IsDst(ushort timeZone)
         {
@@ -592,6 +601,32 @@ namespace BoxSocial.Internals
         public string DateTimeToString(DateTime dt)
         {
             return DateTimeToString(dt, false);
+        }
+
+        public string DateTimeToDateString(DateTime dt)
+        {
+            return DateTimeToDateString(dt, false);
+        }
+
+        public string DateTimeToDateString(DateTime dt, bool today)
+        {
+            if (today)
+            {
+                TimeSpan ts = DateTime.UtcNow.Subtract(dt.Subtract(new TimeSpan(0, 0, UnixTime.GetUtcOffset(timeZoneCode))));
+
+                if (ts.TotalHours <= 24)
+                {
+                    return "Today";
+                }
+                else
+                {
+                    return dt.ToString("MMMM dd, yyyy");
+                }
+            }
+            else
+            {
+                return dt.ToString("MMMM dd, yyyy");
+            }
         }
 
         /// <summary>

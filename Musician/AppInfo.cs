@@ -208,7 +208,10 @@ namespace BoxSocial.Musician
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                //slugs.Add("profile", "Profile");
+                slugs.Add("profile", "Profile");
+                slugs.Add("tours", "Tours");
+                slugs.Add("gigs", "Gigs");
+                slugs.Add("discography", "Discography");
                 return slugs;
             }
         }

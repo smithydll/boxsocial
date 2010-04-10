@@ -129,9 +129,14 @@ namespace BoxSocial.Internals
                 }
             }
 
+            SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
+            timezoneSelectBox.SelectedKey = LoggedInMember.TimeZoneCode.ToString();
+
             pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage;
             template.Parse("S_HOMEPAGE", pagesSelectBox);
-            core.Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
+            template.Parse("S_TIMEZONE", timezoneSelectBox);
+            //core.Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
+
         }
 
         void AccountPreferences_Save(object sender, EventArgs e)

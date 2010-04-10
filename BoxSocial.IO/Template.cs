@@ -110,7 +110,8 @@ namespace BoxSocial.IO
 
         public void Parse(string key, FormField formField)
         {
-            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms")
+            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms" ||
+                formField.GetType().Assembly.GetName().Name == "BoxSocial.Internals")
             {
                 if (!variables.ContainsKey(key))
                 {
@@ -344,7 +345,8 @@ namespace BoxSocial.IO
 
         public void Parse(string key, FormField formField)
         {
-            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms")
+            if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms" ||
+                formField.GetType().Assembly.GetName().Name == "BoxSocial.Internals")
             {
                 variables.Parse(key, formField);
             }

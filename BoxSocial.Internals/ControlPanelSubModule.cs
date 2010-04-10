@@ -579,10 +579,10 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, Classification.BuildClassificationBox(core, classification));
         }
 
-        protected void ParseTimeZoneBox(string templateVar, string timeZone)
+        /*protected void ParseTimeZoneBox(string templateVar, string timeZone)
         {
             template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
-        }
+        }*/
 
         protected Dictionary<string, string> GetModeHiddenFieldList()
         {

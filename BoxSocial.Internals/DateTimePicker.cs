@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Web;
 using BoxSocial.Forms;
@@ -109,7 +110,7 @@ namespace BoxSocial.Internals
             SelectBox dateMinutesSelectBox = new SelectBox(name + "[date-minute]");
             SelectBox dateSecondsSelectBox = new SelectBox(name + "[date-second]");
 
-            for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(-13).Year; i++)
+            for (int i = DateTime.Now.AddYears(-30).Year; i < DateTime.Now.AddYears(5).Year; i++)
             {
                 dateYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
@@ -125,10 +126,26 @@ namespace BoxSocial.Internals
                 dateDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
+            for (int i = 1; i < 13; i++)
+            {
+                dateHoursSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            for (int i = 0; i < 60; i++)
+            {
+                dateMinutesSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            for (int i = 0; i < 60; i++)
+            {
+                dateSecondsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
             dateYearsSelectBox.SelectedKey = value.Year.ToString();
             dateMonthsSelectBox.SelectedKey = value.Month.ToString();
             dateDaysSelectBox.SelectedKey = value.Day.ToString();
 
+            /* Build display */
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("<div class=\"date-field\">");
@@ -162,6 +179,47 @@ namespace BoxSocial.Internals
             sb.AppendLine("</div>");
 
             return sb.ToString();
+        }
+
+        public static long FormDate(Core core, string name, ushort timeZoneCode)
+        {
+            long datetime = 0;
+            UnixTime tz = new UnixTime(core, timeZoneCode);
+            DateTime dt = tz.Now;
+
+            string expression = core.Http.Form[name + "[expression]"];
+
+            if (!string.IsNullOrEmpty(expression))
+            {
+                expression = core.Functions.InterpretDateTime(expression);
+
+                if (!DateTime.TryParse(expression, out dt))
+                {
+                    int year = core.Functions.FormInt(name + "[date-year]", dt.Year);
+                    int month = core.Functions.FormInt(name + "[date-month]", dt.Month);
+                    int day = core.Functions.FormInt(name + "[date-day]", dt.Day);
+                    int hour = core.Functions.FormInt(name + "[date-hour]", dt.Hour);
+                    int minute = core.Functions.FormInt(name + "[date-minute]", dt.Minute);
+                    int second = core.Functions.FormInt(name + "[date-second]", 0);
+
+                    dt = new DateTime(year, month, day, hour, minute, second);
+                }
+            }
+            else
+            {
+                int year = core.Functions.FormInt(name + "[date-year]", dt.Year);
+                int month = core.Functions.FormInt(name + "[date-month]", dt.Month);
+                int day = core.Functions.FormInt(name + "[date-day]", dt.Day);
+                int hour = core.Functions.FormInt(name + "[date-hour]", dt.Hour);
+                int minute = core.Functions.FormInt(name + "[date-minute]", dt.Minute);
+                int second = core.Functions.FormInt(name + "[date-second]", 0);
+
+                dt = new DateTime(year, month, day, hour, minute, second);
+            }
+
+            datetime = tz.GetUnixTimeStamp(dt);
+
+            return datetime;
         }
     }
 }

@@ -739,6 +739,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsPrimitiveType(long typeId)
+        {
+            if (primitiveTypes.ContainsKey(typeId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public void EndResponse()
         {
             page.EndResponse();

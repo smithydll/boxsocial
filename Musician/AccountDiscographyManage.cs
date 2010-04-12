@@ -72,12 +72,24 @@ namespace BoxSocial.Musician
         {
             SetTemplate("account_discography_album_edit");
 
+            /* */
             TextBox titleTextBox = new TextBox("title");
             titleTextBox.MaxLength = 63;
+
+            /* */
+            SelectBox releaseTypeSelectBox = new SelectBox("release-type");
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.Demo).ToString(), "Demo"));
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.Single).ToString(), "Single"));
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.Album).ToString(), "Album"));
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.EP).ToString(), "EP"));
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.DVD).ToString(), "DVD"));
+            releaseTypeSelectBox.Add(new SelectBoxItem(((byte)ReleaseType.Compilation).ToString(), "Compilation"));
 
             switch (e.Mode)
             {
                 case "add":
+
+                    releaseTypeSelectBox.SelectedKey = ((byte)ReleaseType.Demo).ToString();
                     break;
                 case "edit":
                     long releaseId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
@@ -89,6 +101,7 @@ namespace BoxSocial.Musician
                         release = new Release(core, releaseId);
 
                         titleTextBox.Value = release.Title;
+                        releaseTypeSelectBox.SelectedKey = ((byte)release.ReleaseType).ToString();
                     }
                     catch (InvalidReleaseException)
                     {
@@ -107,15 +120,42 @@ namespace BoxSocial.Musician
             AuthoriseRequestSid();
 
             string title = Functions.TrimStringToWord(core.Http.Form["title"], 63);
+            ReleaseType releaseType = (ReleaseType)core.Functions.FormByte("release-type", (byte)ReleaseType.Demo);
+
+            Release release = null;
 
             switch (e.Mode)
             {
                 case "add":
                     // TODO:
-                    Release release = Release.Create(core, (Musician)Owner, title, -1);
+                    release = Release.Create(core, (Musician)Owner, releaseType, title, -1);
                     SetRedirectUri(BuildUri());
                     break;
                 case "edit":
+                    long releaseId = core.Functions.FormLong("id", 0);
+
+                    try
+                    {
+                        release = new Release(core, releaseId);
+                    }
+                    catch (InvalidReleaseException)
+                    {
+                        // TODO: throw exception
+                        return;
+                    }
+
+                    if (release.Musician.Id != Owner.Id)
+                    {
+                        // TODO: throw exception
+                        return;
+                    }
+
+                    release.Title = title;
+                    release.ReleaseType = releaseType;
+
+                    release.Update();
+
+                    SetInformation("Release information updated");
                     break;
             }
         }

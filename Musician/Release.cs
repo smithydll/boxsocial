@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    public enum ReleaseType
+    public enum ReleaseType : byte
     {
         Demo = 1,
         Single = 2,
@@ -47,6 +47,8 @@ namespace BoxSocial.Musician
         private long musicianId;
         [DataField("release_title", 63)]
         private string releaseTitle;
+        [DataField("release_type")]
+        private byte releaseType;
         [DataField("release_date_ut")]
         private long releaseDateRaw;
         [DataField("release_cover_art")]
@@ -73,6 +75,22 @@ namespace BoxSocial.Musician
             get
             {
                 return releaseTitle;
+            }
+            set
+            {
+                SetProperty("releaseTitle", value);
+            }
+        }
+
+        public ReleaseType ReleaseType
+        {
+            get
+            {
+                return (ReleaseType)releaseType;
+            }
+            set
+            {
+                SetProperty("releaseType", (byte)value);
             }
         }
 
@@ -155,11 +173,12 @@ namespace BoxSocial.Musician
             return (Track)input;
         }
 
-        public static Release Create(Core core, Musician musician, string title, long coverId)
+        public static Release Create(Core core, Musician musician, ReleaseType releaseType, string title, long coverId)
         {
             // TODO: fix this
             Item item = Item.Create(core, typeof(Release), new FieldValuePair("musician_id", musician.Id),
                 new FieldValuePair("release_title", title),
+                new FieldValuePair("release_type", (byte)releaseType),
                 new FieldValuePair("release_date_ut", UnixTime.UnixTimeStamp()),
                 new FieldValuePair("release_cover_art", coverId));
 
@@ -179,6 +198,28 @@ namespace BoxSocial.Musician
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public static void ShowDiscography(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("viewdiscography");
+
+            List<Release> releases = e.Page.Musician.GetReleases();
+
+            foreach (Release release in releases)
+            {
+                switch (release.ReleaseType)
+                {
+                    case ReleaseType.Album:
+                        VariableCollection albumVariableCollection = e.Template.CreateChild("album_list");
+
+                        albumVariableCollection.Parse("TITLE", release.Title);
+                        break;
+                    default:
+                        // do nothing
+                        break;
+                }
             }
         }
 

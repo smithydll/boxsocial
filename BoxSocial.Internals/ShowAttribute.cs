@@ -28,6 +28,7 @@ namespace BoxSocial.Internals
     public sealed class ShowAttribute : Attribute
     {
         private string slug;
+        private string cleanSlug;
         private string stub;
         private AppPrimitives primitives;
         private int order;
@@ -45,6 +46,14 @@ namespace BoxSocial.Internals
             get
             {
                 return slug;
+            }
+        }
+
+        public string CleanSlug
+        {
+            get
+            {
+                return cleanSlug;
             }
         }
 
@@ -83,6 +92,7 @@ namespace BoxSocial.Internals
         {
             bool pathIsRegex = false;
             string path = slug;
+            string clean = string.Empty;
 
             if (path.StartsWith(@"^") && path.EndsWith(@"$"))
             {
@@ -91,7 +101,12 @@ namespace BoxSocial.Internals
                 {
                     path = path.Substring(0, path.Length - 4);
                 }
+                clean = path;
                 pathIsRegex = true;
+            }
+            else
+            {
+                clean = path;
             }
 
             if (string.IsNullOrEmpty(stub))
@@ -114,6 +129,7 @@ namespace BoxSocial.Internals
 
             this.stub = stub;
             this.slug = slug;
+            this.cleanSlug = clean;
             this.primitives = primitives;
             this.order = order;
         }

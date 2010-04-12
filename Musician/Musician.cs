@@ -57,6 +57,7 @@ namespace BoxSocial.Musician
     [Primitive("MUSIC", MusicianLoadOptions.All, "musician_id", "musician_slug")]
     [Permission("VIEW", "Can view the musician's profile", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
+    [Permission("COMMENT_GIGS", "Can comment on gigs", PermissionTypes.Interact)]
     public class Musician : Primitive, IPermissibleItem, ICommentableItem
     {
         [DataField("musician_id", DataFieldKeys.Primary)]
@@ -472,6 +473,16 @@ namespace BoxSocial.Musician
             return (Gig)input;
         }
 
+        public List<Release> GetReleases()
+        {
+            return getSubItems(typeof(Release), true).ConvertAll<Release>(new Converter<Item, Release>(convertToRelease));
+        }
+
+        public Release convertToRelease(Item input)
+        {
+            return (Release)input;
+        }
+
         public List<Song> GetSongs()
         {
             return getSubItems(typeof(Song), true).ConvertAll<Song>(new Converter<Item, Song>(convertToSong));
@@ -552,6 +563,7 @@ namespace BoxSocial.Musician
 
             Access.CreateGrantForPrimitive(core, newMusician, User.EveryoneGroupKey, "VIEW");
             Access.CreateGrantForPrimitive(core, newMusician, User.RegisteredUsersGroupKey, "COMMENT");
+            Access.CreateGrantForPrimitive(core, newMusician, User.RegisteredUsersGroupKey, "COMMENT_GIGS");
 
             return newMusician;
         }

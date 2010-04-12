@@ -265,14 +265,14 @@ namespace BoxSocial.FrontEnd
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    try
+                    //try
                     {
                         asm.ModuleVector(core);
                     }
-                    catch (Exception ex)
+                    /*catch (Exception ex)
                     {
                         throw new Exception(ex.ToString() + "\n\n\n" + db.ErrorList + "\n\n" + db.QueryList);
-                    }
+                    }*/
                 }
             }
 

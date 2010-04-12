@@ -151,7 +151,7 @@ namespace BoxSocial.Applications.GuestBook
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("profile/comments", "Guest Book");
+                //slugs.Add("profile/comments", "Guest Book");
                 return slugs;
             }
         }
@@ -425,6 +425,7 @@ namespace BoxSocial.Applications.GuestBook
                 itemKey.Id, adjustment));
         }
 
+        [PageSlug("Guest Book")]
         [Show(@"profile/comments", AppPrimitives.Member)]
         private void showProfileGuestBook(Core core, object sender)
         {
@@ -444,6 +445,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
+        [PageSlug("Guest Book")]
         [Show(@"comments", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician)]
         private void showGuestBook(Core core, object sender)
         {

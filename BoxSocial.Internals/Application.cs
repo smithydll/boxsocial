@@ -330,6 +330,40 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public Dictionary<string, string> GetPageSlugs(AppPrimitives primitive)
+        {
+            Dictionary<string, string> slugs = null;
+
+            if (PageSlugs != null)
+            {
+                slugs = PageSlugs;
+            }
+            else
+            {
+                slugs = new Dictionary<string, string>();
+            }
+
+
+            /* Discover page slugs */
+            Type type = this.GetType();
+
+            foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
+                {
+                    if ((((ShowAttribute)attr).Primitives | primitive) == primitive)
+                    {
+                        foreach (Attribute psAttr in Attribute.GetCustomAttributes(mi, typeof(PageSlugAttribute)))
+                        {
+                            slugs.Add(((ShowAttribute)attr).CleanSlug, ((PageSlugAttribute)psAttr).PageTitle);
+                        }
+                    }
+                }
+            }
+
+            return slugs;
+        }
+
         /// <summary>
         /// A 16x16 image file for the application icon.
         /// </summary>

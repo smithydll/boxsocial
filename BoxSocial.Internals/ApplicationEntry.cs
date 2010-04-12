@@ -697,7 +697,7 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
 
-                Dictionary<string, string> slugs = newApplication.PageSlugs;
+                Dictionary<string, string> slugs = newApplication.GetPageSlugs(owner.AppPrimitive);
 
                 if (slugs != null)
                 {
@@ -758,7 +758,7 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
-                Dictionary<string, string> slugs = newApplication.PageSlugs;
+                Dictionary<string, string> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
 
                 foreach (string slug in slugs.Keys)
                 {
@@ -843,7 +843,7 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
-                Dictionary<string, string> slugs = newApplication.PageSlugs;
+                Dictionary<string, string> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
 
                 foreach (string slug in slugs.Keys)
                 {

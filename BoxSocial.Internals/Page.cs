@@ -688,7 +688,7 @@ namespace BoxSocial.Internals
 
             if ((!Functions.CheckPageNameValid(slug)) && parent == 0)
             {
-                throw new PageSlugNotUniqueException();
+                throw new PageSlugNotUniqueException(slug);
             }
 
             if (string.IsNullOrEmpty(pageBody) && !pageListOnly)
@@ -710,7 +710,7 @@ namespace BoxSocial.Internals
 
             if (pagesTable.Rows.Count > 0)
             {
-                throw new PageSlugNotUniqueException();
+                throw new PageSlugNotUniqueException(slug);
             }
 
             Page parentPage = null;
@@ -963,7 +963,7 @@ namespace BoxSocial.Internals
 
             if ((!Functions.CheckPageNameValid(slug)) && parent == 0)
             {
-                throw new PageSlugNotUniqueException();
+                throw new PageSlugNotUniqueException(slug);
             }
 
             if (string.IsNullOrEmpty(pageBody) && !pageListOnly)
@@ -990,7 +990,7 @@ namespace BoxSocial.Internals
 
             if (pagesTable.Rows.Count > 0)
             {
-                throw new PageSlugNotUniqueException();
+                throw new PageSlugNotUniqueException(slug);
             }
 
             // has the title or parent been changed
@@ -1381,6 +1381,10 @@ namespace BoxSocial.Internals
 
     public class PageSlugNotUniqueException : Exception
     {
+        public PageSlugNotUniqueException(string slug)
+            : base(slug)
+        {
+        }
     }
 
     public class PageContentEmptyException : Exception

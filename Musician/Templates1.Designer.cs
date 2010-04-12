@@ -89,14 +89,13 @@ namespace BoxSocial.Musician {
         ///			&lt;dd&gt;{S_TITLE}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;tour&quot;&gt;Gig Tour&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_TOURS}&lt;/dd&gt;
+        ///      &lt;dt&gt;Gig Date&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_DATE} {S_TIMEZONE}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;city&quot;&gt;Gig City&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_CITY}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;venue&quot;&gt;Gig Venue&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_VENUE}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;abstract&quot;&gt;Gig Description&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;{S_ABSTRACT}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;inpu [rest of string was truncated]&quot;;.
+        ///			&lt;dt&gt;&lt;label for=&quot;abstract&quot;&gt;Gig Description&lt;/label [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_gig_edit {
             get {
@@ -196,7 +195,27 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Musician Memberships&lt;/h3&gt;
+        ///
+        ///&lt;a href=&quot;{U_REGISTER_MUSICIAN}&quot;&gt;Register Musician&lt;/a&gt;
+        ///
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;Fans&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN musician_list --&gt;
+        ///&lt;!-- IF musician_list.INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MUSICIAN}&quot;&gt;{musician_list.DISPLAY_NAME}&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;{musician_list.FANS}&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MANAGE}&quot;&gt;{L_MANAGE}&lt;/a&gt;&lt;/td&gt;
+        ///	&lt;td&gt;&lt;a hre [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_my_musicians {
             get {
@@ -290,13 +309,13 @@ namespace BoxSocial.Musician {
         ///			&lt;dd&gt;{S_TITLE}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;year&quot;&gt;Tour Year&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_YEAR}&lt;/dd&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;abstract&quot;&gt;Tour Description&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_ABSTRACT}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
         ///		&lt;/dl&gt;
         ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;music&quot; /&gt;
-        ///		&lt;input type=&quot;hidden&quot; name=&quot;sub&quot; value=&quot;tour&quot; /&gt;
-        ///		&lt;!-- IF EDIT --&gt;
-        ///		&lt;input type=&quot;hidden&quot; name=&quot;id&quot; value=&quot; [rest of string was truncated]&quot;;.
+        ///		&lt;input type=&quot;hidden&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_tour_edit {
             get {
@@ -377,6 +396,26 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- IF U_MUSICIAN_ACCOUNT --&gt;
+        ///&lt;a href=&quot;{U_MUSICIAN_ACCOUNT}&quot;&gt;Musician Administration Panel&lt;/a&gt;
+        ///&lt;!-- ENDIF --&gt;.
+        /// </summary>
+        internal static string musician_footer {
+            get {
+                return ResourceManager.GetString("musician_footer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewdiscography {
+            get {
+                return ResourceManager.GetString("viewdiscography", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;Fans&lt;/h2&gt;
@@ -432,22 +471,19 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;h2&gt;Musician&lt;/h2&gt;
+        ///&lt;h2&gt;&lt;a href=&quot;{U_MUSICIAN}&quot;&gt;{MUSICIAN_DISPLAY_NAME}&lt;/a&gt;&lt;/h2&gt;
         ///
-        ///&lt;!-- IF BIOGRAPHY --&gt;
-        ///&lt;p&gt;{BIOGRAPHY}&lt;/p&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;!-- IF instrument_list --&gt;
-        ///&lt;h3&gt;{L_INSTRUMENTS}&lt;/h3&gt;
-        ///&lt;ul&gt;
-        ///  &lt;!-- BEGIN instrument_list --&gt;
-        ///  &lt;li&gt;{instrument_list.NAME}&lt;/li&gt;
-        ///  &lt;!-- END instrument_list --&gt;
-        ///&lt;/ul&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///&lt;div id=&quot;pane-profile&quot;&gt;
+        ///  &lt;h3&gt;&lt;a href=&quot;{U_MUSICIAN}&quot;&gt;{MUSICIAN_DISPLAY_NAME}&lt;/a&gt;&lt;/h3&gt;
+        ///  &lt;dl&gt;
+        ///    &lt;dt&gt;{L_JOINED}:&lt;/dt&gt;
+        ///    &lt;dd&gt;{DATE_JOINED}&lt;/dd&gt;
+        ///  &lt;/dl&gt;
+        ///  &lt;!-- IF U_BECOME_FAN --&gt;
+        ///			&lt;p&gt;&lt;span id=&quot;fan-musiciain&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_BECOME_FAN}&quot;&gt;Become a Fan&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+        ///			&lt;!-- ENDIF --&gt;
+        ///  &lt;!-- IF U_MUSICIAN_ACCOUNT --&gt;
+        ///			&lt;p&gt;&lt;span id=&quot;account-musician&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_M [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewmusician {
             get {
@@ -471,12 +507,16 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;h2&gt;Tour&lt;/h2&gt;
+        ///&lt;h2&gt;{TOUR_TITLE} ({TOUR_YEAR})&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF TOUR_ABSTRACT --&gt;
+        ///&lt;p&gt;{TOUR_ABSTRACT}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
         ///
         ///&lt;!-- IF gig_list --&gt;
         ///&lt;ul&gt;
         ///  &lt;!-- BEGIN gig_list --&gt;
-        ///  &lt;li&gt;&lt;/li&gt;
+        ///  &lt;li&gt;&lt;a href=&quot;&quot;&gt;{gig_list.CITY}, {gig_list.DATE}&lt;/a&gt;&lt;/li&gt;
         ///  &lt;!-- END gig_list --&gt;
         ///&lt;/ul&gt;
         ///&lt;!-- ENDIF --&gt;
@@ -497,7 +537,7 @@ namespace BoxSocial.Musician {
         ///&lt;!-- IF tour_list --&gt;
         ///&lt;ul&gt;
         ///&lt;!-- BEGIN tour_list --&gt;
-        ///  &lt;li&gt;&lt;/li&gt;
+        ///  &lt;li&gt;&lt;a href=&quot;{tour_list.U_TOUR}&quot;&gt;{tour_list.TITLE}&lt;/a&gt; ({tour_list.YEAR})&lt;/li&gt;
         ///&lt;!-- END tour_list --&gt;
         ///&lt;/ul&gt;
         ///&lt;!-- ENDIF --&gt;

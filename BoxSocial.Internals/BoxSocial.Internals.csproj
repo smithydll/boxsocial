@@ -126,6 +126,7 @@
     <Compile Include="NumberedItem.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="PageHandle.cs" />
+    <Compile Include="PageSlugAttribute.cs" />
     <Compile Include="ParentTree.cs" />
     <Compile Include="PerformanceMeter.cs" />
     <Compile Include="PermissionCache.cs" />

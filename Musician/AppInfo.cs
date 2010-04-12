@@ -134,21 +134,16 @@ namespace BoxSocial.Musician
 
             if (gigTable.Rows.Count == 1)
             {
-                Primitive owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
+                Musician owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
 
-                /* TODO */
-                /*Access articleAccess = owner.Access;
-                articleAccess.SetViewer(member);
-
-                if (articleAccess.CanComment)
+                if (owner.Access.Can("COMMENT_GIGS"))
                 {
                     return true;
                 }
                 else
                 {
                     return false;
-                }*/
-                return true;
+                }
             }
             else
             {
@@ -208,10 +203,10 @@ namespace BoxSocial.Musician
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("profile", "Profile");
-                slugs.Add("tours", "Tours");
-                slugs.Add("gigs", "Gigs");
-                slugs.Add("discography", "Discography");
+                //slugs.Add("profile", "Profile");
+                //slugs.Add("tours", "Tours");
+                //slugs.Add("gigs", "Gigs");
+                //slugs.Add("discography", "Discography");
                 return slugs;
             }
         }
@@ -222,6 +217,7 @@ namespace BoxSocial.Musician
             core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
+        /*[PageSlug("Profile")]
         [Show("profile", AppPrimitives.Musician)]
         private void showMusician(Core core, object sender)
         {
@@ -230,8 +226,9 @@ namespace BoxSocial.Musician
                 //UserGroup.Show(core, (MPage)sender);
                 Musician.ShowProfile(sender, new ShowMPageEventArgs((MPage)sender));
             }
-        }
+        }*/
 
+        //[PageSlug("Members")]
         [Show("members", AppPrimitives.Musician)]
         private void showMemberlist(Core core, object sender)
         {
@@ -334,6 +331,7 @@ namespace BoxSocial.Musician
             }
         }
 
+        [PageSlug("Profile")]
         [Show(@"^/profile(|/)$", AppPrimitives.Musician)]
         private void showProfile(Core core, object sender)
         {
@@ -343,6 +341,7 @@ namespace BoxSocial.Musician
             }
         }
 
+        [PageSlug("Tours")]
         [Show(@"^/tours(|/)$", AppPrimitives.Musician)]
         private void showTours(Core core, object sender)
         {
@@ -361,6 +360,16 @@ namespace BoxSocial.Musician
             }
         }
 
+        [PageSlug("Gigs")]
+        [Show(@"^/gigs(|/)$", AppPrimitives.Musician)]
+        private void showGigs(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                //Gig.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
+            }
+        }
+
         [Show(@"^/gig/([0-9]+)(|/)$", AppPrimitives.Musician)]
         private void showGig(Core core, object sender)
         {
@@ -375,12 +384,33 @@ namespace BoxSocial.Musician
             }
         }
 
+        [PageSlug("Fans")]
         [Show(@"^/fans(|/)$", AppPrimitives.Musician)]
         private void showFans(Core core, object sender)
         {
             if (sender is MPage)
             {
                 Fan.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
+            }
+        }
+
+        [PageSlug("Discography")]
+        [Show(@"^/discography(|/)$", AppPrimitives.Musician)]
+        private void showDiscography(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.ShowDiscography(sender, new ShowMPageEventArgs((MPage)sender));
+            }
+        }
+
+        [PageSlug("Songs")]
+        [Show(@"^/songs(|/)$", AppPrimitives.Musician)]
+        private void showSongs(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                //Song.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
             }
         }
 

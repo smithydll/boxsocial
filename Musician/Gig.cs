@@ -212,6 +212,22 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Gig(Core core, Musician musician, long gigId)
+            : base(core)
+        {
+            this.musician = musician;
+            ItemLoad += new ItemLoadHandler(Gig_ItemLoad);
+
+            try
+            {
+                LoadItem(gigId, new FieldValuePair("musician_id", musician.Id));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGigException();
+            }
+        }
+
         public Gig(Core core, DataRow gigRow)
             : base(core)
         {
@@ -231,6 +247,22 @@ namespace BoxSocial.Musician
             : base(core)
         {
             this.tour = tour;
+            ItemLoad += new ItemLoadHandler(Gig_ItemLoad);
+
+            try
+            {
+                loadItemInfo(gigRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGigException();
+            }
+        }
+
+        public Gig(Core core, Musician musician, DataRow gigRow)
+            : base(core)
+        {
+            this.musician = musician;
             ItemLoad += new ItemLoadHandler(Gig_ItemLoad);
 
             try
@@ -295,7 +327,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                gig = new Gig(e.Core, e.ItemId);
+                gig = new Gig(e.Core, (Musician)e.Page.Owner, e.ItemId);
             }
             catch (InvalidGigException)
             {
@@ -308,6 +340,11 @@ namespace BoxSocial.Musician
             e.Template.Parse("TIME", e.Core.Tz.DateTimeToString(gig.GetTime(e.Core.Tz)));
             e.Template.Parse("YEAR", gig.GetTime(gig.TimeZone).Year.ToString());
             e.Core.Display.ParseBbcode("ABSTRACT", gig.Abstract);
+
+            if (e.Page.Owner.Access.Can("COMMENT_GIGS"))
+            {
+                e.Template.Parse("CAN_COMMENT", "TRUE");
+            }
 
             e.Core.Display.DisplayComments(e.Template, gig.Musician, gig);
 

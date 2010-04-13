@@ -877,8 +877,6 @@ namespace BoxSocial.Internals
 
                 if (uniqueness != 1)
                 {
-                                    HttpContext.Current.Response.Write(sQuery);
-                                    HttpContext.Current.Response.End();
                     throw new RecordNotUniqueException();
                 }
             }

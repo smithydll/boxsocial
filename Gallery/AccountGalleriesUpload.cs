@@ -32,7 +32,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// Account sub module for uploading photos.
     /// </summary>
-    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "galleries", "upload")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "upload")]
     public class AccountGalleriesUpload : AccountSubModule
     {
 
@@ -96,7 +96,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                Gallery gallery = new Gallery(core, LoggedInMember, galleryId);
+                Gallery gallery = new Gallery(core, Owner, galleryId);
 
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
 
@@ -134,7 +134,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                Gallery parent = new Gallery(core, LoggedInMember, galleryId);
+                Gallery parent = new Gallery(core, Owner, galleryId);
 
                 string slug = core.Http.Files["photo-file"].FileName;
 
@@ -147,7 +147,7 @@ namespace BoxSocial.Applications.Gallery
                         core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
 
-                    GalleryItem.Create(core, LoggedInMember, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification());
+                    GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification());
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");

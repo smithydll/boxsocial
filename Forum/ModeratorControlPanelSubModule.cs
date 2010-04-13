@@ -40,5 +40,16 @@ namespace BoxSocial.Applications.Forum
         {
             get;
         }
+
+        protected new string BuildUri(Core core, string sub)
+        {
+            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
+                Owner.UriStub + "forum/mcp/", ModuleKey, sub));
+        }
+
+        public new string BuildUri(Core core)
+        {
+            return BuildUri(core, Key);
+        }
     }
 }

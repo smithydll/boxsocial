@@ -135,11 +135,11 @@ namespace BoxSocial.Musician
 
         public static void ShowAll(object sender, ShowMPageEventArgs e)
         {
-            e.Template.SetTemplate("viewfans");
+            e.Template.SetTemplate("Musician", "viewfans");
 
             int p = e.Core.Functions.RequestInt("p", 1);
 
-            Musician musician = (Musician)e.Page.Owner;
+            Musician musician = e.Page.Musician;
 
             e.Template.Parse("U_FILTER_ALL", musician.FansUri);
             e.Template.Parse("U_FILTER_BEGINS_A", musician.GetFansUri("a"));

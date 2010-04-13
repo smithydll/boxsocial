@@ -133,11 +133,11 @@ namespace BoxSocial.Applications.Forum
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", this.page.Owner.AccountUriStub);
+                    modulesVariableCollection.Parse("URI", this.page.Owner.UriStub + "forum/mcp/");
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", this.page.Owner.AccountUriStub + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", this.page.Owner.UriStub + "forum/mcp/" + accountModule.Key);
                 }
 
                 if (module == accountModule.Key)

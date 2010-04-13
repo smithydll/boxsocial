@@ -39,6 +39,7 @@ namespace BoxSocial.Musician
         Compilation = 6,
     }
 
+    [DataTable("music_releases")]
     public class Release : NumberedItem, IRateableItem, ICommentableItem
     {
         [DataField("release_id", DataFieldKeys.Primary)]

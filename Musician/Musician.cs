@@ -94,6 +94,8 @@ namespace BoxSocial.Musician
         private long genre;
         [DataField("musician_subgenre")]
         private long subgenre;
+        [DataField("musician_type")]
+        private byte musicianType;
         [DataField("musician_home_page", MYSQL_TEXT)]
         private string homepage;
         [DataField("musician_icon")]
@@ -200,6 +202,18 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("genre", value);
+            }
+        }
+
+        public MusicianType MusicianType
+        {
+            get
+            {
+                return (MusicianType)musicianType;
+            }
+            set
+            {
+                SetProperty("musicianType", (byte)value);
             }
         }
 
@@ -493,6 +507,16 @@ namespace BoxSocial.Musician
             return (Song)input;
         }
 
+        public List<Recording> GetRecordings()
+        {
+            return getSubItems(typeof(Recording), true).ConvertAll<Recording>(new Converter<Item, Recording>(convertToRecording));
+        }
+
+        public Recording convertToRecording(Item input)
+        {
+            return (Recording)input;
+        }
+
         public static Musician Create(Core core, string title, string slug)
         {
             Mysql db = core.Db;
@@ -522,17 +546,6 @@ namespace BoxSocial.Musician
                 session.LoggedInMember.UserId, musicianId));
 
             Musician newMusician = new Musician(core, musicianId);
-
-            // Install a couple of applications
-            /*try
-            {
-                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
-                profileAe.Install(core, newMusician);
-            }
-            catch (Exception ex)
-            {
-                HttpContext.Current.Response.Write(ex.ToString());
-            }*/
 
             try
             {

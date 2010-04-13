@@ -32,7 +32,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group, "galleries", "galleries", true)]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "galleries", true)]
     public class AccountGalleriesManage : AccountSubModule
     {
 

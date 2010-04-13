@@ -82,6 +82,9 @@ namespace BoxSocial.Musician
             /* */
             SelectBox genreSelectBox = new SelectBox("genre");
 
+            /* */
+            SelectBox musicianTypeSelectBox = new SelectBox("musician-type");
+
             List<MusicGenre> genres = MusicGenre.GetGenres(core);
 
             foreach (MusicGenre genre in genres)
@@ -89,13 +92,26 @@ namespace BoxSocial.Musician
                 genreSelectBox.Add(new SelectBoxItem(genre.Id.ToString(), genre.Name));
             }
 
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Musician).ToString(), "Musician"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Duo).ToString(), "Duo"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Trio).ToString(), "Trio"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Quartet).ToString(), "Quartet"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Quintet).ToString(), "Quintet"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Band).ToString(), "Band"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Group).ToString(), "Group"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Orchestra).ToString(), "Orchestra"));
+            musicianTypeSelectBox.Add(new SelectBoxItem(((byte)MusicianType.Choir).ToString(), "Choir"));
+
             biographyTextBox.Value = musician.Biography;
             homepageTextBox.Value = musician.Homepage;
             nameTextBox.Value = musician.TitleName;
+            musicianTypeSelectBox.SelectedKey = ((byte)musician.MusicianType).ToString();
 
             template.Parse("S_BIOGRAPHY", biographyTextBox);
             template.Parse("S_HOMEPAGE", homepageTextBox);
             template.Parse("S_NAME", nameTextBox);
+            template.Parse("S_GENRE", genreSelectBox);
+            template.Parse("S_MUSICIAN_TYPE", musicianTypeSelectBox);
 
             Save(AccountProfileManage_Save);
         }
@@ -105,8 +121,13 @@ namespace BoxSocial.Musician
             AuthoriseRequestSid();
             Musician musician = (Musician)Owner;
 
+            long myGenre = core.Functions.FormLong("genre", musician.GenreRaw);
+            MusicianType musicianType = (MusicianType)core.Functions.FormByte("musician-type", (byte)musician.MusicianType);
+
             musician.Biography = core.Http.Form["biography"];
             musician.Homepage = core.Http.Form["homepage"];
+            musician.GenreRaw = myGenre;
+            musician.MusicianType = musicianType;
 
             musician.Update();
 

@@ -50,6 +50,7 @@
     <Compile Include="AccountMusician.cs" />
     <Compile Include="AccountMyMusicians.cs" />
     <Compile Include="AccountProfileManage.cs" />
+    <Compile Include="AccountRecordingsManage.cs" />
     <Compile Include="AccountSongsManage.cs" />
     <Compile Include="AccountTourManage.cs" />
     <Compile Include="AppInfo.cs" />

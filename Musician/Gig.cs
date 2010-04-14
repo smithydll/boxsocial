@@ -160,6 +160,42 @@ namespace BoxSocial.Musician
             }
         }
 
+        public string Cost
+        {
+            get
+            {
+                return gigCost;
+            }
+            set
+            {
+                SetProperty("gigCost", value);
+            }
+        }
+
+        public bool TicketsAtTheDoor
+        {
+            get
+            {
+                return gigTicketsAtTheDoor;
+            }
+            set
+            {
+                SetProperty("gigTicketsAtTheDoor", value);
+            }
+        }
+
+        public string TicketsUri
+        {
+            get
+            {
+                return gigTicketsUri;
+            }
+            set
+            {
+                SetProperty("gigTicketsUri", value);
+            }
+        }
+
         public Musician Musician
         {
             get
@@ -370,6 +406,9 @@ namespace BoxSocial.Musician
             e.Template.Parse("VENUE", gig.Venue);
             e.Template.Parse("TIME", e.Core.Tz.DateTimeToString(gig.GetTime(e.Core.Tz)));
             e.Template.Parse("YEAR", gig.GetTime(gig.TimeZone).Year.ToString());
+            e.Template.Parse("COST", gig.Cost);
+            e.Template.Parse("IS_TICKETS_AT_DOOR", (gig.TicketsAtTheDoor) ? "TRUE" : "FALSE");
+            e.Template.Parse("U_TICKETS", gig.TicketsUri);
             e.Core.Display.ParseBbcode("ABSTRACT", gig.Abstract);
 
             if (e.Page.Owner.Access.Can("COMMENT_GIGS"))

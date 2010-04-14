@@ -195,7 +195,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return "";
+                return Musician.UriStub + "tours/" + Id.ToString() + "/";
             }
         }
 
@@ -243,7 +243,7 @@ namespace BoxSocial.Musician
             }
 
             List<string[]> tourPath = new List<string[]>();
-            tourPath.Add(new string[] { "*tours", "Tours" });
+            tourPath.Add(new string[] { "tours", "Tours" });
 
             page.Owner.ParseBreadCrumbs(tourPath);
         }
@@ -285,8 +285,8 @@ namespace BoxSocial.Musician
             }
 
             List<string[]> tourPath = new List<string[]>();
-            tourPath.Add(new string[] { "*tours", "Tours" });
-            tourPath.Add(new string[] { "tour/" + tour.Id.ToString(), tour.Title });
+            tourPath.Add(new string[] { "tours", "Tours" });
+            tourPath.Add(new string[] { tour.Id.ToString(), tour.Title });
 
             page.Owner.ParseBreadCrumbs(tourPath);
         }

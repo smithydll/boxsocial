@@ -232,15 +232,14 @@ namespace BoxSocial.Musician {
         ///		&lt;dl&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;name&quot;&gt;Name&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_NAME}&lt;/dd&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;genre&quot;&gt;Genre&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_GENRE}&lt;/dd&gt;
+        ///      &lt;dt&gt;&lt;label for=&quot;musician-type&quot;&gt;Act&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_MUSICIAN_TYPE}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;biography&quot;&gt;Biography&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_BIOGRAPHY}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;homepage&quot;&gt;Homepage&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
-        ///		&lt;/dl&gt;
-        ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;music&quot; /&gt;
-        ///		&lt;input type=&quot;hi [rest of string was truncated]&quot;;.
+        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_profile {
             get {
@@ -407,7 +406,40 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;{L_DISCOGRAPHY}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;!-- IF album_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN album_list --&gt;
+        ///&lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END album_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- IF single_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN single_list --&gt;
+        ///&lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END single_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- IF ep_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN ep_list --&gt;
+        ///&lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END ep_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- IF demo_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN demo_list --&gt;
+        ///&lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END demo_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewdiscography {
             get {
@@ -460,11 +492,21 @@ namespace BoxSocial.Musician {
         ///  &lt;!-- INCLUDE pane.comments.html --&gt;
         ///&lt;/div&gt;
         ///
+        ///&lt;!-- INCLUDE musician_footer --&gt;
         ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewgig {
             get {
                 return ResourceManager.GetString("viewgig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewgigs {
+            get {
+                return ResourceManager.GetString("viewgigs", resourceCulture);
             }
         }
         

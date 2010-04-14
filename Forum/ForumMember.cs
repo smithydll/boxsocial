@@ -337,6 +337,7 @@ namespace BoxSocial.Applications.Forum
         public static void ShowMemberlist(Core core, GPage page)
         {
             page.template.SetTemplate("Forum", "memberlist");
+            ForumSettings.ShowForumHeader(core, page);
 
             page.template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
             page.template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.Owner, "a"));

@@ -64,9 +64,18 @@ namespace BoxSocial.Musician
             SetTemplate("account_recordings");
 
             List<Recording> recordings = ((Musician)Owner).GetRecordings();
+
+            foreach (Recording recording in recordings)
+            {
+                VariableCollection recordingVariableCollection = template.CreateChild("recordings_list");
+            }
         }
 
         void AccountRecordingsManage_Add(object sender, ModuleModeEventArgs e)
+        {
+        }
+
+        void AccountRecordingsManage_Add_Save(object sender, ModuleModeEventArgs e)
         {
         }
     }

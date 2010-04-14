@@ -136,6 +136,7 @@
     <Content Include="templates\viewdiscography.html" />
     <Content Include="templates\viewfans.html" />
     <Content Include="templates\viewgig.html" />
+    <Content Include="templates\viewgigs.html" />
     <Content Include="templates\viewmusician.html" />
     <Content Include="templates\viewmusician_member.html" />
     <Content Include="templates\viewsong.html" />

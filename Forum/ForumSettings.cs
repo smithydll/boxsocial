@@ -254,6 +254,8 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("IS_FORUM_MEMBER", "FALSE");
                 }
             }
+            page.template.Parse("U_FAQ", core.Uri.AppendSid(string.Format("{0}forum/help",
+                page.Owner.UriStub)));
         }
 
         public Access Access

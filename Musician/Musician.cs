@@ -971,7 +971,7 @@ namespace BoxSocial.Musician
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = "";
-            string path = string.Format("/music/{0}", Key);
+            string path = this.UriStub;
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     DisplayName, path);
 
@@ -979,9 +979,12 @@ namespace BoxSocial.Musician
             {
                 if (parts[i][0] != "")
                 {
-                    path += "/" + parts[i][0];
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path);
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
+                    if (!parts[i][0].StartsWith("*"))
+                    {
+                        path += parts[i][0] + "/";
+                    }
                 }
             }
 

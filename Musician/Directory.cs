@@ -105,7 +105,7 @@ namespace BoxSocial.Musician
                 genrePath = "/" + genrePath.TrimEnd(new char[] { '/' });
             }
 
-            return core.Uri.AppendSid(string.Format("music/directory{0}?filter={1}",
+            return core.Uri.AppendSid(string.Format("/music/directory{0}?filter={1}",
                     genrePath, filter));
         }
 

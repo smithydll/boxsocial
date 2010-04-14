@@ -88,6 +88,8 @@ namespace BoxSocial.Musician
                 gigVariableCollection.Parse("VENUE", gig.Venue);
                 gigVariableCollection.Parse("DATE", core.Tz.DateTimeToString(gig.GetTime(core.Tz)));
             }
+
+            template.Parse("U_ADD_GIG", BuildUri("gig", "add"));
         }
 
         void AccountGigManage_Edit(object sender, ModuleModeEventArgs e)

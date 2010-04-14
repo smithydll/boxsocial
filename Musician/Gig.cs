@@ -58,6 +58,12 @@ namespace BoxSocial.Musician
         private string gigTitle;
         [DataField("gig_abstract", MYSQL_TEXT)]
         private string gigAbstract;
+        [DataField("gig_cost", 31)]
+        private string gigCost;
+        [DataField("gig_tickets_door")]
+        private bool gigTicketsAtTheDoor;
+        [DataField("gig_tickets_uri", 127)]
+        private string gigTicketsUri;
 
         private Tour tour;
         private Musician musician;
@@ -291,7 +297,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return Musician.UriStub + "gig/" + gigId.ToString();
+                return Musician.UriStub + "gigs/" + gigId.ToString();
             }
         }
 
@@ -317,6 +323,31 @@ namespace BoxSocial.Musician
             }
 
             return gig;
+        }
+
+        public static void ShowAll(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("Musician", "viewgigs");
+
+            List<Gig> gigs = e.Page.Musician.GetGigs();
+
+            foreach (Gig gig in gigs)
+            {
+                VariableCollection gigVariableCollection = e.Template.CreateChild("gig_list");
+
+                gigVariableCollection.Parse("ID", gig.Id.ToString());
+                gigVariableCollection.Parse("U_GIG", gig.Uri);
+                gigVariableCollection.Parse("DESCRIPTION", gig.Abstract);
+                gigVariableCollection.Parse("CITY", gig.City);
+                gigVariableCollection.Parse("VENUE", gig.Venue);
+                gigVariableCollection.Parse("DATE", e.Core.Tz.DateTimeToDateString(gig.GetTime(e.Core.Tz)));
+                gigVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(gig.Comments));
+            }
+
+            List<string[]> gigPath = new List<string[]>();
+            gigPath.Add(new string[] { "gigs", "Gigs" });
+
+            e.Page.Owner.ParseBreadCrumbs(gigPath);
         }
 
         public static void Show(object sender, ShowMPageEventArgs e)
@@ -352,10 +383,10 @@ namespace BoxSocial.Musician
             if (gig.Tour != null)
             {
                 gigPath.Add(new string[] { "*tours", "Tours" });
-                gigPath.Add(new string[] { "*tour", gig.Tour.Title });
+                gigPath.Add(new string[] { "*tours/" + gig.Tour.Id.ToString(), gig.Tour.Title });
             }
-            gigPath.Add(new string[] { "*gigs", "Gigs" });
-            gigPath.Add(new string[] { "gig/" + gig.Id.ToString(), gig.Venue });
+            gigPath.Add(new string[] { "gigs", "Gigs" });
+            gigPath.Add(new string[] { gig.Id.ToString(), gig.Venue });
 
             e.Page.Owner.ParseBreadCrumbs(gigPath);
         }

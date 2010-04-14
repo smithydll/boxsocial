@@ -351,7 +351,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [Show(@"^/tour/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        [Show(@"^/tours/([0-9]+)(|/)$", AppPrimitives.Musician)]
         private void showTour(Core core, object sender)
         {
             if (sender is MPage)
@@ -366,11 +366,11 @@ namespace BoxSocial.Musician
         {
             if (sender is MPage)
             {
-                //Gig.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
+                Gig.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
             }
         }
 
-        [Show(@"^/gig/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        [Show(@"^/gigs/([0-9]+)(|/)$", AppPrimitives.Musician)]
         private void showGig(Core core, object sender)
         {
             if (sender is MPage)
@@ -414,7 +414,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [Show(@"^/song/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        [Show(@"^/songs/([0-9]+)(|/)$", AppPrimitives.Musician)]
         private void showSong(Core core, object sender)
         {
             if (sender is MPage)

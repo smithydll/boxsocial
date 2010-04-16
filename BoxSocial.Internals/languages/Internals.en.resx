@@ -132,6 +132,12 @@
   <data name="AUGUST" xml:space="preserve">
     <value>August</value>
   </data>
+  <data name="AUTO_BIOGRAPHY" xml:space="preserve">
+    <value>Auto Biography</value>
+  </data>
+  <data name="BISEXUAL" xml:space="preserve">
+    <value>Bisexual</value>
+  </data>
   <data name="BLOCKED" xml:space="preserve">
     <value>Blocked</value>
   </data>
@@ -143,6 +149,9 @@
   </data>
   <data name="COMMENTS" xml:space="preserve">
     <value>Comments</value>
+  </data>
+  <data name="COUNTRY" xml:space="preserve">
+    <value>Country</value>
   </data>
   <data name="COUNTRY_AD" xml:space="preserve">
     <value>Andorra</value>
@@ -324,6 +333,9 @@
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
+  <data name="DATE_OF_BIRTH" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
   <data name="DAY" xml:space="preserve">
     <value>Day</value>
   </data>
@@ -335,6 +347,9 @@
   </data>
   <data name="DENY" xml:space="preserve">
     <value>Deny</value>
+  </data>
+  <data name="DISPLAY_NAME" xml:space="preserve">
+    <value>Display Name</value>
   </data>
   <data name="EDIT" xml:space="preserve">
     <value>Edit</value>
@@ -354,6 +369,12 @@
   <data name="FEBURARY" xml:space="preserve">
     <value>Feburary</value>
   </data>
+  <data name="FEMALE" xml:space="preserve">
+    <value>Female</value>
+  </data>
+  <data name="FIRST_GIVEN_NAME" xml:space="preserve">
+    <value>First Given Name</value>
+  </data>
   <data name="FIVE_STAR" xml:space="preserve">
     <value>Five stars</value>
   </data>
@@ -365,6 +386,21 @@
   </data>
   <data name="FRIENDS" xml:space="preserve">
     <value>Friends</value>
+  </data>
+  <data name="GAY" xml:space="preserve">
+    <value>Gay</value>
+  </data>
+  <data name="GENDER" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="GO_TO_PAGE" xml:space="preserve">
+    <value>Go to page:</value>
+  </data>
+  <data name="HEIGHT" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="HOMOSEXUAL" xml:space="preserve">
+    <value>Homosexual</value>
   </data>
   <data name="HOUR" xml:space="preserve">
     <value>Hour</value>
@@ -387,6 +423,9 @@
   <data name="LEARN_MORE" xml:space="preserve">
     <value>Learn More...</value>
   </data>
+  <data name="MALE" xml:space="preserve">
+    <value>Male</value>
+  </data>
   <data name="MARCH" xml:space="preserve">
     <value>March</value>
   </data>
@@ -398,6 +437,9 @@
   </data>
   <data name="MEMBERS" xml:space="preserve">
     <value>Members</value>
+  </data>
+  <data name="MIDDLE_GIVEN_NAME" xml:space="preserve">
+    <value>Middle Given Name/Middle Initial</value>
   </data>
   <data name="MINUTE" xml:space="preserve">
     <value>Minute</value>
@@ -411,14 +453,34 @@
   <data name="MOVE_UP" xml:space="preserve">
     <value>Move Up</value>
   </data>
+  <data name="MY_INFORMATION" xml:space="preserve">
+    <value>My Information</value>
+  </data>
+  <data name="MY_NAME" xml:space="preserve">
+    <value>My Name</value>
+  </data>
+  <data name="NAME_SUFFIX" xml:space="preserve">
+    <value>Suffix</value>
+    <comment>Jr, Sr etc...</comment>
+  </data>
+  <data name="NAME_TITLE" xml:space="preserve">
+    <value>Title</value>
+    <comment>A title as in Mr. Sir. etc...</comment>
+  </data>
   <data name="NEW" xml:space="preserve">
     <value>New</value>
   </data>
   <data name="NEXT" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="NONE_SPECIFIED" xml:space="preserve">
+    <value>None Specified</value>
+  </data>
   <data name="NOVEMBER" xml:space="preserve">
     <value>November</value>
+  </data>
+  <data name="NO_ANSWER" xml:space="preserve">
+    <value>No Answer</value>
   </data>
   <data name="NO_COMMENTS" xml:space="preserve">
     <value>No Comments</value>
@@ -434,6 +496,9 @@
   </data>
   <data name="PAGES" xml:space="preserve">
     <value>Pages</value>
+  </data>
+  <data name="PERMISSIONS" xml:space="preserve">
+    <value>Permissions</value>
   </data>
   <data name="POSTED" xml:space="preserve">
     <value>Posted</value>
@@ -465,8 +530,14 @@
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
   </data>
+  <data name="STRAIGHT" xml:space="preserve">
+    <value>Straight</value>
+  </data>
   <data name="SUBMIT" xml:space="preserve">
     <value>Submit</value>
+  </data>
+  <data name="SURNAME" xml:space="preserve">
+    <value>Surname</value>
   </data>
   <data name="TAGS" xml:space="preserve">
     <value>Tags</value>
@@ -480,11 +551,20 @@
   <data name="TITLE" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="TRANSEXUAL" xml:space="preserve">
+    <value>Transexual</value>
+  </data>
   <data name="TWO_STAR" xml:space="preserve">
     <value>Two stars</value>
   </data>
   <data name="UNRATED" xml:space="preserve">
     <value>Unrated</value>
+  </data>
+  <data name="UNSPECIFIED" xml:space="preserve">
+    <value>Unspecified</value>
+  </data>
+  <data name="UNSURE" xml:space="preserve">
+    <value>Unsure</value>
   </data>
   <data name="URI" xml:space="preserve">
     <value>Uri</value>
@@ -494,6 +574,9 @@
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="WEIGHT" xml:space="preserve">
+    <value>Weight</value>
   </data>
   <data name="YEAR" xml:space="preserve">
     <value>Year</value>

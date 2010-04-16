@@ -62,6 +62,14 @@ namespace BoxSocial.FrontEnd
             string pageUri = core.Uri.BuildFriendsUri(User);
             core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(User.Friends / 18.0));
 
+            /* pages */
+            core.Display.ParsePageList(User, true);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "friends", "Friends" });
+
+            User.ParseBreadCrumbs(breadCrumbParts);
+
             EndResponse();
         }
     }

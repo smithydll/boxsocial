@@ -1,9 +1,20 @@
 <!-- INCLUDE page_header.html -->
 
 <h2>{FRIENDS_TITLE}</h2>
+<p>{BREADCRUMBS}</p>
 
+<div id="pane-profile">
+  <div id="pane-pages" class="pane">
+    <h3>Pages</h3>
+    <ul>
+      {PAGE_LIST}
+    </ul>
+  </div>
+</div>
+
+<div id="profile">
 	<!-- IF PAGINATION -->
-	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
 <!-- IF FRIENDS -->
 <ul id="profile-friends">
@@ -27,5 +38,6 @@
 	<!-- IF PAGINATION -->
 	<p><strong>Go to page:</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
+</div>
 
 <!-- INCLUDE page_footer.html -->

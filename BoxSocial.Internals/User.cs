@@ -2077,6 +2077,11 @@ namespace BoxSocial.Internals
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));
 
             page.User.ProfileViewed(core.Session.LoggedInMember);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "profile", "Profile" });
+
+            page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
         public static void ShowFriends(object sender, ShowUPageEventArgs e)
@@ -2135,6 +2140,14 @@ namespace BoxSocial.Internals
 
             string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
             e.Core.Display.ParsePagination(pageUri, e.Page.page, (int)Math.Ceiling(e.Page.User.Friends / 18.0));
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.User, true);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "friends", "Friends" });
+
+            e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
         public static void ShowFamily(object sender, ShowUPageEventArgs e)

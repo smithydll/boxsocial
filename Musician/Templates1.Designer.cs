@@ -248,6 +248,15 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_recordings {
+            get {
+                return ResourceManager.GetString("account_recordings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Song&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{U_ACCOUNT}&quot; method=&quot;post&quot;&gt;
@@ -484,16 +493,19 @@ namespace BoxSocial.Musician {
         ///  &lt;dd&gt;{VENUE}&lt;/dd&gt;
         ///  &lt;dt&gt;Time&lt;/dt&gt;
         ///  &lt;dd&gt;{TIME}&lt;/dd&gt;
+        ///  &lt;dt&gt;Tickets&lt;/dt&gt;
+        ///  &lt;!-- IF U_TICKETS --&gt;
+        ///  &lt;dd&gt;&lt;a href=&quot;{U_TICKETS}&quot;&gt;Purchase online [external link]&lt;/a&gt;&lt;/dd&gt;
+        ///  &lt;!-- ENDIF --&gt;
+        ///  &lt;!-- IF IS_TICKETS_AT_DOOR --&gt;
+        ///  &lt;dd&gt;Tickets avaliable at the door&lt;/dd&gt;
+        ///  &lt;!-- ENDIF --&gt;
         ///&lt;/dl&gt;
         ///
         ///&lt;p&gt;{ABSTRACT}&lt;/p&gt;
         ///
         ///&lt;div class=&quot;comment-pane&quot;&gt;
-        ///  &lt;!-- INCLUDE pane.comments.html --&gt;
-        ///&lt;/div&gt;
-        ///
-        ///&lt;!-- INCLUDE musician_footer --&gt;
-        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        ///  &lt;!-- INCLUDE pane.co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewgig {
             get {
@@ -502,7 +514,20 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;{L_GIGS}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;!-- IF gig_list --&gt;
+        ///&lt;ul&gt;
+        ///  &lt;!-- BEGIN gig_list --&gt;
+        ///  &lt;li&gt;&lt;a href=&quot;{gig_list.U_GIG}&quot;&gt;{gig_list.CITY}, {gig_list.DATE}&lt;/a&gt;&lt;/li&gt;
+        ///  &lt;!-- END gig_list --&gt;
+        ///&lt;/ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewgigs {
             get {
@@ -550,6 +575,7 @@ namespace BoxSocial.Musician {
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;{TOUR_TITLE} ({TOUR_YEAR})&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///
         ///&lt;!-- IF TOUR_ABSTRACT --&gt;
         ///&lt;p&gt;{TOUR_ABSTRACT}&lt;/p&gt;
@@ -558,7 +584,7 @@ namespace BoxSocial.Musician {
         ///&lt;!-- IF gig_list --&gt;
         ///&lt;ul&gt;
         ///  &lt;!-- BEGIN gig_list --&gt;
-        ///  &lt;li&gt;&lt;a href=&quot;&quot;&gt;{gig_list.CITY}, {gig_list.DATE}&lt;/a&gt;&lt;/li&gt;
+        ///  &lt;li&gt;&lt;a href=&quot;{gig_list.U_GIG}&quot;&gt;{gig_list.CITY}, {gig_list.DATE}&lt;/a&gt;&lt;/li&gt;
         ///  &lt;!-- END gig_list --&gt;
         ///&lt;/ul&gt;
         ///&lt;!-- ENDIF --&gt;
@@ -574,7 +600,8 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;h2&gt;Tours&lt;/h2&gt;
+        ///&lt;h2&gt;{L_TOURS}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///
         ///&lt;!-- IF tour_list --&gt;
         ///&lt;ul&gt;

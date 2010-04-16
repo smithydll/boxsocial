@@ -161,6 +161,7 @@ namespace BoxSocial.Applications.Gallery
             //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gallery)), galleryCanPostComment, galleryCanDeleteComment, galleryAdjustCommentCount, galleryCommentPosted);
 
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
             //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
@@ -240,6 +241,10 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="e">An EventArgs that contains the event data</param>
         private void photoCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private void galleryCommentPosted(CommentPostedEventArgs e)
         {
         }
 
@@ -352,6 +357,12 @@ namespace BoxSocial.Applications.Gallery
 
             GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
             return galleryItem.Owner.CanDeleteItem();
+        }
+
+        private bool galleryCanDeleteComment(ItemKey itemKey, User member)
+        {
+            Gallery gallery = new Gallery(core, itemKey.Id);
+            return gallery.Owner.CanDeleteItem();
         }
 
         /// <summary>

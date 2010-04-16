@@ -1,14 +1,14 @@
-﻿<h3>My Name</h3>
+﻿<h3>{L_MY_NAME}</h3>
 <p>Details of your real name are kept private between, you, your friends, and your family. People can search for your profile based on the name you give.</p>
 <p>Your real name combined with your date of birth and hometown can be used to find you as together they are the most personally identifyable information about oneself. You should be careful who you give these pieces of information out to.</p>
 
 <form action="{S_ACCOUNT}" method="post">
 	<fieldset>
-		<legend>My Name</legend>
+		<legend>{L_MY_NAME}</legend>
 		<dl>
-			<dt><label for="display">Display Name</label></dt>
+			<dt><label for="display">{L_DISPLAY_NAME}</label></dt>
 			<dd><input type="text" id="display" name="display" value="{DISPLAY_NAME}" /></dd>
-			<dt><label for="title">Title</label></dt>
+			<dt><label for="title">{L_NAME_TITLE}</label></dt>
 			<dd>
 				<select name="title" id="title">
 					<option{TITLE_NONE}></option>
@@ -24,13 +24,13 @@
 					<option{TITLE_LORD}>Lord.</option>
 				</select>
 			</dd>
-			<dt><label for="firstname">First Given Name</label></dt>
+			<dt><label for="firstname">{L_FIRST_GIVEN_NAME}</label></dt>
 			<dd><input type="text" id="firstname" name="firstname" value="{FIRST_NAME}" /></dd>
-			<dt><label for="middlename">Middle Given Name/Middle Initial</label></dt>
+			<dt><label for="middlename">{L_MIDDLE_GIVEN_NAME}</label></dt>
 			<dd><input type="text" id="middlename" name="middlename" value="{MIDDLE_NAME}" /></dd>
-			<dt><label for="lastname">Surname</label></dt>
+			<dt><label for="lastname">{L_SURNAME}</label></dt>
 			<dd><input type="text" id="lastname" name="lastname" value="{LAST_NAME}"/></dd>
-			<dt><label for="suffix">Suffix</label> e.g. Jr., Sr., II, III</dt>
+			<dt><label for="suffix">{L_NAME_SUFFIX}</label> e.g. Jr., Sr., II, III</dt>
 			<dd><input type="text" id="suffix" name="suffix" value="{SUFFIX}" /></dd>
 			<dt></dt>
 			<dd><input type="submit" name="save" value="Save" /></dd>

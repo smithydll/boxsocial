@@ -1510,12 +1510,16 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("S_RATEBAR", "TRUE");
             }
 
-            if (gallery.Access.Can("COMMENT"))
+            if (gallery.Id > 0)
             {
-                e.Template.Parse("CAN_COMMENT", "TRUE");
-            }
+                e.Template.Parse("ALBUM_COMMENTS", "TRUE");
+                if (gallery.Access.Can("COMMENT"))
+                {
+                    e.Template.Parse("CAN_COMMENT", "TRUE");
+                }
 
-            e.Core.Display.DisplayComments(e.Template, e.Page.Owner, gallery);
+                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, gallery);
+            }
 
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());
             e.Template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));

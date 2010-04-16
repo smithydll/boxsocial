@@ -1,4 +1,7 @@
 <!-- INCLUDE page_header.html -->
+
+<p>{BREADCRUMBS}</p>
+
 	<div id="overview-profile" class="pane">
 		<div class="img-wb img-fl">
 			<!-- IF USER_ICON -->
@@ -54,23 +57,6 @@
 			<h3>Pages</h3>
 			<ul>
 				{PAGE_LIST}
-				<!-- IF LISTS -->
-				<li><a href="/{USER_NAME}/lists/">Lists</a>
-					<ul>
-						<!-- BEGIN list_list -->
-						<li>
-						<!-- IF list_list.URI -->
-						<a href="{list_list.URI}">
-						<!-- ENDIF -->
-						{list_list.TITLE}
-						<!-- IF list_list.URI -->
-						</a>
-						<!-- ENDIF -->
-						</li>
-						<!-- END list_list -->
-					</ul>
-				</li>
-				<!-- ENDIF -->
 			</ul>
 		</div>
 		<div id="pane-profile-contact" class="pane">

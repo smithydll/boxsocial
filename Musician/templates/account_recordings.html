@@ -1,0 +1,28 @@
+﻿<h3>Manage Recordings</h3>
+
+<a href="{U_ADD_ALBUM}">Add Album</a>
+<a href="{U_ADD_SINGLE}">Add Single</a>
+
+<table style="width: 100%">
+<tr>
+	<th>Title</th>
+	<th>Tracks</th>
+	<th>Views</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN album_list -->
+<!-- IF album_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{album_list.TITLE}</td>
+	<td>{album_list.TRACKS}</td>
+	<td>{album_list.VIEWS}</td>
+	<td><a href="{album_list.U_EDIT}">{L_EDIT}</a></td>
+	<td><a href="{album_list.U_DELETE}">{L_DELETE}</a>
+  </td>
+</tr>
+<!-- END album_list -->
+</table>

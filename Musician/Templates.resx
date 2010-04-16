@@ -187,4 +187,7 @@
   <data name="viewgigs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewgigs.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="account_recordings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\account_recordings.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

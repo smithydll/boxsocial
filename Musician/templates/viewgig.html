@@ -10,6 +10,13 @@
   <dd>{VENUE}</dd>
   <dt>Time</dt>
   <dd>{TIME}</dd>
+  <dt>Tickets</dt>
+  <!-- IF U_TICKETS -->
+  <dd><a href="{U_TICKETS}">Purchase online [external link]</a></dd>
+  <!-- ENDIF -->
+  <!-- IF IS_TICKETS_AT_DOOR -->
+  <dd>Tickets avaliable at the door</dd>
+  <!-- ENDIF -->
 </dl>
 
 <p>{ABSTRACT}</p>

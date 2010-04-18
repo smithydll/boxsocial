@@ -1,6 +1,5 @@
 <!-- INCLUDE page_header.html -->
 
-<h2>{FRIENDS_TITLE}</h2>
 <p>{BREADCRUMBS}</p>
 
 <div id="pane-profile">
@@ -47,24 +46,15 @@
 	<!-- IF PAGINATION -->
 	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
-<!-- IF FRIENDS -->
-<ul id="profile-friends">
-<!-- BEGIN friend_list -->
-	<li>
-		<dl>
-			<dt><span class="img-wb"><a href="{friend_list.U_PROFILE}">
-			<!-- IF friend_list.ICON -->
-			<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
-			<!-- ELSE -->
-			<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
-			<!-- ENDIF -->
-			</a></span></dt>
-			<dd><a href="{friend_list.U_PROFILE}">{friend_list.USER_DISPLAY_NAME}</a></dd>
-		</dl>
-	</li>
-<!-- END friend_list -->
-</ul>
-<!-- ENDIF -->
+	
+	<!-- IF contact_list -->
+	<ul>
+	<!-- BEGIN contact_list -->
+	<li></li>
+	<!-- END contact_list -->
+	</ul>
+	<!-- ENDIF -->
+	
 	<div class="cheat-clear-left"></div>
 	<!-- IF PAGINATION -->
 	<p><strong>Go to page:</strong> {PAGINATION}</p>

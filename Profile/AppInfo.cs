@@ -136,9 +136,9 @@ namespace BoxSocial.Applications.Profile
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("profile", "Profile");
-                slugs.Add("friends", "Friends");
-                slugs.Add("status-feed", "Status Feed");
+                //slugs.Add("profile", "Profile");
+                //slugs.Add("friends", "Friends");
+                //slugs.Add("status-feed", "Status Feed");
                 return slugs;
             }
         }
@@ -156,6 +156,7 @@ namespace BoxSocial.Applications.Profile
             return AppPrimitives.Member | AppPrimitives.Application;
         }
 
+        [PageSlug("Profile")]
         [Show("profile", AppPrimitives.Member | AppPrimitives.Application)]
         private void showProfile(Core core, object sender)
         {
@@ -169,6 +170,44 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        [Show("contacts", AppPrimitives.Member)]
+        private void showContacts(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                Contact.ShowAll(sender, new ShowUPageEventArgs((UPage)sender));
+            }
+        }
+
+        [Show("contacts/([0-9]+)", AppPrimitives.Member)]
+        private void showContact(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                Contact.ShowAll(sender, new ShowUPageEventArgs((UPage)sender, int.Parse(core.PagePathParts[1].Value)));
+            }
+        }
+
+        [PageSlug("Friends")]
+        [Show("contacts/friends", AppPrimitives.Member)]
+        private void showFriends(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                User.ShowFriends(sender, new ShowUPageEventArgs((UPage)sender));
+            }
+        }
+
+        [Show("contacts/family", AppPrimitives.Member)]
+        private void showFamily(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                User.ShowFamily(sender, new ShowUPageEventArgs((UPage)sender));
+            }
+        }
+
+        [PageSlug("Status Feed")]
         [Show("status-feed", AppPrimitives.Member | AppPrimitives.Application)]
         private void showStatusFeed(Core core, object sender)
         {

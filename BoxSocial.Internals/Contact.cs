@@ -152,6 +152,16 @@ namespace BoxSocial.Internals
 			}
 		}
 
+        public static void ShowAll(object sender, ShowUPageEventArgs e)
+        {
+            e.Template.SetTemplate("view_contacts.html");
+        }
+
+        public static void Show(object sender, ShowUPageEventArgs e)
+        {
+            e.Template.SetTemplate("view_contact.html");
+        }
+
 		public override string Uri
 		{
 			get 

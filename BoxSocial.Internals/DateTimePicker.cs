@@ -149,12 +149,12 @@ namespace BoxSocial.Internals
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("<script type=\"text/javascript\">//<![CDATA[");
-            sb.AppendLine("dtp.push(new array(\"" + name + "date-drop\",\"" + name + "date-field\"));");
+            sb.AppendLine("dtp.push(new array(\"" + name + "[date-drop]\",\"" + name + "[date-field]\"));");
             sb.AppendLine("//]]></script>");
 
-            sb.AppendLine("<div id=\"" + name + "date-field\" class=\"date-field\">");
+            sb.AppendLine("<div class=\"date-field\">");
 
-            sb.AppendLine("<p id=\"" + name + "date-drop\" class=\"date-drop\">");
+            sb.AppendLine("<p id=\"" + name + "[date-drop]\" class=\"date-drop\">");
             sb.Append("Year: ");
             sb.AppendLine(dateYearsSelectBox.ToString());
             sb.AppendLine(" Month: ");
@@ -176,7 +176,7 @@ namespace BoxSocial.Internals
             }
             sb.Append("</p>");
 
-            sb.AppendLine("<p class=\"date-exp\">");
+            sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\">");
             sb.Append(dateExpressionTextBox.ToString());
             sb.Append("</p>");
 

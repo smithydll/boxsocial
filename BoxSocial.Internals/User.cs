@@ -1321,6 +1321,8 @@ namespace BoxSocial.Internals
 
             Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
 
             return newUser;
         }

@@ -555,16 +555,16 @@ namespace BoxSocial.Internals
                 cache = new Cache();
             }
 
-            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            try
             {
-                cache = HttpContext.Current.Cache;
+                if (cache != null)
+                {
+                    o = cache.Get("itemFields");
+                }
             }
-            else
+            catch (NullReferenceException)
             {
-                cache = new Cache();
             }
-
-            o = cache.Get("itemFields");
 
             lock (itemFieldsCacheLock)
             {
@@ -664,8 +664,17 @@ namespace BoxSocial.Internals
 			{
 				cache = new Cache();
 			}
-			
-			cache.Add("itemFields", itemFieldsCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+
+            if (cache != null)
+            {
+                try
+                {
+                    cache.Add("itemFields", itemFieldsCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                }
+                catch (NullReferenceException)
+                {
+                }
+            }
 
             return returnValue;
         }

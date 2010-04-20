@@ -1,0 +1,7 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Debug" appbase="C:\SVN\BoxSocial\Package" />
+  <Config name="Debug" binpathtype="Auto">
+    <assembly path="BoxSocial.Internals.dll" />
+  </Config>
+  <Config name="Release" binpathtype="Auto" runtimeFramework="v2.0.50727" />
+</NUnitProject>

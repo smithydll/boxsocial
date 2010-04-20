@@ -633,15 +633,13 @@ namespace BoxSocial.Internals
                 return input;
             }
 
-            int posn = input.LastIndexOfAny(spacers, max - 1, max);
+            input = input.Substring(0, max);
+
+            int posn = input.LastIndexOfAny(spacers);
 
             if (posn >= 0)
             {
                 input = input.Substring(0, posn);
-            }
-            else
-            {
-                input = input.Substring(0, max - 1);
             }
 
             return input;
@@ -663,7 +661,8 @@ namespace BoxSocial.Internals
 
             if (posn > 0 && (input.Length - posn) <= 4)
             {
-                return input = input.Substring(0, max - (input.Length - posn)) + input.Substring(posn);
+                string ext = input.Substring(posn);
+                return input = input.Substring(0, max - (input.Length - posn)) + ext;
             }
             else
             {
@@ -694,6 +693,23 @@ namespace BoxSocial.Internals
             return (page - 1) * perPage;
         }
 
+        public string InterpretDate(string date)
+        {
+            return "";
+        }
+
+        public string InterpretTime(string time)
+        {
+            switch (time.ToLower())
+            {
+                case "midday":
+                    return "12:00";
+                case "midnight":
+                    return "00:00";
+            }
+            return time;
+        }
+
         public string InterpretDateTime(string date)
         {
             switch (date.ToLower())
@@ -721,6 +737,8 @@ namespace BoxSocial.Internals
             bool isNegative = false;
             bool lastAnd = false;
 
+            List<int> numberParts = new List<int>();
+
             foreach (string part in parts)
             {
                 if (first)
@@ -740,6 +758,7 @@ namespace BoxSocial.Internals
                     continue;
                 }
 
+
                 if (firstDigit)
                 {
                     if (part == "and")
@@ -753,6 +772,11 @@ namespace BoxSocial.Internals
                     if (i >= 100)
                     {
                         number *= i;
+                        if (i >= 1000)
+                        {
+                            numberParts.Add(number);
+                            number = 0;
+                        }
                     }
                     else
                     {
@@ -765,6 +789,12 @@ namespace BoxSocial.Internals
                     number = ParseNumberPart(part);
                     firstDigit = true;
                 }
+
+            }
+
+            foreach (int n in numberParts)
+            {
+                number += n;
             }
 
             return number;
@@ -804,7 +834,7 @@ namespace BoxSocial.Internals
                     return 13;
                 case "fourteen":
                     return 14;
-                case "fiften":
+                case "fifteen":
                     return 15;
                 case "sixteen":
                     return 16;

@@ -102,6 +102,9 @@ namespace BoxSocial.Internals
             TextBox dateExpressionTextBox = new TextBox(name + "[expression]");
             dateExpressionTextBox.IsVisible = false;
 
+            TextBox timeExpressionTextBox = new TextBox(name + "[time]");
+            timeExpressionTextBox.IsVisible = false;
+
             SelectBox dateYearsSelectBox = new SelectBox(name + "[date-year]");
             SelectBox dateMonthsSelectBox = new SelectBox(name + "[date-month]");
             SelectBox dateDaysSelectBox = new SelectBox(name + "[date-day]");
@@ -148,10 +151,6 @@ namespace BoxSocial.Internals
             /* Build display */
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("<script type=\"text/javascript\">//<![CDATA[");
-            sb.AppendLine("dtp.push(new array(\"" + name + "[date-drop]\",\"" + name + "[date-field]\"));");
-            sb.AppendLine("//]]></script>");
-
             sb.AppendLine("<div class=\"date-field\">");
 
             sb.AppendLine("<p id=\"" + name + "[date-drop]\" class=\"date-drop\">");
@@ -178,9 +177,15 @@ namespace BoxSocial.Internals
 
             sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\">");
             sb.Append(dateExpressionTextBox.ToString());
+            sb.Append(timeExpressionTextBox.ToString());
             sb.Append("</p>");
 
             sb.AppendLine("</div>");
+
+            sb.AppendLine("<script type=\"text/javascript\">//<![CDATA[");
+            sb.AppendLine("dtp.push(Array(\"" + name + "[date-drop]\",\"" + name + "[date-field]\"));");
+            sb.AppendLine("EnableDateTimePickers();");
+            sb.AppendLine("//]]></script>");
 
             return sb.ToString();
         }
@@ -191,7 +196,7 @@ namespace BoxSocial.Internals
             UnixTime tz = new UnixTime(core, timeZoneCode);
             DateTime dt = tz.Now;
 
-            string expression = core.Http.Form[name + "[expression]"];
+            string expression = core.Http.Form[name + "[expression]"] + " " + core.Http.Form[name + "[time]"];
 
             if (!string.IsNullOrEmpty(expression))
             {

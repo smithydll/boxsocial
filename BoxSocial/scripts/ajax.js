@@ -367,8 +367,8 @@ function EnableDateTimePickers()
 {
     for(i in dtp)
     {
-        hide(i[0]);
-        show(i[1]);
+        hide(dtp[i][0]);
+        show(dtp[i][1]);
     }
 }
 

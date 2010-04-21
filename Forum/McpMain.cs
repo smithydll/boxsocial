@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -112,6 +113,8 @@ namespace BoxSocial.Applications.Forum
             {
                 VariableCollection topicVariableCollection = template.CreateChild("topic_list");
 
+                CheckBox checkBox = new CheckBox("checkbox[" + topic.Id.ToString() + "]");
+
                 topicVariableCollection.Parse("TITLE", topic.Title);
                 topicVariableCollection.Parse("URI", topic.Uri);
                 topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
@@ -119,6 +122,7 @@ namespace BoxSocial.Applications.Forum
                 topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
                 topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
                 topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
+                topicVariableCollection.Parse("S_CHECK", checkBox);
 
                 if (topicLastPosts.ContainsKey(topic.LastPostId))
                 {

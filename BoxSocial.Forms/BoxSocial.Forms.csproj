@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -46,14 +46,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Button.cs" />
     <Compile Include="CheckBox.cs" />
     <Compile Include="CheckBoxArray.cs" />
     <Compile Include="FormField.cs" />
     <Compile Include="RadioList.cs" />
     <Compile Include="RadioListItem.cs" />
+    <Compile Include="ResetButton.cs" />
     <Compile Include="SelectBox.cs" />
     <Compile Include="SelectBoxItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubmitButton.cs" />
     <Compile Include="TextBox.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

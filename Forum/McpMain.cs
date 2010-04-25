@@ -66,6 +66,12 @@ namespace BoxSocial.Applications.Forum
         {
             //AuthoriseRequestSid();
 
+            /* */
+            SubmitButton submitButton = new SubmitButton("submit", "Submit");
+            
+            /* */
+            SelectBox actionsSelectBox = new SelectBox("actions");
+
             int p = core.Functions.RequestInt("p", 1);
             SetTemplate("mcp_main");
 
@@ -92,6 +98,20 @@ namespace BoxSocial.Applications.Forum
             catch (InvalidForumException)
             {
                 core.Functions.Generate404();
+            }
+
+            if (thisForum.Access.Can("LOCK_TOPICS"))
+            {
+                actionsSelectBox.Add(new SelectBoxItem("lock", "Lock"));
+                actionsSelectBox.Add(new SelectBoxItem("unlock", "Unlock"));
+            }
+            if (thisForum.Access.Can("MOVE_TOPICS"))
+            {
+                actionsSelectBox.Add(new SelectBoxItem("move", "Move"));
+            }
+            if (thisForum.Access.Can("DELETE_TOPICS"))
+            {
+                actionsSelectBox.Add(new SelectBoxItem("delete", "Delete"));
             }
 
             List<ForumTopic> announcements = thisForum.GetAnnouncements();
@@ -213,6 +233,9 @@ namespace BoxSocial.Applications.Forum
                         break;
                 }
             }
+
+            template.Parse("S_ACTIONS", actionsSelectBox);
+            template.Parse("S_SUBMIT", submitButton);
         }
 
         void McpMain_Lock(object sender, ModuleModeEventArgs e)

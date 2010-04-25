@@ -75,6 +75,7 @@ namespace BoxSocial.Applications.Forum
         private Forum forum;
         private TopicReadStatus readStatus = null;
         private bool readStatusLoaded;
+        private Primitive owner;
 
         public long TopicId
         {
@@ -92,6 +93,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public Primitive ForumOwner
+        {
+            get
+            {
+                if (owner == null || (ownerKey.Id != owner.Id && ownerKey.TypeId != owner.TypeId))
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
         public Forum Forum
         {
             get
@@ -100,7 +118,7 @@ namespace BoxSocial.Applications.Forum
                 {
                     if (forumId == 0)
                     {
-                        //forum = new Forum(core, forum.Owner);
+                        forum = new Forum(core, ForumOwner);
                     }
                     else
                     {

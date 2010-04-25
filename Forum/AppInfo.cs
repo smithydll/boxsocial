@@ -253,9 +253,19 @@ namespace BoxSocial.Applications.Forum
         public void ShowGroupForum(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileforum");
+            template.SetProse(core.Prose);
 
             Forum forum = new Forum(core, (UserGroup)e.Owner);
             template.Parse("U_FORUM", forum.Uri);
+
+            List<ForumTopic> recentTopics = forum.GetTopicsFlat(0, 10);
+
+            foreach (ForumTopic topic in recentTopics)
+            {
+                VariableCollection topicVariableCollection = template.CreateChild("topic_list");
+                topicVariableCollection.Parse("TITLE", topic.Title);
+                topicVariableCollection.Parse("URI", topic.Uri);
+            }
 
             e.core.AddMainPanel(template);
         }

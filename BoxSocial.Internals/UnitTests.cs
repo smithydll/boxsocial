@@ -21,7 +21,10 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Text;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -32,6 +35,37 @@ namespace BoxSocial.Internals
     [TestFixture]
     public class FunctionsTests
     {
+        private Mysql db = null;
+        private Template template = null;
+        private Core core = null;
+        private Functions functions = null;
+
+        [SetUp]
+        public void SetUpForNonStaticMembers()
+        {
+            db = new Mysql("root", "", "zinzam0_test", "192.168.56.101");
+            template = new Template(Path.Combine(@"c:\SVN\BoxSocial\BoxSocial", "templates"), "default.html");
+
+            core = new Core(db, template);
+            functions = new Functions(core);
+        }
+
+        [Test]
+        public void IntToMonthTest()
+        {
+            Assert.AreEqual(functions.IntToMonth(1), "January");
+            Assert.AreEqual(functions.IntToMonth(2), "February");
+            Assert.AreEqual(functions.IntToMonth(3), "March");
+            Assert.AreEqual(functions.IntToMonth(4), "April");
+            Assert.AreEqual(functions.IntToMonth(5), "May");
+            Assert.AreEqual(functions.IntToMonth(6), "June");
+            Assert.AreEqual(functions.IntToMonth(7), "July");
+            Assert.AreEqual(functions.IntToMonth(8), "August");
+            Assert.AreEqual(functions.IntToMonth(9), "September");
+            Assert.AreEqual(functions.IntToMonth(10), "October");
+            Assert.AreEqual(functions.IntToMonth(11), "November");
+            Assert.AreEqual(functions.IntToMonth(12), "December");
+        }
 
         [Test]
         public void CheckPageNameValidTest()

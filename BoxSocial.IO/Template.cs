@@ -864,7 +864,11 @@ namespace BoxSocial.IO
                         string proseKey = key.Substring(2).ToUpper();
                         string fragment = null;
 
-                        if (prose.ContainsKey(proseKey))
+                        if (prose.ContainsKey(templateAssembly, proseKey))
+                        {
+                            fragment = prose.GetString(templateAssembly, proseKey);
+                        }
+                        else if (prose.ContainsKey(proseKey))
                         {
                             fragment = prose.GetString(proseKey);
                         }

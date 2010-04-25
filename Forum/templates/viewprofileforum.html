@@ -1,4 +1,11 @@
 ﻿	<div id="profile-forum-pane" class="pane">
-		<h3>Forum</h3>
+		<h3>{L_FORUM}</h3>
 		<a href="{U_FORUM}">{L_GO_TO_FORUM}</a>
+    <!-- IF topic_list -->
+    <dl>
+      <!-- BEGIN topic_list -->
+      <dt><a href="{topic_list.URI}">{topic_list.TITLE}</a></dt>
+      <!-- END topic_list -->
+    </dl>
+    <!-- ENDIF -->
 	</div>

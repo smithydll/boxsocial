@@ -57,6 +57,7 @@ namespace BoxSocial.Applications.Forum
         void McpMain_Load(object sender, EventArgs e)
         {
             this.AddModeHandler("lock", new ModuleModeHandler(McpMain_Lock));
+            this.AddModeHandler("unlock", new ModuleModeHandler(McpMain_Lock));
             this.AddModeHandler("delete", new ModuleModeHandler(McpMain_Delete));
             this.AddModeHandler("move", new ModuleModeHandler(McpMain_Move));
             this.AddModeHandler("delete-post", new ModuleModeHandler(McpMain_DeletePost));
@@ -65,15 +66,14 @@ namespace BoxSocial.Applications.Forum
         void McpMain_Show(object sender, EventArgs e)
         {
             //AuthoriseRequestSid();
+            int p = core.Functions.RequestInt("p", 1);
+            SetTemplate("mcp_main");
 
             /* */
             SubmitButton submitButton = new SubmitButton("submit", "Submit");
             
             /* */
-            SelectBox actionsSelectBox = new SelectBox("actions");
-
-            int p = core.Functions.RequestInt("p", 1);
-            SetTemplate("mcp_main");
+            SelectBox actionsSelectBox = new SelectBox("mode");
 
             long forumId = core.Functions.RequestLong("fid", 0);
             Forum thisForum = null;
@@ -234,6 +234,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
+            template.Parse("TOPICS", allTopics.Count.ToString());
             template.Parse("S_ACTIONS", actionsSelectBox);
             template.Parse("S_SUBMIT", submitButton);
         }
@@ -243,23 +244,65 @@ namespace BoxSocial.Applications.Forum
             AuthoriseRequestSid();
 
             long topicId = core.Functions.FormLong("t", 0);
-            ForumTopic topic = null;
+            long forumId = core.Functions.FormLong("id", 0);
+            Forum forum = null;
 
-            try
+            if (topicId > 0)
             {
-                topic = new ForumTopic(core, topicId);
+                ForumTopic topic = null;
+
+                try
+                {
+                    topic = new ForumTopic(core, topicId);
+                }
+                catch (InvalidTopicException)
+                {
+                    return;
+                }
+
+                if (topic.Forum.Access.Can("LOCK_TOPICS"))
+                {
+                    switch (e.Mode)
+                    {
+                        case "lock":
+                            topic.IsLocked = true;
+                            break;
+                        case "unlock":
+                            topic.IsLocked = false;
+                            break;
+                    }
+
+                    topic.Update();
+                }
             }
-            catch (InvalidTopicException)
+            else
             {
-                return;
+                // Not locking a single topic, locking from the MCP
+
+                List<long> topicIds = core.Functions.FormLongArray("checkbox");
+
+                if (forumId > 0)
+                {
+                    forum = new Forum(core, forumId);
+                }
+                else
+                {
+                    forum = new Forum(core, Owner);
+                }
+
+                switch (e.Mode)
+                {
+                    case "lock":
+                        forum.LockTopics(topicIds);
+                        break;
+                    case "unlock":
+                        forum.UnLockTopics(topicIds);
+                        break;
+                }
             }
 
-            if (topic.Forum.Access.Can("LOCK_TOPICS"))
-            {
-                topic.IsLocked = true;
-
-                topic.Update();
-            }
+            core.Display.ShowMessage("Locked", "The selected topics have been locked.");
+            SetRedirectUri(BuildUri());
         }
 
         void McpMain_Delete(object sender, ModuleModeEventArgs e)

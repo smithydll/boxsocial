@@ -34,7 +34,7 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
-            return string.Format("<input type=\"reset\" name=\"{0}\" value=\"{1}\" style=\"width: 100%;{3}\"{2}/>",
+            return string.Format("<input type=\"reset\" name=\"{0}\" value=\"{1}\" style=\"{3}\"{2}/>",
                 HttpUtility.HtmlEncode(Name),
                 HttpUtility.HtmlEncode(Caption),
                 (IsDisabled) ? " disabled=\"disabled\"" : "",

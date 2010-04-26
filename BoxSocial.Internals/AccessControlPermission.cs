@@ -155,7 +155,8 @@ namespace BoxSocial.Internals
             }
             catch (InvalidItemException)
             {
-                throw new InvalidAccessControlPermissionException();
+                AccessControlPermission acp = new AccessControlPermission(core, permissionId);
+                throw new InvalidAccessControlPermissionException(acp.Name);
             }
 		}
 
@@ -263,5 +264,14 @@ namespace BoxSocial.Internals
 	
 	public class InvalidAccessControlPermissionException : Exception
     {
+        public InvalidAccessControlPermissionException()
+            : base("Invalid Data Supplied")
+        {
+        }
+
+        public InvalidAccessControlPermissionException(string permission)
+            : base ("`" + permission + "` permission not found")
+        {
+        }
     }
 }

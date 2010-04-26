@@ -282,6 +282,26 @@ namespace BoxSocial.Internals
             return outValue;
         }
 
+        public List<long> FormLongArray(string var)
+        {
+            List<long> returnValue = new List<long>();
+
+            List<string> array = core.Http.FormArray(var);
+
+            foreach (string value in array)
+            {
+                try
+                {
+                    returnValue.Add(long.Parse(value));
+                }
+                catch
+                {
+                }
+            }
+
+            return returnValue;
+        }
+
         public byte GetLicenseId()
         {
             return byte.Parse(core.Http.Form["license"]);

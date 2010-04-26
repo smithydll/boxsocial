@@ -130,12 +130,14 @@ namespace BoxSocial.Internals
                 }
                 catch (InvalidItemException)
                 {
-                    throw new InvalidAccessControlGrantException();
+                    AccessControlPermission acp = new AccessControlPermission(core, permissionId);
+                    throw new InvalidAccessControlGrantException(acp.Name);
                 }
             }
             else
             {
-                throw new InvalidAccessControlGrantException();
+                AccessControlPermission acp = new AccessControlPermission(core, permissionId);
+                throw new InvalidAccessControlGrantException(acp.Name);
             }
         }
 		
@@ -286,5 +288,9 @@ namespace BoxSocial.Internals
 	
 	public class InvalidAccessControlGrantException : Exception
     {
+        public InvalidAccessControlGrantException(string permission)
+            : base("`" + permission + "` permission not found")
+        {
+        }
     }
 }

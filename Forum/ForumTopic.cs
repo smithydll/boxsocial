@@ -998,7 +998,7 @@ namespace BoxSocial.Applications.Forum
                 {
                     page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }
-                if (thisForum.Access.Can("REPLY_TOPICS"))
+                if (thisForum.Access.Can("REPLY_TOPICS") && (!thisTopic.IsLocked))
                 {
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }

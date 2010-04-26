@@ -134,6 +134,14 @@ ul#topics dl dd {
 	margin: 0;
 }
 
+ul#topics.mcp dl dt {
+	width: 44%;
+}
+
+ul#topics.mcp dl dd {
+	width: 14%;
+}
+
 ul#posts {
 	list-style: none;
 	margin: 0;

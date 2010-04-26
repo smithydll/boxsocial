@@ -275,6 +275,12 @@ namespace BoxSocial.Applications.Forum
 					
                         ForumTopic topic = new ForumTopic(core, forum, topicId);
 
+                        if (topic.IsLocked)
+                        {
+                            core.Display.ShowMessage("Topic Locked", "The topic cannot be replied to as it has been locked.");
+                            return;
+                        }
+
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 
                         page.template.Parse("REDIRECT_URI", post.Uri);

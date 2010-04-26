@@ -41,6 +41,7 @@ namespace BoxSocial.Applications.Forum
     [Permission("DELETE_OWN_POSTS", "Can delete own posts", PermissionTypes.Delete)]
     [Permission("DELETE_TOPICS", "Can delete topics", PermissionTypes.Delete)]
     [Permission("LOCK_TOPICS", "Can lock topics", PermissionTypes.CreateAndEdit)]
+    [Permission("MOVE_TOPICS", "Can move topics to/from forum", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_ANNOUNCEMENTS", "Can create announcements", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_STICKY", "Can create sticky topics", PermissionTypes.CreateAndEdit)]
     [Permission("REPORT_POSTS", "Can report posts", PermissionTypes.Interact)]

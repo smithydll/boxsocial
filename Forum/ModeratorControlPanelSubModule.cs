@@ -41,6 +41,21 @@ namespace BoxSocial.Applications.Forum
             get;
         }
 
+        /// <summary>
+        /// Creates an isolated template class for the module to render
+        /// inside.
+        /// </summary>
+        private void CreateTemplate()
+        {
+            template = new Template(core.Http.TemplatePath, "1301.html");
+            if (Owner != null)
+            {
+                template.Parse("U_MCP", core.Uri.AppendSid(Owner.UriStub + "forum/mcp/", true));
+                template.Parse("S_MCP", core.Uri.AppendSid(Owner.UriStub + "forum/mcp/", true));
+            }
+            template.SetProse(core.Prose);
+        }
+
         protected new string BuildUri(Core core, string sub)
         {
             return core.Uri.AppendSid(string.Format("{0}{1}/{2}",

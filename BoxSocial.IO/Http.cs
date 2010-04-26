@@ -120,6 +120,21 @@ namespace BoxSocial.IO
                 return current.Request.Form;
             }
         }
+
+        public List<string> FormArray(string var)
+        {
+            List<string> array = new List<string>();
+
+            foreach (string value in current.Request.Form)
+            {
+                if (value.StartsWith(var + "[") && value.EndsWith("]"))
+                {
+                    array.Add(value.Substring(var.Length + 1, value.Length - var.Length - 2));
+                }
+            }
+
+            return array;
+        }
         
         public NameValueCollection Query
         {

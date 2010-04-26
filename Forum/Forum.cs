@@ -881,6 +881,39 @@ namespace BoxSocial.Applications.Forum
             return topics;
         }
 
+        public void LockTopics(List<long> topicIds)
+        {
+            if (Access.Can("LOCK_TOPICS"))
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+                uQuery.AddField("topic_locked", true);
+                uQuery.AddCondition("forum_id", Id);
+                uQuery.AddCondition("topic_id",  ConditionEquality.In, topicIds);
+
+                db.Query(uQuery);
+            }
+        }
+
+        public void UnLockTopics(List<long> topicIds)
+        {
+            if (Access.Can("LOCK_TOPICS"))
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+                uQuery.AddField("topic_locked", false);
+                uQuery.AddCondition("forum_id", Id);
+                uQuery.AddCondition("topic_id", ConditionEquality.In, topicIds);
+
+                db.Query(uQuery);
+            }
+        }
+
+        public void DeleteTopics(List<long> topicIds)
+        {
+            if (Access.Can("DELETE_TOPICS"))
+            {
+            }
+        }
+
         public static Forum Create(Core core, Forum parent, string title, string description, string rules, ushort permissions, bool isCategory)
         {
             string parents;

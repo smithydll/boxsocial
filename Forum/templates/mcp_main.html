@@ -1,10 +1,13 @@
 ﻿<h3>Main</h3>
 
+<form action="{S_MCP}" method="post">
+  <fieldset>
+    <legend>Main</legend>
 	<!-- IF TOPICS -->
   <p>
     {PAGINATION}
   </p>
-			<ul id="topics" class="pane">
+			<ul id="topics" class="pane mcp">
     <li id="topic-head">
 					<dl class="title-row">
 						<dt><div>&nbsp;</div></dt>
@@ -73,3 +76,5 @@
   <!-- ELSE -->
   <p>{L_NO_TOPICS_FORUM}</p>
 	<!-- ENDIF -->
+  </fieldset>
+</form>

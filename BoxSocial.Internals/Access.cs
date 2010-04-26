@@ -191,7 +191,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    throw new InvalidAccessControlPermissionException();
+                    throw new InvalidAccessControlPermissionException(permission);
                 }
             }
 

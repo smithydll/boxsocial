@@ -304,10 +304,10 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         public string BuildUri(string sub, Dictionary<string, string> arguments)
         {
-            string argumentList = "";
+            string argumentList = string.Empty;
             foreach (string key in arguments.Keys)
             {
-                if (argumentList == "")
+                if (argumentList == string.Empty)
                 {
                     argumentList = string.Format("?{0}={1}",
                         key, arguments[key]);

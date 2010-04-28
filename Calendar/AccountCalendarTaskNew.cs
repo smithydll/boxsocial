@@ -81,8 +81,8 @@ namespace BoxSocial.Applications.Calendar
 
             DateTime dueDate = new DateTime(year, month, day, 16, 0, 0);
 
-            string topic = "";
-            string description = "";
+            string topic = string.Empty;
+            string description = string.Empty;
 
             Dictionary<string, string> years = new Dictionary<string, string>();
             for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(110).Year; i++)
@@ -187,8 +187,8 @@ namespace BoxSocial.Applications.Calendar
         void AccountCalendarTaskNew_Save(object sender, EventArgs e)
         {
             long taskId = 0;
-            string topic = "";
-            string description = "";
+            string topic = string.Empty;
+            string description = string.Empty;
             byte percentComplete = core.Functions.FormByte("percent-complete", 0);
             TaskPriority priority = (TaskPriority)core.Functions.FormByte("priority", (byte)TaskPriority.Normal);
             DateTime dueDate = tz.Now;
@@ -227,7 +227,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (description == null)
             {
-                description = "";
+                description = string.Empty;
             }
 
 

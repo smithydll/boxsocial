@@ -46,7 +46,7 @@ namespace BoxSocial.Internals
         {
             // normalise slug if it has been fiddeled with
             slug = slug.ToLower().Normalize(NormalizationForm.FormD);
-            string normalisedSlug = "";
+            string normalisedSlug = string.Empty;
 
             for (int i = 0; i < slug.Length; i++)
             {

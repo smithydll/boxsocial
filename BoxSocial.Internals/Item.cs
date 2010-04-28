@@ -90,7 +90,7 @@ namespace BoxSocial.Internals
         public static string GetPrimaryKey(Type type)
         {
             List<DataFieldInfo> fields = GetFields(type);
-            string keyField = "";
+            string keyField = string.Empty;
 
             foreach (DataFieldInfo field in fields)
             {
@@ -128,7 +128,7 @@ namespace BoxSocial.Internals
 
             string tableName = GetTable(type);
             List<DataFieldInfo> fields = GetFields(type);
-            string keyField = "";
+            string keyField = string.Empty;
 
             SelectQuery query = new SelectQuery(tableName);
 
@@ -188,7 +188,7 @@ namespace BoxSocial.Internals
 
             string tableName = GetTable(this.GetType());
             List<DataFieldInfo> fields = GetFields(this.GetType());
-            string keyField = "";
+            string keyField = string.Empty;
 
             SelectQuery query = new SelectQuery(tableName);
 

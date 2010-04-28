@@ -38,7 +38,7 @@ namespace BoxSocial.Internals
                     }
                     catch
                     {
-                        return "";
+                        return string.Empty;
                     }
                 }
                 else
@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
     public sealed class StylePropertyList : StyleStyle
     {
         public StylePropertyList()
-            : base("")
+            : base(string.Empty)
         {
         }
 
@@ -144,8 +144,8 @@ namespace BoxSocial.Internals
             char current = '\0';
             char previous = '\0';
             char next = '\0';
-            string key = "";
-            string value = "";
+            string key = string.Empty;
+            string value = string.Empty;
 
             //int i = 0;
             //while (i < strLength)
@@ -213,8 +213,8 @@ namespace BoxSocial.Internals
 
                             properties.Add(key, new StyleProperty(key, value.Trim(new char[] { ' ', '\t', '\r', '\n' })));
 
-                            key = "";
-                            value = "";
+                            key = string.Empty;
+                            value = string.Empty;
 
                             continue;
                         }
@@ -324,9 +324,9 @@ namespace BoxSocial.Internals
             char current = '\0';
             char previous = '\0';
             char next = '\0';
-            string rule = "";
-            string style = "";
-            string line = "";
+            string rule = string.Empty;
+            string style = string.Empty;
+            string line = string.Empty;
 
             //int i = 0;
             //while (i < strLength)
@@ -377,7 +377,7 @@ namespace BoxSocial.Internals
 
                     lineIndex = -1;
                     lineNo++;
-                    line = "";
+                    line = string.Empty;
                     continue;
                 }
                 else if (current != '\r')
@@ -452,8 +452,8 @@ namespace BoxSocial.Internals
                                 tempStyle.Parse(style);
                                 styles.Add(rule, tempStyle);
 
-                                style = "";
-                                rule = "";
+                                style = string.Empty;
+                                rule = string.Empty;
                                 continue;
                             }
                             else

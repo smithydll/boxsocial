@@ -168,7 +168,7 @@ namespace BoxSocial.Internals
             {
                 if (displayNameOwnership == null)
                 {
-                    displayNameOwnership = (title != "") ? title : assemblyName;
+                    displayNameOwnership = (title != string.Empty) ? title : assemblyName;
 
                     if (displayNameOwnership.EndsWith("s"))
                     {
@@ -704,7 +704,7 @@ namespace BoxSocial.Internals
                     foreach (string slug in slugs.Keys)
                     {
                         string tSlug = slug;
-                        Page myPage = Page.Create(core, false, owner, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                        Page myPage = Page.Create(core, false, owner, slugs[slug], ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
 
                         if (myPage != null)
                         {
@@ -768,7 +768,7 @@ namespace BoxSocial.Internals
                     query.AddCondition("page_item_type_id", viewer.TypeId);
                     query.AddCondition("page_title", slugs[slug]);
                     query.AddCondition("page_slug", slug);
-                    query.AddCondition("page_parent_path", "");
+                    query.AddCondition("page_parent_path", string.Empty);
 
                     if (db.Query(query).Rows.Count == 0)
                     {
@@ -779,7 +779,7 @@ namespace BoxSocial.Internals
                     {
                         try
                         {
-                            Page myPage = new Page(core, viewer, slug, "");
+                            Page myPage = new Page(core, viewer, slug, string.Empty);
 
                             if (myPage.ListOnly)
                             {
@@ -794,7 +794,7 @@ namespace BoxSocial.Internals
                         catch (PageNotFoundException)
                         {
                             string tSlug = slug;
-                            Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                            Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
 							
 							if (myPage.ListOnly)
                             {
@@ -847,7 +847,7 @@ namespace BoxSocial.Internals
 
                 foreach (string slug in slugs.Keys)
                 {
-                    Page page = new Page(core, viewer, slug, "");
+                    Page page = new Page(core, viewer, slug, string.Empty);
                     page.Delete();
                 }
 
@@ -866,14 +866,14 @@ namespace BoxSocial.Internals
 
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
-            string output = "";
+            string output = string.Empty;
             string path = string.Format("/application/{0}", assemblyName);
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     title, path);
 
             for (int i = 0; i < parts.Count; i++)
             {
-                if (parts[i][0] != "")
+                if (parts[i][0] != string.Empty)
                 {
                     path += "/" + parts[i][0];
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
@@ -935,7 +935,7 @@ namespace BoxSocial.Internals
 
         public void PublishToFeed(User owner, string title)
         {
-            PublishToFeed(owner, title, "");
+            PublishToFeed(owner, title, string.Empty);
         }
 
         public void PublishToFeed(User owner, string title, string message)

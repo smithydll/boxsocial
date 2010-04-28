@@ -95,7 +95,7 @@ namespace BoxSocial.Groups
             {
                 if (displayNameOwnership == null)
                 {
-                    displayNameOwnership = (displayName != "") ? displayName : groupSlug;
+                    displayNameOwnership = (displayName != string.Empty) ? displayName : groupSlug;
 
                     if (displayNameOwnership.EndsWith("s"))
                     {

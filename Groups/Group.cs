@@ -740,7 +740,7 @@ namespace BoxSocial.Groups
 
             InsertQuery iQuery = new InsertQuery(UserGroup.GetTable(typeof(UserGroup)));
             iQuery.AddField("group_name", groupSlug);
-            iQuery.AddField("group_domain", "");
+            iQuery.AddField("group_domain", string.Empty);
 
             long groupId = db.Query(iQuery);
 
@@ -758,7 +758,7 @@ namespace BoxSocial.Groups
             iQuery.AddField("group_comments", 0);
             iQuery.AddField("group_gallery_items", 0);
             iQuery.AddField("group_home_page", "/profile");
-            iQuery.AddField("group_style", "");
+            iQuery.AddField("group_style", string.Empty);
 
             iQuery.AddField("group_reg_ip", session.IPAddress.ToString());
             iQuery.AddField("group_icon", 0);
@@ -1097,14 +1097,14 @@ namespace BoxSocial.Groups
 
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
-            string output = "";
+            string output = string.Empty;
             string path = this.UriStub;
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     DisplayName, path);
 
             for (int i = 0; i < parts.Count; i++)
             {
-                if (parts[i][0] != "")
+                if (parts[i][0] != string.Empty)
                 {
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                         parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
@@ -1424,7 +1424,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));
                 memberVariableCollection.Parse("USER_AGE", member.AgeString);
                 memberVariableCollection.Parse("USER_COUNTRY", member.Country);
-                memberVariableCollection.Parse("USER_CAPTION", "");
+                memberVariableCollection.Parse("USER_CAPTION", string.Empty);
 
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 if (core.LoggedInMemberId > 0)

@@ -36,6 +36,7 @@ namespace BoxSocial.Forms
         private Dictionary<string, SelectBoxItem> itemKeys;
         private string selectedKey;
         protected bool visible;
+        private StyleLength width;
 
         public bool IsVisible
         {
@@ -86,6 +87,7 @@ namespace BoxSocial.Forms
             items = new List<SelectBoxItem>();
             itemKeys = new Dictionary<string, SelectBoxItem>();
             visible = true;
+            width = new StyleLength();
         }
 
         /// <summary>
@@ -131,9 +133,10 @@ namespace BoxSocial.Forms
         public override string ToString()
         {
             StringBuilder selectBox = new StringBuilder();
-            selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\" style=\"{1}\">",
+            selectBox.AppendLine(string.Format("<select name=\"{0}\" id=\"{0}\" style=\"{1}{2}\">",
                 HttpUtility.HtmlEncode(name),
-                (!IsVisible) ? " display: none;" : ""));
+                (!IsVisible) ? " display: none;" : string.Empty,
+                (width.Unit != LengthUnits.Default) ? string.Format(" width: {0};", width) : string.Empty));
 
             foreach (SelectBoxItem item in items)
             {

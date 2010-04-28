@@ -122,9 +122,9 @@ namespace BoxSocial.Applications.Calendar
             DateTime startDate = new DateTime(year, month, day, 8, 0, 0);
             DateTime endDate = new DateTime(year, month, day, 9, 0, 0);
 
-            string subject = "";
-            string location = "";
-            string description = "";
+            string subject = string.Empty;
+            string location = string.Empty;
+            string description = string.Empty;
 			
 			if (edit)
             {
@@ -286,9 +286,9 @@ namespace BoxSocial.Applications.Calendar
             AuthoriseRequestSid();
 
             long eventId = 0;
-            string subject = "";
-            string location = "";
-            string description = "";
+            string subject = string.Empty;
+            string location = string.Empty;
+            string description = string.Empty;
             DateTime startTime = tz.Now;
             DateTime endTime = tz.Now;
             bool edit = false;

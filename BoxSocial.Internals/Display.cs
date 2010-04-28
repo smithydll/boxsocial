@@ -711,7 +711,7 @@ namespace BoxSocial.Internals
             {
                 if (pagesTable.Rows.Count == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 else
                 {

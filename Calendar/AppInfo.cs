@@ -59,7 +59,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "";
+                return string.Empty;
             }
         }
 

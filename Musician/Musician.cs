@@ -970,7 +970,7 @@ namespace BoxSocial.Musician
 
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
-            string output = "";
+            string output = string.Empty;
             string path = this.UriStub;
             output = string.Format("<a href=\"{1}\">{0}</a>",
                     DisplayName, path);
@@ -1204,7 +1204,7 @@ namespace BoxSocial.Musician
             {
                 // normalise slug if it has been fiddeled with
                 slug = slug.ToLower().Normalize(NormalizationForm.FormD);
-                string normalisedSlug = "";
+                string normalisedSlug = string.Empty;
 
                 for (int i = 0; i < slug.Length; i++)
                 {

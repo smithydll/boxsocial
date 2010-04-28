@@ -64,7 +64,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (contactDisplayName == "")
+                if (contactDisplayName == string.Empty)
                 {
                     return FirstName + " " + LastName;
                 }

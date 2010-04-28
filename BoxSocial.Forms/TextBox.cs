@@ -164,18 +164,18 @@ namespace BoxSocial.Forms
                     HttpUtility.HtmlEncode(Value),
                     lines,
                     17 * lines,
-                    (IsDisabled) ? " disabled=\"disabled\"" : "",
-                    (!IsVisible) ? " display: none;" : "",
+                    (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
+                    (!IsVisible) ? " display: none;" : string.Empty,
                     width);
             }
             else
             {
-                return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: {5};{3}\"{2}{3}/>",
+                return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: {5};{4}\"{2}{3}/>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
-                    (IsDisabled) ? " disabled=\"disabled\"" : "",
-                    (MaxLength > -1) ? " maxlength=\"" + MaxLength + "\"" : "",
-                    (!IsVisible) ? " display: none;" : "",
+                    (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
+                    (MaxLength > -1) ? " maxlength=\"" + MaxLength + "\"" : string.Empty,
+                    (!IsVisible) ? " display: none;" : string.Empty,
                     width);
             }
         }

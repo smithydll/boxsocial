@@ -389,7 +389,7 @@ namespace BoxSocial.Internals
         {
             if (string.IsNullOrEmpty(input))
             {
-                return "";
+                return string.Empty;
             }
 
             StringBuilder debugLog = new StringBuilder();
@@ -410,8 +410,8 @@ namespace BoxSocial.Internals
             int inList = 0;
             bool parseList = false;
             bool inCode = false;
-            string Tag = "";
-            string attr = "";
+            string Tag = string.Empty;
+            string attr = string.Empty;
             int startIndex = 0;
             int strLength = input.Length;
             int end = strLength;
@@ -493,8 +493,8 @@ namespace BoxSocial.Internals
                                     int endReplaceLength = 3 + tagLength;
                                     int endOffset = 0;
                                     bool abortParse = false;
-                                    string insertStart = "";
-                                    string insertEnd = "";
+                                    string insertStart = string.Empty;
+                                    string insertEnd = string.Empty;
                                     bool listItem = false;
 
                                     /*
@@ -556,8 +556,8 @@ namespace BoxSocial.Internals
                     inTag = false;
                     endTag = false;
                     inQuote = false;
-                    Tag = "";
-                    attr = "";
+                    Tag = string.Empty;
+                    attr = string.Empty;
                 }
                 else
                 {
@@ -580,8 +580,8 @@ namespace BoxSocial.Internals
                                     inTag = false;
                                     endTag = false;
                                     inQuote = false;
-                                    Tag = "";
-                                    attr = "";
+                                    Tag = string.Empty;
+                                    attr = string.Empty;
                                 }
                                 else
                                 {
@@ -603,8 +603,8 @@ namespace BoxSocial.Internals
                                     inTag = false;
                                     endTag = false;
                                     inQuote = false;
-                                    Tag = "";
-                                    attr = "";
+                                    Tag = string.Empty;
+                                    attr = string.Empty;
                                 }
                             }
                         }
@@ -617,8 +617,8 @@ namespace BoxSocial.Internals
                     endTag = false;
                     inQuote = false;
                     startAttr = false; // fixed parsing error
-                    Tag = "";
-                    attr = "";
+                    Tag = string.Empty;
+                    attr = string.Empty;
                 }
                 i++;
                 if (!inTag)
@@ -655,7 +655,7 @@ namespace BoxSocial.Internals
             double time = ((double)(DateTime.Now.Ticks - start)) / 10000000;
             input = input.Replace("\r\n", "\n");
             input = input.Replace("\n", "<br />");
-            input = input.Replace("<p></p>", "");
+            input = input.Replace("<p></p>", string.Empty);
             input = input.Replace("<p><br /><br />", "<p>");
             input = input.Replace("<p><br />", "<p>");
             input = input.Replace("<br /></p>", "</p>");
@@ -664,9 +664,9 @@ namespace BoxSocial.Internals
             input = input.Replace("<br /></ol>", "</ol>");
             input = input.Replace("<blockquote></blockquote>", "<blockquote>&nbsp;</blockquote>");
             //input = Regex.Replace(input, @"\<p\>(\s)\<\/p\>", "", RegexOptions.Compiled);
-            input = input.Replace("<p> </p>", "");
-            input = input.Replace("<p>\n</p>", "");
-            input = input.Replace("<p>\r\n</p>", "");
+            input = input.Replace("<p> </p>", string.Empty);
+            input = input.Replace("<p>\n</p>", string.Empty);
+            input = input.Replace("<p>\r\n</p>", string.Empty);
             return input;
         }
 
@@ -848,8 +848,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -971,7 +971,7 @@ namespace BoxSocial.Internals
             if (e.StripTag)
             {
                 e.PrefixText = " *";
-                e.SuffixText = "";
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -988,8 +988,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1008,8 +1008,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1035,8 +1035,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1053,8 +1053,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1071,8 +1071,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1089,8 +1089,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1110,8 +1110,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1139,13 +1139,13 @@ namespace BoxSocial.Internals
             {
                 if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "";
+                    e.PrefixText = string.Empty;
                     e.SuffixText = " : (" + e.Attributes.GetAttribute("default") + ")";
                 }
                 else
                 {
-                    e.PrefixText = "";
-                    e.SuffixText = "";
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
                 }
             }
             else
@@ -1195,7 +1195,7 @@ namespace BoxSocial.Internals
             {
                 if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "";
+                    e.PrefixText = string.Empty;
                     e.SuffixText = string.Format("(http://zinzam.com{0})", core.Uri.StripSid(e.Attributes.GetAttribute("default")));
                 }
                 else
@@ -1268,8 +1268,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1295,8 +1295,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1329,7 +1329,7 @@ namespace BoxSocial.Internals
                     youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
 
                     e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
-                    e.SuffixText = "";
+                    e.SuffixText = string.Empty;
                 }
                 else
                 {
@@ -1348,8 +1348,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1357,7 +1357,7 @@ namespace BoxSocial.Internals
                 e.RemoveContents();
 
                 e.PrefixText = "<img src=\"http://zinzam.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
-                e.SuffixText = "";
+                e.SuffixText = string.Empty;
             }
         }
 
@@ -1370,8 +1370,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1393,8 +1393,8 @@ namespace BoxSocial.Internals
 
             if (e.StripTag)
             {
-                e.PrefixText = "";
-                e.SuffixText = "";
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
             }
             else
             {
@@ -1447,18 +1447,18 @@ namespace BoxSocial.Internals
                         e.Attributes.GetAttribute("ownership") == "true")
                     {
                         e.PrefixText = userUser.DisplayNameOwnership;
-                        e.SuffixText = "";
+                        e.SuffixText = string.Empty;
                     }
                     else
                     {
                         e.PrefixText = userUser.DisplayName;
-                        e.SuffixText = "";
+                        e.SuffixText = string.Empty;
                     }
                 }
                 else
                 {
                     e.PrefixText = "Anonymous";
-                    e.SuffixText = "";
+                    e.SuffixText = string.Empty;
                 }
             }
             else
@@ -1497,19 +1497,19 @@ namespace BoxSocial.Internals
                         {
                             e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
                                 userUser.DisplayNameOwnership, userUser.Uri);
-                            e.SuffixText = "";
+                            e.SuffixText = string.Empty;
                         }
                         else
                         {
                             e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
                                 userUser.DisplayName, userUser.Uri);
-                            e.SuffixText = "";
+                            e.SuffixText = string.Empty;
                         }
                     }
                     else
                     {
                         e.PrefixText = "Anonymous";
-                        e.SuffixText = "";
+                        e.SuffixText = string.Empty;
                     }
                 }
             }
@@ -1540,8 +1540,8 @@ namespace BoxSocial.Internals
             bool inQuote = false;
             bool inValue = false;
             int length = input.Length;
-            string param = "";
-            string val = "";
+            string param = string.Empty;
+            string val = string.Empty;
             for (int i = 0; i < length; i++)
             {
                 if (input[i].Equals('&') && i + 6 < input.Length && input.Substring(i, 6).Equals("&quot;"))
@@ -1571,8 +1571,8 @@ namespace BoxSocial.Internals
                 {
                     if (param.Length == 0) param = "default";
                     Attributes.Add(param.ToLower(), val);
-                    param = "";
-                    val = "";
+                    param = string.Empty;
+                    val = string.Empty;
                     inValue = false;
                 }
             }

@@ -59,7 +59,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return "";
+                return string.Empty;
             }
         }
 

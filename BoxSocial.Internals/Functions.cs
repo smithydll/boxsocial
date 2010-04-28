@@ -385,7 +385,7 @@ namespace BoxSocial.Internals
                     selectBox.AppendLine("<div style=\"height: 20px;\">");
                 }
 
-                string icon = "";
+                string icon = string.Empty;
 
                 if (!string.IsNullOrEmpty(item.Icon))
                 {
@@ -440,7 +440,7 @@ namespace BoxSocial.Internals
                 name));
 
             bool hasIcon = false;
-            string defaultIcon = "";
+            string defaultIcon = string.Empty;
             string iconImageName = name + "-icon";
 
             foreach (SelectBoxItem item in items)
@@ -600,7 +600,7 @@ namespace BoxSocial.Internals
         public static string GenerateBreadCrumbs(string userName, string path)
         {
             string[] paths = path.Split('/');
-            string output = "";
+            string output = string.Empty;
 
             path = string.Format("/{0}", userName);
             output = string.Format("<a href=\"{1}\">{0}</a>",
@@ -608,7 +608,7 @@ namespace BoxSocial.Internals
 
             for (int i = 0; i < paths.Length; i++)
             {
-                if (paths[i] != "")
+                if (paths[i] != string.Empty)
                 {
                     path += "/" + paths[i];
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
@@ -715,7 +715,7 @@ namespace BoxSocial.Internals
 
         public string InterpretDate(string date)
         {
-            return "";
+            return string.Empty;
         }
 
         public string InterpretTime(string time)

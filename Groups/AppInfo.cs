@@ -60,7 +60,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return "";
+                return string.Empty;
             }
         }
 

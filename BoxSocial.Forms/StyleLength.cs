@@ -33,12 +33,42 @@ namespace BoxSocial.Forms
         Percentage,
         Points,
         Em,
+        Default,
     }
 
     public class StyleLength
     {
         private float length;
         private LengthUnits unit;
+
+        public float Length
+        {
+            get
+            {
+                return length;
+            }
+            set
+            {
+                length = value;
+            }
+        }
+
+        public LengthUnits Unit
+        {
+            get
+            {
+                return unit;
+            }
+            set
+            {
+                unit = value;
+            }
+        }
+
+        public StyleLength()
+            : this(0F, LengthUnits.Default)
+        {
+        }
 
         public StyleLength(float length, LengthUnits unit)
         {
@@ -62,6 +92,8 @@ namespace BoxSocial.Forms
                     return string.Format("{0} pt", length);
                 case LengthUnits.Em:
                     return string.Format("{0} em", length);
+                case LengthUnits.Default:
+                    return string.Empty;
                 default:
                     return length.ToString();
             }

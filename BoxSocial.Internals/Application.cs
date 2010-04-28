@@ -395,7 +395,7 @@ namespace BoxSocial.Internals
 
         public static string InitialiseApplications(Core core, AppPrimitives primitive)
         {
-            string debug = "";
+            string debug = string.Empty;
 
             Assembly[] assemblies = core.CoreDomain.GetAssemblies();
 

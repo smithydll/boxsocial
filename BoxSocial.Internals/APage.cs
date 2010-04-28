@@ -90,7 +90,7 @@ namespace BoxSocial.Internals
             }
 
             core.PagePath = core.PagePath.Substring(anApplication.AssemblyName.Length + 1 + 12);
-            if (core.PagePath.Trim(new char[] { '/' }) == "")
+            if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {
                 core.PagePath = "/profile";
             }

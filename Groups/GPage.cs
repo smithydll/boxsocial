@@ -76,11 +76,11 @@ namespace BoxSocial.Groups
             {
                 core.PagePath = core.PagePath.Substring(Group.Slug.Length + 1 + 6);
             }
-            if (core.PagePath.Trim(new char[] { '/' }) == "")
+            if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {
                 core.PagePath = Group.Info.GroupHomepage;
             }
-            if (core.PagePath.Trim(new char[] { '/' }) == "")
+            if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {
                 core.PagePath = "/profile";
             }

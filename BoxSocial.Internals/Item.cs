@@ -948,6 +948,21 @@ namespace BoxSocial.Internals
 			}
 		}
 
+        public static long DeleteItem(Type type, long itemId)
+        {
+            /*if (this is IPermissibleItem)
+            {
+                IPermissibleItem iThis = (IPermissibleItem)this;
+                //iThis.Access.SetSessionViewer(core.session);
+                if (!iThis.Access.Can("DELETE"))
+                {
+                    throw new UnauthorisedToDeleteItemException();
+                }
+            }*/
+
+            return 0;
+        }
+
         public long Delete()
         {
             return Delete(false);

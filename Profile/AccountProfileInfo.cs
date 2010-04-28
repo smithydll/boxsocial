@@ -78,6 +78,7 @@ namespace BoxSocial.Applications.Profile
 
             TextBox heightTextBox = new TextBox("height");
             heightTextBox.MaxLength = 3;
+            heightTextBox.Width = new StyleLength(3F, LengthUnits.Em);
             heightTextBox.Value = LoggedInMember.Profile.Height.ToString();
 
             SelectBox dobYearsSelectBox = new SelectBox("dob-year");

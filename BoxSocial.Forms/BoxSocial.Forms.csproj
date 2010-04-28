@@ -50,6 +50,7 @@
     <Compile Include="CheckBox.cs" />
     <Compile Include="CheckBoxArray.cs" />
     <Compile Include="FormField.cs" />
+    <Compile Include="StyleLength.cs" />
     <Compile Include="RadioList.cs" />
     <Compile Include="RadioListItem.cs" />
     <Compile Include="ResetButton.cs" />

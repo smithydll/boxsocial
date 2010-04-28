@@ -911,6 +911,10 @@ namespace BoxSocial.Applications.Forum
         {
             if (Access.Can("DELETE_TOPICS"))
             {
+                foreach (long topicId in topicIds)
+                {
+                    Item.DeleteItem(typeof(ForumTopic), topicId);
+                }
             }
         }
 

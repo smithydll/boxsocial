@@ -510,6 +510,31 @@ namespace BoxSocial.Internals
             return AppendCoreSid("/search");
         }
 
+        public string BuildGroupsUri()
+        {
+            return AppendCoreSid("/groups");
+        }
+
+        public string BuildNetworksUri()
+        {
+            return AppendCoreSid("/networks");
+        }
+
+        public string BuildMusicUri()
+        {
+            return AppendCoreSid("/music");
+        }
+
+        public string BuildMusicDirectoryUri()
+        {
+            return AppendCoreSid("/music/directory");
+        }
+
+        public string BuildMusicChartUri()
+        {
+            return AppendCoreSid("/music/chart");
+        }
+
         #region "Account Module Uri"
 
         public string BuildAccountModuleUri(string key)

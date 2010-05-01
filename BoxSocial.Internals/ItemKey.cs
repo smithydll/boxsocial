@@ -117,7 +117,13 @@ namespace BoxSocial.Internals
 			
 			if (cache != null)
 			{
-				o = cache.Get("itemTypeIds");
+                try
+                {
+                    o = cache.Get("itemTypeIds");
+                }
+                catch (NullReferenceException)
+                {
+                }
 			}
 
             lock (itemTypeCacheLock)

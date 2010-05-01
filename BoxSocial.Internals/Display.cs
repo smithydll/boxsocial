@@ -632,6 +632,13 @@ namespace BoxSocial.Internals
             template.Parse("U_SEARCH", page.Core.Uri.BuildSearchUri());
             template.Parse("S_SEARCH", page.Core.Uri.BuildSearchUri());
 
+            template.Parse("U_FOOT_GROUPS", page.Core.Uri.BuildGroupsUri());
+            template.Parse("U_FOOT_NETWORKS", page.Core.Uri.BuildNetworksUri());
+
+            template.Parse("U_FOOT_MUSIC", page.Core.Uri.BuildMusicUri());
+            template.Parse("U_FOOT_MUSIC_DIRECTORY", page.Core.Uri.BuildMusicDirectoryUri());
+            template.Parse("U_FOOT_MUSIC_CHART", page.Core.Uri.BuildMusicChartUri());
+
             if (session != null)
             {
                 template.Parse("SID", session.SessionId);

@@ -238,8 +238,8 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)(/|)$", @"/applicationpage.aspx?an=$1&path=" });
 
                     patterns.Add(new string[] { @"^/groups/create(/|)$", @"/creategroup.aspx" });
-                    patterns.Add(new string[] { @"^/groups(/|)$", @"/viewgroups.aspx$1" });
-                    patterns.Add(new string[] { @"^/groups/([A-Za-z0-9\-_]+)(/|)$", @"/viewgroups.aspx?category=$1" });
+                    //patterns.Add(new string[] { @"^/groups(/|)$", @"/viewgroups.aspx$1" });
+                    //patterns.Add(new string[] { @"^/groups/([A-Za-z0-9\-_]+)(/|)$", @"/viewgroups.aspx?category=$1" });
 
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)(/|)$", @"/grouppage.aspx?gn=$1&path=" });
 

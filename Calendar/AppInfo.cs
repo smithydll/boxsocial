@@ -340,8 +340,11 @@ namespace BoxSocial.Applications.Calendar
             Calendar cal = new Calendar(e.core);
             List<Event> events = cal.GetEvents(core, e.core.Session.LoggedInMember, startTime, endTime);
 
-            template.Parse("U_CALENDAR", core.Uri.AppendSid(string.Format("/{0}/calendar",
-                e.core.Session.LoggedInMember.UserName)));
+            template.Parse("U_NEW_EVENT", core.Uri.AppendSid(string.Format("{0}calendar/new-event",
+                e.core.Session.LoggedInMember.AccountUriStub)));
+
+            template.Parse("U_CALENDAR", core.Uri.AppendSid(string.Format("{0}calendar",
+                e.core.Session.LoggedInMember.UriStub)));
 
             VariableCollection appointmentDaysVariableCollection = null;
             DateTime lastDay = e.core.Tz.Now;

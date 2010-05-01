@@ -167,6 +167,33 @@ namespace BoxSocial.Groups
             }
         }
 
+        [StaticShow("groups", @"^/groups/register(|/)$")]
+        private void showCreateGroup(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                //Group.ShowRegister(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("groups", @"^/groups(|/)$")]
+        private void showDefault(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                //Default.Show(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("groups", @"^/groups/([A-Za-z0-9\-_]+)(|/)$")]
+        private void showDefault(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                //Default.ShowCategory(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
         public override AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.Member | AppPrimitives.Group;

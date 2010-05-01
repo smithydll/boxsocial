@@ -520,34 +520,41 @@ namespace BoxSocial.Internals
 
         public string IntToMonth(int month)
         {
-            switch (month)
+            try
             {
-                case 1:
-                    return core.Prose.GetString("JANUARY");
-                case 2:
-                    return core.Prose.GetString("FEBURARY");
-                case 3:
-                    return core.Prose.GetString("MARCH");
-                case 4:
-                    return core.Prose.GetString("APRIL");
-                case 5:
-                    return core.Prose.GetString("MAY");
-                case 6:
-                    return core.Prose.GetString("JUNE");
-                case 7:
-                    return core.Prose.GetString("JULY");
-                case 8:
-                    return core.Prose.GetString("AUGUST");
-                case 9:
-                    return core.Prose.GetString("SEPTEMBER");
-                case 10:
-                    return core.Prose.GetString("OCTOBER");
-                case 11:
-                    return core.Prose.GetString("NOVEMBER");
-                case 12:
-                    return core.Prose.GetString("DECEMBER");
-                default:
-                    return core.Prose.GetString("INVALID");
+                switch (month)
+                {
+                    case 1:
+                        return core.Prose.GetString("JANUARY");
+                    case 2:
+                        return core.Prose.GetString("FEBURARY");
+                    case 3:
+                        return core.Prose.GetString("MARCH");
+                    case 4:
+                        return core.Prose.GetString("APRIL");
+                    case 5:
+                        return core.Prose.GetString("MAY");
+                    case 6:
+                        return core.Prose.GetString("JUNE");
+                    case 7:
+                        return core.Prose.GetString("JULY");
+                    case 8:
+                        return core.Prose.GetString("AUGUST");
+                    case 9:
+                        return core.Prose.GetString("SEPTEMBER");
+                    case 10:
+                        return core.Prose.GetString("OCTOBER");
+                    case 11:
+                        return core.Prose.GetString("NOVEMBER");
+                    case 12:
+                        return core.Prose.GetString("DECEMBER");
+                    default:
+                        return core.Prose.GetString("INVALID");
+                }
+            }
+            catch (NullReferenceException)
+            {
+                return "NullReferenceException";
             }
         }
 

@@ -106,6 +106,22 @@ namespace BoxSocial.Internals
         {
         }
 
+        public static List<Category> GetAll(Core core)
+        {
+            List<Category> categories = new List<Category>();
+
+            SelectQuery query = GetSelectQueryStub(typeof(Category));
+
+            DataTable categoriesDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in categoriesDataTable.Rows)
+            {
+                categories.Add(new Category(core, dr));
+            }
+
+            return categories;
+        }
+
         public override long Id
         {
             get

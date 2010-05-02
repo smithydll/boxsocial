@@ -100,10 +100,12 @@ namespace BoxSocial.Internals
             // This will be a complicated mishmash of javascript
 
             TextBox dateExpressionTextBox = new TextBox(name + "[expression]");
-            dateExpressionTextBox.IsVisible = false;
+            //dateExpressionTextBox.IsVisible = false;
+            dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "[expression]" + "')";
 
             TextBox timeExpressionTextBox = new TextBox(name + "[time]");
-            timeExpressionTextBox.IsVisible = false;
+            //timeExpressionTextBox.IsVisible = false;
+            timeExpressionTextBox.Script.OnChange = "ParseTimePicker('" + name + "[time]" + "')";
 
             SelectBox dateYearsSelectBox = new SelectBox(name + "[date-year]");
             SelectBox dateMonthsSelectBox = new SelectBox(name + "[date-month]");
@@ -148,6 +150,9 @@ namespace BoxSocial.Internals
             dateMonthsSelectBox.SelectedKey = value.Month.ToString();
             dateDaysSelectBox.SelectedKey = value.Day.ToString();
 
+            dateExpressionTextBox.Value = value.ToString("dd/MM/yyyy");
+            timeExpressionTextBox.Value = value.ToString("hh:mm:ss");
+
             /* Build display */
             StringBuilder sb = new StringBuilder();
 
@@ -175,9 +180,14 @@ namespace BoxSocial.Internals
             }
             sb.Append("</p>");
 
-            sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\">");
+            sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\" style=\"display: none;\">");
+            sb.Append("Date: ");
             sb.Append(dateExpressionTextBox.ToString());
-            sb.Append(timeExpressionTextBox.ToString());
+            if (ShowTime)
+            {
+                sb.Append(" Time: ");
+                sb.Append(timeExpressionTextBox.ToString());
+            }
             sb.Append("</p>");
 
             sb.AppendLine("</div>");
@@ -196,14 +206,19 @@ namespace BoxSocial.Internals
             UnixTime tz = new UnixTime(core, timeZoneCode);
             DateTime dt = tz.Now;
 
-            string expression = core.Http.Form[name + "[expression]"] + " " + core.Http.Form[name + "[time]"];
+            string dateExpression = core.Http.Form[name + "[expression]"];
+            string timeExpression = core.Http.Form[name + "[time]"];
 
-            if (!string.IsNullOrEmpty(expression))
+            if (!string.IsNullOrEmpty(dateExpression))
             {
-                expression = core.Functions.InterpretDateTime(expression);
+                dateExpression = core.Functions.InterpretDate(dateExpression);
+                timeExpression = core.Functions.InterpretTime(timeExpression);
+
+                string expression = dateExpression + " " + timeExpression;
 
                 if (!DateTime.TryParse(expression, out dt))
                 {
+                    HttpContext.Current.Response.Write("Line 221 FAIL " + expression + "<br />");
                     int year = core.Functions.FormInt(name + "[date-year]", dt.Year);
                     int month = core.Functions.FormInt(name + "[date-month]", dt.Month);
                     int day = core.Functions.FormInt(name + "[date-day]", dt.Day);

@@ -57,7 +57,7 @@ function StarOver(stars, itemId, itemType)
 
 function SubmitRating(stars, itemId, itemType)
 {
-	return PostToPage(null, "rate.aspx?ajax=true&rating=" + stars + "&item=" + itemId + "&type=" + itemType, null);
+	return PostToPage(null, "rate.aspx?ajax=true&rating=" + stars + "&item=" + itemId + "&type=" + itemType, null, null);
 }
 
 function SendStatus()
@@ -66,7 +66,7 @@ function SendStatus()
 	return PostToAccount(SentStatus, "profile", "status", -1, new Array(new Array('message', statusMessage)));
 }
 
-function SentStatus(r)
+function SentStatus(r, e)
 {
 	hide('status-form');
 	show('status-message');
@@ -75,22 +75,22 @@ function SentStatus(r)
 
 function DeleteComment(id, iid)
 {
-	return PostToPage(null, "comment/?mode=delete&item=" + id, new Array(new Array("ajax", "true")));
+	return PostToPage(null, "comment/?mode=delete&item=" + id, null, new Array(new Array("ajax", "true")));
 }
 
 function ReportComment(id, iid)
 {
-	return PostToPage(null, "comment/?mode=report&ajax=true&item=" + id, new Array(new Array("ajax", "true")));
+	return PostToPage(null, "comment/?mode=report&ajax=true&item=" + id, null, new Array(new Array("ajax", "true")));
 }
 
 var ciid;
 function QuoteComment(id, iid)
 {
 	ciid = iid;
-	return PostToPage(QuotedComment, "comment/?ajax=true&mode=fetch&item=" + id, new Array(new Array("ajax", "true")));
+	return PostToPage(QuotedComment, "comment/?ajax=true&mode=fetch&item=" + id, null, new Array(new Array("ajax", "true")));
 }
 
-function QuotedComment(r)
+function QuotedComment(r, e)
 {
 	setv("comment-text-" + ciid, r[1]);
 	ge("comment-text-" + ciid).focus();
@@ -102,10 +102,10 @@ function SubmitComment(id, type, zero, sort)
 {
 	csort = sort;
 	cid = id;
-	return PostToPage(SubmitedComment, "comment/", new Array(new Array("ajax", "true"), new Array("item", id), Array("type", type), new Array("comment", escape(ge("comment-text-" + id).value).replace('+','%2B'))));
+	return PostToPage(SubmitedComment, "comment/", null, new Array(new Array("ajax", "true"), new Array("item", id), Array("type", type), new Array("comment", escape(ge("comment-text-" + id).value).replace('+','%2B'))));
 }
 
-function SubmitedComment(r)
+function SubmitedComment(r, e)
 {
 	var nli = document.createElement('div');
 	nli.innerHTML = r[1];
@@ -144,7 +144,7 @@ function SubmitListItem(id)
 	return PostToAccount(SubmitedListItem, "pages", "lists", id, new Array(new Array("mode", "append"), new Array("save", "Add"), new Array("text", escape(text).replace('+','%2B'))));
 }
 
-function SubmitedListItem(r)
+function SubmitedListItem(r, e)
 {
 	var nli = document.createElement('li');
 	nli.innerHTML = r[1];
@@ -175,15 +175,15 @@ function PostToAccount(onPost, module, sub, id, params)
 	var par = new Array(new Array("module", module), new Array("sub", sub), new Array("id", id));
 	if (params != null)
 	{
-		return PostToPage(onPost, "account/?ajax=true", par.concat(params));
+		return PostToPage(onPost, "account/?ajax=true", null, par.concat(params));
 	}
 	else
 	{
-		return PostToPage(onPost, "account/?ajax=true", par);
+		return PostToPage(onPost, "account/?ajax=true", null, par);
 	}
 }
 
-function PostToPage(onPost, page, params)
+function PostToPage(onPost, page, nodes, params)
 {
 	var par = '';
 	var i = 0;
@@ -217,7 +217,7 @@ function PostToPage(onPost, page, params)
 				if (onPost != null)
 				{
 					var r = ProcessAjaxResult(xhr_lang);
-					if (r != null) onPost(r);
+					if (r != null) onPost(r, nodes);
 				}
 				else
 				{
@@ -372,23 +372,28 @@ function EnableDateTimePickers()
     }
 }
 
-function ParseDateTimePicker(n)
+function ParseDatePicker(n)
 {
     var el = ge(n);
-    var val = LowerCase(el.Value);
-    switch (val)
-    {
-        case "yesterday":
-        case "tomorrow":
-        case "next week":
-        case "two weeks time":
-        case "tomorrow week":
-    }
+    var val = el.value;
     
-    return PostToPage(SubmitedDate, "functions/", new Array(new Array("ajax", "true"), new Array("date", val)));
+    return PostToPage(SubmitedDate, "functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "date"), new Array("date", val)));
 }
 
-function SubmitedDate(r)
+function ParseTimePicker(n)
 {
+	var el = ge(n);
+    var val = el.value;
 
+	return PostToPage(SubmitedTime, "functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "time"), new Array("time", val)));
+}
+
+function SubmitedDate(r, e)
+{
+	e[0].value = r[1];
+}
+
+function SubmitedTime(r, e)
+{
+	e[0].value = r[1];
 }

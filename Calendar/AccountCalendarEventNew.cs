@@ -67,6 +67,17 @@ namespace BoxSocial.Applications.Calendar
         {
             SetTemplate("account_calendar_event_new");
 
+            DateTimePicker startDateTimePicker = new DateTimePicker(core, "start-date");
+            startDateTimePicker.ShowTime = true;
+            startDateTimePicker.ShowSeconds = false;
+
+            DateTimePicker endDateTimePicker = new DateTimePicker(core, "end-date");
+            endDateTimePicker.ShowTime = true;
+            endDateTimePicker.ShowSeconds = false;
+
+            /* */
+            SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
+
             bool edit = false;
             ushort eventAccess = 0;
 
@@ -121,6 +132,7 @@ namespace BoxSocial.Applications.Calendar
 
             DateTime startDate = new DateTime(year, month, day, 8, 0, 0);
             DateTime endDate = new DateTime(year, month, day, 9, 0, 0);
+            timezoneSelectBox.SelectedKey = core.Tz.TimeZoneCode.ToString();
 
             string subject = string.Empty;
             string location = string.Empty;
@@ -156,86 +168,17 @@ namespace BoxSocial.Applications.Calendar
                 }
             }
 
-            SelectBox yearsStartSelectBox = new SelectBox("start-year");
-            SelectBox yearsEndSelectBox = new SelectBox("end-year");
-
-            for (int i = DateTime.Now.AddYears(-110).Year; i < DateTime.Now.AddYears(110).Year; i++)
-            {
-                yearsStartSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
-                yearsEndSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
-            }
-
-            yearsStartSelectBox.SelectedKey = startDate.Year.ToString();
-            yearsEndSelectBox.SelectedKey = endDate.Year.ToString();
-
-            SelectBox monthsStartSelectBox = new SelectBox("start-month");
-            SelectBox monthsEndSelectBox = new SelectBox("end-month");
-
-            for (int i = 1; i < 13; i++)
-            {
-                monthsStartSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
-                monthsEndSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
-            }
-
-            monthsStartSelectBox.SelectedKey = startDate.Month.ToString();
-            monthsEndSelectBox.SelectedKey = endDate.Month.ToString();
-
-            SelectBox daysStartSelectBox = new SelectBox("start-day");
-            SelectBox daysEndSelectBox = new SelectBox("end-day");
-
-            for (int i = 1; i < 32; i++)
-            {
-                daysStartSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
-                daysEndSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
-            }
-
-            daysStartSelectBox.SelectedKey = startDate.Day.ToString();
-            daysEndSelectBox.SelectedKey = endDate.Day.ToString();
-
-            SelectBox hoursStartSelectBox = new SelectBox("start-hour");
-            SelectBox hoursEndSelectBox = new SelectBox("end-hour");
-
-            for (int i = 0; i < 24; i++)
-            {
-                DateTime hourTime = new DateTime(year, month, day, i, 0, 0);
-                hoursStartSelectBox.Add(new SelectBoxItem(i.ToString(), hourTime.ToString("h tt").ToLower()));
-                hoursEndSelectBox.Add(new SelectBoxItem(i.ToString(), hourTime.ToString("h tt").ToLower()));
-            }
-
-            hoursStartSelectBox.SelectedKey = startDate.Hour.ToString();
-            hoursEndSelectBox.SelectedKey = endDate.Hour.ToString();
-
-            SelectBox minutesStartSelectBox = new SelectBox("start-minute");
-            SelectBox minutesEndSelectBox = new SelectBox("end-minute");
-
-            for (int i = 0; i < 60; i++)
-            {
-                minutesStartSelectBox.Add(new SelectBoxItem(i.ToString(), string.Format("{0:00}", i)));
-                minutesEndSelectBox.Add(new SelectBoxItem(i.ToString(), string.Format("{0:00}", i)));
-            }
-
-            minutesStartSelectBox.SelectedKey = startDate.Minute.ToString();
-            minutesEndSelectBox.SelectedKey = endDate.Minute.ToString();
-
             template.Parse("S_YEAR", year.ToString());
             template.Parse("S_MONTH", month.ToString());
             template.Parse("S_DAY", day.ToString());
 
 
-            template.Parse("S_START_YEAR", yearsStartSelectBox);
-            template.Parse("S_END_YEAR", yearsEndSelectBox);
+            startDateTimePicker.Value = startDate;
+            endDateTimePicker.Value = endDate;
 
-            template.Parse("S_START_MONTH", monthsStartSelectBox);
-            template.Parse("S_END_MONTH", monthsEndSelectBox);
-
-            template.Parse("S_START_DAY", daysStartSelectBox);
-            template.Parse("S_END_DAY", daysEndSelectBox);
-
-            template.Parse("S_START_HOUR", hoursStartSelectBox);
-            template.Parse("S_END_HOUR", hoursEndSelectBox);
-
-            template.Parse("S_START_MINUTE", minutesStartSelectBox);
-            template.Parse("S_END_MINUTE", minutesEndSelectBox);
+            template.Parse("S_START_DATE", startDateTimePicker);
+            template.Parse("S_END_DATE", endDateTimePicker);
+            template.Parse("S_TIMEZONE", timezoneSelectBox);
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
@@ -289,9 +232,10 @@ namespace BoxSocial.Applications.Calendar
             string subject = string.Empty;
             string location = string.Empty;
             string description = string.Empty;
-            DateTime startTime = tz.Now;
-            DateTime endTime = tz.Now;
+            long startTime = tz.GetUnixTimeStamp(tz.Now);
+            long endTime = tz.GetUnixTimeStamp(tz.Now);
             bool edit = false;
+            ushort timezone = core.Functions.FormUShort("timezone", 1);
 
             if (core.Http.Form["mode"] == "edit")
             {
@@ -347,21 +291,8 @@ namespace BoxSocial.Applications.Calendar
                 location = core.Http.Form["location"];
                 description = core.Http.Form["description"];
 
-                startTime = new DateTime(
-                    int.Parse(core.Http.Form["start-year"]),
-                    int.Parse(core.Http.Form["start-month"]),
-                    int.Parse(core.Http.Form["start-day"]),
-                    int.Parse(core.Http.Form["start-hour"]),
-                    int.Parse(core.Http.Form["start-minute"]),
-                    0);
-
-                endTime = new DateTime(
-                    int.Parse(core.Http.Form["end-year"]),
-                    int.Parse(core.Http.Form["end-month"]),
-                    int.Parse(core.Http.Form["end-day"]),
-                    int.Parse(core.Http.Form["end-hour"]),
-                    int.Parse(core.Http.Form["end-minute"]),
-                    0);
+                startTime = DateTimePicker.FormDate(core, "start-date", timezone);
+                endTime = DateTimePicker.FormDate(core, "end-date", timezone);
 
                 if (edit)
                 {
@@ -377,7 +308,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!edit)
             {
-                Event calendarEvent = Event.Create(core, Owner, subject, location, description, tz.GetUnixTimeStamp(startTime), tz.GetUnixTimeStamp(endTime));
+                Event calendarEvent = Event.Create(core, Owner, subject, location, description, startTime, endTime);
 
                 foreach (long inviteeId in inviteeIds)
                 {
@@ -399,8 +330,8 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.Location = location;
                 calendarEvent.Subject = subject;
                 calendarEvent.Description = description;
-                calendarEvent.StartTimeRaw = tz.GetUnixTimeStamp(startTime);
-                calendarEvent.EndTimeRaw = tz.GetUnixTimeStamp(endTime);
+                calendarEvent.StartTimeRaw = startTime;
+                calendarEvent.EndTimeRaw = endTime;
                 
                 calendarEvent.Update();
 				

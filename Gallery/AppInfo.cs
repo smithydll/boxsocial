@@ -385,7 +385,7 @@ namespace BoxSocial.Applications.Gallery
                 itemKey.Id, adjustment));
         }
         
-        [Show(@"^/gallery(|/)$", AppPrimitives.Member | AppPrimitives.Musician)]
+        [Show(@"^/gallery(|/)$", AppPrimitives.Member | AppPrimitives.Musician | AppPrimitives.Group | AppPrimitives.Network)]
         private void showRootGallery(Core core, object sender)
         {
             if (sender is PPage)
@@ -404,7 +404,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        [Show(@"gallery/([A-Za-z0-9\-_/]+)", AppPrimitives.Member | AppPrimitives.Musician)]
+        [Show(@"gallery/([A-Za-z0-9\-_/]+)", AppPrimitives.Member | AppPrimitives.Musician | AppPrimitives.Group | AppPrimitives.Network)]
         private void showGallery(Core core, object sender)
         {
             if (sender is PPage)

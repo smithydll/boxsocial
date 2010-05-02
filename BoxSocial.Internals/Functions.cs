@@ -722,7 +722,72 @@ namespace BoxSocial.Internals
 
         public string InterpretDate(string date)
         {
-            return string.Empty;
+            switch (date.ToLower())
+            {
+                case "today":
+                    return core.Tz.Now.ToString("dd/MM/yyyy");
+                case "tomorrow":
+                    return core.Tz.Now.AddDays(1).ToString("dd/MM/yyyy");
+                case "next week":
+                    return core.Tz.Now.AddDays(7).ToString("dd/MM/yyyy");
+                case "two weeks time":
+                case "next fortnight":
+                    return core.Tz.Now.AddDays(14).ToString("dd/MM/yyyy");
+                case "next month":
+                    return core.Tz.Now.AddMonths(1).ToString("dd/MM/yyyy");
+                case "next year":
+                    return core.Tz.Now.AddYears(1).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" days time"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 10));
+
+                return core.Tz.Now.AddDays(number).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" days ago"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 9));
+
+                return core.Tz.Now.AddDays(-1 * number).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" weeks time"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 11));
+
+                return core.Tz.Now.AddDays(number * 7).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" weeks ago"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 10));
+
+                return core.Tz.Now.AddDays(-7 * number).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" months time"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 12));
+
+                return core.Tz.Now.AddMonths(number).ToString("dd/MM/yyyy");
+            }
+
+            if (date.EndsWith(" months ago"))
+            {
+                int number = ParseNumber(date.Substring(0, date.Length - 11));
+
+                return core.Tz.Now.AddMonths(-1 * number).ToString("dd/MM/yyyy");
+            }
+
+            DateTime result = DateTime.Now;
+            if (DateTime.TryParse(date, out result))
+            {
+                return date;
+            }
+
+            return core.Tz.Now.ToString("dd/MM/yyyy");
         }
 
         public string InterpretTime(string time)
@@ -733,6 +798,11 @@ namespace BoxSocial.Internals
                     return "12:00";
                 case "midnight":
                     return "00:00";
+                case "end of the day":
+                    return "23:59";
+                case "close of business":
+                case "end of business":
+                    return "17:00";
             }
             return time;
         }

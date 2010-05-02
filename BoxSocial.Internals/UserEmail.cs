@@ -29,6 +29,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum EmailAddressTypes : byte
+    {
+        Personal = 0x01,
+        Business = 0x02,
+        Student = 0x04,
+        Other = 0x08,
+    }
+
     [DataTable("user_emails")]
     [Permission("VIEW", "Can view the e-mail address", PermissionTypes.View)]
     [Permission("RECIEVE_FROM", "Can receive e-mail from", PermissionTypes.Interact)]
@@ -40,6 +48,8 @@ namespace BoxSocial.Internals
         private long userId;
         [DataField("email_email", DataFieldKeys.Unique ,127)]
         private string emailEmail;
+        [DataField("email_type")]
+        private byte emailType;
         [DataField("email_verified")]
         private bool emailVerified;
         [DataField("email_time_ut")]
@@ -63,6 +73,18 @@ namespace BoxSocial.Internals
             get
             {
                 return emailEmail;
+            }
+        }
+
+        public EmailAddressTypes EmailType
+        {
+            get
+            {
+                return (EmailAddressTypes)emailType;
+            }
+            set
+            {
+                SetProperty("emailType", (byte)value);
             }
         }
 
@@ -160,12 +182,12 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static UserEmail Create(Core core, string email)
+        public static UserEmail Create(Core core, string email, EmailAddressTypes type)
         {
-            return Create(core, core.Session.LoggedInMember, email, false);
+            return Create(core, core.Session.LoggedInMember, email, type, false);
         }
 
-        public static UserEmail Create(Core core, User owner, string email, bool isRegistration)
+        public static UserEmail Create(Core core, User owner, string email, EmailAddressTypes type, bool isRegistration)
         {
             if (!User.CheckEmailValid(email))
             {
@@ -182,6 +204,7 @@ namespace BoxSocial.Internals
             InsertQuery iquery = new InsertQuery(UserEmail.GetTable(typeof(UserEmail)));
             iquery.AddField("email_user_id", owner.Id);
             iquery.AddField("email_email", email);
+            iquery.AddField("email_type", (byte)type);
             if (!isRegistration)
             {
                 iquery.AddField("email_verified", false);
@@ -211,7 +234,8 @@ namespace BoxSocial.Internals
 
             UserEmail newEmail = new UserEmail(core, emailId);
 
-            Access.CreateGrantForPrimitive(core, newEmail, User.EveryoneGroupKey, "VIEW", "RECIEVE_FROM");
+            Access.CreateGrantForPrimitive(core, newEmail, Friend.FriendsGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newEmail, User.EveryoneGroupKey, "RECIEVE_FROM");
 
             return newEmail;
         }
@@ -247,7 +271,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                throw new NotImplementedException();
+                return Owner;
             }
         }
 

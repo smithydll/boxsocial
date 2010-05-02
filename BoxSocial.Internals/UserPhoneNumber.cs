@@ -72,6 +72,10 @@ namespace BoxSocial.Internals
             {
                 return phoneNumber;
             }
+            set
+            {
+                SetProperty("phoneNumber", value);
+            }
         }
 
         public PhoneNumberTypes PhoneType
@@ -167,7 +171,11 @@ namespace BoxSocial.Internals
 
             long phoneId = core.Db.Query(iquery);
 
-            return new UserPhoneNumber(core, phoneId);
+            UserPhoneNumber newPhoneNumber = new UserPhoneNumber(core, phoneId);
+
+            Access.CreateGrantForPrimitive(core, newPhoneNumber, Friend.FriendsGroupKey, "VIEW");
+
+            return newPhoneNumber;
         }
 
         public override long Id
@@ -190,7 +198,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                throw new NotImplementedException();
+                return Owner;
             }
         }
 

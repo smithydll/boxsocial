@@ -1,10 +1,16 @@
 ﻿<h3>{L_MY_CONTACT_DETAILS}</h3>
 <p>{L_CONTACT_DETAILS_INFO}</p>
 
+<div id="new-stuff">
+	<span id="new-email" class="post-button"><a href="{U_ADD_EMAIL}">Add E-mail Address</a></span>
+  <span id="new-phone" class="post-button"><a href="{U_ADD_PHONE}">Add Phone Number</a></span>
+</div>
+
 <!-- IF ADDRESS -->
 <!-- ENDIF -->
 
-<h2>E-mail Addresses</h2>
+<h4>E-mail Addresses</h4>
+
 <table style="width: 100%">
 <tr>
 	<th>Address</th>
@@ -18,15 +24,16 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<td>{email_list.EMAIL}</td>
+	<td>{email_list.EMAIL_ADDRESS}</td>
 	<td><a href="{email_list.U_EDIT}">{L_EDIT}</a></td>
 	<td><a href="{email_list.U_DELETE}">{L_DELETE}</a></td>
-	<td><a href="{email_list.U_PRIVATE}">Privacy</a></td>
+	<td><a href="{email_list.U_EDIT_PERMISSIONS}">Privacy</a></td>
 </tr>
 <!-- END email_list -->
 </table>
 
-<h2>Phone Numbers</h2>
+<h4>Phone Numbers</h4>
+
 <table style="width: 100%">
 <tr>
 	<th>Number</th>
@@ -40,10 +47,10 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<td>{phone_list.EMAIL}</td>
+	<td>{phone_list.PHONE_NUMBER}</td>
 	<td><a href="{phone_list.U_EDIT}">{L_EDIT}</a></td>
 	<td><a href="{phone_list.U_DELETE}">{L_DELETE}</a></td>
-	<td><a href="{phone_list.U_PRIVATE}">Privacy</a></td>
+	<td><a href="{phone_list.U_EDIT_PERMISSIONS}">Privacy</a></td>
 </tr>
 <!-- END phone_list -->
 </table>

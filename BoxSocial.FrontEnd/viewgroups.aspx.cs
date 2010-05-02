@@ -67,7 +67,7 @@ namespace BoxSocial.FrontEnd
                 DataTable categoryTable = db.Query(string.Format("SELECT category_id, category_title FROM global_categories WHERE category_path = '{0}'",
                     Mysql.Escape((string)Request.QueryString["category"])));
 
-                if (categoryTable.Rows.Count > 0)
+                /*if (categoryTable.Rows.Count > 0)
                 {
                     template.Parse("CATEGORY_TITLE", (string)categoryTable.Rows[0]["category_title"]);
                     template.Parse("U_CREATE_GROUP_C", core.Uri.AppendSid("/groups/create?category=" + ((long)categoryTable.Rows[0]["category_id"]).ToString()));
@@ -87,7 +87,7 @@ namespace BoxSocial.FrontEnd
                         groupsVariableCollection.Parse("TITLE", groupRow.DisplayName);
                         groupsVariableCollection.Parse("U_GROUP", groupRow.Uri);
                     }
-                }
+                }*/
             }
 
             EndResponse();

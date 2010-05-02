@@ -107,8 +107,8 @@ namespace BoxSocial.Applications.Profile
                 emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
             }
 
-            template.Parse("U_ADD_EMAIL", BuildUri("add-email"));
-            template.Parse("U_ADD_PHONE", BuildUri("add-phone"));
+            template.Parse("U_ADD_EMAIL", BuildUri("contact", "add-email"));
+            template.Parse("U_ADD_PHONE", BuildUri("contact", "add-phone"));
         }
 
         void AccountContactManage_EditAddress(object sender, ModuleModeEventArgs e)
@@ -178,6 +178,13 @@ namespace BoxSocial.Applications.Profile
             /**/
             TextBox emailTextBox = new TextBox("email-address");
 
+            /**/
+            SelectBox emailTypeSelectBox = new SelectBox("phone-type");
+            emailTypeSelectBox.Add(new SelectBoxItem(((byte)EmailAddressTypes.Personal).ToString(), "Personal"));
+            emailTypeSelectBox.Add(new SelectBoxItem(((byte)EmailAddressTypes.Business).ToString(), "Business"));
+            emailTypeSelectBox.Add(new SelectBoxItem(((byte)EmailAddressTypes.Student).ToString(), "Student"));
+            emailTypeSelectBox.Add(new SelectBoxItem(((byte)EmailAddressTypes.Other).ToString(), "Other"));
+
             switch (e.Mode)
             {
                 case "add-email":
@@ -194,6 +201,13 @@ namespace BoxSocial.Applications.Profile
 
                             emailTextBox.IsDisabled = true;
                             emailTextBox.Value = email.Email;
+
+                            if (emailTypeSelectBox.ContainsKey(((byte)email.EmailType).ToString()))
+                            {
+                                emailTypeSelectBox.SelectedKey = ((byte)email.EmailType).ToString();
+                            }
+
+                            template.Parse("S_ID", email.Id.ToString());
                         }
                         catch (InvalidUserEmailException)
                         {
@@ -204,10 +218,13 @@ namespace BoxSocial.Applications.Profile
                     {
                         return;
                     }
+
+                    template.Parse("EDIT", "TRUE");
                     break;
             }
 
             template.Parse("S_EMAIL", emailTextBox);
+            template.Parse("S_EMAIL_TYPE", emailTypeSelectBox);
         }
 
         void AccountContactManage_AddPhone(object sender, ModuleModeEventArgs e)
@@ -241,22 +258,27 @@ namespace BoxSocial.Applications.Profile
                         {
                             phoneNumber = new UserPhoneNumber(core, phoneNumberId);
 
-                            phoneNumberTextBox.IsDisabled = true;
+                            //phoneNumberTextBox.IsDisabled = true;
                             phoneNumberTextBox.Value = phoneNumber.PhoneNumber;
 
                             if (phoneTypeSelectBox.ContainsKey(((byte)phoneNumber.PhoneType).ToString()))
                             {
                                 phoneTypeSelectBox.SelectedKey = ((byte)phoneNumber.PhoneType).ToString();
                             }
+
+                            template.Parse("S_ID", phoneNumber.Id.ToString());
                         }
                         catch (InvalidUserPhoneNumberException)
                         {
                         }
                     }
+
+                    template.Parse("EDIT", "TRUE");
                     break;
             }
 
             template.Parse("S_PHONE_NUMBER", phoneNumberTextBox);
+            template.Parse("S_PHONE_TYPE", phoneTypeSelectBox);
         }
 
         void AccountContactManage_EditAddress_save(object sender, EventArgs e)
@@ -288,12 +310,13 @@ namespace BoxSocial.Applications.Profile
 
             switch (core.Http.Form["mode"])
             {
-                case "add":
+                case "add-email":
                     string emailAddress = core.Http.Form["email-address"];
+                    EmailAddressTypes emailType = (EmailAddressTypes)core.Functions.FormByte("email-type", (byte)EmailAddressTypes.Personal);
 
                     try
                     {
-                        UserEmail.Create(core, emailAddress);
+                        UserEmail.Create(core, emailAddress, emailType);
 
                         SetRedirectUri(BuildUri());
                         core.Display.ShowMessage("E-mail address Saved", "Your e-mail address has been saved in the database. Before your e-mail can be used it will need to be validated. A validation code has been sent to the e-mail address along with validation instructions.");
@@ -313,8 +336,25 @@ namespace BoxSocial.Applications.Profile
                         return;
                     }
                     return;
-                case "edit":
-                    // do nothing
+                case "edit-email":
+                    long emailId = core.Functions.FormLong("id", 0);
+
+                    UserEmail email = null;
+
+                    try
+                    {
+                        email = new UserEmail(core, emailId);
+                    }
+                    catch (InvalidUserEmailException)
+                    {
+                        return;
+                    }
+
+                    email.EmailType = (EmailAddressTypes)core.Functions.FormByte("email-type", (byte)EmailAddressTypes.Other);
+                    email.Update();
+
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("E-mail address Saved", "Your e-mail address settings has been saved in the database.");
                     return;
                 default:
                     DisplayError("Error - no mode selected");
@@ -328,7 +368,7 @@ namespace BoxSocial.Applications.Profile
 
             switch (core.Http.Form["mode"])
             {
-                case "add":
+                case "add-phone":
                     string phoneNumber = core.Http.Form["phone-number"];
                     PhoneNumberTypes phoneType = (PhoneNumberTypes)core.Functions.FormByte("phone-type", 0);
 
@@ -343,8 +383,25 @@ namespace BoxSocial.Applications.Profile
                     {
                     }
                     return;
-                case "edit":
-                    // do nothing
+                case "edit-phone":
+                    long phoneId = core.Functions.FormLong("id", 0);
+                    UserPhoneNumber number = null;
+
+                    try
+                    {
+                        number = new UserPhoneNumber(core, phoneId);
+                    }
+                    catch (InvalidUserPhoneNumberException)
+                    {
+                        return;
+                    }
+
+                    number.PhoneNumber = core.Http.Form["phone-number"];
+                    number.PhoneType = (PhoneNumberTypes)core.Functions.FormByte("phone-type", (byte)PhoneNumberTypes.Home);
+                    number.Update();
+
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Phone Number Saved", "Your phone number has been saved in the database.");
                     return;
                 default:
                     DisplayError("Error - no mode selected");

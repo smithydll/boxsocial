@@ -93,7 +93,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                pageTitle = "ZinZam • " + HttpUtility.HtmlEncode(value);
+                pageTitle = HttpUtility.HtmlEncode(value) + " • ZinZam";
             }
         }
 

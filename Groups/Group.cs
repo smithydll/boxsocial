@@ -23,9 +23,11 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -47,8 +49,6 @@ namespace BoxSocial.Groups
     [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
-        public const string GROUP_INFO_FIELDS = "gi.group_id, gi.group_name, gi.group_name_display, gi.group_type, gi.group_abstract, gi.group_members, gi.group_officers, gi.group_operators, gi.group_reg_date_ut, gi.group_category, gi.group_comments, gi.group_gallery_items";
-
         [DataField("group_id", DataFieldKeys.Primary)]
         private long groupId;
         [DataField("group_name", DataFieldKeys.Unique, 64)]
@@ -1235,6 +1235,24 @@ namespace BoxSocial.Groups
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddJoin(JoinTypes.Left, GetTable(typeof(GroupMember)), "group_id", "group_id");
             query.AddCondition("user_id", member.Id);
+
+            DataTable groupsTable = core.Db.Query(query);
+
+            foreach (DataRow dr in groupsTable.Rows)
+            {
+                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
+            }
+
+            return groups;
+        }
+
+        public static List<UserGroup> GetUserGroups(Core core, Category category)
+        {
+            List<UserGroup> groups = new List<UserGroup>();
+
+            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            query.AddCondition("group_category", category.Id);
+
             DataTable groupsTable = core.Db.Query(query);
 
             foreach (DataRow dr in groupsTable.Rows)
@@ -1449,6 +1467,204 @@ namespace BoxSocial.Groups
             page.Group.ParseBreadCrumbs("members");
         }
 
+        private static void prepareNewCaptcha(Core core)
+        {
+            // prepare the captcha
+            string captchaString = Captcha.GenerateCaptchaString();
+
+            // delete all existing for this session
+            // captcha is a use once thing, destroy all for this session
+            Confirmation.ClearStale(core, core.Session.SessionId, 2);
+
+            // create a new confimation code
+            Confirmation confirm = Confirmation.Create(core, core.Session.SessionId, captchaString, 2);
+
+            core.Template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+        }
+
+        internal static void ShowRegister(object sender, ShowPageEventArgs e)
+        {
+            e.Template.SetTemplate("creategroup.html");
+
+            if (e.Core.Session.IsLoggedIn == false)
+            {
+                e.Template.Parse("REDIRECT_URI", "/sign-in/?redirect=/music/register");
+                e.Core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new musician.");
+                return;
+            }
+
+            string selected = "checked=\"checked\" ";
+            long category = 1;
+            bool categoryError = false;
+            bool typeError = false;
+            bool categoryFound = true;
+            string slug = e.Core.Http.Form["slug"];
+            string title = e.Core.Http.Form["title"];
+
+            try
+            {
+                category = short.Parse(e.Core.Http["category"]);
+            }
+            catch
+            {
+                categoryError = true;
+            }
+
+            if (string.IsNullOrEmpty(slug))
+            {
+                slug = title;
+            }
+
+            if (!string.IsNullOrEmpty(title))
+            {
+                // normalise slug if it has been fiddeled with
+                slug = slug.ToLower().Normalize(NormalizationForm.FormD);
+                string normalisedSlug = "";
+
+                for (int i = 0; i < slug.Length; i++)
+                {
+                    if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
+                    {
+                        normalisedSlug += slug[i];
+                    }
+                }
+                slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");
+            }
+
+            SelectBox categoriesSelectBox = new SelectBox("category");
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Category));
+            query.AddSort(SortOrder.Ascending, "category_title");
+
+            DataTable categoriesTable = e.Db.Query(query);
+            foreach (DataRow categoryRow in categoriesTable.Rows)
+            {
+                Category cat = new Category(e.Core, categoryRow);
+
+                categoriesSelectBox.Add(new SelectBoxItem(cat.Id.ToString(), cat.Title));
+
+                if (category == cat.Id)
+                {
+                    categoryFound = true;
+                }
+            }
+
+            categoriesSelectBox.SelectedKey = category.ToString();
+
+            if (!categoryFound)
+            {
+                categoryError = true;
+            }
+
+            if (e.Core.Http.Form["submit"] == null)
+            {
+                prepareNewCaptcha(e.Core);
+
+                e.Template.Parse("S_CATEGORIES", categoriesSelectBox);
+                e.Template.Parse("S_OPEN_CHECKED", selected);
+            }
+            else
+            {
+                // submit the form
+                e.Template.Parse("GROUP_TITLE", (string)e.Core.Http.Form["title"]);
+                e.Template.Parse("GROUP_NAME_SLUG", slug);
+                e.Template.Parse("GROUP_DESCRIPTION", (string)e.Core.Http.Form["description"]);
+                e.Template.Parse("S_CATEGORIES", categoriesSelectBox);
+
+                switch ((string)e.Core.Http.Form["type"])
+                {
+                    case "open":
+                        e.Template.Parse("S_OPEN_CHECKED", selected);
+                        break;
+                    case "closed":
+                        e.Template.Parse("S_CLOSED_CHECKED", selected);
+                        break;
+                    case "private":
+                        e.Template.Parse("S_PRIVATE_CHECKED", selected);
+                        break;
+                    default:
+                        typeError = true;
+                        break;
+                }
+
+                DataTable confirmTable = e.Db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 2 AND session_id = '{0}' LIMIT 1",
+                    Mysql.Escape(e.Core.Session.SessionId)));
+
+                if (confirmTable.Rows.Count != 1)
+                {
+                    e.Template.Parse("ERROR", "Captcha is invalid, please try again.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)e.Core.Http.Form["captcha"]).ToLower())
+                {
+                    e.Template.Parse("ERROR", "Captcha is invalid, please try again.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (!UserGroup.CheckGroupNameValid(slug))
+                {
+                    e.Template.Parse("ERROR", "Group slug is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (!UserGroup.CheckGroupNameUnique(e.Core, slug))
+                {
+                    e.Template.Parse("ERROR", "Group slug is already taken, please choose another one.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (categoryError)
+                {
+                    e.Template.Parse("ERROR", "Invalid Category selected, you may have to reload the page.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if (typeError)
+                {
+                    e.Template.Parse("ERROR", "Invalid group type selected, you may have to reload the page.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else if ((string)e.Core.Http.Form["agree"] != "true")
+                {
+                    e.Template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create a group.");
+                    prepareNewCaptcha(e.Core);
+                }
+                else
+                {
+                    UserGroup newGroup = null;
+                    try
+                    {
+                        newGroup = UserGroup.Create(e.Core, e.Core.Http.Form["title"], slug, e.Core.Http.Form["description"], category, e.Core.Http.Form["type"]);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        /*Response.Write("InvalidOperationException<br />");
+                        Response.Write(e.Db.QueryList);
+                        Response.End();*/
+                    }
+                    catch (InvalidGroupException)
+                    {
+                        /*Response.Write("InvalidGroupException<br />");
+                        Response.Write(e.Db.QueryList);
+                        Response.End();*/
+                    }
+
+                    if (newGroup == null)
+                    {
+                        e.Template.Parse("ERROR", "Bad registration details");
+                        prepareNewCaptcha(e.Core);
+                    }
+                    else
+                    {
+                        // captcha is a use once thing, destroy all for this session
+                        e.Db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 2 AND session_id = '{0}'",
+                            Mysql.Escape(e.Core.Session.SessionId)));
+
+                        //Response.Redirect("/", true);
+                        e.Template.Parse("REDIRECT_URI", newGroup.Uri);
+                        e.Core.Display.ShowMessage("Group Created", "You have have created a new group. You will be redirected to the group home page in a second.");
+                        return; /* stop processing the display of this page */
+                    }
+                }
+            }
+        }
+
         public override string AccountUriStub
         {
             get
@@ -1642,6 +1858,11 @@ namespace BoxSocial.Groups
             {
                 return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember)));
             }
+        }
+
+        internal static string BuildCategoryUri(Core core, Internals.Category category)
+        {
+            return core.Uri.AppendSid("/groups/" + category.Path);
         }
     }
 

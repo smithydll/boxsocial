@@ -1250,7 +1250,7 @@ namespace BoxSocial.Internals
             db.Query(query);
 
             User newUser = new User(core, userId);
-            UserEmail registrationEmail = UserEmail.Create(core, newUser, eMail, true);
+            UserEmail registrationEmail = UserEmail.Create(core, newUser, eMail, EmailAddressTypes.Personal, true);
 
             // Install a couple of applications
             try

@@ -656,7 +656,20 @@ namespace BoxSocial.Networks
 
             if (networkInfo.RequireConfirmation)
             {
-                UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, true);
+                EmailAddressTypes emailType = EmailAddressTypes.Other;
+
+                switch (networkInfo.NetworkType)
+                {
+                    case NetworkTypes.School:
+                    case NetworkTypes.University:
+                        emailType = EmailAddressTypes.Student;
+                        break;
+                    case NetworkTypes.Workplace:
+                        emailType = EmailAddressTypes.Business;
+                        break;
+                }
+
+                UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, emailType, true);
 
                 RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
 

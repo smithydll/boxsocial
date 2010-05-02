@@ -61,8 +61,8 @@ namespace BoxSocial.Applications.Profile
         void AccountProfilePermissions_Show(object sender, EventArgs e)
         {
 			Save(new EventHandler(AccountProfilePermissions_Save));
-			
-            template.SetTemplate("Profile", "account_permissions");
+
+            SetTemplate("account_permissions");
 
             /*List<string> permissions = new List<string>();
             permissions.Add("Can Read");

@@ -1710,7 +1710,7 @@ namespace BoxSocial.Applications.Gallery
                 BuildUri(), ParentPath, Path);
         }
 
-        public string RebuildAction(Action action)
+        public string RebuildAction(BoxSocial.Internals.Action action)
         {
             throw new NotImplementedException();
         }

@@ -172,7 +172,7 @@ namespace BoxSocial.Groups
         {
             if (sender is TPage)
             {
-                //Group.ShowRegister(sender, new ShowPageEventArgs((TPage)sender));
+                UserGroup.ShowRegister(sender, new ShowPageEventArgs((TPage)sender));
             }
         }
 
@@ -181,16 +181,16 @@ namespace BoxSocial.Groups
         {
             if (sender is TPage)
             {
-                //Default.Show(sender, new ShowPageEventArgs((TPage)sender));
+                Default.Show(sender, new ShowPageEventArgs((TPage)sender));
             }
         }
 
         [StaticShow("groups", @"^/groups/([A-Za-z0-9\-_]+)(|/)$")]
-        private void showDefault(Core core, object sender)
+        private void showCategory(Core core, object sender)
         {
             if (sender is TPage)
             {
-                //Default.ShowCategory(sender, new ShowPageEventArgs((TPage)sender));
+                Default.ShowCategory(sender, new ShowPageEventArgs((TPage)sender));
             }
         }
 

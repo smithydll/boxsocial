@@ -1562,7 +1562,8 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
+                //return core.Uri.BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
+                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/new?id=" + Id.ToString(), true);
             }
         }
 
@@ -1573,7 +1574,8 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
+                //return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
+                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/upload?id=" + Id.ToString(), true);
             }
         }
         

@@ -82,12 +82,6 @@
     <Compile Include="corners.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="creategroup.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="createmuscian.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -175,12 +169,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="viewfriends.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="viewgroups.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="viewmusicians.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="viewnetworks.aspx.cs">

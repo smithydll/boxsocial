@@ -200,10 +200,19 @@ namespace BoxSocial.Internals
             return sb.ToString();
         }
 
+        public static long FormDate(Core core, string name)
+        {
+            return FormDate(core, name, core.Tz);
+        }
+
         public static long FormDate(Core core, string name, ushort timeZoneCode)
         {
+            return FormDate(core, name, new UnixTime(core, timeZoneCode));
+        }
+
+        public static long FormDate(Core core, string name, UnixTime tz)
+        {
             long datetime = 0;
-            UnixTime tz = new UnixTime(core, timeZoneCode);
             DateTime dt = tz.Now;
 
             string dateExpression = core.Http.Form[name + "[expression]"];

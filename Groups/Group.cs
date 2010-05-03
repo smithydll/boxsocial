@@ -49,6 +49,8 @@ namespace BoxSocial.Groups
     [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
+        public static int GROUPS_PER_PAGE;
+
         [DataField("group_id", DataFieldKeys.Primary)]
         private long groupId;
         [DataField("group_name", DataFieldKeys.Unique, 64)]
@@ -1252,6 +1254,25 @@ namespace BoxSocial.Groups
 
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddCondition("group_category", category.Id);
+
+            DataTable groupsTable = core.Db.Query(query);
+
+            foreach (DataRow dr in groupsTable.Rows)
+            {
+                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
+            }
+
+            return groups;
+        }
+
+        public static List<UserGroup> GetUserGroups(Core core, Category category, int page)
+        {
+            List<UserGroup> groups = new List<UserGroup>();
+
+            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            query.AddCondition("group_category", category.Id);
+            query.LimitStart = (page - 1) * GROUPS_PER_PAGE;
+            query.LimitCount = GROUPS_PER_PAGE;
 
             DataTable groupsTable = core.Db.Query(query);
 

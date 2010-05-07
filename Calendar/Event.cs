@@ -326,7 +326,7 @@ namespace BoxSocial.Applications.Calendar
                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "event_invitation.eml");
 
                     emailTemplate.Parse("FROM_NAME", user.DisplayName);
-                    emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
+                    emailTemplate.Parse("FROM_EMAIL", user.Info.PrimaryEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                     emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));
@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
                         RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "event_invitation.eml");
 
                         emailTemplate.Parse("FROM_NAME", user.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", user.AlternateEmail);
+                        emailTemplate.Parse("FROM_EMAIL", user.Info.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
                         emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));

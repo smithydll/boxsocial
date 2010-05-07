@@ -88,7 +88,7 @@ namespace BoxSocial.Musician
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.ShowCustomStyles)
+                if (loggedInMember.Info.ShowCustomStyles)
                 {
                     template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", primitive.Key));
                 }
@@ -142,6 +142,11 @@ namespace BoxSocial.Musician
 
         public ShowMPageEventArgs(MPage page, long itemId)
             : base(page, itemId)
+        {
+        }
+
+        public ShowMPageEventArgs(MPage page, string slug)
+            : base(page, slug)
         {
         }
 

@@ -76,14 +76,15 @@ namespace BoxSocial.Applications.Profile
             maritialStatusesSelectBox.Add(new SelectBoxItem("DIVORCED", "Divorced"));
             maritialStatusesSelectBox.Add(new SelectBoxItem("WIDOWED", "Widowed"));
 
-			if (LoggedInMember.MaritialStatusRaw != null)
+			if (LoggedInMember.Profile.MaritialStatusRaw != null)
 			{
-				maritialStatusesSelectBox.SelectedKey = LoggedInMember.MaritialStatusRaw;
+				maritialStatusesSelectBox.SelectedKey = LoggedInMember.Profile.MaritialStatusRaw;
 			}
 
             SelectBox religionsSelectBox = new SelectBox("religion");
             religionsSelectBox.Add(new SelectBoxItem("0", "No Answer"));
 
+            // TODO: Fix this
             DataTable religionsTable = db.Query("SELECT * FROM religions ORDER BY religion_title ASC");
 
             foreach (DataRow religionRow in religionsTable.Rows)
@@ -91,9 +92,9 @@ namespace BoxSocial.Applications.Profile
                 religionsSelectBox.Add(new SelectBoxItem(((short)religionRow["religion_id"]).ToString(), (string)religionRow["religion_title"]));
             }
 
-			if (LoggedInMember.ReligionRaw != null)
+			if (LoggedInMember.Profile.ReligionId != null)
 			{
-				religionsSelectBox.SelectedKey = LoggedInMember.ReligionRaw.ToString();
+				religionsSelectBox.SelectedKey = LoggedInMember.Profile.ReligionId.ToString();
 			}
 
             SelectBox sexualitiesSelectBox = new SelectBox("sexuality");
@@ -104,9 +105,9 @@ namespace BoxSocial.Applications.Profile
             sexualitiesSelectBox.Add(new SelectBoxItem("BISEXUAL", "Bisexual"));
             sexualitiesSelectBox.Add(new SelectBoxItem("TRANSEXUAL", "Transexual"));
 
-			if (LoggedInMember.SexualityRaw != null)
+			if (LoggedInMember.Profile.SexualityRaw != null)
 			{
-				sexualitiesSelectBox.SelectedKey = LoggedInMember.SexualityRaw;
+				sexualitiesSelectBox.SelectedKey = LoggedInMember.Profile.SexualityRaw;
 			}
 
             template.Parse("S_MARITIAL_STATUS", maritialStatusesSelectBox);

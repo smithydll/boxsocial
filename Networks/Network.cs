@@ -925,7 +925,7 @@ namespace BoxSocial.Networks
 
 
                 string age;
-                int ageInt = member.Age;
+                int ageInt = member.Profile.Age;
                 if (ageInt == 0)
                 {
                     age = "FALSE";
@@ -938,7 +938,7 @@ namespace BoxSocial.Networks
                 memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetNetworkMemberJoinDate(page.tz)));
                 memberVariableCollection.Parse("USER_AGE", age);
-                memberVariableCollection.Parse("USER_COUNTRY", member.Country);
+                memberVariableCollection.Parse("USER_COUNTRY", member.Profile.Country);
                 memberVariableCollection.Parse("USER_CAPTION", "");
 
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);

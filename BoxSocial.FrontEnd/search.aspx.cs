@@ -189,8 +189,8 @@ namespace BoxSocial.FrontEnd
                 userVariableCollection.Parse("ICON", user.UserIcon);
                 userVariableCollection.Parse("U_PROFILE", user.Uri);
                 userVariableCollection.Parse("JOIN_DATE", tz.DateTimeToString(user.Info.GetRegistrationDate(tz)));
-                userVariableCollection.Parse("USER_AGE", user.AgeString);
-                userVariableCollection.Parse("USER_COUNTRY", user.Country);
+                userVariableCollection.Parse("USER_AGE", user.Profile.AgeString);
+                userVariableCollection.Parse("USER_COUNTRY", user.Profile.Country);
 
                 if (core.Session.IsLoggedIn)
                 {

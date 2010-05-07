@@ -100,7 +100,7 @@ namespace BoxSocial.Internals
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
-                core.PagePath = User.ProfileHomepage;
+                core.PagePath = User.Info.ProfileHomepage;
             }
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, User));
@@ -112,7 +112,7 @@ namespace BoxSocial.Internals
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.ShowCustomStyles)
+                if (loggedInMember.Info.ShowCustomStyles)
                 {
                     template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
                 }

@@ -90,7 +90,7 @@ namespace BoxSocial.Applications.Profile
                 friendsVariableCollection.Parse("U_DEMOTE", core.Uri.BuildDemoteFriendUri(friend.Id));
             }
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.Friends / 50.0));
+            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.Info.Friends / 50.0));
         }
 
         void AccountFriendManage_Add(object sender, EventArgs e)

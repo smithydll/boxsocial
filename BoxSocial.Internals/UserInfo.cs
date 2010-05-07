@@ -317,6 +317,25 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
+        /// Gets the user's last visit date
+        /// </summary>
+        public DateTime LastOnlineTime
+        {
+            get
+            {
+                return GetLastOnlineDate(GetTimeZone);
+            }
+        }
+
+        public DateTime RegistrationDate
+        {
+            get
+            {
+                return GetRegistrationDate(GetTimeZone);
+            }
+        }
+
+        /// <summary>
         /// Gets the user's time zone code
         /// </summary>
         public ushort TimeZoneCode

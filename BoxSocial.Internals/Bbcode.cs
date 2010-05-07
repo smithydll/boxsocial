@@ -398,7 +398,7 @@ namespace BoxSocial.Internals
 
             if (viewer != null)
             {
-                options = viewer.GetUserBbcodeOptions;
+                options = viewer.Info.GetUserBbcodeOptions;
             }
 
             long start = DateTime.Now.Ticks;

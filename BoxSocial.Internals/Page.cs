@@ -875,7 +875,7 @@ namespace BoxSocial.Internals
             AccessControlPermission acpEdit = new AccessControlPermission(core, page.ItemKey.TypeId, "EDIT");
             AccessControlPermission acpView = new AccessControlPermission(core, page.ItemKey.TypeId, "VIEW");
             AccessControlGrant.Create(core, owner.ItemKey, page.ItemKey, acpEdit.PermissionId, AccessControlGrants.Allow);
-            AccessControlGrant.Create(core, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), page.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
+            AccessControlGrant.Create(core, User.EveryoneGroupKey, page.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
 
             return page;
         }

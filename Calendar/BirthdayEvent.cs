@@ -53,7 +53,7 @@ namespace BoxSocial.Applications.Calendar
                 throw new InvalidEventException();
             }
 
-            UnixTime tz = new UnixTime(core, user.TimeZoneCode);
+            UnixTime tz = new UnixTime(core, user.Info.TimeZoneCode);
 
             this.eventId = ~user.Id;
             this.subject = user.TitleNameOwnership + " birthday";
@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Calendar
             this.comments = 0;
             this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.userId = user.Id;
-            this.startTimeRaw =  tz.GetUnixTimeStamp(new DateTime(year, user.DateOfBirth.Month, user.DateOfBirth.Day, 0, 0, 0));
-            this.endTimeRaw = tz.GetUnixTimeStamp(new DateTime(year, user.DateOfBirth.Month, user.DateOfBirth.Day, 23, 59, 59));
+            this.startTimeRaw =  tz.GetUnixTimeStamp(new DateTime(year, user.Profile.DateOfBirth.Month, user.Profile.DateOfBirth.Day, 0, 0, 0));
+            this.endTimeRaw = tz.GetUnixTimeStamp(new DateTime(year, user.Profile.DateOfBirth.Month, user.Profile.DateOfBirth.Day, 23, 59, 59));
             this.allDay = true;
             this.invitees = 0;
             this.category = 0;

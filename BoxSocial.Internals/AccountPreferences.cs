@@ -67,7 +67,7 @@ namespace BoxSocial.Internals
 
             string radioChecked = " checked=\"checked\"";
 
-            if (LoggedInMember.EmailNotifications)
+            if (LoggedInMember.Info.EmailNotifications)
             {
                 template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
             }
@@ -76,7 +76,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
             }
 
-            if (LoggedInMember.ShowCustomStyles)
+            if (LoggedInMember.Info.ShowCustomStyles)
             {
                 template.Parse("S_SHOW_STYLES_YES", radioChecked);
             }
@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_SHOW_STYLES_NO", radioChecked);
             }
 
-            if (LoggedInMember.BbcodeShowImages)
+            if (LoggedInMember.Info.BbcodeShowImages)
             {
                 template.Parse("S_DISPLAY_IMAGES_YES", radioChecked);
             }
@@ -94,7 +94,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_IMAGES_NO", radioChecked);
             }
 
-            if (LoggedInMember.BbcodeShowFlash)
+            if (LoggedInMember.Info.BbcodeShowFlash)
             {
                 template.Parse("S_DISPLAY_FLASH_YES", radioChecked);
             }
@@ -103,7 +103,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_FLASH_NO", radioChecked);
             }
 
-            if (LoggedInMember.BbcodeShowVideos)
+            if (LoggedInMember.Info.BbcodeShowVideos)
             {
                 template.Parse("S_DISPLAY_VIDEOS_YES", radioChecked);
             }
@@ -130,9 +130,9 @@ namespace BoxSocial.Internals
             }
 
             SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
-            timezoneSelectBox.SelectedKey = LoggedInMember.TimeZoneCode.ToString();
+            timezoneSelectBox.SelectedKey = LoggedInMember.Info.TimeZoneCode.ToString();
 
-            pagesSelectBox.SelectedKey = LoggedInMember.ProfileHomepage;
+            pagesSelectBox.SelectedKey = LoggedInMember.Info.ProfileHomepage;
             template.Parse("S_HOMEPAGE", pagesSelectBox);
             template.Parse("S_TIMEZONE", timezoneSelectBox);
             //core.Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());

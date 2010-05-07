@@ -66,15 +66,15 @@ namespace BoxSocial.Applications.Profile
             LoggedInMember.LoadProfileInfo();
 
             template.Parse("DISPLAY_NAME", LoggedInMember.DisplayName);
-            template.Parse("FIRST_NAME", LoggedInMember.FirstName);
-            template.Parse("MIDDLE_NAME", LoggedInMember.MiddleName);
-            template.Parse("LAST_NAME", LoggedInMember.LastName);
-            template.Parse("SUFFIX", LoggedInMember.Suffix);
+            template.Parse("FIRST_NAME", LoggedInMember.Profile.FirstName);
+            template.Parse("MIDDLE_NAME", LoggedInMember.Profile.MiddleName);
+            template.Parse("LAST_NAME", LoggedInMember.Profile.LastName);
+            template.Parse("SUFFIX", LoggedInMember.Profile.Suffix);
 
             string selected = " selected=\"selected\"";
-            if (LoggedInMember.Title != null)
+            if (LoggedInMember.Profile.Title != null)
             {
-                switch (LoggedInMember.Title.ToLower().TrimEnd(new char[] { '.' }))
+                switch (LoggedInMember.Profile.Title.ToLower().TrimEnd(new char[] { '.' }))
                 {
                     default:
                         template.Parse("TITLE_NONE", selected);

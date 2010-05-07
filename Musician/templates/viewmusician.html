@@ -3,6 +3,7 @@
 <h2><a href="{U_MUSICIAN}">{MUSICIAN_DISPLAY_NAME}</a></h2>
 
 <div id="pane-profile">
+  <div class="pane">
   <h3><a href="{U_MUSICIAN}">{MUSICIAN_DISPLAY_NAME}</a></h3>
   <dl>
     <dt>{L_JOINED}:</dt>
@@ -15,6 +16,7 @@
 			<p><span id="account-musician" class="post-button"><a href="{U_MUSICIAN_ACCOUNT}">Musician Account Panel</a></span></p>
 			<!-- ENDIF -->
 </div>
+  
 <!-- IF MEMBERS_PANE -->
 <div class="pane">
   <h3>{L_GROUP_MEMBERS}</h3>
@@ -25,6 +27,7 @@
   </ul>
 </div>
 <!-- ENDIF -->
+  
 		<div id="pane-pages" class="pane">
 			<h3>Pages</h3>
 			<ul>
@@ -32,12 +35,23 @@
 			</ul>
 		</div>
 
+  <!-- BEGIN app_panel_side -->
+  {app_panel_side.BODY}
+  <!-- END app_panel_side -->
+</div>
+
+<div id="profile">
 <!-- IF BIOGRAPHY -->
-<p>{BIOGRAPHY}</p>
+  <div id="profile-autobiography" class="pane normal-writing">
+    <h3>Biography</h3>
+    <p>{BIOGRAPHY}</p>
+  </div>
 <!-- ENDIF -->
 
 <!-- BEGIN app_panel -->
 {app_panel.BODY}
 <!-- END app_panel -->
+
+</div>
 
 <!-- INCLUDE page_footer.html -->

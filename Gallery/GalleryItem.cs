@@ -742,7 +742,7 @@ namespace BoxSocial.Applications.Gallery
             }
 
             // 512 MiB
-            if (core.Session.LoggedInMember.BytesUsed + bytes > (ulong)512 * 1024 * 1024)
+            if (core.Session.LoggedInMember.Info.BytesUsed + bytes > (ulong)512 * 1024 * 1024)
             {
                 throw new GalleryQuotaExceededException();
             }

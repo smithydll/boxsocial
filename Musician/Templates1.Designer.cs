@@ -564,6 +564,7 @@ namespace BoxSocial.Musician {
         ///&lt;h2&gt;&lt;a href=&quot;{U_MUSICIAN}&quot;&gt;{MUSICIAN_DISPLAY_NAME}&lt;/a&gt;&lt;/h2&gt;
         ///
         ///&lt;div id=&quot;pane-profile&quot;&gt;
+        ///  &lt;div class=&quot;pane&quot;&gt;
         ///  &lt;h3&gt;&lt;a href=&quot;{U_MUSICIAN}&quot;&gt;{MUSICIAN_DISPLAY_NAME}&lt;/a&gt;&lt;/h3&gt;
         ///  &lt;dl&gt;
         ///    &lt;dt&gt;{L_JOINED}:&lt;/dt&gt;
@@ -573,11 +574,46 @@ namespace BoxSocial.Musician {
         ///			&lt;p&gt;&lt;span id=&quot;fan-musiciain&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_BECOME_FAN}&quot;&gt;Become a Fan&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
         ///			&lt;!-- ENDIF --&gt;
         ///  &lt;!-- IF U_MUSICIAN_ACCOUNT --&gt;
-        ///			&lt;p&gt;&lt;span id=&quot;account-musician&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_M [rest of string was truncated]&quot;;.
+        ///			&lt;p&gt;&lt;span id=&quot;account-musician&quot; class=&quot;post [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewmusician {
             get {
                 return ResourceManager.GetString("viewmusician", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;&lt;a href=&quot;{U_MEMBER}&quot;&gt;{MEMBER_DISPLAY_NAME}&lt;/a&gt;&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF BIOGRAPHY --&gt;
+        ///&lt;p&gt;{BIOGRAPHY}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- IF instrument_list --&gt;
+        ///&lt;h3&gt;{L_INSTRUMENTS}&lt;/h3&gt;
+        ///&lt;ul&gt;
+        ///  &lt;!-- BEGIN instrument_list --&gt;
+        ///  &lt;li&gt;{instrument_list.NAME}&lt;/li&gt;
+        ///  &lt;!-- END instrument_list --&gt;
+        ///&lt;/ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        /// </summary>
+        internal static string viewmusician_member {
+            get {
+                return ResourceManager.GetString("viewmusician_member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewmusician_members {
+            get {
+                return ResourceManager.GetString("viewmusician_members", resourceCulture);
             }
         }
         

@@ -235,142 +235,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Sexuality
-        {
-            get
-            {
-                return userProfile.Sexuality;
-            }
-        }
-
-        public string SexualityRaw
-        {
-            get
-            {
-                return userProfile.SexualityRaw;
-            }
-        }
-
-        public string Gender
-        {
-            get
-            {
-                return userProfile.Gender;
-            }
-        }
-
-        public string GenderRaw
-        {
-            get
-            {
-                return userProfile.GenderRaw;
-            }
-        }
-
-        public string MaritialStatus
-        {
-            get
-            {
-                return userProfile.MaritialStatus;
-            }
-        }
-
-        public string MaritialStatusRaw
-        {
-            get
-            {
-                return userProfile.MaritialStatusRaw;
-            }
-        }
-
-        public string Autobiography
-        {
-            get
-            {
-                return userProfile.Autobiography;
-            }
-        }
-
-        public int Age
-        {
-            get
-            {
-                return userProfile.Age;
-            }
-        }
-
-        public string AgeString
-        {
-            get
-            {
-                return userProfile.AgeString;
-            }
-        }
-
-        public DateTime DateOfBirth
-        {
-            get
-            {
-                return userProfile.DateOfBirth;
-            }
-        }
-
-        public DateTime RegistrationDate
-        {
-            get
-            {
-                return userInfo.GetRegistrationDate(core.Tz);
-            }
-        }
-
-        public DateTime LastOnlineTime
-        {
-            get
-            {
-                return userInfo.GetLastOnlineDate(core.Tz);
-            }
-        }
-
-        public long ProfileViews
-        {
-            get
-            {
-                return userProfile.ProfileViews;
-            }
-        }
-
-        public long ProfileComments
-        {
-            get
-            {
-                return userProfile.ProfileComments;
-            }
-        }
-
-        public long BlogSubscriptions
-        {
-            get
-            {
-                return userInfo.BlogSubscriptions;
-            }
-        }
-
-        public string Country
-        {
-            get
-            {
-                return userProfile.Country;
-            }
-        }
-
-        public string CountryIso
-        {
-            get
-            {
-                return userProfile.CountryIso;
-            }
-        }
-
         public string ProfileUri
         {
             get
@@ -433,154 +297,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Title
-        {
-            get
-            {
-                return userProfile.Title;
-            }
-        }
-
-        public string FirstName
-        {
-            get
-            {
-                return userProfile.FirstName;
-            }
-        }
-
-        public string MiddleName
-        {
-            get
-            {
-                return userProfile.MiddleName;
-            }
-        }
-
-        public string LastName
-        {
-            get
-            {
-                return userProfile.LastName;
-            }
-        }
-
-        public string Suffix
-        {
-            get
-            {
-                return userProfile.Suffix;
-            }
-        }
-
-        public short ReligionRaw
-        {
-            get
-            {
-                return userProfile.ReligionId;
-            }
-        }
-
-        public bool ShowCustomStyles
-        {
-            get
-            {
-                return userInfo.ShowCustomStyles;
-            }
-        }
-
-        public bool BbcodeShowImages
-        {
-            get
-            {
-                return userInfo.BbcodeShowImages;
-            }
-        }
-
-        public bool BbcodeShowFlash
-        {
-            get
-            {
-                return userInfo.BbcodeShowFlash;
-            }
-        }
-
-        public bool BbcodeShowVideos
-        {
-            get
-            {
-                return userInfo.BbcodeShowVideos;
-            }
-        }
-
-        public BbcodeOptions GetUserBbcodeOptions
-        {
-            get
-            {
-                return userInfo.GetUserBbcodeOptions;
-            }
-        }
-
-        public string ProfileHomepage
-        {
-            get
-            {
-                return userInfo.ProfileHomepage;
-            }
-            set
-            {
-                userInfo.ProfileHomepage = value;
-            }
-        }
-
-        public long Friends
-        {
-            get
-            {
-                return userInfo.Friends;
-            }
-        }
-
-        public string AlternateEmail
-        {
-            get
-            {
-                return userInfo.PrimaryEmail;
-            }
-        }
-
-        public bool EmailNotifications
-        {
-            get
-            {
-                return userInfo.EmailNotifications;
-            }
-        }
-
-        public ulong BytesUsed
-        {
-            get
-            {
-                return userInfo.BytesUsed;
-            }
-        }
-
-        public long StatusMessages
-        {
-            get
-            {
-                return userInfo.StatusMessages;
-            }
-        }
-
-        public ushort TimeZoneCode
-        {
-            get
-            {
-                return userInfo.TimeZoneCode;
-            }
-        }
-
         public string UserDomain
         {
             get
@@ -594,14 +310,6 @@ namespace BoxSocial.Internals
             get
             {
                 return emailAddresses;
-            }
-        }
-
-        public UnixTime GetTimeZone
-        {
-            get
-            {
-                return userInfo.GetTimeZone;
             }
         }
 
@@ -968,7 +676,7 @@ namespace BoxSocial.Internals
             foreach (DataRow dr in friendsTable.Rows)
             {
                 UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
-                UnixTime tz = new UnixTime(core, friend.TimeZoneCode);
+                UnixTime tz = new UnixTime(core, friend.Info.TimeZoneCode);
                 DateTime dob = new DateTime(st.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
                 long dobUt = tz.GetUnixTimeStamp(dob);
 
@@ -1994,7 +1702,7 @@ namespace BoxSocial.Internals
             }
 
             string age;
-            int ageInt = page.User.Age;
+            int ageInt = page.User.Profile.Age;
             if (ageInt == 0)
             {
                 age = "FALSE";
@@ -2004,16 +1712,16 @@ namespace BoxSocial.Internals
                 age = ageInt.ToString() + " years old";
             }
 
-            core.Template.Parse("USER_SEXUALITY", page.User.Sexuality);
-            core.Template.Parse("USER_GENDER", page.User.Gender);
-            core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Autobiography);
-            core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.MaritialStatus);
+            core.Template.Parse("USER_SEXUALITY", page.User.Profile.Sexuality);
+            core.Template.Parse("USER_GENDER", page.User.Profile.Gender);
+            core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Profile.Autobiography);
+            core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.Profile.MaritialStatus);
             core.Template.Parse("USER_AGE", age);
-            core.Template.Parse("USER_JOINED", core.Tz.DateTimeToString(page.User.RegistrationDate));
-            core.Template.Parse("USER_LAST_SEEN", core.Tz.DateTimeToString(page.User.LastOnlineTime, true));
-            core.Template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.ProfileViews));
-            core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.BlogSubscriptions));
-            core.Template.Parse("USER_COUNTRY", page.User.Country);
+            core.Template.Parse("USER_JOINED", core.Tz.DateTimeToString(page.User.Info.RegistrationDate));
+            core.Template.Parse("USER_LAST_SEEN", core.Tz.DateTimeToString(page.User.Info.LastOnlineTime, true));
+            core.Template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.Profile.ProfileViews));
+            core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.Info.BlogSubscriptions));
+            core.Template.Parse("USER_COUNTRY", page.User.Profile.Country);
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
             core.Template.Parse("USER_ICON", page.User.UserThumbnail);
 
@@ -2022,15 +1730,15 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("IS_PROFILE", "TRUE");
 
-            if (page.User.MaritialStatusRaw != "UNDEF")
+            if (page.User.Profile.MaritialStatusRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
-            if (page.User.GenderRaw != "UNDEF")
+            if (page.User.Profile.GenderRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
-            if (page.User.SexualityRaw != "UNDEF")
+            if (page.User.Profile.SexualityRaw != "UNDEF")
             {
                 hasProfileInfo = true;
             }
@@ -2046,9 +1754,9 @@ namespace BoxSocial.Internals
                 core.Template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
             }
 
-            string langFriends = (page.User.Friends != 1) ? "friends" : "friend";
+            string langFriends = (page.User.Info.Friends != 1) ? "friends" : "friend";
 
-            core.Template.Parse("FRIENDS", page.User.Friends.ToString());
+            core.Template.Parse("FRIENDS", page.User.Info.Friends.ToString());
             core.Template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = page.User.GetFriends(1, 8);
@@ -2095,7 +1803,7 @@ namespace BoxSocial.Internals
                 e.Core.Functions.Generate403();
             }
 
-            string langFriends = (e.Page.User.Friends != 1) ? "friends" : "friend";
+            string langFriends = (e.Page.User.Info.Friends != 1) ? "friends" : "friend";
 
             e.Template.Parse("U_FILTER_ALL", GenerateFriendsUri(e.Core, e.Page.User));
             e.Template.Parse("U_FILTER_BEGINS_A", GenerateFriendsUri(e.Core, e.Page.User, "a"));
@@ -2127,7 +1835,7 @@ namespace BoxSocial.Internals
 
             e.Template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", e.Page.User.DisplayNameOwnership));
 
-            e.Template.Parse("FRIENDS", e.Page.User.Friends.ToString());
+            e.Template.Parse("FRIENDS", e.Page.User.Info.Friends.ToString());
             e.Template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = e.Page.User.GetFriends(e.Page.page, 18);
@@ -2141,7 +1849,7 @@ namespace BoxSocial.Internals
             }
 
             string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
-            e.Core.Display.ParsePagination(pageUri, e.Page.page, (int)Math.Ceiling(e.Page.User.Friends / 18.0));
+            e.Core.Display.ParsePagination(pageUri, e.Page.page, (int)Math.Ceiling(e.Page.User.Info.Friends / 18.0));
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);

@@ -375,7 +375,7 @@ namespace BoxSocial.Applications.Forum
 
                 memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 //memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));
-                memberVariableCollection.Parse("USER_COUNTRY", member.Country);
+                memberVariableCollection.Parse("USER_COUNTRY", member.Profile.Country);
 
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
 

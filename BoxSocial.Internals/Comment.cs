@@ -277,7 +277,7 @@ namespace BoxSocial.Internals
             bool hasMatchingHash = false;
             string messageMd5Hash = MessageMd5(message);
 
-            TimeSpan ts = DateTime.Now - core.Session.LoggedInMember.RegistrationDate;
+            TimeSpan ts = DateTime.Now - core.Session.LoggedInMember.Info.RegistrationDate;
 
             // registered last ...
             if (ts.TotalMinutes <= 10) // first 10 minutes

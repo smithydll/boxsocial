@@ -341,6 +341,25 @@ namespace BoxSocial.Musician
             }
         }
 
+        [PageSlug("Members")]
+        [Show(@"/profile/members(|/)$", AppPrimitives.Musician)]
+        private void showMembers(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                MusicianMember.ShowAll(sender, new ShowMPageEventArgs((MPage)sender));
+            }
+        }
+
+        [Show(@"/profile/members/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showMember(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                MusicianMember.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+        }
+
         [PageSlug("Tours")]
         [Show(@"^/tours(|/)$", AppPrimitives.Musician)]
         private void showTours(Core core, object sender)

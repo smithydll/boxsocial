@@ -287,7 +287,7 @@ namespace BoxSocial.Internals
 
             if (loggedInMember != null)
             {
-                tz = loggedInMember.GetTimeZone;
+                tz = loggedInMember.Info.GetTimeZone;
             }
 
             // move it here

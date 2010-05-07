@@ -554,7 +554,7 @@ namespace BoxSocial.Internals
             {
                 if (userId != 0)
                 {
-                    TimeSpan ts = DateTime.Now - loggedInMember.LastOnlineTime;
+                    TimeSpan ts = DateTime.Now - loggedInMember.Info.LastOnlineTime;
 
                     if (ts.TotalMinutes >= 5)
                     {
@@ -752,7 +752,7 @@ namespace BoxSocial.Internals
 
                             if (isLoggedIn)
                             {
-                                TimeSpan ts = DateTime.Now - loggedInMember.LastOnlineTime;
+                                TimeSpan ts = DateTime.Now - loggedInMember.Info.LastOnlineTime;
 
                                 if (ts.TotalMinutes >= 5)
                                 {

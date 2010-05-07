@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Profile
             SetTemplate("account_profile");
 
             string selected = " checked=\"checked\"";
-            switch (LoggedInMember.GenderRaw)
+            switch (LoggedInMember.Profile.GenderRaw)
             {
                 case "UNDEF":
                     template.Parse("S_GENDER_UNDEF", selected);
@@ -88,9 +88,9 @@ namespace BoxSocial.Applications.Profile
                 dobYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            if (LoggedInMember.DateOfBirth != null)
+            if (LoggedInMember.Profile.DateOfBirth != null)
             {
-                dobYearsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Year.ToString();
+                dobYearsSelectBox.SelectedKey = LoggedInMember.Profile.DateOfBirth.Year.ToString();
             }
 
             SelectBox dobMonthsSelectBox = new SelectBox("dob-month");
@@ -100,9 +100,9 @@ namespace BoxSocial.Applications.Profile
                 dobMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
             }
 
-            if (LoggedInMember.DateOfBirth != null)
+            if (LoggedInMember.Profile.DateOfBirth != null)
             {
-                dobMonthsSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Month.ToString();
+                dobMonthsSelectBox.SelectedKey = LoggedInMember.Profile.DateOfBirth.Month.ToString();
             }
 
             SelectBox dobDaysSelectBox = new SelectBox("dob-day");
@@ -112,9 +112,9 @@ namespace BoxSocial.Applications.Profile
                 dobDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            if (LoggedInMember.DateOfBirth != null)
+            if (LoggedInMember.Profile.DateOfBirth != null)
             {
-                dobDaysSelectBox.SelectedKey = LoggedInMember.DateOfBirth.Day.ToString();
+                dobDaysSelectBox.SelectedKey = LoggedInMember.Profile.DateOfBirth.Day.ToString();
             }
 
             SelectBox countriesSelectBox = new SelectBox("country");
@@ -131,9 +131,9 @@ namespace BoxSocial.Applications.Profile
                 countriesSelectBox.Add(new SelectBoxItem((string)countryRow["country_iso"], (string)countryRow["country_name"]));
             }
 
-			if (LoggedInMember.CountryIso != null)
+			if (LoggedInMember.Profile.CountryIso != null)
 			{
-				countriesSelectBox.SelectedKey = LoggedInMember.CountryIso;
+				countriesSelectBox.SelectedKey = LoggedInMember.Profile.CountryIso;
 			}
 
             template.Parse("S_DOB_YEAR", dobYearsSelectBox);
@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Profile
             template.Parse("S_COUNTRY", countriesSelectBox);
             template.Parse("S_HEIGHT", heightTextBox);
 
-            template.Parse("S_AUTO_BIOGRAPHY", LoggedInMember.Autobiography);
+            template.Parse("S_AUTO_BIOGRAPHY", LoggedInMember.Profile.Autobiography);
 
             Save(new EventHandler(AccountProfileInfo_Save));
         }

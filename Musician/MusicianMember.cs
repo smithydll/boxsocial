@@ -153,6 +153,31 @@ namespace BoxSocial.Musician
             }
         }
 
+        public MusicianMember(Core core, Musician owner, string username, UserLoadOptions loadOptions)
+            : base(core)
+        {
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_keys.username", username);
+            query.AddCondition("musician_id", owner.Id);
+
+            DataTable memberTable = db.Query(query);
+
+
+            if (memberTable.Rows.Count == 1)
+            {
+                loadItemInfo(typeof(User), memberTable.Rows[0]);
+                loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
+                loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
+                loadItemInfo(typeof(MusicianMember), memberTable.Rows[0]);
+                /*loadUserInfo(memberTable.Rows[0]);
+                loadUserIcon(memberTable.Rows[0]);*/
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public MusicianMember(Core core, DataRow memberRow)
             : base(core)
         {
@@ -195,15 +220,29 @@ namespace BoxSocial.Musician
             return instruments;
         }
 
+        public static void ShowAll(object sender, ShowMPageEventArgs e)
+        {
+            e.Template.SetTemplate("Musician", "viewmusician_members");
+
+            List<MusicianMember> members = e.Page.Musician.GetMembers();
+
+            foreach (MusicianMember member in members)
+            {
+                VariableCollection memberVariableCollection = e.Template.CreateChild("member_list");
+
+                memberVariableCollection.Parse("STAGE_NAME", member.StageName);
+            }
+        }
+
         public static void Show(object sender, ShowMPageEventArgs e)
         {
-            e.Template.SetTemplate("Musician", "viewmember");
+            e.Template.SetTemplate("Musician", "viewmusician_member");
 
             MusicianMember member = null;
 
             try
             {
-                member = new MusicianMember(e.Core, (Musician)e.Page.Owner, e.ItemId, UserLoadOptions.All);
+                member = new MusicianMember(e.Core, (Musician)e.Page.Owner, e.Slug, UserLoadOptions.All);
             }
             catch (InvalidMusicianMemberException)
             {

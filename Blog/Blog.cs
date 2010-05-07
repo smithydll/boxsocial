@@ -745,7 +745,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 string pageUri = "";
-                string breadcrumbExtension = (page.User.ProfileHomepage == "/blog") ? "" : "blog/";
+                string breadcrumbExtension = (page.User.Info.ProfileHomepage == "/blog") ? "" : "blog/";
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "blog", "Blog" });
@@ -843,7 +843,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>The URI</returns>
         public static string BuildUri(Core core, User member)
         {
-            if (member.ProfileHomepage == "/blog")
+            if (member.Info.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendSid(string.Format("{0}",
                     member.UriStub));
@@ -863,7 +863,7 @@ namespace BoxSocial.Applications.Blog
         /// <returns>The URI</returns>
         public static string BuildAbsoluteUri(Core core, User member)
         {
-            if (member.ProfileHomepage == "/blog")
+            if (member.Info.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendAbsoluteSid(string.Format("{0}",
                     member.UriStubAbsolute));

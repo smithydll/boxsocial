@@ -351,7 +351,7 @@ namespace BoxSocial.Internals
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                 {
-                    if ((((ShowAttribute)attr).Primitives | primitive) == primitive)
+                    if ((((ShowAttribute)attr).Primitives & primitive) == primitive)
                     {
                         foreach (Attribute psAttr in Attribute.GetCustomAttributes(mi, typeof(PageSlugAttribute)))
                         {

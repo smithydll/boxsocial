@@ -217,27 +217,6 @@ namespace BoxSocial.Musician
             core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
-        /*[PageSlug("Profile")]
-        [Show("profile", AppPrimitives.Musician)]
-        private void showMusician(Core core, object sender)
-        {
-            if (sender is MPage)
-            {
-                //UserGroup.Show(core, (MPage)sender);
-                Musician.ShowProfile(sender, new ShowMPageEventArgs((MPage)sender));
-            }
-        }*/
-
-        //[PageSlug("Members")]
-        [Show("members", AppPrimitives.Musician)]
-        private void showMemberlist(Core core, object sender)
-        {
-            if (sender is MPage)
-            {
-                //UserGroup.ShowMemberlist(core, (GPage)sender);
-            }
-        }
-
         public override AppPrimitives GetAppPrimitiveSupport()
         {
             return AppPrimitives.None | AppPrimitives.Member | AppPrimitives.Musician;
@@ -342,7 +321,7 @@ namespace BoxSocial.Musician
         }
 
         [PageSlug("Members")]
-        [Show(@"/profile/members(|/)$", AppPrimitives.Musician)]
+        [Show(@"^/profile/members(|/)$", AppPrimitives.Musician)]
         private void showMembers(Core core, object sender)
         {
             if (sender is MPage)
@@ -351,7 +330,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [Show(@"/profile/members/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        [Show(@"^/profile/members/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
         private void showMember(Core core, object sender)
         {
             if (sender is MPage)

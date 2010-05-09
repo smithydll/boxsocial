@@ -1065,6 +1065,14 @@ namespace BoxSocial.Networks
                 return "Network: " + DisplayName;
             }
         }
+
+        public static ItemKey NetworkMembersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(NetworkMember)));
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

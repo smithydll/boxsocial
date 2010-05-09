@@ -88,6 +88,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Application.cs" />
+    <Compile Include="ApplicationDeveloper.cs" />
     <Compile Include="ApplicationEntry.cs" />
     <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="ApplicationSlug.cs" />

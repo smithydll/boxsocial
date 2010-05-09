@@ -82,6 +82,7 @@
     <Compile Include="Exif.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryItem.cs" />
+    <Compile Include="GallerySettings.cs" />
     <Compile Include="GroupGallery.cs" />
     <Compile Include="GroupGalleryItem.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
@@ -117,6 +118,10 @@
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Musician\Musician.csproj">
+      <Project>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</Project>
+      <Name>Musician</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networks\Networks.csproj">
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>

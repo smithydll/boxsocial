@@ -33,7 +33,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public abstract partial class APage : TPage
+    public abstract partial class APage : PPage
     {
         protected string anAssemblyName;
         protected ApplicationEntry anApplication;
@@ -101,6 +101,27 @@ namespace BoxSocial.Internals
 
 
 
+        }
+    }
+
+    public class ShowAPageEventArgs : ShowPPageEventArgs
+    {
+        public new APage Page
+        {
+            get
+            {
+                return (APage)page;
+            }
+        }
+
+        public ShowAPageEventArgs(APage page, long itemId)
+            : base(page, itemId)
+        {
+        }
+
+        public ShowAPageEventArgs(APage page)
+            : base(page)
+        {
         }
     }
 }

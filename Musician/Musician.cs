@@ -1334,6 +1334,22 @@ namespace BoxSocial.Musician
                 return 10;
             }
         }
+
+        public static ItemKey MusicianMembersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(MusicianMember)));
+            }
+        }
+
+        public static ItemKey MusicianFansGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(Fan)));
+            }
+        }
     }
 
     public class InvalidMusicianException : Exception

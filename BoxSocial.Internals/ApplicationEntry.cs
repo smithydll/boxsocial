@@ -40,6 +40,9 @@ namespace BoxSocial.Internals
 
     [DataTable("applications", "APPLICATION")]
     [Primitive("APPLICATION", ApplicationLoadOptions.All, "application_id", "application_assembly_name")]
+    [Permission("COMMENT", "Can comment on the application", PermissionTypes.Interact)]
+    [Permission("RATE", "Can rate the application", PermissionTypes.Interact)]
+    [Permission("UPDATE", "Can update the application", PermissionTypes.CreateAndEdit)]
     public class ApplicationEntry : Primitive, ICommentableItem, IPermissibleItem
     {
         //public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
@@ -1216,6 +1219,14 @@ namespace BoxSocial.Internals
             get
             {
                 return "Application: " + Title;
+            }
+        }
+
+        public static ItemKey ApplicationDevelopersGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(ApplicationDeveloper)));
             }
         }
     }

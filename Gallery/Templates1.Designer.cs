@@ -173,6 +173,15 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_galleries_settings {
+            get {
+                return ResourceManager.GetString("account_galleries_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Upload Photo&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;

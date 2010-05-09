@@ -33,7 +33,7 @@ namespace BoxSocial.Musician
         {
             e.Template.SetTemplate("Musician", "music_default");
 
-
+            e.Template.Parse("U_REGISTER_MUSICIAN", e.Core.Uri.AppendSid("/music/register"));
         }
 
         public static void ShowChart(object sender, ShowPageEventArgs e)

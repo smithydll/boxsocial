@@ -1667,12 +1667,11 @@ namespace BoxSocial.Install
                                 query.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", repo));
                                 query.AddField("application_tile", string.Format(@"/images/{0}/tile.png", repo));
 
-                                /*applicationId = db.UpdateQuery(string.Format(@"INSERT INTO applications (application_assembly_name, user_id, application_date_ut, application_title, application_description, application_primitive, application_primitives, application_comment, application_rating) VALUES ('{0}', {1}, {2}, '{3}', '{4}', {5}, {6}, {7}, {8});",
-                                    Mysql.Escape(repo), 0, tz.GetUnixTimeStamp(tz.Now), Mysql.Escape(newApplication.Title), Mysql.Escape(newApplication.Description), isPrimitive, (byte)newApplication.GetAppPrimitiveSupport(), newApplication.UsesComments, newApplication.UsesRatings));*/
-
                                 applicationId = db.Query(query);
 
                                 ApplicationEntry updateApplication = new ApplicationEntry(core, applicationId);
+
+                                //ApplicationEntry updateApplication = ApplicationEntry.Create(core, repo, newApplication, isPrimitive);
 
                                 /*try
                                 {

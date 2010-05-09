@@ -174,6 +174,12 @@ namespace BoxSocial.Musician
         public static Dictionary<long, MusicGenre> GetGenres(Core core, List<Musician> musicians)
         {
             Dictionary<long, MusicGenre> genres = new Dictionary<long, MusicGenre>();
+
+            if (musicians == null || musicians.Count == 0)
+            {
+                return genres;
+            }
+
             List<long> genreIds = new List<long>();
 
             foreach (Musician musician in musicians)

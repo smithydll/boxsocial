@@ -169,8 +169,6 @@ namespace BoxSocial.Musician
                 loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
                 loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
                 loadItemInfo(typeof(MusicianMember), memberTable.Rows[0]);
-                /*loadUserInfo(memberTable.Rows[0]);
-                loadUserIcon(memberTable.Rows[0]);*/
             }
             else
             {
@@ -184,6 +182,24 @@ namespace BoxSocial.Musician
             loadItemInfo(typeof(MusicianMember), memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
+        public static MusicianMember Create(Core core, Musician musician, User member)
+        {
+            InsertQuery iQuery = new InsertQuery(typeof(MusicianMember));
+            iQuery.AddField("user_id", member.Id);
+            iQuery.AddField("musician_id", musician.Id);
+            iQuery.AddField("member_date_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("member_lead", false);
+            iQuery.AddField("member_instruments", 0);
+            iQuery.AddField("member_stage_name", string.Empty);
+            iQuery.AddField("member_biography", string.Empty);
+
+            core.Db.Query(iQuery);
+
+            MusicianMember newMember = new MusicianMember(core, musician, member);
+
+            return newMember;
         }
 
         public override bool CanEditItem()

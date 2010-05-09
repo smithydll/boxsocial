@@ -117,42 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_galleries" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="GALLERIES" xml:space="preserve">
+    <value>Galleries</value>
   </data>
-  <data name="account_galleries_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_add.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="GALLERY" xml:space="preserve">
+    <value>Gallery</value>
   </data>
-  <data name="account_galleries_group" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_group.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="GALLERY_SETTINGS" xml:space="preserve">
+    <value>Gallery Settings</value>
   </data>
-  <data name="account_galleries_photo_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_photo_edit.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="IMAGE" xml:space="preserve">
+    <value>Image</value>
   </data>
-  <data name="account_galleries_photo_tag" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_photo_tag.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="MAKE_DISPLAY_PICTURE" xml:space="preserve">
+    <value>Make my Display Picture</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_galleries_settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_settings.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="MANAGE_GALLERIES" xml:space="preserve">
+    <value>Manage Galleries</value>
   </data>
-  <data name="account_galleries_upload" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_galleries_upload.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="NEW_GALLERY" xml:space="preserve">
+    <value>New Gallery</value>
   </data>
-  <data name="groupgalleryupload" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\groupgalleryupload.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="PHOTO" xml:space="preserve">
+    <value>Photo</value>
   </data>
-  <data name="viewgallery" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewgallery.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="ROTATE_LEFT" xml:space="preserve">
+    <value>Rotate Left</value>
   </data>
-  <data name="viewgroupgallery" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewgroupgallery.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="ROTATE_RIGHT" xml:space="preserve">
+    <value>Rotate Right</value>
   </data>
-  <data name="viewphoto" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewphoto.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="SET_ALBUM_COVER" xml:space="preserve">
+    <value>Set as Album Cover</value>
   </data>
-  <data name="viewprofilegallery" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewprofilegallery.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="TAG_PHOTO" xml:space="preserve">
+    <value>Tag Photo</value>
+  </data>
+  <data name="UPLOAD_PHOTO" xml:space="preserve">
+    <value>Upload Photo</value>
   </data>
 </root>

@@ -131,8 +131,6 @@ namespace BoxSocial.Internals
                 loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
                 loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
                 loadItemInfo(typeof(ApplicationDeveloper), memberTable.Rows[0]);
-                /*loadUserInfo(memberTable.Rows[0]);
-                loadUserIcon(memberTable.Rows[0]);*/
             }
             else
             {
@@ -146,6 +144,19 @@ namespace BoxSocial.Internals
             loadItemInfo(typeof(ApplicationDeveloper), memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
+        public static ApplicationDeveloper Create(Core core, ApplicationEntry application, User developer)
+        {
+            InsertQuery iQuery = new InsertQuery(typeof(ApplicationDeveloper));
+            iQuery.AddField("user_id", developer.Id);
+            iQuery.AddField("application_id", application.Id);
+
+            core.Db.Query(iQuery);
+
+            ApplicationDeveloper newDeveloper = new ApplicationDeveloper(core, application, developer);
+
+            return newDeveloper;
         }
 
         public override bool CanEditItem()

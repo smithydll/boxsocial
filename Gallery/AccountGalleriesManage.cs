@@ -96,6 +96,7 @@ namespace BoxSocial.Applications.Gallery
 
                     template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", pg.Id));
                     template.Parse("U_UPLOAD_PHOTO", BuildUri("upload", pg.Id));
+                    template.Parse("U_PERMISSIONS", core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", pg.Id, ItemType.GetTypeId(typeof(Gallery))), true));
 
                     galleryParentPath = pg.FullPath;
                 }
@@ -109,6 +110,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 pg = new Gallery(core, Owner);
                 template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", 0));
+                template.Parse("U_PERMISSIONS", core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", pg.Settings.Id, ItemType.GetTypeId(typeof(GallerySettings))), true));
             }
 
             List<Gallery> ugs = pg.GetGalleries();

@@ -542,10 +542,9 @@ namespace BoxSocial.Musician
 
             long musicianId = db.Query(iQuery);
 
-            db.UpdateQuery(string.Format("INSERT INTO musician_members (user_id, musician_id, member_date_ut) VALUES ({0}, {1}, UNIX_TIMESTAMP())",
-                session.LoggedInMember.UserId, musicianId));
-
             Musician newMusician = new Musician(core, musicianId);
+
+            MusicianMember member = MusicianMember.Create(core, newMusician, session.LoggedInMember);
 
             try
             {

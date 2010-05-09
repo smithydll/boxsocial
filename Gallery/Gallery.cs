@@ -184,6 +184,8 @@ namespace BoxSocial.Applications.Gallery
         Access access;
         List<AccessControlPermission> permissionsList;
 
+        private GallerySettings settings;
+
         /// <summary>
         /// Gets the gallery Id
         /// </summary>
@@ -463,6 +465,28 @@ namespace BoxSocial.Applications.Gallery
             : base(core)
         {
             this.owner = owner;
+            this.ownerKey = owner.ItemKey;
+
+            galleryId = 0;
+            path = "";
+            parentPath = "";
+
+            if (owner is User)
+            {
+                userId = owner.Id;
+            }
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the Gallery class.
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="settings">Gallery Settings</param>
+        public Gallery(Core core, GallerySettings settings)
+            : base(core)
+        {
+            this.settings = settings;
+            this.owner = settings.Owner;
             this.ownerKey = owner.ItemKey;
 
             galleryId = 0;
@@ -1352,6 +1376,17 @@ namespace BoxSocial.Applications.Gallery
         {
             e.Template.SetTemplate("Gallery", "viewgallery");
 
+            GallerySettings settings;
+            try
+            {
+                settings = new GallerySettings(e.Core, e.Page.Owner);
+            }
+            catch (InvalidGallerySettingsException)
+            {
+                GallerySettings.Create(e.Core, e.Page.Owner);
+                settings = new GallerySettings(e.Core, e.Page.Owner);
+            }
+
             int p = 1;
             char[] trimStartChars = { '.', '/' };
 
@@ -1563,7 +1598,7 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 //return core.Uri.BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
-                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/new?id=" + Id.ToString(), true);
+                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/galleries/?mode=new&id=" + Id.ToString(), true);
             }
         }
 
@@ -1597,12 +1632,34 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                if (access == null)
+                if (Id == 0)
                 {
-                    access = new Access(core, this);
+                    return Settings.Access;
                 }
+                else
+                {
+                    if (access == null)
+                    {
+                        access = new Access(core, this);
+                    }
+                    return access;
+                }
+            }
+        }
 
-                return access;
+        public GallerySettings Settings
+        {
+            get
+            {
+                if (settings == null)
+                {
+                    settings = new GallerySettings(core, Owner);
+                    return settings;
+                }
+                else
+                {
+                    return settings;
+                }
             }
         }
 

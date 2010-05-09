@@ -77,6 +77,7 @@
     <Compile Include="AccountGalleriesPhotoEdit.cs" />
     <Compile Include="AccountGalleriesPhotoRotate.cs" />
     <Compile Include="AccountGalleriesPhotoTag.cs" />
+    <Compile Include="AccountGalleriesSettings.cs" />
     <Compile Include="AccountGalleriesUpload.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Exif.cs" />
@@ -137,6 +138,7 @@
     <Content Include="templates\account_galleries_group.html" />
     <Content Include="templates\account_galleries_photo_tag.html" />
     <Content Include="templates\account_galleries_photo_edit.html" />
+    <Content Include="templates\account_galleries_settings.html" />
     <Content Include="templates\account_galleries_upload.html" />
     <Content Include="templates\groupgalleryupload.html" />
     <Content Include="templates\viewgallery.html" />
@@ -157,6 +159,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="languages\Gallery.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="resources\gallery.svg" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +187,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Gallery.en.resx"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -45,10 +45,6 @@ namespace BoxSocial.Internals
     [Permission("UPDATE", "Can update the application", PermissionTypes.CreateAndEdit)]
     public class ApplicationEntry : Primitive, ICommentableItem, IPermissibleItem
     {
-        //public const string APPLICATION_FIELDS = "ap.application_id, ap.application_title, ap.application_description, ap.application_icon, ap.application_assembly_name, ap.user_id, ap.application_primitives, ap.application_date_ut, ap.application_primitive, ap.application_comments, ap.application_comment, ap.application_rating, ap.application_style, ap.application_script";
-        //public const string USER_APPLICATION_FIELDS = "pa.app_id, pa.item_id, pa.item_type_id";
-        //public const string APPLICATION_SLUG_FIELDS = "al.slug_id, al.slug_stub, al.slug_slug_ex, al.application_id";
-
         [DataField("application_id", DataFieldKeys.Primary)]
         private long applicationId;
         [DataField("user_id")]
@@ -560,11 +556,40 @@ namespace BoxSocial.Internals
             itemId = (long)applicationRow["item_id"];
         }
 
-        public static ApplicationEntry Create()
+        public static ApplicationEntry Create(Core core, string assembly, Application application, bool isPrimitive)
         {
-            // TODO:
+            InsertQuery iQuery = new InsertQuery(typeof(ApplicationEntry));
+            iQuery.AddField("application_assembly_name", assembly);
+            iQuery.AddField("user_id", core.LoggedInMemberId);
+            iQuery.AddField("application_date_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("application_title", application.Title);
+            iQuery.AddField("application_description", application.Description);
+            iQuery.AddField("application_primitive", isPrimitive);
+            iQuery.AddField("application_primitives", (byte)application.GetAppPrimitiveSupport());
+            iQuery.AddField("application_comment", application.UsesComments);
+            iQuery.AddField("application_rating", application.UsesRatings);
+            iQuery.AddField("application_style", !string.IsNullOrEmpty(application.StyleSheet));
+            iQuery.AddField("application_script", !string.IsNullOrEmpty(application.JavaScript));
+            iQuery.AddField("application_icon", string.Format(@"/images/{0}/icon.png", assembly));
+            iQuery.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", assembly));
+            iQuery.AddField("application_tile", string.Format(@"/images/{0}/tile.png", assembly));
 
-            throw new NotImplementedException();
+            long applicationId = core.Db.Query(iQuery);
+
+            ApplicationEntry newApplication = new ApplicationEntry(core, applicationId);
+
+            ApplicationDeveloper developer = ApplicationDeveloper.Create(core, newApplication, core.Session.LoggedInMember);
+
+            try
+            {
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                guestbookAe.Install(core, newApplication);
+            }
+            catch
+            {
+            }
+
+            return newApplication;
         }
 
         public override string UriStub

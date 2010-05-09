@@ -266,7 +266,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (Gallery.Create(core, Owner, parent, title, ref slug, description) != null)
                         {
-                            SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", parent.GalleryId));
+                            SetRedirectUri(BuildUri("galleries", parent.GalleryId));
                             core.Display.ShowMessage("Gallery Created", "You have successfully created a new gallery.");
                             return;
                         }
@@ -314,7 +314,7 @@ namespace BoxSocial.Applications.Gallery
                         {
                             gallery.Update(core, title, slug, description);
 
-                            SetRedirectUri(core.Uri.BuildAccountSubModuleUri("galleries", "galleries", gallery.ParentId));
+                            SetRedirectUri(BuildUri("galleries", gallery.ParentId));
                             core.Display.ShowMessage("Gallery Edit Saved", "You have saved the edits to the gallery.");
                             return;
                         }

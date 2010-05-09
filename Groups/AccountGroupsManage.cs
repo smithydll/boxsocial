@@ -67,7 +67,7 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_manage");
 
-            template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/create"));
+            template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/register"));
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(GroupOperator));
             query.AddFields(Item.GetFieldsPrefixed(typeof(UserGroup)));

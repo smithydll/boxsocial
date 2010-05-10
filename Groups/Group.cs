@@ -49,7 +49,7 @@ namespace BoxSocial.Groups
     [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
-        public static int GROUPS_PER_PAGE;
+        public static int GROUPS_PER_PAGE = 10;
 
         [DataField("group_id", DataFieldKeys.Primary)]
         private long groupId;

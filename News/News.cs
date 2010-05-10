@@ -31,6 +31,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.News
 {
+    // NewsSettings table
 	public class News
 	{
 		private Core core;

@@ -190,11 +190,14 @@
   <data name="account_recordings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_recordings.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="viewmusician_member" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewmusician_member.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="viewmusician_members" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\viewmusician_members.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="chart_default" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\chart_default.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

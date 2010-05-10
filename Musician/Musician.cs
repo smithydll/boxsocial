@@ -106,6 +106,10 @@ namespace BoxSocial.Musician
         private long registeredDate;
         [DataField("musician_featured_date_ut")]
         private long featuredDate;
+        [DataField("musician_downloads")]
+        private long downloadsTotal;
+        [DataField("musician_downloads_week")]
+        private long downloadsWeek;
 
         private Access access;
 
@@ -154,6 +158,36 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("fans", value);
+            }
+        }
+
+        /// <summary>
+        /// Total downloads of all time
+        /// </summary>
+        public long DownloadsAllTime
+        {
+            get
+            {
+                return downloadsTotal;
+            }
+            set
+            {
+                SetProperty("downloadsTotal", value);
+            }
+        }
+
+        /// <summary>
+        /// Total number of downloads since midnight Sunday
+        /// </summary>
+        public long DownloadsThisWeek
+        {
+            get
+            {
+                return downloadsWeek;
+            }
+            set
+            {
+                SetProperty("downloadsWeek", value);
             }
         }
 

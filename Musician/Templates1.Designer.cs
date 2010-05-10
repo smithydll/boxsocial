@@ -387,9 +387,20 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string chart_default {
+            get {
+                return ResourceManager.GetString("chart_default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;Music&lt;/h2&gt;
+        ///
+        ///&lt;p&gt;&lt;a href=&quot;{U_REGISTER_MUSICIAN}&quot;&gt;Register Musician&lt;/a&gt;&lt;/p&gt;
         ///
         ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
@@ -609,7 +620,19 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;{L_MUSICIAN_MEMBERS}&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF member_list --&gt;
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN member_list --&gt;
+        ///	&lt;li&gt;{member_list.STAGE_NAME}&lt;/li&gt;
+        ///&lt;!-- END member_list --&gt;
+        ///&lt;/ul&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewmusician_members {
             get {

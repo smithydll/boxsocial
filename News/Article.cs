@@ -49,6 +49,8 @@ namespace BoxSocial.Applications.News
         private string articleBody;
 		[DataField("article_comments")]
         private long articleComments;
+        [DataField("article_icon_item_id")]
+        private long newsIconGalleryItemId;
 		
 		private Primitive owner;
 		private User poster;

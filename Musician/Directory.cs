@@ -32,7 +32,10 @@ namespace BoxSocial.Musician
         {
             e.Template.SetTemplate("Musician", "music_directory");
 
-            //e.Template.Parse("U_FILTER_ALL", page.Group.MemberlistUri);
+            e.Template.Parse("U_MUSIC_ARTISTS", e.Core.Uri.AppendSid("/music/directory/all"));
+            e.Template.Parse("U_MUSIC_GENRES", e.Core.Uri.AppendSid("/music/directory/genres"));
+
+            e.Template.Parse("U_FILTER_ALL", e.Core.Uri.AppendSid("/music/directory/all"));
             e.Template.Parse("U_FILTER_BEGINS_A", GetDirectoryUri(e.Core, "a"));
             e.Template.Parse("U_FILTER_BEGINS_B", GetDirectoryUri(e.Core, "b"));
             e.Template.Parse("U_FILTER_BEGINS_C", GetDirectoryUri(e.Core, "c"));

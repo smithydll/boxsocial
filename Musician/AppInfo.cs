@@ -283,6 +283,27 @@ namespace BoxSocial.Musician
             }
         }
 
+        [StaticShow("music", @"^/music/chart/artists(|/)$")]
+        private void showChartArtists(Core core, object sender)
+        {
+            if (sender is TPage)
+            {
+                //Default.ShowArtistChart(sender, new ShowPageEventArgs((TPage)sender));
+            }
+        }
+
+        [StaticShow("music", @"^/music/chart/albums(|/)$")]
+        private void showChartAlbums(Core core, object sender)
+        {
+            //Default.ShowAlbumChart(sender, new ShowPageEventArgs((TPage)sender));
+        }
+
+        [StaticShow("music", @"^/music/chart/singles(|/)$")]
+        private void showChartSingles(Core core, object sender)
+        {
+            //Default.ShowSinglesChart(sender, new ShowPageEventArgs((TPage)sender));
+        }
+
         [StaticShow("music", @"^/music/directory(|/)$")]
         private void showDirectory(Core core, object sender)
         {

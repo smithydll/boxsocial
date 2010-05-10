@@ -1,1 +1,12 @@
-﻿
+﻿#news-list {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+#news-list li {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+	display: block;
+}

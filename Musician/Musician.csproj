@@ -150,6 +150,7 @@
     <Content Include="templates\account_song_edit.html" />
     <Content Include="templates\account_tour_edit.html" />
     <Content Include="templates\account_tour_manage.html" />
+    <Content Include="templates\chart_default.html" />
     <Content Include="templates\musician_footer.html" />
     <Content Include="templates\music_directory.html" />
     <Content Include="templates\music_default.html" />

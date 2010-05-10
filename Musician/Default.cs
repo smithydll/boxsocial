@@ -38,6 +38,9 @@ namespace BoxSocial.Musician
 
         public static void ShowChart(object sender, ShowPageEventArgs e)
         {
+            e.Template.SetTemplate("Musician", "chart_default");
+
+
         }
     }
 }

@@ -1081,7 +1081,13 @@ namespace BoxSocial.Applications.Gallery
                 string pageUri = string.Format("{0}gallery/{1}",
                     HttpUtility.HtmlEncode(e.Page.Owner.UriStub), e.Slug);
                 e.Core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
-                e.Page.Owner.ParseBreadCrumbs("gallery/" + galleryItem.Path);
+
+                List<string[]> breadCrumbParts = new List<string[]>();
+
+                breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+                breadCrumbParts.Add(new string[] { galleryItem.Path, galleryItem.ItemTitle });
+
+                e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
             }
             catch (GalleryItemNotFoundException)
@@ -1094,9 +1100,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Shows an image
         /// </summary>
-        /// <param name="core">Core token</param>
-        /// <param name="owner">Image owner</param>
-        /// <param name="photoName">Photo slug</param>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event arguments</param>
         public static void ShowImage(object sender, ShowPPageEventArgs e)
         {
             string photoName = e.Slug;

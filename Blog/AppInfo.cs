@@ -228,7 +228,6 @@ namespace BoxSocial.Applications.Blog
         {
             BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
             Blog myBlog = new Blog(core, (User)blogEntry.Owner);
-            //blogEntry.Access.SetViewer(member);
 
             if (myBlog.Access.Can("COMMENT_ITEMS"))
             {

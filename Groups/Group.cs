@@ -1485,7 +1485,12 @@ namespace BoxSocial.Groups
 
             string pageUri = page.Group.MemberlistUri;
             core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.Group.Members / 18.0));
-            page.Group.ParseBreadCrumbs("members");
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+
+            breadCrumbParts.Add(new string[] { "members", "Members" });
+
+            page.Group.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private static void prepareNewCaptcha(Core core)

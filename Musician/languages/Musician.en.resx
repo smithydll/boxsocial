@@ -126,6 +126,9 @@
   <data name="ALL_AGES" xml:space="preserve">
     <value>All Ages</value>
   </data>
+  <data name="ALL_ARTISTS" xml:space="preserve">
+    <value>All Artists</value>
+  </data>
   <data name="ARTIST" xml:space="preserve">
     <value>Artist</value>
   </data>

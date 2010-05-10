@@ -947,7 +947,12 @@ namespace BoxSocial.Networks
 
             string pageUri = page.Network.MemberlistUri;
             core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.Network.Members / 18.0));
-            page.Network.GenerateBreadCrumbs("members");
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+
+            breadCrumbParts.Add(new string[] { "members", "Members" });
+
+            page.Network.GenerateBreadCrumbs(breadCrumbParts);
         }
 
         public override string AccountUriStub

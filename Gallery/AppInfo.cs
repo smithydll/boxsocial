@@ -179,15 +179,6 @@ namespace BoxSocial.Applications.Gallery
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group | AppPrimitives.Network);
 
-            /*aii.AddSlug("gallery", @"^/gallery(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("gallery", @"^/gallery/([A-Za-z0-9\-_\.]+)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-
-            aii.AddSlug("images", @"^/images/([A-Za-z0-9\-_/\.]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);*/
-
-            //aii.AddModule("galleries");
-
             aii.AddCommentType("PHOTO");
 
             return aii;
@@ -214,13 +205,6 @@ namespace BoxSocial.Applications.Gallery
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            //core.RegisterApplicationPage(@"^/gallery(|/)$", showGallery, 1);
-            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)(|/)$", showSubGallery, 2);
-            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_/]+)/([A-Za-z0-9\-_\.]+)$", showUserPhoto, 3);
-            //core.RegisterApplicationPage(@"^/gallery/([A-Za-z0-9\-_\.]+)$", showPhoto, 4);
-
-            //core.RegisterApplicationPage(@"^/images/([A-Za-z0-9\-_/\.]+)", showImage, 5);
         }
 
         /// <summary>
@@ -256,36 +240,6 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>True if the user can post a comment, false otherwise</returns>
         private bool photoCanPostComment(ItemKey itemKey, User member)
         {
-            /*SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
-            query.AddCondition("gallery_item_id", itemKey.Id);
-
-            DataTable galleryItemTable = core.db.Query(query);
-
-            if (galleryItemTable.Rows.Count == 1)
-            {
-                ItemKey ik = new ItemKey((long)galleryItemTable.Rows[0]["gallery_item_item_Id"], (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"]);
-
-                core.PrimitiveCache.LoadPrimitiveProfile(ik);
-                Primitive owner = core.PrimitiveCache[ik];
-
-                GalleryItem gi = new GalleryItem(core, ik.Id);
-                Access photoAccess = new Access(core, new Gallery(core, gi.Owner, gi.ParentId));
-                //photoAccess.SetViewer(member);
-
-                if (photoAccess.Can("COMMENT_ITEMS"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }*/
-
             GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
             Gallery gallery = new Gallery(core, galleryItem.ParentId);
 
@@ -313,48 +267,6 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>True if the user can delete a comment, false otherwise</returns>
         private bool photoCanDeleteComment(ItemKey itemKey, User member)
         {
-            /*SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
-            query.AddCondition("gallery_item_id", itemKey.Id);
-
-            DataTable galleryItemTable = core.db.Query(query);
-
-            if (galleryItemTable.Rows.Count == 1)
-            {
-                long itid = (long)galleryItemTable.Rows[0]["gallery_item_item_type_id"];
-
-                if (itid == ItemKey.GetTypeId(typeof(User)))
-                {
-                        if ((long)galleryItemTable.Rows[0]["gallery_item_item_id"] == member.Id)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                }
-                else if (itid == ItemKey.GetTypeId(typeof(UserGroup)))
-                {
-                    UserGroup group = new UserGroup(core, (long)galleryItemTable.Rows[0]["gallery_item_item_id"]);
-                    if (group.IsGroupOperator(member))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }*/
-
             GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
             return galleryItem.Owner.CanDeleteItem();
         }

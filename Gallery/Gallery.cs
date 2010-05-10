@@ -1449,6 +1449,10 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
+                    if (settings.AllowItemsAtRoot && gallery.access.Can("CREATE_ITEMS"))
+                    {
+                        e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
+                    }
                     if (gallery.Access.Can("CREATE_CHILD"))
                     {
                         e.Template.Parse("U_NEW_GALLERY", gallery.NewGalleryUri);
@@ -1653,7 +1657,14 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (settings == null)
                 {
-                    settings = new GallerySettings(core, Owner);
+                    try
+                    {
+                        settings = new GallerySettings(core, Owner);
+                    }
+                    catch (InvalidGallerySettingsException)
+                    {
+                        settings = GallerySettings.Create(core, Owner);
+                    }
                     return settings;
                 }
                 else

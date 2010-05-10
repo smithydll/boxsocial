@@ -1693,8 +1693,6 @@ namespace BoxSocial.Internals
 
             page.User.LoadProfileInfo();
 
-            //page.User.Access.SetViewer(core.session.LoggedInMember);
-
             if (!page.User.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();

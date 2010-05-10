@@ -138,7 +138,6 @@ namespace BoxSocial.Applications.Pages
                 if (listAccess == null)
                 {
                     listAccess = new Access(core, this);
-                    //listAccess.SetSessionViewer(core.session);
                 }
                 return listAccess;
             }

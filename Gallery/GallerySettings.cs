@@ -30,6 +30,10 @@ using BoxSocial.Musician;
 
 namespace BoxSocial.Applications.Gallery
 {
+
+    /// <summary>
+    /// Gallery Settings
+    /// </summary>
     [DataTable("user_gallery_settings")]
     [Permission("VIEW", "Can view the gallery", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on the gallery", PermissionTypes.Interact)]
@@ -54,6 +58,8 @@ namespace BoxSocial.Applications.Gallery
         private long bytes;
         [DataField("gallery_allow_items_root")]
         private bool allowItemsAtRoot;
+        [DataField("gallery_items_root")]
+        private long galleryItemsAtRoot;
 
         private Primitive owner;
         private Access access;
@@ -63,6 +69,50 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return settingsId;
+            }
+        }
+
+        public long Comments
+        {
+            get
+            {
+                return comments;
+            }
+        }
+
+        public long GalleryItems
+        {
+            get
+            {
+                return galleryItems;
+            }
+        }
+
+        public long GalleryItemsAtRoot
+        {
+            get
+            {
+                return galleryItemsAtRoot;
+            }
+        }
+
+        public long Bytes
+        {
+            get
+            {
+                return bytes;
+            }
+        }
+
+        public bool AllowItemsAtRoot
+        {
+            get
+            {
+                return allowItemsAtRoot;
+            }
+            set
+            {
+                SetProperty("allowItemsAtRoot", value);
             }
         }
 
@@ -108,6 +158,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_id", owner.Id);
             iQuery.AddField("gallery_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_items", 0);
+            iQuery.AddField("gallery_items_root", 0);
             iQuery.AddField("gallery_comments", 0);
             iQuery.AddField("gallery_bytes", 0);
             iQuery.AddField("gallery_allow_items_root", false);

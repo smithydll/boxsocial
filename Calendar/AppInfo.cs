@@ -192,7 +192,6 @@ namespace BoxSocial.Applications.Calendar
         private bool eventCanPostComment(ItemKey itemKey, User member)
         {
             Event calendarEvent = new Event(core, itemKey.Id);
-            //calendarEvent.Access.SetViewer(member);
 
             if (calendarEvent.Access.Can("COMMENT") || calendarEvent.IsInvitee(member))
             {

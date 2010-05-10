@@ -171,8 +171,6 @@ namespace BoxSocial.Applications.GuestBook
             {
                 User owner = new User(core, itemKey.Id, UserLoadOptions.All);
 
-                //owner.Access.SetViewer(member);
-
                 if (owner.Access.Can("COMMENT"))
                 {
                     return true;
@@ -500,8 +498,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
-
-            //profileOwner.Access.SetViewer(e.core.session.LoggedInMember);
 
             if (e.core.Session.IsLoggedIn)
             {

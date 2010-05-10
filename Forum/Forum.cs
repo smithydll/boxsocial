@@ -725,8 +725,6 @@ namespace BoxSocial.Applications.Forum
                 }
 				if (forum != null)
 				{
-					//forum.Access.SetSessionViewer(core.session);
-					
 					if (forum.Access.Can("VIEW"))
 					{
 						sb.Add(new SelectBoxItem(forum.Id.ToString(), forum.Title));
@@ -1413,7 +1411,6 @@ namespace BoxSocial.Applications.Forum
                 thisForum.ReadAll(true);
             }
 			
-			//thisForum.Access.SetSessionViewer(core.session);
 			if (!thisForum.Access.Can("VIEW"))
 			{
                 core.Functions.Generate403();
@@ -1425,8 +1422,6 @@ namespace BoxSocial.Applications.Forum
             }
 
             topicsCount = thisForum.Topics;
-
-            //thisForum.ForumAccess.SetSessionViewer(core.session);
 
             if (!thisForum.Access.Can("VIEW"))
             {
@@ -1446,7 +1441,6 @@ namespace BoxSocial.Applications.Forum
 			
 			foreach (Forum forum in forums)
 			{
-				//forum.Access.SetSessionViewer(core.session);
 				if (forum.Access.Can("VIEW"))
 				{
 					accessibleForums.Add(forum);
@@ -1770,7 +1764,14 @@ namespace BoxSocial.Applications.Forum
             {
                 if (settings == null)
                 {
-                    settings = new ForumSettings(core, Owner);
+                    try
+                    {
+                        settings = new ForumSettings(core, Owner);
+                    }
+                    catch (InvalidForumSettingsException)
+                    {
+                        settings = ForumSettings.Create(core, Owner);
+                    }
                     return settings;
                 }
                 else

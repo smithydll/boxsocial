@@ -762,7 +762,6 @@ namespace BoxSocial.Internals
             if (this is IPermissibleItem)
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;
-                //iThis.Access.SetSessionViewer(core.session);
                 if (!iThis.Access.Can("EDIT"))
                 {
                     throw new UnauthorisedToUpdateItemException();

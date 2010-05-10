@@ -143,7 +143,13 @@ namespace BoxSocial.Internals
             }
 
             core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.page, (int)Math.Ceiling(owner.Info.StatusMessages / 10.0));
-            owner.ParseBreadCrumbs("profile/status");
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+
+            breadCrumbParts.Add(new string[] { "profile", "Profile" });
+            breadCrumbParts.Add(new string[] { "status", "Status Feed" });
+
+            owner.ParseBreadCrumbs(breadCrumbParts);
         }
     }
 }

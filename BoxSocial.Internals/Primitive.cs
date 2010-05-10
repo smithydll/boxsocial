@@ -221,21 +221,6 @@ namespace BoxSocial.Internals
 
         public abstract ushort GetAccessLevel(User viewer);
 
-        public void ParseBreadCrumbs(string path)
-        {
-            ParseBreadCrumbs("BREADCRUMBS", path);
-        }
-
-        public void ParseBreadCrumbs(string templateVar, string path)
-        {
-            ParseBreadCrumbs(core.Template, templateVar, path);
-        }
-
-        public void ParseBreadCrumbs(Template template, string templateVar, string path)
-        {
-            template.ParseRaw(templateVar, GenerateBreadCrumbs(path));
-        }
-
         public void ParseBreadCrumbs(List<string[]> parts)
         {
             ParseBreadCrumbs("BREADCRUMBS", parts);
@@ -252,28 +237,6 @@ namespace BoxSocial.Internals
         }
 
         public abstract string GenerateBreadCrumbs(List<string[]> parts);
-
-        public string GenerateBreadCrumbs(string path)
-        {
-            return GenerateBreadCrumbs(BreadCrumbsFromPath(path));
-        }
-
-        protected List<string[]> BreadCrumbsFromPath(string path)
-        {
-            string[] pathParts = path.Split('/');
-
-            List<string[]> parts = new List<string[]>();
-
-            foreach (string pathPart in pathParts)
-            {
-                string partTitle = pathPart;
-                partTitle.Insert(0, char.ToUpper(partTitle[0]).ToString());
-                partTitle.Remove(1, 1);
-                parts.Add(new string[] { pathPart, partTitle });
-            }
-
-            return parts;
-        }
 
         public abstract Access Access
         {

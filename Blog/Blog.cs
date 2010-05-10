@@ -523,15 +523,13 @@ namespace BoxSocial.Applications.Blog
                 return;
             }
 
-            //long loggedIdUid = myBlog.Access.SetSessionViewer(core.session);
             ushort readAccessLevel = 0x0000;
 
-            /* TODO: see what's wrong here, for not just rely on the application layer security settings */
-            /*if (!myBlog.BlogAccess.CanRead)
+            if (!myBlog.Access.Can("VIEW"))
             {
-                Functions.Generate403(core);
+                core.Functions.Generate403();
                 return;
-            }*/
+            }
 
             try
             {
@@ -554,7 +552,6 @@ namespace BoxSocial.Applications.Blog
 
             if (!rss)
             {
-                //page.template.Parse("PAGE_LIST", Display.GeneratePageList(page.ProfileOwner, core.session.LoggedInMember, true));
                 core.Display.ParsePageList(page.User, true);
                 page.template.Parse("U_PROFILE", page.User.Uri);
                 page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
@@ -723,9 +720,6 @@ namespace BoxSocial.Applications.Blog
                         comments = blogEntries[i].Comments;
                         page.template.Parse("BLOG_POST_COMMENTS", core.Functions.LargeIntegerToString(comments));
                         page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
-
-                        //myBlog.Access = new Access(core, blogEntries[i], page.User);
-                        //myBlog.Access.SetViewer(core.session.LoggedInMember);
                     }
 
                     if (post > 0)
@@ -795,17 +789,15 @@ namespace BoxSocial.Applications.Blog
                         pageUri = myBlog.Uri;
                     }
                 }
-                //page.template.Parse("BREADCRUMBS", page.ProfileOwner.GenerateBreadCrumbs(breadCrumbParts));
+
                 page.User.ParseBreadCrumbs(breadCrumbParts);
 
                 if (post <= 0)
                 {
-                    //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true));
                     core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true);
                 }
                 else
                 {
-                    //page.template.ParseRaw("PAGINATION", Display.GeneratePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0)));
                     core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0));
                 }
 

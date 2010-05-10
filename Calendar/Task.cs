@@ -350,8 +350,6 @@ namespace BoxSocial.Applications.Calendar
             {
                 Task calendarTask = new Task(core, owner, taskId);
 
-                //calendarTask.TaskAccess.SetSessionViewer(core.session);
-
                 if (!calendarTask.TaskAccess.Can("VIEW"))
                 {
                     core.Functions.Generate403();
@@ -363,10 +361,11 @@ namespace BoxSocial.Applications.Calendar
                 page.template.Parse("DUE_DATE", calendarTask.GetDueTime(core.Tz).ToString());
 
                 List<string[]> calendarPath = new List<string[]>();
+
                 calendarPath.Add(new string[] { "calendar", "Calendar" });
                 calendarPath.Add(new string[] { "*tasks", "Tasks" });
                 calendarPath.Add(new string[] { "task/" + calendarTask.TaskId.ToString(), calendarTask.Topic });
-                //page.template.Parse("BREADCRUMBS", owner.GenerateBreadCrumbs(calendarPath));
+
                 owner.ParseBreadCrumbs(calendarPath);
             }
             catch

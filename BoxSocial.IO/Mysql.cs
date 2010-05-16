@@ -93,6 +93,12 @@ namespace BoxSocial.IO
             Connect();
         }
 
+        public void ResetQueryLog()
+        {
+            QueryList = new StringBuilder();
+            ErrorList = new StringBuilder();
+        }
+
         private new void Connect()
         {
             sqlConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);

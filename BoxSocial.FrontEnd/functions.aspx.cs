@@ -42,6 +42,28 @@ namespace BoxSocial.FrontEnd
                     string time = core.Functions.InterpretTime(Request.Form["time"]);
                     core.Ajax.SendRawText("time", time);
                     return;
+                case "user-list":
+                    ReturnUserList();
+                    return;
+            }
+        }
+
+        private void ReturnUserList()
+        {
+            string namePart = Request.Form["name-field"];
+
+            if (core.Session.IsLoggedIn)
+            {
+                List<Friend> friends = core.Session.LoggedInMember.GetFriends(namePart);
+
+                Dictionary<long, string> friendNames = new Dictionary<long, string>();
+
+                foreach (Friend friend in friends)
+                {
+                    friendNames.Add(friend.Id, friend.DisplayName);
+                }
+
+                core.Ajax.SendDictionary("user-select", friendNames);
             }
         }
     }

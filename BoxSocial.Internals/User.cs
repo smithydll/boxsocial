@@ -625,6 +625,31 @@ namespace BoxSocial.Internals
             return GetFriends(1, 255);
         }
 
+        public List<Friend> GetFriends(string namePart)
+        {
+            List<Friend> friends = new List<Friend>();
+
+            SelectQuery query = new SelectQuery("user_relations");
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            query.AddCondition("relation_me", userId);
+            query.AddCondition("relation_type", "FRIEND");
+            QueryCondition qc1 = query.AddCondition(new DataField("user_info", "username"), ConditionEquality.Like, namePart + "%");
+            qc1.AddCondition(ConditionRelations.Or, new DataField("user_profile", "profile_name_first"), ConditionEquality.Like, namePart + "%");
+            qc1.AddCondition(ConditionRelations.Or, new DataField("user_info", "user_name_display"), ConditionEquality.Like, namePart + "%");
+            query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
+
+            return friends;
+        }
+
         public List<Friend> GetFriends(int page, int perPage)
         {
             List<Friend> friends = new List<Friend>();

@@ -172,6 +172,7 @@
     <Compile Include="UserPhoneNumber.cs" />
     <Compile Include="UserProfile.cs" />
     <Compile Include="UserRelation.cs" />
+    <Compile Include="UserSelectBox.cs" />
     <Compile Include="UserStyle.cs" />
     <Compile Include="INestableItem.cs" />
     <Compile Include="AccessControlPermission.cs" />

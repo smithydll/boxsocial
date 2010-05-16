@@ -324,6 +324,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static void CreateGrantForPrimitive(Core core, long itemTypeId, long itemId, ItemKey grantee, params string[] permissionNames)
+        {
+            SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            query.AddCondition("permission_item_type_id", itemTypeId);
+            query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
+            query.AddSort(SortOrder.Ascending, "permission_type");
+
+            DataTable permissionDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in permissionDataTable.Rows)
+            {
+                AccessControlPermission permission = new AccessControlPermission(core, dr);
+                AccessControlGrant.Create(core, grantee, new ItemKey(itemId, itemTypeId), permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
         private void FillPermissions()
         {
             if (permissions == null)

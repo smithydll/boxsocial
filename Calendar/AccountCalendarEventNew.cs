@@ -75,6 +75,8 @@ namespace BoxSocial.Applications.Calendar
             endDateTimePicker.ShowTime = true;
             endDateTimePicker.ShowSeconds = false;
 
+            UserSelectBox inviteesUserSelectBox = new UserSelectBox(core, "invitees");
+
             /* */
             SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
 
@@ -157,6 +159,7 @@ namespace BoxSocial.Applications.Calendar
 
                     startDate = calendarEvent.GetStartTime(core.Tz);
                     endDate = calendarEvent.GetEndTime(core.Tz);
+                    inviteesUserSelectBox.Invitees = calendarEvent.GetInvitees();
 
                     subject = calendarEvent.Subject;
                     location = calendarEvent.Location;
@@ -175,10 +178,6 @@ namespace BoxSocial.Applications.Calendar
 
             startDateTimePicker.Value = startDate;
             endDateTimePicker.Value = endDate;
-
-            template.Parse("S_START_DATE", startDateTimePicker);
-            template.Parse("S_END_DATE", endDateTimePicker);
-            template.Parse("S_TIMEZONE", timezoneSelectBox);
 
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
@@ -211,15 +210,15 @@ namespace BoxSocial.Applications.Calendar
                 outputInviteesIds.Append(inviteeId.ToString());
             }
 
-            if (outputInvitees != null)
-            {
-                template.Parse("S_INVITEES", outputInvitees.ToString());
-            }
-
             if (outputInviteesIds != null)
             {
                 template.Parse("INVITEES_ID_LIST", outputInviteesIds.ToString());
             }
+
+            template.Parse("S_START_DATE", startDateTimePicker);
+            template.Parse("S_END_DATE", endDateTimePicker);
+            template.Parse("S_TIMEZONE", timezoneSelectBox);
+            template.Parse("S_INVITEES", inviteesUserSelectBox);
 
             Save(new EventHandler(AccountCalendarEventNew_Save));
         }

@@ -98,6 +98,9 @@ namespace BoxSocial.Install
                     case ConsoleKey.E: // Exit
                         Console.Clear();
                         return;
+                    case ConsoleKey.F:
+                        EnterUpgradePermissions();
+                        break;
                 }
             }
         }
@@ -116,6 +119,293 @@ namespace BoxSocial.Install
             Console.Write("d) Install Box Social");
             Console.SetCursorPosition(5, 13);
             Console.Write("e) Exit");
+            Console.SetCursorPosition(5, 15);
+            Console.Write("f) Upgrade Permissions");
+        }
+
+        static void EnterUpgradePermissions()
+        {
+            lock (displayUpdateLock)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.SetCursorPosition(5, 5);
+                Console.Write("Database: ________________");
+
+                Console.SetCursorPosition(5, 7);
+                Console.Write("MySQL Root Password: ________________");
+
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.SetCursorPosition(5, 21);
+                Console.Write(" Enter ");
+                Console.BackgroundColor = ConsoleColor.Black;
+
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+
+            ConsoleKey begin;
+            string database = string.Empty;
+            string mysqlRootPassword = string.Empty;
+
+            do
+            {
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(18, 5);
+                }
+                database = getField(false, database);
+
+                lock (displayUpdateLock)
+                {
+                    Console.SetCursorPosition(15, 7);
+                }
+                mysqlRootPassword = getField(true, mysqlRootPassword);
+
+                while (true)
+                {
+                    begin = Console.ReadKey(false).Key;
+                    if (begin == ConsoleKey.Enter)
+                    {
+                        Console.Clear();
+
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        Console.SetCursorPosition(5, 5);
+                        Console.Write("Upgrading...");
+
+                        Installer.mysqlDatabase = database;
+                        Installer.mysqlRootPassword = mysqlRootPassword;
+
+                        upgradePermissions();
+                        Console.WriteLine("Permissions Upgraded");
+                        Console.WriteLine("Press Enter to continue");
+                        while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                        {
+                            Thread.Sleep(100);
+                        }
+                        return;
+                    }
+                    else if (begin == ConsoleKey.Escape)
+                    {
+                        return;
+                    }
+                    else if (begin == ConsoleKey.Tab)
+                    {
+                        break;
+                    }
+                }
+
+            } while (begin == ConsoleKey.Tab);
+        }
+
+        static void upgradePermissions()
+        {
+            //Setup
+            Mysql db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+            Core core = new Core(db, null);
+
+            Dictionary<string, long> typeIds = new Dictionary<string, long>();
+
+            {
+                DataTable dtTypes = db.Query("SELECT * FROM item_types;");
+
+                foreach (DataRow dr in dtTypes.Rows)
+                {
+                    typeIds.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                }
+            }
+
+            // User Profile
+            {
+                long offset = 0;
+                long rows = 100;
+
+                while (rows > 0)
+                {
+                    db.CloseConnection();
+                    Thread.Sleep(100);
+                    db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+                    core = new Core(db, null);
+
+                    DataTable dt = db.Query("SELECT * FROM user_profile LIMIT " + offset.ToString() + ", 100;");
+                    rows = dt.Rows.Count;
+                    offset += 100;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (((ushort)dr["profile_access"] & 0x1000) == 0x1000) // Friends Read
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FriendsGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                        }
+
+                        if (((ushort)dr["profile_access"] & 0x2000) == 0x2000) // Friends Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FriendsGroupKey, "COMMENT");
+                        }
+
+                        if (((ushort)dr["profile_access"] & 0x0100) == 0x0100) // Family Read
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FamilyGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                        }
+
+                        if (((ushort)dr["profile_access"] & 0x0200) == 0x0200) // Family Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FamilyGroupKey, "COMMENT");
+                        }
+
+                        if (((ushort)dr["profile_access"] & 0x0001) == 0x0001) // Everyone Read
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], User.EveryoneGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                        }
+
+                        if (((ushort)dr["profile_access"] & 0x0002) == 0x0002) // Everyone Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], User.RegisteredUsersGroupKey, "COMMENT");
+                        }
+                    }
+                }
+            }
+
+            // Pages
+            {
+                long offset = 0;
+                long rows = 100;
+
+                while (rows > 0)
+                {
+                    db.CloseConnection();
+                    Thread.Sleep(100);
+                    db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+                    core = new Core(db, null);
+
+                    DataTable dt = db.Query("SELECT * FROM user_pages LIMIT " + offset.ToString() + ", 100;");
+                    rows = dt.Rows.Count;
+                    offset += 100;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (((ushort)dr["page_access"] & 0x1000) == 0x1000) // Friends Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.FriendsGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["page_access"] & 0x0100) == 0x0100) // Family Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.FamilyGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["page_access"] & 0x0001) == 0x0001) // Everyone Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], User.EveryoneGroupKey, "VIEW");
+                        }
+                    }
+                }
+            }
+
+            // Blog
+            {
+                long offset = 0;
+                long rows = 100;
+
+                while (rows > 0)
+                {
+                    db.CloseConnection();
+                    Thread.Sleep(100);
+                    db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+                    core = new Core(db, null);
+
+                    DataTable dt = db.Query("SELECT * FROM user_blog LIMIT " + offset.ToString() + ", 100;");
+                    rows = dt.Rows.Count;
+                    offset += 100;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (((ushort)dr["blog_access"] & 0x1000) == 0x1000) // Friends Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FriendsGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["blog_access"] & 0x2000) == 0x2000) // Friends Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FriendsGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+
+                        if (((ushort)dr["blog_access"] & 0x0100) == 0x0100) // Family Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FamilyGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["blog_access"] & 0x0200) == 0x0200) // Family Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FamilyGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+
+                        if (((ushort)dr["blog_access"] & 0x0001) == 0x0001) // Everyone Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.EveryoneGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["blog_access"] & 0x0002) == 0x0002) // Everyone Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.RegisteredUsersGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+                    }
+                }
+            }
+
+            // Galleries
+            {
+                long offset = 0;
+                long rows = 100;
+
+                while (rows > 0)
+                {
+                    db.CloseConnection();
+                    Thread.Sleep(100);
+                    db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+                    core = new Core(db, null);
+
+                    DataTable dt = db.Query("SELECT * FROM user_galleries LIMIT " + offset.ToString() + ", 100;");
+                    rows = dt.Rows.Count;
+                    offset += 100;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        if (((ushort)dr["gallery_access"] & 0x1000) == 0x1000) // Friends Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FriendsGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["gallery_access"] & 0x2000) == 0x2000) // Friends Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FriendsGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+
+                        if (((ushort)dr["gallery_access"] & 0x0100) == 0x0100) // Family Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FamilyGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["gallery_access"] & 0x0200) == 0x0200) // Family Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FamilyGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+
+                        if (((ushort)dr["gallery_access"] & 0x0001) == 0x0001) // Everyone Read
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.EveryoneGroupKey, "VIEW");
+                        }
+
+                        if (((ushort)dr["gallery_access"] & 0x0002) == 0x0002) // Everyone Comment
+                        {
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.RegisteredUsersGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                        }
+                    }
+                }
+            }
+
         }
 
         static void EnterUpdateApplication()

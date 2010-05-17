@@ -1,5 +1,6 @@
 ﻿var host = "/";
 var dtp = Array(); /* Date Time Pickers */
+var usb = Array(); /* User Select Boxes */
 
 function htmlEncode(i) {
 	i = i.replace("&","&amp;");
@@ -24,14 +25,29 @@ function show(n)
 	ge(n).style.display = 'block';
 }
 
+function sv(e, v)
+{
+	e.innerHTML = v;
+}
+
 function setv(n, v)
 {
-	ge(n).innerHTML = v;
+	sv(ge(n), v);
+}
+
+function ac(e, c)
+{
+	e.appendChild(c);
 }
 
 function apc(n, c)
 {
-	ge(n).appendChild(c);
+	ac(ge(n), c);
+}
+
+function ce(el)
+{
+	return document.createElement(el);
 }
 
 function StarOver(stars, itemId, itemType)
@@ -107,8 +123,8 @@ function SubmitComment(id, type, zero, sort)
 
 function SubmitedComment(r, e)
 {
-	var nli = document.createElement('div');
-	nli.innerHTML = r[1];
+	var nli = ce('div');
+	sv(nli, r[1]);
 	if (csort == 'desc')
 	{
 		var n = ge("comment-list");
@@ -146,8 +162,8 @@ function SubmitListItem(id)
 
 function SubmitedListItem(r, e)
 {
-	var nli = document.createElement('li');
-	nli.innerHTML = r[1];
+	var nli = ce('li');
+	sv(nli, r[1]);
 	apc("list-list", nli);
 
 	try
@@ -262,6 +278,21 @@ function ProcessAjaxResult(xhr_lang)
 	{
 		return new Array(GetNode(doc, 'code'));
 	}
+	else if (type == 'Array')
+	{
+		return new Array(GetNode(doc, 'array'));
+	}
+	else if (type == 'Dictionary')
+	{
+		var a = Array();
+		var n = doc.getElementsByTagName('array')[0].children;
+		for (i = 0; i < n.length; i++)
+		{
+			var o = n[i].children;
+			a.push(new Array(o[0].textContent, o[1].textContent));
+		}
+		return a;
+	}
 	else
 	{
 		return xhr_lang.responseText;
@@ -341,13 +372,13 @@ function ShowSpamComment(id)
 	{
 		// hide
 		commentDiv.style.display = "none";
-		commentADiv.innerHTML = "show comment";
+		sv(commentADiv, "show comment");
 	}
 	else
 	{
 		// show
 		commentDiv.style.display = "block";
-		commentADiv.innerHTML = "hide comment";
+		sv(commentADiv, "hide comment");
 	}
 	
 	return false;
@@ -396,4 +427,48 @@ function SubmitedDate(r, e)
 function SubmitedTime(r, e)
 {
 	e[0].value = r[1];
+}
+
+function PickUserName(n)
+{
+	var el = ge(n);
+	var val = el.value;
+
+	return PostToPage(SubmittedUserSelectBox, "functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "user-list"), new Array("name-field", val)));
+}
+
+function SubmittedUserSelectBox(r, e)
+{
+	var s = e[0].id.substring(0, e[0].id.length - 5);
+	var n = s + '[dropbox]';
+	show(n);
+
+	setv(n, '');
+	for (i in r)
+	{
+		var nli = ce('li');
+		var nli2 = ce('a');
+		sv(nli2, r[i][1]);
+		nli2.onclick = "SelectName('" + s + "', new Array('" + r[i][0] + "','" + r[i][1] + "'))";
+		nli2.href = '#';
+		ac(nli, nli2);
+		apc(n, nli);
+	}
+}
+
+function SelectName(n, i)
+{
+	var e = ge(n + '[raw]');
+	e.value = '';
+	var c = ce('span');
+	var r = ce('a');
+	sv(r, 'X');
+	c.class = 'username-name';
+	sv(c, i[1] + '&nbsp;');
+	ac(c, r);
+	apc(n + '[list]', c);
+}
+
+function RemoveName(n, i)
+{
 }

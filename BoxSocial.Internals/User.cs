@@ -634,18 +634,26 @@ namespace BoxSocial.Internals
             query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
             query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
             query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
+            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
-            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
-            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
-            QueryCondition qc1 = query.AddCondition(new DataField("user_info", "username"), ConditionEquality.Like, namePart + "%");
+            QueryCondition qc1 = query.AddCondition(new DataField("user_info", "user_name"), ConditionEquality.Like, namePart + "%");
             qc1.AddCondition(ConditionRelations.Or, new DataField("user_profile", "profile_name_first"), ConditionEquality.Like, namePart + "%");
             qc1.AddCondition(ConditionRelations.Or, new DataField("user_info", "user_name_display"), ConditionEquality.Like, namePart + "%");
             query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
+            query.LimitCount = 10;
+
+            DataTable friendsTable = db.Query(query);
+
+            foreach (DataRow dr in friendsTable.Rows)
+            {
+                friends.Add(new Friend(core, dr, UserLoadOptions.All));
+            }
 
             return friends;
         }

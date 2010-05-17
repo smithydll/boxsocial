@@ -168,7 +168,15 @@ namespace BoxSocial.Internals
 
             AjaxDictionary am = new AjaxDictionary();
             am.ResponseCode = ajaxCode;
-            am.ResponseDictionary = arrayItems;
+
+            List<AjaxDictionaryItem> ajaxArrayItems = new List<AjaxDictionaryItem>();
+
+            foreach (long id in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new AjaxDictionaryItem(id, arrayItems[id]));
+            }
+
+            am.ResponseDictionary = ajaxArrayItems.ToArray();
 
             xs = new XmlSerializer(typeof(AjaxDictionary));
             stw = new StringWriter();
@@ -240,12 +248,32 @@ namespace BoxSocial.Internals
     public class AjaxDictionary
     {
         [XmlElement("type")]
-        public string AjaxType = "Array";
+        public string AjaxType = "Dictionary";
 
         [XmlElement("code")]
         public string ResponseCode;
 
-        [XmlElement("array")]
-        public Dictionary<long, string> ResponseDictionary;
+        [XmlArray("array")]
+        [XmlArrayItem("item")]
+        public AjaxDictionaryItem[] ResponseDictionary;
+    }
+
+    public class AjaxDictionaryItem
+    {
+        [XmlElement("id")]
+        public long Id;
+        [XmlElement("value")]
+        public string Value;
+
+        public AjaxDictionaryItem()
+        {
+
+        }
+
+        public AjaxDictionaryItem(long id, string value)
+        {
+            this.Id = id;
+            this.Value = value;
+        }
     }
 }

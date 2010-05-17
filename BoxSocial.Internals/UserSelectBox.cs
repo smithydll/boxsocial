@@ -67,17 +67,17 @@ namespace BoxSocial.Internals
 
             TextBox rawNamesTextBox = new TextBox(name + "[raw]");
             rawNamesTextBox.Width = new StyleLength(100, LengthUnits.Percentage);
-            rawNamesTextBox.Script.OnChange = string.Empty;
+            rawNamesTextBox.Script.OnKeyUp = "PickUserName('" + name + "[raw]')";
 
             string userIdList = string.Empty;
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("<div class=\"username-field\">");
-            sb.AppendLine("<p>");
+            sb.AppendLine("<p id=\"" + name + "[list]\">");
 
             foreach (long userId in userIds)
             {
-                sb.Append("<span class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "</span");
+                sb.Append("<span class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "</span>");
 
                 if (userIdList != string.Empty)
                 {
@@ -89,6 +89,8 @@ namespace BoxSocial.Internals
 
             sb.AppendLine("<p>");
             sb.Append(rawNamesTextBox.ToString());
+            sb.Append("<ul id=\"" + name + "[dropbox]\" class=\"username-dropbox\" style=\"display: none;\">");
+            sb.Append("</ul>");
             sb.Append("</p>");
 
             sb.AppendLine("</div>");

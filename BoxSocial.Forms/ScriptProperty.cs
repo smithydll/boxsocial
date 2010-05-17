@@ -29,6 +29,11 @@ namespace BoxSocial.Forms
     public class ScriptProperty
     {
         private string onchange;
+        private string onkeypress;
+        private string onkeydown;
+        private string onkeyup;
+        private string onfocus;
+        private string onblur;
 
         public string OnChange
         {
@@ -42,6 +47,66 @@ namespace BoxSocial.Forms
             }
         }
 
+        public string OnKeyPress
+        {
+            get
+            {
+                return onkeypress;
+            }
+            set
+            {
+                onkeypress = value;
+            }
+        }
+
+        public string OnKeyDown
+        {
+            get
+            {
+                return onkeydown;
+            }
+            set
+            {
+                onkeydown = value;
+            }
+        }
+
+        public string OnKeyUp
+        {
+            get
+            {
+                return onkeyup;
+            }
+            set
+            {
+                onkeyup = value;
+            }
+        }
+
+        public string OnFocus
+        {
+            get
+            {
+                return onfocus;
+            }
+            set
+            {
+                onfocus = value;
+            }
+        }
+
+        public string OnBlur
+        {
+            get
+            {
+                return onblur;
+            }
+            set
+            {
+                onblur = value;
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -50,6 +115,41 @@ namespace BoxSocial.Forms
             {
                 sb.Append(" onchange=\"");
                 sb.Append(onchange);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onkeypress))
+            {
+                sb.Append(" onkeypress=\"");
+                sb.Append(onkeypress);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onkeyup))
+            {
+                sb.Append(" onkeyup=\"");
+                sb.Append(onkeyup);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onkeydown))
+            {
+                sb.Append(" onkeydown=\"");
+                sb.Append(onkeydown);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onfocus))
+            {
+                sb.Append(" onfocus=\"");
+                sb.Append(onfocus);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onblur))
+            {
+                sb.Append(" onblur=\"");
+                sb.Append(onblur);
                 sb.Append("\"");
             }
 

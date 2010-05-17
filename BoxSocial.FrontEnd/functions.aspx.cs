@@ -28,6 +28,11 @@ namespace BoxSocial.FrontEnd
 {
     public partial class functions : TPage
     {
+        public functions()
+            : base("")
+        {
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string function = Request.Form["fun"];

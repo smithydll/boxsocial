@@ -1073,3 +1073,24 @@ dl#app-list {
 .foot-nav li {
 	list-style: none;
 }
+
+.username-dropbox {
+	position: absolute;
+	width: 250px;
+	list-style: none;
+	margin: 0;
+	padding: 0.1em;
+	background-color: #ccccee;
+	border: solid 1px #666699;
+}
+
+.username-name {
+	background-color: #ccccee;
+	border: solid 1px #666699;
+	padding: 0.1em;
+	margin-right: 0.5em;
+}
+
+.username-field a {
+	cursor: pointer;
+}

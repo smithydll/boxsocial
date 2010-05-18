@@ -50,6 +50,43 @@ function ce(el)
 	return document.createElement(el);
 }
 
+function avl(n, i)
+{
+	var e = ge(n);
+	var l = e.value.split(',');
+	for (j in l)
+	{
+		if (l[j] == i)
+		{
+			return false;
+		}
+	}
+	if (e.value == '')
+	{
+		e.value = i;
+	}
+	else
+	{
+		e.value += ',' + i;
+	}
+	return true;
+}
+
+function rvl(n, i)
+{
+	var e = ge(n);
+	var l = e.value.split(',');
+	var m = Array();
+	for (j in l)
+	{
+		if (l[j] != i)
+		{
+			m.push(l[j]);
+		}
+	}
+	e.value = m.join(',');
+}
+
 function StarOver(stars, itemId, itemType)
 {
 	var i = 1;
@@ -449,7 +486,7 @@ function SubmittedUserSelectBox(r, e)
 		var nli = ce('li');
 		var nli2 = ce('a');
 		sv(nli2, r[i][1]);
-		nli2.onclick = "SelectName('" + s + "', new Array('" + r[i][0] + "','" + r[i][1] + "'))";
+		nli2.setAttribute('onclick', "SelectName('" + s + "', new Array('" + r[i][0] + "','" + r[i][1] + "'))"); 
 		nli2.href = '#';
 		ac(nli, nli2);
 		apc(n, nli);
@@ -460,15 +497,24 @@ function SelectName(n, i)
 {
 	var e = ge(n + '[raw]');
 	e.value = '';
-	var c = ce('span');
-	var r = ce('a');
-	sv(r, 'X');
-	c.class = 'username-name';
-	sv(c, i[1] + '&nbsp;');
-	ac(c, r);
-	apc(n + '[list]', c);
+	if (avl(n + '[ids]', i[0]))
+	{
+		var c = ce('span');
+		c.id = n + '[' + i[0] + ']';
+		c.className = 'username-name';
+		var r = ce('a');
+		r.setAttribute('onclick', "RemoveName('" + n + "','" + i[0] + "')");
+		sv(r, 'X');
+		c.class = 'username-name';
+		sv(c, i[1] + '&nbsp;');
+		ac(c, r);
+		apc(n + '[list]', c);
+	}
+	hide(n + '[dropbox]');
 }
 
 function RemoveName(n, i)
 {
+	ge(n + '[list]').removeChild(ge(n + '[' + i + ']'));
+	rvl(n + '[ids]', i);
 }

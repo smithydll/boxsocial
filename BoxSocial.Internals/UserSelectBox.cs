@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
 
             foreach (long userId in userIds)
             {
-                sb.Append("<span class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "</span>");
+                sb.Append("<span class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "<a onclick=\"RemoveName('" + name + "','" + userId.ToString() + "')\">X</a></span>");
 
                 if (userIdList != string.Empty)
                 {

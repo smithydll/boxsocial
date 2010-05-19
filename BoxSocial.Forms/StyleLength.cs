@@ -81,17 +81,17 @@ namespace BoxSocial.Forms
             switch (unit)
             {
                 case LengthUnits.mm:
-                    return string.Format("{0} mm", length);
+                    return string.Format("{0}mm", length);
                 case LengthUnits.cm:
-                    return string.Format("{0} cm", length);
+                    return string.Format("{0}cm", length);
                 case LengthUnits.Pixels:
-                    return string.Format("{0} px", length);
+                    return string.Format("{0}px", length);
                 case LengthUnits.Percentage:
-                    return string.Format("{0} %", length);
+                    return string.Format("{0}%", length);
                 case LengthUnits.Points:
-                    return string.Format("{0} pt", length);
+                    return string.Format("{0}pt", length);
                 case LengthUnits.Em:
-                    return string.Format("{0} em", length);
+                    return string.Format("{0}em", length);
                 case LengthUnits.Default:
                     return string.Empty;
                 default:

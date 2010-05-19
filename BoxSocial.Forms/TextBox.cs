@@ -181,7 +181,7 @@ namespace BoxSocial.Forms
             }
             else
             {
-                return string.Format("<input type=\"text\" name=\"{0}\" id = \"{0}\" value=\"{1}\" style=\"width: {5};{4}\"{2}{3}{6}/>",
+                return string.Format("<input type=\"text\" name=\"{0}\" id=\"{0}\" value=\"{1}\" style=\"width: {5};{4}\"{2}{3}{6}/>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,

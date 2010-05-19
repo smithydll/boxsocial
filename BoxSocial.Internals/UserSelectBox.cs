@@ -32,7 +32,33 @@ namespace BoxSocial.Internals
     public class UserSelectBox : FormField
     {
         private Core core;
+        private bool selectMultiple = true;
         private List<long> userIds;
+        private StyleLength width;
+
+        public bool SelectMultiple
+        {
+            get
+            {
+                return selectMultiple;
+            }
+            set
+            {
+                selectMultiple = value;
+            }
+        }
+
+        public StyleLength Width
+        {
+            get
+            {
+                return width;
+            }
+            set
+            {
+                width = value;
+            }
+        }
 
         public List<long> Invitees
         {
@@ -52,6 +78,7 @@ namespace BoxSocial.Internals
             this.name = name;
 
             userIds = new List<long>();
+            width = new StyleLength(100F, LengthUnits.Percentage);
         }
 
         public UserSelectBox(Core core, string name, List<long> userIds)
@@ -59,6 +86,8 @@ namespace BoxSocial.Internals
             this.core = core;
             this.name = name;
             this.userIds = userIds;
+
+            width = new StyleLength(100F, LengthUnits.Percentage);
         }
 
         public override string ToString()
@@ -66,18 +95,28 @@ namespace BoxSocial.Internals
             core.PrimitiveCache.LoadUserProfiles(userIds);
 
             TextBox rawNamesTextBox = new TextBox(name + "[raw]");
-            rawNamesTextBox.Width = new StyleLength(100, LengthUnits.Percentage);
-            rawNamesTextBox.Script.OnKeyUp = "PickUserName('" + name + "[raw]')";
+            rawNamesTextBox.Width = width;
+            rawNamesTextBox.Script.OnKeyUp = "PickUserName('" + name + "[raw]', " + (!selectMultiple).ToString().ToLower() + ")";
+
+            HiddenField idsHiddenField = new HiddenField(name + "[ids]");
 
             string userIdList = string.Empty;
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("<div class=\"username-field\">");
-            sb.AppendLine("<p id=\"" + name + "[list]\">");
+            if (SelectMultiple)
+            {
+                sb.AppendLine("<div class=\"username-field\">");
+                sb.AppendLine("<p id=\"" + name + "[list]\">");
+            }
+            else
+            {
+                sb.AppendLine("<span class=\"username-field\">");
+                sb.AppendLine("<span id=\"" + name + "[list]\">");
+            }
 
             foreach (long userId in userIds)
             {
-                sb.Append("<span class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "<a onclick=\"RemoveName('" + name + "','" + userId.ToString() + "')\">X</a></span>");
+                sb.Append("<span id=\"" + name + "[" + userId.ToString() + "]\" class=\"username-name\">" + core.PrimitiveCache[userId].DisplayName + "&nbsp;<a onclick=\"RemoveName('" + name + "','" + userId.ToString() + "')\">X</a></span>");
 
                 if (userIdList != string.Empty)
                 {
@@ -85,18 +124,34 @@ namespace BoxSocial.Internals
                 }
                 userIdList += userId.ToString();
             }
-            sb.Append("</p>");
 
-            sb.AppendLine("<p>");
+            idsHiddenField.Value = userIdList;
+
+            if (SelectMultiple)
+            {
+                sb.Append("</p>");
+
+                sb.AppendLine("<p>");
+            }
+            else
+            {
+                sb.Append("</span>&nbsp;<span>");
+            }
             sb.Append(rawNamesTextBox.ToString());
             sb.Append("<ul id=\"" + name + "[dropbox]\" class=\"username-dropbox\" style=\"display: none;\">");
             sb.Append("</ul>");
-            sb.Append("</p>");
+            if (SelectMultiple)
+            {
+                sb.Append("</p>");
+                sb.AppendLine("</div>");
+            }
+            else
+            {
+                sb.Append("</span>");
+                sb.Append("</span>");
+            }
 
-            sb.AppendLine("</div>");
-
-            sb.AppendLine(string.Format("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />",
-                name + "[ids]", userIdList));
+            sb.AppendLine(idsHiddenField.ToString());
 
             return sb.ToString();
         }
@@ -104,6 +159,20 @@ namespace BoxSocial.Internals
         public static List<long> FormUsers(Core core, string name)
         {
             List<long> userIds = new List<long>();
+
+            string formValue = core.Http.Form[name + "[ids]"];
+            string[] ids = formValue.Split(new char[] { ',' });
+
+            foreach (string idString in ids)
+            {
+                long id;
+                long.TryParse(idString, out id);
+
+                if (id > 0)
+                {
+                    userIds.Add(id);
+                }
+            }
 
             return userIds;
         }

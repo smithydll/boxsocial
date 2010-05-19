@@ -36,6 +36,7 @@ namespace BoxSocial.Internals
         private bool showTime;
         private bool showSeconds;
         private bool disabled;
+        private StyleLength width;
 
         public DateTime Value
         {
@@ -58,6 +59,18 @@ namespace BoxSocial.Internals
             set
             {
                 disabled = value;
+            }
+        }
+
+        public StyleLength Width
+        {
+            get
+            {
+                return width;
+            }
+            set
+            {
+                width = value;
             }
         }
 
@@ -93,6 +106,7 @@ namespace BoxSocial.Internals
             disabled = false;
             showTime = false;
             showSeconds = false;
+            width = new StyleLength(100F, LengthUnits.Percentage);
         }
 
         public override string ToString()
@@ -102,10 +116,14 @@ namespace BoxSocial.Internals
             TextBox dateExpressionTextBox = new TextBox(name + "[expression]");
             //dateExpressionTextBox.IsVisible = false;
             dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "[expression]" + "')";
+            dateExpressionTextBox.Width.Length = Width.Length * 0.4F;
+            dateExpressionTextBox.Width.Unit = Width.Unit;
 
             TextBox timeExpressionTextBox = new TextBox(name + "[time]");
             //timeExpressionTextBox.IsVisible = false;
             timeExpressionTextBox.Script.OnChange = "ParseTimePicker('" + name + "[time]" + "')";
+            timeExpressionTextBox.Width.Length = Width.Length * 0.4F;
+            timeExpressionTextBox.Width.Unit = Width.Unit;
 
             SelectBox dateYearsSelectBox = new SelectBox(name + "[date-year]");
             SelectBox dateMonthsSelectBox = new SelectBox(name + "[date-month]");

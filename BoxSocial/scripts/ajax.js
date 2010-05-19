@@ -466,15 +466,25 @@ function SubmitedTime(r, e)
 	e[0].value = r[1];
 }
 
-function PickUserName(n)
+function PickUserName(n, m)
 {
 	var el = ge(n);
 	var val = el.value;
 
-	return PostToPage(SubmittedUserSelectBox, "functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "user-list"), new Array("name-field", val)));
+	return PostToPage(((m) ? SubmittedUserSelectBox : SubmittedUsersSelectBox), "functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "user-list"), new Array("name-field", val)));
 }
 
 function SubmittedUserSelectBox(r, e)
+{
+	SubmittedUserSelectBoxShow(r, e, true)
+}
+
+function SubmittedUsersSelectBox(r, e)
+{
+	SubmittedUserSelectBoxShow(r, e, false)
+}
+
+function SubmittedUserSelectBoxShow(r, e, m)
 {
 	var s = e[0].id.substring(0, e[0].id.length - 5);
 	var n = s + '[dropbox]';
@@ -486,17 +496,28 @@ function SubmittedUserSelectBox(r, e)
 		var nli = ce('li');
 		var nli2 = ce('a');
 		sv(nli2, r[i][1]);
-		nli2.setAttribute('onclick', "SelectName('" + s + "', new Array('" + r[i][0] + "','" + r[i][1] + "'))"); 
-		nli2.href = '#';
+		nli2.setAttribute('onclick', "SelectName('" + s + "', new Array('" + r[i][0] + "','" + r[i][1] + "')," + m + ")"); 
 		ac(nli, nli2);
 		apc(n, nli);
 	}
 }
 
-function SelectName(n, i)
+function SelectName(n, i, m)
 {
 	var e = ge(n + '[raw]');
 	e.value = '';
+	if (m)
+	{
+		var v = ge(n + '[ids]').value;
+		if (v != '')
+		{
+			var l = v.split(',');
+			for (j in l)
+			{
+				RemoveName(n, l[j]);
+			}
+		}
+	}
 	if (avl(n + '[ids]', i[0]))
 	{
 		var c = ce('span');

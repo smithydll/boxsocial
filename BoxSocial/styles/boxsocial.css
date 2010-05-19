@@ -1091,6 +1091,6 @@ dl#app-list {
 	margin-right: 0.5em;
 }
 
-.username-field a {
+.username-field a, .username-dropbox a {
 	cursor: pointer;
 }

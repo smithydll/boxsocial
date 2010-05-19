@@ -110,29 +110,45 @@ namespace BoxSocial.Applications.Profile
 				sexualitiesSelectBox.SelectedKey = LoggedInMember.Profile.SexualityRaw;
 			}
 
+            UserSelectBox relationUserSelectBox = new UserSelectBox(core, "relation");
+            relationUserSelectBox.Width = new StyleLength();
+            relationUserSelectBox.SelectMultiple = false;
+
             template.Parse("S_MARITIAL_STATUS", maritialStatusesSelectBox);
             template.Parse("S_RELIGION", religionsSelectBox);
             template.Parse("S_SEXUALITY", sexualitiesSelectBox);
 
             if (LoggedInMember.Profile.MaritialWithConfirmed && LoggedInMember.Profile.MaritialWithId > 0)
             {
+                relationUserSelectBox.Invitees = new List<long>(new long[] { LoggedInMember.Profile.MaritialWithId });
                 core.LoadUserProfile(LoggedInMember.Profile.MaritialWithId);
 
                 template.Parse("S_RELATIONSHIP_WITH", core.PrimitiveCache[LoggedInMember.Profile.MaritialWithId].UserName);
             }
+
+            template.Parse("S_RELATION", relationUserSelectBox);
         }
 
         void AccountLifestyle_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
 
-            string relationshipWith = core.Http.Form["relationship-with"];
+            long relationId = core.Functions.FormLong("relation[ids]", 0);
+            string relationshipWith = core.Http.Form["relation[raw]"];
             User relation = null;
 
-            if (!string.IsNullOrEmpty(relationshipWith))
+            if (relationId > 0)
             {
-                long key = core.LoadUserProfile(relationshipWith);
-                relation = core.PrimitiveCache[key];
+                core.PrimitiveCache.LoadUserProfile(relationId);
+                relation = core.PrimitiveCache[relationId];
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(relationshipWith))
+                {
+                    long key = core.LoadUserProfile(relationshipWith);
+                    relation = core.PrimitiveCache[key];
+                }
             }
 
             string existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;

@@ -138,6 +138,7 @@
     <Compile Include="PPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="StaticShowAttribute.cs" />
     <Compile Include="UnitTests.cs" />
     <Compile Include="UPage.cs">

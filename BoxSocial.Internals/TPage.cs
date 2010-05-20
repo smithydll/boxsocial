@@ -241,6 +241,7 @@ namespace BoxSocial.Internals
             core.Email = new Email(core);
             core.Ajax = new Ajax(core);
             core.Uri = new Linker(core);
+            core.ApplicationSettings = new Settings(core);
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -375,6 +376,39 @@ namespace BoxSocial.Internals
             core.Prose.Close();
             //core.Dispose();
             //core = null;
+        }
+
+        public void ParseCoreBreadCrumbs(List<string[]> parts)
+        {
+            ParseCoreBreadCrumbs("BREADCRUMBS", parts);
+        }
+
+        public void ParseCoreBreadCrumbs(string templateVar, List<string[]> parts)
+        {
+            ParseCoreBreadCrumbs(core.Template, templateVar, parts);
+        }
+
+        public void ParseCoreBreadCrumbs(Template template, string templateVar, List<string[]> parts)
+        {
+            string output = string.Empty;
+            string path = "/";
+            output = string.Format("<a href=\"{1}\">{0}</a>",
+                    core.ApplicationSettings.SiteTitle, path);
+
+            for (int i = 0; i < parts.Count; i++)
+            {
+                if (parts[i][0] != "")
+                {
+                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
+                    if (!parts[i][0].StartsWith("*"))
+                    {
+                        path += parts[i][0] + "/";
+                    }
+                }
+            }
+
+            template.ParseRaw(templateVar, output);
         }
     }
 

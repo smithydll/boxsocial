@@ -51,7 +51,7 @@ namespace BoxSocial.Groups
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "groups", "Groups" });
 
-            //e.Page.ParseBreadCrumbs(breadCrumbParts);
+            e.Page.ParseCoreBreadCrumbs(breadCrumbParts);
         }
 
         public static void ShowCategory(object sender, ShowPageEventArgs e)
@@ -87,13 +87,13 @@ namespace BoxSocial.Groups
                 groupsVariableCollection.Parse("U_GROUP", group.Uri);
             }
 
-            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), e.Page.page, (int)Math.Ceiling(category.Groups / (double)UserGroup.GROUPS_PER_PAGE));
+            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), e.Page.page, (int)Math.Ceiling(category.Groups / ((double)UserGroup.GROUPS_PER_PAGE)));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "groups", "Groups" });
             breadCrumbParts.Add(new string[] { category.Path, category.Title });
 
-            //e.Page.ParseBreadCrumbs(breadCrumbParts);
+            e.Page.ParseCoreBreadCrumbs(breadCrumbParts);
         }
     }
 }

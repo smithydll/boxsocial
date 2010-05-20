@@ -48,6 +48,7 @@ namespace BoxSocial.Internals
         private Email email;
         private Ajax ajax;
         private Linker uri;
+        private Settings applicationSettings;
 
         internal TPage page;
 
@@ -312,6 +313,18 @@ namespace BoxSocial.Internals
             internal set
             {
                 uri = value;
+            }
+        }
+
+        public Settings ApplicationSettings
+        {
+            get
+            {
+                return applicationSettings;
+            }
+            internal set
+            {
+                applicationSettings = value;
             }
         }
 

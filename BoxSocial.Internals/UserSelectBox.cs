@@ -161,16 +161,19 @@ namespace BoxSocial.Internals
             List<long> userIds = new List<long>();
 
             string formValue = core.Http.Form[name + "[ids]"];
-            string[] ids = formValue.Split(new char[] { ',' });
-
-            foreach (string idString in ids)
+            if (!string.IsNullOrEmpty(formValue))
             {
-                long id;
-                long.TryParse(idString, out id);
+                string[] ids = formValue.Split(new char[] { ',' });
 
-                if (id > 0)
+                foreach (string idString in ids)
                 {
-                    userIds.Add(id);
+                    long id;
+                    long.TryParse(idString, out id);
+
+                    if (id > 0)
+                    {
+                        userIds.Add(id);
+                    }
                 }
             }
 

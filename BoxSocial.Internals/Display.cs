@@ -444,6 +444,11 @@ namespace BoxSocial.Internals
 
             foreach (Comment comment in comments)
             {
+                core.PrimitiveCache.LoadUserProfile(comment.UserId);
+            }
+
+            foreach (Comment comment in comments)
+            {
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
                 //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
@@ -467,9 +472,12 @@ namespace BoxSocial.Internals
                         hook(new DisplayCommentHookEventArgs(core, owner, commentPoster, commentsVariableCollection));
                     }
 
-                    if (owner.CanModerateComments(core.Session.LoggedInMember))
+                    if (core.Session.IsLoggedIn)
                     {
-                        commentsVariableCollection.Parse("MODERATE", "TRUE");
+                        if (owner.CanModerateComments(core.Session.LoggedInMember))
+                        {
+                            commentsVariableCollection.Parse("MODERATE", "TRUE");
+                        }
                     }
 
                     if (owner.IsCommentOwner(commentPoster))
@@ -491,6 +499,11 @@ namespace BoxSocial.Internals
                 catch
                 {
                     // if userid is 0, anonymous
+                    commentsVariableCollection.Parse("USERNAME", "Anonymous");
+                    commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
+
+                    commentsVariableCollection.Parse("OWNER", "FALSE");
+                    commentsVariableCollection.Parse("NORMAL", "TRUE");
                 }
             }
         }

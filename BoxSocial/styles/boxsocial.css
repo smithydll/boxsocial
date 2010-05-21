@@ -2,7 +2,7 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	font-size: 100%;
-	background: #000000;
+	background: #c0c0c0;
 }
 
 body {
@@ -117,11 +117,12 @@ div#rc-bottom {
 #foot {
 	clear: both;
 	border-top: solid 1px #D7D7D7;
-	background-color: #000000;
+	background-color: #c0c0c0;
+	background-image: url('/images/footer-gradient.png');
 }
 
 #foot * {
-	color: #FFFFFF;
+	color: #333333;
 }
 
 #body {
@@ -1061,7 +1062,7 @@ dl#app-list {
 }
 
 #foot-nav > li > p {
-	color: #999999;
+	color: #191919;
 }
 
 .foot-nav {

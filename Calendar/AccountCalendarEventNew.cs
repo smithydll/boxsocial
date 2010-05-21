@@ -136,14 +136,14 @@ namespace BoxSocial.Applications.Calendar
                 try
                 {
                     Event calendarEvent = new Event(core, id);
-                    inviteeIds.AddRange(calendarEvent.GetInvitees());
+                    inviteeIds.AddRange(calendarEvent.GetInviteeIds());
 
                     template.Parse("EDIT", "TRUE");
                     template.Parse("ID", calendarEvent.EventId.ToString());
 
                     startDate = calendarEvent.GetStartTime(core.Tz);
                     endDate = calendarEvent.GetEndTime(core.Tz);
-                    inviteesUserSelectBox.Invitees = calendarEvent.GetInvitees();
+                    inviteesUserSelectBox.Invitees = calendarEvent.GetInviteeIds();
 
                     subject = calendarEvent.Subject;
                     location = calendarEvent.Location;
@@ -301,8 +301,8 @@ namespace BoxSocial.Applications.Calendar
                 calendarEvent.EndTimeRaw = endTime;
                 
                 calendarEvent.Update();
-				
-				List<long> alreadyInvited = calendarEvent.GetInvitees();
+
+                List<long> alreadyInvited = calendarEvent.GetInviteeIds();
 				
 				List<long> idsToBeInvited = new List<long>();
 				

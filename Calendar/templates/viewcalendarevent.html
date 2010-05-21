@@ -19,7 +19,7 @@
 	<!-- ENDIF -->
 <!-- IF INVITEES -->
 <div id="profile-friends-pane" class="pane">
-  <h3>Attendies ({ATTENDEES})</h3>
+  <h3>Attending ({ATTENDEES})</h3>
   	<!-- IF ATTENDEES -->
   <!--p><a href="{U_ATTENDEES}">View All</a></p-->
 	<ul id="profile-friends">
@@ -44,6 +44,69 @@
 	<!-- ELSE -->
 	<p>There are no people attending this event.</p>
 	<!-- ENDIF -->
+
+  <!-- IF MAYBE_ATTENDING -->
+  <h3>Maybe Attending ({MAYBE_ATTENDING})</h3>
+	<ul id="profile-friends">
+	<!-- BEGIN maybe_attending_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{maybe_attending_list.U_PROFILE}">
+				<!-- IF maybe_attending_list.ICON -->
+				<img src="{maybe_attending_list.ICON}" alt="{maybe_attending_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{maybe_attending_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{maybe_attending_list.U_PROFILE}">{maybe_attending_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END maybe_attending_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+  <!-- ENDIF -->
+  
+  <!-- IF NOT_ATTENDING -->
+  <h3>Not Attending ({NOT_ATTENDING})</h3>
+	<ul id="profile-friends">
+	<!-- BEGIN not_attending_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{not_attending_list.U_PROFILE}">
+				<!-- IF not_attending_list.ICON -->
+				<img src="{not_attending_list.ICON}" alt="{not_attending_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{not_attending_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{not_attending_list.U_PROFILE}">{not_attending_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END not_attending_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+  <!-- ENDIF -->
+  
+  <!-- IF NOT_RESPONDED -->
+  <h3>Have not Responded ({NOT_RESPONDED})</h3>
+	<ul id="profile-friends">
+	<!-- BEGIN unresponded_list -->
+		<li>
+			<dl>
+				<dt><span class="img-wb"><a href="{unresponded_list.U_PROFILE}">
+				<!-- IF unresponded_list.ICON -->
+				<img src="{unresponded_list.ICON}" alt="{unresponded_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{unresponded_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a></span></dt>
+				<dd><a href="{unresponded_list.U_PROFILE}">{unresponded_list.USER_DISPLAY_NAME}</a></dd>
+			</dl>
+		</li>
+	<!-- END unresponded_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+  <!-- ENDIF -->
 </div>
 <div id="comments" class="comment-pane">
   <!-- INCLUDE pane.comments.html -->

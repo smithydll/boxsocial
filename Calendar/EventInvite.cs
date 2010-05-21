@@ -65,6 +65,14 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public ItemKey Invited
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public long InviterId
         {
             get

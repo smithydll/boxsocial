@@ -523,6 +523,11 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
         public IPermissibleItem PermissiveParent
         {
             get

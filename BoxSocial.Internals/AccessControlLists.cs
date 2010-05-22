@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Reflection;
 using System.Web;
 using BoxSocial.Forms;
 using BoxSocial.IO;
@@ -53,6 +54,12 @@ namespace BoxSocial.Internals
             List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
             
             ownerGroups.AddRange(core.GetPrimitivePermissionGroups(owner));
+
+            Type type = item.GetType();
+            if (type.GetMethod(type.Name + "_GetItemGroups", new Type[] { typeof(Core) }) != null)
+            {
+                ownerGroups.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetItemGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }));
+            }
 
             foreach (PrimitivePermissionGroup ppg in ownerGroups)
             {

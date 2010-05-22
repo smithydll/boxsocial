@@ -268,6 +268,7 @@ namespace BoxSocial.Applications.Calendar
             }*/
 
             Access.CreateAllGrantsForOwner(core, newEvent);
+            Access.CreateGrantForPrimitive(core, newEvent, EventInvite.InviteesGroupKey, "VIEW", "COMMENT");
 
             /*if (isPublicEvent)
             {
@@ -459,11 +460,35 @@ namespace BoxSocial.Applications.Calendar
         {
             if (member != null)
             {
-                SelectQuery query = new SelectQuery("event_invites");
-                query.AddFields("item_id", "item_type_id", "inviter_id", "event_id");
+                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
                 query.AddCondition("event_id", EventId);
                 query.AddCondition("item_id", member.Id);
                 query.AddCondition("item_type_id", member.TypeId);
+
+                if (db.Query(query).Rows.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsAttending(User member, EventAttendance attendance)
+        {
+            if (member != null)
+            {
+                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+                query.AddCondition("event_id", EventId);
+                query.AddCondition("item_id", member.Id);
+                query.AddCondition("item_type_id", member.TypeId);
+                query.AddCondition("item_type_id", (byte)attendance);
 
                 if (db.Query(query).Rows.Count > 0)
                 {
@@ -768,6 +793,38 @@ namespace BoxSocial.Applications.Calendar
             {
                 return "Event: " + Subject + " (" + core.Tz.DateTimeToString(GetStartTime(core.Tz),false) + ")";
             }
+        }
+
+        public static List<PrimitivePermissionGroup> Event_GetItemGroups(Core core)
+        {
+            List<PrimitivePermissionGroup> itemGroups = new List<PrimitivePermissionGroup>();
+
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.InviteesGroupKey, "Event Invitees"));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.AttendingGroupKey, "Event Attending"));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.MaybeAttendingGroupKey, "Event Maybe Attending"));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.NotAttendingGroupKey, "Event Not Attending"));
+
+            return itemGroups;
+        }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            if (key == EventInvite.InviteesGroupKey)
+            {
+                if (IsInvitee(viewer))
+                {
+                    return true;
+                }
+            }
+            if (key == EventInvite.AttendingGroupKey)
+            {
+                if (IsAttending(viewer, EventAttendance.Yes))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 

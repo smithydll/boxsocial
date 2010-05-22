@@ -255,6 +255,8 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        public abstract bool IsItemGroupMember(User viewer, ItemKey key);
         
         public IPermissibleItem PermissiveParent
         {

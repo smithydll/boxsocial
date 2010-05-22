@@ -152,6 +152,38 @@ namespace BoxSocial.Applications.Calendar
                 throw new NotImplementedException();
             }
         }
+
+        public static ItemKey InviteesGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(EventInvite)));
+            }
+        }
+
+        public static ItemKey AttendingGroupKey
+        {
+            get
+            {
+                return new ItemKey(-2, ItemType.GetTypeId(typeof(EventInvite)));
+            }
+        }
+
+        public static ItemKey MaybeAttendingGroupKey
+        {
+            get
+            {
+                return new ItemKey(-3, ItemType.GetTypeId(typeof(EventInvite)));
+            }
+        }
+
+        public static ItemKey NotAttendingGroupKey
+        {
+            get
+            {
+                return new ItemKey(-4, ItemType.GetTypeId(typeof(EventInvite)));
+            }
+        }
     }
 
     public class InvalidEventInviteException : Exception

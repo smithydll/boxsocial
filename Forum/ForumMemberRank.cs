@@ -255,6 +255,11 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
         public IPermissibleItem PermissiveParent
         {
             get

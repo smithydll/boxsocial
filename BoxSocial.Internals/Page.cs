@@ -1329,6 +1329,11 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
         
         public IPermissibleItem PermissiveParent
         {

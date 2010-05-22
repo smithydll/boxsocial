@@ -993,6 +993,11 @@ namespace BoxSocial.Applications.Blog
                 throw new NotImplementedException();
             }
         }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
         
         /// <summary>
         /// 

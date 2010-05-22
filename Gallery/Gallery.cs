@@ -1686,6 +1686,11 @@ namespace BoxSocial.Applications.Gallery
                 return permissionsList;
             }
         }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
         
         public IPermissibleItem PermissiveParent
         {

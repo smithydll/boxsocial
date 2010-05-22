@@ -1006,6 +1006,11 @@ namespace BoxSocial.Networks
             }
         }
 
+        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
         public override List<PrimitivePermissionGroup> GetPrimitivePermissionGroups()
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();

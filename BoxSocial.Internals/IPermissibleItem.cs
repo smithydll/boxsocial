@@ -56,6 +56,8 @@ namespace BoxSocial.Internals
             get;
         }
 
+        bool IsItemGroupMember(User viewer, ItemKey key);
+
         long Id
         {
             get;

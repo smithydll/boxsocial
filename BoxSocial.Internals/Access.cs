@@ -227,6 +227,21 @@ namespace BoxSocial.Internals
                                         break;
                                 }
                             }
+
+                            if (item.IsItemGroupMember(viewer, grant.PrimitiveKey))
+                            {
+                                switch (grant.Allow)
+                                {
+                                    case AccessControlGrants.Allow:
+                                        allow = true;
+                                        break;
+                                    case AccessControlGrants.Deny:
+                                        deny = true;
+                                        break;
+                                    case AccessControlGrants.Inherit:
+                                        break;
+                                }
+                            }
                         }
                     }
                 }

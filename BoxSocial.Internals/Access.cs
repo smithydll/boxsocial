@@ -227,8 +227,7 @@ namespace BoxSocial.Internals
                                         break;
                                 }
                             }
-
-                            if (item.IsItemGroupMember(viewer, grant.PrimitiveKey))
+                            if (grant.PrimitiveKey.Equals(User.CreatorKey) && viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
                             {
                                 switch (grant.Allow)
                                 {
@@ -241,6 +240,48 @@ namespace BoxSocial.Internals
                                     case AccessControlGrants.Inherit:
                                         break;
                                 }
+                            }
+                        }
+                        if (item.IsItemGroupMember(viewer, grant.PrimitiveKey))
+                        {
+                            switch (grant.Allow)
+                            {
+                                case AccessControlGrants.Allow:
+                                    allow = true;
+                                    break;
+                                case AccessControlGrants.Deny:
+                                    deny = true;
+                                    break;
+                                case AccessControlGrants.Inherit:
+                                    break;
+                            }
+                        }
+                        if (grant.PrimitiveKey.Equals(User.RegisteredUsersGroupKey) && viewer != null)
+                        {
+                            switch (grant.Allow)
+                            {
+                                case AccessControlGrants.Allow:
+                                    allow = true;
+                                    break;
+                                case AccessControlGrants.Deny:
+                                    deny = true;
+                                    break;
+                                case AccessControlGrants.Inherit:
+                                    break;
+                            }
+                        }
+                        if (grant.PrimitiveKey.Equals(User.EveryoneGroupKey))
+                        {
+                            switch (grant.Allow)
+                            {
+                                case AccessControlGrants.Allow:
+                                    allow = true;
+                                    break;
+                                case AccessControlGrants.Deny:
+                                    deny = true;
+                                    break;
+                                case AccessControlGrants.Inherit:
+                                    break;
                             }
                         }
                     }

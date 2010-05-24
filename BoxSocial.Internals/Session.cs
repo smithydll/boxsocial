@@ -544,7 +544,7 @@ namespace BoxSocial.Internals
             if (changedRows == 0)
             {
                 Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
-                sessionId = SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed").ToLower();
+                sessionId = SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
 
                 db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3})",
                     sessionId, isLoggedIn, ipAddress.ToString(), userId));

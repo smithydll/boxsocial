@@ -1514,8 +1514,8 @@ namespace BoxSocial.Groups
 
             if (e.Core.Session.IsLoggedIn == false)
             {
-                e.Template.Parse("REDIRECT_URI", "/sign-in/?redirect=/music/register");
-                e.Core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new musician.");
+                e.Template.Parse("REDIRECT_URI", "/sign-in/?redirect=/groups/register");
+                e.Core.Display.ShowMessage("Not Logged In", "You must be logged in to register a new group.");
                 return;
             }
 
@@ -1782,7 +1782,7 @@ namespace BoxSocial.Groups
             switch (permission)
             {
                 case "VIEW":
-                    switch (GroupType)
+                    switch (GroupType.ToUpper())
                     {
                         case "OPEN":
                             return true;

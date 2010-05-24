@@ -51,26 +51,38 @@ namespace BoxSocial.Internals
 
             //sb.Add(new SelectBoxItem(string.Format("{0},{1}", ItemType.GetTypeId(typeof(User)), -1), "Everyone"));
 
-            List<PrimitivePermissionGroup> ownerGroups = owner.GetPrimitivePermissionGroups();
-            
-            ownerGroups.AddRange(core.GetPrimitivePermissionGroups(owner));
+            List<PrimitivePermissionGroup> ownerGroups = new List<PrimitivePermissionGroup>();
+            int itemGroups = 0;
 
             Type type = item.GetType();
             if (type.GetMethod(type.Name + "_GetItemGroups", new Type[] { typeof(Core) }) != null)
             {
                 ownerGroups.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetItemGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }));
+                itemGroups = ownerGroups.Count;
             }
+            
+            ownerGroups.AddRange(core.GetPrimitivePermissionGroups(owner));
 
+            int i = 0;
             foreach (PrimitivePermissionGroup ppg in ownerGroups)
             {
+                if (i == 0 && itemGroups > 0)
+                {
+                    sb.Add(new SelectBoxItem("-1", "Item groups", false));
+                }
+                if (i == itemGroups)
+                {
+                    sb.Add(new SelectBoxItem("-2", "Friendship groups", false));
+                }
                 if (!string.IsNullOrEmpty(ppg.LanguageKey))
                 {
-                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), core.Prose.GetString(ppg.LanguageKey)));
+                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), " -- " + core.Prose.GetString(ppg.LanguageKey)));
                 }
                 else
                 {
-                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), ppg.DisplayName));
+                    sb.Add(new SelectBoxItem(string.Format("{0},{1}", ppg.TypeId, ppg.ItemId), " -- " + ppg.DisplayName));
                 }
+                i++;
             }
 
             return sb;
@@ -142,12 +154,24 @@ namespace BoxSocial.Internals
         
                                 if (groupsSelectBox.ContainsKey(itemGrant.PrimitiveKey.ToString()))
                                 {
-                                    grantVariableCollection.Parse("DISPLAY_NAME", groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Text);
+                                    string text = groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Text;
+                                    if (text.StartsWith(" -- "))
+                                    {
+                                        text = text.Substring(4);
+                                    }
+                                    grantVariableCollection.Parse("DISPLAY_NAME", text);
                                     groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Selectable = false;
                                 }
                                 else
                                 {
-                                    grantVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[itemGrant.PrimitiveKey].DisplayName);
+                                    try
+                                    {
+                                        grantVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[itemGrant.PrimitiveKey].DisplayName);
+                                    }
+                                    catch
+                                    {
+                                        grantVariableCollection.Parse("DISPLAY_NAME", "{{ERROR LOADING PRIMITIVE(" + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() + ":" + (new ItemType(core, itemGrant.PrimitiveKey.TypeId)).Namespace + ")}}");
+                                    }
                                 }
         
                                 RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");

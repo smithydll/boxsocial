@@ -848,6 +848,8 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("topic_item_id", ownerKey.Id);
             query.AddCondition("topic_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Descending, "topic_last_post_id");
+            query.LimitStart = (currentPge - 1) * perPage;
+            query.LimitCount = perPage;
 
             DataTable topicsTable = db.Query(query);
 

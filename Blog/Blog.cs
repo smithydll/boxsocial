@@ -372,6 +372,7 @@ namespace BoxSocial.Applications.Blog
             string status = (drafts) ? "DRAFT" : "PUBLISH";
 
             query.AddCondition("post_status", status);
+            query.AddCondition("user_id", UserId);
             query.AddSort(SortOrder.Descending, "post_time_ut");
             query.LimitStart = (bpage - 1) * 10;
             query.LimitCount = 10;

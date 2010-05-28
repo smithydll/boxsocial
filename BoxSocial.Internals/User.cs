@@ -2046,6 +2046,11 @@ namespace BoxSocial.Internals
 
         public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
+            if (viewer == null)
+            {
+                return false;
+            }
+
             if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(Friend)))
             {
                 switch (primitiveKey.Id)

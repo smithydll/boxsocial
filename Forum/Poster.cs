@@ -207,7 +207,7 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("S_POST_TEXT", text);
             }
 
-            if (sbis.Count > 1)
+            if (sbis.Count > 1 && (mode == "post" || mode == "edit"))
             {
                 core.Display.ParseRadioArray("S_TOPIC_STATE", "topic-state", sbis.Count, sbis, topicState);
             }

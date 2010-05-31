@@ -1750,7 +1750,7 @@ namespace BoxSocial.Applications.Forum
             }
             if (thisForum.Access.Can("DELETE_TOPICS") || thisForum.Access.Can("LOCK_TOPICS"))
             {
-                permissions.Add(core.Prose.GetString("YOU_CAN_MODERATE_FORUM"), true, core.Uri.AppendAbsoluteSid(thisForum.ModeratorControlPanelUri));
+                permissions.Add(core.Prose.GetString("YOU_CAN_MODERATE_FORUM"), true, thisForum.ModeratorControlPanelUri);
                 flagPermissionsBlock = true;
             }
 

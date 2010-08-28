@@ -74,6 +74,7 @@
     <Compile Include="AccountGroupsManage.cs" />
     <Compile Include="AccountGroupsMembershipsManage.cs" />
     <Compile Include="AccountGroupStyle.cs" />
+    <Compile Include="AccountSubGroupsManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="GPage.cs">
@@ -91,6 +92,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SubGroup.cs" />
     <Compile Include="Templates1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

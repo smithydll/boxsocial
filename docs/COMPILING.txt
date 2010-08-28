@@ -1,0 +1,11 @@
+COMPILING
+
+1. Edit compile.bat absolute path to docbook/
+2. Make sure you have the most recent version of libxml installed in the
+   libxml/ folder
+3. Compile using the batch file
+
+FAQ
+Q. Why is the docbook xslt structure in the source tree?
+A. To control a base install that everyone uses, including the custom xslt
+   elements in xsl/. This helps to make sure nothing will break.

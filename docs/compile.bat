@@ -1,5 +1,5 @@
 @ECHO OFF
-SET XML_CATALOG_FILES=C:\SVN\BoxSocial\docs\docbook\5.0
+SET XML_CATALOG_FILES=C:\Hg\BoxSocial\BoxSocial-hg\docs\docbook\5.0
 rem book
 libxml\xsltproc.exe --output xsl\boxsocial.titlepage.xsl docbook\xsl\template\titlepage.xsl xsl\boxsocial.titlepage.xml
 libxml\xsltproc.exe --xinclude --xincludestyle --stringparam fop1.extensions 1 --stringparam paper.type A4 --output book.fo xsl\boxsocial.xsl book.xml

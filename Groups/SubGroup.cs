@@ -52,8 +52,18 @@ namespace BoxSocial.Groups
         private string slug;
         [DataField("sub_group_name_display", 64)]
         private string displayName;
+        [DataField("sub_group_type", 15)]
+        private string subGroupType;
         [DataField("sub_group_colour")]
         private uint colour;
+        [DataField("sub_group_reg_date_ut")]
+        private long timestampCreated;
+        [DataField("sub_group_reg_ip", 50)]
+        private string registrationIp;
+        [DataField("sub_group_members")]
+        private long memberCount;
+        [DataField("sub_group_abstract", MYSQL_TEXT)]
+        private string description;
 
         private string displayNameOwnership = null;
         private UserGroup parent;
@@ -87,6 +97,14 @@ namespace BoxSocial.Groups
             get
             {
                 return "SUBGROUP";
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return description;
             }
         }
 
@@ -318,6 +336,46 @@ namespace BoxSocial.Groups
         void SubUserGroup_ItemLoad()
         {
             throw new NotImplementedException();
+        }
+
+        public static SubUserGroup Create(Core core, UserGroup parent, string groupTitle, string groupSlug, string groupDescription, string groupType)
+        {
+            Mysql db = core.Db;
+            SessionState session = core.Session;
+
+            if (core.Session.LoggedInMember == null)
+            {
+                return null;
+            }
+
+            if (!parent.CheckSubGroupNameUnique(groupSlug))
+            {
+                return null;
+            }
+
+            switch (groupType)
+            {
+                case "open":
+                    groupType = "OPEN";
+                    break;
+                case "closed":
+                    groupType = "CLOSED";
+                    break;
+                case "private":
+                    groupType = "PRIVATE";
+                    break;
+                default:
+                    return null;
+            }
+
+            db.BeginTransaction();
+        }
+
+        public static void Show(object sender, ShowPageEventArgs e)
+        {
+            e.Page.template.SetTemplate("Groups", "viewsubgroup");
+
+            SubUserGroup subgroup = new SubUserGroup(e.Core, e.Core.PagePathParts[1].Value);
         }
     }
 

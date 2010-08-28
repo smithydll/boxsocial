@@ -823,6 +823,20 @@ namespace BoxSocial.Groups
             return newGroup;
         }
 
+        public bool CheckSubGroupNameUnique(string groupName)
+        {
+            SelectQuery query = new SelectQuery(typeof(SubUserGroup));
+            query.AddField(new DataField(typeof(SubUserGroup), "sub_group_name"));
+            query.AddCondition(new QueryFunction("sub_group_name", QueryFunctions.ToLowerCase), groupName);
+            query.AddCondition("sub_group_parent_id", Id);
+
+            if (Query(query).Rows.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static bool CheckGroupNameUnique(Core core, string groupName)
         {
             if (core.Db.Query(string.Format("SELECT group_name FROM group_keys WHERE LCASE(group_name) = '{0}';",

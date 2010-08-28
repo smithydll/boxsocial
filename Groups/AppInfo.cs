@@ -167,6 +167,15 @@ namespace BoxSocial.Groups
             }
         }
 
+        [Show(@"groups/([A-Za-z0-9\-_]+)", AppPrimitives.Group)]
+        private void showSubGroupProfile(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                SubUserGroup.Show(sender, new ShowGPageEventArgs((GPage)sender));
+            }
+        }
+
         [StaticShow("groups", @"^/groups/register(|/)$")]
         private void showCreateGroup(Core core, object sender)
         {

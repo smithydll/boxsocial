@@ -32,7 +32,8 @@ namespace BoxSocial.Internals
         Network = 0x04,
         Application = 0x08,
         Musician = 0x10,
-        Any = Member | Group | Network | Application | Musician,
+        SubGroup = 0x20,
+        Any = Member | Group | Network | Application | Musician | SubGroup,
     }
 
     public interface IAppInfo

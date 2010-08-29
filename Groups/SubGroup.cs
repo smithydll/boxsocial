@@ -369,6 +369,17 @@ namespace BoxSocial.Groups
             }
 
             db.BeginTransaction();
+
+            Item item = Item.Create(core, typeof(SubUserGroup), new FieldValuePair("sub_group_parent_id", parent.Id),
+                new FieldValuePair("sub_group_name", groupSlug),
+                new FieldValuePair("sub_group_name_display", groupTitle),
+                new FieldValuePair("sub_group_type", groupType),
+                new FieldValuePair("sub_group_reg_ip", core.Session.IPAddress.ToString()),
+                new FieldValuePair("sub_group_reg_date_ut", UnixTime.UnixTimeStamp()),
+                new FieldValuePair("sub_group_colour", 0x000000),
+                new FieldValuePair("sub_group_members", 0));
+
+            return (SubUserGroup)item;
         }
 
         public static void Show(object sender, ShowPageEventArgs e)

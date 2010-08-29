@@ -918,9 +918,38 @@ namespace BoxSocial.Internals
 		public static Item Create(Core core, Type type, bool suppress, params FieldValuePair[] fields)
 		{
             core.Db.BeginTransaction();
+
+            List<DataFieldInfo> itemFields = GetFields(type);
 			
 			InsertQuery iQuery = new InsertQuery(GetTable(type));
 			
+            // Validate Fields
+            foreach (FieldValuePair field in fields)
+			{
+                bool flag = false;
+                foreach (DataFieldInfo dfi in itemFields)
+                {
+                    if (dfi.Name == field.TableField)
+                    {
+                        if (dfi.Length > 0 && field.Value is string)
+                        {
+                            if (((string)field.Value).Length > dfi.Length)
+                            {
+                                throw new FieldTooLongException(dfi.Name);
+                            }
+                        }
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (!flag)
+                {
+                    throw new FieldNotFoundException(field.Field);
+                }
+            }
+
+            // Add Fields to Query statement
 			foreach (FieldValuePair field in fields)
 			{
 				iQuery.AddField(field.Field, field.Value);
@@ -1394,6 +1423,38 @@ namespace BoxSocial.Internals
 		}
 		
 		public FieldNotUniqueIndexException(string field)
+			: base("Field: " + field)
+		{
+		}
+    }
+
+    public class FieldTooLongException : Exception
+    {
+        private string fieldName;
+
+        public string FieldName
+        {
+            get
+            {
+                return FieldName;
+            }
+        }
+
+        public FieldTooLongException(string field)
+            : base("Field: " + field)
+        {
+            this.fieldName = field;
+        }
+    }
+
+    public class FieldNotFoundException : Exception
+    {
+        public FieldNotFoundException()
+			: base ()
+		{
+		}
+
+        public FieldNotFoundException(string field)
 			: base("Field: " + field)
 		{
 		}

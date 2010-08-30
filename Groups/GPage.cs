@@ -140,4 +140,25 @@ namespace BoxSocial.Groups
             }
         }
     }
+
+    public class ShowGPageEventArgs : ShowPPageEventArgs
+    {
+        public new GPage Page
+        {
+            get
+            {
+                return (GPage)page;
+            }
+        }
+
+        public ShowGPageEventArgs(GPage page, long itemId)
+            : base(page, itemId)
+        {
+        }
+
+        public ShowGPageEventArgs(GPage page)
+            : base(page)
+        {
+        }
+    }
 }

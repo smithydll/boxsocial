@@ -486,6 +486,27 @@ namespace BoxSocial.IO
             string loopName = String.Empty;
             List<string> loopCache = new List<string>();
 
+            // Static Variables
+            variables.Parse("$_INDEX", childIndex);
+            if (childIndex % 2 == 0)
+            {
+                variables.Parse("$_INDEX_EVEN", "TRUE");
+                variables.Parse("$_INDEX_ODD", "FALSE");
+            }
+            else
+            {
+                variables.Parse("$_INDEX_EVEN", "FALSE");
+                variables.Parse("$_INDEX_ODD", "TRUE");
+            }
+            if (childIndex == 0)
+            {
+                variables.Parse("$_INDEX_FIRST", "TRUE");
+            }
+            else
+            {
+                variables.Parse("$_INDEX_FIRST", "FALSE");
+            }
+
             for (int i = 0; i < lines.Length; i++)
             {
                 line = lines[i];
@@ -859,6 +880,14 @@ namespace BoxSocial.IO
                             line = line.Insert(tv.Index + offset, value4);
                         }
                     }
+                        // These are static keys
+                    /*else if (key.StartsWith("$_"))
+                    {
+                        if (childIndex % 2 == 0)
+                        {
+
+                        }
+                    }*/
                     else if (prose != null && key.StartsWith("L_"))
                     {
                         string proseKey = key.Substring(2).ToUpper();
@@ -951,7 +980,7 @@ namespace BoxSocial.IO
                         continue;
                     }
 
-                    if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-')
+                    if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-' || line[i] == '$')
                     {
                         varName += line[i];
                     }

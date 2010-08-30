@@ -421,6 +421,35 @@ namespace BoxSocial.Groups
         {
         }
 
+        public List<SubUserGroup> GetSubGroups()
+        {
+            return GetSubGroups(0, 0, null);
+        }
+
+        public List<SubUserGroup> GetSubGroups(int page, int perPage)
+        {
+            return GetSubGroups(page, perPage, null);
+        }
+
+        public List<SubUserGroup> GetSubGroups(int page, int perPage, string filter)
+        {
+            List<SubUserGroup> subGroups = new List<SubUserGroup>();
+
+            SelectQuery query = SubUserGroup.GetSelectQueryStub(typeof(SubUserGroup));
+            query.AddSort(SortOrder.Ascending, "sub_group_reg_date_ut");
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition("sub_group_name_first", filter);
+            }
+            if (page > 0 && perPage > 0)
+            {
+                query.LimitStart = (page - 1) * perPage;
+                query.LimitCount = perPage;
+            }
+
+            return subGroups;
+        }
+
         public List<GroupMember> GetMembers(int page, int perPage)
         {
             return GetMembers(page, perPage, null);
@@ -821,6 +850,20 @@ namespace BoxSocial.Groups
             }
 
             return newGroup;
+        }
+
+        public bool CheckSubGroupNameUnique(string groupName)
+        {
+            SelectQuery query = new SelectQuery(typeof(SubUserGroup));
+            query.AddField(new DataField(typeof(SubUserGroup), "sub_group_name"));
+            query.AddCondition(new QueryFunction("sub_group_name", QueryFunctions.ToLowerCase), groupName);
+            query.AddCondition("sub_group_parent_id", Id);
+
+            if (Query(query).Rows.Count > 0)
+            {
+                return false;
+            }
+            return true;
         }
 
         public static bool CheckGroupNameUnique(Core core, string groupName)

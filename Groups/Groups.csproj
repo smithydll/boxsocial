@@ -74,6 +74,7 @@
     <Compile Include="AccountGroupsManage.cs" />
     <Compile Include="AccountGroupsMembershipsManage.cs" />
     <Compile Include="AccountGroupStyle.cs" />
+    <Compile Include="AccountSubGroupsManage.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="GPage.cs">
@@ -91,6 +92,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SubGroup.cs" />
+    <Compile Include="SubGroupMember.cs" />
     <Compile Include="Templates1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -120,11 +123,13 @@
     <Content Include="templates\account_group_manage.html" />
     <Content Include="templates\account_group_membership.html" />
     <Content Include="templates\account_group_style.html" />
+    <Content Include="templates\account_group_subgroup_manage.html" />
     <Content Include="templates\groups_default.html" />
     <Content Include="templates\group_footer.html" />
     <Content Include="templates\viewgroup.html" />
     <Content Include="templates\viewgroupmemberlist.html" />
     <Content Include="templates\viewprofilegroups.htm" />
+    <Content Include="templates\viewsubgroup.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="languages\Groups.en.resx">
@@ -175,6 +180,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\resgen.exe" "$(ProjectDir)languages\Groups.en.resx"</PostBuildEvent>
+    <PostBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\Groups.en.resx"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -36,6 +36,38 @@ namespace BoxSocial.IO
 				return field;
 			}
 		}
+
+        public string Table
+        {
+            get
+            {
+                if (field.Contains("`.`"))
+                {
+                    int i = field.IndexOf("`.`");
+                    return field.Substring(1, i - 1);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public string TableField
+        {
+            get
+            {
+                if (field.Contains("`.`"))
+                {
+                    int i = field.IndexOf("`.`");
+                    return field.Substring(i + 3, field.Length - i - 3 - 1);
+                }
+                else
+                {
+                    return field;
+                }
+            }
+        }
 		
 		public object Value
 		{

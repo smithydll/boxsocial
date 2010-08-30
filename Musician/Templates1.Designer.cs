@@ -239,7 +239,8 @@ namespace BoxSocial.Musician {
         ///			&lt;dt&gt;&lt;label for=&quot;biography&quot;&gt;Biography&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_BIOGRAPHY}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;homepage&quot;&gt;Homepage&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;        /// [rest of string was truncated]&quot;;.
+        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_profile {
             get {

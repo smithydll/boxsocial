@@ -421,6 +421,35 @@ namespace BoxSocial.Groups
         {
         }
 
+        public List<SubUserGroup> GetSubGroups()
+        {
+            return GetSubGroups(0, 0, null);
+        }
+
+        public List<SubUserGroup> GetSubGroups(int page, int perPage)
+        {
+            return GetSubGroups(page, perPage, null);
+        }
+
+        public List<SubUserGroup> GetSubGroups(int page, int perPage, string filter)
+        {
+            List<SubUserGroup> subGroups = new List<SubUserGroup>();
+
+            SelectQuery query = SubUserGroup.GetSelectQueryStub(typeof(SubUserGroup));
+            query.AddSort(SortOrder.Ascending, "sub_group_reg_date_ut");
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition("sub_group_name_first", filter);
+            }
+            if (page > 0 && perPage > 0)
+            {
+                query.LimitStart = (page - 1) * perPage;
+                query.LimitCount = perPage;
+            }
+
+            return subGroups;
+        }
+
         public List<GroupMember> GetMembers(int page, int perPage)
         {
             return GetMembers(page, perPage, null);

@@ -41,7 +41,7 @@ namespace BoxSocial.Groups
         All = Key | Info,
     }
 
-    [DataTable("sub_group_keys", "SUBGROUP")]
+    [DataTable("sub_groups", "SUBGROUP")]
     public class SubUserGroup : Primitive
     {
         [DataField("sub_group_id", DataFieldKeys.Primary)]
@@ -50,6 +50,8 @@ namespace BoxSocial.Groups
         private long parentId;
         [DataField("sub_group_name", DataFieldKeys.Unique, 64)]
         private string slug;
+        [DataField("sub_group_name_first")]
+        private char first;
         [DataField("sub_group_name_display", 64)]
         private string displayName;
         [DataField("sub_group_type", 15)]
@@ -338,6 +340,47 @@ namespace BoxSocial.Groups
             throw new NotImplementedException();
         }
 
+        public List<SubGroupMember> GetMembers(int page, int perPage)
+        {
+            return GetMembers(page, perPage, null);
+        }
+
+        public List<SubGroupMember> GetMembers(int page, int perPage, string filter)
+        {
+            List<SubGroupMember> members = new List<SubGroupMember>();
+
+            SelectQuery query = new SelectQuery("sub_group_members");
+            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
+            query.AddCondition("sub_group_member_approved", true);
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition("user_keys.user_name_first", filter);
+            }
+            query.AddSort(SortOrder.Ascending, "sub_group_member_date_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                members.Add(new SubGroupMember(core, dr));
+            }
+
+            return members;
+        }
+
         public static SubUserGroup Create(Core core, UserGroup parent, string groupTitle, string groupSlug, string groupDescription, string groupType)
         {
             Mysql db = core.Db;
@@ -372,6 +415,7 @@ namespace BoxSocial.Groups
 
             Item item = Item.Create(core, typeof(SubUserGroup), new FieldValuePair("sub_group_parent_id", parent.Id),
                 new FieldValuePair("sub_group_name", groupSlug),
+                new FieldValuePair("sub_group_name_first", groupSlug[0]),
                 new FieldValuePair("sub_group_name_display", groupTitle),
                 new FieldValuePair("sub_group_type", groupType),
                 new FieldValuePair("sub_group_reg_ip", core.Session.IPAddress.ToString()),

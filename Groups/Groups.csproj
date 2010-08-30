@@ -93,6 +93,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SubGroup.cs" />
+    <Compile Include="SubGroupMember.cs" />
     <Compile Include="Templates1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

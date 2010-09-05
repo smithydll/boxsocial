@@ -1152,6 +1152,19 @@ namespace BoxSocial.Internals
                                     }
                                 }
                             }
+                            else if (value is string && fi.FieldType == typeof(char))
+                            {
+                                if (((string)value).Length > 0)
+                                {
+                                    fi.SetValue(this, ((string)value)[0]);
+                                    fieldsLoaded++;
+                                }
+                                else
+                                {
+                                    fi.SetValue(this, null);
+                                    fieldsLoaded++;
+                                }
+                            }
                             else if (fi.FieldType == typeof(bool) && !(value is bool))
                             {
                                 if (value is byte)
@@ -1269,6 +1282,17 @@ namespace BoxSocial.Internals
 	                                            fi.SetValue(this, ((sbyte)itemRow[columnName] > 0) ? true : false);
 	                                        }
 	                                    }
+                                        else if (itemRow[columnName] is string && fi.FieldType == typeof(char))
+                                        {
+                                            if (((string)itemRow[columnName]).Length > 0)
+                                            {
+                                                fi.SetValue(this, ((string)itemRow[columnName])[0]);
+                                            }
+                                            else
+                                            {
+                                                fi.SetValue(this, null);
+                                            }
+                                        }
 	                                    else
 	                                    {
 	                                        fi.SetValue(this, itemRow[columnName]);

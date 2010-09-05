@@ -264,7 +264,7 @@ namespace BoxSocial.Internals
         {
             if (core.Http.Form["save"] != null)
             {
-                saveHandler(this, new EventArgs());
+                saveHandler((object)this, new EventArgs());
             }
         }
 
@@ -274,7 +274,7 @@ namespace BoxSocial.Internals
             {
                 if (core.Http.Form["mode"] != null)
                 {
-                    saveHandler(this, new ModuleModeEventArgs(core.Http.Form["mode"]));
+                    saveHandler((object)this, new ModuleModeEventArgs(core.Http.Form["mode"]));
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace BoxSocial.Internals
             {
                 if (core.Http.Form["mode"] != null)
                 {
-                    saveHandler(this, new ItemModuleModeEventArgs(core.Http.Form["mode"], item));
+                    saveHandler((object)this, new ItemModuleModeEventArgs(core.Http.Form["mode"], item));
                 }
             }
         }

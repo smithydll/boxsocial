@@ -64,11 +64,18 @@ namespace BoxSocial.Groups
         private string registrationIp;
         [DataField("sub_group_members")]
         private long memberCount;
+        [DataField("sub_group_leaders")]
+        private long leaderCount;
         [DataField("sub_group_abstract", MYSQL_TEXT)]
         private string description;
 
         private string displayNameOwnership = null;
         private UserGroup parent;
+
+        private Dictionary<User, bool> groupMemberCache = new Dictionary<User, bool>();
+        private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
+        private Dictionary<User, bool> groupMemberAbsoluteCache = new Dictionary<User, bool>();
+        private Dictionary<User, bool> groupLeaderCache = new Dictionary<User, bool>();
 
         public long SubGroupId
         {
@@ -102,11 +109,55 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string Title
+        {
+            get
+            {
+                return displayName;
+            }
+            set
+            {
+                SetProperty("displayName", value);
+            }
+        }
+
         public string Description
         {
             get
             {
                 return description;
+            }
+            set
+            {
+                SetProperty("description", value);
+            }
+        }
+
+        public long MemberCount
+        {
+            get
+            {
+                return memberCount;
+            }
+        }
+
+        public long LeaderCount
+        {
+            get
+            {
+                return leaderCount;
+            }
+        }
+
+        public string SubGroupType
+        {
+            get
+            {
+                return subGroupType;
+            }
+            set
+            {
+                SetProperty("subGroupType", value);
             }
         }
 
@@ -114,7 +165,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                if (parent != null || parent.Id != parentId)
+                if (parent == null || parent.Id != parentId)
                 {
                     ItemKey key = new ItemKey(parentId, ItemType.GetTypeId(typeof(UserGroup)));
                     core.PrimitiveCache.LoadPrimitiveProfile(key);
@@ -165,6 +216,22 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string EditUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "edit", Id, true);
+            }
+        }
+
+        public string DeleteUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "delete", Id, true);
+            }
+        }
+
         public override string TitleName
         {
             get
@@ -185,7 +252,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return displayName;
+                return Title;
             }
         }
 
@@ -212,22 +279,53 @@ namespace BoxSocial.Groups
 
         public override bool CanModerateComments(User member)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override bool IsCommentOwner(User member)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override ushort GetAccessLevel(User viewer)
         {
-            throw new NotImplementedException();
+            switch (SubGroupType)
+            {
+                case "OPEN":
+                case "CLOSED":
+                    return 0x0001;
+                case "PRIVATE":
+                    if (IsSubGroupMember(viewer))
+                    {
+                        return 0x0001;
+                    }
+                    break;
+            }
+
+            return 0x0000;
         }
 
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
-            throw new NotImplementedException();
+            string output = string.Empty;
+            string path = this.UriStub;
+            output = string.Format("<a href=\"{1}\">{0}</a>",
+                    DisplayName, path);
+
+            for (int i = 0; i < parts.Count; i++)
+            {
+                if (parts[i][0] != string.Empty)
+                {
+                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
+                    if (!parts[i][0].StartsWith("*"))
+                    {
+                        path += parts[i][0] + "/";
+                    }
+                }
+            }
+
+            return output;
         }
 
         public override Access Access
@@ -337,7 +435,87 @@ namespace BoxSocial.Groups
 
         void SubUserGroup_ItemLoad()
         {
-            throw new NotImplementedException();
+        }
+
+        private void preLoadMemberCache(User member)
+        {
+            SelectQuery query = SubGroupMember.GetSelectQueryStub(typeof(SubGroupMember));
+            query.AddFields("user_id", "sub_group_member_approved");
+            query.AddCondition("sub_group_id", Id);
+            query.AddCondition("user_id", member.UserId);
+
+            DataTable memberTable = db.Query(query);
+
+            if (memberTable.Rows.Count > 0)
+            {
+                switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["sub_group_member_approved"])
+                {
+                    case GroupMemberApproval.Pending:
+                        groupMemberCache.Add(member, false);
+                        groupMemberPendingCache.Add(member, true);
+                        groupMemberAbsoluteCache.Add(member, true);
+                        break;
+                    case GroupMemberApproval.Member:
+                        groupMemberCache.Add(member, true);
+                        groupMemberPendingCache.Add(member, false);
+                        groupMemberAbsoluteCache.Add(member, true);
+                        break;
+                }
+            }
+            else
+            {
+                groupMemberCache.Add(member, false);
+                groupMemberPendingCache.Add(member, false);
+                groupMemberAbsoluteCache.Add(member, false);
+            }
+        }
+
+        public bool IsSubGroupMember(User member)
+        {
+            if (member != null)
+            {
+                if (groupMemberCache.ContainsKey(member))
+                {
+                    return groupMemberCache[member];
+                }
+                else
+                {
+                    preLoadMemberCache(member);
+                    return groupMemberCache[member];
+                }
+            }
+            return false;
+        }
+
+        public List<SubGroupMember> GetLeaders()
+        {
+            List<SubGroupMember> leaders = new List<SubGroupMember>();
+
+            SelectQuery query = new SelectQuery("sub_group_members");
+            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
+            query.AddCondition("sub_group_member_is_leader", true);
+            query.AddCondition("sub_group_member_approved", true);
+            query.AddSort(SortOrder.Ascending, "sub_group_member_date_ut");
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                leaders.Add(new SubGroupMember(core, dr));
+            }
+
+            return leaders;
         }
 
         public List<SubGroupMember> GetMembers(int page, int perPage)
@@ -353,6 +531,7 @@ namespace BoxSocial.Groups
             query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
             query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
             query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
+            query.AddCondition("sub_group_member_is_leader", false);
             query.AddCondition("sub_group_member_approved", true);
             if (!string.IsNullOrEmpty(filter))
             {
@@ -361,6 +540,37 @@ namespace BoxSocial.Groups
             query.AddSort(SortOrder.Ascending, "sub_group_member_date_ut");
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
+
+            DataTable membersTable = db.Query(query);
+
+            List<long> memberIds = new List<long>();
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                memberIds.Add((long)dr["user_id"]);
+            }
+
+            core.LoadUserProfiles(memberIds);
+
+            foreach (DataRow dr in membersTable.Rows)
+            {
+                members.Add(new SubGroupMember(core, dr));
+            }
+
+            return members;
+        }
+
+        public List<SubGroupMember> GetMembersWaitingApproval()
+        {
+            List<SubGroupMember> members = new List<SubGroupMember>();
+
+            SelectQuery query = new SelectQuery("sub_group_members");
+            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
+            query.AddCondition("sub_group_member_is_leader", false);
+            query.AddCondition("sub_group_member_approved", false);
+            query.AddSort(SortOrder.Ascending, "sub_group_member_date_ut");
 
             DataTable membersTable = db.Query(query);
 
@@ -393,10 +603,10 @@ namespace BoxSocial.Groups
 
             if (!parent.CheckSubGroupNameUnique(groupSlug))
             {
-                return null;
+                throw new GroupNameNotUniqueException();
             }
 
-            switch (groupType)
+            switch (groupType.ToLower())
             {
                 case "open":
                     groupType = "OPEN";
@@ -431,10 +641,72 @@ namespace BoxSocial.Groups
             e.Page.template.SetTemplate("Groups", "viewsubgroup");
 
             SubUserGroup subgroup = new SubUserGroup(e.Core, e.Core.PagePathParts[1].Value);
+
+            List<SubGroupMember> awaitingApproval = subgroup.GetMembersWaitingApproval();
+
+            foreach (SubGroupMember member in awaitingApproval)
+            {
+            }
+
+            if (awaitingApproval.Count > 0)
+            {
+                e.Core.Template.Parse("IS_WAITING_APPROVAL", "TRUE");
+            }
+
+            List<SubGroupMember> leaders = subgroup.GetLeaders();
+
+            foreach (SubGroupMember member in leaders)
+            {
+                VariableCollection leaderVariableCollection = e.Core.Template.CreateChild("leader_list");
+
+                leaderVariableCollection.Parse("U_MEMBER", member.Uri);
+                leaderVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+            }
+
+            List<SubGroupMember> members = subgroup.GetMembers(e.Page.page, 20);
+
+            foreach (SubGroupMember member in members)
+            {
+                VariableCollection memberVariableCollection = e.Core.Template.CreateChild("member_list");
+
+                memberVariableCollection.Parse("U_MEMBER", member.Uri);
+                memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+
+                /*if (string.IsNullOrEmpty(member.UserThumbnail))
+                {
+                    memberVariableCollection.Parse("I_DISPLAY_PIC", string.Empty);
+                }
+                else
+                {
+                    Image displayPic = new Image("display-pic[" + member.Id.ToString() + "]", member.UserThumbnail);
+                    memberVariableCollection.Parse("I_DISPLAY_PIC", displayPic);
+                }*/
+            }
+        }
+
+        public static List<PrimitivePermissionGroup> SubUserGroup_GetPrimitiveGroups(Core core, Primitive owner)
+        {
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            if (owner is UserGroup)
+            {
+                List<SubUserGroup> groups = ((UserGroup)owner).GetSubGroups();
+
+                foreach (SubUserGroup group in groups)
+                {
+                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName));
+                }
+            }
+
+            return ppgs;
         }
     }
 
     public class InvalidSubGroupException : Exception
+    {
+    }
+
+    public class GroupNameNotUniqueException : Exception
     {
     }
 }

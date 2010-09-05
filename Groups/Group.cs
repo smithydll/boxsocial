@@ -436,6 +436,7 @@ namespace BoxSocial.Groups
             List<SubUserGroup> subGroups = new List<SubUserGroup>();
 
             SelectQuery query = SubUserGroup.GetSelectQueryStub(typeof(SubUserGroup));
+            query.AddCondition("sub_group_parent_id", Id);
             query.AddSort(SortOrder.Ascending, "sub_group_reg_date_ut");
             if (!string.IsNullOrEmpty(filter))
             {
@@ -445,6 +446,13 @@ namespace BoxSocial.Groups
             {
                 query.LimitStart = (page - 1) * perPage;
                 query.LimitCount = perPage;
+            }
+
+            DataTable subGroupsDataTable = Query(query);
+
+            foreach (DataRow dr in subGroupsDataTable.Rows)
+            {
+                subGroups.Add(new SubUserGroup(core, dr, UserSubGroupLoadOptions.Common));
             }
 
             return subGroups;

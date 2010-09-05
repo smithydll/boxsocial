@@ -41,19 +41,6 @@ namespace BoxSocial.Groups
         public AccountGroups(Account account)
             : base(account)
         {
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageGroups);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageGroupMemberships);
-            //RegisterSubModule += new RegisterSubModuleHandler(DeleteGroup);
-            //RegisterSubModule += new RegisterSubModuleHandler(EditGroup);
-            //RegisterSubModule += new RegisterSubModuleHandler(JoinGroup);
-            //RegisterSubModule += new RegisterSubModuleHandler(LeaveGroup);
-            //RegisterSubModule += new RegisterSubModuleHandler(InviteGroup);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupMakeOfficer);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupMakeOperator);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupRemoveOfficer);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupResignOperator);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupApproveMember);
-            //RegisterSubModule += new RegisterSubModuleHandler(GroupBanMember);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)

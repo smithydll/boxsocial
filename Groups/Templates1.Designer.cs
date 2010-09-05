@@ -135,11 +135,11 @@ namespace BoxSocial.Groups {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN group_list --&gt;
-        ///&lt;!-- IF group_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF group_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
-        ///&lt;!-- ENDIF --&gt; [rest of string was truncated]&quot;;.
+        ///&lt;!-- ENDIF - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_group_manage {
             get {
@@ -162,12 +162,12 @@ namespace BoxSocial.Groups {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN group_list --&gt;
-        ///&lt;!-- IF group_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF group_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
-        ///	&lt;td&gt;{group_list.GROUP_DISPLAY_NAME}&lt;/t [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;{group_list.GROUP_DISPLAY_NAME}&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_group_membership {
             get {
@@ -194,6 +194,57 @@ namespace BoxSocial.Groups {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Create User Group&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Edit Group&lt;/legend&gt;
+        ///		&lt;dl id=&quot;form-list&quot;&gt;
+        ///            &lt;dt class=&quot;top&quot;&gt;&lt;label for=&quot;title&quot;&gt;Group Title:&lt;/label&gt;&lt;/dt&gt;
+        ///		    &lt;dd class=&quot;top&quot;&gt;{S_TITLE}&lt;/dd&gt;
+        ///		    &lt;dt class=&quot;top&quot;&gt;&lt;label for=&quot;slug&quot;&gt;Group name slug:&lt;/label&gt;&lt;/dt&gt;
+        ///		    &lt;dd class=&quot;top&quot;&gt;{S_SLUG}&lt;/dd&gt;
+        ///			&lt;dt class=&quot;top&quot;&gt;&lt;label for=&quot;description&quot;&gt;Group Description:&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd class=&quot;top&quot;&gt;
+        ///				{S_DESCRIPTION}
+        ///			&lt;/dd&gt;
+        ///			&lt;dt class=&quot;top&quot;&gt;&lt;lab [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_group_subgroup_create {
+            get {
+                return ResourceManager.GetString("account_group_subgroup_create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage User Groups&lt;/h3&gt;
+        ///&lt;p&gt;Manage user groups that are in the current Group.&lt;/p&gt;
+        ///&lt;span id=&quot;create-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_CREATE_USER_GROUP}&quot;&gt;Create a New User Group&lt;/a&gt;&lt;/span&gt;
+        ///&lt;table style=&quot;width: 100%&quot;&gt;
+        ///&lt;tr&gt;
+        ///	&lt;th&gt;Title&lt;/th&gt;
+        ///	&lt;th&gt;Type&lt;/th&gt;
+        ///	&lt;th&gt;Members&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;&lt;/th&gt;
+        ///&lt;/tr&gt;
+        ///&lt;!-- BEGIN group_list --&gt;
+        ///&lt;!-- IF group_list.$_INDEX_EVEN --&gt;
+        ///&lt;tr class=&quot;even&quot;&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///&lt;tr class=&quot;odd&quot;&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///	&lt;td&gt;{group_list.GROUP_DISPLAY_NAME}&lt;/td&gt;
+        ///	&lt;td&gt;{gr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_group_subgroup_manage {
+            get {
+                return ResourceManager.GetString("account_group_subgroup_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- IF U_GROUP_ACCOUNT --&gt;
         ///&lt;a href=&quot;{U_GROUP_ACCOUNT}&quot;&gt;Group Administration Panel&lt;/a&gt;
         ///&lt;!-- ENDIF --&gt;.
@@ -207,6 +258,11 @@ namespace BoxSocial.Groups {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;h2&gt;Groups&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF BREADCRUMBS --&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
         ///&lt;span id=&quot;create-group&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_CREATE_GROUP}&quot;&gt;Create a New Group&lt;/a&gt;&lt;/span&gt;
         ///&lt;!-- IF CATEGORIES --&gt;
         ///&lt;h3&gt;Categories&lt;/h3&gt;
@@ -218,10 +274,7 @@ namespace BoxSocial.Groups {
         ///&lt;!-- ENDIF --&gt;
         ///
         ///&lt;!-- IF CATEGORY_TITLE --&gt;
-        ///&lt;h3&gt;{CATEGORY_TITLE}&lt;/h3&gt;
-        ///&lt;!-- IF GROUPS --&gt;
-        ///&lt;!-- ELSE --&gt;
-        ///&lt;p&gt;There are no groups in t [rest of string was truncated]&quot;;.
+        ///&lt;h3&gt;{CATEGORY_TITLE}&lt;/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string groups_default {
             get {
@@ -255,6 +308,7 @@ namespace BoxSocial.Groups {
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;{MEMBERS_TITLE}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///
         ///&lt;!-- IF IS_WAITING_APPROVAL --&gt;
         ///&lt;h3&gt;Pending Memberships&lt;/h3&gt;
@@ -264,15 +318,14 @@ namespace BoxSocial.Groups {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN approval_list --&gt;
-        ///&lt;!-- IF approval_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF approval_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{approval_list.U_PROFILE}&quot;&gt;{approval_list.USER_DISPLAY_NAME}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{approval_list.U_APPROVE}&quot;&gt;Approve Membership&lt;/a&gt;&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;!-- END approval_li [rest of string was truncated]&quot;;.
+        ///&lt;/t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewgroupmemberlist {
             get {
@@ -295,6 +348,33 @@ namespace BoxSocial.Groups {
         internal static string viewprofilegroups {
             get {
                 return ResourceManager.GetString("viewprofilegroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;{SUBGROUP_TITLE}&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF IS_WAITING_APPROVAL --&gt;
+        ///
+        ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;div id=&quot;member-filter-panel&quot;&gt;
+        ///  &lt;p&gt;
+        ///    &lt;a href=&quot;{U_FILTER_ALL}&quot;&gt;All&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_A}&quot;&gt;A&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_B}&quot;&gt;B&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_C}&quot;&gt;C&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_D}&quot;&gt;D&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_E}&quot;&gt;E&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_F}&quot;&gt;F&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS_G}&quot;&gt;G&lt;/a&gt;
+        ///    &lt;a href=&quot;{U_FILTER_BEGINS [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string viewsubgroup {
+            get {
+                return ResourceManager.GetString("viewsubgroup", resourceCulture);
             }
         }
     }

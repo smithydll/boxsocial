@@ -123,6 +123,7 @@
     <Content Include="templates\account_group_manage.html" />
     <Content Include="templates\account_group_membership.html" />
     <Content Include="templates\account_group_style.html" />
+    <Content Include="templates\account_group_subgroup_create.html" />
     <Content Include="templates\account_group_subgroup_manage.html" />
     <Content Include="templates\groups_default.html" />
     <Content Include="templates\group_footer.html" />

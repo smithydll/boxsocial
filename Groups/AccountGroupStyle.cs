@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Groups
 {
-    [AccountSubModule(AppPrimitives.Group, "groups", "style", true)]
+    [AccountSubModule(AppPrimitives.Group, "groups", "style")]
     public class AccountGroupStyle : AccountSubModule
     {
         public override string Title

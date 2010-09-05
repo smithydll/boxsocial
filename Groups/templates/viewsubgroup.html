@@ -1,1 +1,82 @@
-﻿
+﻿<!-- INCLUDE page_header.html -->
+
+<h2>{SUBGROUP_TITLE}</h2>
+
+<!-- IF IS_WAITING_APPROVAL -->
+
+<!-- ENDIF -->
+
+<div id="member-filter-panel">
+  <p>
+    <a href="{U_FILTER_ALL}">All</a>
+    <a href="{U_FILTER_BEGINS_A}">A</a>
+    <a href="{U_FILTER_BEGINS_B}">B</a>
+    <a href="{U_FILTER_BEGINS_C}">C</a>
+    <a href="{U_FILTER_BEGINS_D}">D</a>
+    <a href="{U_FILTER_BEGINS_E}">E</a>
+    <a href="{U_FILTER_BEGINS_F}">F</a>
+    <a href="{U_FILTER_BEGINS_G}">G</a>
+    <a href="{U_FILTER_BEGINS_H}">H</a>
+    <a href="{U_FILTER_BEGINS_I}">I</a>
+    <a href="{U_FILTER_BEGINS_J}">J</a>
+    <a href="{U_FILTER_BEGINS_K}">K</a>
+    <a href="{U_FILTER_BEGINS_L}">L</a>
+    <a href="{U_FILTER_BEGINS_M}">N</a>
+    <a href="{U_FILTER_BEGINS_N}">M</a>
+    <a href="{U_FILTER_BEGINS_O}">O</a>
+    <a href="{U_FILTER_BEGINS_P}">P</a>
+    <a href="{U_FILTER_BEGINS_Q}">Q</a>
+    <a href="{U_FILTER_BEGINS_R}">R</a>
+    <a href="{U_FILTER_BEGINS_S}">S</a>
+    <a href="{U_FILTER_BEGINS_T}">T</a>
+    <a href="{U_FILTER_BEGINS_U}">U</a>
+    <a href="{U_FILTER_BEGINS_V}">V</a>
+    <a href="{U_FILTER_BEGINS_W}">W</a>
+    <a href="{U_FILTER_BEGINS_X}">X</a>
+    <a href="{U_FILTER_BEGINS_Y}">Y</a>
+    <a href="{U_FILTER_BEGINS_Z}">Z</a>
+  </p>
+</div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+
+    <table>
+        <tr>
+            <th>{L_GROUP_LEADER}</th>
+            <th>{L_LOCATION}</th>
+            <th>{L_JOINED}</th>
+            <!-- IF IS_LEADER -->
+            <th></th>
+            <th></th>
+            <!-- ENDIF -->
+        </tr>
+        <!-- BEGIN leader_list -->
+        <tr>
+        </tr>
+        <!-- END leader_list -->
+    </table>
+
+    <table>
+        <tr>
+            <th>{L_GROUP_MEMBERS}</th>
+            <th>{L_LOCATION}</th>
+            <th>{L_JOINED}</th>
+            <!-- IF IS_LEADER -->
+            <th></th>
+            <th></th>
+            <!-- ENDIF -->
+        </tr>
+        <!-- BEGIN member_list -->
+        <tr>
+            <td></td>
+        </tr>
+        <!-- END member_list -->
+    </table>
+
+	<div class="cheat-clear-left"></div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+
+<!-- INCLUDE page_footer.html -->

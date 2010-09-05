@@ -71,6 +71,7 @@ namespace BoxSocial.Groups
 
         private string displayNameOwnership = null;
         private UserGroup parent;
+        private Access access;
 
         private Dictionary<User, bool> groupMemberCache = new Dictionary<User, bool>();
         private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
@@ -330,7 +331,15 @@ namespace BoxSocial.Groups
 
         public override Access Access
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+
+                return access;
+            }
         }
 
         public override List<AccessControlPermission> AclPermissions
@@ -340,42 +349,67 @@ namespace BoxSocial.Groups
 
         public override bool IsItemGroupMember(User viewer, ItemKey key)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override List<PrimitivePermissionGroup> GetPrimitivePermissionGroups()
         {
-            throw new NotImplementedException();
+            List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
+
+            return ppgs;
         }
 
         public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsSubGroupMember(viewer);
+            }
+
+            return false;
         }
 
         public override bool CanEditPermissions()
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsSubGroupLeader(core.Session.LoggedInMember);
+            }
+
+            return false;
         }
 
         public override bool CanEditItem()
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsSubGroupLeader(core.Session.LoggedInMember);
+            }
+
+            return false;
         }
 
         public override bool CanDeleteItem()
         {
-            throw new NotImplementedException();
+            if (core.LoggedInMemberId > 0)
+            {
+                return IsSubGroupLeader(core.Session.LoggedInMember);
+            }
+
+            return false;
         }
 
         public override bool GetDefaultCan(string permission)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override string DisplayTitle
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return "User Group: " + DisplayName;
+            }
         }
 
         public SubUserGroup(Core core, long groupId)
@@ -482,6 +516,23 @@ namespace BoxSocial.Groups
                 {
                     preLoadMemberCache(member);
                     return groupMemberCache[member];
+                }
+            }
+            return false;
+        }
+
+        public bool IsSubGroupLeader(User member)
+        {
+            if (member != null)
+            {
+                if (groupLeaderCache.ContainsKey(member))
+                {
+                    return groupLeaderCache[member];
+                }
+                else
+                {
+                    preLoadMemberCache(member);
+                    return groupLeaderCache[member];
                 }
             }
             return false;

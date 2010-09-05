@@ -1322,12 +1322,12 @@ namespace BoxSocial.Applications.Forum
                 if (forumId == 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}forum/mcp",
-                        Owner.UriStub), true);
+                        Owner.UriStubAbsolute), true);
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}forum/mcp?fid={1}",
-                        Owner.UriStub, forumId), true);
+                        Owner.UriStubAbsolute, forumId), true);
                 }
             }
         }

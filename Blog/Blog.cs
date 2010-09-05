@@ -52,6 +52,8 @@ namespace BoxSocial.Applications.Blog
         private string title;
         [DataField("blog_entries")]
         private long entries;
+        [DataField("blog_drafts")]
+        private long drafts;
         [DataField("blog_comments")]
         private long comments;
         [DataField("blog_visits")]
@@ -90,6 +92,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return entries;
+            }
+        }
+
+        public long Drafts
+        {
+            get
+            {
+                return drafts;
             }
         }
 
@@ -369,13 +379,13 @@ namespace BoxSocial.Applications.Blog
                 bpage = 1;
             }
 
-            string status = (drafts) ? "DRAFT" : "PUBLISH";
+            PublishStatuses status = (drafts) ? PublishStatuses.Draft : PublishStatuses.Publish;
 
-            query.AddCondition("post_status", status);
+            query.AddCondition("post_status", (byte)status);
             query.AddCondition("user_id", UserId);
             query.AddSort(SortOrder.Descending, "post_time_ut");
-            query.LimitStart = (bpage - 1) * 10;
-            query.LimitCount = 10;
+            query.LimitStart = (bpage - 1) * perPage;
+            query.LimitCount = perPage;
 
             DataTable blogEntriesTable = db.Query(query);
 

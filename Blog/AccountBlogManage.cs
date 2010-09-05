@@ -77,7 +77,6 @@ namespace BoxSocial.Applications.Blog
             ushort readAccessLevel = 0x0000;
             List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, p, 25, ref readAccessLevel);
 
-            int i = 0;
             foreach (BlogEntry be in blogEntries)
             {
                 VariableCollection blogVariableCollection = template.CreateChild("blog_list");
@@ -92,12 +91,6 @@ namespace BoxSocial.Applications.Blog
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
-
-                if (i % 2 == 0)
-                {
-                    blogVariableCollection.Parse("INDEX_EVEN", "TRUE");
-                }
-                i++;
             }
 
             core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Entries / 25.0)), false);

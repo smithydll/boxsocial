@@ -249,13 +249,14 @@ namespace BoxSocial.Applications.Blog
             /*
              * Create a blog if they do not already have one
              */
+            Blog myBlog = null;
             try
             {
-                Blog myBlog = new Blog(core, LoggedInMember);
+                myBlog = new Blog(core, LoggedInMember);
             }
             catch (InvalidBlogException)
             {
-                Blog.Create(core);
+                myBlog = Blog.Create(core);
             }
 
             bool postEditTimestamp = false;
@@ -312,7 +313,33 @@ namespace BoxSocial.Applications.Blog
             // update, must happen before save new because it populates postId
             if (postId > 0)
             {
+                db.BeginTransaction();
+
                 BlogEntry myBlogEntry = new BlogEntry(core, postId);
+
+                if (publishStatus != myBlogEntry.Status)
+                {
+                    switch (publishStatus)
+                    {
+                        case PublishStatuses.Publish:
+                            UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
+                            uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
+                            uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Subtraction, 1));
+                            uQuery.AddCondition("user_id", Owner.Id);
+
+                            db.Query(uQuery);
+                            break;
+                        case PublishStatuses.Draft:
+                            uQuery = new UpdateQuery(typeof(Blog));
+                            uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Addition, 1));
+                            uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Subtraction, 1));
+                            uQuery.AddCondition("user_id", Owner.Id);
+
+                            db.Query(uQuery);
+                            break;
+                    }
+                }
+
                 myBlogEntry.Title = title;
                 myBlogEntry.Body = postBody;
                 myBlogEntry.License = license;
@@ -327,24 +354,6 @@ namespace BoxSocial.Applications.Blog
                 myBlogEntry.Update();
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, tags);
-
-                /*UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
-                uQuery.AddCondition("post_title", title);
-                uQuery.AddCondition("post_modified_ut", UnixTime.UnixTimeStamp());
-                uQuery.AddCondition("post_ip", session.IPAddress.ToString());
-                uQuery.AddCondition("post_text", postBody);
-                uQuery.AddCondition("post_license", license);
-                uQuery.AddCondition("post_status", status);
-                uQuery.AddCondition("post_category", category);
-                if (postEditTimestamp)
-                {
-                    uQuery.AddCondition("post_time_ut", tz.GetUnixTimeStamp(postTime));
-                }
-                uQuery.AddCondition("post_id", postId);
-
-                db.Query(uQuery);*/
-
-                /* do not count edits as new postings*/
             }
             else if (postId == 0) // else if to make sure only one triggers
             {
@@ -369,12 +378,27 @@ namespace BoxSocial.Applications.Blog
                 myBlogEntry.Guid = postGuid;
                 myBlogEntry.Update();
 
-                db.UpdateQuery(string.Format("UPDATE user_blog SET blog_entries = blog_entries + 1 WHERE user_id = {0}",
-                    LoggedInMember.UserId));
+                switch (publishStatus)
+                {
+                    case PublishStatuses.Publish:
+                        UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
+                        uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
+                        uQuery.AddCondition("user_id", Owner.Id);
+
+                        db.Query(uQuery);
+                        break;
+                    case PublishStatuses.Draft:
+                        uQuery = new UpdateQuery(typeof(Blog));
+                        uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Addition, 1));
+                        uQuery.AddCondition("user_id", Owner.Id);
+
+                        db.Query(uQuery);
+                        break;
+                }
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, tags, true);
 
-                if (status == "PUBLISH")
+                if (publishStatus == PublishStatuses.Publish)
                 {
                     // TODO Permissions
                     //if (Access.FriendsCanRead(myBlogEntry.Permissions))

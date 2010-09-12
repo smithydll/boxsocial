@@ -1,0 +1,90 @@
+﻿<h3>Manage User Groups Members :: {SUBGROUP_DISPLAY_NAME}</h3>
+
+<table style="width: 100%">
+<tr>
+	<th>User</th>
+	<th>Default Group for Member</th>
+	<th>Joined</th>
+	<th>&nbsp;</th>
+</tr>
+<tr>
+	<th colspan="4">Group Leaders</th>
+</tr>
+<!-- IF leader_list -->
+<!-- BEGIN leader_list -->
+<!-- IF leader_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{leader_list.U_USER}">{leader_list.DISPLAY_NAME}</a></td>
+	<td>{leader_list.DEFAULT_GROUP}</td>
+	<td>{leader_list.JOINED_DATE}</td>
+	<td>{leader_list.S_MARK}</td>
+</tr>
+<!-- END leader_list -->
+<!-- ELSE -->
+<tr>
+	<td colspan="4">This group has no leaders.</td>
+</tr>
+<!-- ENDIF -->
+<!-- IF awaiting_list -->
+<tr>
+	<th colspan="4">Pending</th>
+</tr>
+<!-- BEGIN awaiting_list -->
+<!-- IF awaiting_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{awaiting_list.U_USER}">{awaiting_list.DISPLAY_NAME}</a></td>
+	<td>{awaiting_list.DEFAULT_GROUP}</td>
+	<td>{awaiting_list.JOINED_DATE}</td>
+	<td>{awaiting_list.S_MARK}</td>
+</tr>
+<!-- END awaiting_list -->
+<!-- ENDIF -->
+<tr>
+	<th colspan="4">Approved Members</th>
+</tr>
+<!-- IF member_list -->
+<!-- BEGIN member_list -->
+<!-- IF member_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{member_list.U_USER}">{member_list.DISPLAY_NAME}</a></td>
+	<td>{member_list.DEFAULT_GROUP}</td>
+	<td>{member_list.JOINED_DATE}</td>
+	<td>{member_list.S_MARK}</td>
+</tr>
+<!-- END member_list -->
+<!-- ELSE -->
+<tr>
+	<td colspan="4">This group is empty.</td>
+</tr>
+<!-- ENDIF -->
+</table>
+
+<h3>Add Users To Group</h3>
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Add Users To Group</legend>
+		<dl id="form-list">
+			<dt class="top"><label for="make-leader">Make Group Leader:</label></dt>
+		    <dd class="top">{S_MAKE_LEADER}</dd>
+			<dt class="top"><label for="make-leader">Make Default Group:</label></dt>
+		    <dd class="top">{S_MAKE_DEFAULT_GROUP}</dd>
+            <dt class="top"><label for="usernames">Usernames:</label></dt>
+		    <dd class="top">{S_USERNAMES}</dd>
+			<dt class="top"></dt>
+			<dd class="top"><input type="submit" value="Save Group" name="save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="groups" />
+        <input type="hidden" name="sub" value="subgroups" />
+		<input type="hidden" name="id" value="{S_GROUP_ID}" />
+        <input type="hidden" name="mode" value="members" />
+	</fieldset>
+</form>

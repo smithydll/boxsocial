@@ -217,6 +217,14 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string EditMembersUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "members", Id, true);
+            }
+        }
+
         public string EditUri
         {
             get
@@ -293,6 +301,7 @@ namespace BoxSocial.Groups
             switch (SubGroupType)
             {
                 case "OPEN":
+                case "REQUEST":
                 case "CLOSED":
                     return 0x0001;
                 case "PRIVATE":
@@ -371,22 +380,12 @@ namespace BoxSocial.Groups
 
         public override bool CanEditPermissions()
         {
-            if (core.LoggedInMemberId > 0)
-            {
-                return IsSubGroupLeader(core.Session.LoggedInMember);
-            }
-
-            return false;
+            return Parent.CanEditPermissions();
         }
 
         public override bool CanEditItem()
         {
-            if (core.LoggedInMemberId > 0)
-            {
-                return IsSubGroupLeader(core.Session.LoggedInMember);
-            }
-
-            return false;
+            return Parent.CanEditItem();
         }
 
         public override bool CanDeleteItem()
@@ -495,12 +494,22 @@ namespace BoxSocial.Groups
                         groupMemberAbsoluteCache.Add(member, true);
                         break;
                 }
+
+                if ((bool)memberTable.Rows[0]["sub_group_member_is_leader"])
+                {
+                    groupLeaderCache.Add(member, true);
+                }
+                else
+                {
+                    groupLeaderCache.Add(member, false);
+                }
             }
             else
             {
                 groupMemberCache.Add(member, false);
                 groupMemberPendingCache.Add(member, false);
                 groupMemberAbsoluteCache.Add(member, false);
+                groupLeaderCache.Add(member, false);
             }
         }
 
@@ -642,6 +651,31 @@ namespace BoxSocial.Groups
             return members;
         }
 
+        public bool AddMember(User member, bool approved, bool isLeader, bool isDefault)
+        {
+            if (Parent.IsGroupMember(member))
+            {
+                InsertQuery iQuery = new InsertQuery(typeof(SubGroupMember));
+                iQuery.AddField("user_id", member.Id);
+                iQuery.AddField("group_id", Parent.Id);
+                iQuery.AddField("sub_group_id", Id);
+                iQuery.AddField("sub_group_member_date_ut", UnixTime.UnixTimeStamp());
+                iQuery.AddField("sub_group_member_ip", core.Session.IPAddress.ToString());
+                iQuery.AddField("sub_group_member_approved", approved);
+                iQuery.AddField("sub_group_member_is_leader", isLeader);
+                iQuery.AddField("sub_group_member_default", isDefault);
+
+                db.Query(iQuery);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
         public static SubUserGroup Create(Core core, UserGroup parent, string groupTitle, string groupSlug, string groupDescription, string groupType)
         {
             Mysql db = core.Db;
@@ -661,6 +695,9 @@ namespace BoxSocial.Groups
             {
                 case "open":
                     groupType = "OPEN";
+                    break;
+                case "request":
+                    groupType = "REQUEST";
                     break;
                 case "closed":
                     groupType = "CLOSED";
@@ -683,6 +720,9 @@ namespace BoxSocial.Groups
                 new FieldValuePair("sub_group_reg_date_ut", UnixTime.UnixTimeStamp()),
                 new FieldValuePair("sub_group_colour", 0x000000),
                 new FieldValuePair("sub_group_members", 0));
+
+            /*db.UpdateQuery(string.Format("INSERT INTO sub_group_members (user_id, group_id, sub_group_id, sub_group_member_approved, sub_group_member_ip, sub_group_member_date_ut, sub_group_member_is_leader) VALUES ({0}, {1}, {2}, 1, '{3}', UNIX_TIMESTAMP(), 1)",
+                session.LoggedInMember.UserId, parent.Id, ((SubUserGroup)item).Id, Mysql.Escape(session.IPAddress.ToString())));*/
 
             return (SubUserGroup)item;
         }

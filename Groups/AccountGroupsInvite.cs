@@ -81,6 +81,7 @@ namespace BoxSocial.Groups
                 switch (thisGroup.GroupType)
                 {
                     case "OPEN":
+                    case "REQUEST":
                     case "CLOSED":
                     case "PRIVATE":
                         break;

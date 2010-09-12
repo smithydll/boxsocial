@@ -45,8 +45,6 @@ namespace BoxSocial.Groups
     [PermissionGroup]
     public class GroupMember : User
     {
-        public const string USER_GROUP_FIELDS = "gm.user_id, gm.group_id, gm.group_member_approved, gm.group_member_ip, gm.group_member_date_ut";
-
         [DataField("user_id")]
         private new long userId;
         [DataField("group_id")]
@@ -57,6 +55,10 @@ namespace BoxSocial.Groups
         private string memberJoinIp;
         [DataField("group_member_approved")]
         private byte memberApproval;
+        [DataField("group_member_colour", 6)]
+        private string memberColour;
+        [DataField("group_default_subgroup")]
+        private long memberDefaultSubGroup;
 
         private bool isOperator;
 

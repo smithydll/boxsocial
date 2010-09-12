@@ -765,6 +765,9 @@ namespace BoxSocial.Groups
                 case "open":
                     groupType = "OPEN";
                     break;
+                case "request":
+                    groupType = "REQUEST";
+                    break;
                 case "closed":
                     groupType = "CLOSED";
                     break;
@@ -1135,6 +1138,7 @@ namespace BoxSocial.Groups
             switch (GroupType)
             {
                 case "OPEN":
+                case "REQUEST":
                 case "CLOSED":
                     return 0x0001;
                 case "PRIVATE":
@@ -1653,6 +1657,9 @@ namespace BoxSocial.Groups
                     case "open":
                         e.Template.Parse("S_OPEN_CHECKED", selected);
                         break;
+                    case "request":
+                        e.Template.Parse("S_REQUEST_CHECKED", selected);
+                        break;
                     case "closed":
                         e.Template.Parse("S_CLOSED_CHECKED", selected);
                         break;
@@ -1837,6 +1844,7 @@ namespace BoxSocial.Groups
                     {
                         case "OPEN":
                             return true;
+                        case "REQUEST":
                         case "CLOSED":
                             if (IsGroupMember(core.Session.LoggedInMember))
                             {

@@ -101,6 +101,9 @@ namespace BoxSocial.Groups
                 case "OPEN":
                     template.Parse("S_OPEN_CHECKED", selected);
                     break;
+                case "REQUEST":
+                    template.Parse("S_REQUEST_CHECKED", selected);
+                    break;
                 case "CLOSED":
                     template.Parse("S_CLOSED_CHECKED", selected);
                     break;
@@ -165,6 +168,9 @@ namespace BoxSocial.Groups
             {
                 case "open":
                     type = "OPEN";
+                    break;
+                case "request":
+                    type = "REQUEST";
                     break;
                 case "closed":
                     type = "CLOSED";

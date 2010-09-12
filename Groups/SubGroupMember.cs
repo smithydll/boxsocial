@@ -51,6 +51,8 @@ namespace BoxSocial.Groups
         private byte memberApproval;
         [DataField("sub_group_member_is_leader")]
         private bool isGroupLeader;
+        [DataField("sub_group_member_default")]
+        private bool isDefaultGroup;
 
         public SubGroupMember(Core core, SubUserGroup group, long userId)
             : base(core)
@@ -84,7 +86,7 @@ namespace BoxSocial.Groups
         public SubGroupMember(Core core, DataRow memberRow)
             : base(core)
         {
-            loadItemInfo(typeof(GroupMember), memberRow);
+            loadItemInfo(typeof(SubGroupMember), memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.PrimitiveCache[userId]);
         }
@@ -95,6 +97,8 @@ namespace BoxSocial.Groups
             userId = (int)memberRow["user_id"];
             memberJoinDateRaw = (long)memberRow["sub_group_member_date_ut"];
             memberApproval = (byte)memberRow["sub_group_member_approved"];
+            isGroupLeader = (bool)memberRow["sub_group_member_is_leader"];
+            isDefaultGroup = (bool)memberRow["sub_group_member_default"];
         }
     }
 }

@@ -99,6 +99,9 @@ namespace BoxSocial.Groups
                     case "OPEN":
                         groupVariableCollection.Parse("GROUP_TYPE", "Open");
                         break;
+                    case "REQUEST":
+                        groupVariableCollection.Parse("GROUP_TYPE", "Request");
+                        break;
                     case "CLOSED":
                         groupVariableCollection.Parse("GROUP_TYPE", "Closed");
                         break;

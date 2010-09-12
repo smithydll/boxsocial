@@ -65,6 +65,7 @@ namespace BoxSocial.Groups
         {
             AddModeHandler("create", new ModuleModeHandler(AccountSubGroupsManage_Create));
             AddModeHandler("edit", new ModuleModeHandler(AccountSubGroupsManage_Create));
+            AddModeHandler("members", new ModuleModeHandler(AccountSubGroupsManage_Members));
         }
 
         void AccountSubGroupsManage_Show(object sender, EventArgs e)
@@ -85,6 +86,8 @@ namespace BoxSocial.Groups
                     subGroupVariableCollection.Parse("ID", subGroup.Id);
                     subGroupVariableCollection.Parse("MEMBERS", subGroup.MemberCount);
 
+                    subGroupVariableCollection.Parse("U_SUBGROUP", subGroup.Uri);
+                    subGroupVariableCollection.Parse("U_MEMBERS", subGroup.EditMembersUri);
                     subGroupVariableCollection.Parse("U_EDIT", subGroup.EditUri);
                     subGroupVariableCollection.Parse("U_DELETE", subGroup.DeleteUri);
                 }
@@ -98,6 +101,103 @@ namespace BoxSocial.Groups
             }
         }
 
+        void AccountSubGroupsManage_Members(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_group_subgroup_members");
+
+            long id = core.Functions.RequestLong("id", 0);
+
+            if (id <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                subUserGroup = new SubUserGroup(core, id);
+            }
+            catch (InvalidSubGroupException)
+            {
+                return;
+            }
+
+            if (subUserGroup.CanEditItem())
+            {
+                List<SubGroupMember> leaders = subUserGroup.GetLeaders();
+                List<SubGroupMember> awaiting = subUserGroup.GetMembersWaitingApproval();
+                List<SubGroupMember> members = subUserGroup.GetMembers(core.PageNo, 25);
+
+                UserSelectBox newUserSelectBox = new UserSelectBox(core, "usernames");
+                newUserSelectBox.SelectMultiple = false;
+                //Form.AddFormField(newUserSelectBox);
+
+                YesNoList makeLeaderYesNoList = new YesNoList(core, "make-leader");
+                makeLeaderYesNoList.SelectedKey = "no";
+                //Form.AddFormField(makeLeaderYesNoList);
+
+                YesNoList makeDefaultYesNoList = new YesNoList(core, "make-default");
+                makeDefaultYesNoList.SelectedKey = "no";
+                //Form.AddFormField(makeDefaultYesNoList);
+
+                template.Parse("SUBGROUP_DISPLAY_NAME", subUserGroup.DisplayName);
+                template.Parse("S_USERNAMES", newUserSelectBox);
+                template.Parse("S_MAKE_LEADER", makeLeaderYesNoList);
+                template.Parse("S_MAKE_DEFAULT_GROUP", makeDefaultYesNoList);
+                template.Parse("S_GROUP_ID", subUserGroup.Id.ToString());
+
+                foreach (SubGroupMember member in leaders)
+                {
+                    VariableCollection memberVariableCollection = template.CreateChild("leader_list");
+                    memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                }
+
+                foreach (SubGroupMember member in awaiting)
+                {
+                    VariableCollection memberVariableCollection = template.CreateChild("awaiting_list");
+                    memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                }
+
+                foreach (SubGroupMember member in members)
+                {
+                    VariableCollection memberVariableCollection = template.CreateChild("member_list");
+                    memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                }
+                
+            }
+            else
+            {
+                return;
+            }
+
+            Save(AccountSubGroupsManage_Members_AddNew);
+        }
+
+        void AccountSubGroupsManage_Members_AddNew(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            List<long> userIds = UserSelectBox.FormUsers(core, "usernames");
+            core.LoadUserProfiles(userIds);
+
+            foreach (long id in userIds)
+            {
+                if (subUserGroup.AddMember(core.PrimitiveCache[id], true, YesNoList.FormBool(core, "make-leader"), YesNoList.FormBool(core, "make-default")))
+                {
+
+                    if (YesNoList.FormBool(core, "make-leader"))
+                    {
+                        VariableCollection memberVariableCollection = template.CreateChild("leader_list");
+                        memberVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[id].DisplayName);
+                    }
+                    else
+                    {
+                        VariableCollection memberVariableCollection = template.CreateChild("member_list");
+                        memberVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[id].DisplayName);
+                    }
+                }
+            }
+        }
+
         SubUserGroup subUserGroup = null;
         void AccountSubGroupsManage_Create(object sender, ModuleModeEventArgs e)
         {
@@ -106,19 +206,24 @@ namespace BoxSocial.Groups
             TextBox titleTextBox = new TextBox("title");
             titleTextBox.MaxLength = 64;
             titleTextBox.Script.OnChange = "UpdateSlug()";
+            Form.AddFormField(titleTextBox);
 
             TextBox slugTextBox = new TextBox("slug");
             slugTextBox.MaxLength = 64;
+            Form.AddFormField(slugTextBox);
 
             TextBox descriptionTextBox = new TextBox("description");
             descriptionTextBox.IsFormatted = true;
             descriptionTextBox.Lines = 4;
+            Form.AddFormField(descriptionTextBox);
 
             RadioList groupTypeRadioList = new RadioList("group-type");
 
             groupTypeRadioList.Add(new RadioListItem(groupTypeRadioList.Name, "open", "Open Group"));
+            groupTypeRadioList.Add(new RadioListItem(groupTypeRadioList.Name, "request", "Request Group"));
             groupTypeRadioList.Add(new RadioListItem(groupTypeRadioList.Name, "closed", "Closed Group"));
             groupTypeRadioList.Add(new RadioListItem(groupTypeRadioList.Name, "private", "Private Group"));
+            Form.AddFormField(groupTypeRadioList);
 
             switch (e.Mode)
             {
@@ -149,24 +254,31 @@ namespace BoxSocial.Groups
                         return;
                     }
 
-                    titleTextBox.Script.OnChange = string.Empty;
-                    titleTextBox.Value = subUserGroup.DisplayName;
-                    slugTextBox.IsDisabled = true;
-                    slugTextBox.Value = subUserGroup.Key;
-                    descriptionTextBox.Value = subUserGroup.Description;
-
-                    switch (subUserGroup.SubGroupType)
+                    if (!Form.IsFormSubmission)
                     {
-                        case "OPEN":
-                            groupTypeRadioList.SelectedKey = "open";
-                            break;
-                        case "CLOSED":
-                            groupTypeRadioList.SelectedKey = "closed";
-                            break;
-                        case "PRIVATE":
-                            groupTypeRadioList.SelectedKey = "private";
-                            break;
+                        titleTextBox.Script.OnChange = string.Empty;
+                        titleTextBox.Value = subUserGroup.DisplayName;
+                        descriptionTextBox.Value = subUserGroup.Description;
+
+                        switch (subUserGroup.SubGroupType)
+                        {
+                            case "OPEN":
+                                groupTypeRadioList.SelectedKey = "open";
+                                break;
+                            case "REQUEST":
+                                groupTypeRadioList.SelectedKey = "request";
+                                break;
+                            case "CLOSED":
+                                groupTypeRadioList.SelectedKey = "closed";
+                                break;
+                            case "PRIVATE":
+                                groupTypeRadioList.SelectedKey = "private";
+                                break;
+                        }
                     }
+
+                    slugTextBox.Value = subUserGroup.Key;
+                    slugTextBox.IsDisabled = true;
 
                     template.Parse("S_GROUP_ID", subUserGroup.Id.ToString());
                     template.Parse("EDIT", "TRUE");
@@ -178,6 +290,7 @@ namespace BoxSocial.Groups
             template.Parse("S_DESCRIPTION", descriptionTextBox);
 
             template.Parse("S_TYPE_OPEN", groupTypeRadioList["open"]);
+            template.Parse("S_TYPE_REQUEST", groupTypeRadioList["request"]);
             template.Parse("S_TYPE_CLOSED", groupTypeRadioList["closed"]);
             template.Parse("S_TYPE_PRIVATE", groupTypeRadioList["private"]);
 
@@ -231,6 +344,9 @@ namespace BoxSocial.Groups
                     {
                         case "open":
                             groupType = "OPEN";
+                            break;
+                        case "request":
+                            groupType = "REQUEST";
                             break;
                         case "closed":
                             groupType = "CLOSED";

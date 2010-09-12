@@ -235,12 +235,20 @@ namespace BoxSocial.Groups {
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
-        ///	&lt;td&gt;{group_list.GROUP_DISPLAY_NAME}&lt;/td&gt;
-        ///	&lt;td&gt;{gr [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a href=&quot;{group_list.U_MEMBERS}&quot;&gt;{group_list.D [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_group_subgroup_manage {
             get {
                 return ResourceManager.GetString("account_group_subgroup_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_group_subgroup_members {
+            get {
+                return ResourceManager.GetString("account_group_subgroup_members", resourceCulture);
             }
         }
         

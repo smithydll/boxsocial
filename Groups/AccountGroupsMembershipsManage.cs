@@ -141,6 +141,9 @@ namespace BoxSocial.Groups
                     case "OPEN":
                         groupVariableCollection.Parse("GROUP_TYPE", "Open");
                         break;
+                    case "REQUEST":
+                        groupVariableCollection.Parse("GROUP_TYPE", "Request");
+                        break;
                     case "CLOSED":
                         groupVariableCollection.Parse("GROUP_TYPE", "Closed");
                         break;
@@ -231,6 +234,7 @@ namespace BoxSocial.Groups
                         case "PRIVATE": // assume as you've been invited that it is enough for activation
                             activated = 1;
                             break;
+                        case "REQUEST":
                         case "CLOSED":
                             activated = 0;
                             break;

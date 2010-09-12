@@ -47,5 +47,7 @@ namespace BoxSocial.Forms
                 name = value;
             }
         }
+
+        public abstract void SetValue(string value);
     }
 }

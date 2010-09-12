@@ -54,6 +54,7 @@
     <Compile Include="Button.cs" />
     <Compile Include="CheckBox.cs" />
     <Compile Include="CheckBoxArray.cs" />
+    <Compile Include="Form.cs" />
     <Compile Include="FormField.cs" />
     <Compile Include="HiddenField.cs" />
     <Compile Include="Image.cs" />

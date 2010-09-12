@@ -90,5 +90,10 @@ namespace BoxSocial.Forms
 
             return checkBoxArray.ToString();
         }
+
+        public override void SetValue(string value)
+        {
+            // Do Nothing
+        }
     }
 }

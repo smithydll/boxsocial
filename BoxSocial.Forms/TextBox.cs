@@ -191,5 +191,10 @@ namespace BoxSocial.Forms
                     Script.ToString());
             }
         }
+
+        public override void SetValue(string value)
+        {
+            this.Value = value;
+        }
     }
 }

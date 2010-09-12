@@ -85,5 +85,10 @@ namespace BoxSocial.Forms
                 (IsDisabled) ? " disabled=\"disabled\"" : "",
                 (!IsVisible) ? " display: none;" : "");
         }
+
+        public override void SetValue(string value)
+        {
+            // Do Nothing
+        }
     }
 }

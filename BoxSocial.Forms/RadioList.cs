@@ -96,6 +96,46 @@ namespace BoxSocial.Forms
             }
         }
 
+        public void Add(string key, string text)
+        {
+            RadioListItem item = new RadioListItem(Name, key, text);
+            if (!itemKeys.ContainsKey(item.Key))
+            {
+                items.Add(item);
+                itemKeys.Add(item.Key, item);
+            }
+        }
+
+        public void Add(string key, string text, string icon)
+        {
+            RadioListItem item = new RadioListItem(Name, key, text, icon);
+            if (!itemKeys.ContainsKey(item.Key))
+            {
+                items.Add(item);
+                itemKeys.Add(item.Key, item);
+            }
+        }
+
+        public void Add(string key, string text, bool selectable)
+        {
+            RadioListItem item = new RadioListItem(Name, key, text, selectable);
+            if (!itemKeys.ContainsKey(item.Key))
+            {
+                items.Add(item);
+                itemKeys.Add(item.Key, item);
+            }
+        }
+
+        public void Add(string key, string text, string icon, bool selectable)
+        {
+            RadioListItem item = new RadioListItem(Name, key, text, icon, selectable);
+            if (!itemKeys.ContainsKey(item.Key))
+            {
+                items.Add(item);
+                itemKeys.Add(item.Key, item);
+            }
+        }
+
         /// <summary>
         /// Returns true is contains the given key.
         /// </summary>
@@ -124,6 +164,11 @@ namespace BoxSocial.Forms
             selectBox.AppendLine("</ul>");
 
             return selectBox.ToString();
+        }
+
+        public override void SetValue(string value)
+        {
+            SelectedKey = value;
         }
     }
 }

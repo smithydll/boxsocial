@@ -195,5 +195,10 @@ namespace BoxSocial.Forms
                     HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(text));
             }
         }
+
+        public override void SetValue(string value)
+        {
+            // Do Nothing
+        }
     }
 }

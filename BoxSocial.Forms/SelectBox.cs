@@ -169,5 +169,10 @@ namespace BoxSocial.Forms
             return items.GetHashCode();
         }
 
+
+        public override void SetValue(string value)
+        {
+            SelectedKey = value;
+        }
     }
 }

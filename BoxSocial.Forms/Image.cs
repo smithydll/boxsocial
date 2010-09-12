@@ -74,5 +74,10 @@ namespace BoxSocial.Forms
                 (string.IsNullOrEmpty(styleClass)) ? string.Empty : " class=\"" + styleClass + "\"");
 
         }
+
+        public override void SetValue(string value)
+        {
+            // Do Nothin
+        }
     }
 }

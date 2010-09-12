@@ -81,5 +81,17 @@ namespace BoxSocial.Forms
             return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"width: 100%;\" {1}{2}/>",
                 HttpUtility.HtmlEncode(name), (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
         }
+
+        public override void SetValue(string value)
+        {
+            if (value == "checked")
+            {
+                isChecked = true;
+            }
+            else
+            {
+                isChecked = false;
+            }
+        }
     }
 }

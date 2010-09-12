@@ -29,6 +29,8 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -55,8 +57,16 @@ namespace BoxSocial.Install
         private static string adminEmail;
         private static long adminUid;
 
+        private static ConsoleColor backgroundColour;
+        private static ConsoleColor foregroundColour;
+
+        private static char[] shortcuts = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
         static void Main(string[] args)
         {
+            backgroundColour = Console.BackgroundColor;
+            foregroundColour = Console.ForegroundColor;
+
             displayUpdateLock = new object();
 
             ThreadStart threadStart = new ThreadStart(updateDisplayedTime);
@@ -69,58 +79,286 @@ namespace BoxSocial.Install
             thread.Abort();
         }
 
-        static void PollMenu()
+        static void ExecuteMessage(string message, ConsoleColor backColour, bool pause)
         {
-            while (true)
+            lock (displayUpdateLock)
             {
-                lock (displayUpdateLock)
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.BackgroundColor = backColour;
+
+                Console.SetCursorPosition(5, Console.WindowHeight / 2 - 2);
+
+                for (int i = 5; i < Console.WindowWidth - 5; i++)
                 {
-                    ShowMainMenu();
-                    Console.CursorVisible = false;
+                    Console.Write(" ");
                 }
 
-                ConsoleKeyInfo menuKey = Console.ReadKey(false);
+                Console.SetCursorPosition(5, Console.WindowHeight / 2 - 1);
 
-                switch (menuKey.Key)
+                string[] lines = message.Split(new char[] { '\n' });
+
+                for (int j = 0; j < lines.Length; j++)
                 {
-                    case ConsoleKey.A: // Update Application
-                        EnterUpdateApplication();
-                        break;
-                    case ConsoleKey.B: // Sync Application
-                        break;
-                    case ConsoleKey.C: // Install Application
-                        break;
-                    case ConsoleKey.D: // Install Box Social
-                        EnterInstallBoxSocial();
-                        break;
-                    case ConsoleKey.Escape:
-                    case ConsoleKey.Q:
-                    case ConsoleKey.E: // Exit
-                        Console.Clear();
-                        return;
-                    case ConsoleKey.F:
-                        EnterUpgradePermissions();
-                        break;
+                    Console.Write(" ");
+                    Console.Write(lines[j]);
+
+                    for (int i = 5; i < Console.WindowWidth - 6 - lines[j].Length; i++)
+                    {
+                        Console.Write(" ");
+                    }
+
+                    Console.SetCursorPosition(5, Console.WindowHeight / 2 + j);
+                }
+
+                for (int i = 5; i < Console.WindowWidth - 5; i++)
+                {
+                    Console.Write(" ");
+                }
+
+                Console.BackgroundColor = backgroundColour;
+                Console.ForegroundColor = foregroundColour;
+            }
+
+            updateTimeFrame();
+
+            
+            Console.CursorVisible = false;
+            if (pause)
+            {
+                ConsoleKeyInfo key;
+                while ((key = Console.ReadKey(true)) != null)
+                {
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.Enter:
+                        case ConsoleKey.Escape:
+                            Console.Clear();
+                            return;
+                    }
                 }
             }
         }
 
-        static void ShowMainMenu()
+        static void ExecuteMenu(List<MenuOption> menuItems)
         {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.SetCursorPosition(5, 5);
-            Console.Write("a) Update Application");
-            Console.SetCursorPosition(5, 7);
-            Console.Write("b) Sync Application");
-            Console.SetCursorPosition(5, 9);
-            Console.Write("c) Install Application");
-            Console.SetCursorPosition(5, 11);
-            Console.Write("d) Install Box Social");
-            Console.SetCursorPosition(5, 13);
-            Console.Write("e) Exit");
-            Console.SetCursorPosition(5, 15);
-            Console.Write("f) Upgrade Permissions");
+            int selectedIndex = 0;
+
+            ShowMenu(menuItems, selectedIndex);
+
+            ConsoleKeyInfo key;
+            while ((key = Console.ReadKey(true)) != null)
+            {
+                switch (key.Key)
+                {
+                    case ConsoleKey.Escape:
+                        Console.Clear();
+                        return;
+                    case ConsoleKey.Enter:
+                        if (menuItems[selectedIndex].Handler != null)
+                        {
+                            menuItems[selectedIndex].Handler();
+                        }
+                        break;
+                    case ConsoleKey.UpArrow:
+                        if (selectedIndex > 0)
+                        {
+                            selectedIndex--;
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (selectedIndex < menuItems.Count - 1)
+                        {
+                            selectedIndex++;
+                        }
+                        break;
+                    default:
+                        for (int i = 0; i < menuItems.Count; i++) 
+                        {
+                            if (key.KeyChar == shortcuts[i])
+                            {
+                                selectedIndex = i;
+                                if (menuItems[i].Handler != null)
+                                {
+                                    menuItems[i].Handler();
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                ShowMenu(menuItems, selectedIndex);
+            }
+        }
+
+        static void ShowMenu(List<MenuOption> menuItems, int selectedIndex)
+        {
+            lock (displayUpdateLock)
+            {
+                Console.Clear();
+                Console.ForegroundColor = foregroundColour;
+
+                int j = 0;
+                int k = 0;
+                for (int i = 0; i < menuItems.Count; i++)
+                {
+                    Console.SetCursorPosition(5 + (Console.WindowWidth - 10) / 2 * j, 3 + 2 * k);
+
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.BackgroundColor = ConsoleColor.Green;
+                    }
+
+                    Console.Write(shortcuts[i].ToString() + ") " + menuItems[i].Title);
+
+                    Console.BackgroundColor = backgroundColour;
+                    Console.ForegroundColor = foregroundColour;
+
+                    k++;
+
+                    if (6 + 2 * k > Console.WindowHeight)
+                    {
+                        k = 0;
+                        j++;
+                    }
+                }
+            }
+            updateTimeFrame();
+
+            Console.CursorVisible = false;
+        }
+
+        static void DoExit()
+        {
+            Environment.Exit(0);
+        }
+
+        static void PollMenu()
+        {
+            List<MenuOption> menuItems = new List<MenuOption>();
+
+            menuItems.Add(new MenuOption("Update Application", EnterShowApplications));
+            menuItems.Add(new MenuOption("Sync Application", null));
+            menuItems.Add(new MenuOption("Install Application", null));
+            menuItems.Add(new MenuOption("Install Box Social", EnterInstallBoxSocial));
+            menuItems.Add(new MenuOption("Exit", DoExit));
+            menuItems.Add(new MenuOption("Upgrade Permissions", EnterUpgradePermissions));
+
+            ExecuteMenu(menuItems);
+        }
+
+        static void EnterShowApplications()
+        {
+            List<MenuOption> menuItems = new List<MenuOption>();
+
+            menuItems.Add(new MenuOption("Blog", UpdateBlog));
+            menuItems.Add(new MenuOption("BoxSocial.Internals", UpdateBoxSocialInternals));
+            menuItems.Add(new MenuOption("Calendar", UpdateCalendar));
+            menuItems.Add(new MenuOption("Forum", UpdateForum));
+            menuItems.Add(new MenuOption("Gallery", UpdateGallery));
+            menuItems.Add(new MenuOption("Groups", UpdateGroups));
+            menuItems.Add(new MenuOption("GuestBook", UpdateGuestbook));
+            menuItems.Add(new MenuOption("Mail", UpdateMail));
+            menuItems.Add(new MenuOption("Musician", UpdateMusician));
+            menuItems.Add(new MenuOption("Networks", UpdateNetworks));
+            menuItems.Add(new MenuOption("News", UpdateNews));
+            menuItems.Add(new MenuOption("Pages", UpdatePages));
+            menuItems.Add(new MenuOption("Profile", UpdateProfile));
+
+            ExecuteMenu(menuItems);
+        }
+
+        static void loadUpdateOptions()
+        {
+            FileStream fs = new FileStream("settings.xml", FileMode.Open);
+            InstallSettings settings;
+            XmlSerializer xs = new XmlSerializer(typeof(InstallSettings));
+            settings = (InstallSettings)xs.Deserialize(fs);
+            fs.Close();
+
+            Installer.domain = settings.Domain;
+            Installer.mysqlDatabase = settings.DatabaseName;
+            Installer.mysqlRootPassword = settings.DatabaseRootPassword;
+            Installer.root = settings.RootDirectory;
+        }
+
+        static void UpdateBlog()
+        {
+            loadUpdateOptions();
+            doUpdate("Blog");
+        }
+
+        static void UpdateBoxSocialInternals()
+        {
+            loadUpdateOptions();
+            doUpdate("BoxSocial.Internals");
+        }
+
+        static void UpdateCalendar()
+        {
+            loadUpdateOptions();
+            doUpdate("Calendar");
+        }
+
+        static void UpdateForum()
+        {
+            loadUpdateOptions();
+            doUpdate("Forum");
+        }
+
+        static void UpdateGallery()
+        {
+            loadUpdateOptions();
+            doUpdate("Gallery");
+        }
+
+        static void UpdateGroups()
+        {
+            loadUpdateOptions();
+            doUpdate("Groups");
+        }
+
+        static void UpdateGuestbook()
+        {
+            loadUpdateOptions();
+            doUpdate("GuestBook");
+        }
+
+        static void UpdateMail()
+        {
+            loadUpdateOptions();
+            doUpdate("Mail");
+        }
+
+        static void UpdateMusician()
+        {
+            loadUpdateOptions();
+            doUpdate("Musician");
+        }
+
+        static void UpdateNetworks()
+        {
+            loadUpdateOptions();
+            doUpdate("Networks");
+        }
+
+        static void UpdateNews()
+        {
+            loadUpdateOptions();
+            doUpdate("News");
+        }
+
+        static void UpdatePages()
+        {
+            loadUpdateOptions();
+            doUpdate("Pages");
+        }
+
+        static void UpdateProfile()
+        {
+            loadUpdateOptions();
+            doUpdate("Profile");
         }
 
         static void EnterUpgradePermissions()
@@ -452,7 +690,7 @@ namespace BoxSocial.Install
             {
                 Console.SetCursorPosition(18, 5);
             }
-            repo = getField(false, repo);
+            repo = getField(false, repo, new List<string> { "BoxSocial.Internals", "Blog", "Groups", "Forum" });
 
             lock (displayUpdateLock)
             {
@@ -663,6 +901,21 @@ namespace BoxSocial.Install
                         Installer.adminPassword = administrationPassword;
                         Installer.adminEmail = administrationEmail;
 
+                        FileStream fs = new FileStream("settings.xml", FileMode.OpenOrCreate);
+                        XmlSerializer xs = new XmlSerializer(typeof(InstallSettings));
+                        InstallSettings settings = new InstallSettings();
+                        settings.RootDirectory = root;
+                        settings.Domain = domain;
+                        settings.DatabaseHost = "localhost";
+                        settings.DatabaseRootUser = "root";
+                        settings.DatabaseRootPassword = mysqlRootPassword;
+                        settings.DatabaseWebUser = mysqlUser;
+                        settings.DatabaseWebPassword = mysqlUserPassword;
+                        settings.DatabaseType = "mysql";
+
+                        xs.Serialize(fs, settings);
+                        fs.Close();
+
                         doInstall();
                         Console.WriteLine("Box Social Installed");
                         Console.WriteLine("Press Enter to continue");
@@ -686,42 +939,49 @@ namespace BoxSocial.Install
         }
 
         #region Time Thread
+
+        static void updateTimeFrame()
+        {
+            lock (displayUpdateLock)
+            {
+                int left = Console.CursorLeft;
+                int top = Console.CursorTop;
+                ConsoleColor colour = Console.ForegroundColor;
+                bool cursor = Console.CursorVisible;
+
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.SetCursorPosition(0, 0);
+                Console.Write("Box Social Installer");
+                Console.SetCursorPosition(0, 1);
+                for (int i = 0; i < Console.WindowWidth; i++)
+                {
+                    Console.Write("-");
+                }
+
+                Console.SetCursorPosition(0, Console.WindowHeight - 2);
+
+                for (int i = 0; i < Console.WindowWidth; i++)
+                {
+                    Console.Write("-");
+                }
+
+                Console.SetCursorPosition(Console.WindowWidth - 10, 0);
+                Console.Write(DateTime.Now.ToShortTimeString());
+
+                Console.SetCursorPosition(left, top);
+                Console.ForegroundColor = colour;
+                Console.CursorVisible = cursor;
+            }
+        }
+
         static void updateDisplayedTime()
         {
             while (true)
             {
-                lock (displayUpdateLock)
-                {
-                    int left = Console.CursorLeft;
-                    int top = Console.CursorTop;
-                    ConsoleColor colour = Console.ForegroundColor;
-                    bool cursor = Console.CursorVisible;
+                updateTimeFrame();
 
-                    Console.CursorVisible = false;
-                    Console.ForegroundColor = ConsoleColor.White;
-
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write("Box Social Installer");
-                    Console.SetCursorPosition(0, 1);
-                    for (int i = 0; i < Console.WindowWidth; i++)
-                    {
-                        Console.Write("-");
-                    }
-
-                    Console.SetCursorPosition(0, Console.WindowHeight - 2);
-
-                    for (int i = 0; i < Console.WindowWidth; i++)
-                    {
-                        Console.Write("-");
-                    }
-
-                    Console.SetCursorPosition(Console.WindowWidth - 10, 0);
-                    Console.Write(DateTime.Now.ToShortTimeString());
-
-                    Console.SetCursorPosition(left, top);
-                    Console.ForegroundColor = colour;
-                    Console.CursorVisible = cursor;
-                }
                 Thread.Sleep(100);
             }
         }
@@ -734,6 +994,17 @@ namespace BoxSocial.Install
 
         static string getField(bool isPasswordField, string currentValue)
         {
+            return getField(isPasswordField, currentValue, null);
+        }
+
+        static string getField(bool isPasswordField, string currentValue, List<string> values)
+        {
+            bool listIsVisible = false;
+            int selectedIndex = 0;
+            string selectedValue = string.Empty;
+            int lastCursorLeft = Console.CursorLeft;
+            int lastCursorTop = Console.CursorTop;
+
             lock (displayUpdateLock)
             {
                 Console.CursorVisible = true;
@@ -757,19 +1028,72 @@ namespace BoxSocial.Install
             {
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
-                        lock (displayUpdateLock)
+                    case ConsoleKey.F2:
+                        if ((!listIsVisible) && values != null && values.Count > 0)
                         {
-                            Console.CursorVisible = false;
+                            lock (displayUpdateLock)
+                            {
+                                Console.CursorLeft = 5;
+                                Console.CursorTop = 5;
+                                Console.WriteLine("--------------------");
+                                foreach (string listItem in values)
+                                {
+                                    Console.Write("| " + listItem);
+                                    for (int i = 20 - listItem.Length - 2; i > 0; i--)
+                                    {
+                                        Console.Write(" ");
+                                    }
+                                    Console.WriteLine("|");
+                                }
+                                Console.WriteLine("--------------------");
+                            }
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        if (listIsVisible)
+                        {
+                            if (selectedIndex < values.Count - 1)
+                            {
+                                selectedIndex++;
+                                selectedValue = values[selectedIndex];
+                            }
+                        }
+                        break;
+                    case ConsoleKey.UpArrow:
+                        if (listIsVisible)
+                        {
+                            if (selectedIndex > 0)
+                            {
+                                selectedIndex--;
+                                selectedValue = values[selectedIndex];
+                            }
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        if (listIsVisible)
+                        {
+                            field = selectedValue;
+                            listIsVisible = false;
+                            // Redraw
+                        }
+                        else
+                        {
+                            lock (displayUpdateLock)
+                            {
+                                Console.CursorVisible = false;
+                            }
                         }
                         return field;
                     case ConsoleKey.Backspace:
-                        field = field.Substring(0, field.Length - 1);
-                        lock (displayUpdateLock)
+                        if (field.Length > 0)
                         {
-                            Console.CursorLeft = Console.CursorLeft - 1;
-                            Console.Write(" ");
-                            Console.CursorLeft = Console.CursorLeft - 1;
+                            field = field.Substring(0, field.Length - 1);
+                            lock (displayUpdateLock)
+                            {
+                                Console.CursorLeft = Console.CursorLeft - 1;
+                                Console.Write(" ");
+                                Console.CursorLeft = Console.CursorLeft - 1;
+                            }
                         }
                         break;
                     default:
@@ -810,17 +1134,20 @@ namespace BoxSocial.Install
             stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
             scriptsRoot = Path.Combine(root, "scripts");
 
+            ExecuteMessage("Updating `" + repo + "`.\nPlease Wait...", ConsoleColor.Blue, false);
+
             InstallRepository(repo);
             InstallApplication(repo);
             InstallLanguage("en", repo);
 
-            Console.WriteLine("Reloading apache");
             Process p1 = new Process();
             p1.StartInfo.FileName = "/etc/init.d/apache2";
             p1.StartInfo.Arguments = "force-reload";
             p1.Start();
 
             p1.WaitForExit();
+
+            ExecuteMessage("`" + repo + "` has been successfully updated.\nPress ENTER to continue.", ConsoleColor.Green, true);
         }
 
         static void doInstall()

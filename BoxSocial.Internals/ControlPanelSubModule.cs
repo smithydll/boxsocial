@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         private Dictionary<string, ModuleModeHandler> modes = new Dictionary<string, ModuleModeHandler>();
         private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
 
+        protected Form Form;
+
         public Primitive SetOwner
         {
             set
@@ -299,14 +301,23 @@ namespace BoxSocial.Internals
         /// </summary>
         private void CreateTemplate()
         {
+            string formSubmitUri = string.Empty;
             template = new Template(core.Http.TemplatePath, "1301.html");
             if (Owner != null)
             {
-                template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
-                template.Parse("S_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
+                formSubmitUri = core.Uri.AppendSid(Owner.AccountUriStub, true);
+                template.Parse("U_ACCOUNT", formSubmitUri);
+                template.Parse("S_ACCOUNT", formSubmitUri);
             }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetProse(core.Prose);
+
+            Form = new Form("control-panel", formSubmitUri);
+            Form.SetValues(core.Http.Form);
+            if (core.Http.Form["save"] != null)
+            {
+                Form.IsFormSubmission = true;
+            }
         }
 
         /// <summary>

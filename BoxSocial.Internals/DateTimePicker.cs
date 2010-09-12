@@ -272,5 +272,10 @@ namespace BoxSocial.Internals
 
             return datetime;
         }
+
+        public override void SetValue(string value)
+        {
+            // Do Nothing
+        }
     }
 }

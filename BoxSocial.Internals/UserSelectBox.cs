@@ -179,5 +179,10 @@ namespace BoxSocial.Internals
 
             return userIds;
         }
+
+        public override void SetValue(string value)
+        {
+            userIds = FormUsers(core, value);
+        }
     }
 }

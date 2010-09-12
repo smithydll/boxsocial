@@ -39,5 +39,17 @@ namespace BoxSocial.Internals
             Add("yes", core.Prose.GetString("YES"));
             Add("no", core.Prose.GetString("NO"));
         }
+
+        public static bool FormBool(Core core, string name)
+        {
+            switch (core.Http.Form[name])
+            {
+                case "yes":
+                    return true;
+                case "no":
+                default:
+                    return false;
+            }
+        }
     }
 }

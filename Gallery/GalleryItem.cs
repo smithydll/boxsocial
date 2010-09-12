@@ -1178,6 +1178,7 @@ namespace BoxSocial.Applications.Gallery
                     switch (((UserGroup)e.Page.Owner).GroupType)
                     {
                         case "OPEN":
+                        case "REQUEST":
                             // can view the gallery and all it's photos
                             break;
                         case "CLOSED":

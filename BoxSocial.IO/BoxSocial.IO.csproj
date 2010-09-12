@@ -45,6 +45,11 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK, Version=1.0.12.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files (x86)\AWS SDK for .NET\bin\AWSSDK.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="mysql.data, Version=6.2.2.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Users\Lachlan\Downloads\mysql-connector-net-6.2.2-noinstall\mysql.data.dll</HintPath>
@@ -56,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmazonS3.cs" />
     <Compile Include="IProse.cs" />
     <Compile Include="RawTemplate.cs" />
     <Compile Include="Database.cs" />
@@ -73,6 +79,7 @@
     <Compile Include="QueryFunction.cs" />
     <Compile Include="QueryOperation.cs" />
     <Compile Include="SelectQuery.cs" />
+    <Compile Include="Storage.cs" />
     <Compile Include="Template.cs" />
     <Compile Include="UniqueKey.cs" />
     <Compile Include="UpdateQuery.cs" />

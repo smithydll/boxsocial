@@ -232,6 +232,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
   </PropertyGroup>
 </Project>

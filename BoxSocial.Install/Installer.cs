@@ -39,6 +39,7 @@ namespace BoxSocial.Install
     public static class Installer
     {
         static object displayUpdateLock;
+        private static bool interactive = true;
 
         private static bool binary;
         private static string root;
@@ -64,6 +65,15 @@ namespace BoxSocial.Install
 
         static void Main(string[] args)
         {
+            if (args.Length >= 2)
+            {
+                interactive = false;
+                EnterCommandLine(args[0], args);
+
+                /* Exit Application */
+                return;
+            }
+
             backgroundColour = Console.BackgroundColor;
             foregroundColour = Console.ForegroundColor;
 
@@ -79,8 +89,47 @@ namespace BoxSocial.Install
             thread.Abort();
         }
 
+        static void EnterCommandLine(string option, string[] args)
+        {
+            switch (option)
+            {
+                case "update":
+                    loadUpdateOptions();
+
+                    if (args[1] == "all")
+                    {
+                        doUpdate("BoxSocial.Internals");
+                        doUpdate("Profile");
+                        doUpdate("Groups");
+                        doUpdate("Networks");
+                        doUpdate("Musician");
+                        doUpdate("Gallery");
+                        doUpdate("Blog");
+                        doUpdate("Calendar");
+                        doUpdate("Forum");
+                        doUpdate("GuestBook");
+                        doUpdate("Mail");
+                        doUpdate("News");
+                        doUpdate("Pages");
+                    }
+                    else
+                    {
+                        doUpdate(args[1]);
+                    }
+                    break;
+                case "sync":
+                    break;
+            }
+        }
+
         static void ExecuteMessage(string message, ConsoleColor backColour, bool pause)
         {
+            if (!interactive)
+            {
+                Console.WriteLine(message);
+                return;
+            }
+
             lock (displayUpdateLock)
             {
                 Console.Clear();
@@ -418,10 +467,13 @@ namespace BoxSocial.Install
 
                         upgradePermissions();
                         Console.WriteLine("Permissions Upgraded");
-                        Console.WriteLine("Press Enter to continue");
-                        while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                        if (interactive)
                         {
-                            Thread.Sleep(100);
+                            Console.WriteLine("Press Enter to continue");
+                            while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                            {
+                                Thread.Sleep(100);
+                            }
                         }
                         return;
                     }
@@ -739,10 +791,13 @@ namespace BoxSocial.Install
 
                     doUpdate(repo);
                     Console.WriteLine("Application Updated");
-                    Console.WriteLine("Press Enter to continue");
-                    while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                    if (interactive)
                     {
-                        Thread.Sleep(100);
+                        Console.WriteLine("Press Enter to continue");
+                        while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                        {
+                            Thread.Sleep(100);
+                        }
                     }
                     return;
                 }
@@ -918,10 +973,13 @@ namespace BoxSocial.Install
 
                         doInstall();
                         Console.WriteLine("Box Social Installed");
-                        Console.WriteLine("Press Enter to continue");
-                        while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                        if (interactive)
                         {
-                            Thread.Sleep(100);
+                            Console.WriteLine("Press Enter to continue");
+                            while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                            {
+                                Thread.Sleep(100);
+                            }
                         }
                         return;
                     }
@@ -1147,7 +1205,7 @@ namespace BoxSocial.Install
 
             p1.WaitForExit();
 
-            ExecuteMessage("`" + repo + "` has been successfully updated.\nPress ENTER to continue.", ConsoleColor.Green, true);
+            ExecuteMessage("`" + repo + "` has been successfully updated." + ((interactive) ? "\nPress ENTER to continue." : ""), ConsoleColor.Green, true);
         }
 
         static void doInstall()

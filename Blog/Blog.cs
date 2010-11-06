@@ -574,6 +574,7 @@ namespace BoxSocial.Applications.Blog
             }
 
             List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, p, 10, ref readAccessLevel);
+            long entriesCount = core.Db.LastQueryRows;
 
             page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
 

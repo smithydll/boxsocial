@@ -414,6 +414,9 @@
   <data name="JANUARY" xml:space="preserve">
     <value>January</value>
   </data>
+  <data name="JOINED" xml:space="preserve">
+    <value>Joined</value>
+  </data>
   <data name="JULY" xml:space="preserve">
     <value>July</value>
   </data>
@@ -422,6 +425,9 @@
   </data>
   <data name="LEARN_MORE" xml:space="preserve">
     <value>Learn More...</value>
+  </data>
+  <data name="LOCATION" xml:space="preserve">
+    <value>Location</value>
   </data>
   <data name="MALE" xml:space="preserve">
     <value>Male</value>

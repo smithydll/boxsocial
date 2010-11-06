@@ -209,6 +209,11 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string GetUri(string filter)
+        {
+            return core.Uri.AppendSid(UriStub + "?filter=" + filter);
+        }
+
         public override string Uri
         {
             get
@@ -733,6 +738,34 @@ namespace BoxSocial.Groups
 
             SubUserGroup subgroup = new SubUserGroup(e.Core, e.Core.PagePathParts[1].Value);
 
+            e.Template.Parse("U_FILTER_ALL", subgroup.Uri);
+            e.Template.Parse("U_FILTER_BEGINS_A", subgroup.GetUri("a"));
+            e.Template.Parse("U_FILTER_BEGINS_B", subgroup.GetUri("b"));
+            e.Template.Parse("U_FILTER_BEGINS_C", subgroup.GetUri("c"));
+            e.Template.Parse("U_FILTER_BEGINS_D", subgroup.GetUri("d"));
+            e.Template.Parse("U_FILTER_BEGINS_E", subgroup.GetUri("e"));
+            e.Template.Parse("U_FILTER_BEGINS_F", subgroup.GetUri("f"));
+            e.Template.Parse("U_FILTER_BEGINS_G", subgroup.GetUri("g"));
+            e.Template.Parse("U_FILTER_BEGINS_H", subgroup.GetUri("h"));
+            e.Template.Parse("U_FILTER_BEGINS_I", subgroup.GetUri("i"));
+            e.Template.Parse("U_FILTER_BEGINS_J", subgroup.GetUri("j"));
+            e.Template.Parse("U_FILTER_BEGINS_K", subgroup.GetUri("k"));
+            e.Template.Parse("U_FILTER_BEGINS_L", subgroup.GetUri("l"));
+            e.Template.Parse("U_FILTER_BEGINS_M", subgroup.GetUri("m"));
+            e.Template.Parse("U_FILTER_BEGINS_N", subgroup.GetUri("n"));
+            e.Template.Parse("U_FILTER_BEGINS_O", subgroup.GetUri("o"));
+            e.Template.Parse("U_FILTER_BEGINS_P", subgroup.GetUri("p"));
+            e.Template.Parse("U_FILTER_BEGINS_Q", subgroup.GetUri("q"));
+            e.Template.Parse("U_FILTER_BEGINS_R", subgroup.GetUri("r"));
+            e.Template.Parse("U_FILTER_BEGINS_S", subgroup.GetUri("s"));
+            e.Template.Parse("U_FILTER_BEGINS_T", subgroup.GetUri("t"));
+            e.Template.Parse("U_FILTER_BEGINS_U", subgroup.GetUri("u"));
+            e.Template.Parse("U_FILTER_BEGINS_V", subgroup.GetUri("v"));
+            e.Template.Parse("U_FILTER_BEGINS_W", subgroup.GetUri("w"));
+            e.Template.Parse("U_FILTER_BEGINS_X", subgroup.GetUri("x"));
+            e.Template.Parse("U_FILTER_BEGINS_Y", subgroup.GetUri("y"));
+            e.Template.Parse("U_FILTER_BEGINS_Z", subgroup.GetUri("z"));
+
             List<SubGroupMember> awaitingApproval = subgroup.GetMembersWaitingApproval();
 
             foreach (SubGroupMember member in awaitingApproval)
@@ -754,7 +787,8 @@ namespace BoxSocial.Groups
                 leaderVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
             }
 
-            List<SubGroupMember> members = subgroup.GetMembers(e.Page.page, 20);
+            List<SubGroupMember> members = subgroup.GetMembers(e.Page.page, 20, e.Core.Functions.GetFilter());
+            long memberCount = e.Db.LastQueryRows;
 
             foreach (SubGroupMember member in members)
             {
@@ -773,6 +807,8 @@ namespace BoxSocial.Groups
                     memberVariableCollection.Parse("I_DISPLAY_PIC", displayPic);
                 }*/
             }
+
+            e.Core.Display.ParsePagination(subgroup.GetUri(e.Core.Functions.GetFilter()), e.Page.page, (int)(Math.Ceiling(memberCount / 20.0)));
         }
 
         public static List<PrimitivePermissionGroup> SubUserGroup_GetPrimitiveGroups(Core core, Primitive owner)

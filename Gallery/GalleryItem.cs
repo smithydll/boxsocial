@@ -557,6 +557,10 @@ namespace BoxSocial.Applications.Gallery
             catch (InvalidLicenseException)
             {
             }
+            catch (IndexOutOfRangeException)
+            {
+                throw new GalleryItemNotFoundException();
+            }
         }
 
         /*public GalleryItem(Mysql db, Member owner, long itemId)
@@ -1094,9 +1098,48 @@ namespace BoxSocial.Applications.Gallery
                 List<string[]> breadCrumbParts = new List<string[]>();
 
                 breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
-                breadCrumbParts.Add(new string[] { galleryItem.Path, galleryItem.ItemTitle });
+                if (gallery.Parents != null)
+                {
+                    foreach (ParentTreeNode node in gallery.Parents.Nodes)
+                    {
+                        breadCrumbParts.Add(new string[] { node.ParentSlug, node.ParentTitle });
+                    }
+                }
+                breadCrumbParts.Add(new string[] { gallery.Path, gallery.GalleryTitle });
+                if (!string.IsNullOrEmpty(galleryItem.ItemTitle))
+                {
+                    breadCrumbParts.Add(new string[] { galleryItem.Path, galleryItem.ItemTitle });
+                }
+                else
+                {
+                    breadCrumbParts.Add(new string[] { galleryItem.Path, galleryItem.Path });
+                }
 
                 e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
+
+                List<UserTag> tags = UserTag.GetTags(e.Core, galleryItem);
+
+                if (tags.Count > 0)
+                {
+                    e.Template.Parse("HAS_USER_TAGS", "TRUE");
+                }
+
+                e.Template.Parse("TAG_COUNT", tags.Count.ToString());
+
+                int i = 0;
+
+                foreach (UserTag tag in tags)
+                {
+                    VariableCollection tagsVariableCollection = e.Template.CreateChild("user_tags");
+
+                    tagsVariableCollection.Parse("INDEX", i.ToString());
+                    tagsVariableCollection.Parse("TAG_ID", tag.TagId);
+                    tagsVariableCollection.Parse("TAG_X", (tag.TagLocation.X / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("TAG_Y", (tag.TagLocation.Y / 1000 - 50).ToString());
+                    tagsVariableCollection.Parse("DISPLAY_NAME", tag.TaggedMember.DisplayName);
+                    tagsVariableCollection.Parse("U_MEMBER", tag.TaggedMember.Uri);
+                    tagsVariableCollection.Parse("TAG_USER_ID", tag.TaggedMember.Id.ToString());
+                }
 
             }
             catch (GalleryItemNotFoundException)

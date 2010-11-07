@@ -41,14 +41,20 @@
 	<p><strong>Go to page:</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
 
-    <table>
+    <table class="datalist">
         <tr>
-            <th>{L_GROUP_LEADER}</th>
-            <th>{L_LOCATION}</th>
-            <th>{L_JOINED}</th>
             <!-- IF IS_LEADER -->
-            <th></th>
-            <th></th>
+            <th width="30%">{L_GROUP_LEADER}</th>
+            <th width="20%">{L_LOCATION}</th>
+            <th width="20%">{L_JOINED}</th>
+            <!-- ELSE -->
+            <th width="40%">{L_GROUP_LEADER}</th>
+            <th width="30%">{L_LOCATION}</th>
+            <th width="30%">{L_JOINED}</th>
+            <!-- ENDIF -->
+            <!-- IF IS_LEADER -->
+            <th width="15%"></th>
+            <th width="15%"></th>
             <!-- ENDIF -->
         </tr>
         <!-- BEGIN leader_list -->
@@ -64,14 +70,20 @@
         <!-- END leader_list -->
     </table>
 
-    <table>
+    <table class="datalist">
         <tr>
-            <th>{L_GROUP_MEMBERS}</th>
-            <th>{L_LOCATION}</th>
-            <th>{L_JOINED}</th>
             <!-- IF IS_LEADER -->
-            <th></th>
-            <th></th>
+            <th width="30%">{L_GROUP_MEMBERS}</th>
+            <th width="20%">{L_LOCATION}</th>
+            <th width="20%">{L_JOINED}</th>
+            <!-- ELSE -->
+            <th width="40%">{L_GROUP_LEADER}</th>
+            <th width="30%">{L_LOCATION}</th>
+            <th width="30%">{L_JOINED}</th>
+            <!-- ENDIF -->
+            <!-- IF IS_LEADER -->
+            <th width="15%"></th>
+            <th width="15%"></th>
             <!-- ENDIF -->
         </tr>
         <!-- BEGIN member_list -->

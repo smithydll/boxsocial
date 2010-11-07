@@ -1095,3 +1095,11 @@ dl#app-list {
 .username-field a, .username-dropbox a {
 	cursor: pointer;
 }
+
+.datalist {
+	width: 100%;
+}
+
+.datalist th {
+	
+}

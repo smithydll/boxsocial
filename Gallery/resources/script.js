@@ -11,7 +11,7 @@ function CreateUserTagNearPointer(id, event)
 	
 	//PostToAccount(UserTagCreated, "gallery", "tag", id, null);
 	
-	var tags = ge("user-tags");
+	var tags = ge("tags").value;
 	
 	var nli = document.createElement('li');
 	
@@ -25,9 +25,11 @@ function CreateUserTagNearPointer(id, event)
 	var nih = document.createElement('input');
 	nih.type = 'hidden';
 	nih.name = 'tag[' + tags + ']';
-	nih.value = photox + ',' + photoy + ',' + newTag[2][1];
+	nih.value = photox + ',' + photoy;
 	
 	apc("fieldlist", nih);
+
+	ge("tags").value = parseInt(tags) + 1;
 	
 	try
 	{

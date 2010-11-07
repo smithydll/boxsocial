@@ -177,6 +177,28 @@ namespace BoxSocial.Internals
                 }
             }
 
+            int limit = 10;
+            string userNames = core.Http.Form[name + "[raw]"];
+
+            if (!string.IsNullOrEmpty(userNames))
+            {
+                string[] usernames = userNames.Split(new char[] { ',', ';', ' ' });
+
+                foreach (string username in usernames)
+                {
+                    if (limit > 0)
+                    {
+                        long id = core.PrimitiveCache.LoadUserProfile(username);
+                        userIds.Add(id);
+                        limit--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
             return userIds;
         }
 

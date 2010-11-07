@@ -21,7 +21,7 @@ var user_tags = new Array();
           <span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.TAG_TITLE}</span>
           <!-- END user_tags -->
         </span>
-        <img id="photo-640" name="photo-640" src="{S_PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);" onmousedown="CreateUserTagNearPointer({ID}, event);"/>
+        <img id="photo-640" name="photo-640" src="{S_PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);" onmousedown="CreateUserTagNearPointer({S_PHOTO_ID}, event);"/>
       </dd>
       <dd>
         Tags:
@@ -47,7 +47,7 @@ var user_tags = new Array();
     <!-- BEGIN user_tags -->
     <input type="hidden" name="tag[{user_tags.INDEX}]" value="{user_tags.TAG_X},{user_tags.TAG_Y},{user_tags.TAG_TITLE},{user_tags.TAG_USER_ID}" />
     <!-- END user_tags -->
-    <input type="hidden" name="tags" value="{TAG_COUNT}" />
+    <input type="hidden" name="tags" id="tags" value="{TAG_COUNT}" />
 		<input type="hidden" name="module" value="galleries" />
 		<input type="hidden" name="sub" value="tag" />
 		<input type="hidden" name="id" value="{S_PHOTO_ID}" />

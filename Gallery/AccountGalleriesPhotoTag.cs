@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Gallery
                     Owner.Key, photo.ParentPath, photo.Path);
                 template.Parse("S_PHOTO_TITLE", photo.ItemTitle);
                 template.Parse("S_PHOTO_DISPLAY", displayUri);
-                template.Parse("ID", photo.Id.ToString());
+                template.Parse("S_PHOTO_ID", photo.Id.ToString());
 
                 List<UserTag> tags = UserTag.GetTags(core, photo);
 
@@ -133,9 +133,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 long photoId = core.Functions.RequestLong("id", 0);
 
-                GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
+                GalleryItem photo = new GalleryItem(core, Owner, photoId);
 
                 long tagCount = core.Functions.FormLong("tags", 0);
+                HttpContext.Current.Response.Write(tagCount.ToString());
 
                 List<UserTag> tags = UserTag.GetTags(core, photo);
 
@@ -149,11 +150,14 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (!string.IsNullOrEmpty(core.Http.Form["name[" + i + "]"]))
                     {
-                        usernames.Add(core.Http.Form["name[" + i + "]"]);
-                        long userId = core.LoadUserProfile(core.Http.Form["name[" + i + "]"]);
-                        if (userId > 0)
+                        if (!usernames.Contains(core.Http.Form["name[" + i + "]"]))
                         {
-                            usersTaggedByName.Add(core.Http.Form["name[" + i + "]"], userId);
+                            usernames.Add(core.Http.Form["name[" + i + "]"]);
+                            long userId = core.LoadUserProfile(core.Http.Form["name[" + i + "]"]);
+                            if (userId > 0)
+                            {
+                                usersTaggedByName.Add(core.Http.Form["name[" + i + "]"], userId);
+                            }
                         }
                     }
                 }
@@ -188,7 +192,7 @@ namespace BoxSocial.Applications.Gallery
 				{
 					bool tagExists = false;
 					string[] parts = ti.Split(',');
-					
+
 					if (parts.Length != 4)
 					{
 						continue;
@@ -202,19 +206,22 @@ namespace BoxSocial.Applications.Gallery
 					{
 						continue;
 					}
-					
+
+                    bool flag = true;
 					foreach (UserTag tag in tags)
 					{
 						if (tag.TaggedMember.Id == uid)
 						{
-							continue;
-						}
-						else
-						{
-							core.LoadUserProfile(uid);
-							newTags.Add(uid, new Point(x, y));
+                            flag = false;
+                            break;
 						}
 					}
+
+                    if (flag)
+                    {
+                        core.LoadUserProfile(uid);
+                        newTags.Add(uid, new Point(x * 1000, y * 1000));
+                    }
 				}
 				
 				foreach (long uid in newTags.Keys)

@@ -716,14 +716,26 @@ namespace BoxSocial.Internals
 
             foreach (AssemblyName an in assemblies)
             {
-                Assembly asm = Assembly.Load(an);
-                Type[] types = asm.GetTypes();
-                foreach (Type type in types)
+                try
                 {
-                    if (type.IsSubclassOf(typeof(Primitive)))
+                    if (an.FullName.StartsWith("BoxSocial.IO"))
                     {
-                        AddPrimitiveType(type);
+                        continue;
                     }
+                    Assembly asm = Assembly.Load(an);
+                    Type[] types = asm.GetTypes();
+                    foreach (Type type in types)
+                    {
+                        if (type.IsSubclassOf(typeof(Primitive)))
+                        {
+                            AddPrimitiveType(type);
+                        }
+                    }
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                    HttpContext.Current.Response.Write("Panic, error loading: " + an.FullName);
+                    HttpContext.Current.Response.End();
                 }
             }
         }

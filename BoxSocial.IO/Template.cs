@@ -74,6 +74,11 @@ namespace BoxSocial.IO
 
             childLoops[fullName].Add(vc);
 
+            if (!variables.ContainsKey(name))
+            {
+                variables.Add(name, "IS_DEF");
+            }
+
             return vc;
         }
 

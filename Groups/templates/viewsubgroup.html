@@ -8,6 +8,7 @@
 
 <div id="member-filter-panel">
   <p>
+    <strong>{L_FILTER}:</strong>
     <a href="{U_FILTER_ALL}">All</a>
     <a href="{U_FILTER_BEGINS_A}">A</a>
     <a href="{U_FILTER_BEGINS_B}">B</a>
@@ -59,9 +60,9 @@
         </tr>
         <!-- BEGIN leader_list -->
         <tr>
-          <td>{leader_list.DISPLAY_NAME}</td>
-          <td></td>
-          <td></td>
+            <td><a href="{leader_list.U_MEMBER}">{leader_list.DISPLAY_NAME}</a></td>
+            <td>{leader_list.LOCATION}</td>
+            <td>{leader_list.JOINED}</td>
           <!-- IF IS_LEADER -->
           <td></td>
           <td></td>
@@ -77,7 +78,7 @@
             <th width="20%">{L_LOCATION}</th>
             <th width="20%">{L_JOINED}</th>
             <!-- ELSE -->
-            <th width="40%">{L_GROUP_LEADER}</th>
+            <th width="40%">{L_GROUP_MEMBERS}</th>
             <th width="30%">{L_LOCATION}</th>
             <th width="30%">{L_JOINED}</th>
             <!-- ENDIF -->
@@ -88,9 +89,9 @@
         </tr>
         <!-- BEGIN member_list -->
         <tr>
-            <td>{member_list.DISPLAY_NAME}</td>
-            <td></td>
-            <td></td>
+            <td><a href="{member_list.U_MEMBER}">{member_list.DISPLAY_NAME}</a></td>
+            <td>{member_list.LOCATION}</td>
+            <td>{member_list.JOINED}</td>
           <!-- IF IS_LEADER -->
             <td></td>
             <td></td>

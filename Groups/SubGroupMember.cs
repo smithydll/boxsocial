@@ -54,6 +54,35 @@ namespace BoxSocial.Groups
         [DataField("sub_group_member_default")]
         private bool isDefaultGroup;
 
+        public long SubGroupId
+        {
+            get
+            {
+                return subGroupId;
+            }
+        }
+
+        public bool IsGroupLeader
+        {
+            get
+            {
+                return isGroupLeader;
+            }
+        }
+
+        public bool IsDefaultGroup
+        {
+            get
+            {
+                return isDefaultGroup;
+            }
+        }
+
+        public DateTime GetJoinedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(memberJoinDateRaw);
+        }
+
         public SubGroupMember(Core core, SubUserGroup group, long userId)
             : base(core)
         {

@@ -770,6 +770,12 @@ namespace BoxSocial.Groups
 
             foreach (SubGroupMember member in awaitingApproval)
             {
+                VariableCollection approvalVariableCollection = e.Core.Template.CreateChild("approval_list");
+
+                approvalVariableCollection.Parse("U_MEMBER", member.Uri);
+                approvalVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                approvalVariableCollection.Parse("LOCATION", member.Profile.Country);
+                approvalVariableCollection.Parse("JOINED", e.Core.Tz.DateTimeToDateString(member.GetJoinedDate(e.Core.Tz)));
             }
 
             if (awaitingApproval.Count > 0)
@@ -785,6 +791,8 @@ namespace BoxSocial.Groups
 
                 leaderVariableCollection.Parse("U_MEMBER", member.Uri);
                 leaderVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                leaderVariableCollection.Parse("LOCATION", member.Profile.Country);
+                leaderVariableCollection.Parse("JOINED", e.Core.Tz.DateTimeToDateString(member.GetJoinedDate(e.Core.Tz)));
             }
 
             List<SubGroupMember> members = subgroup.GetMembers(e.Page.page, 20, e.Core.Functions.GetFilter());
@@ -796,6 +804,9 @@ namespace BoxSocial.Groups
 
                 memberVariableCollection.Parse("U_MEMBER", member.Uri);
                 memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                memberVariableCollection.Parse("LOCATION", member.Profile.Country);
+                memberVariableCollection.Parse("JOINED", e.Core.Tz.DateTimeToDateString(member.GetJoinedDate(e.Core.Tz)));
+
 
                 /*if (string.IsNullOrEmpty(member.UserThumbnail))
                 {

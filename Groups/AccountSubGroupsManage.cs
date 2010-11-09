@@ -147,20 +147,59 @@ namespace BoxSocial.Groups
 
                 foreach (SubGroupMember member in leaders)
                 {
+                    CheckBox memberCheckBox = new CheckBox("check[" + member.Id.ToString() + "]");
+
                     VariableCollection memberVariableCollection = template.CreateChild("leader_list");
                     memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                    memberVariableCollection.Parse("JOINED_DATE", core.Tz.DateTimeToDateString(member.GetJoinedDate(core.Tz)));
+                    memberVariableCollection.Parse("S_MARK", memberCheckBox);
+
+                    if (member.IsDefaultGroup)
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("YES"));
+                    }
+                    else
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("NO"));
+                    }
                 }
 
                 foreach (SubGroupMember member in awaiting)
                 {
+                    CheckBox memberCheckBox = new CheckBox("check[" + member.Id.ToString() + "]");
+
                     VariableCollection memberVariableCollection = template.CreateChild("awaiting_list");
                     memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                    memberVariableCollection.Parse("JOINED_DATE", core.Tz.DateTimeToDateString(member.GetJoinedDate(core.Tz)));
+                    memberVariableCollection.Parse("S_MARK", memberCheckBox);
+
+                    if (member.IsDefaultGroup)
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("YES"));
+                    }
+                    else
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("NO"));
+                    }
                 }
 
                 foreach (SubGroupMember member in members)
                 {
+                    CheckBox memberCheckBox = new CheckBox("check[" + member.Id.ToString() + "]");
+
                     VariableCollection memberVariableCollection = template.CreateChild("member_list");
                     memberVariableCollection.Parse("DISPLAY_NAME", member.DisplayName);
+                    memberVariableCollection.Parse("JOINED_DATE", core.Tz.DateTimeToDateString(member.GetJoinedDate(core.Tz)));
+                    memberVariableCollection.Parse("S_MARK", memberCheckBox);
+
+                    if (member.IsDefaultGroup)
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("YES"));
+                    }
+                    else
+                    {
+                        memberVariableCollection.Parse("DEFAULT_GROUP", core.Prose.GetString("NO"));
+                    }
                 }
                 
             }

@@ -157,6 +157,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\Forum.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Forum.en.resx"</PostBuildEvent>
     <ProjectGuid>{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}</ProjectGuid>
     <RootNamespace>BoxSocial.Applications.Forum</RootNamespace>
   </PropertyGroup>

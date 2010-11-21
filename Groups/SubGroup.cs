@@ -222,6 +222,22 @@ namespace BoxSocial.Groups
             }
         }
 
+        public string JoinUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "join", Id, true);
+            }
+        }
+
+        public string LeaveUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "leave", Id, true);
+            }
+        }
+
         public string EditMembersUri
         {
             get
@@ -817,6 +833,24 @@ namespace BoxSocial.Groups
                     Image displayPic = new Image("display-pic[" + member.Id.ToString() + "]", member.UserThumbnail);
                     memberVariableCollection.Parse("I_DISPLAY_PIC", displayPic);
                 }*/
+            }
+
+            if (e.Core.Session.IsLoggedIn)
+            {
+                if (subgroup.IsSubGroupMember(e.Core.Session.LoggedInMember))
+                {
+                    if (!subgroup.IsSubGroupLeader(e.Core.Session.LoggedInMember))
+                    {
+                        e.Template.Parse("U_LEAVE", subgroup.LeaveUri);
+                    }
+                }
+                else
+                {
+                    if (subgroup.SubGroupType == "OPEN" || subgroup.SubGroupType == "REQUEST")
+                    {
+                        e.Template.Parse("U_JOIN", subgroup.JoinUri);
+                    }
+                }
             }
 
             e.Core.Display.ParsePagination(subgroup.GetUri(e.Core.Functions.GetFilter()), e.Page.page, (int)(Math.Ceiling(memberCount / 20.0)));

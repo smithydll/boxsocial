@@ -4,9 +4,15 @@
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
 		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
+    <!-- IF U_EDIT_EVENT -->
 		<span id="edit-event" class="post-button"><a href="{U_EDIT_EVENT}">Edit Event</a></span>
+    <!-- ENDIF -->
+    <!-- IF U_EDIT_PERMISSIONS -->
     <span id="edit-event" class="post-button"><a href="{U_EDIT_PERMISSIONS}">Edit Permissions</a></span>
+    <!-- ENDIF -->
+    <!-- IF U_DELETE_EVENT -->
     <span id="delete-event" class="post-button"><a href="{U_DELETE_EVENT}">Delete Event</a></span>
+    <!-- ENDIF -->
 	</div>
 	<!-- ENDIF -->
 	<!-- IF LOCATION -->

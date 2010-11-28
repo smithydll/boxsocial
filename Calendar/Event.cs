@@ -547,7 +547,28 @@ namespace BoxSocial.Applications.Calendar
         {
             e.Template.SetTemplate("Calendar", "viewcalendarevent");
 
-            Event calendarEvent = new Event(e.Core, e.ItemId);
+            Event calendarEvent = null;
+
+            if (e.ItemId <= 0)
+            {
+                User pageUser = null;
+                if (e.Page.Owner is User)
+                {
+                    pageUser = (User)e.Page.Owner;
+                    e.Core.LoadUserProfile(~e.ItemId);
+                    User birthdayUser = e.Core.PrimitiveCache[~e.ItemId];
+                    calendarEvent = new BirthdayEvent(e.Core, pageUser, birthdayUser, e.Core.Tz.Now.Year);
+                }
+                else
+                {
+                    e.Core.Functions.Generate404();
+                    return;
+                }
+            }
+            else
+            {
+                calendarEvent = new Event(e.Core, e.ItemId);
+            }
 
             if (e.Core.LoggedInMemberId == e.Page.Owner.Id && e.Page.Owner.GetType() == typeof(User))
             {
@@ -555,15 +576,24 @@ namespace BoxSocial.Applications.Calendar
                     string.Format("year={0}", e.Core.Tz.Now.Year),
                     string.Format("month={0}", e.Core.Tz.Now.Month),
                     string.Format("day={0}", e.Core.Tz.Now.Day)));
-                e.Template.Parse("U_EDIT_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", e.ItemId, true));
-                e.Template.Parse("U_DELETE_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", e.ItemId, true));
-                e.Template.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(e.Core, calendarEvent));
+                if (!(calendarEvent is BirthdayEvent))
+                {
+                    e.Template.Parse("U_EDIT_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", e.ItemId, true));
+                    e.Template.Parse("U_DELETE_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", e.ItemId, true));
+                    e.Template.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(e.Core, calendarEvent));
+                }
             }
 
-            if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.Session.LoggedInMember))
+            if (calendarEvent is BirthdayEvent)
             {
-                e.Core.Functions.Generate403();
-                return;
+            }
+            else
+            {
+                if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.Session.LoggedInMember))
+                {
+                    e.Core.Functions.Generate403();
+                    return;
+                }
             }
 
             e.Template.Parse("SUBJECT", calendarEvent.Subject);
@@ -578,134 +608,137 @@ namespace BoxSocial.Applications.Calendar
             calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
             e.Page.Owner.ParseBreadCrumbs(calendarPath);
 
-            if (calendarEvent.Access.Can("COMMENT") || (e.Core.Session.IsLoggedIn && calendarEvent.IsInvitee(e.Core.Session.LoggedInMember)))
+            if (!(calendarEvent is BirthdayEvent))
             {
-                e.Template.Parse("CAN_COMMENT", "TRUE");
-            }
-            e.Core.Display.DisplayComments(e.Template, calendarEvent.owner, calendarEvent);
-
-            List<EventInvite> invitees = calendarEvent.GetInvites();
-            List<long> invitedIds = new List<long>(); /* Users to be displayed on the page */
-
-            long attendingCount = 0;
-            long invitedCount = 0;
-            long notAttendingCount = 0;
-            long mightAttendCount = 0;
-            long notRespondedCount = 0;
-
-            int i = 0, j = 0, k = 0, l = 0;
-            foreach (EventInvite ei in invitees)
-            {
-                if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
+                if (calendarEvent.Access.Can("COMMENT") || (e.Core.Session.IsLoggedIn && calendarEvent.IsInvitee(e.Core.Session.LoggedInMember)))
                 {
-                    invitedCount++;
+                    e.Template.Parse("CAN_COMMENT", "TRUE");
+                }
+                e.Core.Display.DisplayComments(e.Template, calendarEvent.owner, calendarEvent);
 
-                    switch (ei.InviteStatus)
+                List<EventInvite> invitees = calendarEvent.GetInvites();
+                List<long> invitedIds = new List<long>(); /* Users to be displayed on the page */
+
+                long attendingCount = 0;
+                long invitedCount = 0;
+                long notAttendingCount = 0;
+                long mightAttendCount = 0;
+                long notRespondedCount = 0;
+
+                int i = 0, j = 0, k = 0, l = 0;
+                foreach (EventInvite ei in invitees)
+                {
+                    if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
                     {
-                        case EventAttendance.Yes:
-                            if (i < 4)
-                            {
-                                invitedIds.Add(ei.Invited.Id);
-                                i++;
-                            }
-                            attendingCount++;
-                            break;
-                        case EventAttendance.Maybe:
-                            if (j < 4)
-                            {
-                                invitedIds.Add(ei.Invited.Id);
-                                j++;
-                            }
-                            mightAttendCount++;
-                            break;
-                        case EventAttendance.No:
-                            if (k < 4)
-                            {
-                                invitedIds.Add(ei.Invited.Id);
-                                k++;
-                            }
-                            notAttendingCount++;
-                            break;
-                        case EventAttendance.Unknown:
-                            if (l < 4)
-                            {
-                                invitedIds.Add(ei.Invited.Id);
-                                l++;
-                            }
-                            notRespondedCount++;
-                            break;
+                        invitedCount++;
+
+                        switch (ei.InviteStatus)
+                        {
+                            case EventAttendance.Yes:
+                                if (i < 4)
+                                {
+                                    invitedIds.Add(ei.Invited.Id);
+                                    i++;
+                                }
+                                attendingCount++;
+                                break;
+                            case EventAttendance.Maybe:
+                                if (j < 4)
+                                {
+                                    invitedIds.Add(ei.Invited.Id);
+                                    j++;
+                                }
+                                mightAttendCount++;
+                                break;
+                            case EventAttendance.No:
+                                if (k < 4)
+                                {
+                                    invitedIds.Add(ei.Invited.Id);
+                                    k++;
+                                }
+                                notAttendingCount++;
+                                break;
+                            case EventAttendance.Unknown:
+                                if (l < 4)
+                                {
+                                    invitedIds.Add(ei.Invited.Id);
+                                    l++;
+                                }
+                                notRespondedCount++;
+                                break;
+                        }
                     }
                 }
-            }
 
-            e.Core.LoadUserProfiles(invitedIds);
+                e.Core.LoadUserProfiles(invitedIds);
 
-            e.Template.Parse("ATTENDEES", attendingCount.ToString());
-            e.Template.Parse("INVITEES", invitedCount.ToString());
-            e.Template.Parse("NOT_ATTENDING", notAttendingCount.ToString());
-            e.Template.Parse("MAYBE_ATTENDING", mightAttendCount.ToString());
-            e.Template.Parse("NOT_RESPONDED", notRespondedCount.ToString());
+                e.Template.Parse("ATTENDEES", attendingCount.ToString());
+                e.Template.Parse("INVITEES", invitedCount.ToString());
+                e.Template.Parse("NOT_ATTENDING", notAttendingCount.ToString());
+                e.Template.Parse("MAYBE_ATTENDING", mightAttendCount.ToString());
+                e.Template.Parse("NOT_RESPONDED", notRespondedCount.ToString());
 
-            if (attendingCount > 1)
-            {
-                e.Template.Parse("L_IS_ARE", "is");
-                e.Template.Parse("L_ATTENDEES", "attendees");
-            }
-            else
-            {
-                e.Template.Parse("L_IS_ARE", "are");
-                e.Template.Parse("L_ATTENDEES", "attendee");
-            }
-
-            i = j = k = l = 0;
-            foreach (EventInvite ei in invitees)
-            {
-                if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
+                if (attendingCount > 1)
                 {
-                    VariableCollection listVariableCollection = null;
+                    e.Template.Parse("L_IS_ARE", "is");
+                    e.Template.Parse("L_ATTENDEES", "attendees");
+                }
+                else
+                {
+                    e.Template.Parse("L_IS_ARE", "are");
+                    e.Template.Parse("L_ATTENDEES", "attendee");
+                }
 
-                    switch (ei.InviteStatus)
+                i = j = k = l = 0;
+                foreach (EventInvite ei in invitees)
+                {
+                    if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
                     {
-                        case EventAttendance.Yes:
-                            i++;
-                            if (i > 4)
-                            {
+                        VariableCollection listVariableCollection = null;
+
+                        switch (ei.InviteStatus)
+                        {
+                            case EventAttendance.Yes:
+                                i++;
+                                if (i > 4)
+                                {
+                                    break;
+                                }
+                                listVariableCollection = e.Template.CreateChild("attendee_list");
                                 break;
-                            }
-                            listVariableCollection = e.Template.CreateChild("attendee_list");
-                            break;
-                        case EventAttendance.No:
-                            j++;
-                            if (j > 4)
-                            {
+                            case EventAttendance.No:
+                                j++;
+                                if (j > 4)
+                                {
+                                    break;
+                                }
+                                listVariableCollection = e.Template.CreateChild("not_attending_list");
                                 break;
-                            }
-                            listVariableCollection = e.Template.CreateChild("not_attending_list");
-                            break;
-                        case EventAttendance.Maybe:
-                            k++;
-                            if (k > 4)
-                            {
+                            case EventAttendance.Maybe:
+                                k++;
+                                if (k > 4)
+                                {
+                                    break;
+                                }
+                                listVariableCollection = e.Template.CreateChild("maybe_attending_list");
                                 break;
-                            }
-                            listVariableCollection = e.Template.CreateChild("maybe_attending_list");
-                            break;
-                        case EventAttendance.Unknown:
-                            l++;
-                            if (l > 4)
-                            {
+                            case EventAttendance.Unknown:
+                                l++;
+                                if (l > 4)
+                                {
+                                    break;
+                                }
+                                listVariableCollection = e.Template.CreateChild("unresponded_list");
                                 break;
-                            }
-                            listVariableCollection = e.Template.CreateChild("unresponded_list");
-                            break;
+                        }
+
+                        User user = e.Core.PrimitiveCache[ei.Invited.Id];
+
+                        listVariableCollection.Parse("U_PROFILE", user.Uri);
+                        listVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
+                        listVariableCollection.Parse("ICON", user.UserTile);
+                        listVariableCollection.Parse("ICON", user.UserTile);
                     }
-
-                    User user = e.Core.PrimitiveCache[ei.Invited.Id];
-
-                    listVariableCollection.Parse("U_PROFILE", user.Uri);
-                    listVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
-                    listVariableCollection.Parse("ICON", user.UserTile);
-                    listVariableCollection.Parse("ICON", user.UserTile);
                 }
             }
         }

@@ -274,7 +274,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        [Show(@"calendar/event/([0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
+        [Show(@"calendar/event/([\-0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showEvent(Core core, object sender)
         {
             if (sender is UPage)

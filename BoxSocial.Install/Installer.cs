@@ -111,6 +111,13 @@ namespace BoxSocial.Install
                         doUpdate("Mail");
                         doUpdate("News");
                         doUpdate("Pages");
+
+                        Process p1 = new Process();
+                        p1.StartInfo.FileName = "/etc/init.d/apache2";
+                        p1.StartInfo.Arguments = "force-reload";
+                        p1.Start();
+
+                        p1.WaitForExit();
                     }
                     else
                     {
@@ -1198,12 +1205,15 @@ namespace BoxSocial.Install
             InstallApplication(repo);
             InstallLanguage("en", repo);
 
-            Process p1 = new Process();
-            p1.StartInfo.FileName = "/etc/init.d/apache2";
-            p1.StartInfo.Arguments = "force-reload";
-            p1.Start();
+            if (interactive)
+            {
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "/etc/init.d/apache2";
+                p1.StartInfo.Arguments = "force-reload";
+                p1.Start();
 
-            p1.WaitForExit();
+                p1.WaitForExit();
+            }
 
             ExecuteMessage("`" + repo + "` has been successfully updated." + ((interactive) ? "\nPress ENTER to continue." : ""), ConsoleColor.Green, true);
         }

@@ -23,6 +23,7 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -1082,6 +1083,11 @@ namespace BoxSocial.Networks
             {
                 return new ItemKey(-1, ItemType.GetTypeId(typeof(NetworkMember)));
             }
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

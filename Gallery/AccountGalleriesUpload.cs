@@ -146,6 +146,8 @@ namespace BoxSocial.Applications.Gallery
                         TPage.EnsureStoragePathExists(saveFileName);
                         core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
                     }
+                    // start here for new storage framework
+                    //Owner.StoreFile(core.Http.Files["photo-file"].InputStream);
 
                     GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification());
 

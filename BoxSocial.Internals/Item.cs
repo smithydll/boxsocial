@@ -607,9 +607,18 @@ namespace BoxSocial.Internals
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
+                List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
+                {
+                    DataFieldKeyAttribute dfkattr = (DataFieldKeyAttribute)attr;
+
+                    additionalIndexes.Add(dfkattr);
+                }
+
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
                     DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                    dfattr.AddIndexes(additionalIndexes.ToArray());
                     if (dfattr.FieldName != null)
                     {
                         if ((fi.FieldType == typeof(ItemKey)) && (!getRawFields))
@@ -617,8 +626,8 @@ namespace BoxSocial.Internals
                             DataFieldInfo dfiId;
                             DataFieldInfo dfiTypeId;
 
-                            dfiId = new DataFieldInfo(dfattr.FieldName + "_id", typeof(long), dfattr.MaxLength, dfattr.Index);
-                            dfiTypeId = new DataFieldInfo(dfattr.FieldName + "_type_id", typeof(long), dfattr.MaxLength, dfattr.Index);
+                            dfiId = new DataFieldInfo(dfattr.FieldName + "_id", typeof(long), dfattr.MaxLength, dfattr.Indicies);
+                            dfiTypeId = new DataFieldInfo(dfattr.FieldName + "_type_id", typeof(long), dfattr.MaxLength, dfattr.Indicies);
 
                             dfiId.ParentType = dfattr.ParentType;
                             dfiId.ParentFieldName = dfattr.ParentFieldName;
@@ -631,7 +640,7 @@ namespace BoxSocial.Internals
                         else
                         {
                             DataFieldInfo dfi;
-                            dfi = new DataFieldInfo(dfattr.FieldName, fi.FieldType, dfattr.MaxLength, dfattr.Index);
+                            dfi = new DataFieldInfo(dfattr.FieldName, fi.FieldType, dfattr.MaxLength, dfattr.Indicies);
                             dfi.ParentType = dfattr.ParentType;
                             dfi.ParentFieldName = dfattr.ParentFieldName;
 
@@ -788,11 +797,20 @@ namespace BoxSocial.Internals
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
+                List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
+                {
+                    DataFieldKeyAttribute dfkattr = (DataFieldKeyAttribute)attr;
+
+                    additionalIndexes.Add(dfkattr);
+                }
+
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
                     if (updatedItems.Contains(fi.Name))
                     {
                         DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+                        dfattr.AddIndexes(additionalIndexes.ToArray());
                         if (dfattr.FieldName != null)
                         {
                             uQuery.AddField(dfattr.FieldName, fi.GetValue(this));

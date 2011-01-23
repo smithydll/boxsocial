@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -284,6 +285,8 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        public abstract string StoreFile(Stream file);
     }
 
     /// <summary>

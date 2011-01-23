@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,6 +55,14 @@ namespace BoxSocial.Internals
         Religion = Key | 0x10,
         Common = Key | Info | Icon,
         All = Key | Info | Profile | Icon | Country | Religion,
+    }
+
+    public enum SubscriberLevel : byte
+    {
+        Free = 0x00,
+        Paid1 = 0x01,
+        Paid10 = 0x02,
+        Paid100 = 0x03,
     }
 
     [DataTable("user_keys", "USER")]
@@ -2171,6 +2180,11 @@ namespace BoxSocial.Internals
             {
                 return new ItemKey(-3, ItemType.GetTypeId(typeof(User)));
             }
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1258,6 +1259,11 @@ namespace BoxSocial.Internals
             {
                 return new ItemKey(-1, ItemType.GetTypeId(typeof(ApplicationDeveloper)));
             }
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

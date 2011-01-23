@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -1953,6 +1954,11 @@ namespace BoxSocial.Groups
         internal static string BuildCategoryUri(Core core, Internals.Category category)
         {
             return core.Uri.AppendSid("/groups/" + category.Path);
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -871,6 +872,11 @@ namespace BoxSocial.Groups
             }
 
             return ppgs;
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

@@ -44,9 +44,11 @@ namespace BoxSocial.Internals
 	{
 		[DataField("grant_primitive", DataFieldKeys.Unique, "u_key")]
 		private ItemKey primitiveKey;
-		[DataField("grant_item_id", DataFieldKeys.Unique, "u_key")]
+        [DataFieldKey(DataFieldKeys.Index, "i_grant")]
+		[DataField("grant_item_id", DataFieldKeys.Unique, "u_key")] //new UniqueKey("u_key"), new Index("i_grant"))]
 		private long itemId;
-		[DataField("grant_item_type_id", DataFieldKeys.Unique, "u_key")]
+        [DataFieldKey(DataFieldKeys.Index, "i_grant")]
+        [DataField("grant_item_type_id", DataFieldKeys.Unique, "u_key")] //new UniqueKey("u_key"), new Index("i_grant"))]
 		private long itemTypeId;
 		[DataField("grant_permission_id", DataFieldKeys.Unique, "u_key")]
 		private long permissionId;

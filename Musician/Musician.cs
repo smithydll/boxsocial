@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -1387,6 +1388,11 @@ namespace BoxSocial.Musician
             {
                 return new ItemKey(-1, ItemType.GetTypeId(typeof(Fan)));
             }
+        }
+
+        public override string StoreFile(Stream file)
+        {
+            return core.Storage.SaveFile("zinzam.user", file);
         }
     }
 

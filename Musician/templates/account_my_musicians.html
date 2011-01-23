@@ -5,13 +5,14 @@
 <table style="width: 100%">
 <tr>
 	<th></th>
-	<th>Fans</th>
+	<th>{L_FANS}</th>
 	<th></th>
 	<th></th>
 </tr>
+<!-- IF musician_list -->
 <!-- BEGIN musician_list -->
 <!-- IF musician_list.$_INDEX_EVEN -->
-<tr class="even">
+  <tr class="even">
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
@@ -22,4 +23,11 @@
   </td>
 </tr>
 <!-- END musician_list -->
+<!-- ELSE -->
+    <tr>
+      <td colspan="4">
+        You are not associated with any musical acts.
+      </td>
+    </tr>
+<!-- ENDIF -->
 </table>

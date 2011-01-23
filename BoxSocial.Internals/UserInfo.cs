@@ -80,6 +80,12 @@ namespace BoxSocial.Internals
         private bool emailNotifications;
         [DataField("user_bytes")]
         private ulong bytes;
+        [DataField("user_bytes_month")]
+        private ulong bytesMonth;
+        [DataField("user_subscription_expirary")]
+        private long subscriptionEndDate;
+        [DataField("user_month_start")]
+        private long bytesMonthStartDate;
         [DataField("user_reg_date_ut")]
         private long registrationDateRaw;
         [DataField("user_last_visit_ut")]
@@ -88,6 +94,8 @@ namespace BoxSocial.Internals
         private long userStatusMessages;
         [DataField("user_new_password", 63)]
         private string userNewPassword;
+        [DataField("user_subscription_level")]
+        private byte userSubscriptionLevel;
 
         private string userNameOwnership;
         private UnixTime timeZone;
@@ -157,6 +165,18 @@ namespace BoxSocial.Internals
                     }
                 }
                 return userNameOwnership;
+            }
+        }
+
+        public SubscriberLevel SubscriptionLevel
+        {
+            get
+            {
+                return (SubscriberLevel)userSubscriptionLevel;
+            }
+            set
+            {
+                SetProperty("userSubscriptionLevel", (byte)value);
             }
         }
 

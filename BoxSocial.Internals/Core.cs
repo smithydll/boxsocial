@@ -49,6 +49,7 @@ namespace BoxSocial.Internals
         private Ajax ajax;
         private Linker uri;
         private Settings applicationSettings;
+        private Storage storage;
 
         internal TPage page;
 
@@ -193,6 +194,18 @@ namespace BoxSocial.Internals
             internal set
             {
                 session = value;
+            }
+        }
+
+        public Storage Storage
+        {
+            get
+            {
+                return storage;
+            }
+            internal set
+            {
+                storage = value;
             }
         }
 

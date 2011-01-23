@@ -117,7 +117,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN gig_list --&gt;
-        ///&lt;!-- IF gig_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF gig_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -129,7 +129,7 @@ namespace BoxSocial.Musician {
         ///	&lt;td&gt;&lt;a href=&quot;{gig_list.U_DELETE}&quot;&gt;{L_DELETE}&lt;/a&gt;
         ///  &lt;/td&gt;
         ///&lt;/tr&gt;
-        ///&lt;!-- END  [rest of string was truncated]&quot;;.
+        ///&lt;!-- EN [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_gigs_manage {
             get {
@@ -174,7 +174,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN member_list --&gt;
-        ///&lt;!-- IF member_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF member_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -186,7 +186,7 @@ namespace BoxSocial.Musician {
         ///    &lt;a href=&quot;{member_list.U_LEAVE}&quot;&gt;{L_LEAVE}&lt;/a&gt;
         ///    &lt;!-- ELSE --&gt;
         ///    {L_LEAVE}
-        ///    &lt;!-- EN [rest of string was truncated]&quot;;.
+        ///    &lt;!--  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_members_manage {
             get {
@@ -207,7 +207,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN musician_list --&gt;
-        ///&lt;!-- IF musician_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF musician_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -215,7 +215,7 @@ namespace BoxSocial.Musician {
         ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MUSICIAN}&quot;&gt;{musician_list.DISPLAY_NAME}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;{musician_list.FANS}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MANAGE}&quot;&gt;{L_MANAGE}&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a hre [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a h [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_my_musicians {
             get {
@@ -239,8 +239,7 @@ namespace BoxSocial.Musician {
         ///			&lt;dt&gt;&lt;label for=&quot;biography&quot;&gt;Biography&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_BIOGRAPHY}&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;homepage&quot;&gt;Homepage&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///			&lt;dd&gt;{S_HOMEPAGE}&lt;/dd&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_profile {
             get {
@@ -263,7 +262,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN album_list --&gt;
-        ///&lt;!-- IF album_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF album_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -272,7 +271,7 @@ namespace BoxSocial.Musician {
         ///	&lt;td&gt;{album_list.TRACKS}&lt;/td&gt;
         ///	&lt;td&gt;{album_list.VIEWS}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{album_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_recordings {
             get {
@@ -314,7 +313,7 @@ namespace BoxSocial.Musician {
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN song_list --&gt;
-        ///&lt;!-- IF song_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF song_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -322,7 +321,7 @@ namespace BoxSocial.Musician {
         ///	&lt;td&gt;{song_list.TITLE}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_RECORDINGS}&quot;&gt;{song_list.RECORDINGS}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_ADD_RECORDING}&quot;&gt;Add Recording&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_EDIT}&quot;&gt; [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a href=&quot;{song_list.U_EDIT} [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_songs {
             get {
@@ -370,7 +369,7 @@ namespace BoxSocial.Musician {
         ///  &lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
         ///&lt;!-- BEGIN tour_list --&gt;
-        ///&lt;!-- IF tour_list.INDEX_EVEN --&gt;
+        ///&lt;!-- IF tour_list.$_INDEX_EVEN --&gt;
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
@@ -379,7 +378,7 @@ namespace BoxSocial.Musician {
         ///  &lt;td&gt;{tour_list.YEAR}&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_GIGS}&quot;&gt;{tour_list.GIGS}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{tour_list.U_ADD_GIG}&quot;&gt;Add Gig&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a href=&quot;{tou [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a href=&quot;{t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_tour_manage {
             get {
@@ -388,7 +387,20 @@ namespace BoxSocial.Musician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;h2&gt;Chart&lt;/h2&gt;
+        ///
+        ///&lt;!-- IF TOP_ARTISTS --&gt;
+        ///&lt;h3&gt;Top 10 Artists This Week&lt;/h3&gt;
+        ///
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN musician_list --&gt;
+        ///	&lt;li&gt;&lt;/li&gt;
+        ///&lt;!-- END musician_list --&gt;
+        ///&lt;/ul&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string chart_default {
             get {
@@ -435,6 +447,34 @@ namespace BoxSocial.Musician {
         internal static string music_directory {
             get {
                 return ResourceManager.GetString("music_directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;ul&gt;
+        ///	&lt;li&gt;&lt;a href=&quot;{U_MUSIC_ARTISTS}&quot;&gt;{L_ALL_ARTISTS}&lt;/a&gt;&lt;/li&gt;
+        ///	&lt;li&gt;&lt;a href=&quot;{U_MUSIC_GENRES}&quot;&gt;{L_GENRES}&lt;/a&gt;&lt;/li&gt;
+        ///&lt;/ul&gt;
+        ///
+        ///	&lt;!-- IF PAGINATION --&gt;
+        ///	&lt;p&gt;&lt;strong&gt;Go to page:&lt;/strong&gt; {PAGINATION}&lt;/p&gt;
+        ///	&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;ul&gt;
+        ///&lt;!-- BEGIN genre_list --&gt;
+        ///  &lt;li&gt;
+        ///    &lt;p&gt;&lt;a href=&quot;{genre_list.U_GENRE}&quot;&gt;{genre_list.DISPLAY_NAME}&lt;/a&gt;&lt;/p&gt;
+        ///    &lt;ul&gt;
+        ///&lt;!-- BEGIN subgenre_list --&gt;
+        ///      &lt;li&gt;&lt;a href=&quot;{genre_list.subgenre_list.U_SUBGENRE}&quot;&gt;{genre_list.subge [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string music_directory_genres {
+            get {
+                return ResourceManager.GetString("music_directory_genres", resourceCulture);
             }
         }
         

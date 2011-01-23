@@ -242,6 +242,14 @@ namespace BoxSocial.Internals
             core.Ajax = new Ajax(core);
             core.Uri = new Linker(core);
             core.ApplicationSettings = new Settings(core);
+            if (WebConfigurationManager.AppSettings["storage-provider"] == "amazon_s3")
+            {
+                core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
+            }
+            else
+            {
+                core.Storage = new LocalStorage("/var/www/storage/", db);
+            }
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');

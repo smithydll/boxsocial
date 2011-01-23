@@ -98,11 +98,14 @@ namespace BoxSocial.IO
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.Index != null)
+                if (field.Indicies != null)
                 {
-                    if (!indexes.Contains(field.Index))
+                    foreach (Index index in field.Indicies)
                     {
-                        indexes.Add(field.Index);
+                        if (!indexes.Contains(index))
+                        {
+                            indexes.Add(index);
+                        }
                     }
                 }
             }
@@ -116,11 +119,14 @@ namespace BoxSocial.IO
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.Index != null)
+                if (field.Indicies != null)
                 {
-                    if (field.Index.key == key)
+                    foreach (Index index in field.Indicies)
                     {
-                        indexFields.Add(field);
+                        if (index.key == key)
+                        {
+                            indexFields.Add(field);
+                        }
                     }
                 }
             }

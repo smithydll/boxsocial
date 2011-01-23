@@ -33,7 +33,7 @@ namespace BoxSocial.IO
         private long length;
         private Type parentType;
         private string parentFieldName;
-        private Index index;
+        private List<Index> indicies;
 
         public DataFieldAttribute()
         {
@@ -43,28 +43,31 @@ namespace BoxSocial.IO
         {
             this.fieldName = fieldName;
             this.length = 0;
+            this.indicies = new List<Index>();
         }
 
         public DataFieldAttribute(string fieldName, long fieldLength)
         {
             this.fieldName = fieldName;
             this.length = fieldLength;
+            this.indicies = new List<Index>();
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key)
         {
 			this.key = key;
             this.fieldName = fieldName;
+            this.indicies = new List<Index>();
             switch (key)
             {
                 case DataFieldKeys.Primary:
-				    this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
                     break;
                 case DataFieldKeys.Unique:
-				    this.index = new UniqueKey("u_" + fieldName);
+                    this.indicies.Add(new UniqueKey("u_" + fieldName));
                     break;
 				case DataFieldKeys.Index:
-				    this.index = new Index("i_" + fieldName);
+                    this.indicies.Add(new Index("i_" + fieldName));
 					break;
 				default:
 					break;
@@ -77,20 +80,34 @@ namespace BoxSocial.IO
 			this.key = key;
             this.fieldName = fieldName;
             this.length = 0;
+            this.indicies = new List<Index>();
 			switch (key)
 			{
 				case DataFieldKeys.Primary:
-		            this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-		            this.index = new UniqueKey(keyName);
+                    this.indicies.Add(new UniqueKey(keyName));
 					break;
 				case DataFieldKeys.Index:
-		            this.index = new Index(keyName);
+                    this.indicies.Add(new Index(keyName));
 					break;
 				default:
 					break;
 			}
+        }
+
+        public DataFieldAttribute(string fieldName, params Index[] indicies)
+        {
+            this.fieldName = fieldName;
+            this.length = 0;
+            this.indicies = new List<Index>();
+            foreach (Index index in indicies)
+            {
+                this.key |= index.KeyType;
+
+                this.indicies.Add(index);
+            }
         }
 
         public DataFieldAttribute(string fieldName, DataFieldKeys key, long fieldLength)
@@ -98,16 +115,17 @@ namespace BoxSocial.IO
         {
 			this.key = key;
             this.length = fieldLength;
+            this.indicies = new List<Index>();
             switch (key)
 			{
 				case DataFieldKeys.Primary:
-					this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-				    this.index = new UniqueKey("u_" + fieldName);
+                    this.indicies.Add(new UniqueKey("u_" + fieldName));
 					break;
 				case DataFieldKeys.Index:
-				    this.index = new Index("i_" + fieldName);
+                    this.indicies.Add(new Index("i_" + fieldName));
 					break;
 				default:
 					break;
@@ -119,20 +137,34 @@ namespace BoxSocial.IO
 			this.key = key;
             this.fieldName = fieldName;
             this.length = fieldLength;
+            this.indicies = new List<Index>();
 			switch (key)
 			{
 				case DataFieldKeys.Primary:
-					this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-				    this.index = new UniqueKey(keyName);
+                    this.indicies.Add(new UniqueKey(keyName));
 					break;
 				case DataFieldKeys.Index:
-				    this.index = new Index(keyName);
+                    this.indicies.Add(new Index(keyName));
 					break;
 				default:
 					break;
 			}
+        }
+
+        public DataFieldAttribute(string fieldName, long fieldLength, params Index[] indicies)
+        {
+            this.fieldName = fieldName;
+            this.length = fieldLength;
+            this.indicies = new List<Index>();
+            foreach (Index index in indicies)
+            {
+                this.key |= index.KeyType;
+
+                this.indicies.Add(index);
+            }
         }
 
         /// <summary>
@@ -151,6 +183,7 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
         }
 		
 		public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key)
@@ -165,16 +198,17 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
             switch (key)
 			{
 				case DataFieldKeys.Primary:
-				    this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-				    this.index = new UniqueKey("u_" + fieldName);
+                    this.indicies.Add(new UniqueKey("u_" + fieldName));
 					break;
 				case DataFieldKeys.Index:
-				    this.index = new Index("i_" + fieldName);
+                    this.indicies.Add(new Index("i_" + fieldName));
 					break;
 				default:
 					break;
@@ -193,20 +227,36 @@ namespace BoxSocial.IO
             this.length = 0;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
             switch (key)
 			{
 				case DataFieldKeys.Primary:
-				    this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-				    this.index = new UniqueKey(keyName);
+                    this.indicies.Add(new UniqueKey(keyName));
 					break;
 				case DataFieldKeys.Index:
-				    this.index = new Index(keyName);
+                    this.indicies.Add(new Index(keyName));
 					break;
 				default:
 					break;
 			}
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, params Index[] indicies)
+        {
+            this.fieldName = fieldName;
+            this.length = 0;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
+            foreach (Index index in indicies)
+            {
+                this.key |= index.KeyType;
+
+                this.indicies.Add(index);
+            }
         }
 
         public DataFieldAttribute(string fieldName, Type parentType, DataFieldKeys key, string keyName, long fieldLength)
@@ -221,20 +271,36 @@ namespace BoxSocial.IO
             this.length = fieldLength;
             this.parentType = parentType;
             this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
 			switch (key)
 			{
 				case DataFieldKeys.Primary:
-				    this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
 					break;
 				case DataFieldKeys.Unique:
-				    this.index = new UniqueKey(keyName);
+                    this.indicies.Add(new UniqueKey(keyName));
 					break;
 				case DataFieldKeys.Index:
-				    this.index = new Index(keyName);
+                    this.indicies.Add(new Index(keyName));
 					break;
 				default:
 					break;
 			}
+        }
+
+        public DataFieldAttribute(string fieldName, Type parentType, string parentFieldName, long fieldLength, params Index[] indicies)
+        {
+            this.fieldName = fieldName;
+            this.length = fieldLength;
+            this.parentType = parentType;
+            this.parentFieldName = parentFieldName;
+            this.indicies = new List<Index>();
+            foreach (Index index in indicies)
+            {
+                this.key |= index.KeyType;
+
+                this.indicies.Add(index);
+            }
         }
 
         public string FieldName
@@ -253,11 +319,27 @@ namespace BoxSocial.IO
             }
         }
 
-        public Index Index
+        public Index[] Indicies
         {
             get
             {
-                return index;
+                return indicies.ToArray();
+            }
+        }
+
+        public void AddIndex(DataFieldKeyAttribute index)
+        {
+            if (index != null)
+            {
+                indicies.Add(index.Index);
+            }
+        }
+
+        public void AddIndexes(DataFieldKeyAttribute[] indexes)
+        {
+            foreach (DataFieldKeyAttribute index in indexes)
+            {
+                indicies.Add(index.Index);
             }
         }
 

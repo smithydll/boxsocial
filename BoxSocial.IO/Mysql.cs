@@ -689,7 +689,7 @@ namespace BoxSocial.IO
                 if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     notNull = " NOT NULL";
-					if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+                    if (Index.GetFields(field.PrimaryIndex.Key, GetFields(tableName)).Count == 1)
 					{
 						defaultValue = " DEFAULT NULL AUTO_INCREMENT";
 					}
@@ -739,7 +739,7 @@ namespace BoxSocial.IO
                     if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
                         notNull = " NOT NULL";
-						if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+                        if (Index.GetFields(field.PrimaryIndex.Key, GetFields(tableName)).Count == 1)
 						{
 							defaultValue = " DEFAULT NULL AUTO_INCREMENT";
 						}
@@ -800,7 +800,7 @@ namespace BoxSocial.IO
                 if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                 {
                     notNull = " NOT NULL";
-					if (Index.GetFields(field.Index.Key, GetFields(tableName)).Count == 1)
+                    if (Index.GetFields(field.PrimaryIndex.Key, GetFields(tableName)).Count == 1)
                     {
 						defaultValue = " DEFAULT NULL AUTO_INCREMENT";
 					}
@@ -874,7 +874,7 @@ namespace BoxSocial.IO
                     if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
                         notNull = " NOT NULL";
-                        if (Index.GetFields(field.Index.Key, fields).Count == 1)
+                        if (Index.GetFields(field.PrimaryIndex.Key, fields).Count == 1)
                         {
                             defaultValue = " DEFAULT NULL AUTO_INCREMENT";
                         }
@@ -897,7 +897,7 @@ namespace BoxSocial.IO
                 {
                     if ((field.Key & DataFieldKeys.Primary) == DataFieldKeys.Primary)
                     {
-						if (Index.GetFields(field.Index.Key, fields).Count == 1)
+                        if (Index.GetFields(field.PrimaryIndex.Key, fields).Count == 1)
 						{
 							notNull = " NOT NULL";
 	                        primaryKey = field;

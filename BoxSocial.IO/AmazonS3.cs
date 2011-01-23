@@ -38,39 +38,68 @@ namespace BoxSocial.IO
             s3Client = new AmazonS3Client(keyId, secretKey);
         }
 
-        public override void CreateBin()
+        public override void CreateBin(string bin)
+        {
+            PutBucketRequest pbr = new PutBucketRequest();
+            pbr.BucketName = bin;
+            PutBucketResponse response = s3Client.PutBucket(pbr);
+        }
+
+        public override string SaveFile(string bin, Stream file)
+        {
+            string fileName = HashFile(file);
+            PutObjectRequest request = new PutObjectRequest();
+            request.BucketName = bin;
+            request.GenerateMD5Digest = true;
+            request.InputStream = file;
+            request.Key = fileName;
+            request.StorageClass = S3StorageClass.Standard;
+            PutObjectResponse response = s3Client.PutObject(request);
+            return fileName;
+        }
+
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
+        {
+            string fileName = HashFile(file);
+            PutObjectRequest request = new PutObjectRequest();
+            request.BucketName = bin;
+            request.GenerateMD5Digest = true;
+            request.InputStream = file;
+            request.Key = fileName;
+            request.StorageClass = S3StorageClass.ReducedRedundancy;
+            PutObjectResponse response = s3Client.PutObject(request);
+            return fileName;
+        }
+
+        public override void DeleteFile(string bin, string fileName)
+        {
+            DeleteObjectRequest request = new DeleteObjectRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+            DeleteObjectResponse response = s3Client.DeleteObject(request);
+        }
+
+        public override void TouchFile(string bin, string fileName)
         {
             throw new NotImplementedException();
         }
 
-        public override void SaveFile(Stream file)
+        public override Stream RetrieveFile(string bin, string fileName)
         {
-            ListBucketsResponse response = s3Client.ListBuckets();
-            foreach (S3Bucket bucket in response.Buckets)
-            {
-                if (bucket.BucketName == "")
-                {
-                    PutObjectRequest request = new PutObjectRequest();
-                    request.GenerateMD5Digest = true;
-                    request.InputStream = file;
-                    request.StorageClass = S3StorageClass.Standard;
-                    s3Client.PutObject(request);
-                }
-            }
+            GetObjectRequest request = new GetObjectRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+            GetObjectResponse response = s3Client.GetObject(request);
+
+            return response.ResponseStream;
         }
 
-        public override void SaveFileWithReducedRedundancy(Stream file)
+        public override string RetrieveFileUri(string bin, string fileName)
         {
-        }
-
-        public override void DeleteFile()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void TouchFile()
-        {
-            throw new NotImplementedException();
+            GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+            return s3Client.GetPreSignedURL(request);
         }
     }
 }

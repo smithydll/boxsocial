@@ -48,6 +48,7 @@
     <Reference Include="AWSSDK, Version=1.0.12.0, Culture=neutral, PublicKeyToken=cd2d24cd2bace800, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\bin\AWSSDK.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data, Version=6.2.2.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -60,7 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmazonS3.cs" />
+    <Compile Include="DataFieldKeyAttribute.cs" />
     <Compile Include="IProse.cs" />
+    <Compile Include="LocalStorage.cs" />
     <Compile Include="RawTemplate.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DataField.cs" />

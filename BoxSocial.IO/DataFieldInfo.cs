@@ -40,7 +40,7 @@ namespace BoxSocial.IO
         private long fieldLength;
         private Type parentType;
         private string parentFieldName;
-        private Index index;
+        private List<Index> indicies;
 
         public string Name
         {
@@ -66,6 +66,9 @@ namespace BoxSocial.IO
             }
         }
 		
+        /// <summary>
+        /// Deletes all other keys from this field and replaced with the set value
+        /// </summary>
 		public DataFieldKeys Key
 		{
 			get
@@ -75,29 +78,45 @@ namespace BoxSocial.IO
 			set
 			{
 				this.key = value;
+                this.indicies = new List<Index>();
 				switch (this.key)
 	            {
 	                case DataFieldKeys.Primary:
-					    this.index = new PrimaryKey();
+                        this.indicies.Add(new PrimaryKey());
 	                    break;
 	                case DataFieldKeys.Unique:
-					    this.index = new UniqueKey("u_" + fieldName);
+                        this.indicies.Add(new UniqueKey("u_" + fieldName));
 	                    break;
 					case DataFieldKeys.Index:
-						this.index = new Index("i_" + fieldName);
+                        this.indicies.Add(new Index("i_" + fieldName));
 						break;
 				    default:
-						this.index = null;
+                        this.indicies = null;
 						break;
 	            }
 			}
 		}
 
-        public Index Index
+        public Index[] Indicies
         {
             get
             {
-                return index;
+                return indicies.ToArray();
+            }
+        }
+
+        public Index PrimaryIndex
+        {
+            get
+            {
+                foreach (Index index in indicies)
+                {
+                    if (index.KeyType == DataFieldKeys.Primary)
+                    {
+                        return index;
+                    }
+                }
+                return null;
             }
         }
 
@@ -130,6 +149,7 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
+            this.indicies = new List<Index>();
         }
 
         public DataFieldInfo(string name, Type type, long length, DataFieldKeys key)
@@ -137,16 +157,17 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
+            this.indicies = new List<Index>();
             switch (key)
             {
                 case DataFieldKeys.Primary:
-				    this.index = new PrimaryKey();
+                    this.indicies.Add(new PrimaryKey());
                     break;
                 case DataFieldKeys.Unique:
-				    this.index = new UniqueKey("u_" + fieldName);
+                    this.indicies.Add(new UniqueKey("u_" + fieldName));
                     break;
 				case DataFieldKeys.Index:
-					this.index = new Index("i_" + fieldName);
+                    this.indicies.Add(new Index("i_" + fieldName));
 					break;
 			    default:
 					break;
@@ -159,15 +180,32 @@ namespace BoxSocial.IO
             this.fieldName = name;
             this.fieldType = type;
             this.fieldLength = length;
-            this.index = key;
+            this.indicies = new List<Index>();
+            this.indicies.Add(key);
 			if (key != null)
 			{
-				this.key = key.KeyType;
+				this.key |= key.KeyType;
 			}
 			else
 			{
 				this.key = DataFieldKeys.None;
 			}
+        }
+
+        public DataFieldInfo(string name, Type type, long length, Index[] indicies)
+        {
+            this.fieldName = name;
+            this.fieldType = type;
+            this.fieldLength = length;
+            this.indicies = new List<Index>();
+            this.indicies.AddRange(indicies);
+            foreach (Index index in indicies)
+            {
+                if (key != null)
+                {
+                    this.key |= index.KeyType;
+                }
+            }
         }
     }
 }

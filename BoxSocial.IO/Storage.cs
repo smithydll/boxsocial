@@ -20,8 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Data;
 using System.IO;
 using System.Text;
+using System.Web;
 
 namespace BoxSocial.IO
 {
@@ -34,14 +37,36 @@ namespace BoxSocial.IO
             this.db = db;
         }
 
-        public abstract void CreateBin();
+        public abstract void CreateBin(string bin);
 
-        public abstract void SaveFile(Stream file);
+        public abstract string SaveFile(string bin, Stream file);
 
-        public abstract void SaveFileWithReducedRedundancy(Stream file);
+        public abstract string SaveFileWithReducedRedundancy(string bin, Stream file);
 
-        public abstract void DeleteFile();
+        public abstract void DeleteFile(string bin, string fileName);
 
-        public abstract void TouchFile();
+        public abstract void TouchFile(string bin, string fileName);
+
+        public abstract Stream RetrieveFile(string bin, string fileName);
+
+        public abstract string RetrieveFileUri(string bin, string fileName);
+
+        public static string HashFile(Stream fileStream)
+        {
+            HashAlgorithm hash = new SHA512Managed();
+
+            byte[] fileBytes = new byte[fileStream.Length];
+            fileStream.Read(fileBytes, 0, (int)fileStream.Length);
+
+            byte[] fileHash = hash.ComputeHash(fileBytes);
+
+            string fileHashString = "";
+            foreach (byte fileHashByte in fileHash)
+            {
+                fileHashString += string.Format("{0:x2}", fileHashByte);
+            }
+
+            return fileHashString;
+        }
     }
 }

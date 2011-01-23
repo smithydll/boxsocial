@@ -38,11 +38,14 @@ namespace BoxSocial.IO
 
             foreach (DataFieldInfo field in fields)
             {
-                if (field.Index != null)
+                if (field.Indicies != null)
                 {
-                    if (field.Index.Key == key)
+                    foreach (Index index in field.Indicies)
                     {
-                        keyFields.Add(field);
+                        if (index.Key == key)
+                        {
+                            keyFields.Add(field);
+                        }
                     }
                 }
             }

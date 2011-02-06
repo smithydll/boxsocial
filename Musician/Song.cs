@@ -56,6 +56,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public long MusicianId
+        {
+            get
+            {
+                return musicianId;
+            }
+        }
+
         public string Title
         {
             get
@@ -181,6 +189,24 @@ namespace BoxSocial.Musician
             return getSubItems(typeof(Recording), true).ConvertAll<Recording>(new Converter<Item, Recording>(convertToRecording));
         }
 
+        public List<Recording> GetRecordingsByMusician()
+        {
+            List<Recording> recordings = new List<Recording>();
+
+            SelectQuery query = Recording.GetSelectQueryStub(typeof(Recording));
+            query.AddCondition("song_id", SongId);
+            query.AddCondition("musician_id", MusicianId);
+
+            DataTable recordingsDataTable = db.Query(query);
+
+            foreach (DataRow dr in recordingsDataTable.Rows)
+            {
+                recordings.Add(new Recording(core, dr));
+            }
+
+            return recordings;
+        }
+
         public Recording convertToRecording(Item input)
         {
             return (Recording)input;
@@ -235,6 +261,7 @@ namespace BoxSocial.Musician
             }
 
             e.Template.Parse("TITLE", song.Title);
+            e.Template.Parse("LYRICS", song.Lyrics);
 
             List<Recording> recordings = song.GetRecordings();
 
@@ -242,7 +269,21 @@ namespace BoxSocial.Musician
             {
                 VariableCollection recordingVariableCollection = e.Template.CreateChild("recording_list");
 
-                //recordingVariableCollection.Parse(
+                recordingVariableCollection.Parse("RECORDING_ID", recording.Id);
+                recordingVariableCollection.Parse("RECORDING_LOCATION", recording.RecordingLocation);
+
+                if (recording.MusicianId != song.Musician.Id)
+                {
+                    recordingVariableCollection.Parse("IS_COVER", "TRUE");
+                    recordingVariableCollection.Parse("RECORDING_MUSICIAN_NAME", recording.Musician.DisplayName);
+                    recordingVariableCollection.Parse("RECORDING_MUSICIAN_ID", recording.Musician.Id);
+                    recordingVariableCollection.Parse("RECORDING_MUSICIAN_URI", recording.Musician.Uri);
+                }
+            }
+
+            if (e.Page.Musician.Access.Can("COMMENT_SONGS"))
+            {
+                e.Template.Parse("CAN_COMMENT", "TRUE");
             }
         }
     }

@@ -426,11 +426,17 @@
   <data name="LEARN_MORE" xml:space="preserve">
     <value>Learn More...</value>
   </data>
+  <data name="LEAVE" xml:space="preserve">
+    <value>Leave</value>
+  </data>
   <data name="LOCATION" xml:space="preserve">
     <value>Location</value>
   </data>
   <data name="MALE" xml:space="preserve">
     <value>Male</value>
+  </data>
+  <data name="MANAGE" xml:space="preserve">
+    <value>Manage</value>
   </data>
   <data name="MARCH" xml:space="preserve">
     <value>March</value>

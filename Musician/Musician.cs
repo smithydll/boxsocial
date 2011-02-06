@@ -59,6 +59,11 @@ namespace BoxSocial.Musician
     [Permission("VIEW", "Can view the musician's profile", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     [Permission("COMMENT_GIGS", "Can comment on gigs", PermissionTypes.Interact)]
+    [Permission("RATE_GIGS", "Can rate gigs", PermissionTypes.Interact)]
+    [Permission("COMMENT_SONGS", "Can comment on songs", PermissionTypes.Interact)]
+    [Permission("RATE_SONGS", "Can rate songs", PermissionTypes.Interact)]
+    [Permission("COMMENT_RELEASES", "Can comment on releases", PermissionTypes.Interact)]
+    [Permission("RATE_RELEASES", "Can rate releases", PermissionTypes.Interact)]
     public class Musician : Primitive, IPermissibleItem, ICommentableItem
     {
         [DataField("musician_id", DataFieldKeys.Primary)]

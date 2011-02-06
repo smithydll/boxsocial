@@ -204,22 +204,42 @@ namespace BoxSocial.Musician
 
         public static void ShowDiscography(object sender, ShowMPageEventArgs e)
         {
-            e.Template.SetTemplate("viewdiscography");
+            e.Template.SetTemplate("Musician", "viewdiscography");
 
             List<Release> releases = e.Page.Musician.GetReleases();
 
             foreach (Release release in releases)
             {
+                VariableCollection releaseVariableCollection = null;
                 switch (release.ReleaseType)
                 {
                     case ReleaseType.Album:
-                        VariableCollection albumVariableCollection = e.Template.CreateChild("album_list");
+                        releaseVariableCollection = e.Template.CreateChild("album_list");
+                        break;
 
-                        albumVariableCollection.Parse("TITLE", release.Title);
+                    case ReleaseType.Compilation:
+                        releaseVariableCollection = e.Template.CreateChild("compilation_list");
+                        break;
+                    case ReleaseType.Demo:
+                        releaseVariableCollection = e.Template.CreateChild("demo_list");
+                        break;
+                    case ReleaseType.DVD:
+                        releaseVariableCollection = e.Template.CreateChild("dvd_list");
+                        break;
+                    case ReleaseType.EP:
+                        releaseVariableCollection = e.Template.CreateChild("ep_list");
+                        break;
+                    case ReleaseType.Single:
+                        releaseVariableCollection = e.Template.CreateChild("single_list");
                         break;
                     default:
                         // do nothing
                         break;
+                }
+
+                if (releaseVariableCollection != null)
+                {
+                    releaseVariableCollection.Parse("TITLE", release.Title);
                 }
             }
         }

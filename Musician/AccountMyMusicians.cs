@@ -87,6 +87,8 @@ namespace BoxSocial.Musician
                 musicianVariableCollection.Parse("DISPLAY_NAME", musician.DisplayName);
                 musicianVariableCollection.Parse("U_MUSICIAN", musician.Uri);
                 musicianVariableCollection.Parse("FANS", core.Functions.LargeIntegerToString(musician.Fans));
+                musicianVariableCollection.Parse("U_MANAGE", musician.AccountUriStub);
+                musicianVariableCollection.Parse("U_LEAVE", "{TODO}");
             }
         }
 

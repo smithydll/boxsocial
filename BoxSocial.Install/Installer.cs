@@ -98,6 +98,9 @@ namespace BoxSocial.Install
 
                     if (args[1] == "all")
                     {
+                        doUpdate("BoxSocial.Forms", false);
+                        doUpdate("BoxSocial.FrontEnd", false);
+                        doUpdate("BoxSocial.IO", false);
                         doUpdate("BoxSocial.Internals");
                         doUpdate("Profile");
                         doUpdate("Groups");
@@ -112,6 +115,20 @@ namespace BoxSocial.Install
                         doUpdate("News");
                         doUpdate("Pages");
 
+                        InstallLanguage("en", @"Internals");
+                        InstallLanguage("en", @"Profile");
+                        InstallLanguage("en", @"Groups");
+                        InstallLanguage("en", @"Networks");
+                        InstallLanguage("en", @"Musician");
+                        InstallLanguage("en", @"Gallery");
+                        InstallLanguage("en", @"Blog");
+                        InstallLanguage("en", @"Calendar");
+                        InstallLanguage("en", @"Forum");
+                        InstallLanguage("en", @"GuestBook");
+                        InstallLanguage("en", @"Mail");
+                        InstallLanguage("en", @"News");
+                        InstallLanguage("en", @"Pages");
+
                         Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";
                         p1.StartInfo.Arguments = "force-reload";
@@ -122,6 +139,8 @@ namespace BoxSocial.Install
                     else
                     {
                         doUpdate(args[1]);
+
+                        InstallLanguage("en", args[1]);
                     }
                     break;
                 case "sync":
@@ -337,84 +356,98 @@ namespace BoxSocial.Install
             Installer.mysqlDatabase = settings.DatabaseName;
             Installer.mysqlRootPassword = settings.DatabaseRootPassword;
             Installer.root = settings.RootDirectory;
+            Installer.languageRoot = Path.Combine(Installer.root, "language");
         }
 
         static void UpdateBlog()
         {
             loadUpdateOptions();
             doUpdate("Blog");
+            InstallLanguage("en", @"Blog");
         }
 
         static void UpdateBoxSocialInternals()
         {
             loadUpdateOptions();
             doUpdate("BoxSocial.Internals");
+            InstallLanguage("en", @"Internals");
         }
 
         static void UpdateCalendar()
         {
             loadUpdateOptions();
             doUpdate("Calendar");
+            InstallLanguage("en", @"Calendar");
         }
 
         static void UpdateForum()
         {
             loadUpdateOptions();
             doUpdate("Forum");
+            InstallLanguage("en", @"Forum");
         }
 
         static void UpdateGallery()
         {
             loadUpdateOptions();
             doUpdate("Gallery");
+            InstallLanguage("en", @"Gallery");
         }
 
         static void UpdateGroups()
         {
             loadUpdateOptions();
             doUpdate("Groups");
+            InstallLanguage("en", @"Groups");
         }
 
         static void UpdateGuestbook()
         {
             loadUpdateOptions();
             doUpdate("GuestBook");
+            InstallLanguage("en", @"GuestBook");
         }
 
         static void UpdateMail()
         {
             loadUpdateOptions();
             doUpdate("Mail");
+            InstallLanguage("en", @"Mail");
         }
 
         static void UpdateMusician()
         {
             loadUpdateOptions();
             doUpdate("Musician");
+            InstallLanguage("en", @"Musician");
         }
 
         static void UpdateNetworks()
         {
             loadUpdateOptions();
             doUpdate("Networks");
+            InstallLanguage("en", @"Networks");
         }
 
         static void UpdateNews()
         {
             loadUpdateOptions();
             doUpdate("News");
+            InstallLanguage("en", @"News");
         }
 
         static void UpdatePages()
         {
             loadUpdateOptions();
             doUpdate("Pages");
+            InstallLanguage("en", @"Pages");
         }
 
         static void UpdateProfile()
         {
             loadUpdateOptions();
             doUpdate("Profile");
+            InstallLanguage("en", @"Profile");
         }
 
         static void EnterUpgradePermissions()
@@ -1192,7 +1225,7 @@ namespace BoxSocial.Install
             return field;
         }
 
-        static void doUpdate(string repo)
+        static void doUpdate(string repo, bool install = true)
         {
             binRoot = Path.Combine(root, "bin");
             imagesRoot = Path.Combine(root, "images");
@@ -1202,8 +1235,12 @@ namespace BoxSocial.Install
             ExecuteMessage("Updating `" + repo + "`.\nPlease Wait...", ConsoleColor.Blue, false);
 
             InstallRepository(repo);
-            InstallApplication(repo);
-            InstallLanguage("en", repo);
+
+            if (install)
+            {
+                InstallApplication(repo);
+                InstallLanguage("en", repo);
+            }
 
             if (interactive)
             {
@@ -1594,12 +1631,18 @@ namespace BoxSocial.Install
                     {
                         Directory.CreateDirectory(dir);
                     }
+                    if (File.Exists(Path.Combine(dir, string.Format("{0}.{1}.resources", repo, lang))))
+                    {
+                        File.Delete(Path.Combine(dir, string.Format("{0}.{1}.resources", repo, lang)));
+                    }
+
                     File.Copy(string.Format("{0}.{1}.resources", repo, lang),
                         Path.Combine(dir, string.Format("{0}.{1}.resources", repo, lang)));
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
             }
         }
 

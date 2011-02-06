@@ -240,7 +240,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                throw new NotImplementedException();
+                return Musician.UriStub + "songs/" + Id.ToString();
             }
         }
 

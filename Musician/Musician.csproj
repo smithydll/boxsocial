@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Recording.cs" />
     <Compile Include="Release.cs" />
+    <Compile Include="Sample.cs" />
     <Compile Include="Song.cs" />
     <Compile Include="AccountMemberProfile.cs" />
     <Compile Include="Templates1.Designer.cs">
@@ -147,6 +148,7 @@
     <Content Include="templates\account_my_musicians.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_recordings.html" />
+    <Content Include="templates\account_releases.html" />
     <Content Include="templates\account_songs.html" />
     <Content Include="templates\account_song_edit.html" />
     <Content Include="templates\account_tour_edit.html" />

@@ -47,5 +47,30 @@ namespace BoxSocial.Musician
                 return 1;
             }
         }
+
+        public AccountReleasesManage()
+        {
+            this.Load += new EventHandler(AccountReleasesManage_Load);
+            this.Show += new EventHandler(AccountReleasesManage_Show);
+        }
+
+        void AccountReleasesManage_Load(object sender, EventArgs e)
+        {
+            AddModeHandler("add", new ModuleModeHandler(AccountReleasesManage_Add));
+            AddModeHandler("edit", new ModuleModeHandler(AccountReleasesManage_Add));
+        }
+
+        void AccountReleasesManage_Show(object sender, EventArgs e)
+        {
+            SetTemplate("account_releases");
+        }
+
+        void AccountReleasesManage_Add(object sender, ModuleModeEventArgs e)
+        {
+        }
+
+        void AccountReleasesManage_Add_Save(object sender, ModuleModeEventArgs e)
+        {
+        }
     }
 }

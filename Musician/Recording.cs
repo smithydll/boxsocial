@@ -217,6 +217,24 @@ namespace BoxSocial.Musician
         {
         }
 
+        public List<Sample> GetSamples()
+        {
+            List<Sample> samples = new List<Sample>();
+
+            SelectQuery query = GetSelectQueryStub(typeof(Sample));
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(Sample), "recording_sampled_id"), new DataField(typeof(Recording), "recording_id"));
+            query.AddCondition("recording_id", Id);
+
+            DataTable sampleDataTable = db.Query(query);
+
+            foreach (DataRow dr in sampleDataTable.Rows)
+            {
+                samples.Add(new Sample(core, dr));
+            }
+
+            return samples;
+        }
+
         public override long Id
         {
             get
@@ -233,9 +251,21 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static void Show(Core core, PPage page, long recordingId)
+        public static void Show(object sender, ShowMPageEventArgs e)
         {
-            page.template.SetTemplate("Musician", "viewrecording");
+            e.Template.SetTemplate("Musician", "viewrecording");
+
+            Recording recording = null;
+
+            try
+            {
+                recording = new Recording(e.Core, e.ItemId);
+            }
+            catch
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
         }
     }
 

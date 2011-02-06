@@ -253,8 +253,8 @@ namespace BoxSocial.Musician
                     // TODO;
                     gig = Gig.Create(core, (Musician)Owner, tour, time, timezone, city, venue, gigAbstract, allAges);
 
-                    core.Display.ShowMessage("Gig created", "Your gig has been created");
                     SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Gig created", "Your gig has been created");
                     break;
                 case "edit":
                     long gigId = core.Functions.FormLong("id", 0);

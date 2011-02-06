@@ -202,20 +202,20 @@ namespace BoxSocial.Musician {
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///&lt;tr&gt;
         ///	&lt;th&gt;&lt;/th&gt;
-        ///	&lt;th&gt;Fans&lt;/th&gt;
+        ///	&lt;th&gt;{L_FANS}&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
+        ///&lt;!-- IF musician_list --&gt;
         ///&lt;!-- BEGIN musician_list --&gt;
         ///&lt;!-- IF musician_list.$_INDEX_EVEN --&gt;
-        ///&lt;tr class=&quot;even&quot;&gt;
+        ///  &lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
         ///&lt;!-- ENDIF --&gt;
         ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MUSICIAN}&quot;&gt;{musician_list.DISPLAY_NAME}&lt;/a&gt;&lt;/td&gt;
         ///	&lt;td&gt;{musician_list.FANS}&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MANAGE}&quot;&gt;{L_MANAGE}&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a h [rest of string was truncated]&quot;;.
+        ///	&lt;td&gt;&lt;a href=&quot;{musician_list.U_MANAGE [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_my_musicians {
             get {
@@ -250,8 +250,23 @@ namespace BoxSocial.Musician {
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Manage Recordings&lt;/h3&gt;
         ///
+        ///&lt;a href=&quot;{U_ADD_RECORDING}&quot;&gt;Add Recording&lt;/a&gt;.
+        /// </summary>
+        internal static string account_recordings {
+            get {
+                return ResourceManager.GetString("account_recordings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Manage Releases&lt;/h3&gt;
+        ///
+        ///&lt;a href=&quot;{U_ADD_DEMO}&quot;&gt;Add Demo&lt;/a&gt;
+        ///&lt;a href=&quot;{U_ADD_EP}&quot;&gt;Add EP&lt;/a&gt;
         ///&lt;a href=&quot;{U_ADD_ALBUM}&quot;&gt;Add Album&lt;/a&gt;
         ///&lt;a href=&quot;{U_ADD_SINGLE}&quot;&gt;Add Single&lt;/a&gt;
+        ///&lt;a href=&quot;{U_ADD_DVD}&quot;&gt;Add DVD&lt;/a&gt;
+        ///&lt;a href=&quot;{U_ADD_COMPILATION}&quot;&gt;Add Compilation&lt;/a&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///&lt;tr&gt;
@@ -266,16 +281,11 @@ namespace BoxSocial.Musician {
         ///&lt;tr class=&quot;even&quot;&gt;
         ///&lt;!-- ELSE --&gt;
         ///&lt;tr class=&quot;odd&quot;&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///	&lt;td&gt;{album_list.TITLE}&lt;/td&gt;
-        ///	&lt;td&gt;{album_list.TRACKS}&lt;/td&gt;
-        ///	&lt;td&gt;{album_list.VIEWS}&lt;/td&gt;
-        ///	&lt;td&gt;&lt;a href=&quot;{album_list.U_EDIT}&quot;&gt;{L_EDIT}&lt;/a&gt;&lt;/td&gt;
-        ///	&lt;td&gt; [rest of string was truncated]&quot;;.
+        ///&lt;!-- ENDIF - [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string account_recordings {
+        internal static string account_releases {
             get {
-                return ResourceManager.GetString("account_recordings", resourceCulture);
+                return ResourceManager.GetString("account_releases", resourceCulture);
             }
         }
         

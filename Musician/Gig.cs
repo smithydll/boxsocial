@@ -341,7 +341,7 @@ namespace BoxSocial.Musician
         {
             // TODO: fix this
             Item item = Item.Create(core, typeof(Gig), new FieldValuePair("musician_id", owner.Id),
-                new FieldValuePair("tour_id", tour.Id),
+                new FieldValuePair("tour_id", ((tour != null) ? tour.Id : 0)),
                 new FieldValuePair("gig_time_ut", time),
                 new FieldValuePair("gig_time_zone", timezone),
                 new FieldValuePair("gig_city", city),

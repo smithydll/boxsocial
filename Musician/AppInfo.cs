@@ -446,5 +446,89 @@ namespace BoxSocial.Musician
                 return;
             }
         }
+
+        [Show(@"^/recordings/([0-9]+)(|/)$", AppPrimitives.Musician)]
+        private void showRecording(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Recording.Show(sender, new ShowMPageEventArgs((MPage)sender, long.Parse(core.PagePathParts[1].Value)));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
+
+        [Show(@"^/discography/demo/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showDemo(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
+
+        [Show(@"^/discography/single/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showSingle(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
+
+        [Show(@"^/discography/album/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showAlbum(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
+
+        [Show(@"^/discography/ep/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showEP(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
+
+        [Show(@"^/discography/dvd/([a-z0-9\-_\+]+)(|/)$", AppPrimitives.Musician)]
+        private void showDVD(Core core, object sender)
+        {
+            if (sender is MPage)
+            {
+                Release.Show(sender, new ShowMPageEventArgs((MPage)sender, core.PagePathParts[1].Value));
+            }
+            else
+            {
+                core.Functions.Generate404();
+                return;
+            }
+        }
     }
 }

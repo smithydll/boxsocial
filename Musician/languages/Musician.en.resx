@@ -159,6 +159,9 @@
   <data name="GIGS" xml:space="preserve">
     <value>Gigs</value>
   </data>
+  <data name="GIG_DESCRIPTION" xml:space="preserve">
+    <value>Gig Description</value>
+  </data>
   <data name="GROUP_MEMBERS" xml:space="preserve">
     <value>Group members</value>
   </data>
@@ -176,6 +179,9 @@
   </data>
   <data name="MUSICIAN" xml:space="preserve">
     <value>Musician</value>
+  </data>
+  <data name="NO_TOUR" xml:space="preserve">
+    <value>No Tour</value>
   </data>
   <data name="RECORDING" xml:space="preserve">
     <value>Recording</value>

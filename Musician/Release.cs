@@ -48,6 +48,8 @@ namespace BoxSocial.Musician
         private long musicianId;
         [DataField("release_title", 63)]
         private string releaseTitle;
+        [DataField("release_slug", DataFieldKeys.Index, 63)]
+        private string releaseSlug;
         [DataField("release_type")]
         private byte releaseType;
         [DataField("release_date_ut")]
@@ -80,6 +82,14 @@ namespace BoxSocial.Musician
             set
             {
                 SetProperty("releaseTitle", value);
+            }
+        }
+
+        public string Slug
+        {
+            get
+            {
+                return releaseSlug;
             }
         }
 
@@ -145,6 +155,21 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Release(Core core, string slug)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Release_ItemLoad);
+
+            try
+            {
+                LoadItem("release_slug", slug);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidReleaseException();
+            }
+        }
+
         public Release(Core core, DataRow releaseRow)
             : base(core)
         {
@@ -176,9 +201,15 @@ namespace BoxSocial.Musician
 
         public static Release Create(Core core, Musician musician, ReleaseType releaseType, string title, long coverId)
         {
+            string slug = title;
+            Navigation.GenerateSlug(title, ref slug);
+
+            slug = Functions.TrimStringToWord(slug);
+
             // TODO: fix this
             Item item = Item.Create(core, typeof(Release), new FieldValuePair("musician_id", musician.Id),
                 new FieldValuePair("release_title", title),
+                new FieldValuePair("release_slug", slug),
                 new FieldValuePair("release_type", (byte)releaseType),
                 new FieldValuePair("release_date_ut", UnixTime.UnixTimeStamp()),
                 new FieldValuePair("release_cover_art", coverId));
@@ -198,7 +229,21 @@ namespace BoxSocial.Musician
         {
             get
             {
-                throw new NotImplementedException();
+                switch (ReleaseType)
+                {
+                    case BoxSocial.Musician.ReleaseType.Demo:
+                        return Musician.UriStub + "discography/demo/" + Slug.ToString();
+                    case BoxSocial.Musician.ReleaseType.Single:
+                        return Musician.UriStub + "discography/single/" + Slug.ToString();
+                    case BoxSocial.Musician.ReleaseType.Album:
+                        return Musician.UriStub + "discography/album/" + Slug.ToString();
+                    case BoxSocial.Musician.ReleaseType.EP:
+                        return Musician.UriStub + "discography/ep/" + Slug.ToString();
+                    case BoxSocial.Musician.ReleaseType.DVD:
+                        return Musician.UriStub + "discography/dvd/" + Slug.ToString();
+                    default:
+                        return Musician.UriStub + "discography/release/" + Id.ToString();
+                }
             }
         }
 
@@ -240,6 +285,7 @@ namespace BoxSocial.Musician
                 if (releaseVariableCollection != null)
                 {
                     releaseVariableCollection.Parse("TITLE", release.Title);
+                    releaseVariableCollection.Parse("URI", release.Uri);
                 }
             }
         }
@@ -252,7 +298,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                release = new Release(e.Core, e.ItemId);
+                release = new Release(e.Core, e.Slug);
             }
             catch
             {

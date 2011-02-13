@@ -75,7 +75,7 @@ cp INSTALL.txt Package/
 
 cp Dependencies/bin/MySql.Data.dll Package/
 
-cp GDK Package/
+cp --recursive GDK Package/
 
 rm BoxSocial.tar.gz
 tar -cf BoxSocial.tar Package/*

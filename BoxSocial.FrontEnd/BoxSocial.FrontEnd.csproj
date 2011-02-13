@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -217,8 +217,5 @@
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">$(SolutionDir)package.sh "$(SolutionDir)"</PostBuildEvent>
     <ProjectGuid>{24606021-8412-4668-8404-5BF5CB1D7E7C}</ProjectGuid>
     <RootNamespace>BoxSocial.FrontEnd</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)package.bat "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

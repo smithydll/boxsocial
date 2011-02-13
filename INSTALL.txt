@@ -1,0 +1,25 @@
+
+Box Social is designed to be run on an ubuntu linux server running mono.
+While Box Social will run on a windows server, at the moment the installer only
+works on linux hosts.
+
+Pre requesites:
+ * rsvg-convert is required to compile the GDK to PNG files during install
+ * To use Amazon Web Services AWSSDK.dll is required, just copy to the install
+   folder prior to installing
+ * Mono 2.8 is recommended for best compatibility
+ 
+Install Steps:
+ * run the BoxSocial.Install.exe programme from the command line
+ * press "c" to install Box Social the application
+
+To Update a component:
+ * run the BoxSocial.Install.exe programme from the command line
+ * press "a" to update the Box Social application
+ * select the component you want to update
+ 
+Update all components
+ * run from the command line BoxSocial.Install.exe -update all
+
+It doesn't matter if you update a component even if it is at the current
+version, Box Social will automatically detect and update selected components.

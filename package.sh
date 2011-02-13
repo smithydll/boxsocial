@@ -69,6 +69,14 @@ cp Dependencies/bin/AWSSDK.dll Package/
 cp BoxSocial.Install/bin/Debug/BoxSocial.Install.exe Package/
 cp BoxSocial.Install/bin/Debug/BoxSocial.Install.mdb Package/
 
+cp license.txt Package/
+
+cp INSTALL.txt Package/
+
+cp Dependencies/bin/MySql.Data.dll Package/
+
+cp GDK Package/
+
 rm BoxSocial.tar.gz
 tar -cf BoxSocial.tar Package/*
 gzip BoxSocial.tar

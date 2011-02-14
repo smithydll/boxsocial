@@ -38,6 +38,11 @@ namespace BoxSocial.IO
             s3Client = new AmazonS3Client(keyId, secretKey);
         }
 
+        private string SanitiseBinName(string bin)
+        {
+            return bin.Replace('\\', '.').Replace('/', '.');
+        }
+
         public override void CreateBin(string bin)
         {
             PutBucketRequest pbr = new PutBucketRequest();
@@ -100,6 +105,19 @@ namespace BoxSocial.IO
             request.BucketName = bin;
             request.Key = fileName;
             return s3Client.GetPreSignedURL(request);
+        }
+
+        public override bool IsCloudStorage
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override string RetrieveFilePath(string bin, string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

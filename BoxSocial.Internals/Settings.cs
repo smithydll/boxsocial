@@ -38,6 +38,30 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string StorageProvider
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["storage-provider"];
+            }
+        }
+
+        public string StorageRootUserFiles
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["storage-root"];
+            }
+        }
+
+        public string StorageBinUserFilesPrefix
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["storage-bin"];
+            }
+        }
+
         public Settings(Core core)
         {
             this.core = core;

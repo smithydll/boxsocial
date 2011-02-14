@@ -37,6 +37,11 @@ namespace BoxSocial.IO
             this.db = db;
         }
 
+        public abstract bool IsCloudStorage
+        {
+            get;
+        }
+
         public abstract void CreateBin(string bin);
 
         public abstract string SaveFile(string bin, Stream file);
@@ -50,6 +55,8 @@ namespace BoxSocial.IO
         public abstract Stream RetrieveFile(string bin, string fileName);
 
         public abstract string RetrieveFileUri(string bin, string fileName);
+
+        public abstract string RetrieveFilePath(string bin, string fileName);
 
         public static string HashFile(Stream fileStream)
         {

@@ -215,6 +215,15 @@ namespace BoxSocial.Internals
             timer.Start();
             rand = new Random();
 
+            db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
+                WebConfigurationManager.AppSettings["mysql-password"],
+                WebConfigurationManager.AppSettings["mysql-database"],
+                WebConfigurationManager.AppSettings["mysql-host"]);
+            template = new Template(Server.MapPath("./templates/"), "");
+            core = new Core(db, template);
+
+            core.Settings = new Settings(core);
+            // TODO: REMOVE
             lock (StoragePathLock)
             {
                 if (StoragePath == null)
@@ -222,34 +231,27 @@ namespace BoxSocial.Internals
                     StoragePath = Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]);
                 }
             }
-            db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
-                WebConfigurationManager.AppSettings["mysql-password"],
-                WebConfigurationManager.AppSettings["mysql-database"],
-                WebConfigurationManager.AppSettings["mysql-host"]);
-            template = new Template(Server.MapPath("./templates/"), "");
-            core = new Core(db, template);
-            //Core.DB = db;
+            // END REMOVE
+            if (core.Settings.StorageProvider == "amazon_s3")
+            {
+                core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
+            }
+            else if (core.Settings.StorageProvider == "local")
+            {
+                core.Storage = new LocalStorage(core.Settings.StorageRootUserFiles, db);
+            }
+            else
+            {
+                core.Storage = new LocalStorage("/var/www/storage/", db);
+            }
+
             core.page = this;
-            //Functions.Core = core;
-            //Display.Core = core;
-            //Email.Core = core;
-            //Ajax.Core = core;
-            //Linker.Core = core;
             core.Bbcode = new Bbcode(core);
             core.Functions = new Functions(core);
             core.Display = new Display(core);
             core.Email = new Email(core);
             core.Ajax = new Ajax(core);
             core.Uri = new Linker(core);
-            core.ApplicationSettings = new Settings(core);
-            if (WebConfigurationManager.AppSettings["storage-provider"] == "amazon_s3")
-            {
-                core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
-            }
-            else
-            {
-                core.Storage = new LocalStorage("/var/www/storage/", db);
-            }
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -401,7 +403,7 @@ namespace BoxSocial.Internals
             string output = string.Empty;
             string path = "/";
             output = string.Format("<a href=\"{1}\">{0}</a>",
-                    core.ApplicationSettings.SiteTitle, path);
+                    core.Settings.SiteTitle, path);
 
             for (int i = 0; i < parts.Count; i++)
             {

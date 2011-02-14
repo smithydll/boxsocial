@@ -329,7 +329,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public Settings ApplicationSettings
+        public Settings Settings
         {
             get
             {

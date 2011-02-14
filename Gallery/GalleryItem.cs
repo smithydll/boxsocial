@@ -1020,9 +1020,7 @@ namespace BoxSocial.Applications.Gallery
 
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
 
-                string displayUri = string.Format("{0}images/_display/{1}",
-                        e.Page.Owner.UriStub, galleryItem.FullPath);
-                e.Template.Parse("PHOTO_DISPLAY", displayUri);
+                e.Template.Parse("PHOTO_DISPLAY", galleryItem.DisplayUri);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
@@ -1035,6 +1033,7 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("U_ROTATE_RIGHT", galleryItem.RotateRightUri);
                 e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
                 e.Template.Parse("U_TAG", galleryItem.TagUri);
+                e.Template.Parse("U_VIEW_FULL", galleryItem.FullUri);
 
                 switch (galleryItem.Classification)
                 {
@@ -1285,7 +1284,18 @@ namespace BoxSocial.Applications.Gallery
                     }
                     else
                     {
-                        e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail));
+                        if (e.Core.Storage.IsCloudStorage)
+                        {
+                            string imageUri = e.Core.Storage.RetrieveFileUri(System.IO.Path.Combine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.storagePath);
+                            e.Core.Http.Redirect(imageUri);
+                        }
+                        else
+                        {
+                            string imagePath = e.Core.Storage.RetrieveFilePath(System.IO.Path.Combine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.storagePath);
+                            e.Core.Http.TransmitFile(imagePath);
+                        }
+
+                        //e.Core.Http.TransmitFile(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail));
                     }
                 }
                 else if (displayRequest)
@@ -1709,11 +1719,51 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                        owner.UriStub, path));
+                        owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
+                        owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string DisplayUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
+                        owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
+                        owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string FullUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/{1}",
+                        owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/{1}",
                         owner.UriStub, path));
                 }
             }

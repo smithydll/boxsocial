@@ -616,8 +616,8 @@ namespace BoxSocial.Internals
             SessionState session = page.session;
 
             template.Parse("TITLE", page.PageTitle); // the set page title function sanitises
-            template.Parse("HEADING", page.Core.ApplicationSettings.SiteTitle);
-            template.Parse("SITE_TITLE", page.Core.ApplicationSettings.SiteTitle);
+            template.Parse("HEADING", page.Core.Settings.SiteTitle);
+            template.Parse("SITE_TITLE", page.Core.Settings.SiteTitle);
             template.Parse("YEAR", DateTime.Now.Year.ToString());
 
             if (page.CanonicalUri != null)

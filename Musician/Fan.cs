@@ -137,8 +137,6 @@ namespace BoxSocial.Musician
         {
             e.Template.SetTemplate("Musician", "viewfans");
 
-            int p = e.Core.Functions.RequestInt("p", 1);
-
             Musician musician = e.Page.Musician;
 
             e.Template.Parse("U_FILTER_ALL", musician.FansUri);
@@ -169,7 +167,7 @@ namespace BoxSocial.Musician
             e.Template.Parse("U_FILTER_BEGINS_Y", musician.GetFansUri("y"));
             e.Template.Parse("U_FILTER_BEGINS_Z", musician.GetFansUri("z"));
 
-            List<Fan> fans = musician.GetFans(p, 20, e.Core.Functions.GetFilter());
+            List<Fan> fans = musician.GetFans(e.Page.TopLevelPageNumber, 20, e.Core.Functions.GetFilter());
 
             foreach (Fan fan in fans)
             {

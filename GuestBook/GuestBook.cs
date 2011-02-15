@@ -69,7 +69,6 @@ namespace BoxSocial.Applications.GuestBook
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
             page.User.LoadProfileInfo();
-            int p = core.Functions.RequestInt("p", 1);
 
             if (!page.User.Access.Can("VIEW"))
             {
@@ -93,7 +92,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.User, page.User, UserGuestBookHook);
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User), p, (int)Math.Ceiling(page.User.Comments / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User), page.TopLevelPageNumber, (int)Math.Ceiling(page.User.Comments / 10.0));
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
@@ -103,7 +102,6 @@ namespace BoxSocial.Applications.GuestBook
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
             page.User.LoadProfileInfo();
-            int p = core.Functions.RequestInt("p", 1);
 
             if (!page.User.Access.Can("VIEW"))
             {
@@ -157,7 +155,7 @@ namespace BoxSocial.Applications.GuestBook
             core.Display.DisplayComments(page.template, page.User, page.User, commenters, comments, UserGuestBookHook);
 
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), p, (int)Math.Ceiling(comments / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), page.TopLevelPageNumber, (int)Math.Ceiling(comments / 10.0));
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
@@ -179,8 +177,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             if (core.Session.IsLoggedIn)
             {
                 if (page.Group.IsGroupMember(core.Session.LoggedInMember))
@@ -191,7 +187,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.Group, page.Group);
             page.template.Parse("L_GUESTBOOK", page.Group.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.Group), p, (int)Math.Ceiling(page.Group.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Group), page.TopLevelPageNumber, (int)Math.Ceiling(page.Group.Comments / 10.0));
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
@@ -205,8 +201,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             if (core.Session.IsLoggedIn)
             {
                 if (page.Network.IsNetworkMember(core.Session.LoggedInMember))
@@ -217,7 +211,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.Network, page.Network);
             page.template.Parse("L_GUESTBOOK", page.Network.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.Network), p, (int)Math.Ceiling(page.Network.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Network), page.TopLevelPageNumber, (int)Math.Ceiling(page.Network.Comments / 10.0));
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
@@ -230,8 +224,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             if (core.Session.IsLoggedIn)
             {
                 page.template.Parse("CAN_COMMENT", "TRUE");
@@ -239,7 +231,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.AnApplication, page.AnApplication);
             page.template.Parse("L_GUESTBOOK", page.AnApplication.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.AnApplication), p, (int)Math.Ceiling(page.AnApplication.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.AnApplication), page.TopLevelPageNumber, (int)Math.Ceiling(page.AnApplication.Comments / 10.0));
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
@@ -252,8 +244,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             page.template.SetTemplate("GuestBook", "viewguestbook");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             if (core.Session.IsLoggedIn)
             {
                 if (page.Musician.Access.Can("COMMENT"))
@@ -264,7 +254,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.Musician, page.Musician);
             page.template.Parse("L_GUESTBOOK", page.Musician.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination(GuestBook.Uri(core, page.Musician), p, (int)Math.Ceiling(page.Musician.Comments / 10.0));
+            core.Display.ParsePagination(GuestBook.Uri(core, page.Musician), page.TopLevelPageNumber, (int)Math.Ceiling(page.Musician.Comments / 10.0));
 
 
             List<string[]> breadCrumbParts = new List<string[]>();

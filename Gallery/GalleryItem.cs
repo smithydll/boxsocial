@@ -1073,16 +1073,6 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
-                int p = 1;
-
-                try
-                {
-                    p = int.Parse(e.Core.Http.Query["p"]);
-                }
-                catch
-                {
-                }
-
                 if (gallery.Access.Can("COMMENT_ITEMS"))
                 {
                     e.Template.Parse("CAN_COMMENT", "TRUE");
@@ -1092,7 +1082,7 @@ namespace BoxSocial.Applications.Gallery
 
                 string pageUri = string.Format("{0}gallery/{1}",
                     HttpUtility.HtmlEncode(e.Page.Owner.UriStub), e.Slug);
-                e.Core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
 
@@ -1267,9 +1257,11 @@ namespace BoxSocial.Applications.Gallery
 
                 if (thumbnailRequest)
                 {
-                    if (!File.Exists(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail)))
+                    //if (!File.Exists(TPage.GetStorageFilePath(galleryItem.StoragePath, StorageFileType.Thumbnail)))
+                    if (!e.Core.Storage.FileExists(System.IO.Path.Combine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.StoragePath))
                     {
-                        CreateThumbnail(TPage.GetStorageFilePath(galleryItem.StoragePath));
+                        //CreateThumbnail(TPage.GetStorageFilePath(galleryItem.StoragePath));
+                        CreateThumbnail(e.Core, galleryItem.StoragePath);
                     }
 
                     if (galleryItem.ContentType == "image/png")
@@ -1521,6 +1513,45 @@ namespace BoxSocial.Applications.Gallery
                 TPage.EnsureStoragePathExists(imageFile.Name, StorageFileType.Thumbnail);
                 File.Copy(fileName, TPage.GetStorageFilePath(imageFile.Name, StorageFileType.Thumbnail));
             }
+        }
+
+        private static void CreateThumbnail(Core core, string fileName)
+        {
+            // TODO:
+            Stream fs = core.Storage.RetrieveFile(core.Settings.StorageBinUserFilesPrefix, fileName);
+            Image image = Image.FromStream(fs);
+            Image thumbImage;
+            int width = image.Width;
+            int height = image.Height;
+            double ratio = (double)width / height;
+
+            if (width > 160 || height > 160)
+            {
+                if (width >= height)
+                {
+                    width = 160;
+                    height = (int)(160 / ratio);
+                }
+                else
+                {
+                    height = 160;
+                    width = (int)(160 * ratio);
+                }
+
+                Image.GetThumbnailImageAbort abortCallBack = new Image.GetThumbnailImageAbort(abortResize);
+                thumbImage = image.GetThumbnailImage(width, height, abortCallBack, IntPtr.Zero);
+                thumbImage.Palette = image.Palette;
+
+                MemoryStream stream = new MemoryStream();
+                thumbImage.Save(stream, image.RawFormat);
+                core.Storage.SaveFile(System.IO.Path.Combine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName, stream);
+                stream.Close();
+            }
+            else
+            {
+                core.Storage.CopyFile(core.Settings.StorageBinUserFilesPrefix, System.IO.Path.Combine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName);
+            }
+            fs.Close();
         }
 
         /// <summary>

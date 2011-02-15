@@ -49,13 +49,13 @@ namespace BoxSocial.Musician
         public MPage()
             : base()
         {
-            page = 1;
+            //page = 1;
         }
 
         public MPage(string templateFile)
             : base(templateFile)
         {
-            page = 1;
+            //page = 1;
         }
 
         protected void BeginMusicianPage()

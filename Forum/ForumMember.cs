@@ -367,7 +367,7 @@ namespace BoxSocial.Applications.Forum
             page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.Owner, "y"));
             page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.Owner, "z"));
 
-            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.Owner, core.Functions.GetFilter(), page.page, 20);
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.Owner, core.Functions.GetFilter(), page.TopLevelPageNumber, 20);
 
             foreach (ForumMember member in members.Values)
             {

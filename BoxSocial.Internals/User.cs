@@ -1878,7 +1878,7 @@ namespace BoxSocial.Internals
             e.Template.Parse("FRIENDS", e.Page.User.Info.Friends.ToString());
             e.Template.Parse("L_FRIENDS", langFriends);
 
-            List<Friend> friends = e.Page.User.GetFriends(e.Page.page, 18);
+            List<Friend> friends = e.Page.User.GetFriends(e.Page.TopLevelPageNumber, 18);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = e.Template.CreateChild("friend_list");
@@ -1889,7 +1889,7 @@ namespace BoxSocial.Internals
             }
 
             string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
-            e.Core.Display.ParsePagination(pageUri, e.Page.page, (int)Math.Ceiling(e.Page.User.Info.Friends / 18.0));
+            e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(e.Page.User.Info.Friends / 18.0));
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);

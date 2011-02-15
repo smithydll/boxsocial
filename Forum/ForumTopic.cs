@@ -831,7 +831,6 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId, long topicId)
         {
-            int p = core.Functions.RequestInt("p", 1);
             long m = core.Functions.RequestLong("m", 0); // post, seeing as p has been globally reserved for page and cannot be used for post, we use m for message
             Forum thisForum = null;
 
@@ -888,7 +887,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    posts = thisTopic.GetPosts(p, settings.PostsPerPage);
+                    posts = thisTopic.GetPosts(page.TopLevelPageNumber, settings.PostsPerPage);
                 }
 
                 page.template.Parse("POSTS", posts.Count.ToString());
@@ -1003,7 +1002,7 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 
-                core.Display.ParsePagination(thisTopic.Uri, p, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
+                core.Display.ParsePagination(thisTopic.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "forum", "Forum" });

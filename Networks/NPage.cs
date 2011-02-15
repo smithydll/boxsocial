@@ -48,13 +48,13 @@ namespace BoxSocial.Networks
         public NPage()
             : base()
         {
-            page = 1;
+            //page = 1;
         }
 
         public NPage(string templateFile)
             : base(templateFile)
         {
-            page = 1;
+            //page = 1;
         }
 
         protected void BeginNetworkPage()

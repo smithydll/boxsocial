@@ -812,7 +812,7 @@ namespace BoxSocial.Groups
                 leaderVariableCollection.Parse("JOINED", e.Core.Tz.DateTimeToDateString(member.GetJoinedDate(e.Core.Tz)));
             }
 
-            List<SubGroupMember> members = subgroup.GetMembers(e.Page.page, 20, e.Core.Functions.GetFilter());
+            List<SubGroupMember> members = subgroup.GetMembers(e.Page.TopLevelPageNumber, 20, e.Core.Functions.GetFilter());
             long memberCount = e.Db.LastQueryRows;
 
             foreach (SubGroupMember member in members)
@@ -854,7 +854,7 @@ namespace BoxSocial.Groups
                 }
             }
 
-            e.Core.Display.ParsePagination(subgroup.GetUri(e.Core.Functions.GetFilter()), e.Page.page, (int)(Math.Ceiling(memberCount / 20.0)));
+            e.Core.Display.ParsePagination(subgroup.GetUri(e.Core.Functions.GetFilter()), e.Page.TopLevelPageNumber, (int)(Math.Ceiling(memberCount / 20.0)));
         }
 
         public static List<PrimitivePermissionGroup> SubUserGroup_GetPrimitiveGroups(Core core, Primitive owner)

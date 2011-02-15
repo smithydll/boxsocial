@@ -915,12 +915,10 @@ namespace BoxSocial.Networks
         {
             page.template.SetTemplate("Networks", "viewnetworkmemberlist");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Network.DisplayName);
             page.template.Parse("MEMBERS", ((ulong)page.Network.Members).ToString());
 
-            foreach (NetworkMember member in page.Network.GetMembers(p, 18))
+            foreach (NetworkMember member in page.Network.GetMembers(page.TopLevelPageNumber, 18))
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
 
@@ -947,7 +945,7 @@ namespace BoxSocial.Networks
             }
 
             string pageUri = page.Network.MemberlistUri;
-            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.Network.Members / 18.0));
+            core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(page.Network.Members / 18.0));
 
             List<string[]> breadCrumbParts = new List<string[]>();
 

@@ -70,12 +70,35 @@ namespace BoxSocial.Internals
         public SessionState session;
         protected Random rand;
         Stopwatch timer;
-        public int page;
+        protected int[] page;
         public UnixTime tz;
         protected Core core;
         public PageSignature Signature;
         private bool isAjax;
         private bool pageEnded;
+
+        public int[] PageNumber
+        {
+            get
+            {
+                return page;
+            }
+        }
+
+        public int TopLevelPageNumber
+        {
+            get
+            {
+                if (page.Length >= 1)
+                {
+                    return page[0];
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
 
         public Core Core
         {
@@ -323,8 +346,25 @@ namespace BoxSocial.Internals
             }
 
             template.SetProse(core.Prose);
-            
-            page = core.Functions.RequestInt("p", 1);
+
+            if (!string.IsNullOrEmpty(core.Http.Query["p"]))
+            {
+                string[] pages = core.Http.Query["p"].Split(new char[] { ',' });
+                page = new int[pages.Length];
+
+                for (int i = 0; i < pages.Length; i++)
+                {
+                    if (!int.TryParse(pages[i], out page[i]))
+                    {
+                        page[i] = 1;
+                    }
+                }
+            }
+            else
+            {
+                page = new int[1];
+                page[0] = 1;
+            }
         }
 
         public TPage(string templateFile)

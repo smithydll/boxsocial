@@ -74,12 +74,11 @@ namespace BoxSocial.Applications.News
 		
 		public static void Show(Core core, GPage page)
 		{
-            int p = core.Functions.RequestInt("p", 1);
 			page.template.SetTemplate("News", "viewnews");
 
             News news = new News(core, page.Group);
 
-            List<Article> articles = news.GetArticles(p, 10);
+            List<Article> articles = news.GetArticles(page.TopLevelPageNumber, 10);
 			
 			page.template.Parse("NEWS_COUNT", articles.Count.ToString());
 
@@ -96,7 +95,7 @@ namespace BoxSocial.Applications.News
 				articleVariableCollection.Parse("DATE", core.Tz.DateTimeToString(article.GetCreatedDate(core.Tz)));
             }
 
-            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, p, (int)Math.Ceiling((double)page.Group.Info.NewsArticles / 10), false);
+            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((double)page.Group.Info.NewsArticles / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });

@@ -49,30 +49,32 @@ namespace BoxSocial.Internals
         public PPage()
             : base()
         {
-            page = 1;
+            /*string[] pages = Request.QueryString["p"].Split(new char[] { ',' });
+            page = new int[pages.Length];
 
-            try
+            for (int i = 0; i < pages.Length; i++)
             {
-                page = int.Parse(Request.QueryString["p"]);
-            }
-            catch
-            {
-            }
+                if (!int.TryParse(pages[i], out page[i]))
+                {
+                    page[i] = 1;
+                }
+            }*/
 
         }
 
         public PPage(string templateFile)
             : base(templateFile)
         {
-            page = 1;
+            /*string[] pages = Request.QueryString["p"].Split(new char[] { ',' });
+            page = new int[pages.Length];
 
-            try
+            for (int i = 0; i < pages.Length; i++)
             {
-                page = int.Parse(Request.QueryString["p"]);
-            }
-            catch
-            {
-            }
+                if (!int.TryParse(pages[i], out page[i]))
+                {
+                    page[i] = 1;
+                }
+            }*/
         }
 
         public Primitive Owner

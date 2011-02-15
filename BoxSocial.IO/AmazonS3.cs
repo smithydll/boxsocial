@@ -63,9 +63,33 @@ namespace BoxSocial.IO
             return fileName;
         }
 
+        public override string SaveFile(string bin, string fileName, Stream file)
+        {
+            PutObjectRequest request = new PutObjectRequest();
+            request.BucketName = bin;
+            request.GenerateMD5Digest = true;
+            request.InputStream = file;
+            request.Key = fileName;
+            request.StorageClass = S3StorageClass.Standard;
+            PutObjectResponse response = s3Client.PutObject(request);
+            return fileName;
+        }
+
         public override string SaveFileWithReducedRedundancy(string bin, Stream file)
         {
             string fileName = HashFile(file);
+            PutObjectRequest request = new PutObjectRequest();
+            request.BucketName = bin;
+            request.GenerateMD5Digest = true;
+            request.InputStream = file;
+            request.Key = fileName;
+            request.StorageClass = S3StorageClass.ReducedRedundancy;
+            PutObjectResponse response = s3Client.PutObject(request);
+            return fileName;
+        }
+
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
             request.GenerateMD5Digest = true;
@@ -105,6 +129,41 @@ namespace BoxSocial.IO
             request.BucketName = bin;
             request.Key = fileName;
             return s3Client.GetPreSignedURL(request);
+        }
+
+        public override void CopyFile(string fromBin, string toBin, string fileName)
+        {
+            CopyObjectRequest request = new CopyObjectRequest();
+            request.SourceBucket = fromBin;
+            request.DestinationBucket = toBin;
+            request.SourceKey = fileName;
+            request.DestinationKey = fileName;
+            CopyObjectResponse response = s3Client.CopyObject(request);
+        }
+
+        public override bool FileExists(string bin, string fileName)
+        {
+            GetObjectMetadataRequest request = new GetObjectMetadataRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+
+            try
+            {
+                GetObjectMetadataResponse response = s3Client.GetObjectMetadata(request);
+            }
+            catch (Amazon.S3.AmazonS3Exception ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+
+            return true;
         }
 
         public override bool IsCloudStorage

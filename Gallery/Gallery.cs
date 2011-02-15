@@ -1387,7 +1387,6 @@ namespace BoxSocial.Applications.Gallery
                 settings = new GallerySettings(e.Core, e.Page.Owner);
             }
 
-            int p = 1;
             char[] trimStartChars = { '.', '/' };
 
             string galleryPath = e.Slug;
@@ -1435,7 +1434,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                     }
 
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.page, (int)Math.Ceiling(gallery.Items / 12.0));
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0));
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1516,7 +1515,7 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, p, 12);
+            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12);
 
             e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 

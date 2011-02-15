@@ -45,7 +45,6 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            int p = core.Functions.RequestInt("p", 1);
             long typeId = core.Functions.RequestLong("type", 0);
             long id = core.Functions.RequestLong("id", 0);
 
@@ -76,7 +75,7 @@ namespace BoxSocial.FrontEnd
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + (byte)viewingPrimitive, (byte)viewingPrimitive);
             query.AddSort(SortOrder.Ascending, "application_title");
-            query.LimitStart = (p - 1) * 10;
+            query.LimitStart = (TopLevelPageNumber - 1) * 10;
             query.LimitCount = 10;
 
             DataTable applicationsTable = db.Query(query);
@@ -92,7 +91,7 @@ namespace BoxSocial.FrontEnd
                 applicationVariableCollection.Parse("I_TILE", ae.Tile);
             }
 
-            core.Display.ParsePagination("/applications/", p, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
+            core.Display.ParsePagination("/applications/", TopLevelPageNumber, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
 
             EndResponse();
         }

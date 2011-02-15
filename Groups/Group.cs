@@ -1448,8 +1448,6 @@ namespace BoxSocial.Groups
         {
             page.template.SetTemplate("Groups", "viewgroupmemberlist");
 
-            int p = core.Functions.RequestInt("p", 1);
-
             page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Group.DisplayName);
             page.template.Parse("MEMBERS", ((ulong)page.Group.Members).ToString());
 
@@ -1510,7 +1508,7 @@ namespace BoxSocial.Groups
 
             }
 
-            List<GroupMember> members = page.Group.GetMembers(p, 18, core.Functions.GetFilter());
+            List<GroupMember> members = page.Group.GetMembers(page.TopLevelPageNumber, 18, core.Functions.GetFilter());
             foreach (GroupMember member in members)
             {
                 VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
@@ -1540,7 +1538,7 @@ namespace BoxSocial.Groups
             }
 
             string pageUri = page.Group.MemberlistUri;
-            core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(page.Group.Members / 18.0));
+            core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(page.Group.Members / 18.0));
 
             List<string[]> breadCrumbParts = new List<string[]>();
 

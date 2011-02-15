@@ -75,7 +75,7 @@ namespace BoxSocial.Groups
             e.Template.Parse("U_CREATE_GROUP_C", e.Core.Uri.AppendSid("/groups/register?category=" + category.Id.ToString()));
             e.Template.Parse("U_CREATE_GROUP", e.Core.Uri.AppendSid("/groups/register?category=" + category.Id.ToString()));
 
-            List<UserGroup> groups = UserGroup.GetUserGroups(e.Core, category, e.Page.page);
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.Core, category, e.Page.TopLevelPageNumber);
 
             e.Template.Parse("GROUPS", groups.Count.ToString());
 
@@ -87,7 +87,7 @@ namespace BoxSocial.Groups
                 groupsVariableCollection.Parse("U_GROUP", group.Uri);
             }
 
-            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), e.Page.page, (int)Math.Ceiling(category.Groups / ((double)UserGroup.GROUPS_PER_PAGE)));
+            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), e.Page.TopLevelPageNumber, (int)Math.Ceiling(category.Groups / ((double)UserGroup.GROUPS_PER_PAGE)));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "groups", "Groups" });

@@ -63,7 +63,7 @@ namespace BoxSocial.Musician
             e.Template.Parse("U_FILTER_BEGINS_Y", GetDirectoryUri(e.Core, "y"));
             e.Template.Parse("U_FILTER_BEGINS_Z", GetDirectoryUri(e.Core, "z"));
 
-            List<Musician> musicians = Musician.GetMusicians(e.Core, e.Core.Functions.GetFilter(), e.Page.page);
+            List<Musician> musicians = Musician.GetMusicians(e.Core, e.Core.Functions.GetFilter(), e.Page.TopLevelPageNumber);
             long musicianCount = e.Db.LastQueryRows;
 
             Dictionary<long, MusicGenre> musicianGenres = MusicGenre.GetGenres(e.Core, musicians);
@@ -88,7 +88,7 @@ namespace BoxSocial.Musician
                 }
             }
 
-            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter()), e.Page.page, (int)(Math.Ceiling(musicianCount / 10.0)));
+            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter()), e.Page.TopLevelPageNumber, (int)(Math.Ceiling(musicianCount / 10.0)));
         }
 
         private static string GetDirectoryUri(Core core, string filter)
@@ -196,7 +196,7 @@ namespace BoxSocial.Musician
                 }
             }
 
-            List<Musician> musicians = genreObject.GetMusicians(e.Core.Functions.GetFilter(), e.Page.page);
+            List<Musician> musicians = genreObject.GetMusicians(e.Core.Functions.GetFilter(), e.Page.TopLevelPageNumber);
 
             long musicianCount = e.Db.LastQueryRows;
 
@@ -224,7 +224,7 @@ namespace BoxSocial.Musician
 
             e.Template.Parse("ARTISTS", musicianCount.ToString());
 
-            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter(), genreObject.Slug), e.Page.page, (int)(Math.Ceiling(musicianCount / 10.0)));
+            e.Core.Display.ParsePagination(GetDirectoryUri(e.Core, e.Core.Functions.GetFilter(), genreObject.Slug), e.Page.TopLevelPageNumber, (int)(Math.Ceiling(musicianCount / 10.0)));
         }
     }
 }

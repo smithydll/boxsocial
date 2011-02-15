@@ -171,7 +171,7 @@ namespace BoxSocial.FrontEnd
             }
 
             squery.LimitCount = 10;
-            squery.LimitStart = 10 * (page - 1);
+            squery.LimitStart = 10 * (TopLevelPageNumber - 1);
 
             DataTable searchDataTable = db.Query(squery);
 
@@ -224,7 +224,7 @@ namespace BoxSocial.FrontEnd
             {
                 template.SetTemplate("searchfriendsresult.html");
 
-                friends = loggedInMember.SearchFriendNames(needle, page, 20);
+                friends = loggedInMember.SearchFriendNames(needle, TopLevelPageNumber, 20);
 
                 foreach (UserRelation friend in friends)
                 {

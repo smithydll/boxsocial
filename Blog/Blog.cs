@@ -521,7 +521,6 @@ namespace BoxSocial.Applications.Blog
 
             bool rss = false;
             long comments = 0;
-            int p = 1;
             string postTitle = null;
 
             Blog myBlog;
@@ -548,12 +547,6 @@ namespace BoxSocial.Applications.Blog
             }
             catch { }
 
-            try
-            {
-                p = int.Parse(core.Http.Query["p"]);
-            }
-            catch { }
-
             /*if (rss)
             {
                 core.Http.SwitchContextType("text/xml");
@@ -573,7 +566,7 @@ namespace BoxSocial.Applications.Blog
                 }
             }
 
-            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, p, 10, ref readAccessLevel);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, ref readAccessLevel);
             long entriesCount = core.Db.LastQueryRows;
 
             page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
@@ -806,11 +799,11 @@ namespace BoxSocial.Applications.Blog
 
                 if (post <= 0)
                 {
-                    core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(myBlog.Entries / 10.0), true);
+                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(myBlog.Entries / 10.0), true);
                 }
                 else
                 {
-                    core.Display.ParsePagination(pageUri, p, (int)Math.Ceiling(comments / 10.0));
+                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(comments / 10.0));
                 }
 
                 page.CanonicalUri = pageUri;

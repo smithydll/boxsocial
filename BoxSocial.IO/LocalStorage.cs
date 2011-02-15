@@ -52,6 +52,26 @@ namespace BoxSocial.IO
                 fs.Write(buffer, 0, len);
             }
 
+            fs.Close();
+
+            return fileName;
+        }
+
+        public override string SaveFile(string bin, string fileName, Stream file)
+        {
+            string path = RetrieveStoragePath(bin, fileName);
+            EnsureStoragePathExists(path);
+            FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
+
+            byte[] buffer = new byte[8192];
+            int len;
+            while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                fs.Write(buffer, 0, len);
+            }
+
+            fs.Close();
+
             return fileName;
         }
 
@@ -68,6 +88,26 @@ namespace BoxSocial.IO
             {
                 fs.Write(buffer, 0, len);
             }
+
+            fs.Close();
+
+            return fileName;
+        }
+
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        {
+            string path = RetrieveStoragePath(bin, fileName);
+            EnsureStoragePathExists(path);
+            FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
+
+            byte[] buffer = new byte[8192];
+            int len;
+            while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                fs.Write(buffer, 0, len);
+            }
+
+            fs.Close();
 
             return fileName;
         }
@@ -98,6 +138,22 @@ namespace BoxSocial.IO
         public override string RetrieveFileUri(string bin, string fileName)
         {
             throw new NotImplementedException();
+        }
+
+        public override void CopyFile(string fromBin, string toBin, string fileName)
+        {
+            string fromPath = RetrieveStoragePath(fromBin, fileName);
+            string toPath = RetrieveStoragePath(fromBin, fileName);
+            EnsureStoragePathExists(fromPath);
+            EnsureStoragePathExists(toPath);
+            File.Copy(fromPath, toPath);
+        }
+
+        public override bool FileExists(string bin, string fileName)
+        {
+            string path = RetrieveStoragePath(bin, fileName);
+
+            return File.Exists(Path.Combine(path, fileName));
         }
 
         public override bool IsCloudStorage

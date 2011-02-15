@@ -1369,7 +1369,6 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(Core core, GPage page, long forumId)
         {
-            int p = core.Functions.RequestInt("p", 1);
             string mark = core.Http.Query["mark"];
             ForumSettings settings;
             try
@@ -1554,7 +1553,7 @@ namespace BoxSocial.Applications.Forum
             if ((settings.AllowTopicsAtRoot && forumId == 0) || forumId > 0)
             {
                 List<ForumTopic> announcements = thisForum.GetAnnouncements();
-                List<ForumTopic> topics = thisForum.GetTopics(p, settings.TopicsPerPage);
+                List<ForumTopic> topics = thisForum.GetTopics(page.TopLevelPageNumber, settings.TopicsPerPage);
                 List<ForumTopic> allTopics = new List<ForumTopic>();
                 allTopics.AddRange(announcements);
                 allTopics.AddRange(topics);
@@ -1687,7 +1686,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            core.Display.ParsePagination(thisForum.Uri, p, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
+            core.Display.ParsePagination(thisForum.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });

@@ -49,13 +49,13 @@ namespace BoxSocial.Groups
         public GPage()
             : base()
         {
-            page = 1;
+            //page = 1;
         }
 
         public GPage(string templateFile)
             : base(templateFile)
         {
-            page = 1;
+            //page = 1;
         }
 
         protected void BeginGroupPage()

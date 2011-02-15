@@ -46,7 +46,11 @@ namespace BoxSocial.IO
 
         public abstract string SaveFile(string bin, Stream file);
 
+        public abstract string SaveFile(string bin, string fileName, Stream file);
+
         public abstract string SaveFileWithReducedRedundancy(string bin, Stream file);
+
+        public abstract string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file);
 
         public abstract void DeleteFile(string bin, string fileName);
 
@@ -57,6 +61,10 @@ namespace BoxSocial.IO
         public abstract string RetrieveFileUri(string bin, string fileName);
 
         public abstract string RetrieveFilePath(string bin, string fileName);
+
+        public abstract void CopyFile(string fromBin, string toBin, string fileName);
+
+        public abstract bool FileExists(string bin, string fileName);
 
         public static string HashFile(Stream fileStream)
         {

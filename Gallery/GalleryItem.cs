@@ -1082,7 +1082,7 @@ namespace BoxSocial.Applications.Gallery
 
                 string pageUri = string.Format("{0}gallery/{1}",
                     HttpUtility.HtmlEncode(e.Page.Owner.UriStub), e.Slug);
-                e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                e.Core.Display.ParsePagination("COMMENT_PAGINATION", pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
 

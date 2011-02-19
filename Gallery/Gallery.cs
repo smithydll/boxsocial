@@ -1556,7 +1556,14 @@ namespace BoxSocial.Applications.Gallery
                     e.Template.Parse("CAN_COMMENT", "TRUE");
                 }
 
-                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, gallery);
+                int commentPage = 1;
+                if (e.Page.PageNumber.Length >= 2)
+                {
+                    commentPage = e.Page.PageNumber[1];
+                }
+                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, commentPage, gallery);
+
+                e.Core.Display.ParsePagination("COMMENT_PAGINATION", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), commentPage, (int)Math.Ceiling(gallery.Comments / 10.0));
             }
 
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());

@@ -346,14 +346,27 @@ namespace BoxSocial.Internals
 
         public void DisplayComments(Template template, Primitive owner, ICommentableItem item)
         {
-            DisplayComments(template, owner, item, null, -1, null);
+            int page = core.page.TopLevelPageNumber;
+
+            DisplayComments(template, owner, page, item);
+        }
+
+        public void DisplayComments(Template template, Primitive owner, int page, ICommentableItem item)
+        {
+            DisplayComments(template, owner, item, null, page, -1, null);
         }
 
         public void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
+            int page = core.page.TopLevelPageNumber;
+
+            DisplayComments(template, owner, item, commenters, page, commentCount, hook);
+        }
+
+        public void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, int page, long commentCount, DisplayCommentHookHandler hook)
+        {
             Mysql db = core.Db;
 
-            int p = core.Functions.RequestInt("p", 1);
             long c = core.Functions.RequestLong("c", 0);
 
             if (c > 0)
@@ -405,15 +418,15 @@ namespace BoxSocial.Internals
 
                 if (item.CommentSortOrder == SortOrder.Ascending)
                 {
-                    p = (int)(before / item.CommentsPerPage + 1);
+                    page = (int)(before / item.CommentsPerPage + 1);
                 }
                 else
                 {
-                    p = (int)(after / item.CommentsPerPage + 1);
+                    page = (int)(after / item.CommentsPerPage + 1);
                 }
             }
 
-            List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, p, item.CommentsPerPage, commenters);
+            List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, page, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
             if (commentCount >= 0)

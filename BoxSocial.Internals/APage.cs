@@ -41,32 +41,11 @@ namespace BoxSocial.Internals
         public APage()
             : base()
         {
-            /*string[] pages = Request.QueryString["p"].Split(new char[] { ',' });
-            page = new int[pages.Length];
-
-            for (int i = 0; i < pages.Length; i++)
-            {
-                if (!int.TryParse(pages[i], out page[i]))
-                {
-                    page[i] = 1;
-                }
-            }*/
-
         }
 
         public APage(string templateFile)
             : base(templateFile)
         {
-            /*string[] pages = Request.QueryString["p"].Split(new char[] { ',' });
-            page = new int[pages.Length];
-
-            for (int i = 0; i < pages.Length; i++)
-            {
-                if (!int.TryParse(pages[i], out page[i]))
-                {
-                    page[i] = 1;
-                }
-            }*/
         }
 
         public ApplicationEntry AnApplication

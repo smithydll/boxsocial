@@ -227,9 +227,9 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(/|)$", @"/musicaccount.aspx?mn=$1&module=$2" });
                     patterns.Add(new string[] { @"^/music/([A-Za-z0-9\-_]+)/account(/|)$", @"/musicaccount.aspx?mn=$1" });
 
-                    patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_]+).css$", @"/userstyle.aspx?un=$1" });
-                    patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_]+).css$", @"/groupstyle.aspx?gn=$1" });
-                    patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_]+).css$", @"/musicstyle.aspx?gn=$1" });
+                    patterns.Add(new string[] { @"^/styles/([A-Za-z0-9\-_\.]+).css$", @"/userstyle.aspx?un=$1" });
+                    patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_\.]+).css$", @"/groupstyle.aspx?gn=$1" });
+                    patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_\.]+).css$", @"/musicstyle.aspx?gn=$1" });
 
                     patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });

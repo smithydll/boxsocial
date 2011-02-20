@@ -58,3 +58,19 @@ copy "%1"BoxSocial\bin\MySql.Data.dll "%1"Package\
 
 copy "%1"BoxSocial.Install\bin\Debug\BoxSocial.Install.exe "%1"Package\
 copy "%1"BoxSocial.Install\bin\Debug\BoxSocial.Install.pdb "%1"Package\
+
+md "%1"Package\GDK
+
+copy "%1"BoxSocial\GDK "%1"Package\GDK
+
+md "%1"Package\templates
+
+copy "%1"BoxSocial\templates "%1"Package\templates
+
+md "%1"Package\styles
+
+copy "%1"BoxSocial\style "%1"Package\styles
+
+md "%1"Package\scripts
+
+copy "%1"BoxSocial\scripts "%1"Package\scripts

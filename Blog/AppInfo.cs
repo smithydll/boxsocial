@@ -303,7 +303,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        [Show(@"blog/([0-9]{4})/([0-9]{1,2})", AppPrimitives.Member)]
+        [Show(@"blog/([0-9]{4})", AppPrimitives.Member)]
         private void showBlogYear(Core core, object sender)
         {
             if (sender is UPage)

@@ -1558,8 +1558,40 @@ namespace BoxSocial.Install
             InstallLanguage("en", @"News");
 
             InstallGDK();
+            InstallTemplates();
 
             db.CloseConnection();
+        }
+
+        private static void InstallTemplates()
+        {
+            if (!Directory.Exists(Path.Combine(root, "templates")))
+            {
+                Directory.CreateDirectory(Path.Combine(root, "templates"));
+            }
+            DirectoryInfo templatesDir = new DirectoryInfo(Path.Combine(root, "templates"));
+
+            string[] files = Directory.GetFiles("templates");
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(templatesDir.FullName, fi.Name), true);
+            }
+
+            if (!Directory.Exists(Path.Combine(Path.Combine(root, "templates"), "emails")))
+            {
+                Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "emails"));
+            }
+            DirectoryInfo emailsDir = Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "emails"));
+
+            files = Directory.GetFiles(Path.Combine("templates", "emails"));
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(emailsDir.FullName, fi.Name), true);
+            }
         }
 
         private static void InstallGDK()

@@ -178,6 +178,7 @@ namespace BoxSocial.FrontEnd
                                 {
                                     ApplicationEntry updateApplication = new ApplicationEntry(core, applicationTable.Rows[0]);
                                     applicationId = updateApplication.ApplicationId;
+                                    string updateKey = updateApplication.Key;
 
                                     if (updateApplication.CreatorId == core.LoggedInMemberId)
                                     {
@@ -187,12 +188,12 @@ namespace BoxSocial.FrontEnd
                                         //
                                         if (newApplication.Icon != null)
                                         {
-                                            if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key))))
+                                            if (!Directory.Exists(Server.MapPath(string.Format(@".\images\{0}\", updateKey))))
                                             {
-                                                Directory.CreateDirectory(Server.MapPath(string.Format(@".\images\{0}\", updateApplication.Key)));
+                                                Directory.CreateDirectory(Server.MapPath(string.Format(@".\images\{0}\", updateKey)));
                                             }
 
-                                            newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateApplication.Key)), System.Drawing.Imaging.ImageFormat.Png);
+                                            newApplication.Icon.Save(Server.MapPath(string.Format(@".\images\{0}\icon.png", updateKey)), System.Drawing.Imaging.ImageFormat.Png);
                                         }
 
                                         //
@@ -206,7 +207,7 @@ namespace BoxSocial.FrontEnd
                                             }
 
                                             SaveTextFile(newApplication.StyleSheet, Server.MapPath(string.Format(@".\styles\applications\{0}.css",
-                                                updateApplication.Key)));
+                                                updateKey)));
                                         }
 
                                         //
@@ -215,7 +216,7 @@ namespace BoxSocial.FrontEnd
                                         if (!string.IsNullOrEmpty(newApplication.JavaScript))
                                         {
                                             SaveTextFile(newApplication.JavaScript, Server.MapPath(string.Format(@".\scripts\{0}.js",
-                                                updateApplication.Key)));
+                                                updateKey)));
                                         }
 
                                         UpdateQuery query = new UpdateQuery("applications");
@@ -227,7 +228,7 @@ namespace BoxSocial.FrontEnd
                                         query.AddField("application_rating", newApplication.UsesRatings);
                                         query.AddField("application_style", !string.IsNullOrEmpty(newApplication.StyleSheet));
                                         query.AddField("application_script", !string.IsNullOrEmpty(newApplication.JavaScript));
-                                        query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
+                                        query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateKey));
                                         query.AddCondition("application_assembly_name", assemblyName);
 
                                         db.BeginTransaction();

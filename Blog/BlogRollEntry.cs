@@ -142,6 +142,11 @@ namespace BoxSocial.Applications.Blog
 
         public static BlogRollEntry Create(Core core, long userId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             User member = new User(core, userId);
 
             InsertQuery iquery = new InsertQuery("blog_roll_entries");
@@ -155,6 +160,11 @@ namespace BoxSocial.Applications.Blog
 
         public static BlogRollEntry Create(Core core, string title, string uri)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(uri))
             {
                 throw new NoNullAllowedException();

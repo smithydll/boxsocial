@@ -824,4 +824,8 @@ namespace BoxSocial.Internals
             }
         }*/
     }
+
+    public class NullCoreException : Exception
+    {
+    }
 }

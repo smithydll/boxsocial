@@ -185,7 +185,7 @@ namespace BoxSocial.Forms
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
-                    (MaxLength > -1) ? " maxlength=\"" + MaxLength + "\"" : string.Empty,
+                    (MaxLength > -1) ? " maxlength=\"" + MaxLength.ToString() + "\"" : string.Empty,
                     (!IsVisible) ? " display: none;" : string.Empty,
                     width,
                     Script.ToString());

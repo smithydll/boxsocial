@@ -57,7 +57,9 @@ namespace BoxSocial.FrontEnd
                 isAjax = true;
             }
 
-            if (Request.QueryString["mode"] == "quote")
+            string mode = Request.QueryString["mode"];
+
+            if (mode == "quote")
             {
                 template.SetTemplate("posting.comment.html");
 
@@ -89,7 +91,7 @@ namespace BoxSocial.FrontEnd
                 EndResponse();
             }
 
-            if (Request.QueryString["mode"] == "fetch")
+            if (mode == "fetch")
             {
                 try
                 {
@@ -117,7 +119,7 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
-            if (Request.QueryString["mode"] == "report")
+            if (mode == "report")
             {
                 try
                 {
@@ -154,7 +156,7 @@ namespace BoxSocial.FrontEnd
                 core.Ajax.ShowMessage(isAjax, "commentReported", "Reported Comment", "You have successfully reported a comment.");
             }
 
-            if (Request.QueryString["mode"] == "delete")
+            if (mode == "delete")
             {
                 try
                 {

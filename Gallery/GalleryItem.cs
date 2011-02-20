@@ -916,7 +916,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (CharUnicodeInfo.GetUnicodeCategory(saveFileUri[i]) != UnicodeCategory.NonSpacingMark)
                 {
-                    normalisedSlug += saveFileUri[i];
+                    normalisedSlug += saveFileUri[i].ToString();
                 }
             }
             saveFileUri = Regex.Replace(normalisedSlug, @"([\W]+)", "-") + saveFileExt;

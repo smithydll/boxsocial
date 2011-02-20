@@ -58,11 +58,11 @@ namespace BoxSocial.Forms
         public override string ToString()
         {
             string style = string.Empty;
-            if (Width.Length != 0)
+            if (Width.Length > 0 || Width.Length < 0)
             {
                 style = "width: " + Width.ToString() + "; ";
             }
-            if (Height.Length != 0)
+            if (Height.Length > 0 || Height.Length < 0)
             {
                 style = "height: " + Height.ToString() + "; ";
             }

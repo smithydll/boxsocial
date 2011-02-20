@@ -1262,7 +1262,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (CharUnicodeInfo.GetUnicodeCategory(slug[i]) != UnicodeCategory.NonSpacingMark)
                 {
-                    normalisedSlug += slug[i];
+                    normalisedSlug += slug[i].ToString();
                 }
             }
             slug = Regex.Replace(normalisedSlug, @"([\W]+)", "-");

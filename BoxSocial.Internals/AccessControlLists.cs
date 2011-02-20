@@ -174,7 +174,7 @@ namespace BoxSocial.Internals
                                     }
                                 }
         
-                                RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]");
+                                RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() +"]");
         
                                 allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                                 allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
@@ -193,9 +193,9 @@ namespace BoxSocial.Internals
                                         break;
                                 }
                                 
-                                if (core.Http.Form["allow[" + itemPermission.Id + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]"] != null)
+                                if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() +"]"] != null)
                                 {
-                                    allowrl.SelectedKey = core.Http.Form["allow[" + itemPermission.Id + "," + itemGrant.PrimitiveKey.TypeId + "," + itemGrant.PrimitiveKey.Id +"]"];
+                                    allowrl.SelectedKey = core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() +"]"];
                                 }
         
                                 grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
@@ -228,15 +228,15 @@ namespace BoxSocial.Internals
                             
                             grantVariableCollection.Parse("DISPLAY_NAME", gsbi.Text);
                             
-                            RadioList allowrl = new RadioList("allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]");
+                            RadioList allowrl = new RadioList("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]");
                             
                             allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                             allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
                             allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
                             
-                            if (core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"] != null)
+                            if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"] != null)
                             {
-                                allowrl.SelectedKey = core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"];
+                                allowrl.SelectedKey = core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"];
                             }
                             else
                             {
@@ -279,7 +279,7 @@ namespace BoxSocial.Internals
                         
                         grantVariableCollection.Parse("DISPLAY_NAME", groupsSelectBox[groupSelectBoxId].Text);
                         
-                        RadioList allowrl = new RadioList("allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]");
+                        RadioList allowrl = new RadioList("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]");
                         
                         allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                         allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
@@ -442,9 +442,9 @@ namespace BoxSocial.Internals
                         
                             UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, itemPermission.Id, AccessControlGrants.Inherit);
                                                         
-                            if (core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"] != null)
+                            if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"] != null)
                             {
-                                switch (core.Http.Form["allow[" + itemPermission.Id + "," + ik.TypeId + "," + ik.Id +"]"])
+                                switch (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"])
                                 {
                                     case "allow":
                                         uacg.Allow = AccessControlGrants.Allow;

@@ -130,7 +130,7 @@ namespace BoxSocial.IO
 
         public QueryCondition AddCondition(ConditionRelations relation, QueryOperation field, object value)
         {
-            return AddCondition(relation, field, value);
+            return conditions.AddCondition(relation, field, value);
         }
 
         public QueryCondition AddCondition(ConditionRelations relation, string field, object value)

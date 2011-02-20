@@ -178,7 +178,7 @@ namespace BoxSocial.Internals
 					for (int i = 0; i < m.Groups.Count; i++) 
 					{ 
 						Console.WriteLine("Found:'" + m.Groups[i] + "' at " 
-							+ m.Groups[i].Index);
+							+ m.Groups[i].Index.ToString());
 					}
 				}
 			}

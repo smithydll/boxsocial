@@ -186,7 +186,7 @@ namespace BoxSocial.Applications.Pages
             {
                 if (CharUnicodeInfo.GetUnicodeCategory(normalisedText[i]) != UnicodeCategory.NonSpacingMark)
                 {
-                    normalisedSlug += normalisedText[i];
+                    normalisedSlug += normalisedText[i].ToString();
                 }
             }
             // we want to be a little less stringent with list items to allow for some punctuation of being of importance

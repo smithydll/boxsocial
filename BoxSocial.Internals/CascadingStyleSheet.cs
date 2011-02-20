@@ -195,12 +195,12 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            key += current;
+                            key += current.ToString();
                         }
                     }
                     else
                     {
-                        key += current;
+                        key += current.ToString();
                     }
                 }
                 else
@@ -220,12 +220,12 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            value += current;
+                            value += current.ToString();
                         }
                     }
                     else
                     {
-                        value += current;
+                        value += current.ToString();
                     }
                 }
 
@@ -382,7 +382,7 @@ namespace BoxSocial.Internals
                 }
                 else if (current != '\r')
                 {
-                    line += current;
+                    line += current.ToString();
                 }
 
                 if (current == '/' && next == '*')
@@ -437,7 +437,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            rule += current;
+                            rule += current.ToString();
                         }
                     }
                     else
@@ -458,12 +458,12 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                style += current;
+                                style += current.ToString();
                             }
                         }
                         else
                         {
-                            style += current;
+                            style += current.ToString();
                         }
                     }
                 }

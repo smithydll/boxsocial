@@ -59,8 +59,10 @@ namespace BoxSocial.FrontEnd
                 // redirect to the homepage if we are already logged in
                 Response.Redirect("/");
             }
+            
+            string mode = Request.QueryString["mode"];
 
-            if (Request.QueryString["mode"] == "optout")
+            if (mode == "optout")
             {
                 string emailKey = Request.QueryString["key"];
 
@@ -86,7 +88,7 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
             }
-            else if (Request.QueryString["mode"] == "activate")
+            else if (mode == "activate")
             {
                 long userId = 0;
                 string activateKey = (string)Request.QueryString["key"];
@@ -118,7 +120,7 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
             }
-            else if (Request.QueryString["mode"] == "activate-password")
+            else if (mode == "activate-password")
             {
                 long userId = 0;
                 string activateKey = (string)Request.QueryString["key"];

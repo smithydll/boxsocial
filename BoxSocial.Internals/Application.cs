@@ -208,7 +208,7 @@ namespace BoxSocial.Internals
                                 {
                                     if ((!columns[field.Name].Type.Equals(field.Type)) || ((columns[field.Name].Type.Equals(typeof(string)) || columns[field.Name].Type.Equals(typeof(char[]))) && columns[field.Name].Length != field.Length))
                                     {
-                                        Console.WriteLine(field.Name + ": " + columns[field.Name].Type + " (" + columns[field.Name].Length + "), " + field.Type + " (" + field.Length + ")");
+                                        //Console.WriteLine(field.Name + ": " + columns[field.Name].Type + " (" + columns[field.Name].Length + "), " + field.Type + " (" + field.Length + ")");
                                         core.Db.ChangeColumn(table, field);
                                     }
                                 }

@@ -90,6 +90,11 @@ namespace BoxSocial.Applications.Blog
 
         public DateTime GetTime(UnixTime tz)
         {
+            if (tz == null)
+            {
+                return core.Tz.DateTimeFromMysql(tz);
+            }
+
             return tz.DateTimeFromMysql(trackBackTimeRaw);
         }
 
@@ -130,6 +135,16 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static TrackBack Create(Core core, BlogEntry entry, string uri, string blurb)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (entry == null)
+            {
+                throw new InvalidBlogEntryException();
+            }
+
             // TODO: validate uri
 
             InsertQuery iquery = new InsertQuery(TrackBack.GetTable(typeof(TrackBack)));

@@ -1478,7 +1478,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return FieldName;
+                return fieldName;
             }
         }
 

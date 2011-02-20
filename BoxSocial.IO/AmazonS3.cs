@@ -159,7 +159,7 @@ namespace BoxSocial.IO
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 

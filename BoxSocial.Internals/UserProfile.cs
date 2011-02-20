@@ -181,7 +181,7 @@ namespace BoxSocial.Internals
                     case "RELATIONSHIP":
                         if (MaritialWithConfirmed && MaritialWithId > 0)
                         {
-                            return "In a Relationship with [user]" + MaritialWithId + "[/user]";
+                            return "In a Relationship with [user]" + MaritialWithId.ToString() + "[/user]";
                         }
                         else
                         {

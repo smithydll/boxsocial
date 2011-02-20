@@ -32,7 +32,7 @@ namespace BoxSocial.FrontEnd
                 long userId = (long)(int)kr["user_id"];
                 core.LoadUserProfile(userId);
 
-                Response.Write("User: " + userId + "<br />\n");
+                Response.Write("User: " + userId.ToString() + "<br />\n");
 				
                 query = new SelectQuery("primitive_apps pa");
                 //query.AddFields(ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS);

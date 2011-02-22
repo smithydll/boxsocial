@@ -352,6 +352,64 @@ namespace BoxSocial.Internals
         protected void AssertFormVariable(string var)
         {
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ControlPanelModule)
+            {
+                ControlPanelModule c = (ControlPanelModule)obj;
+
+                if (c.Order == Order && c.Key == Key)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool operator ==(ControlPanelModule a, ControlPanelModule b)
+        {
+            if (a.Order == b.Order && a.Key == b.Key)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator !=(ControlPanelModule a, ControlPanelModule b)
+        {
+            if (a.Order == b.Order && a.Key == b.Key)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool operator >(ControlPanelModule a, ControlPanelModule b)
+        {
+            if (a.Order > b.Order)
+            {
+                return true;
+            }
+            if (a.Order == b.Order && a.Key.CompareTo(b.Key) > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator <(ControlPanelModule a, ControlPanelModule b)
+        {
+            if (a.Order < b.Order)
+            {
+                return true;
+            }
+            if (a.Order == b.Order && a.Key.CompareTo(b.Key) < 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     [DataTable("account_modules")]

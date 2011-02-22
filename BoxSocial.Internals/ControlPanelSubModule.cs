@@ -606,6 +606,63 @@ namespace BoxSocial.Internals
             return hiddenFieldList;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is ControlPanelSubModule)
+            {
+                ControlPanelSubModule c = (ControlPanelSubModule)obj;
+
+                if (c.Order == Order && c.Key == Key)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool operator ==(ControlPanelSubModule a, ControlPanelSubModule b)
+        {
+            if (a.Order == b.Order && a.Key == b.Key)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator !=(ControlPanelSubModule a, ControlPanelSubModule b)
+        {
+            if (a.Order == b.Order && a.Key == b.Key)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool operator >(ControlPanelSubModule a, ControlPanelSubModule b)
+        {
+            if (a.Order > b.Order)
+            {
+                return true;
+            }
+            if (a.Order == b.Order && a.Key.CompareTo(b.Key) > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator <(ControlPanelSubModule a, ControlPanelSubModule b)
+        {
+            if (a.Order < b.Order)
+            {
+                return true;
+            }
+            if (a.Order == b.Order && a.Key.CompareTo(b.Key) < 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public class ModuleModeEventArgs : EventArgs

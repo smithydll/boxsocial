@@ -75,11 +75,11 @@ cp INSTALL.txt Package/
 
 cp --recursive GDK Package/
 
-cp --recursive templates Package/
+cp --recursive BoxSocial/templates Package/
 
-cp --recursive styles Package/
+cp --recursive BoxSocial/styles Package/
 
-cp --recursive scripts Package/
+cp --recursive BoxSocial/scripts Package/
 
 rm BoxSocial.tar.gz
 tar -cf BoxSocial.tar Package/*

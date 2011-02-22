@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -412,6 +413,7 @@ namespace BoxSocial.Internals
 
         public ApplicationEntry CallingApplication
         {
+            [MethodImpl(MethodImplOptions.NoInlining)]
             get
             {
                 string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
@@ -468,7 +470,7 @@ namespace BoxSocial.Internals
             FindAllPrimitivesLoaded();
         }
 
-        public void Dispose()
+        public void DisposeOf()
         {
             userProfileCache = null;
         }

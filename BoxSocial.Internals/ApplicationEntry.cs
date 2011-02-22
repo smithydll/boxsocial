@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -425,6 +426,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public ApplicationEntry(Core core)
             : base(core)
         {

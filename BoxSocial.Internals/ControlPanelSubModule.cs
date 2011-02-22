@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Web;
 using BoxSocial;
 using BoxSocial.Forms;
@@ -93,16 +94,18 @@ namespace BoxSocial.Internals
 
             string mode = core.Http["mode"];
 
-            if (Load != null)
+            EventHandler loadHandler = Load;
+            if (loadHandler != null)
             {
-                Load(this, new EventArgs());
+                loadHandler(this, new EventArgs());
             }
 
             if (string.IsNullOrEmpty(mode) || !HasModeHandler(mode))
             {
-                if (Show != null)
+                EventHandler showHandler = Show;
+                if (showHandler != null)
                 {
-                    Show(this, new EventArgs());
+                    showHandler(this, new EventArgs());
                 }
             }
             else if (!string.IsNullOrEmpty(mode))
@@ -350,6 +353,7 @@ namespace BoxSocial.Internals
             RenderTemplate();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected void SetTemplate(string templateName)
         {
             template.AddPageAssembly(Assembly.GetCallingAssembly());

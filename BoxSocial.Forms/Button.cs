@@ -64,7 +64,7 @@ namespace BoxSocial.Forms
             }
             set
             {
-                visible = false;
+                visible = value;
             }
         }
 

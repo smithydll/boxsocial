@@ -48,8 +48,10 @@ namespace BoxSocial.FrontEnd
                 Response.ContentType = "image/png";
             }
 
-            int width = int.Parse(Request.QueryString["width"]);
-            int cornerSize = int.Parse(Request.QueryString["roundness"]);
+            int width = 0;
+            int.TryParse(Request.QueryString["width"], out width);
+            int cornerSize = 0;
+            int.TryParse(Request.QueryString["roundness"], out cornerSize);
             string colour = Request.QueryString["colour"];
 
             headColour = Color.FromArgb((int)Convert.ToByte(colour.Substring(0, 2), 16),

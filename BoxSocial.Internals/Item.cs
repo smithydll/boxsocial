@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
@@ -79,6 +80,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected Item(Core core)
         {
             this.core = core;
@@ -777,14 +779,16 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (ItemChangeAuthenticationProvider != null)
+            ItemChangeAuthenticationProviderHandler itemChangeAuthenticationProviderHander = ItemChangeAuthenticationProvider;
+            if (itemChangeAuthenticationProviderHander != null)
             {
-                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Edit));
+                itemChangeAuthenticationProviderHander(this, new ItemChangeAuthenticationProviderEventArgs(ItemChangeAction.Edit));
             }
 
-            if (OnUpdate != null)
+            EventHandler onUpdateHandler = OnUpdate;
+            if (onUpdateHandler != null)
             {
-                OnUpdate(this, new EventArgs());
+                onUpdateHandler(this, new EventArgs());
             }
 
             if (updatedItems.Count == 0)
@@ -911,9 +915,10 @@ namespace BoxSocial.Internals
 
             if (result > 0)
             {
-                if (ItemUpdated != null)
+                EventHandler itemUpdatedHandler = ItemUpdated;
+                if (itemUpdatedHandler != null)
                 {
-                    ItemUpdated(this, new EventArgs());
+                    itemUpdatedHandler(this, new EventArgs());
                 }
             }
 
@@ -922,9 +927,10 @@ namespace BoxSocial.Internals
 
         protected void AuthenticateAction(ItemChangeAction action)
         {
-            if (ItemChangeAuthenticationProvider != null)
+            ItemChangeAuthenticationProviderHandler itemChangeAuthenticationProviderHander = ItemChangeAuthenticationProvider;
+            if (itemChangeAuthenticationProviderHander != null)
             {
-                ItemChangeAuthenticationProvider(this, new ItemChangeAuthenticationProviderEventArgs(action));
+                itemChangeAuthenticationProviderHander(this, new ItemChangeAuthenticationProviderEventArgs(action));
             }
         }
 		
@@ -1054,9 +1060,10 @@ namespace BoxSocial.Internals
 
             if (result > 0)
             {
-                if (ItemDeleted != null)
+                ItemDeletedEventHandler itemDeletedHandler = ItemDeleted;
+                if (itemDeletedHandler != null)
                 {
-                    ItemDeleted(this, new ItemDeletedEventArgs(parentDeleted));
+                    itemDeletedHandler(this, new ItemDeletedEventArgs(parentDeleted));
                 }
             }
 

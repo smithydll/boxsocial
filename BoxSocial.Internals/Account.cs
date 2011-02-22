@@ -55,7 +55,11 @@ namespace BoxSocial.Internals
 
         public void RegisterAllModules()
         {
-            this.RegisterModule(core, new EventArgs());
+            RegisterModuleHandler handler = this.RegisterModule;
+            if (handler != null)
+            {
+                handler(core, new EventArgs());
+            }
         }
     }
 }

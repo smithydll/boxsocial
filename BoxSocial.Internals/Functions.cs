@@ -304,12 +304,15 @@ namespace BoxSocial.Internals
 
         public byte GetLicenseId()
         {
-            return byte.Parse(core.Http.Form["license"]);
+            byte licenseId = 0;
+            byte.TryParse(core.Http.Form["license"], out licenseId);
+            return licenseId;
         }
         
         public Classifications GetClassification()
         {
-            byte a = byte.Parse(core.Http.Form["classification"]);
+            byte a = 0;
+            byte.TryParse(core.Http.Form["classification"], out a);
             return (Classifications)a;
         }
 

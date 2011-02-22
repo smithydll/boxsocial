@@ -25,6 +25,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -716,6 +717,7 @@ namespace BoxSocial.Internals
             return null;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
         {
             return new ApplicationEntry(core, installee, Assembly.GetCallingAssembly().GetName().Name);

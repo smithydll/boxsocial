@@ -23,6 +23,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -130,6 +131,7 @@ namespace BoxSocial.IO
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void ParseRaw(string key, string value)
         {
             Assembly asm = Assembly.GetCallingAssembly();
@@ -362,6 +364,7 @@ namespace BoxSocial.IO
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void ParseRaw(string key, string value)
         {
             Assembly asm = Assembly.GetCallingAssembly();

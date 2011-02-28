@@ -108,6 +108,11 @@ namespace BoxSocial.Internals
 
         public static List<Category> GetAll(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Category> categories = new List<Category>();
 
             SelectQuery query = GetSelectQueryStub(typeof(Category));

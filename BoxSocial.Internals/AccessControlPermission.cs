@@ -218,6 +218,11 @@ namespace BoxSocial.Internals
 
         public static List<AccessControlPermission> GetPermissions(Core core, IPermissibleItem item)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<AccessControlPermission> permissions = new List<AccessControlPermission>();
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlPermission));

@@ -91,6 +91,11 @@ namespace BoxSocial.Internals
 
         public static void Create(Core core, long actionId, long itemId, long itemTypeId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iquery = new InsertQuery(ActionItem.GetTable(typeof(ActionItem)));
             iquery.AddField("action_id", actionId);
             iquery.AddField("item_id", itemId);

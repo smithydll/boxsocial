@@ -183,6 +183,11 @@ namespace BoxSocial.Internals
 
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             ItemType type = new ItemType(core, ik.TypeId);
             Type tType = null;
             

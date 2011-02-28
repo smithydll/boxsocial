@@ -106,6 +106,11 @@ namespace BoxSocial.Internals
 
         public static StatusMessage Create(Core core, User creator, string message)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery("user_status_messages");
             iQuery.AddField("user_id", creator.Id);
             iQuery.AddField("status_message", message);

@@ -158,6 +158,11 @@ namespace BoxSocial.Internals
 
         public static List<long> FormUsers(Core core, string name)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<long> userIds = new List<long>();
 
             string formValue = core.Http.Form[name + "[ids]"];

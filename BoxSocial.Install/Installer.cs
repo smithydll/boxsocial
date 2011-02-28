@@ -1694,6 +1694,11 @@ namespace BoxSocial.Install
 
         public static void InstallData(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             // Categories
             Dictionary<string, string> categories = new Dictionary<string, string>();
             categories.Add("uncategorised", "Uncategorised");
@@ -2048,6 +2053,11 @@ namespace BoxSocial.Install
 		
 		public static long CreateUser(Core core, string userName, string email, string password)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery("user_keys");
             iQuery.AddField("user_name", userName);
             iQuery.AddField("user_name_lower", userName.ToLower());

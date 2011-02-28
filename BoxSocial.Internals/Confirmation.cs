@@ -93,6 +93,11 @@ namespace BoxSocial.Internals
 
         public static Confirmation Create(Core core, string session, string code, byte type)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(Confirmation)));
             iQuery.AddField("session_id", session);
             iQuery.AddField("confirm_code", code);
@@ -105,6 +110,11 @@ namespace BoxSocial.Internals
 
         public static void ClearStale(Core core, string session, byte type)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             DeleteQuery dQuery = new DeleteQuery(GetTable(typeof(Confirmation)));
             dQuery.AddCondition("confirm_type", type);
             dQuery.AddCondition("session_id", session);

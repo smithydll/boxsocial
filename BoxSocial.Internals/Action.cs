@@ -132,6 +132,11 @@ namespace BoxSocial.Internals
 
         public static List<Action> GetActions(Core core, User user, long itemId, long itemTypeId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Action> actions = new List<Action>();
 
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));

@@ -163,6 +163,11 @@ namespace BoxSocial.Internals
 
         public static UserPhoneNumber Create(Core core, string phoneNumber, PhoneNumberTypes phoneType)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iquery = new InsertQuery(UserPhoneNumber.GetTable(typeof(UserPhoneNumber)));
             iquery.AddField("phone_user_id", core.Session.LoggedInMember.Id);
             iquery.AddField("phone_number", phoneNumber);

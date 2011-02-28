@@ -83,6 +83,11 @@ namespace BoxSocial.Internals
         /// <param name="owner">Owner</param>
         public void ModuleVector(Core core, Primitive owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.core = core;
             this.db = core.Db;
             this.session = core.Session;
@@ -489,6 +494,11 @@ namespace BoxSocial.Internals
         /// </summary>
         public static void AuthoriseRequestSid(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (core.Http.Query["sid"] != core.Session.SessionId)
             {
                 if (string.IsNullOrEmpty(core.Http.Query["sid"]))

@@ -80,6 +80,11 @@ namespace BoxSocial.Internals
 
         public static ApplicationSlug Create(Core core, long applicationId, string slug, string stub, bool isStatic, AppPrimitives primitives, long updatedTime)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ApplicationSlug)));
             iQuery.AddField("slug_stub", stub);
             iQuery.AddField("slug_slug_ex", slug);

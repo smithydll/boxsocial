@@ -151,6 +151,11 @@ namespace BoxSocial.Internals
 		// Cannot use the built-in for un-numbered stuffs 
 		public static AccessControlGrant Create(Core core, ItemKey primitive, ItemKey item, long permissionId, AccessControlGrants allow)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			InsertQuery iQuery = new InsertQuery(typeof(AccessControlGrant));
             
             iQuery.AddField("grant_primitive_id", primitive.Id);
@@ -175,6 +180,11 @@ namespace BoxSocial.Internals
 
         public static List<AccessControlGrant> GetGrants(Core core, List<IPermissibleItem> items)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
             Dictionary<long, IPermissibleItem> itemDictionary = new Dictionary<long, IPermissibleItem>();
@@ -207,6 +217,11 @@ namespace BoxSocial.Internals
 		
 		public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			List<AccessControlGrant> grants = new List<AccessControlGrant>();
 			
 			SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
@@ -225,6 +240,11 @@ namespace BoxSocial.Internals
 
         public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item, long permissionId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));

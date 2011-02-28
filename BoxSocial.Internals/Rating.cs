@@ -122,6 +122,10 @@ namespace BoxSocial.Internals
         /// <remarks>ItemRated should implement a transaction.</remarks>
         public static void Vote(Core core, ItemKey itemKey, int rating)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
 
             if (itemKey.Id < 1)
             {

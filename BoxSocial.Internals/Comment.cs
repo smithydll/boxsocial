@@ -158,6 +158,11 @@ namespace BoxSocial.Internals
 
         public static Comment Create(Core core, ItemKey itemKey, string comment)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (!core.Session.IsLoggedIn)
             {
                 throw new NotLoggedInException();
@@ -196,6 +201,11 @@ namespace BoxSocial.Internals
 
         public static List<Comment> GetComments(Core core, ItemKey itemKey, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
             List<Comment> comments = new List<Comment>();
 
@@ -251,6 +261,11 @@ namespace BoxSocial.Internals
 
         public static void LoadUserInfoCache(Core core, List<Comment> comments)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<long> userIds = GetUserIds(comments);
 
             core.LoadUserProfiles(userIds);

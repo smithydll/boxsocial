@@ -159,6 +159,11 @@ namespace BoxSocial.Internals
 		
 		public static void InstallTypes(Core core, Assembly asm, long applicationId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Type[] types = asm.GetTypes();
 
             foreach (Type type in types)
@@ -182,6 +187,11 @@ namespace BoxSocial.Internals
 
         public static void InstallTables(Core core, Assembly asm)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Type[] types = asm.GetTypes();
 
             foreach (Type type in types)
@@ -397,6 +407,11 @@ namespace BoxSocial.Internals
 
         public static string InitialiseApplications(Core core, AppPrimitives primitive)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             string debug = string.Empty;
 
             Assembly[] assemblies = core.CoreDomain.GetAssemblies();
@@ -599,6 +614,11 @@ namespace BoxSocial.Internals
 
         public static void LoadApplications(Core core, AppPrimitives primitive, string uri, List<ApplicationEntry> applicationsList)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Stopwatch load = new Stopwatch();
             load.Start();
             foreach (ApplicationEntry ae in applicationsList)
@@ -666,6 +686,11 @@ namespace BoxSocial.Internals
 
         public static Application GetApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             try
             {
                 string assemblyPath;

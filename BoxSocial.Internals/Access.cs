@@ -47,6 +47,11 @@ namespace BoxSocial.Internals
 
         public Access(Core core, IPermissibleItem item)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.core = core;
             this.item = item;
             this.owner = item.Owner;
@@ -347,6 +352,11 @@ namespace BoxSocial.Internals
 
         public static string BuildAclUri(Core core, IPermissibleItem item)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendAbsoluteSid(string.Format("acl.aspx?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
         }
 
@@ -366,6 +376,11 @@ namespace BoxSocial.Internals
 
         public static void CreateGrantForPrimitive(Core core, IPermissibleItem item, ItemKey grantee, params string[] permissionNames)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
@@ -382,6 +397,11 @@ namespace BoxSocial.Internals
 
         public static void CreateGrantForPrimitive(Core core, long itemTypeId, long itemId, ItemKey grantee, params string[] permissionNames)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", itemTypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);

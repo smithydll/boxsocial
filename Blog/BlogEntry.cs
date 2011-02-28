@@ -383,6 +383,11 @@ namespace BoxSocial.Applications.Blog
 
         public static BlogEntry Create(Core core, Primitive owner, string title, string body, byte license, string status, short category, long postTime)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", core.Session.LoggedInMember.Id),
                 new FieldValuePair("post_time_ut", postTime),
                 new FieldValuePair("post_title", title),

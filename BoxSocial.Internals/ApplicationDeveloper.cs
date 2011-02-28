@@ -148,6 +148,11 @@ namespace BoxSocial.Internals
 
         public static ApplicationDeveloper Create(Core core, ApplicationEntry application, User developer)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(typeof(ApplicationDeveloper));
             iQuery.AddField("user_id", developer.Id);
             iQuery.AddField("application_id", application.Id);

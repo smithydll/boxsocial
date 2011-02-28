@@ -561,6 +561,11 @@ namespace BoxSocial.Internals
 
         public static ApplicationEntry Create(Core core, string assembly, Application application, bool isPrimitive)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(typeof(ApplicationEntry));
             iQuery.AddField("application_assembly_name", assembly);
             iQuery.AddField("user_id", core.LoggedInMemberId);
@@ -724,6 +729,11 @@ namespace BoxSocial.Internals
         // bool finaliseTransaction
         public bool Install(Core core, User viewer, Primitive owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (!HasInstalled(owner))
             {
                 Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
@@ -779,6 +789,11 @@ namespace BoxSocial.Internals
 
         public bool UpdateInstall(Core core, Primitive viewer)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.db = core.Db;
 
             if (!HasInstalled(viewer))
@@ -1037,6 +1052,11 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public Action GetMostRecentFeedAction(User owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.AddCondition("action_application", Id);
@@ -1058,6 +1078,11 @@ namespace BoxSocial.Internals
 
         public static void ShowPage(Core core, APage page)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             core.Template.SetTemplate("viewapplication.html");
             page.Signature = PageSignature.viewapplication;
 

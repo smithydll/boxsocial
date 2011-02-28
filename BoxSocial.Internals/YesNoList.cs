@@ -34,6 +34,11 @@ namespace BoxSocial.Internals
         public YesNoList(Core core, string name)
             : base(name)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.core = core;
 
             Add("yes", core.Prose.GetString("YES"));
@@ -42,6 +47,11 @@ namespace BoxSocial.Internals
 
         public static bool FormBool(Core core, string name)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             switch (core.Http.Form[name])
             {
                 case "yes":

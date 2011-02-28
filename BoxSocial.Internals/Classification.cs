@@ -40,6 +40,11 @@ namespace BoxSocial.Internals
 
         public static string BuildClassificationBox(Core core, Classifications classification)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Template template = new Template(core.Http.TemplatePath, "std.classifications_box.html");
 
             switch (classification)
@@ -63,6 +68,11 @@ namespace BoxSocial.Internals
 
         public static void ApplyRestrictions(Core core, Classifications classification)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             switch (classification)
             {
                 case Classifications.Restricted:

@@ -932,6 +932,11 @@ namespace BoxSocial.Internals
         /// <returns>Null if registration failed</returns>
         public static User Register(Core core, string userName, string eMail, string password, string passwordConfirm)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
             SessionState session = core.Session;
 
@@ -1705,12 +1710,22 @@ namespace BoxSocial.Internals
 
         public static string GenerateFriendsUri(Core core, User primitive)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}friends",
                 primitive.UriStub));
         }
 
         public static string GenerateFriendsUri(Core core, User primitive, string filter)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}friends?filter={1}",
                 primitive.UriStub, filter));
         }
@@ -1727,6 +1742,11 @@ namespace BoxSocial.Internals
 
         public static void ShowProfile(Core core, UPage page)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             core.Template.SetTemplate("viewprofile.html");
             //HttpContext.Current.Response.Write("I'm not here?<br />");
             page.Signature = PageSignature.viewprofile;

@@ -825,6 +825,14 @@ namespace BoxSocial.Internals
                 return photoAccess;
             }
         }*/
+
+        public static void CheckCoreIsNotNull(Core core)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+        }
     }
 
     public class NullCoreException : Exception

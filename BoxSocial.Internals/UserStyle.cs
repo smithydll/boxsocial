@@ -117,6 +117,11 @@ namespace BoxSocial.Internals
 
         public static UserStyle Create(Core core, User owner, string css)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (owner.Id == core.LoggedInMemberId)
             {
                 InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(UserStyle)));

@@ -2,7 +2,7 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	font-size: 100%;
-	background: #c0c0c0;
+	height: 100%;
 }
 
 body {
@@ -10,6 +10,13 @@ body {
 	font-size: 62.5%;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	text-align: center;
+}
+
+#wrapper {
+	min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        margin: 0 auto -10em;
 }
 
 #page {
@@ -115,10 +122,18 @@ div#rc-bottom {
 }
 
 #foot {
-	clear: both;
+	/*clear: both;*/
+	background-color: #e0e0e0;
+	/*background-image: url('/images/footer-gradient.png');*/
+	height: 10em;
+}
+
+#footer {
 	border-top: solid 1px #D7D7D7;
-	background-color: #c0c0c0;
-	background-image: url('/images/footer-gradient.png');
+}
+
+#clear-space {
+	height: 10em;
 }
 
 #foot * {

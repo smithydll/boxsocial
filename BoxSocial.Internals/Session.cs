@@ -284,6 +284,11 @@ namespace BoxSocial.Internals
 
         public SessionState(Core core, Mysql db, System.Security.Principal.IPrincipal User, HttpRequest Request, HttpResponse Response)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.Request = Request;
             this.Response = Response;
             this.db = db;
@@ -298,6 +303,11 @@ namespace BoxSocial.Internals
 		
 		public SessionState(Core core, User user)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			this.core = core;
 			this.db = core.Db;
 			isLoggedIn = true;

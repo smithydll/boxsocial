@@ -941,6 +941,11 @@ namespace BoxSocial.Internals
 		
 		public static Item Create(Core core, Type type, bool suppress, params FieldValuePair[] fields)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             core.Db.BeginTransaction();
 
             List<DataFieldInfo> itemFields = GetFields(type);
@@ -1393,6 +1398,11 @@ namespace BoxSocial.Internals
 
         public static void IncrementItemColumn(Core core, Type type, long id, string column, int value)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             UpdateQuery uQuery = new UpdateQuery(GetTable(type));
             uQuery.AddField(column, new QueryOperation(column, QueryOperations.Addition, value));
             uQuery.AddCondition(GetPrimaryKey(type), id);

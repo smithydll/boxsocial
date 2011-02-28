@@ -135,6 +135,11 @@ namespace BoxSocial.Internals
 
         public static List<Tag> GetTags(Core core, NumberedItem item)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Tag> tags = new List<Tag>();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
@@ -153,6 +158,11 @@ namespace BoxSocial.Internals
 
         public static List<Tag> GetTags(Core core, string[] tags)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Tag> tagList = new List<Tag>();
 
             if (tags.Length == 0)

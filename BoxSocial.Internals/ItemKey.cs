@@ -103,6 +103,11 @@ namespace BoxSocial.Internals
 		
 		public static void populateItemTypeCache(Core core)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             System.Web.Caching.Cache cache;
 			object o = null;
 			

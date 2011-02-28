@@ -33,6 +33,11 @@ namespace BoxSocial.Internals
 
         public static List<Action> GetItems(Core core, User owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Action> feedItems = new List<Action>();
 
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
@@ -61,6 +66,11 @@ namespace BoxSocial.Internals
 
         public static void Show(Core core, TPage page, User owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Template template = new Template(core.Http.TemplatePath, "viewfeed.html");
 
             List<Action> feedActions = Feed.GetItems(core, owner);

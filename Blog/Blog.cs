@@ -168,6 +168,16 @@ namespace BoxSocial.Applications.Blog
         public Blog(Core core, User owner)
             : base(core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (owner == null)
+            {
+                throw new InvalidUserException();
+            }
+
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Blog_ItemLoad);
 
@@ -209,6 +219,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static Blog Create(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             SelectQuery query = new SelectQuery("user_blog ub");
             query.AddFields("ub.user_id");
             query.AddCondition("ub.user_id", core.LoggedInMemberId);
@@ -840,6 +855,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns>The URI</returns>
         public static string BuildUri(Core core, User member)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (member.Info.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendSid(string.Format("{0}",
@@ -860,6 +880,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns>The URI</returns>
         public static string BuildAbsoluteUri(Core core, User member)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (member.Info.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendAbsoluteSid(string.Format("{0}",
@@ -881,12 +906,22 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildUri(Core core, User member, string category)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}blog/category/{1}",
                 member.UriStub, category));
         }
 
         public static string BuildTagUri(Core core, User member, string tag)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}blog/tag/{1}",
                 member.UriStub, tag));
         }
@@ -900,6 +935,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, string category)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/category/{1}",
                 member.UriStubAbsolute, category));
         }
@@ -913,6 +953,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildUri(Core core, User member, int year)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}",
                 member.UriStub, year));
         }
@@ -926,6 +971,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}",
                 member.UriStubAbsolute, year));
         }
@@ -940,6 +990,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildUri(Core core, User member, int year, int month)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStub, year, month));
         }
@@ -954,6 +1009,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year, int month)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStubAbsolute, year, month));
         }
@@ -969,6 +1029,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildUri(Core core, User member, int year, int month, long postId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStub, year, month, postId));
         }
@@ -984,6 +1049,11 @@ namespace BoxSocial.Applications.Blog
         /// <returns></returns>
         public static string BuildAbsoluteUri(Core core, User member, int year, int month, long postId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStubAbsolute, year, month, postId));
         }

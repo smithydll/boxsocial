@@ -154,6 +154,11 @@ namespace BoxSocial.Applications.Blog
         /// <param name="core">Core token</param>
         public override void Initialise(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             this.core = core;
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);

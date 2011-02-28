@@ -135,6 +135,11 @@ namespace BoxSocial.Internals
 
         public static Notification Create(Core core, ApplicationEntry application, User receiver, string subject, string body)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             int applicationId = 0;
 
             if (application != null)
@@ -160,6 +165,11 @@ namespace BoxSocial.Internals
 
         public static List<Notification> GetRecentNotifications(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Notification> notificationItems = new List<Notification>();
 
             SelectQuery query = Notification.GetSelectQueryStub(typeof(Notification));
@@ -182,6 +192,11 @@ namespace BoxSocial.Internals
 
         public static long GetUnseenNotificationCount(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<Notification> notificationItems = new List<Notification>();
 
             SelectQuery query = new SelectQuery(GetTable(typeof(Notification)));

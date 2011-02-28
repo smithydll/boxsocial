@@ -38,6 +38,11 @@ namespace BoxSocial.Internals
 
         public static List<StatusMessage> GetItems(Core core, User owner, int page)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<StatusMessage> feedItems = new List<StatusMessage>();
 
             SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
@@ -68,6 +73,11 @@ namespace BoxSocial.Internals
 
         public static List<StatusMessage> GetFriendItems(Core core, User owner, int limit, int page)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<long> friendIds = owner.GetFriendIds();
             List<StatusMessage> feedItems = new List<StatusMessage>();
 
@@ -100,6 +110,11 @@ namespace BoxSocial.Internals
 
         public static StatusMessage GetLatest(Core core, User owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
             query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
@@ -119,6 +134,11 @@ namespace BoxSocial.Internals
 
         public static StatusMessage SaveMessage(Core core, string message)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
             ae.PublishToFeed(core.Session.LoggedInMember, message, "");
 
@@ -130,6 +150,11 @@ namespace BoxSocial.Internals
          */
         public static void Show(Core core, TPage page, User owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             core.Template.SetTemplate("Profile", "viewstatusfeed");
 
             List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber);

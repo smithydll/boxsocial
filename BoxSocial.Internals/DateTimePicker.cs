@@ -230,6 +230,11 @@ namespace BoxSocial.Internals
 
         public static long FormDate(Core core, string name, UnixTime tz)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             long datetime = 0;
             DateTime dt = tz.Now;
 

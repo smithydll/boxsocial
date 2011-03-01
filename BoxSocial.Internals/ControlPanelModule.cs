@@ -353,8 +353,12 @@ namespace BoxSocial.Internals
         {
         }
 
-        public override bool Equals(object obj)
+        /*public override bool Equals(object obj)
         {
+            if (obj == null)
+            {
+                return false;
+            }
             if (obj is ControlPanelModule)
             {
                 ControlPanelModule c = (ControlPanelModule)obj;
@@ -369,6 +373,14 @@ namespace BoxSocial.Internals
 
         public static bool operator ==(ControlPanelModule a, ControlPanelModule b)
         {
+            if (a.Equals(null) && !b.Equals(null) || !a.Equals(null) && b.Equals(null))
+            {
+                return false;
+            }
+            if (a.Equals(null) && b.Equals(null))
+            {
+                return true;
+            }
             if (a.Order == b.Order && a.Key == b.Key)
             {
                 return true;
@@ -378,6 +390,14 @@ namespace BoxSocial.Internals
 
         public static bool operator !=(ControlPanelModule a, ControlPanelModule b)
         {
+            if (a.Equals(null) && !b.Equals(null) || !a.Equals(null) && b.Equals(null))
+            {
+                return true;
+            }
+            if (a.Equals(null) && b.Equals(null))
+            {
+                return false;
+            }
             if (a.Order == b.Order && a.Key == b.Key)
             {
                 return false;
@@ -409,7 +429,7 @@ namespace BoxSocial.Internals
                 return true;
             }
             return false;
-        }
+        }*/
     }
 
     [DataTable("account_modules")]

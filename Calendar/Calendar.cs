@@ -374,10 +374,22 @@ namespace BoxSocial.Applications.Calendar
         {
             page.template.SetTemplate("Calendar", "viewcalendaryear");
 
+            // 15 year window
+            if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
+            {
+                core.Functions.Generate404();
+            }
+
             page.template.Parse("CURRENT_YEAR", year.ToString());
 
-            page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(core, owner, year - 1));
-            page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(core, owner, year + 1));
+            if (year - 1 >= DateTime.Now.Year - 10)
+            {
+                page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(core, owner, year - 1));
+            }
+            if (year + 1 <= DateTime.Now.Year + 5)
+            {
+                page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(core, owner, year + 1));
+            }
 
             for (int i = 1; i <= 12; i++)
             {
@@ -395,7 +407,7 @@ namespace BoxSocial.Applications.Calendar
             }
 
             // 15 year window
-            if (year < DateTime.Now.Year - 5 || year > DateTime.Now.Year + 10)
+            if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
             {
                 core.Functions.Generate404();
             }
@@ -507,6 +519,12 @@ namespace BoxSocial.Applications.Calendar
         public static void Show(Core core, TPage page, Primitive owner, int year, int month, int day)
         {
             page.template.SetTemplate("Calendar", "viewcalendarday");
+
+            // 15 year window
+            if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
+            {
+                core.Functions.Generate404();
+            }
 
             if (month < 1 || month > 12)
             {

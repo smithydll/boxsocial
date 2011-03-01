@@ -26,6 +26,7 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -553,8 +554,14 @@ namespace BoxSocial.Internals
 
             if (changedRows == 0)
             {
-                Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
-                sessionId = SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
+                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                byte[] randomNumber = new byte[16];
+                rng.GetBytes(randomNumber);
+                //Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
+                //rand.NextDouble().ToString()
+
+                string rand = HexRNG(randomNumber);
+                sessionId = SessionState.SessionMd5(rand + "bsseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
 
                 db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3})",
                     sessionId, isLoggedIn, ipAddress.ToString(), userId));
@@ -1080,6 +1087,28 @@ namespace BoxSocial.Internals
             while (i < count);
 
             return output;
+        }
+
+        public static string HexRNG(byte[] input)
+        {
+            string output = string.Empty;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                output += string.Format("{0:X2}", input[i]);
+            }
+
+            return output;
+        }
+
+        public static double GetDoubleRNG(RNGCryptoServiceProvider rng)
+        {
+            byte[] randomNumber = new byte[4];
+            rng.GetBytes(randomNumber);
+
+            double rand = (((((((uint)randomNumber[0] << 8) + (uint)randomNumber[1]) << 8) + (uint)randomNumber[2]) << 8) + (uint)randomNumber[3]) / (double)UInt32.MaxValue;
+
+            return rand;
         }
 
         public static void RedirectAuthenticate()

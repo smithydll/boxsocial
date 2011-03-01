@@ -750,11 +750,17 @@ namespace BoxSocial.Applications.Blog
 
                 if (post > 0)
                 {
+                    if (blogEntries.Count != 1)
+                    {
+                        core.Functions.Generate404();
+                        return;
+                    }
+
                     if (myBlog.Access.Can("COMMENT_ITEMS"))
                     {
                         page.template.Parse("CAN_COMMENT", "TRUE");
                     }
-                    core.Display.DisplayComments(page.template, page.User, new BlogEntry(core, post));
+                    core.Display.DisplayComments(page.template, page.User, blogEntries[0]);
                     page.template.Parse("SINGLE", "TRUE");
                 }
 

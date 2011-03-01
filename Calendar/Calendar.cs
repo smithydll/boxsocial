@@ -395,6 +395,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 DisplayMiniCalendar(core, page.template.CreateChild("month"), owner, year, i);
             }
+
+            List<string[]> calendarPath = new List<string[]>();
+            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { year.ToString(), year.ToString() });
+            owner.ParseBreadCrumbs(calendarPath);
         }
 
         public static void Show(Core core, TPage page, Primitive owner, int year, int month)

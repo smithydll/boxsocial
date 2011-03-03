@@ -1131,7 +1131,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return string.Format("/application/{0}/account/",
+                return string.Format("/application/{0}/manage/",
                     Key);
             }
         }

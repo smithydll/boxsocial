@@ -1109,6 +1109,11 @@ namespace BoxSocial.Internals
                     core.Template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
                 }
+
+                if (core.Session.LoggedInMember.Id == page.AnApplication.CreatorId)
+                {
+                    core.Template.Parse("U_MANAGE", core.Uri.AppendSid(page.AnApplication.AccountUriStub));
+                }
             }
 
             User Creator = new User(core, page.AnApplication.CreatorId, UserLoadOptions.All);

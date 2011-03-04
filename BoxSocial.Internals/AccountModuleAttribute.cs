@@ -28,6 +28,7 @@ namespace BoxSocial.Internals
     public sealed class AccountModuleAttribute : Attribute
     {
         private string moduleName;
+        private AppPrimitives primitives;
 
         public string Name
         {
@@ -37,9 +38,23 @@ namespace BoxSocial.Internals
             }
         }
 
+        public AppPrimitives Primitives
+        {
+            get
+            {
+                return primitives;
+            }
+        }
+
         public AccountModuleAttribute(string moduleName)
+            : this (AppPrimitives.Any, moduleName)
+        {
+        }
+
+        public AccountModuleAttribute(AppPrimitives primitives, string moduleName)
         {
             this.moduleName = moduleName;
+            this.primitives = primitives;
         }
     }
 }

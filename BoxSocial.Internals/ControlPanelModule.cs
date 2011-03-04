@@ -201,6 +201,29 @@ namespace BoxSocial.Internals
             }
         }
 
+        public AppPrimitives Primitives
+        {
+            get
+            {
+                Type type = this.GetType();
+
+                foreach (Attribute attr in type.GetCustomAttributes(typeof(AccountModuleAttribute), false))
+                {
+                    if (attr != null)
+                    {
+                        AccountModuleAttribute asmattr = (AccountModuleAttribute)attr;
+                        if (asmattr.Name != null)
+                        {
+                            return asmattr.Primitives;
+                        }
+                    }
+                }
+
+                // null key, should not happen!!!
+                return AppPrimitives.None;
+            }
+        }
+
         /// <summary>
         /// The order the module is to appear along the tab display.
         /// </summary>

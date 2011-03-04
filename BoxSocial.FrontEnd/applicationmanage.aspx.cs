@@ -106,11 +106,14 @@ namespace BoxSocial.FrontEnd
 
                     if (newModule != null)
                     {
-                        newModule.assembly = assembly;
-                        accountModules.Add(newModule);
-                        if (newModule.Key == module)
+                        if ((newModule.Primitives & AnApplication.AppPrimitive) == AnApplication.AppPrimitive)
                         {
-                            core.AddPageAssembly(assembly);
+                            newModule.assembly = assembly;
+                            accountModules.Add(newModule);
+                            if (newModule.Key == module)
+                            {
+                                core.AddPageAssembly(assembly);
+                            }
                         }
                     }
                 }
@@ -128,7 +131,7 @@ namespace BoxSocial.FrontEnd
 
                     if (newModule != null)
                     {
-                        if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Group) == AppPrimitives.Group)
+                        if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Application) == AppPrimitives.Application)
                         {
                             accountSubModules.Add(newModule);
                         }
@@ -153,7 +156,7 @@ namespace BoxSocial.FrontEnd
 
             if (AnApplication.CreatorId != loggedInMember.Id)
             {
-                core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
+                core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this application.");
             }
 
             template.Parse("ACCOUNT_TITLE", "Application Control Panel :: " + AnApplication.DisplayName);

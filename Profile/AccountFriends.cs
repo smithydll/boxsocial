@@ -35,7 +35,7 @@ using BoxSocial.Internals;
 
 namespace BoxSocial
 {
-    [AccountModule("friends")]
+    [AccountModule(AppPrimitives.Member, "friends")]
     public class AccountFriends : AccountModule
     {
         public AccountFriends(Account account)

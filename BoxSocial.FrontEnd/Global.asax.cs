@@ -236,9 +236,9 @@ namespace BoxSocial.FrontEnd
 
                     patterns.Add(new string[] { @"^/applications(/|)$", @"/viewapplications.aspx$1" });
 
-                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?mn=$1&module=$2&sub=$3" });
-                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?mn=$1&module=$2" });
-                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage(/|)$", @"/applicationmanage.aspx?mn=$1" });
+                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?an=$1&module=$2&sub=$3" });
+                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?an=$1&module=$2" });
+                    patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage(/|)$", @"/applicationmanage.aspx?an=$1" });
 
                     patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)(/|)$", @"/applicationpage.aspx?an=$1&path=" });
 

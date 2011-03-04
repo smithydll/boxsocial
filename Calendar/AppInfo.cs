@@ -125,16 +125,6 @@ namespace BoxSocial.Applications.Calendar
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            /*aii.AddSlug("calendar", @"^/calendar(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/event/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/task/([0-9]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("calendar", @"^/calendar/tasks(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network);
-
-            aii.AddModule("calendar");*/
-
             aii.AddCommentType("EVENT");
 
             return aii;
@@ -153,14 +143,6 @@ namespace BoxSocial.Applications.Calendar
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            /*core.RegisterApplicationPage(@"^/calendar(|/)$", showCalendar, 1);
-            core.RegisterApplicationPage(@"^/calendar/([0-9]{4})(|/)$", showCalendarYear, 2);
-            core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})(|/)$", showCalendarMonth, 3);
-            core.RegisterApplicationPage(@"^/calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})(|/)$", showCalendarDay, 4);
-            //core.RegisterApplicationPage(@"^/calendar/event/([0-9]+)(|/)$", showEvent, 5);
-            //core.RegisterApplicationPage(@"^/calendar/task/([0-9]+)(|/)$", showTask, 6);
-            core.RegisterApplicationPage(@"^/calendar/tasks(|/)$", showTasks, 7);*/
         }
 
         /// <summary>

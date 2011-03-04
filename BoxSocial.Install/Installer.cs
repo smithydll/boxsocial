@@ -129,6 +129,8 @@ namespace BoxSocial.Install
                         InstallLanguage("en", @"News");
                         InstallLanguage("en", @"Pages");
 
+                        InstallTemplates();
+
                         Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";
                         p1.StartInfo.Arguments = "force-reload";

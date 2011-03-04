@@ -208,6 +208,10 @@ namespace BoxSocial.IO
                 return string.Format("({0})",
                     ((DataField)value).ToString());
             }
+            else if (value == null)
+            {
+                throw new UnknownFieldTypeException();
+            }
             else
             {
                 throw new UnknownFieldTypeException(value);
@@ -217,7 +221,18 @@ namespace BoxSocial.IO
 
     public class UnknownFieldTypeException : Exception
     {
-        public UnknownFieldTypeException(object field) : base("unknown field of type " + field.GetType().ToString())
+        public UnknownFieldTypeException(object field)
+            : base("unknown field of type " + field.GetType().ToString())
+        {
+        }
+
+        public UnknownFieldTypeException()
+            : base("unknown field of type null")
+        {
+        }
+
+        public UnknownFieldTypeException(string info)
+            : base("unknown field of type null\n" + info)
         {
         }
     }

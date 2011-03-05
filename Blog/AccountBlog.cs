@@ -50,12 +50,6 @@ namespace BoxSocial.Applications.Blog
         public AccountBlog(Account account)
             : base(account)
         {
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageBlog);
-            //RegisterSubModule += new RegisterSubModuleHandler(WritePost);
-            //RegisterSubModule += new RegisterSubModuleHandler(ManageDrafts);
-            //RegisterSubModule += new RegisterSubModuleHandler(EditBlogRoll);
-            //RegisterSubModule += new RegisterSubModuleHandler(EditPreferences);
-            // TODO: Blog Preferences
         }
 
         /// <summary>

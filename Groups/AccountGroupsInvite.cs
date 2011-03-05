@@ -52,7 +52,8 @@ namespace BoxSocial.Groups
             }
         }
 
-        public AccountGroupsInvite()
+        public AccountGroupsInvite(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGroupsInvite_Load);
             this.Show += new EventHandler(AccountGroupsInvite_Show);

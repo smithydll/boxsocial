@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
-        public AccountCompose()
+        public AccountCompose(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountCompose_Load);
             this.Show += new EventHandler(AccountCompose_Show);

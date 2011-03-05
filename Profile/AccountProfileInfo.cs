@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountProfileInfo()
+        public AccountProfileInfo(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountProfileInfo_Load);
             this.Show += new EventHandler(AccountProfileInfo_Show);

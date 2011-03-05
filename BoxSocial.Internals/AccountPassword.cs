@@ -47,7 +47,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public AccountPassword()
+        public AccountPassword(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountPassword_Load);
             this.Show += new EventHandler(AccountPassword_Show);

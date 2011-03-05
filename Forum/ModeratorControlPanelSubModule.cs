@@ -41,6 +41,11 @@ namespace BoxSocial.Applications.Forum
             get;
         }
 
+        public ModeratorControlPanelSubModule(Core core)
+            : base(core)
+        {
+        }
+
         /// <summary>
         /// Creates an isolated template class for the module to render
         /// inside.

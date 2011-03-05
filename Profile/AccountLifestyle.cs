@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountLifestyle()
+        public AccountLifestyle(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountLifestyle_Load);
             this.Show += new EventHandler(AccountLifestyle_Show);

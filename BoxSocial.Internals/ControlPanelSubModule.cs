@@ -65,6 +65,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ControlPanelSubModule(Core core)
+        {
+            this.core = core;
+        }
+
         /// <summary>
         /// We do this so we don't have to keep re-declaring the same
         /// constructor

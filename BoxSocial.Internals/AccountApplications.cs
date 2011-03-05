@@ -47,7 +47,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public AccountApplications()
+        public AccountApplications(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountApplications_Load);
             this.Show += new EventHandler(AccountApplications_Show);

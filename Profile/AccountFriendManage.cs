@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountFriendManage()
+        public AccountFriendManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountFriendManage_Load);
             this.Show += new EventHandler(AccountFriendManage_Show);

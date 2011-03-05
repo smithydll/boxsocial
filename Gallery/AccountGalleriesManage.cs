@@ -61,7 +61,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        public AccountGalleriesManage()
+        public AccountGalleriesManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGalleriesManage_Load);
             this.Show += new EventHandler(AccountGalleriesManage_Show);

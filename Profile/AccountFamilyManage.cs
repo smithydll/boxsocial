@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountFamilyManage()
+        public AccountFamilyManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountFamilyManage_Load);
             this.Show += new EventHandler(AccountFamilyManage_Show);

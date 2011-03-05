@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountDisplayPic()
+        public AccountDisplayPic(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountDisplayPic_Load);
             this.Show += new EventHandler(AccountDisplayPic_Show);

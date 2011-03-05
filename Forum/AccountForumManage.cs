@@ -50,7 +50,8 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public AccountForumManage()
+        public AccountForumManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountForumManage_Load);
             this.Show += new EventHandler(AccountForumManage_Show);

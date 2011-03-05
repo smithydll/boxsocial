@@ -48,7 +48,8 @@ namespace BoxSocial.Groups
             }
         }
 
-        public AccountGroupStyle()
+        public AccountGroupStyle(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGroupStyle_Load);
             this.Show += new EventHandler(AccountGroupStyle_Show);

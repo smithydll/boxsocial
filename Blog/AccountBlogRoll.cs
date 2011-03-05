@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public AccountBlogRoll()
+        public AccountBlogRoll(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountBlogRoll_Load);
             this.Show += new EventHandler(AccountBlogRoll_Show);

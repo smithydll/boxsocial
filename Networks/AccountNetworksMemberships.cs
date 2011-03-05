@@ -48,7 +48,8 @@ namespace BoxSocial.Networks
             }
         }
 
-        public AccountNetworksMemberships()
+        public AccountNetworksMemberships(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountNetworksMemberships_Load);
             this.Show += new EventHandler(AccountNetworksMemberships_Show);

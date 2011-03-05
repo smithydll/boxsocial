@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public AccountForumRanks()
+        public AccountForumRanks(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountForumRanks_Load);
             this.Show += new EventHandler(AccountForumRanks_Show);

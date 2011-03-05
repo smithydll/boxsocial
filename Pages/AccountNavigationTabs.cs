@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public AccountNavigationTabs()
+        public AccountNavigationTabs(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountNavigationTabs_Load);
             this.Show += new EventHandler(AccountNavigationTabs_Show);

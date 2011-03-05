@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public AccountCalendarEventDelete()
+        public AccountCalendarEventDelete(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountCalendarEventDelete_Load);
             this.Show += new EventHandler(AccountCalendarEventDelete_Show);

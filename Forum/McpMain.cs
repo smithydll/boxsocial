@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public McpMain()
+        public McpMain(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(McpMain_Load);
             this.Show += new EventHandler(McpMain_Show);

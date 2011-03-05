@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public AccountPagesWrite()
+        public AccountPagesWrite(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountPagesWrite_Load);
             this.Show += new EventHandler(AccountPagesWrite_Show);

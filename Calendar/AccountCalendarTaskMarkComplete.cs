@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public AccountCalendarTaskMarkComplete()
+        public AccountCalendarTaskMarkComplete(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountCalendarTaskMarkComplete_Load);
             this.Show += new EventHandler(AccountCalendarTaskMarkComplete_Show);

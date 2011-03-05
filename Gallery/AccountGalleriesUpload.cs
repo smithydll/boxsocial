@@ -61,7 +61,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Constructor for the Account sub module
         /// </summary>
-        public AccountGalleriesUpload()
+        public AccountGalleriesUpload(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGalleriesUpload_Load);
             this.Show += new EventHandler(AccountGalleriesUpload_Show);

@@ -51,7 +51,8 @@ namespace BoxSocial.Groups
             }
         }
 
-        public AccountGroupsMembershipsManage()
+        public AccountGroupsMembershipsManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGroupsMembershipsManage_Load);
             this.Show += new EventHandler(AccountGroupsMembershipsManage_Show);

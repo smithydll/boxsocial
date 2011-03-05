@@ -62,7 +62,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        public AccountGalleriesPhotoRotate()
+        public AccountGalleriesPhotoRotate(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoRotate_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoRotate_Show);

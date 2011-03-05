@@ -61,7 +61,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        public AccountGalleriesPhotoDelete()
+        public AccountGalleriesPhotoDelete(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoDelete_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoDelete_Show);

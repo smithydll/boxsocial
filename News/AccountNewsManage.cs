@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        public AccountNewsManage()
+        public AccountNewsManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountNewsManage_Load);
             this.Show += new EventHandler(AccountNewsManage_Show);

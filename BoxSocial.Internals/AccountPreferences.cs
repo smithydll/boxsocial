@@ -48,7 +48,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public AccountPreferences()
+        public AccountPreferences(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountPreferences_Load);
             this.Show += new EventHandler(AccountPreferences_Show);

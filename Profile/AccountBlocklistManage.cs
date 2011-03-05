@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountBlocklistManage()
+        public AccountBlocklistManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountBlocklistManage_Load);
             this.Show += new EventHandler(AccountBlocklistManage_Show);

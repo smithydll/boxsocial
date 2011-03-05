@@ -29,6 +29,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+    /// <summary>
+    /// Account sub module for managing blog posts
+    /// </summary>
     [AccountSubModule("blog", "manage", true)]
     public class AccountBlogManage : AccountSubModule
     {
@@ -36,7 +39,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "Manage Blog Posts";
+                return core.Prose.GetString("MANAGE_BLOG_POSTS");
             }
         }
 
@@ -48,7 +51,8 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public AccountBlogManage()
+        public AccountBlogManage(Core core)
+            : base (core)
         {
             this.Load += new EventHandler(AccountBlogManage_Load);
             this.Show += new EventHandler(AccountBlogManage_Show);

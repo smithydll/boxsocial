@@ -50,7 +50,8 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        public AccountNewsWrite()
+        public AccountNewsWrite(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountNewsWrite_Load);
             this.Show += new EventHandler(AccountNewsWrite_Show);

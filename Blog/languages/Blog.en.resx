@@ -135,6 +135,9 @@
   <data name="BLOG_TITLE" xml:space="preserve">
     <value>Blog Title</value>
   </data>
+  <data name="DRAFT_BLOG_POSTS" xml:space="preserve">
+    <value>Draft Blog Posts</value>
+  </data>
   <data name="EDIT_BLOG_ROLL" xml:space="preserve">
     <value>Edit Blog Roll</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="MANAGE_BLOG" xml:space="preserve">
     <value>Manage Blog</value>
+  </data>
+  <data name="MANAGE_BLOG_POSTS" xml:space="preserve">
+    <value>Manage Blog Posts</value>
   </data>
   <data name="NEW_BLOG_POST" xml:space="preserve">
     <value>New Blog Post</value>

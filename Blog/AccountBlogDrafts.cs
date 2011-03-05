@@ -29,17 +29,27 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+    /// <summary>
+    /// Account sub module for managing draft blog posts
+    /// </summary>
     [AccountSubModule("blog", "drafts")]
     public class AccountBlogDrafts : AccountSubModule
     {
+
+        /// <summary>
+        /// Account sub module title
+        /// </summary>
         public override string Title
         {
             get
             {
-                return "Draft Blog Posts";
+                return core.Prose.GetString("DRAFT_BLOG_POSTS");
             }
         }
 
+        /// <summary>
+        /// Account sub module order
+        /// </summary>
         public override int Order
         {
             get
@@ -48,17 +58,22 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public AccountBlogDrafts()
+
+        /// <summary>
+        /// Account sub module constructor
+        /// </summary>
+        public AccountBlogDrafts(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountBlogDrafts_Load);
             this.Show += new EventHandler(AccountBlogDrafts_Show);
         }
 
-        void AccountBlogDrafts_Load(object sender, EventArgs e)
+        private void AccountBlogDrafts_Load(object sender, EventArgs e)
         {
         }
 
-        void AccountBlogDrafts_Show(object sender, EventArgs e)
+        private void AccountBlogDrafts_Show(object sender, EventArgs e)
         {
             SetTemplate("account_blog_manage");
 

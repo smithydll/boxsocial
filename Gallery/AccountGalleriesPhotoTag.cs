@@ -63,7 +63,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        public AccountGalleriesPhotoTag()
+        public AccountGalleriesPhotoTag(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoTag_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoTag_Show);

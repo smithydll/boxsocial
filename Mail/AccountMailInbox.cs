@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
-        public AccountMailInbox()
+        public AccountMailInbox(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountMailInbox_Load);
             this.Show += new EventHandler(AccountMailInbox_Show);

@@ -52,7 +52,8 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public AccountListsManage()
+        public AccountListsManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountListsManage_Load);
             this.Show += new EventHandler(AccountListsManage_Show);

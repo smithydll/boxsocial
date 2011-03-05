@@ -63,7 +63,8 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Constructor for the Account sub module
         /// </summary>
-        public AccountBlogWrite()
+        public AccountBlogWrite(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountBlogWrite_Load);
             this.Show += new EventHandler(AccountBlogWrite_Show);

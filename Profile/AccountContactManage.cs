@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        public AccountContactManage()
+        public AccountContactManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountContactManage_Load);
             this.Show += new EventHandler(AccountContactManage_Show);

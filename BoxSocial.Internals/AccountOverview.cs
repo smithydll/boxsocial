@@ -47,7 +47,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public AccountOverview()
+        public AccountOverview(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountOverview_Load);
             this.Show += new EventHandler(AccountOverview_Show);

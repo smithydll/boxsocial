@@ -40,5 +40,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        public AccountSubModule(Core core)
+            : base(core)
+        {
+        }
     }
 }

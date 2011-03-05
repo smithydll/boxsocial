@@ -49,7 +49,8 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public AccountCalendarEventNew()
+        public AccountCalendarEventNew(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountCalendarEventNew_Load);
             this.Show += new EventHandler(AccountCalendarEventNew_Show);

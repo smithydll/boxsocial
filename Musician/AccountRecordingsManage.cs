@@ -48,7 +48,8 @@ namespace BoxSocial.Musician
             }
         }
 
-        public AccountRecordingsManage()
+        public AccountRecordingsManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountRecordingsManage_Load);
             this.Show += new EventHandler(AccountRecordingsManage_Show);

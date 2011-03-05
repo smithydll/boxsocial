@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public AccountBlogPreferences()
+        public AccountBlogPreferences(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountBlogPreferences_Load);
             this.Show += new EventHandler(AccountBlogPreferences_Show);

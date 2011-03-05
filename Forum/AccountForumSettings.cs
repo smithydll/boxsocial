@@ -48,7 +48,8 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public AccountForumSettings()
+        public AccountForumSettings(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountForumSettings_Load);
             this.Show += new EventHandler(AccountForumSettings_Show);

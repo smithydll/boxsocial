@@ -49,7 +49,8 @@ namespace BoxSocial.Musician
             }
         }
 
-        public AccountProfileManage()
+        public AccountProfileManage(Core core)
+            : base(core)
         {
             this.Load += new EventHandler(AccountProfileManage_Load);
             this.Show += new EventHandler(AccountProfileManage_Show);

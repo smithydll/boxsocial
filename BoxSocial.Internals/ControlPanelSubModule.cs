@@ -68,6 +68,12 @@ namespace BoxSocial.Internals
         public ControlPanelSubModule(Core core)
         {
             this.core = core;
+            this.db = core.Db;
+            this.session = core.Session;
+            this.tz = core.Tz;
+            this.LoggedInMember = session.LoggedInMember;
+
+            core.Prose.AddApplication(Assembly.GetAssembly(this.GetType()).GetName().Name);
         }
 
         /// <summary>

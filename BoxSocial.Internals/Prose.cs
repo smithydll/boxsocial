@@ -93,9 +93,12 @@ namespace BoxSocial.Internals
         {
             try
             {
-                ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.Http.LanguagePath, key), null);
+                if (!languageResources.ContainsKey(key))
+                {
+                    ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.Http.LanguagePath, key), null);
 
-                languageResources.Add(key, rm);
+                    languageResources.Add(key, rm);
+                }
             }
             catch
             {

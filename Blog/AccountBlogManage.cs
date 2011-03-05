@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.Prose.GetString("MANAGE_BLOG_POSTS");
+                return core.Prose.GetString("Blog", "MANAGE_BLOG_POSTS");
             }
         }
 

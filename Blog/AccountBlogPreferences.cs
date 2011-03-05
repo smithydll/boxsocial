@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "Blog Preferences";
+                return core.Prose.GetString("Blog", "BLOG_PREFERENCES");
             }
         }
 

@@ -126,6 +126,9 @@
   <data name="BLOGROLL" xml:space="preserve">
     <value>Blogroll</value>
   </data>
+  <data name="BLOG_ENTRY_DOES_NOT_EXIST" xml:space="preserve">
+    <value>Blog entry does not exist.</value>
+  </data>
   <data name="BLOG_POST" xml:space="preserve">
     <value>Blog Post</value>
   </data>
@@ -176,5 +179,8 @@
   </data>
   <data name="WRITE_BLOG_POST" xml:space="preserve">
     <value>Write Blog Post</value>
+  </data>
+  <data name="WRITE_NEW_BLOG_POST" xml:space="preserve">
+    <value>Write New Blog Post</value>
   </data>
 </root>

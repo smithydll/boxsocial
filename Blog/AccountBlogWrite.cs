@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "Write New Blog Post";
+                return core.Prose.GetString("Blog", "WRITE_NEW_BLOG_POST");
             }
         }
 
@@ -170,7 +170,7 @@ namespace BoxSocial.Applications.Blog
                     }
                     catch (InvalidBlogEntryException)
                     {
-                        DisplayError("Blog entry does not exist.");
+                        DisplayError(core.Prose.GetString("Blog", "BLOG_ENTRY_DOES_NOT_EXIST"));
                         return;
                     }
                 }
@@ -181,10 +181,6 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_POST_DAY", postDaysSelectBox);
             template.Parse("S_POST_HOUR", postTime.Hour.ToString());
             template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
-
-            List<string> permissions = new List<string>();
-            permissions.Add("Can Read");
-            permissions.Add("Can Comment");
 
             SelectBox licensesSelectBox = new SelectBox("license");
             DataTable licensesTable = db.Query(ContentLicense.GetSelectQueryStub(typeof(ContentLicense)));

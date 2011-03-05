@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "Edit Blog Roll";
+                return core.Prose.GetString("Blog", "EDIT_BLOG_ROLL");
             }
         }
 

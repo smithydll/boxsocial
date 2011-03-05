@@ -287,7 +287,7 @@ namespace BoxSocial.Applications.Calendar
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network;
+            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician;
         }
 
         void core_PageHooks(HookEventArgs e)

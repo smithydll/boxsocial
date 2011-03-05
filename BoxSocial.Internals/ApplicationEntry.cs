@@ -488,6 +488,21 @@ namespace BoxSocial.Internals
                 throw new InvalidApplicationException();
             }
         }
+
+        public ApplicationEntry(Core core, string assemblyName)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
+
+            try
+            {
+                LoadItem("application_assembly_name", assemblyName);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidApplicationException();
+            }
+        }
 		
         public ApplicationEntry(Core core, long applicationId)
             : base(core)
@@ -732,6 +747,11 @@ namespace BoxSocial.Internals
             if (core == null)
             {
                 throw new NullCoreException();
+            }
+
+            if ((owner.AppPrimitive & AppPrimitive) != owner.AppPrimitive)
+            {
+                return false;
             }
 
             if (!HasInstalled(owner))

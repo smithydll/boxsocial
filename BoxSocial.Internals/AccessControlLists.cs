@@ -460,7 +460,8 @@ namespace BoxSocial.Internals
                             
                             try
                             {
-                                AccessControlGrant.Create(core, ik, item.ItemKey, itemPermission.Id, uacg.Allow);
+                                AccessControlGrant newACG = AccessControlGrant.Create(core, ik, item.ItemKey, itemPermission.Id, uacg.Allow);
+                                itemGrants.Add(newACG);
                             }
                             catch (InvalidAccessControlGrantException)
                             {

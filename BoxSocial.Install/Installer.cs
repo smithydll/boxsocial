@@ -2223,6 +2223,16 @@ namespace BoxSocial.Install
             Core core = new Core(db, template);
             UnixTime tz = new UnixTime(core, 0);
 
+            // disable application
+            if (repo != "BoxSocial.Internals")
+            {
+                UpdateQuery query = new UpdateQuery("applications");
+                query.AddField("application_update", true);
+                query.AddCondition("application_assembly_name", repo);
+
+                db.Query(query);
+            }
+
             string assemblyPath = null;
             bool isPrimitive = false;
             bool isInternals = false;
@@ -2253,13 +2263,13 @@ namespace BoxSocial.Install
             {
                 BoxSocial.Internals.Application.InstallTables(core, loadApplication);
                 BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
-                
+
                 Type[] types = loadApplication.GetTypes();
                 foreach (Type t in types)
                 {
                     //if (t.GetInterfaces().
                     List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
-                    
+
                     foreach (PermissionInfo pi in permissions)
                     {
                         try
@@ -2625,7 +2635,7 @@ namespace BoxSocial.Install
                                         }
                                     }
                                 }*/
-                                
+
                                 // TODO Permissions
 
                                 db.UpdateQuery(string.Format(@"DELETE FROM application_slugs WHERE application_id = {0} AND slug_updated_ut <> {1};",
@@ -2639,13 +2649,13 @@ namespace BoxSocial.Install
 
                                 BoxSocial.Internals.Application.InstallTypes(core, loadApplication, applicationId);
                                 BoxSocial.Internals.Application.InstallTables(core, loadApplication);
-                                
+
                                 //Type[] types = loadApplication.GetTypes();
                                 foreach (Type t in types)
                                 {
                                     //if (t.GetInterfaces().
                                     List<PermissionInfo> permissions = AccessControlLists.GetPermissionInfo(t);
-                                    
+
                                     foreach (PermissionInfo pi in permissions)
                                     {
                                         try
@@ -2678,6 +2688,12 @@ namespace BoxSocial.Install
                 Console.WriteLine(repo + " has been installed.");
 
             }
+
+            UpdateQuery queryUpdate = new UpdateQuery("applications");
+            queryUpdate.AddField("application_update", false);
+            queryUpdate.AddCondition("application_assembly_name", repo);
+
+            db.Query(queryUpdate);
 
             db.CloseConnection();
         }

@@ -48,7 +48,7 @@ namespace BoxSocial.FrontEnd
             long typeId = core.Functions.RequestLong("type", 0);
             long id = core.Functions.RequestLong("id", 0);
 
-            AppPrimitives viewingPrimitive = AppPrimitives.Member;
+            AppPrimitives viewingPrimitive = AppPrimitives.None;
 
             if (typeId == 0 || typeId == ItemKey.GetTypeId(typeof(User)))
 			{
@@ -63,14 +63,14 @@ namespace BoxSocial.FrontEnd
 			{
                 viewingPrimitive = AppPrimitives.Network;
 			}
-			else if (typeId == ItemKey.GetTypeId(typeof(Application)))
+			else if (typeId == ItemKey.GetTypeId(typeof(ApplicationEntry)))
 			{
                 viewingPrimitive = AppPrimitives.Application;
 			}
-			/*else if (typeId == ItemKey.GetTypeId(typeof(Musician)))
+			else if (typeId == ItemKey.GetTypeId(typeof(Musician.Musician)))
 			{
                 viewingPrimitive = AppPrimitives.Musician;
-            }*/
+            }
 
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + ((byte)viewingPrimitive).ToString(), (byte)viewingPrimitive);

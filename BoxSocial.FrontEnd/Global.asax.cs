@@ -215,6 +215,10 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
                     patterns.Add(new string[] { @"^/functions(/|)$", @"/functions.aspx" });
 
+                    patterns.Add(new string[] { @"^/api/acl(/|)$", @"/acl.aspx" });
+                    patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
+                    patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });
+
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
                     patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });

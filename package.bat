@@ -67,6 +67,10 @@ md "%1"Package\templates
 
 copy "%1"BoxSocial\templates "%1"Package\templates
 
+md "%1"Package\templates\emails
+
+copy "%1"BoxSocial\templates\emails "%1"Package\templates\emails
+
 md "%1"Package\styles
 
 copy "%1"BoxSocial\style "%1"Package\styles

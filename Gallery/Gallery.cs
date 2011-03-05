@@ -1702,7 +1702,14 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return Owner;
+                if (parentId == 0)
+                {
+                    return Owner;
+                }
+                else
+                {
+                    return new Gallery(core, ParentId);
+                }
             }
         }
 

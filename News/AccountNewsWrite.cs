@@ -50,6 +50,10 @@ namespace BoxSocial.Applications.News
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountNewsWrite class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountNewsWrite(Core core)
             : base(core)
         {

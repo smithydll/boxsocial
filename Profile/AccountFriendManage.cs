@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountFriendManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountFriendManage(Core core)
             : base(core)
         {

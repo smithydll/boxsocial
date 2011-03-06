@@ -52,6 +52,10 @@ namespace BoxSocial.Groups
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountGroupsEdit class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGroupsEdit(Core core)
             : base(core)
         {

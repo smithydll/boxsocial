@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountForumSettings class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountForumSettings(Core core)
             : base(core)
         {

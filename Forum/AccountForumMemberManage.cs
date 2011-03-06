@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountForumMemberManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountForumMemberManage(Core core)
             : base(core)
 		{

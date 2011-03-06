@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountStyle class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountStyle(Core core)
             : base(core)
         {

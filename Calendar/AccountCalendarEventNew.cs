@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountCalendarEventNew class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountCalendarEventNew(Core core)
             : base(core)
         {

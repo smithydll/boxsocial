@@ -48,6 +48,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountPreferences class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountPreferences(Core core)
             : base(core)
         {

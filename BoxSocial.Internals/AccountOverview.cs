@@ -47,6 +47,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountOverview class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountOverview(Core core)
             : base(core)
         {

@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountMailInbox class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountMailInbox(Core core)
             : base(core)
         {

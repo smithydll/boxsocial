@@ -59,8 +59,9 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the AccountGalleriesPhotoDelete class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGalleriesPhotoDelete(Core core)
             : base(core)
         {

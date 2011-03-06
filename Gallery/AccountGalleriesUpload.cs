@@ -59,8 +59,9 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Constructor for the Account sub module
+        /// Initializes a new instance of the AccountGalleriesUpload class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGalleriesUpload(Core core)
             : base(core)
         {

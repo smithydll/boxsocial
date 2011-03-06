@@ -47,6 +47,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountApplications class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountApplications(Core core)
             : base(core)
         {

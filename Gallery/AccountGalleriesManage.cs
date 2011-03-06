@@ -59,8 +59,9 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the AccountGalleriesManage class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGalleriesManage(Core core)
             : base(core)
         {

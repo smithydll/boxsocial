@@ -43,15 +43,6 @@ namespace BoxSocial
         public AccountProfile(Account account)
             : base(account)
         {
-            //RegisterSubModule += new RegisterSubModuleHandler(Info);
-            //RegisterSubModule += new RegisterSubModuleHandler(MyName);
-            //RegisterSubModule += new RegisterSubModuleHandler(DisplayPicture);
-            //RegisterSubModule += new RegisterSubModuleHandler(Contact);
-            // TODO: personality
-            //RegisterSubModule += new RegisterSubModuleHandler(Lifestyle);
-            //RegisterSubModule += new RegisterSubModuleHandler(Style);
-            //RegisterSubModule += new RegisterSubModuleHandler(Permissions);
-            //RegisterSubModule += new RegisterSubModuleHandler(SaveStatus);
         }
 
         protected override void RegisterModule(Core core, EventArgs e)

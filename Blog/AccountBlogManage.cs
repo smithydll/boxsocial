@@ -51,6 +51,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountBlogManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountBlogManage(Core core)
             : base (core)
         {

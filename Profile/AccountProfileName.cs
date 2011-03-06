@@ -47,6 +47,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountProfileName class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountProfileName(Core core)
             : base(core)
         {

@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountDisplayPic class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountDisplayPic(Core core)
             : base(core)
         {

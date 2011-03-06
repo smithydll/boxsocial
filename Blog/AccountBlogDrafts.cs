@@ -60,8 +60,9 @@ namespace BoxSocial.Applications.Blog
 
 
         /// <summary>
-        /// Account sub module constructor
+        /// Initializes a new instance of the AccountBlogDrafts class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountBlogDrafts(Core core)
             : base(core)
         {

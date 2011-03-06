@@ -49,6 +49,10 @@ namespace BoxSocial.Musician
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountDiscographyManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountDiscographyManage(Core core)
             : base(core)
         {

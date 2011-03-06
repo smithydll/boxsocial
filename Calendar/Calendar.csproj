@@ -125,10 +125,14 @@
     <Content Include="templates\todayupcommingevents.html" />
     <Content Include="templates\viewcalendarday.html" />
     <Content Include="templates\viewcalendarevent.html" />
-    <Content Include="templates\viewcalendarmonth.html" />
+    <Content Include="templates\viewcalendarmonth.html">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="templates\viewcalendartask.html" />
     <Content Include="templates\viewcalendartasks.html" />
-    <Content Include="templates\viewcalendaryear.html" />
+    <Content Include="templates\viewcalendaryear.html">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

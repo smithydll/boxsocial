@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountProfileInfo class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountProfileInfo(Core core)
             : base(core)
         {

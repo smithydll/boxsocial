@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountProfilePermissions class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountProfilePermissions(Core core)
             : base(core)
         {

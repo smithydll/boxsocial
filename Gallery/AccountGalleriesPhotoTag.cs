@@ -61,8 +61,9 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the AccountGalleriesPhotoTag class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGalleriesPhotoTag(Core core)
             : base(core)
         {

@@ -52,6 +52,10 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountListsManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountListsManage(Core core)
             : base(core)
         {

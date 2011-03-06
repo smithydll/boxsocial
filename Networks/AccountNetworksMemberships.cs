@@ -48,6 +48,10 @@ namespace BoxSocial.Networks
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountNetworksMemberships class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountNetworksMemberships(Core core)
             : base(core)
         {

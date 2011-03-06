@@ -41,6 +41,10 @@ namespace BoxSocial.Internals
             get;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountSubModule class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountSubModule(Core core)
             : base(core)
         {

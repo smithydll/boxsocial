@@ -48,6 +48,10 @@ namespace BoxSocial.Musician
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountMembersManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountMembersManage(Core core)
             : base (core)
         {

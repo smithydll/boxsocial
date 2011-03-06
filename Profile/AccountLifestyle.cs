@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountLifestyle class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountLifestyle(Core core)
             : base(core)
         {

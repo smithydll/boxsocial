@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountBlogPreferences class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountBlogPreferences(Core core)
             : base(core)
         {

@@ -48,6 +48,10 @@ namespace BoxSocial.Groups
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountGroupStyle class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGroupStyle(Core core)
             : base(core)
         {

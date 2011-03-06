@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountCalendarEventInvite class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountCalendarEventInvite(Core core)
             : base(core)
         {

@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountFriendInvite class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountFriendInvite(Core core)
             : base(core)
         {

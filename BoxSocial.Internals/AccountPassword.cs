@@ -47,6 +47,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountPassword class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountPassword(Core core)
             : base(core)
         {

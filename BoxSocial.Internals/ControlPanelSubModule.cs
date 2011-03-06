@@ -65,6 +65,10 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ControlPanelSubModule class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public ControlPanelSubModule(Core core)
         {
             this.core = core;
@@ -631,7 +635,7 @@ namespace BoxSocial.Internals
             return hiddenFieldList;
         }
 
-        /*public override bool Equals(object obj)
+        public override bool Equals(object obj)
         {
             if (obj == null)
             {
@@ -651,36 +655,12 @@ namespace BoxSocial.Internals
 
         public static bool operator ==(ControlPanelSubModule a, ControlPanelSubModule b)
         {
-            if (a.Equals(null) && !b.Equals(null) || !a.Equals(null) && b.Equals(null))
-            {
-                return false;
-            }
-            if (a.Equals(null) && b.Equals(null))
-            {
-                return true;
-            }
-            if (a.Order == b.Order && a.Key == b.Key)
-            {
-                return true;
-            }
-            return false;
+            return a.Equals(b);
         }
 
         public static bool operator !=(ControlPanelSubModule a, ControlPanelSubModule b)
         {
-            if (a.Equals(null) && !b.Equals(null) || !a.Equals(null) && b.Equals(null))
-            {
-                return true;
-            }
-            if (a.Equals(null) && b.Equals(null))
-            {
-                return false;
-            }
-            if (a.Order == b.Order && a.Key == b.Key)
-            {
-                return false;
-            }
-            return true;
+            return !a.Equals(b);
         }
 
         public static bool operator >(ControlPanelSubModule a, ControlPanelSubModule b)
@@ -707,7 +687,7 @@ namespace BoxSocial.Internals
                 return true;
             }
             return false;
-        }*/
+        }
     }
 
     public class ModuleModeEventArgs : EventArgs

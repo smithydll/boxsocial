@@ -49,6 +49,10 @@ namespace BoxSocial.Applications.News
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountNewsManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountNewsManage(Core core)
             : base(core)
         {

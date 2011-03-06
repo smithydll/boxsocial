@@ -51,6 +51,10 @@ namespace BoxSocial.Groups
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountGroupsManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountGroupsManage(Core core)
             : base(core)
         {

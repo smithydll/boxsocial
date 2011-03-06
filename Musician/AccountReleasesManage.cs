@@ -48,6 +48,10 @@ namespace BoxSocial.Musician
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountReleasesManage class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountReleasesManage(Core core)
             : base(core)
         {

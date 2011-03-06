@@ -61,8 +61,9 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
-        /// Constructor for the Account sub module
+        /// Initializes a new instance of the AccountBlogWrite class. 
         /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountBlogWrite(Core core)
             : base(core)
         {

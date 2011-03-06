@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountNavigationTabs class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountNavigationTabs(Core core)
             : base(core)
         {

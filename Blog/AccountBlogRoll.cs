@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountBlogRoll class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountBlogRoll(Core core)
             : base(core)
         {

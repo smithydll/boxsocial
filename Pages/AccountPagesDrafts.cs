@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the AccountPagesDrafts class. 
+        /// </summary>
+        /// <param name="core">The Core token.</param>
         public AccountPagesDrafts(Core core)
             : base(core)
         {

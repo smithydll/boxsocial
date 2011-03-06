@@ -41,9 +41,9 @@ namespace BoxSocial.Internals
         private Core core;
         private NumberFormatInfo numberFormatInfo;
         private List<string> itemTypes = new List<string>();
-        private const string selected = " selected=\"selected\"";
-        private const string disabled = " disabled=\"disabled\"";
-        private const string boxChecked = " checked=\"checked\"";
+        private static readonly string selected = " selected=\"selected\"";
+        private static readonly string disabled = " disabled=\"disabled\"";
+        private static readonly string boxChecked = " checked=\"checked\"";
 
         public Functions(Core core)
         {

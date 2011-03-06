@@ -50,7 +50,7 @@ namespace BoxSocial.IO
             PutBucketResponse response = s3Client.PutBucket(pbr);
         }
 
-        public override string SaveFile(string bin, Stream file)
+        public override string SaveFile(string bin, MemoryStream file)
         {
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
@@ -63,7 +63,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, Stream file)
+        public override string SaveFile(string bin, string fileName, MemoryStream file)
         {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
@@ -75,7 +75,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, MemoryStream file)
         {
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
@@ -88,7 +88,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, MemoryStream file)
         {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;

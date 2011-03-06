@@ -286,7 +286,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract string StoreFile(Stream file);
+        public abstract string StoreFile(MemoryStream file);
     }
 
     /// <summary>

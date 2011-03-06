@@ -1130,6 +1130,12 @@ namespace BoxSocial.Applications.Gallery
                     tagsVariableCollection.Parse("TAG_USER_ID", tag.TaggedMember.Id.ToString());
                 }
 
+                /*string path1 = TPage.GetStorageFilePath(galleryItem.StoragePath);
+                string path2 = e.Core.Storage.RetrieveFilePath(string.Empty, galleryItem.StoragePath);
+                string path3 = e.Core.Storage.RetrieveFilePath("_thumb", galleryItem.StoragePath);
+
+                HttpContext.Current.Response.Write(path1 + "<br />" + path2 + "<br />" + path3);*/
+
             }
             catch (GalleryItemNotFoundException)
             {
@@ -1546,12 +1552,13 @@ namespace BoxSocial.Applications.Gallery
                 thumbImage.Save(stream, image.RawFormat);
                 core.Storage.SaveFile(System.IO.Path.Combine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName, stream);
                 stream.Close();
+                fs.Close();
             }
             else
             {
+                fs.Close();
                 core.Storage.CopyFile(core.Settings.StorageBinUserFilesPrefix, System.IO.Path.Combine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName);
             }
-            fs.Close();
         }
 
         /// <summary>

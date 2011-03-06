@@ -265,7 +265,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                core.Storage = new LocalStorage("/var/www/storage/", db);
+                core.Storage = new LocalStorage(Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]), db);
             }
 
             core.page = this;

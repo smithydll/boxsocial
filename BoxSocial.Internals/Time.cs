@@ -121,7 +121,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// The Time Zone Code for UTC.
         /// </summary>
-        public const ushort UTC_CODE = 30;
+        public static readonly ushort UTC_CODE = 30;
 
         [DataField("timezone_id", DataFieldKeys.Primary)]
         private long timezoneId;

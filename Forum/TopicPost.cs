@@ -33,8 +33,6 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_post")]
     public class TopicPost : NumberedItem
     {
-        //public const string FORUM_TOPIC_INFO_FIELDS = "ft.topic_id, ft.topic_title, ft.user_id, ft.item_id, ft.item_type, ft.topic_views, ft.topic_time, ft.topic_last_post_id, ft.topic_last_post_time";
-
         [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
         [DataField("topic_id", typeof(ForumTopic), DataFieldKeys.Index)]

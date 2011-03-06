@@ -2202,7 +2202,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override string StoreFile(Stream file)
+        public override string StoreFile(MemoryStream file)
         {
             return core.Storage.SaveFile("zinzam.user", file);
         }

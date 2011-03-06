@@ -32,8 +32,6 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     public class StatusMessage : NumberedItem
     {
-        //public const string STATUS_MESSAGE_FIELDS = "usm.status_id, usm.user_id, usm.status_message, usm.status_time_ut";
-
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
         [DataField("user_id", DataFieldKeys.Index)]

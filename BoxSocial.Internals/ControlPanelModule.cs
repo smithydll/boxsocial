@@ -394,6 +394,11 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static bool operator ==(ControlPanelModule a, ControlPanelModule b)
         {
             return a.Equals(b);

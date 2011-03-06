@@ -245,7 +245,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public class SessionState
     {
-        private const int SESSION_EXPIRES = 3600;
+        private static readonly int SESSION_EXPIRES = 3600;
 
         private User loggedInMember;
         private IPAddress ipAddress;

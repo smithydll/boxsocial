@@ -57,8 +57,6 @@ namespace BoxSocial.Networks
     [Primitive("NETWORK", NetworkLoadOptions.All, "network_id", "network_network")]
     public class Network : Primitive, ICommentableItem, IPermissibleItem
     {
-        public const string NETWORK_INFO_FIELDS = "`network_info`.network_id, `network_info`.network_name_display, `network_info`.network_abstract, `network_info`.network_members, `network_info`.network_comments, `network_info`.network_require_confirmation, `network_info`.network_type, `network_info`.network_gallery_items, `network_info`.network_bytes";
-
         [DataField("network_id", DataFieldKeys.Primary)]
         private long networkId;
         [DataField("network_network", DataFieldKeys.Unique, 24)]
@@ -1083,7 +1081,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override string StoreFile(Stream file)
+        public override string StoreFile(MemoryStream file)
         {
             return core.Storage.SaveFile("zinzam.user", file);
         }

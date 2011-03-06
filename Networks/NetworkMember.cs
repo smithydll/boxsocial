@@ -37,8 +37,6 @@ namespace BoxSocial.Networks
     [PermissionGroup]
     public class NetworkMember : User
     {
-        public const string USER_NETWORK_FIELDS = "nm.user_id, nm.network_id, nm.member_join_date_ut, nm.member_join_ip, nm.member_email, nm.member_active, nm.member_activate_code";
-
         [DataField("user_id")]
         private new long userId; // hide the parent variable to have it register in the table
         [DataField("network_id", typeof(Network))]
@@ -136,8 +134,11 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, Network theNetwork, User member)
             : base(core)
         {
-            DataTable memberTable = db.Query(string.Format("SELECT {2} FROM network_members nm WHERE nm.user_id = {0} AND nm.network_id = {1}",
-                member.UserId, theNetwork.NetworkId, USER_NETWORK_FIELDS));
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_keys.user_id", member.UserId);
+            query.AddCondition("network_members.network_id", theNetwork.Id);
+
+            DataTable memberTable = db.Query(query);
 
             if (memberTable.Rows.Count == 1)
             {
@@ -160,8 +161,11 @@ namespace BoxSocial.Networks
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 
-            DataTable userNetworks = core.Db.Query(string.Format("SELECT {1} FROM network_members nm WHERE user_id = {0} AND member_active = 1;",
-                member.UserId, NetworkMember.USER_NETWORK_FIELDS));
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_keys.user_id", member.UserId);
+            query.AddCondition("network_members.member_active", true);
+
+            DataTable userNetworks = core.Db.Query(query);
 
             foreach (DataRow memberRow in userNetworks.Rows)
             {

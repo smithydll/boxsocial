@@ -37,8 +37,6 @@ namespace BoxSocial.Applications.Pages
     [DataTable("list_items")]
     public class ListItem : NumberedItem
     {
-        public const string LIST_ITEM_FIELDS = "li.list_item_id, li.list_id, li.list_item_text_id, lit.list_item_text, lit.list_item_text_normalised";
-
         [DataField("list_item_id", DataFieldKeys.Primary)]
         private long listItemId;
         [DataField("list_id", typeof(List))]

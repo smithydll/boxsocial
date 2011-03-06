@@ -36,8 +36,6 @@ namespace BoxSocial.Internals
     [DataTable("licenses")]
     public class ContentLicense : NumberedItem
     {
-        public const string LICENSE_FIELDS = "li.license_id, li.license_title, li.license_icon, li.license_link";
-
         [DataField("license_id", DataFieldKeys.Primary)]
         private byte licenseId;
         [DataField("license_title", 63)]

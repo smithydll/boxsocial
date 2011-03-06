@@ -49,8 +49,9 @@ namespace BoxSocial.IO
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            byte[] bytes = file.ToArray();
-            fs.Write(bytes, 0, bytes.Length);
+            file.WriteTo(fs);
+            //byte[] bytes = file.ToArray();
+            //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
             int len;
             while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
@@ -69,8 +70,9 @@ namespace BoxSocial.IO
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            byte[] bytes = file.ToArray();
-            fs.Write(bytes, 0, bytes.Length);
+            file.WriteTo(fs);
+            //byte[] bytes = file.ToArray();
+            //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
             int len;
             while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
@@ -90,8 +92,9 @@ namespace BoxSocial.IO
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            byte[] bytes = file.ToArray();
-            fs.Write(bytes, 0, bytes.Length);
+            file.WriteTo(fs);
+            //byte[] bytes = file.ToArray();
+            //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
             int len;
             while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
@@ -110,8 +113,9 @@ namespace BoxSocial.IO
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            byte[] bytes = file.ToArray();
-            fs.Write(bytes, 0, bytes.Length);
+            file.WriteTo(fs);
+            //byte[] bytes = file.ToArray();
+            //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
             int len;
             while ((len = file.Read(buffer, 0, buffer.Length)) > 0)

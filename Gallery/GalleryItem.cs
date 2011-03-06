@@ -1483,47 +1483,10 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Thumbnail size fits into a 160 x 160 display area. The aspect ratio is preserved.
         /// </summary>
+        /// <param name="core"></param>
         /// <param name="fileName"></param>
-        private static void CreateThumbnail(string fileName)
-        {
-            Image image = Image.FromFile(fileName);
-            Image thumbImage;
-            int width = image.Width;
-            int height = image.Height;
-            double ratio = (double)width / height;
-
-            if (width > 160 || height > 160)
-            {
-                if (width >= height)
-                {
-                    width = 160;
-                    height = (int)(160 / ratio);
-                }
-                else
-                {
-                    height = 160;
-                    width = (int)(160 * ratio);
-                }
-
-                Image.GetThumbnailImageAbort abortCallBack = new Image.GetThumbnailImageAbort(abortResize);
-                thumbImage = image.GetThumbnailImage(width, height, abortCallBack, IntPtr.Zero);
-                thumbImage.Palette = image.Palette;
-
-                FileInfo imageFile = new FileInfo(fileName);
-                TPage.EnsureStoragePathExists(imageFile.Name, StorageFileType.Thumbnail);
-                thumbImage.Save(TPage.GetStorageFilePath(imageFile.Name, StorageFileType.Thumbnail), image.RawFormat);
-            }
-            else
-            {
-                FileInfo imageFile = new FileInfo(fileName);
-                TPage.EnsureStoragePathExists(imageFile.Name, StorageFileType.Thumbnail);
-                File.Copy(fileName, TPage.GetStorageFilePath(imageFile.Name, StorageFileType.Thumbnail));
-            }
-        }
-
         private static void CreateThumbnail(Core core, string fileName)
         {
-            // TODO:
             Stream fs = core.Storage.RetrieveFile(core.Settings.StorageBinUserFilesPrefix, fileName);
             Image image = Image.FromStream(fs);
             Image thumbImage;

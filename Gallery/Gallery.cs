@@ -1704,7 +1704,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (parentId == 0)
                 {
-                    return Owner;
+                    return Settings;
                 }
                 else
                 {

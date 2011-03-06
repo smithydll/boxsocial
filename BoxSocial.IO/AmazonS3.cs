@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
@@ -30,12 +31,18 @@ namespace BoxSocial.IO
 {
     public class AmazonS3 : Storage
     {
+        AmazonS3Config s3Config;
+        Amazon.S3.AmazonS3 client;
         AmazonS3Client s3Client;
 
         public AmazonS3(string keyId, string secretKey, Database db)
             : base (db)
         {
-            s3Client = new AmazonS3Client(keyId, secretKey);
+            s3Config = new AmazonS3Config();
+            s3Config.ServiceURL = "s3.amazonaws.com";
+            s3Config.CommunicationProtocol = Protocol.HTTPS;
+
+            client = AWSClientFactory.CreateAmazonS3Client(keyId, secretKey, s3Config);
         }
 
         private string SanitiseBinName(string bin)
@@ -47,7 +54,7 @@ namespace BoxSocial.IO
         {
             PutBucketRequest pbr = new PutBucketRequest();
             pbr.BucketName = bin;
-            PutBucketResponse response = s3Client.PutBucket(pbr);
+            PutBucketResponse response = client.PutBucket(pbr);
         }
 
         public override string SaveFile(string bin, MemoryStream file)
@@ -59,7 +66,7 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.Standard;
-            PutObjectResponse response = s3Client.PutObject(request);
+            PutObjectResponse response = client.PutObject(request);
             return fileName;
         }
 
@@ -71,7 +78,7 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.Standard;
-            PutObjectResponse response = s3Client.PutObject(request);
+            PutObjectResponse response = client.PutObject(request);
             return fileName;
         }
 
@@ -84,7 +91,7 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
-            PutObjectResponse response = s3Client.PutObject(request);
+            PutObjectResponse response = client.PutObject(request);
             return fileName;
         }
 
@@ -96,7 +103,7 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
-            PutObjectResponse response = s3Client.PutObject(request);
+            PutObjectResponse response = client.PutObject(request);
             return fileName;
         }
 
@@ -105,7 +112,7 @@ namespace BoxSocial.IO
             DeleteObjectRequest request = new DeleteObjectRequest();
             request.BucketName = bin;
             request.Key = fileName;
-            DeleteObjectResponse response = s3Client.DeleteObject(request);
+            DeleteObjectResponse response = client.DeleteObject(request);
         }
 
         public override void TouchFile(string bin, string fileName)
@@ -118,7 +125,7 @@ namespace BoxSocial.IO
             GetObjectRequest request = new GetObjectRequest();
             request.BucketName = bin;
             request.Key = fileName;
-            GetObjectResponse response = s3Client.GetObject(request);
+            GetObjectResponse response = client.GetObject(request);
 
             return response.ResponseStream;
         }
@@ -138,7 +145,7 @@ namespace BoxSocial.IO
             request.DestinationBucket = toBin;
             request.SourceKey = fileName;
             request.DestinationKey = fileName;
-            CopyObjectResponse response = s3Client.CopyObject(request);
+            CopyObjectResponse response = client.CopyObject(request);
         }
 
         public override bool FileExists(string bin, string fileName)
@@ -149,7 +156,7 @@ namespace BoxSocial.IO
 
             try
             {
-                GetObjectMetadataResponse response = s3Client.GetObjectMetadata(request);
+                GetObjectMetadataResponse response = client.GetObjectMetadata(request);
             }
             catch (Amazon.S3.AmazonS3Exception ex)
             {

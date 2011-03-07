@@ -148,7 +148,7 @@ namespace BoxSocial.Applications.Pages
         {
             //core.RegisterApplicationPage(@"^/lists(|/)$", showLists, 1);
             //core.RegisterApplicationPage(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", showList, 2);
-            core.RegisterApplicationPage(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, @"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue);
+            core.RegisterApplicationPage(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, @"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue, false);
         }
 
         private void showPage(Core core, object sender)

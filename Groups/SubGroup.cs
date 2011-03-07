@@ -753,7 +753,17 @@ namespace BoxSocial.Groups
         {
             e.Page.template.SetTemplate("Groups", "viewsubgroup");
 
-            SubUserGroup subgroup = new SubUserGroup(e.Core, e.Core.PagePathParts[1].Value);
+            SubUserGroup subgroup;
+
+            try
+            {
+                subgroup = new SubUserGroup(e.Core, e.Core.PagePathParts[1].Value);
+            }
+            catch (InvalidSubGroupException)
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
 
             e.Template.Parse("U_FILTER_ALL", subgroup.Uri);
             e.Template.Parse("U_FILTER_BEGINS_A", subgroup.GetUri("a"));

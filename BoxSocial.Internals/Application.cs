@@ -105,12 +105,12 @@ namespace BoxSocial.Internals
                     }*/
                     if (((ShowAttribute)attr).Order > 0)
                     {
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order);
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order, false);
                     }
                     else
                     {
                         i++;
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, false);
                     }
                 }
 
@@ -118,12 +118,12 @@ namespace BoxSocial.Internals
                 {
                     if (((StaticShowAttribute)attr).Order > 0)
                     {
-                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((StaticShowAttribute)attr).Order);
+                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((StaticShowAttribute)attr).Order, true);
                     }
                     else
                     {
                         i++;
-                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i);
+                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, true);
                     }
                 }
             }

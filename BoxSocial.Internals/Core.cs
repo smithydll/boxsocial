@@ -517,20 +517,30 @@ namespace BoxSocial.Internals
 
         public void InvokeApplication(AppPrimitives primitive, object sender)
         {
+            InvokeApplication(primitive, sender, false);
+        }
+
+        public void InvokeApplication(AppPrimitives primitive, object sender, bool staticPage)
+        {
             LoadApplication(this, sender);
 
             pages.Sort();
             foreach (PageHandle page in pages)
             {
-                if ((page.Primitives & primitive) == primitive || primitive == AppPrimitives.Any)
+                if (staticPage == page.StaticPage)
                 {
-                    Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
-                    Match pathMatch = rex.Match(PagePath);
-                    if (pathMatch.Success)
+                    if ((page.Primitives & primitive) == primitive || primitive == AppPrimitives.Any)
                     {
-                        PagePathParts = pathMatch.Groups;
-                        page.Execute(this, sender);
-                        return;
+                        Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
+                        //HttpContext.Current.Response.Write("<br />" + page.Expression + " &nbsp; " + PagePath);
+                        Match pathMatch = rex.Match(PagePath);
+                        if (pathMatch.Success)
+                        {
+                            //HttpContext.Current.Response.Write(" **match** ");
+                            PagePathParts = pathMatch.Groups;
+                            page.Execute(this, sender);
+                            return;
+                        }
                     }
                 }
             }
@@ -609,16 +619,16 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle)
+        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, bool staticPage)
         {
             // register with a moderately high priority leaving room for higher priority registration
             // it doesn't matter if two pages have the same priority
-            RegisterApplicationPage(primitives, expression, pageHandle, 8);
+            RegisterApplicationPage(primitives, expression, pageHandle, 8, staticPage);
         }
 
-        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order)
+        public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order, bool staticPage)
         {
-            pages.Add(new PageHandle(primitives, expression, pageHandle, order));
+            pages.Add(new PageHandle(primitives, expression, pageHandle, order, staticPage));
         }
 
         public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)

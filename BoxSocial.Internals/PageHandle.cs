@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -33,6 +34,7 @@ namespace BoxSocial.Internals
         private AppPrimitives primitives;
         private int order;
         private string expression;
+        private bool staticPage;
 
         /// <summary>
         /// The function that gets executed if a match
@@ -63,16 +65,26 @@ namespace BoxSocial.Internals
             }
         }
 
-        public PageHandle(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order)
+        public bool StaticPage
+        {
+            get
+            {
+                return staticPage;
+            }
+        }
+
+        public PageHandle(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order, bool staticPage)
         {
             this.order = order;
             this.handler = pageHandle;
             this.expression = expression;
             this.primitives = primitives;
+            this.staticPage = staticPage;
         }
 
         public void Execute(Core core, object sender)
         {
+            //HttpContext.Current.Response.Write(handler.Method.Name);
             this.handler(core, sender);
         }
 

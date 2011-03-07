@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -49,7 +50,7 @@ namespace BoxSocial.Groups
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "groups", "Groups" });
+            breadCrumbParts.Add(new string[] { "groups", e.Core.Prose.GetString("Groups", "GROUPS") });
 
             e.Page.ParseCoreBreadCrumbs(breadCrumbParts);
         }

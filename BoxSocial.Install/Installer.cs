@@ -20,15 +20,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Web;
+using System.Web.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.Internals;
@@ -49,6 +53,7 @@ namespace BoxSocial.Install
         private static string scriptsRoot;
         private static string languageRoot;
         private static string domain;
+        private static string mysqlHost;
         private static string mysqlRootPassword;
         private static string mysqlWebUser;
         private static string mysqlWebPassword;
@@ -1563,6 +1568,58 @@ namespace BoxSocial.Install
             InstallTemplates();
 
             db.CloseConnection();
+        }
+
+        private static void InstallWebConfig()
+        {
+            Configuration configuration = WebConfigurationManager.OpenWebConfiguration(root);
+            AppSettingsSection appSettingsSection = (AppSettingsSection)configuration.GetSection("appSettings");
+
+            if (appSettingsSection == null)
+            {
+                ConfigurationSection newSection = new AppSettingsSection();
+                configuration.Sections.Add("appSettings", newSection);
+                appSettingsSection = (AppSettingsSection)newSection;
+            }
+            if (appSettingsSection != null)
+            {
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("mysql-host", mysqlHost));
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("mysql-user", mysqlWebUser));
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("mysql-password", mysqlWebPassword));
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("mysql-database", mysqlDatabase));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("storage-path", ));
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("boxsocial-host", domain));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("boxsocial-title", siteTitle));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("smtp-server", smtpServer));
+                appSettingsSection.Settings.Add(new KeyValueConfigurationElement("email", adminEmail));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("error-email", errorEmail));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("storage-provider", storageProvider));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("storage-root", storageRoot));
+                //appSettingsSection.Settings.Add(new KeyValueConfigurationElement("storage-bin", storageBin));
+            }
+
+            SystemWebSectionGroup systemWebSection = (SystemWebSectionGroup)configuration.GetSectionGroup("system.web");
+
+            if (systemWebSection == null)
+            {
+                ConfigurationSectionGroup newSectionGroup = new SystemWebSectionGroup();
+                configuration.SectionGroups.Add("system.web", newSectionGroup);
+                systemWebSection = (SystemWebSectionGroup)newSectionGroup;
+            }
+            if (systemWebSection != null)
+            {
+                systemWebSection.CustomErrors.Mode = CustomErrorsMode.Off;
+                systemWebSection.CustomErrors.DefaultRedirect = "404.aspx";
+                systemWebSection.CustomErrors.Errors.Add(new CustomError(404, "404.aspx"));
+                systemWebSection.CustomErrors.Errors.Add(new CustomError(403, "403.aspx"));
+                systemWebSection.Trace.Enabled = false;
+
+                systemWebSection.Authentication.Mode = AuthenticationMode.Forms;
+                systemWebSection.Authentication.Forms.SlidingExpiration = true;
+                systemWebSection.Authentication.Forms.Name = "zinzam";
+            }
+
+            configuration.Save();
         }
 
         private static void InstallTemplates()

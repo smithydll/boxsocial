@@ -21,12 +21,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -426,6 +428,13 @@ namespace BoxSocial.Internals
                 return ApplicationEntries[assemblyName];
             }
         }
+
+        //public void InstallWebConfigSettings()
+        //{
+        //    Configuration config = WebConfigurationManager.OpenWebConfiguration("~");
+
+            
+        //}
 
         public long LoggedInMemberId
         {

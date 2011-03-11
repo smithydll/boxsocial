@@ -509,7 +509,11 @@ namespace BoxSocial.Internals
                 {
                     return "Last Week";
                 }
-                else if (now.Month - 1 == then.Month)
+                else if (now.Month - 1 == then.Month && now.Year == then.Year && now.Month != 1)
+                {
+                    return "Last Month";
+                }
+                else if (now.Month == 1 && then.Month == 12 && now.Year == then.Year - 1)
                 {
                     return "Last Month";
                 }
@@ -517,7 +521,7 @@ namespace BoxSocial.Internals
                 {
                     return "Two Weeks Ago";
                 }
-                else if (now.Month == then.Month)
+                else if (now.Month == then.Month && now.Year == then.Year)
                 {
                     return "Earlier in the Month";
                 }

@@ -1,6 +1,13 @@
 <!-- INCLUDE page_header.html -->
 <div id="today-main">
 	<h3>{DATE_STRING}</h3>
+	<!-- IF actions_list -->
+	<div id="today-actions">
+		<!-- BEGIN actions_list -->
+		<span class="post-button"><a href="{actions_list.URI}">{actions_list.TITLE}</a></span>
+		<!-- END actions_list -->
+	</div>
+	<!-- END IF -->
 	<div id="today-right" style="float: right; width: 250px;">
 	<!-- BEGIN app_panel_side -->
 {app_panel_side.BODY}

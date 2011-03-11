@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ADD_TO_BLOGROLL" xml:space="preserve">
+    <value>Add to blogroll</value>
+  </data>
   <data name="ARCHIVE" xml:space="preserve">
     <value>Archive</value>
   </data>
@@ -134,6 +137,9 @@
   </data>
   <data name="BLOG_PREFERENCES" xml:space="preserve">
     <value>Blog Preferences</value>
+  </data>
+  <data name="BLOG_ROLL_DESCRIPTION" xml:space="preserve">
+    <value>You can add a blog to your blog roll that exists outside of ZinZam.</value>
   </data>
   <data name="BLOG_TITLE" xml:space="preserve">
     <value>Blog Title</value>

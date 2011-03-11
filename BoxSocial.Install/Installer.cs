@@ -1087,10 +1087,15 @@ namespace BoxSocial.Install
             {
                 updateTimeFrame();
 
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
         }
         #endregion
+
+        static string getOption(Dictionary<string, string> options, string currentKey)
+        {
+            return currentKey;
+        }
 
         static string getField(bool isPasswordField)
         {
@@ -1270,6 +1275,7 @@ namespace BoxSocial.Install
             scriptsRoot = Path.Combine(root, "scripts");
 
             PerformInstall();
+            InstallWebConfig();
 
             Console.WriteLine("Reloading apache");
             Process p1 = new Process();

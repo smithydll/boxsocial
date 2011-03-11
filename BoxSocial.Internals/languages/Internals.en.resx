@@ -348,6 +348,9 @@
   <data name="DENY" xml:space="preserve">
     <value>Deny</value>
   </data>
+  <data name="DESCRIPTION" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="DISPLAY_NAME" xml:space="preserve">
     <value>Display Name</value>
   </data>
@@ -380,6 +383,12 @@
   </data>
   <data name="FOUR_STAR" xml:space="preserve">
     <value>Four stars</value>
+  </data>
+  <data name="FRIDAY" xml:space="preserve">
+    <value>Friday</value>
+  </data>
+  <data name="FRIDAY_2" xml:space="preserve">
+    <value>Fr</value>
   </data>
   <data name="FRIEND" xml:space="preserve">
     <value>Friend</value>
@@ -455,6 +464,12 @@
   </data>
   <data name="MINUTE" xml:space="preserve">
     <value>Minute</value>
+  </data>
+  <data name="MONDAY" xml:space="preserve">
+    <value>Monday</value>
+  </data>
+  <data name="MONDAY_2" xml:space="preserve">
+    <value>Mo</value>
   </data>
   <data name="MONTH" xml:space="preserve">
     <value>Month</value>
@@ -533,6 +548,12 @@
   <data name="REGISTERED_USERS" xml:space="preserve">
     <value>Registered users</value>
   </data>
+  <data name="SATURDAY" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="SATURDAY_2" xml:space="preserve">
+    <value>Sa</value>
+  </data>
   <data name="SAVE" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -548,8 +569,17 @@
   <data name="STRAIGHT" xml:space="preserve">
     <value>Straight</value>
   </data>
+  <data name="SUBJECT" xml:space="preserve">
+    <value>Subject</value>
+  </data>
   <data name="SUBMIT" xml:space="preserve">
     <value>Submit</value>
+  </data>
+  <data name="SUNDAY" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="SUNDAY_2" xml:space="preserve">
+    <value>Su</value>
   </data>
   <data name="SURNAME" xml:space="preserve">
     <value>Surname</value>
@@ -560,14 +590,29 @@
   <data name="THREE_STAR" xml:space="preserve">
     <value>Three stars</value>
   </data>
+  <data name="THURSDAY" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="THURSDAY_2" xml:space="preserve">
+    <value>Th</value>
+  </data>
   <data name="TIME" xml:space="preserve">
     <value>Time</value>
+  </data>
+  <data name="TIMEZONE" xml:space="preserve">
+    <value>Timezone</value>
   </data>
   <data name="TITLE" xml:space="preserve">
     <value>Title</value>
   </data>
   <data name="TRANSEXUAL" xml:space="preserve">
     <value>Transexual</value>
+  </data>
+  <data name="TUESDAY" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="TUESDAY_2" xml:space="preserve">
+    <value>Tu</value>
   </data>
   <data name="TWO_STAR" xml:space="preserve">
     <value>Two stars</value>
@@ -589,6 +634,12 @@
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="WEDNESDAY" xml:space="preserve">
+    <value>Wednesday</value>
+  </data>
+  <data name="WEDNESDAY_2" xml:space="preserve">
+    <value>We</value>
   </data>
   <data name="WEIGHT" xml:space="preserve">
     <value>Weight</value>

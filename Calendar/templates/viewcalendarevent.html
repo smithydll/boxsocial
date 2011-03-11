@@ -3,29 +3,29 @@
 	<p>{BREADCRUMBS}</p>
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
-		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">New Event</a></span>
+		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></span>
     <!-- IF U_EDIT_EVENT -->
-		<span id="edit-event" class="post-button"><a href="{U_EDIT_EVENT}">Edit Event</a></span>
+		<span id="edit-event" class="post-button"><a href="{U_EDIT_EVENT}">{L_EDIT_EVENT}</a></span>
     <!-- ENDIF -->
     <!-- IF U_EDIT_PERMISSIONS -->
-    <span id="edit-event" class="post-button"><a href="{U_EDIT_PERMISSIONS}">Edit Permissions</a></span>
+    <span id="edit-event" class="post-button"><a href="{U_EDIT_PERMISSIONS}">{L_EDIT_PERMISSIONS}</a></span>
     <!-- ENDIF -->
     <!-- IF U_DELETE_EVENT -->
-    <span id="delete-event" class="post-button"><a href="{U_DELETE_EVENT}">Delete Event</a></span>
+    <span id="delete-event" class="post-button"><a href="{U_DELETE_EVENT}">{L_DELETE_EVENT}</a></span>
     <!-- ENDIF -->
 	</div>
 	<!-- ENDIF -->
 	<!-- IF LOCATION -->
-	<p>Location: {LOCATION}</p>
+	<p>{L_LOCATION}: {LOCATION}</p>
 	<!-- ENDIF -->
-	<p>Start Time: {START_TIME}</p>
-	<p>End Time: {END_TIME}</p>
+	<p>{L_START_TIME}: {START_TIME}</p>
+	<p>{L_END_TIME}: {END_TIME}</p>
 	<!-- IF DESCRIPTION -->
 	<p>{DESCRIPTION}</p>
 	<!-- ENDIF -->
 <!-- IF INVITEES -->
 <div id="profile-friends-pane" class="pane">
-  <h3>Attending ({ATTENDEES})</h3>
+  <h3>{L_ATTENDING} ({ATTENDEES})</h3>
   	<!-- IF ATTENDEES -->
   <!--p><a href="{U_ATTENDEES}">View All</a></p-->
 	<ul id="profile-friends">
@@ -73,7 +73,7 @@
   <!-- ENDIF -->
   
   <!-- IF NOT_ATTENDING -->
-  <h3>Not Attending ({NOT_ATTENDING})</h3>
+  <h3>{L_NOT_ATTENDING} ({NOT_ATTENDING})</h3>
 	<ul id="profile-friends">
 	<!-- BEGIN not_attending_list -->
 		<li>
@@ -94,7 +94,7 @@
   <!-- ENDIF -->
   
   <!-- IF NOT_RESPONDED -->
-  <h3>Have not Responded ({NOT_RESPONDED})</h3>
+  <h3>{L_HAVE_NOT_RESPONDED} ({NOT_RESPONDED})</h3>
 	<ul id="profile-friends">
 	<!-- BEGIN unresponded_list -->
 		<li>

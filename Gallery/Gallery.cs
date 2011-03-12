@@ -422,11 +422,28 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item URI
         /// </summary>
+        [Obsolete("The preferred method is to use the highlight ID to load the item and check it's permissions.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public string HighlightUri
         {
             get
             {
                 return highlightUri;
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery highlighted item ID
+        /// </summary>
+        public long HighlightId
+        {
+            get
+            {
+                return highlightId;
+            }
+            set
+            {
+                SetProperty("highlightId", value);
             }
         }
 
@@ -437,21 +454,29 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                if (string.IsNullOrEmpty(highlightUri))
+                if (HighlightId > 0)
                 {
-                    return "FALSE";
-                }
-                else
-                {
-                    if (owner is User)
+                    if (this.Access.Can("VIEW_ITEMS"))
                     {
-                        return string.Format("/{0}/images/_thumb/{1}/{2}",
-                            ((User)owner).UserName, FullPath, highlightUri);
+                        try
+                        {
+                            GalleryItem item = new GalleryItem(core, HighlightId);
+
+                            return item.ThumbUri;
+                        }
+                        catch (GalleryItemNotFoundException)
+                        {
+                            return "FALSE";
+                        }
                     }
                     else
                     {
                         return "FALSE";
                     }
+                }
+                else
+                {
+                    return "FALSE";
                 }
             }
         }

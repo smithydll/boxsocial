@@ -94,46 +94,26 @@ namespace BoxSocial.Applications.Gallery
 
                 string galleryFullPath = ugi.ParentPath;
                 int indexOfLastSlash = galleryFullPath.LastIndexOf('/');
-                string galleryPath;
-                string galleryParentPath;
 
-                if (indexOfLastSlash >= 0)
+                try
                 {
-                    galleryPath = galleryFullPath.Substring(indexOfLastSlash).TrimStart(new char[] { '/' });
-                    galleryParentPath = galleryFullPath.Substring(0, indexOfLastSlash).TrimEnd(new char[] { '/' });
+                    Gallery gallery = new Gallery(core, Owner, galleryFullPath);
+
+                    gallery.HighlightId = pictureId;
+                    gallery.Update();
+
+                    SetRedirectUri(Gallery.BuildGalleryUri(core, LoggedInMember, galleryFullPath));
+                    core.Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
+                    return;
                 }
-                else
-                {
-                    galleryPath = galleryFullPath;
-                    galleryParentPath = "";
-                }
-
-                DataTable galleryTable = db.Query(string.Format("SELECT gallery_id FROM user_galleries WHERE user_id = {0} AND gallery_parent_path = '{2}' AND gallery_path = '{1}';",
-                    LoggedInMember.UserId, Mysql.Escape(galleryPath), Mysql.Escape(galleryParentPath)));
-
-                if (galleryTable.Rows.Count == 1)
-                {
-                    // only worry about view permissions, don't worry about comment permissions
-                    if (true)
-                    {
-                        long galleryId = (long)galleryTable.Rows[0]["gallery_id"];
-
-                        db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_highlight_id = {0} WHERE user_id = {1} AND gallery_id = {2}",
-                            pictureId, LoggedInMember.UserId, galleryId));
-
-                        SetRedirectUri(Gallery.BuildGalleryUri(core, LoggedInMember, galleryFullPath));
-                        core.Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
-                        return;
-                    }
-                    else
-                    {
-                        core.Display.ShowMessage("Cannot change gallery cover", "You must use a photo with equal view permissions as the gallery it is the cover of.");
-                        return;
-                    }
-                }
-                else
+                catch (InvalidGalleryException)
                 {
                     core.Display.ShowMessage("Cannot change gallery cover", "You could not change the gallery cover image to the selected image.");
+                    return;
+                }
+                catch (UnauthorisedToUpdateItemException)
+                {
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to complete this action.");
                     return;
                 }
             }

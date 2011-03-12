@@ -1840,12 +1840,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }

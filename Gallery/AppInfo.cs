@@ -159,14 +159,14 @@ namespace BoxSocial.Applications.Gallery
 			
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
+            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gallery)), galleryCanPostComment, galleryCanDeleteComment, galleryAdjustCommentCount, galleryCommentPosted);
 
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
             //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
-            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoRated);
-            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoRated);
+            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoRated);
+            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoRated);
         }
 
         /// <summary>
@@ -415,7 +415,7 @@ namespace BoxSocial.Applications.Gallery
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 
                 // show recent photographs in the gallery
-                GroupGallery gallery = new GroupGallery(e.core, thisGroup);
+                Gallery gallery = new Gallery(e.core, thisGroup);
 
                 List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 
@@ -447,7 +447,7 @@ namespace BoxSocial.Applications.Gallery
 
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
 
-            NetworkGallery gallery = new NetworkGallery(e.core, theNetwork);
+            Gallery gallery = new Gallery(e.core, theNetwork);
 
             List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
 

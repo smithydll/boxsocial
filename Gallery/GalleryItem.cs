@@ -1255,7 +1255,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else if (e.Page.Owner is UserGroup)
                 {
-                    galleryItem = new GroupGalleryItem(e.Core, (UserGroup)e.Page.Owner, photoName);
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
                     switch (((UserGroup)e.Page.Owner).GroupType)
                     {
                         case "OPEN":
@@ -1274,7 +1274,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else if (e.Page.Owner is Network)
                 {
-                    galleryItem = new NetworkGalleryItem(e.Core, (Network)e.Page.Owner, photoName);
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
                     switch (((Network)e.Page.Owner).NetworkType)
                     {
                         case NetworkTypes.Country:

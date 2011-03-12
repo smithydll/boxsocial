@@ -84,8 +84,6 @@
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryItem.cs" />
     <Compile Include="GallerySettings.cs" />
-    <Compile Include="GroupGallery.cs" />
-    <Compile Include="GroupGalleryItem.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -97,11 +95,7 @@
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="UserTag.cs" />
-    <Compile Include="NetworkGallery.cs" />
-    <Compile Include="NetworkGalleryItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserGallery.cs" />
-    <Compile Include="UserGalleryItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

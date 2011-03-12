@@ -58,96 +58,96 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Owner of the gallery
         /// </summary>
-        protected Primitive owner;
+        private Primitive owner;
 
         /// <summary>
         /// Id of the gallery
         /// </summary>
         [DataField("gallery_id", DataFieldKeys.Primary)]
-        protected long galleryId;
+        private long galleryId;
 
         /// <summary>
         /// User Id (usergallery)
         /// </summary>
         [DataField("user_id")]
-        protected long userId;
+        private long userId;
         
         /// <summary>
         /// Id of the parent gallery
         /// </summary>
         [DataField("gallery_parent_id")]
-        protected long parentId;
+        private long parentId;
 
         /// <summary>
         /// Gallery title
         /// </summary>
         [DataField("gallery_title", 31)]
-        protected string galleryTitle;
+        private string galleryTitle;
 
         /// <summary>
         /// Gallery parent path
         /// </summary>
         [DataField("gallery_parent_path", MYSQL_TEXT)]
-        protected string parentPath;
+        private string parentPath;
 
         /// <summary>
         /// Gallery path (slug)
         /// </summary>
         [DataField("gallery_path", 31)]
-        protected string path;
+        private string path;
 
         /// <summary>
         /// Number of gallery comments
         /// </summary>
         [DataField("gallery_comments")]
-        protected long galleryComments;
+        private long galleryComments;
 
         /// <summary>
         /// Number of gallery items comments
         /// </summary>
         [DataField("gallery_item_comments")]
-        protected long galleryItemComments;
+        private long galleryItemComments;
 
         /// <summary>
         /// Number of visits made to the gallery
         /// </summary>
         [DataField("gallery_visits")]
-        protected long visits;
+        private long visits;
 
         /// <summary>
         /// Number of photos in the gallery
         /// </summary>
         [DataField("gallery_items")]
-        protected long items;
+        private long items;
 
         /// <summary>
         /// Number of bytes the the photos in the gallery consume
         /// </summary>
         [DataField("gallery_bytes")]
-        protected long bytes;
+        private long bytes;
 
         /// <summary>
         /// Gallery abstract
         /// </summary>
         [DataField("gallery_abstract", MYSQL_TEXT)]
-        protected string galleryAbstract;
+        private string galleryAbstract;
 
         /// <summary>
         /// Gallery Description
         /// </summary>
         [DataField("gallery_description", 255)]
-        protected string galleryDescription;
+        private string galleryDescription;
 
         /// <summary>
         /// Id of the highlighted photo
         /// </summary>
         [DataField("gallery_highlight_id")]
-        protected long highlightId;
+        private long highlightId;
 
         /// <summary>
         /// URI of the highlighted photo
         /// </summary>
-        protected string highlightUri;
+        private string highlightUri;
 
         /// <summary>
         /// Hierarchy

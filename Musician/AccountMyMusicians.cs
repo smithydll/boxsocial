@@ -30,7 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Musician
 {
-    [AccountSubModule(AppPrimitives.Member, "music", "my-musicians")]
+    [AccountSubModule(AppPrimitives.Member, "music", "my-musicians", true)]
     public class AccountMyMusicians : AccountSubModule
     {
         public override string Title

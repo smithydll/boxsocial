@@ -61,6 +61,8 @@ namespace BoxSocial.Musician
 
         void AccountMembersManage_Load(object sender, EventArgs e)
         {
+            this.AddModeHandler("edit", new ModuleModeHandler(AccountMembersManage_Edit));
+            this.AddModeHandler("leave", new ModuleModeHandler(AccountMembersManage_Leave));
         }
 
         void AccountMembersManage_Show(object sender, EventArgs e)
@@ -79,8 +81,28 @@ namespace BoxSocial.Musician
 
                 if (member.Id == LoggedInMember.Id)
                 {
-                    memberVariableCollection.Parse("U_LEAVE", "{TODO}");
+                    memberVariableCollection.Parse("U_EDIT", BuildUri("members", "edit", member.Id));
+                    memberVariableCollection.Parse("U_LEAVE", BuildUri("members", "leave", member.Id));
                 }
+            }
+        }
+
+        void AccountMembersManage_Edit(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_member_profile");
+        }
+
+        void AccountMembersManage_Leave(object sender, ModuleModeEventArgs e)
+        {
+            MusicianMember member = new MusicianMember(core, (Musician)Owner, core.Functions.RequestLong("id", 0));
+
+            if (member.Musician.Id != Owner.Id)
+            {
+                return;
+            }
+
+            if (member.Id == LoggedInMember.Id)
+            {
             }
         }
     }

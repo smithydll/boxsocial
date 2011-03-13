@@ -184,6 +184,29 @@ namespace BoxSocial.Musician
             loadUserFromUser(core.PrimitiveCache[userId]);
         }
 
+        public MusicianMember(Core core, Musician musician, long userId)
+            : base(core)
+        {
+            this.db = db;
+
+            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            query.AddCondition("user_keys.user_id", userId);
+            query.AddCondition("musician_members.musician_id", musician.Id);
+
+            DataTable memberTable = db.Query(query);
+
+            if (memberTable.Rows.Count == 1)
+            {
+                loadItemInfo(typeof(MusicianMember), memberTable.Rows[0]);
+                core.LoadUserProfile(userId);
+                loadUserFromUser(core.PrimitiveCache[userId]);
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public static MusicianMember Create(Core core, Musician musician, User member)
         {
             InsertQuery iQuery = new InsertQuery(typeof(MusicianMember));

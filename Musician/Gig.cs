@@ -218,6 +218,10 @@ namespace BoxSocial.Musician
         {
             get
             {
+                if (tourId == 0)
+                {
+                    return null;
+                }
                 if (tour == null || tour.Id != tourId)
                 {
                     tour = new Tour(core, tourId);

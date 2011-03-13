@@ -7,6 +7,7 @@
 	<th>Title</th>
 	<th>Joined</th>
 	<th></th>
+  <th></th>
 </tr>
 <!-- BEGIN member_list -->
 <!-- IF member_list.$_INDEX_EVEN -->
@@ -17,6 +18,13 @@
 	<td>{member_list.DISPLAY_NAME}</td>
 	<td>{member_list.DATE_JOINED}</td>
 	<td>
+    <!-- IF member_list.U_EDIT -->
+    <a href="{member_list.U_EDIT}">{L_EDIT}</a>
+    <!-- ELSE -->
+    {L_EDIT}
+    <!-- ENDIF -->
+  </td>
+  <td>
     <!-- IF member_list.U_LEAVE -->
     <a href="{member_list.U_LEAVE}">{L_LEAVE}</a>
     <!-- ELSE -->

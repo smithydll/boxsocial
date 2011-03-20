@@ -714,8 +714,12 @@ namespace BoxSocial.Internals
         {
             if (viewer != null)
             {
-                DataTable viewerTable = db.Query(string.Format("SELECT item_id, item_type_id FROM primitive_apps WHERE application_id = {0} AND item_id = {1} AND item_type_id = {2}",
-                    applicationId, viewer.Id, viewer.TypeId));
+                SelectQuery query = PrimitiveApplicationInfo.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
+                query.AddCondition("application_id", Id);
+                query.AddCondition("item_id", viewer.Id);
+                query.AddCondition("item_type_id", viewer.TypeId);
+
+                DataTable viewerTable = db.Query(query);
 
                 if (viewerTable.Rows.Count > 0)
                 {
@@ -749,8 +753,9 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            if ((owner.AppPrimitive & AppPrimitive) != owner.AppPrimitive)
+            if ((owner.AppPrimitive & SupportedPrimitives) != owner.AppPrimitive)
             {
+                //HttpContext.Current.Response.Write("<br />Primitive bitmap error.");
                 return false;
             }
 
@@ -804,6 +809,7 @@ namespace BoxSocial.Internals
                     return true;
                 }
             }
+            //HttpContext.Current.Response.Write("<br />Primitive install status error.");
             return false;
         }
 

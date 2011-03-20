@@ -184,14 +184,22 @@ namespace BoxSocial.Internals
             /*try
             {*/
             ApplicationEntry ae = new ApplicationEntry(core, null, id);
-            ae.Install(core, core.Session.LoggedInMember, Owner);
+            bool success = ae.Install(core, core.Session.LoggedInMember, Owner);
             /*}
             catch
             {
             }*/
 
-            SetRedirectUri(BuildUri());
-            core.Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
+            if (success)
+            {
+                SetRedirectUri(BuildUri());
+                core.Display.ShowMessage("Application Installed", "The application has been installed to your profile.");
+            }
+            else
+            {
+                SetRedirectUri(BuildUri());
+                core.Display.ShowMessage("Application Not Installed", "The application has not been installed to your profile.");
+            }
         }
 
         public void ApplicationUninstall(object sender, EventArgs e)

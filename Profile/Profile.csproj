@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -142,7 +142,9 @@
     <Content Include="templates\account_permissions.html" />
     <Content Include="templates\account_phone_edit.html" />
     <Content Include="templates\account_profile.html" />
-    <Content Include="templates\account_style.html" />
+    <Content Include="templates\account_style.html">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="templates\viewstatusfeed.html" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

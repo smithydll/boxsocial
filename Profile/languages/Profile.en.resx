@@ -120,6 +120,9 @@
   <data name="ADDRESS" xml:space="preserve">
     <value>Address</value>
   </data>
+  <data name="ADVANCED" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
   <data name="BODY_BUILD" xml:space="preserve">
     <value>Build</value>
   </data>
@@ -147,11 +150,20 @@
   <data name="POST_CODE" xml:space="preserve">
     <value>Post Code</value>
   </data>
+  <data name="SIMPLE" xml:space="preserve">
+    <value>Simple</value>
+  </data>
   <data name="STATUS_FEED" xml:space="preserve">
     <value>Status Feed</value>
   </data>
+  <data name="STYLE" xml:space="preserve">
+    <value>Style</value>
+  </data>
   <data name="SUBURB" xml:space="preserve">
     <value>Suburb/Town</value>
+  </data>
+  <data name="THEME" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="UNBLOCK" xml:space="preserve">
     <value>Unblock</value>

@@ -144,7 +144,9 @@
     <Content Include="templates\account_gigs_manage.html" />
     <Content Include="templates\account_gig_edit.html" />
     <Content Include="templates\account_members_manage.html" />
-    <Content Include="templates\account_member_profile.html" />
+    <Content Include="templates\account_member_profile.html">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="templates\account_my_musicians.html" />
     <Content Include="templates\account_profile.html" />
     <Content Include="templates\account_recordings.html" />

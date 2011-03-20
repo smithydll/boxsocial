@@ -52,6 +52,7 @@ namespace BoxSocial.FrontEnd
         private void ShowStatusUpdates()
         {
             Template template = new Template(core.Http.TemplatePath, "statusmessagespanel.html");
+            template.SetProse(core.Prose);
 
             /* My status */
             StatusMessage myStatusMessage = StatusFeed.GetLatest(core, loggedInMember);
@@ -82,6 +83,7 @@ namespace BoxSocial.FrontEnd
         private void ShowUnseenNotifications()
         {
             Template template = new Template(core.Http.TemplatePath, "notificationspanel.html");
+            template.SetProse(core.Prose);
 
             long notifications = Notification.GetUnseenNotificationCount(core);
 

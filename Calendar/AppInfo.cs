@@ -305,6 +305,7 @@ namespace BoxSocial.Applications.Calendar
         void ShowMiniCalendar(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todaymonthpanel");
+            template.SetProse(core.Prose);
 
             Calendar.DisplayMiniCalendar(e.core, template, e.core.Session.LoggedInMember, e.core.Tz.Now.Year, e.core.Tz.Now.Month);
 
@@ -314,6 +315,7 @@ namespace BoxSocial.Applications.Calendar
         void ShowToday(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todayupcommingevents");
+            template.SetProse(core.Prose);
 
             long startTime = e.core.Tz.GetUnixTimeStamp(new DateTime(e.core.Tz.Now.Year, e.core.Tz.Now.Month, e.core.Tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 7; // skip ahead one week into the future
@@ -363,6 +365,7 @@ namespace BoxSocial.Applications.Calendar
             //
 
             template = new Template(Assembly.GetExecutingAssembly(), "todaytaskspanel");
+            template.SetProse(core.Prose);
             List<Task> tasks = cal.GetTasks(core, e.core.Session.LoggedInMember, startTime, endTime, true);
 
             VariableCollection taskDaysVariableCollection = null;

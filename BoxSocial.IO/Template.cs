@@ -988,7 +988,7 @@ namespace BoxSocial.IO
                         continue;
                     }
 
-                    if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-' || line[i] == '$')
+                    if ((line[i] >= 'A' && line[i] <= 'Z') || line[i] == '_' || line[i] == '-' || line[i] == '$' || (line[i] >= '0' && line[i] <= '9' && varName != string.Empty))
                     {
                         varName += line[i];
                     }

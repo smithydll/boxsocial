@@ -1,10 +1,10 @@
-<h3>Style</h3>
+<h3>{L_STYLE}</h3>
 <p>Create a custom style. To see your style change to your profile, you must first turn on 'Show Custom Styles' in your account preferences.</p>
 <form action="{S_ACCOUNT}" method="post">
 	<fieldset>
 		<legend>Style</legend>
     <!-- IF THEME_EDITOR -->
-      <h4><span>Theme</span> <small><a href="?mode=standard">Simple</a></small> <small><a href="?mode=advanced">Advanced</a></small></h4>
+      <h4><span>{L_THEME}</span> <small><a href="?mode=standard">{L_SIMPLE}</a></small> <small><a href="?mode=advanced">{L_ADVANCED}</a></small></h4>
     <div><label><input type="radio" id="theme-default" name="theme" value="default"{DEFAULT_SELECTED} />Default</label></div>
     <div style="height: 104px;">
     <!-- BEGIN theme -->
@@ -21,7 +21,7 @@
       <input type="hidden" name="mode" value="theme" />
     <!-- ENDIF -->
     <!-- IF STANDARD_EDITOR -->
-      <h4><small><a href="?mode=theme">Theme</a></small> <span>Simple Style</span> <small><a href="?mode=advanced">Advanced</a></small></h4>
+      <h4><small><a href="?mode=theme">{L_THEME}</a></small> <span>Simple Style</span> <small><a href="?mode=advanced">{L_ADVANCED}</a></small></h4>
       <div id="simple-style">
         <h5>Page Style</h5>
         <dl style="margin-left: 80px;">
@@ -60,7 +60,7 @@
     <input type="hidden" name="mode" value="standard" />
     <!-- ENDIF -->
     <!-- IF ADVANCED_EDITOR -->
-      <h4><small><a href="?mode=theme">Theme</a></small> <small><a href="?mode=standard">Simple</a></small> <label for="css-style"><span>Advanced CSS</span></label></h4>
+      <h4><small><a href="?mode=theme">{L_THEME}</a></small> <small><a href="?mode=standard">{L_SIMPLE}</a></small> <label for="css-style"><span>Advanced CSS</span></label></h4>
 			<div id="advanced-style">
 				<textarea id="css-style" name="css-style" style="margin: 0px; width: 100%; height: 250px; border: solid 1px #666666;" cols="70" rows="15">{STYLE}</textarea>
 			</div>

@@ -45,8 +45,8 @@ namespace BoxSocial.Applications.Blog
     {
         [DataField("trackback_id", DataFieldKeys.Primary)]
         private long trackBackId;
-        [DataField("blog_id", typeof(Blog))]
-        private long blogId;
+        [DataField("user_id")]
+        private long ownerId;
         [DataField("post_id", typeof(BlogEntry))]
         private long blogEntryId;
         [DataField("trackback_uri", 255)]
@@ -61,6 +61,10 @@ namespace BoxSocial.Applications.Blog
         private bool approved;
         [DataField("trackback_spam")]
         private bool isSpam;
+
+        private User owner;
+        private Blog blog;
+        private BlogEntry blogPost;
 
         public long TrackBackId
         {
@@ -112,10 +116,73 @@ namespace BoxSocial.Applications.Blog
             return tz.DateTimeFromMysql(trackBackTimeRaw);
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.PrimitiveCache[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+
+            }
+        }
+
+        public Blog Blog
+        {
+            get
+            {
+                if (blog == null || blog.Id != ownerId)
+                {
+                    if (blogPost != null && blogPost.Id == blogEntryId)
+                    {
+                        blog = blogPost.Blog;
+                    }
+                    else if (ownerId != 0)
+                    {
+                        blog = new Blog(core, ownerId);
+                    }
+                    else if (ownerId > 0 && Owner is User)
+                    {
+                        blog = new Blog(core, (User)Owner);
+                    }
+                    else
+                    {
+                        throw new InvalidBlogException();
+                    }
+                }
+                return blog;
+            }
+        }
+
         public TrackBack(Core core, long trackBackId)
+            : this(core, null, null, trackBackId)
+        {
+        }
+
+        public TrackBack(Core core, Blog blog, long trackBackId)
+            : this(core, blog, null, trackBackId)
+        {
+        }
+
+        public TrackBack(Core core, BlogEntry blogPost, long trackBackId)
+            : this(core, null, blogPost, trackBackId)
+        {
+        }
+
+        public TrackBack(Core core, Blog blog, BlogEntry blogPost, long trackBackId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(TrackBack_ItemLoad);
+
+            this.blog = blog;
+            this.blogPost = blogPost;
 
             try
             {
@@ -127,10 +194,28 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public TrackBack(Core core, Blog blog, DataRow trackBackRow)
+            : this(core, blog, null, trackBackRow)
+        {
+        }
+
         public TrackBack(Core core, DataRow trackBackRow)
+            : this(core, null, null, trackBackRow)
+        {
+        }
+
+        public TrackBack(Core core, BlogEntry blogPost, DataRow trackBackRow)
+            : this(core, null, blogPost, trackBackRow)
+        {
+        }
+
+        public TrackBack(Core core, Blog blog, BlogEntry blogPost, DataRow trackBackRow)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(TrackBack_ItemLoad);
+
+            this.blog = blog;
+            this.blogPost = blogPost;
 
             loadItemInfo(trackBackRow);
         }

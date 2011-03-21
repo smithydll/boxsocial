@@ -195,6 +195,26 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public Blog(Core core, long userId)
+            : base(core)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            ItemLoad += new ItemLoadHandler(Blog_ItemLoad);
+
+            try
+            {
+                LoadItem(userId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidBlogException();
+            }
+        }
+
         /// <summary>
         /// ItemLoad event
         /// </summary>
@@ -475,7 +495,7 @@ namespace BoxSocial.Applications.Blog
 
             foreach (DataRow dr in trackBacksTable.Rows)
             {
-                trackBacks.Add(new TrackBack(core, dr));
+                trackBacks.Add(new TrackBack(core, this, dr));
             }
 
             return trackBacks;
@@ -494,7 +514,7 @@ namespace BoxSocial.Applications.Blog
 
             foreach (DataRow dr in pingBacksTable.Rows)
             {
-                pingBacks.Add(new PingBack(core, dr));
+                pingBacks.Add(new PingBack(core, this, dr));
             }
 
             return pingBacks;

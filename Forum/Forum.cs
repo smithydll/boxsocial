@@ -53,7 +53,7 @@ namespace BoxSocial.Applications.Forum
     {
         [DataField("forum_id", DataFieldKeys.Primary)]
         private long forumId;
-        [DataField("forum_parent_id")]
+        [DataField("forum_parent_id", typeof(Forum))]
         private long parentId;
         [DataField("forum_title", 127)]
         private string forumTitle;

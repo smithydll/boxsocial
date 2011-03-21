@@ -37,8 +37,8 @@ namespace BoxSocial.Applications.Blog
     {
         [DataField("pingback_id", DataFieldKeys.Primary)]
         private long pingBackId;
-        [DataField("blog_id", typeof(Blog))]
-        private long blogId;
+        [DataField("user_id")]
+        private long ownerId;
         [DataField("post_id", typeof(BlogEntry))]
         private long blogEntryId;
         [DataField("pingback_uri", 255)]
@@ -47,6 +47,10 @@ namespace BoxSocial.Applications.Blog
         private long pingBackTimeRaw;
         [DataField("pingback_ip", 50)]
         private string pingBackIp;
+
+        private User owner;
+        private Blog blog;
+        private BlogEntry blogPost;
 
         public long PingBackId
         {
@@ -90,10 +94,73 @@ namespace BoxSocial.Applications.Blog
             return tz.DateTimeFromMysql(pingBackTimeRaw);
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.PrimitiveCache[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+
+            }
+        }
+
+        public Blog Blog
+        {
+            get
+            {
+                if (blog == null || blog.Id != ownerId)
+                {
+                    if (blogPost != null && blogPost.Id == blogEntryId)
+                    {
+                        blog = blogPost.Blog;
+                    }
+                    else if (ownerId != 0)
+                    {
+                        blog = new Blog(core, ownerId);
+                    }
+                    else if (ownerId > 0 && Owner is User)
+                    {
+                        blog = new Blog(core, (User)Owner);
+                    }
+                    else
+                    {
+                        throw new InvalidBlogException();
+                    }
+                }
+                return blog;
+            }
+        }
+
         public PingBack(Core core, long pingBackId)
+            : this(core, null, null, pingBackId)
+        {
+        }
+
+        public PingBack(Core core, Blog blog, long pingBackId)
+            : this(core, blog, null, pingBackId)
+        {
+        }
+
+        public PingBack(Core core, BlogEntry blogPost, long pingBackId)
+            : this(core, null, blogPost, pingBackId)
+        {
+        }
+
+        public PingBack(Core core, Blog blog, BlogEntry blogPost, long pingBackId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(PingBack_ItemLoad);
+
+            this.blog = blog;
+            this.blogPost = blogPost;
 
             try
             {
@@ -106,9 +173,27 @@ namespace BoxSocial.Applications.Blog
         }
 
         public PingBack(Core core, DataRow pingBackRow)
+            : this(core, null, null, pingBackRow)
+        {
+        }
+
+        public PingBack(Core core, Blog blog, DataRow pingBackRow)
+            : this(core, blog, null, pingBackRow)
+        {
+        }
+
+        public PingBack(Core core, BlogEntry blogPost, DataRow pingBackRow)
+            : this(core, null, blogPost, pingBackRow)
+        {
+        }
+
+        public PingBack(Core core, Blog blog, BlogEntry blogPost, DataRow pingBackRow)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(PingBack_ItemLoad);
+
+            this.blog = blog;
+            this.blogPost = blogPost;
 
             loadItemInfo(pingBackRow);
         }

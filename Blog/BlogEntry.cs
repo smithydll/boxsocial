@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Blog
 
         [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
-        [DataField("user_id")]
+        [DataField("user_id", typeof(User))]
         private long ownerId;
         [DataField("post_title", 127)]
         private string title;
@@ -95,6 +95,7 @@ namespace BoxSocial.Applications.Blog
         private bool allowComment;
 
         private Primitive owner;
+        private Blog blog;
 
         /// <summary>
         /// Gets the blog entry id
@@ -136,6 +137,32 @@ namespace BoxSocial.Applications.Blog
                     return owner;
                 }
 
+            }
+        }
+
+        /// <summary>
+        /// Gets the blog for the blog post
+        /// </summary>
+        public Blog Blog
+        {
+            get
+            {
+                if (blog == null || blog.Id != ownerId)
+                {
+                    if (ownerId != 0)
+                    {
+                        blog = new Blog(core, ownerId);
+                    }
+                    else if (ownerId > 0 && Owner is User)
+                    {
+                        blog = new Blog(core, (User)Owner);
+                    }
+                    else
+                    {
+                        throw new InvalidBlogException();
+                    }
+                }
+                return blog;
             }
         }
 
@@ -369,18 +396,40 @@ namespace BoxSocial.Applications.Blog
         {
             List<TrackBack> trackBacks = new List<TrackBack>();
 
-            SelectQuery query = new SelectQuery(TrackBack.GetTable(typeof(TrackBack)));
-            query.AddFields(TrackBack.GetFieldsPrefixed(typeof(TrackBack)));
+            SelectQuery query = TrackBack.GetSelectQueryStub(typeof(TrackBack));
             query.AddCondition("post_id", postId);
 
             DataTable trackBacksTable = db.Query(query);
 
             foreach (DataRow dr in trackBacksTable.Rows)
             {
-                trackBacks.Add(new TrackBack(core, dr));
+                trackBacks.Add(new TrackBack(core, this, dr));
             }
 
             return trackBacks;
+        }
+
+        /// <summary>
+        /// Gets the pingbacks for the blog entry
+        /// </summary>
+        /// <param name="page">The page</param>
+        /// <param name="perPage">Number of pingbacks per page</param>
+        /// <returns></returns>
+        public List<PingBack> GetPingBacks(int page, int perPage)
+        {
+            List<PingBack> pingBacks = new List<PingBack>();
+
+            SelectQuery query = PingBack.GetSelectQueryStub(typeof(PingBack));
+            query.AddCondition("post_id", postId);
+
+            DataTable pingBacksTable = db.Query(query);
+
+            foreach (DataRow dr in pingBacksTable.Rows)
+            {
+                pingBacks.Add(new PingBack(core, this, dr));
+            }
+
+            return pingBacks;
         }
 
         public static BlogEntry Create(Core core, Primitive owner, string title, string body, byte license, string status, short category, long postTime)

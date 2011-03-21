@@ -162,6 +162,9 @@
   <data name="MANAGE_BLOG_POSTS" xml:space="preserve">
     <value>Manage Blog Posts</value>
   </data>
+  <data name="MANAGE_TRACKBACKS" xml:space="preserve">
+    <value>Manage Track Backs.</value>
+  </data>
   <data name="NEW_BLOG_POST" xml:space="preserve">
     <value>New Blog Post</value>
   </data>

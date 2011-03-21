@@ -74,6 +74,7 @@
     <Compile Include="AccountBlogManage.cs" />
     <Compile Include="AccountBlogPreferences.cs" />
     <Compile Include="AccountBlogRoll.cs" />
+    <Compile Include="AccountBlogTrackback.cs" />
     <Compile Include="AccountBlogWrite.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Blog.cs" />

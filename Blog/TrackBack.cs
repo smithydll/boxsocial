@@ -29,6 +29,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Blog
 {
+
+    public enum TrackBackApprovalStatus
+    {
+        Unapproved = 0x01,
+        Approved = 0x02,
+        Any = Unapproved | Approved,
+    }
+
     /// <summary>
     /// Represents a trackback
     /// </summary>
@@ -37,7 +45,9 @@ namespace BoxSocial.Applications.Blog
     {
         [DataField("trackback_id", DataFieldKeys.Primary)]
         private long trackBackId;
-        [DataField("post_id")]
+        [DataField("blog_id", typeof(Blog))]
+        private long blogId;
+        [DataField("post_id", typeof(BlogEntry))]
         private long blogEntryId;
         [DataField("trackback_uri", 255)]
         private string trackBackUri;
@@ -47,6 +57,10 @@ namespace BoxSocial.Applications.Blog
         private long trackBackTimeRaw;
         [DataField("trackback_ip", 50)]
         private string trackBackIp;
+        [DataField("trackback_approved")]
+        private bool approved;
+        [DataField("trackback_spam")]
+        private bool isSpam;
 
         public long TrackBackId
         {

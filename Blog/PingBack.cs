@@ -37,7 +37,9 @@ namespace BoxSocial.Applications.Blog
     {
         [DataField("pingback_id", DataFieldKeys.Primary)]
         private long pingBackId;
-        [DataField("post_id")]
+        [DataField("blog_id", typeof(Blog))]
+        private long blogId;
+        [DataField("post_id", typeof(BlogEntry))]
         private long blogEntryId;
         [DataField("pingback_uri", 255)]
         private string pingBackUri;
@@ -137,5 +139,25 @@ namespace BoxSocial.Applications.Blog
 
             return new PingBack(core, id);
         }
+
+        public override long Id
+        {
+            get
+            {
+                return pingBackId;
+            }
+        }
+
+        public override string Uri
+        {
+            get
+            {
+                return "";
+            }
+        }
+    }
+
+    public class InvalidPingBackException : Exception
+    {
     }
 }

@@ -58,6 +58,10 @@ namespace BoxSocial.Applications.Blog
         private long comments;
         [DataField("blog_visits")]
         private long visits;
+        [DataField("allow_trackback")]
+        private bool allowTrackBack;
+        [DataField("allow_pingback")]
+        private bool allowPingBack;
 
         private User owner;
         private Access access;
@@ -431,6 +435,69 @@ namespace BoxSocial.Applications.Blog
             }
 
             return blogRollEntries;
+        }
+
+        public List<TrackBack> GetTrackBacksUnapproved(int currentPage, int perPage)
+        {
+            return GetTrackBacksAll(currentPage, perPage, TrackBackApprovalStatus.Unapproved);
+        }
+
+        public List<TrackBack> GetTrackBacksApproved(int currentPage, int perPage)
+        {
+            return GetTrackBacksAll(currentPage, perPage, TrackBackApprovalStatus.Approved);
+        }
+
+        public List<TrackBack> GetTrackBacksAll(int currentPage, int perPage)
+        {
+            return GetTrackBacksAll(currentPage, perPage, TrackBackApprovalStatus.Any);
+        }
+
+        private List<TrackBack> GetTrackBacksAll(int currentPage, int perPage, TrackBackApprovalStatus approval)
+        {
+            List<TrackBack> trackBacks = new List<TrackBack>();
+
+            SelectQuery query = TrackBack.GetSelectQueryStub(typeof(TrackBack));
+            query.AddCondition("blog_id", Id);
+            query.AddCondition("trackback_spam", false);
+            query.LimitStart = (currentPage - 1) * perPage;
+            query.LimitCount = perPage;
+
+            if (approval == TrackBackApprovalStatus.Approved)
+            {
+                query.AddCondition("trackback_approved", true);
+            }
+            else if (approval == TrackBackApprovalStatus.Unapproved)
+            {
+                query.AddCondition("trackback_approved", false);
+            }
+
+            DataTable trackBacksTable = db.Query(query);
+
+            foreach (DataRow dr in trackBacksTable.Rows)
+            {
+                trackBacks.Add(new TrackBack(core, dr));
+            }
+
+            return trackBacks;
+        }
+
+        public List<PingBack> GetPingBacks(int currentPage, int perPage)
+        {
+            List<PingBack> pingBacks = new List<PingBack>();
+
+            SelectQuery query = PingBack.GetSelectQueryStub(typeof(PingBack));
+            query.AddCondition("blog_id", Id);
+            query.LimitStart = (currentPage - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable pingBacksTable = db.Query(query);
+
+            foreach (DataRow dr in pingBacksTable.Rows)
+            {
+                pingBacks.Add(new PingBack(core, dr));
+            }
+
+            return pingBacks;
         }
 
         /// <summary>

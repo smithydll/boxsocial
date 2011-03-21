@@ -91,6 +91,8 @@ namespace BoxSocial.Applications.Blog
         private long createdRaw;
         [DataField("post_modified_ut")]
         private long modifiedRaw;
+        [DataField("post_allow_comment")]
+        private bool allowComment;
 
         private Primitive owner;
 

@@ -368,7 +368,7 @@ namespace BoxSocial.Applications.Blog
 
                 db.BeginTransaction();
 
-                BlogEntry myBlogEntry = BlogEntry.Create(core, core.Session.LoggedInMember, title, postBody, license, status, category, postTimeRaw);
+                BlogEntry myBlogEntry = BlogEntry.Create(core, myBlog, title, postBody, license, status, category, postTimeRaw);
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);

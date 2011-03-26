@@ -32,18 +32,97 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.News
 {
     // NewsSettings table
-	public class News
+    [DataTable("news_settings", "NEWSSETTINGS")]
+    [Permission("COMMENT_ARTICLES", "Can comment on the news articles", PermissionTypes.Interact)]
+    [Permission("CREATE_ARTICLES", "Can post news articles", PermissionTypes.CreateAndEdit)]
+	public class News : NumberedItem, IPermissibleItem
 	{
-		private Core core;
-		private Mysql db;
+        [DataField("news_id", DataFieldKeys.Primary)]
+        private long newsId;
+        [DataField("news_item", DataFieldKeys.Index)]
+        private ItemKey ownerKey;
+        [DataField("news_title", 127)]
+        private string newsTitle;
+        [DataField("news_items_per_page")]
+        private int newsItemsPerPage;
+
 		private Primitive owner;
+        private Access newsAccess;
+
+        public string Title
+        {
+            get
+            {
+                return newsTitle;
+            }
+            set
+            {
+                SetProperty("newsTitle", value);
+            }
+        }
+
+        public int ItemsPerPage
+        {
+            get
+            {
+                return newsItemsPerPage;
+            }
+            set
+            {
+                SetProperty("newsItemsPerPage", value);
+            }
+        }
+
+        public News(Core core, long newsId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(News_ItemLoad);
+
+            try
+            {
+                LoadItem(newsId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNewsException();
+            }
+        }
+
+        public News(Core core, DataRow newsDataRow)
+			: base(core)
+		{
+            ItemLoad += new ItemLoadHandler(News_ItemLoad);
+			
+			try
+			{
+                loadItemInfo(newsDataRow);
+			}
+		    catch (InvalidItemException)
+			{
+                throw new InvalidNewsException();
+			}
+		}
 		
 		public News(Core core, Primitive owner)
+            : base (core)
 		{
-			this.core = core;
-			this.db = core.Db;
+            ItemLoad += new ItemLoadHandler(News_ItemLoad);
+
 			this.owner = owner;
+
+            try
+            {
+                LoadItem("news_item_id", "news_item_type_id", owner);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNewsException();
+            }
 		}
+
+        void News_ItemLoad()
+        {
+        }
 		
 		public List<Article> GetArticles(int currentPage, int count)
 		{
@@ -71,12 +150,30 @@ namespace BoxSocial.Applications.News
 			
 			return articles;
 		}
+
+        public static News Create(Core core, Primitive owner, string title, int itemsPerPage)
+        {
+            Item item = Item.Create(core, typeof(News), new FieldValuePair("news_item_id", owner.Id),
+                new FieldValuePair("news_item_type_id", owner.TypeId),
+                new FieldValuePair("news_title", title),
+                new FieldValuePair("news_items_per_page", itemsPerPage));
+
+            return (News)item;
+        }
 		
 		public static void Show(Core core, GPage page)
 		{
 			page.template.SetTemplate("News", "viewnews");
 
-            News news = new News(core, page.Group);
+            News news = null;
+            try
+            {
+                news = new News(core, page.Owner);
+            }
+            catch (InvalidNewsException)
+            {
+                news = News.Create(core, page.Owner, page.Owner.TitleNameOwnership + " News", 10);
+            }
 
             List<Article> articles = news.GetArticles(page.TopLevelPageNumber, 10);
 			
@@ -103,12 +200,94 @@ namespace BoxSocial.Applications.News
             page.Group.ParseBreadCrumbs(breadCrumbParts);
 		}
 		
-		public string Uri
+		public override string Uri
 		{
 			get
 			{
-				return owner.UriStub;
+				return owner.UriStub + "/news";
 			}
 		}
-	}
+
+        public override long Id
+        {
+            get
+            {
+                return newsId;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (Id == 0)
+                {
+                    return Owner.Access;
+                }
+                else
+                {
+                    if (newsAccess == null)
+                    {
+                        newsAccess = new Access(core, this);
+                    }
+                    return newsAccess;
+                }
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || (ownerKey.Id != owner.Id && ownerKey.TypeId != owner.TypeId))
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                return AccessControlLists.GetPermissions(core, this);
+            }
+        }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "News: " + Title + "[" + Owner.TitleName + "]";
+            }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
+    }
+
+    public class InvalidNewsException : Exception
+    {
+    }
 }

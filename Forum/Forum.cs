@@ -918,6 +918,20 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="parent"></param>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="rules"></param>
+        /// <param name="permissions"></param>
+        /// <param name="isCategory"></param>
+        /// <returns></returns>
+        /// <exception cref="NullCoreException"></exception>
+        /// <exception cref="InvalidForumException"></exception>
+        /// <exception cref="UnauthorisedToCreateItemException"></exception>
         public static Forum Create(Core core, Forum parent, string title, string description, string rules, ushort permissions, bool isCategory)
         {
             string parents;
@@ -925,6 +939,11 @@ namespace BoxSocial.Applications.Forum
 			int level = 0;
 			
             //core.db.BeginTransaction();
+
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
 
             if (parent == null)
             {

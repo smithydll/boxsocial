@@ -44,6 +44,7 @@ namespace BoxSocial.Applications.Blog
     [Permission("VIEW", "Can view your blog", PermissionTypes.View)]
     [Permission("COMMENT_ITEMS", "Can comment on your blog entries", PermissionTypes.Interact)]
     [Permission("RATE_ITEMS", "Can rate your blog entries", PermissionTypes.Interact)]
+    [Permission("POST_ITEMS", "Can post blog entries to your blog", PermissionTypes.CreateAndEdit)]
     public class Blog : NumberedItem, IPermissibleItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]

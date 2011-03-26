@@ -200,11 +200,21 @@ namespace BoxSocial.Applications.News
             }
         }
 
-        public static Article Create(Core core, Primitive owner, string subject, string body)
+        public static Article Create(Core core, News news, string subject, string body)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (news == null)
+            {
+                throw new InvalidNewsException();
+            }
+
             // TODO: fix this
-            Item item = Item.Create(core, typeof(Article), new FieldValuePair("article_item_id", owner.Id),
-                new FieldValuePair("article_item_type_id", owner.TypeId),
+            Item item = Item.Create(core, typeof(Article), new FieldValuePair("article_item_id", news.Owner.Id),
+                new FieldValuePair("article_item_type_id", news.Owner.TypeId),
                 new FieldValuePair("article_time_ut", UnixTime.UnixTimeStamp()),
                 new FieldValuePair("article_subject", subject),
                 new FieldValuePair("article_body", body),

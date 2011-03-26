@@ -430,16 +430,31 @@ namespace BoxSocial.Applications.Forum
         {
             core.Db.BeginTransaction();
 
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (forum == null)
             {
                 throw new InvalidForumException();
             }
 
-            /*if (!forum.ForumAccess.CanCreate)
+            if (!forum.Access.Can("CREATE_TOPICS"))
             {
                 // todo: throw new exception
                 throw new UnauthorisedToCreateItemException();
-            }*/
+            }
+
+            if ((status == TopicStates.Announcement || status == TopicStates.Global) && (!forum.Access.Can("CREATE_ANNOUNCEMENTS")))
+            {
+                throw new UnauthorisedToCreateItemException();
+            }
+
+            if (status == TopicStates.Sticky && (!forum.Access.Can("CREATE_STICKY")))
+            {
+                throw new UnauthorisedToCreateItemException();
+            }
 
             if (forum.Owner is UserGroup)
             {

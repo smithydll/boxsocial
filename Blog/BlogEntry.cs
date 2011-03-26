@@ -432,14 +432,43 @@ namespace BoxSocial.Applications.Blog
             return pingBacks;
         }
 
-        public static BlogEntry Create(Core core, Primitive owner, string title, string body, byte license, string status, short category, long postTime)
+        /// <summary>
+        /// Creates a new blog entry
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="blog"></param>
+        /// <param name="title">Title for the new blog entry</param>
+        /// <param name="body">Body for the new blog entry</param>
+        /// <param name="license">License ID for the new blog entry</param>
+        /// <param name="status">Publish status for the new blog entry</param>
+        /// <param name="category">Category ID for the new blog entry</param>
+        /// <param name="postTime">Post time for the new blog entry</param>
+        /// <returns>The new blog entry retrieved from the DB</returns>
+        /// <exception cref="NullCoreException">Throws exception when core token is null</exception>
+        /// <exception cref="InvalidBlogException">Throws exception when blog token is null</exception>
+        /// <exception cref="UnauthorisedToCreateItemException">Throws exception when unauthorised to create a new BlogEntry</exception>
+        public static BlogEntry Create(Core core, Blog blog, string title, string body, byte license, string status, short category, long postTime)
         {
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", core.Session.LoggedInMember.Id),
+            if (blog == null)
+            {
+                throw new InvalidBlogException();
+            }
+
+            if (blog.UserId != core.Session.LoggedInMember.Id)
+            {
+                throw new UnauthorisedToCreateItemException();
+            }
+
+            /*if (!blog.Access.Can("POST_ITEMS"))
+            {
+            }*/
+
+            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", blog.UserId),
                 new FieldValuePair("post_time_ut", postTime),
                 new FieldValuePair("post_title", title),
                 new FieldValuePair("post_modified_ut", postTime),

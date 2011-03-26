@@ -82,7 +82,17 @@ namespace BoxSocial.Applications.News
             string subject = core.Http.Form["title"];
             string body = core.Http.Form["post"];
 
-            Article newArticle = Article.Create(core, Owner, subject, body);
+            News news = null;
+            try
+            {
+                news = new News(core, Owner);
+            }
+            catch (InvalidNewsException)
+            {
+                news = News.Create(core, Owner, Owner.TitleNameOwnership + " News", 10);
+            }
+
+            Article newArticle = Article.Create(core, news, subject, body);
 
             SetRedirectUri(BuildUri("manage"));
             core.Display.ShowMessage("Article Published", "The news article has been published.");

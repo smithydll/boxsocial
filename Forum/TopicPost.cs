@@ -354,11 +354,21 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            /*if (!forum.ForumAccess.CanCreate)
+            if (forum == null)
+            {
+                throw new InvalidForumException();
+            }
+
+            if (topic == null)
+            {
+                throw new InvalidTopicException();
+            }
+
+            if (!forum.Access.Can("REPLY_TOPICS"))
             {
                 // todo: throw new exception
                 throw new UnauthorisedToCreateItemException();
-            }*/
+            }
 
             InsertQuery iQuery = new InsertQuery(NumberedItem.GetTable(typeof(TopicPost)));
             iQuery.AddField("topic_id", topic.Id);

@@ -223,41 +223,41 @@ namespace BoxSocial.Applications.News
 
             return (Article)item;
         }
-		
-		public static void Show(Core core, GPage page, long articleId)
+
+        public static void Show(object sender, ShowGPageEventArgs e)
 		{
-			page.template.SetTemplate("News", "viewnewsarticle");
+			e.Template.SetTemplate("News", "viewnewsarticle");
 			
 			Article article = null;
 			
 			try
 			{
-				article = new Article(core, articleId);
+				article = new Article(e.Core, e.ItemId);
 			}
 			catch (InvalidArticleException)
 			{
-                core.Functions.Generate404();
+                e.Core.Functions.Generate404();
 			}
 
-            core.Display.ParseBbcode(page.template, "ARTICLE_BODY", article.ArticleBody);
-            page.template.Parse("ARTICLE_TITLE", article.ArticleSubject);
-			page.template.Parse("ARTICLE_U_ARTICLE", article.Uri);
-			page.template.Parse("ARTICLE_U_POSTER", article.Poster.Uri);
-			page.template.Parse("ARTICLE_USERNAME", article.Poster.DisplayName);
-			page.template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
-			page.template.Parse("ARTICLE_DATE", core.Tz.DateTimeToString(article.GetCreatedDate(core.Tz)));
+            e.Core.Display.ParseBbcode(e.Template, "ARTICLE_BODY", article.ArticleBody);
+            e.Template.Parse("ARTICLE_TITLE", article.ArticleSubject);
+            e.Template.Parse("ARTICLE_U_ARTICLE", article.Uri);
+            e.Template.Parse("ARTICLE_U_POSTER", article.Poster.Uri);
+            e.Template.Parse("ARTICLE_USERNAME", article.Poster.DisplayName);
+            e.Template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
+            e.Template.Parse("ARTICLE_DATE", e.Core.Tz.DateTimeToString(article.GetCreatedDate(e.Core.Tz)));
 
-            core.Display.ParsePagination(page.template, "PAGINATION", article.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((double)article.Comments / 10), false);
+            e.Core.Display.ParsePagination(e.Template, "PAGINATION", article.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)article.Comments / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });
-			breadCrumbParts.Add(new string[] { articleId.ToString(), article.ArticleSubject });
+			breadCrumbParts.Add(new string[] { e.ItemId.ToString(), article.ArticleSubject });
 
-            page.Group.ParseBreadCrumbs(breadCrumbParts);
-			
+            e.Page.Group.ParseBreadCrumbs(breadCrumbParts);
 
-            page.template.Parse("CAN_COMMENT", "TRUE");
-            core.Display.DisplayComments(page.template, page.Group, article);
+
+            e.Template.Parse("CAN_COMMENT", "TRUE");
+            e.Core.Display.DisplayComments(e.Template, e.Page.Group, article);
 		}
     }
 

@@ -161,43 +161,49 @@ namespace BoxSocial.Applications.News
             return (News)item;
         }
 		
-		public static void Show(Core core, GPage page)
+		public static void Show(object sender, ShowGPageEventArgs e)
 		{
-			page.template.SetTemplate("News", "viewnews");
+			e.Template.SetTemplate("News", "viewnews");
 
             News news = null;
             try
             {
-                news = new News(core, page.Owner);
+                news = new News(e.Core, e.Page.Owner);
             }
             catch (InvalidNewsException)
             {
-                news = News.Create(core, page.Owner, page.Owner.TitleNameOwnership + " News", 10);
+                news = News.Create(e.Core, e.Page.Owner, e.Page.Owner.TitleNameOwnership + " News", 10);
             }
 
-            List<Article> articles = news.GetArticles(page.TopLevelPageNumber, 10);
+            List<Article> articles = news.GetArticles(e.Page.TopLevelPageNumber, 10);
 			
-			page.template.Parse("NEWS_COUNT", articles.Count.ToString());
+			e.Template.Parse("NEWS_COUNT", articles.Count.ToString());
 
             foreach (Article article in articles)
             {
-                VariableCollection articleVariableCollection = page.template.CreateChild("news_list");
+                VariableCollection articleVariableCollection = e.Template.CreateChild("news_list");
 
-                core.Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
+                e.Core.Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
                 articleVariableCollection.Parse("TITLE", article.ArticleSubject);
 				articleVariableCollection.Parse("U_ARTICLE", article.Uri);
 				articleVariableCollection.Parse("U_POSTER", article.Poster.Uri);
 				articleVariableCollection.Parse("USERNAME", article.Poster.DisplayName);
 				articleVariableCollection.Parse("COMMENTS", article.Comments.ToString());
-				articleVariableCollection.Parse("DATE", core.Tz.DateTimeToString(article.GetCreatedDate(core.Tz)));
+				articleVariableCollection.Parse("DATE", e.Core.Tz.DateTimeToString(article.GetCreatedDate(e.Core.Tz)));
             }
 
-            core.Display.ParsePagination(page.template, "PAGINATION", news.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((double)page.Group.Info.NewsArticles / 10), false);
+            if (news.Access.Can("CREATE_ARTICLES"))
+            {
+                e.Template.Parse("U_CREATE_ARTICLE", news.Owner.AccountUriStub);
+                e.Template.Parse("L_POST_NEWS_ARTICLE", "New Article");
+            }
+
+            e.Core.Display.ParsePagination(e.Template, "PAGINATION", news.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)e.Page.Group.Info.NewsArticles / 10), false);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });
 
-            page.Group.ParseBreadCrumbs(breadCrumbParts);
+            e.Page.Group.ParseBreadCrumbs(breadCrumbParts);
 		}
 		
 		public override string Uri

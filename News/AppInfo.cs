@@ -250,7 +250,7 @@ namespace BoxSocial.Applications.News
         {
             if (sender is GPage)
             {
-                News.Show(core, (GPage)sender);
+                News.Show(sender, new ShowGPageEventArgs((GPage)sender));
             }
         }
 
@@ -259,7 +259,7 @@ namespace BoxSocial.Applications.News
         {
             if (sender is GPage)
             {
-                Article.Show(core, (GPage)sender, long.Parse(core.PagePathParts[1].Value));
+                Article.Show(sender, new ShowGPageEventArgs((GPage)sender, long.Parse(core.PagePathParts[1].Value)));
             }
         }
 

@@ -70,6 +70,7 @@
     <Compile Include="DocumentCustomFieldFloatingPointValue.cs" />
     <Compile Include="DocumentCustomFieldLongTextValue.cs" />
     <Compile Include="DocumentCustomFieldShortTextValue.cs" />
+    <Compile Include="DocumentRevision.cs" />
     <Compile Include="DocumentTemplate.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Supplier.cs" />

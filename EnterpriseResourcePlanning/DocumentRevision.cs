@@ -31,7 +31,12 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    public class DocumentCustomField
+    public class DocumentRevision : NumberedItem
     {
+        [DataField("document_id", DataFieldKeys.Primary)]
+        private long documentId;
+        [DataField("document_revision", 3)]
+        private string documentRevision;
+        //private string revisionComment;
     }
 }

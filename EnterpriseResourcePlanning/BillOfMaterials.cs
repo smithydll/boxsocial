@@ -31,63 +31,47 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [DataTable("erp_parts")]
-    public class Document : NumberedItem
+    public class BillOfMaterials : NumberedItem
     {
-        [DataField("document_id", DataFieldKeys.Primary)]
+        [DataField("bom_id", DataFieldKeys.Primary)]
+        private long bomId;
+        [DataField("document_id")]
         private long documentId;
-        [DataField("document_key", DataFieldKeys.Unique, "document_key")]
-        private string documentKey;
-        [DataField("document_item", DataFieldKeys.Unique, "document_key")]
-        private ItemKey ownerKey;
-        [DataField("document_title", 63)]
-        private string documentTitle;
-        [DataField("document_revision", 3)]
-        private string documentRevision;
+        [DataField("bom_parent_id")]
+        private long bomParentId;
+        [DataField("bom_quantity")]
+        private int quantity;
 
-        private Primitive owner;
+        private Document document;
 
-        public string DocumentKey
+        public Document BomDocument
         {
             get
             {
-                return documentKey;
+                if (document == null || document.Id != documentId)
+                {
+                    document = new Document(core, documentId);
+                }
+                return document;
             }
         }
 
-        public Primitive Owner
-        {
-            get
-            {
-                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
-                {
-                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
-                    owner = core.PrimitiveCache[ownerKey];
-                    return owner;
-                }
-                else
-                {
-                    return owner;
-                }
-            }
-        }
-
-        public Document(Core core, long documentId)
+        public BillOfMaterials(Core core, long bomId)
             : base (core)
         {
-            ItemLoad += new ItemLoadHandler(Document_ItemLoad);
+            ItemLoad += new ItemLoadHandler(BillOfMaterials_ItemLoad);
 
             try
             {
-                LoadItem(documentId);
+                LoadItem(bomId);
             }
             catch (InvalidItemException)
             {
-                throw new InvalidDocumentException();
+                throw new InvalidBillOfMaterialsException();
             }
         }
 
-        void Document_ItemLoad()
+        void BillOfMaterials_ItemLoad()
         {
         }
 
@@ -95,7 +79,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return documentId;
+                return bomId;
             }
         }
 
@@ -103,13 +87,13 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}document/{1}",
-                        Owner.UriStub, DocumentKey));
+                return core.Uri.AppendSid(string.Format("{0}indented-bom/",
+                        BomDocument.Owner.UriStub));
             }
         }
     }
 
-    public class InvalidDocumentException : Exception
+    public class InvalidBillOfMaterialsException : Exception
     {
     }
 }

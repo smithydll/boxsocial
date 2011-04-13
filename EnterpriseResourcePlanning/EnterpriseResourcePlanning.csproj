@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppInfo.cs" />
+    <Compile Include="BillOfMaterials.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentCustomField.cs" />
     <Compile Include="DocumentCustomFieldFixedPointValue.cs" />

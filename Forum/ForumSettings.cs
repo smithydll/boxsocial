@@ -275,7 +275,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeString != owner.Type)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];

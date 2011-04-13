@@ -31,12 +31,22 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
+    public enum DocumentStatus : byte
+    {
+        Unreleased = 0,
+        Current = 1,
+        Superseded = 2,
+    }
+
+    [DataTable("erp_document_revisions")]
     public class DocumentRevision : NumberedItem
     {
         [DataField("document_id", DataFieldKeys.Primary)]
         private long documentId;
         [DataField("document_revision", 3)]
         private string documentRevision;
+        [DataField("document_revision_status")]
+        private byte documentRevisionStatus;
         //private string revisionComment;
     }
 }

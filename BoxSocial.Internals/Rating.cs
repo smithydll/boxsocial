@@ -69,7 +69,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemKey.Type;
+                return itemKey.TypeString;
             }
         }
 
@@ -206,7 +206,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemKey.Type;
+                return itemKey.TypeString;
             }
         }
 

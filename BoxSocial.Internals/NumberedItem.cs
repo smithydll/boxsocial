@@ -30,6 +30,66 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public sealed class NumberedItemId : ItemKey, IComparable
+    {
+        private Type type;
+
+        public NumberedItemId(long itemId, long typeId)
+            : base(itemId, typeId)
+        {
+            this.type = null;
+        }
+
+        public NumberedItemId(long itemId, Type type)
+            : base(itemId, type)
+        {
+            this.type = type;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(PrimitiveId)) return -1;
+            PrimitiveId pk = (PrimitiveId)obj;
+
+            if (TypeId != pk.TypeId)
+                return TypeId.CompareTo(pk.TypeId);
+            return Id.CompareTo(pk.Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != typeof(PrimitiveId)) return false;
+            PrimitiveId pk = (PrimitiveId)obj;
+
+            if (TypeId != pk.TypeId)
+                return false;
+            if (Id != pk.Id)
+                return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return TypeId.GetHashCode() ^ Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            if (TypeId < 0)
+            {
+                return string.Format("{0}.{1}",
+                    TypeId, Id);
+                ;
+            }
+            else
+            {
+                return string.Format("NULL.{0}",
+                    Id);
+                ;
+            }
+        }
+    }
+
     public abstract class NumberedItem : Item
     {
         protected ItemKey key = null;

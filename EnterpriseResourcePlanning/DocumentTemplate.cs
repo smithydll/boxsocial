@@ -31,7 +31,46 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    public class DocumentTemplate
+    [DataTable("erp_document_template")]
+    public class DocumentTemplate : NumberedItem
+    {
+        [DataField("template_id", DataFieldKeys.Primary)]
+        private long templateId;
+
+        public DocumentTemplate(Core core, long templateId)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentTemplate_ItemLoad);
+
+            try
+            {
+                LoadItem(templateId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTemplateException();
+            }
+        }
+
+        void DocumentTemplate_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return templateId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidTemplateException : Exception
     {
     }
 }

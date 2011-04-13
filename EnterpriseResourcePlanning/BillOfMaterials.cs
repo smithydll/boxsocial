@@ -31,13 +31,15 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
+
+    [DataTable("erp_bom")]
     public class BillOfMaterials : NumberedItem
     {
         [DataField("bom_id", DataFieldKeys.Primary)]
         private long bomId;
-        [DataField("document_id")]
+        [DataField("document_id", typeof(Document))]
         private long documentId;
-        [DataField("bom_parent_id")]
+        [DataField("bom_parent_id", typeof(Document))]
         private long bomParentId;
         [DataField("bom_quantity")]
         private int quantity;
@@ -87,8 +89,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}indented-bom/",
-                        BomDocument.Owner.UriStub));
+                return core.Uri.AppendSid(string.Format("{0}bom/{1}",
+                        BomDocument.Owner.UriStub, BomDocument.DocumentKey));
             }
         }
     }

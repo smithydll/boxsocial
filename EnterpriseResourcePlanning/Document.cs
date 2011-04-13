@@ -31,7 +31,7 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [DataTable("erp_parts")]
+    [DataTable("erp_documents")]
     public class Document : NumberedItem
     {
         [DataField("document_id", DataFieldKeys.Primary)]
@@ -44,8 +44,15 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private string documentTitle;
         [DataField("document_revision", 3)]
         private string documentRevision;
+        [DataField("document_superseded_by")]
+        private long supersededById;
+        [DataField("project_id", typeof(Project))]
+        private long projectId;
+        [DataField("template_id", typeof(DocumentTemplate))]
+        private long documentTemplateId;
 
         private Primitive owner;
+        private DocumentTemplate template;
 
         public string DocumentKey
         {
@@ -59,7 +66,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                if (owner == null || ownerKey.Id != owner.Id || ownerKey.Type != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeString != owner.Type)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];
@@ -69,6 +76,18 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                 {
                     return owner;
                 }
+            }
+        }
+
+        public DocumentTemplate Template
+        {
+            get
+            {
+                if (template == null || template.Id != documentTemplateId)
+                {
+                    template = new DocumentTemplate(core, documentTemplateId);
+                }
+                return template;
             }
         }
 

@@ -97,7 +97,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemKey.Type;
+                return itemKey.TypeString;
             }
         }
 
@@ -186,7 +186,7 @@ namespace BoxSocial.Internals
 
             Relation relations = Relation.None;
             // A little bit of hard coding we can't avoid
-            if (itemKey.Type == typeof(User).FullName)
+            if (itemKey.TypeString == typeof(User).FullName)
             {
                 core.LoadUserProfile(itemKey.Id);
                 relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.Session.LoggedInMember);
@@ -221,7 +221,7 @@ namespace BoxSocial.Internals
             {
                 if (commenters.Count == 2)
                 {
-                    if (itemKey.Type == typeof(User).FullName)
+                    if (itemKey.TypeString == typeof(User).FullName)
                     {
                         QueryCondition qc1 = query.AddCondition("comment_item_id", commenters[0].Id);
                         qc1.AddCondition("user_id", commenters[1].Id);
@@ -461,7 +461,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return itemKey.Type;
+                return itemKey.TypeString;
             }
         }
 

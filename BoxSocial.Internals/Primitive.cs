@@ -82,7 +82,7 @@ namespace BoxSocial.Internals
 
     }
 
-    public class PrimitiveId : ItemKey, IComparable
+    public sealed class PrimitiveId : ItemKey, IComparable
     {
         public PrimitiveId(long itemId, long typeId)
             : base(itemId, typeId)

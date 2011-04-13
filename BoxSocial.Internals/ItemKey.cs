@@ -37,6 +37,7 @@ namespace BoxSocial.Internals
 		private long itemId;
 		private long itemTypeId;
 		private string itemType;
+        private Type type;
 		
 		public long Id
 		{
@@ -54,19 +55,28 @@ namespace BoxSocial.Internals
 			}
 		}
 		
-		public string Type
+		public string TypeString
 		{
 			get
 			{
 				return itemType;
 			}
 		}
+
+        public Type Type
+        {
+            get
+            {
+                return type;
+            }
+        }
 		
 		public ItemKey(long itemId, string itemType)
 		{
 			this.itemId = itemId;
 			this.itemType = itemType;
 			this.itemTypeId = itemTypeCache[itemType];
+            this.type = null;
 		}
 		
 		public ItemKey(long itemId, long itemTypeId)
@@ -81,7 +91,24 @@ namespace BoxSocial.Internals
 				}
 			}
 			this.itemTypeId = itemTypeId;
+            this.type = null;
 		}
+
+        public ItemKey(long itemId, Type itemType)
+        {
+            this.itemId = itemId;
+            long itemTypeId = GetTypeId(itemType);
+            foreach (string value in itemTypeCache.Keys)
+            {
+                if (itemTypeCache[value] == itemTypeId)
+                {
+                    this.itemType = value;
+                    break;
+                }
+            }
+            this.itemTypeId = itemTypeId;
+            this.type = itemType;
+        }
         
         public ItemKey(string key)
         {
@@ -99,6 +126,7 @@ namespace BoxSocial.Internals
                 }
             }
             this.itemTypeId = itemTypeId;
+            this.type = null;
         }
 		
 		public static void populateItemTypeCache(Core core)

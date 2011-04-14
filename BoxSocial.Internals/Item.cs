@@ -174,6 +174,11 @@ namespace BoxSocial.Internals
             }*/
 
             loadItemInfo(type, core.Db.ReaderQuery(query));
+
+            if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
+            {
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
         }
 
         protected void LoadItem(string uniqueIndex, object value)
@@ -286,6 +291,11 @@ namespace BoxSocial.Internals
             }*/
 			
 			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
+
+            if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
+            {
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
         }
 
         protected List<Type> getSubTypes()

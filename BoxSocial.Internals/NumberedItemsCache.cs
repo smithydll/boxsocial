@@ -45,6 +45,16 @@ namespace BoxSocial.Internals
             typesAccessed.Add(typeId, type);
         }
 
+        public void RegisterItem(NumberedItem item)
+        {
+            NumberedItemId itemKey = new NumberedItemId(item.Id, item.ItemKey.TypeId);
+
+            if (!(itemsCached.ContainsKey(itemKey)))
+            {
+                itemsCached.Add(itemKey, item);
+            }
+        }
+
         /// <summary>
         /// List of types accessed
         /// </summary>

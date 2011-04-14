@@ -57,6 +57,7 @@ namespace BoxSocial.Internals
         internal TPage page;
 
         private PrimitivesCache userProfileCache;
+        private NumberedItemsCache itemsCache;
 
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
@@ -365,6 +366,17 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Returns items cached in memory.
+        /// </summary>
+        public NumberedItemsCache ItemCache
+        {
+            get
+            {
+                return itemsCache;
+            }
+        }
+
         public void LoadUserProfile(long userId)
         {
             userProfileCache.LoadUserProfile(userId);
@@ -473,6 +485,7 @@ namespace BoxSocial.Internals
 			ItemKey.populateItemTypeCache(this);
 
             userProfileCache = new PrimitivesCache(this);
+            itemsCache = new NumberedItemsCache(this);
 
             AddPrimitiveType(typeof(User));
             AddPrimitiveType(typeof(ApplicationEntry));

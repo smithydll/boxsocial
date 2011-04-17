@@ -72,14 +72,27 @@
     <Compile Include="DocumentCustomFieldLongTextValue.cs" />
     <Compile Include="DocumentCustomFieldShortTextValue.cs" />
     <Compile Include="DocumentRevision.cs" />
+    <Compile Include="DocumentSearchKeywords.cs" />
     <Compile Include="DocumentTemplate.cs" />
+    <Compile Include="ErpSettings.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Supplier.cs" />
+    <Compile Include="Templates.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="languages\" />
     <Folder Include="resources\" />
     <Folder Include="templates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="languages\EnterpriseResourcePlanning.en.resx" />
+    <EmbeddedResource Include="Templates.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

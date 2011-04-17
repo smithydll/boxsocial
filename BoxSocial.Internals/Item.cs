@@ -245,7 +245,7 @@ namespace BoxSocial.Internals
 			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
         }
 
-        protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner)
+        protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner, params FieldValuePair[] keyFields)
         {
             // 1. check indexes are unique
             // 2. Build query
@@ -272,6 +272,14 @@ namespace BoxSocial.Internals
 
             query.AddCondition(ownerIdIndex, owner.Id);
             query.AddCondition(ownerTypeIndex, owner.TypeId);
+
+            if (keyFields != null)
+            {
+                foreach (FieldValuePair fvp in keyFields)
+                {
+                    query.AddCondition(fvp.Field, fvp.Value);
+                }
+            }
 
             /*DataTable itemTable = Query(query);
 

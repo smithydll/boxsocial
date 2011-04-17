@@ -182,6 +182,7 @@ namespace BoxSocial.Internals
                 {
                     core.PrimitiveCache.LoadUserProfile(creatorId);
                     creator = core.PrimitiveCache[creatorId];
+                    //creator = (User)core.ItemCache[new ItemKey(creatorId, typeof(User))];
                     return creator;
                 }
                 else
@@ -199,6 +200,7 @@ namespace BoxSocial.Internals
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];
+                    //owner = (Primitive)core.ItemCache[ownerKey];
                     return owner;
                 }
                 else

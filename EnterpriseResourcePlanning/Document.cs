@@ -85,9 +85,25 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             {
                 if (template == null || template.Id != documentTemplateId)
                 {
-                    template = new DocumentTemplate(core, documentTemplateId);
+                    //template = new DocumentTemplate(core, documentTemplateId);
+                    template = (DocumentTemplate)core.ItemCache[new ItemKey(documentTemplateId, typeof(DocumentTemplate))];
                 }
                 return template;
+            }
+        }
+
+        public Document(Core core, Primitive owner, string key)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Document_ItemLoad);
+
+            try
+            {
+                LoadItem("document_item_id", "document_item_type_id", owner, new FieldValuePair("document_key", key));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentException();
             }
         }
 
@@ -99,6 +115,21 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             try
             {
                 LoadItem(documentId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentException();
+            }
+        }
+
+        public Document(Core core, DataRow documentDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Document_ItemLoad);
+
+            try
+            {
+                loadItemInfo(documentDataRow);
             }
             catch (InvalidItemException)
             {
@@ -125,6 +156,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                 return core.Uri.AppendSid(string.Format("{0}document/{1}",
                         Owner.UriStub, DocumentKey));
             }
+        }
+
+        public void Show(object sender, ShowPPageEventArgs e)
+        {
         }
     }
 

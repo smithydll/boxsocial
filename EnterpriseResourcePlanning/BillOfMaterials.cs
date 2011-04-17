@@ -52,7 +52,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             {
                 if (document == null || document.Id != documentId)
                 {
-                    document = new Document(core, documentId);
+                    //document = new Document(core, documentId);
+                    document = (Document)core.ItemCache[new ItemKey(documentId, typeof(Document))];
                 }
                 return document;
             }
@@ -66,6 +67,21 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             try
             {
                 LoadItem(bomId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidBillOfMaterialsException();
+            }
+        }
+
+        public BillOfMaterials(Core core, DataRow bomDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(BillOfMaterials_ItemLoad);
+
+            try
+            {
+                loadItemInfo(bomDataRow);
             }
             catch (InvalidItemException)
             {

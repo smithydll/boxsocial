@@ -55,6 +55,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void RequestItem(ItemKey itemKey)
+        {
+            batchedItemIds.Add(new NumberedItemId(itemKey.Id, itemKey.TypeId));
+        }
+
         /// <summary>
         /// List of types accessed
         /// </summary>

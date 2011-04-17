@@ -31,13 +31,7 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [DataTable("erp_project")]
-    [Permission("VIEW_DOCUMENTS", "Can view documents", PermissionTypes.View)]
-    [Permission("VIEW_SUPPLIERS", "Can view suppliers", PermissionTypes.View)]
-    [Permission("VIEW_PURCHASES", "Can view purchases", PermissionTypes.View)]
-    [Permission("CREATE_DOCUMENTS", "Can create documents", PermissionTypes.CreateAndEdit)]
-    [Permission("CREATE_SUPPLIERS", "Can create suppliers", PermissionTypes.CreateAndEdit)]
-    [Permission("CREATE_PURCHASES", "Can create purchases", PermissionTypes.CreateAndEdit)]
+    [DataTable("erp_projects")]
     public class Project : NumberedItem, IPermissibleItem
     {
         [DataField("project_id", DataFieldKeys.Primary)]
@@ -52,25 +46,12 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long projectStartDate;
 
         private Primitive owner;
-        private Access access;
 
         public string ProjectKey
         {
             get
             {
                 return projectKey;
-            }
-        }
-        
-        public Access Access
-        {
-            get
-            {
-                if (access == null)
-                {
-                    access = new Access(core, this);
-                }
-                return access;
             }
         }
 
@@ -106,6 +87,36 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public Project(Core core, Primitive owner, string key)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Project_ItemLoad);
+
+            try
+            {
+                LoadItem("project_item_id", "project_item_type_id", owner, new FieldValuePair("project_key", key));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidProjectException();
+            }
+        }
+
+        public Project(Core core, DataRow projectDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Project_ItemLoad);
+
+            try
+            {
+                loadItemInfo(projectDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidProjectException();
+            }
+        }
+
         void Project_ItemLoad()
         {
         }
@@ -125,6 +136,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                 return core.Uri.AppendSid(string.Format("{0}project/{1}",
                         Owner.UriStub, ProjectKey));
             }
+        }
+
+        public void Show(object sender, ShowPPageEventArgs e)
+        {
         }
     }
 

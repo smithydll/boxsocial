@@ -50,6 +50,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long projectId;
         [DataField("template_id", typeof(DocumentTemplate))]
         private long documentTemplateId;
+        [DataField("document_created_date")]
+        private long documentCreatedDate;
+        [DataField("document_released_date")]
+        private long documentReleasedDate;
 
         private Primitive owner;
         private DocumentTemplate template;
@@ -60,6 +64,16 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             {
                 return documentKey;
             }
+        }
+
+        public DateTime GetCreatedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(documentCreatedDate);
+        }
+
+        public DateTime GetReleasedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(documentReleasedDate);
         }
 
         public Primitive Owner

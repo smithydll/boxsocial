@@ -36,6 +36,36 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     {
         [DataField("template_id", DataFieldKeys.Primary)]
         private long templateId;
+        [DataField("document_key_prefix", 8)]
+        private string documentKeyPrefix;
+        [DataField("document_last_key_id")]
+        private long lastDocumentKeyId;
+        [DataField("document_count")]
+        private long documentCount;
+
+        public string KeyPrefix
+        {
+            get
+            {
+                return documentKeyPrefix;
+            }
+        }
+
+        public long LastKeyId
+        {
+            get
+            {
+                return LastKeyId;
+            }
+        }
+
+        public long DocumentCount
+        {
+            get
+            {
+                return documentCount;
+            }
+        }
 
         public DocumentTemplate(Core core, long templateId)
             : base (core)

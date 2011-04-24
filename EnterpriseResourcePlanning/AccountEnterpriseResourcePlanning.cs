@@ -19,20 +19,42 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Reflection;
+using System.IO;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
-using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [DataTable("erp_suppliers")]
-    public class Supplier : NumberedItem
+    [AccountModule("erp")]
+    public class AccountEnterpriseResourcePlanning : AccountModule
     {
+        public AccountEnterpriseResourcePlanning(Account account)
+            : base(account)
+        {
+        }
+
+        protected override void RegisterModule(Core core, EventArgs e)
+        {
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return "Enterprise Resource Planning";
+            }
+        }
+
+        public override int Order
+        {
+            get
+            {
+                return 12;
+            }
+        }
     }
 }

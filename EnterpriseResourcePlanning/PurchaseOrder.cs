@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,42 +19,29 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
-namespace BoxSocial.Applications.Calendar
+namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [AccountModule("calendar")]
-    public class AccountCalendar : AccountModule
+    public class PurchaseOrder
     {
-        public AccountCalendar(Account account)
-            : base(account)
-        {
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return "Calendar";
-            }
-        }
-
-        public override int Order
-        {
-            get
-            {
-                return 9;
-            }
-        }
+        [DataField("purchase_order_id", DataFieldKeys.Primary)]
+        private long purchaseOrderId;
+        [DataField("currency_id")]
+        private long purchaseCurrency;
+        [DataField("purchase_order_price")]
+        private int purchasePrice;
+        [DataField("purchase_order_delivery")]
+        private int deliveryPrice;
+        [DataField("purchase_order_total")]
+        private int totalPrice;
     }
 }

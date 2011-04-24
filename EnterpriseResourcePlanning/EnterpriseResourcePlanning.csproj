@@ -63,6 +63,8 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountEnterpriseResourcePlanning.cs" />
+    <Compile Include="AccountEnterpriseResourcePlanningSettings.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="BillOfMaterials.cs" />
     <Compile Include="Document.cs" />
@@ -76,7 +78,9 @@
     <Compile Include="DocumentTemplate.cs" />
     <Compile Include="ErpSettings.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="Supplier.cs" />
+    <Compile Include="PurchaseItem.cs" />
+    <Compile Include="PurchaseOrder.cs" />
+    <Compile Include="Vendor.cs" />
     <Compile Include="Templates.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -19,42 +19,24 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
-namespace BoxSocial.Applications.Calendar
+namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [AccountModule("calendar")]
-    public class AccountCalendar : AccountModule
+    [DataTable("erp_vendors")]
+    public class Vendor : NumberedItem
     {
-        public AccountCalendar(Account account)
-            : base(account)
-        {
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {
-        }
-
-        public override string Name
-        {
-            get
-            {
-                return "Calendar";
-            }
-        }
-
-        public override int Order
-        {
-            get
-            {
-                return 9;
-            }
-        }
+        [DataField("vendor_id", DataFieldKeys.Primary)]
+        private long vendorId;
+        [DataField("vendor_item")]
+        private ItemKey ownerKey;
     }
 }

@@ -1,7 +1,7 @@
-/*
- * Box Social™
+ï»¿/*
+ * Box Socialâ„¢
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+ * Copyright Â© 2007, David Lachlan Smith
  * 
  * $Id:$
  * 
@@ -27,25 +27,16 @@ using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.Applications.Calendar
+namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    [AccountModule("calendar")]
-    public class AccountCalendar : AccountModule
+    [AccountSubModule("erp", "settings", true)]
+    public class AccountEnterpriseResourcePlanningSettings : AccountSubModule
     {
-        public AccountCalendar(Account account)
-            : base(account)
-        {
-        }
-
-        protected override void RegisterModule(Core core, EventArgs e)
-        {
-        }
-
-        public override string Name
+        public override string Title
         {
             get
             {
-                return "Calendar";
+                return "ERP Settings";
             }
         }
 
@@ -53,8 +44,24 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return 9;
+                return 1;
             }
+        }
+
+        public AccountEnterpriseResourcePlanningSettings(Core core)
+            : base(core)
+        {
+            this.Load += new EventHandler(AccountEnterpriseResourcePlanningSettings_Load);
+            this.Show += new EventHandler(AccountEnterpriseResourcePlanningSettings_Show);
+        }
+
+        void AccountEnterpriseResourcePlanningSettings_Load(object sender, EventArgs e)
+        {
+        }
+
+        void AccountEnterpriseResourcePlanningSettings_Show(object sender, EventArgs e)
+        {
+            SetTemplate("account_erp_settings");
         }
     }
 }

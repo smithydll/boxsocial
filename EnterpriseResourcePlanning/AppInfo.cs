@@ -92,8 +92,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                //return Properties.Resources.svgIcon;
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 
@@ -101,8 +100,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                //return Properties.Resources.style;
-                return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -110,8 +108,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                //return Properties.Resources.script;
-                return null;
+                return Properties.Resources.script;
             }
         }
 

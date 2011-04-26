@@ -38,5 +38,56 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long vendorId;
         [DataField("vendor_item")]
         private ItemKey ownerKey;
+
+        public Vendor(Core core, long vendorId)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(Vendor_ItemLoad);
+
+            try
+            {
+                LoadItem(vendorId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidVendorException();
+            }
+        }
+
+        public Vendor(Core core, DataRow vendorDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Vendor_ItemLoad);
+
+            try
+            {
+                loadItemInfo(vendorDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidVendorException();
+            }
+        }
+
+        void Vendor_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return vendorId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidVendorException : Exception
+    {
     }
 }

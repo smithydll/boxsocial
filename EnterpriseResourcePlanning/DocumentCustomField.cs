@@ -31,7 +31,68 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    public class DocumentCustomField
+
+    public enum DocumentCustomFieldTypes : byte
     {
+        FixedPoint = 0x01,
+        FloatingPoint = 0x02,
+        ShortText = 0x03,
+        LongText = 0x04,
+    }
+
+    [DataTable("erp_custom_fields")]
+    public class DocumentCustomField : NumberedItem
+    {
+        [DataField("custom_field_id", DataFieldKeys.Primary)]
+        private long customFieldId;
+        [DataField("template_id", typeof(DocumentTemplate))]
+        private long templateId;
+        [DataField("custom_field_name", 15)]
+        private string fieldName;
+        [DataField("custom_field_title", 15)]
+        private string fieldTitle;
+        [DataField("custom_field_type")]
+        private byte fieldType;
+
+        public string FieldName
+        {
+            get
+            {
+                return fieldName;
+            }
+        }
+
+        public string FieldTitle
+        {
+            get
+            {
+                return fieldTitle;
+            }
+            set
+            {
+                SetProperty(ref ((object)fieldTitle), value);
+            }
+        }
+
+        public DocumentCustomFieldTypes FieldType
+        {
+            get
+            {
+                return (DocumentCustomFieldTypes)fieldType;
+            }
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return customFieldId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

@@ -58,11 +58,28 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private Primitive owner;
         private DocumentTemplate template;
 
+        private List<DocumentCustomFieldFixedPointValue> customFieldsFixedPoint = new List<DocumentCustomFieldFixedPointValue>();
+        private List<DocumentCustomFieldFloatingPointValue> customFieldsFloatingPoint = new List<DocumentCustomFieldFloatingPointValue>();
+        private List<DocumentCustomFieldLongTextValue> customFieldsLongText = new List<DocumentCustomFieldLongTextValue>();
+        private List<DocumentCustomFieldShortTextValue> customFieldsShortText = new List<DocumentCustomFieldShortTextValue>();
+
         public string DocumentKey
         {
             get
             {
                 return documentKey;
+            }
+        }
+
+        public string DocumentTitle
+        {
+            get
+            {
+                return documentTitle;
+            }
+            set
+            {
+                SetProperty(ref ((object)documentTitle), value);
             }
         }
 

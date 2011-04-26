@@ -47,5 +47,56 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long purchaseCurrency;
         [DataField("purchase_item_price")]
         private int purchasePrice;
+
+        public PurchaseItem(Core core, long purchaseItemId)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(PurchaseItem_ItemLoad);
+
+            try
+            {
+                LoadItem(purchaseItemId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPurchaseItemException();
+            }
+        }
+
+        public PurchaseItem(Core core, DataRow purchaseItemDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(PurchaseItem_ItemLoad);
+
+            try
+            {
+                loadItemInfo(purchaseItemDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPurchaseItemException();
+            }
+        }
+
+        void PurchaseItem_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return purchaseItemId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidPurchaseItemException : Exception
+    {
     }
 }

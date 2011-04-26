@@ -338,6 +338,44 @@ namespace BoxSocial.Internals
             updatedItems.Add(sf.GetMethod().Name);
         }
 
+        protected void SetProperty(ref object var, object value)
+        {
+            if (var != value)
+            {
+                string key = string.Empty;
+                try
+                {
+                    Type thisType = this.GetType();
+                    FieldInfo[] fis = thisType.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+
+                    foreach (FieldInfo fi in fis)
+                    {
+                        object val = fi.GetValue(this);
+                        if (Object.ReferenceEquals(val, var))
+                        {
+                            key = fi.Name;
+                            break;
+                        }
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    var = value;
+
+                    if (!updatedItems.Contains(key))
+                    {
+                        updatedItems.Add(key);
+                    }
+                }
+            }
+        }
+
         protected void SetProperty(string key, object value)
         {
             try

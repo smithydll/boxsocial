@@ -41,12 +41,65 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     [DataTable("erp_document_revisions")]
     public class DocumentRevision : NumberedItem
     {
-        [DataField("document_id", DataFieldKeys.Primary)]
+        [DataField("document_revision_id", DataFieldKeys.Primary)]
+        private long documentRevisionId;
+        [DataField("document_id")]
         private long documentId;
         [DataField("document_revision", 3)]
         private string documentRevision;
         [DataField("document_revision_status")]
         private byte documentRevisionStatus;
         //private string revisionComment;
+
+        public DocumentRevision(Core core, long documentRevisionId)
+            : base (core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentRevision_ItemLoad);
+
+            try
+            {
+                LoadItem(documentRevisionId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentRevisionException();
+            }
+        }
+
+        public DocumentRevision(Core core, DataRow documentRevisionDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentRevision_ItemLoad);
+
+            try
+            {
+                loadItemInfo(documentRevisionDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentRevisionException();
+            }
+        }
+
+        void DocumentRevision_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return documentRevisionId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidDocumentRevisionException : Exception
+    {
     }
 }

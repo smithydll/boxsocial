@@ -32,13 +32,13 @@ using BoxSocial.Groups;
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
     [DataTable("erp_projects")]
-    public class Project : NumberedItem, IPermissibleItem
+    public class Project : NumberedItem
     {
         [DataField("project_id", DataFieldKeys.Primary)]
         private int projectId;
-        [DataField("project_key", DataFieldKeys.Unique, "project_key")]
+        [DataField("project_key", DataFieldKeys.Unique, "u_project_key")]
         private string projectKey;
-        [DataField("project_item", DataFieldKeys.Unique, "project_key")]
+        [DataField("project_item", DataFieldKeys.Unique, "u_project_key")]
         private ItemKey ownerKey;
         [DataField("project_title", 63)]
         private string projectTitle;

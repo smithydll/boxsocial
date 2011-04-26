@@ -347,6 +347,7 @@ namespace BoxSocial.Install
             menuItems.Add(new MenuOption("News", UpdateNews));
             menuItems.Add(new MenuOption("Pages", UpdatePages));
             menuItems.Add(new MenuOption("Profile", UpdateProfile));
+            menuItems.Add(new MenuOption("Enterprise Resource Planning", UpdateEnterpriseResourcePlanning));
 
             ExecuteMenu(menuItems);
         }
@@ -455,6 +456,13 @@ namespace BoxSocial.Install
             loadUpdateOptions();
             doUpdate("Profile");
             InstallLanguage("en", @"Profile");
+        }
+
+        static void UpdateEnterpriseResourcePlanning()
+        {
+            loadUpdateOptions();
+            doUpdate("EnterpriseResourcePlanning");
+            InstallLanguage("en", @"EnterpriseResourcePlanning");
         }
 
         static void EnterUpgradePermissions()

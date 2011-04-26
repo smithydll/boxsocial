@@ -40,6 +40,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private string documentKeyPrefix;
         [DataField("document_last_key_id")]
         private long lastDocumentKeyId;
+        [DataField("document_key_padded")]
+        private bool keyPadded;
+        [DataField("document_key_padding_length")]
+        private int keyPaddingLength;
         [DataField("document_count")]
         private long documentCount;
 
@@ -56,6 +60,22 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             get
             {
                 return LastKeyId;
+            }
+        }
+
+        public bool IsKeyPadded
+        {
+            get
+            {
+                return keyPadded;
+            }
+        }
+
+        public int KeyPaddingLength
+        {
+            get
+            {
+                return keyPaddingLength;
             }
         }
 

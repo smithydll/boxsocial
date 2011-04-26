@@ -35,6 +35,10 @@ copy "%1"Mail\bin\Debug\Mail.dll "%1"Package\
 copy "%1"Mail\bin\Debug\Mail.pdb "%1"Package\
 copy "%1"Mail\languages\Mail.en.resources "%1"Package\
 
+copy "%1"EnterpriseResourcePlanning\bin\Debug\EnterpriseResourcePlanning.dll "%1"Package\
+copy "%1"EnterpriseResourcePlanning\bin\Debug\EnterpriseResourcePlanning.pdb "%1"Package\
+copy "%1"EnterpriseResourcePlanning\languages\EnterpriseResourcePlanning.en.resources "%1"Package\
+
 copy "%1"BoxSocial.Forms\bin\Debug\BoxSocial.Forms.dll "%1"Package\
 copy "%1"BoxSocial.Forms\bin\Debug\BoxSocial.Forms.pdb "%1"Package\
 copy "%1"BoxSocial.IO\bin\Debug\BoxSocial.IO.dll "%1"Package\

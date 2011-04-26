@@ -31,10 +31,32 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
+    [DataTable("erp_wordlist")]
     public class DocumentSearchKeywords : NumberedItem
     {
-        [DataField("erp_keyword_id", DataFieldKeys.Primary)]
+        [DataField("keyword_id", DataFieldKeys.Primary)]
         private long keywordId;
+        [DataField("keyword_word", 31)]
+        private string keyword;
+
+        public DocumentSearchKeywords(Core core, DataRow keywordRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentSearchKeywords_ItemLoad);
+
+            try
+            {
+                loadItemInfo(keywordRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentSearchKeywordsException();
+            }
+        }
+
+        void DocumentSearchKeywords_ItemLoad()
+        {
+        }
 
         public override long Id
         {
@@ -48,5 +70,9 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get { throw new NotImplementedException(); }
         }
+    }
+
+    public class InvalidDocumentSearchKeywordsException : Exception
+    {
     }
 }

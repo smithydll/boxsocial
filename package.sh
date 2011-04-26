@@ -39,6 +39,10 @@ cp Mail/bin/Debug/Mail.dll Package/
 cp Mail/bin/Debug/Mail.mdb Package/
 cp Mail/languages/Mail.en.resources Package/
 
+cp EnterpriseResourcePlanning/bin/Debug/EnterpriseResourcePlanning.dll Package/
+cp EnterpriseResourcePlanning/bin/Debug/EnterpriseResourcePlanning.mdb Package/
+cp EnterpriseResourcePlanning/languages/EnterpriseResourcePlanning.en.resources Package/
+
 cp BoxSocial.Forms/bin/Debug/BoxSocial.Forms.dll Package/
 cp BoxSocial.Forms/bin/Debug/BosSocial.Forms.mdb Package/
 cp BoxSocial.IO/bin/Debug/BoxSocial.IO.dll Package/

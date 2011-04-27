@@ -59,5 +59,48 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Enterprise Resource Planning Permissions&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Enterprise Resource Planning Permissions&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label&gt;Permissions&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;
+        ///				{S_ERP_PERMS}
+        ///			&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+        ///		&lt;/dl&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;erp&quot; /&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;sub&quot; value=&quot;permissions&quot; /&gt;
+        ///	&lt;/fieldset&gt;
+        ///&lt;/form&gt;.
+        /// </summary>
+        internal static string account_erp_permissions {
+            get {
+                return ResourceManager.GetString("account_erp_permissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Enterprise Resource Planning Settings&lt;/h3&gt;.
+        /// </summary>
+        internal static string account_erp_settings {
+            get {
+                return ResourceManager.GetString("account_erp_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewdocument {
+            get {
+                return ResourceManager.GetString("viewdocument", resourceCulture);
+            }
+        }
     }
 }

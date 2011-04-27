@@ -113,6 +113,7 @@
     <Content Include="resources\style.css" />
     <Content Include="templates\account_erp_permissions.html" />
     <Content Include="templates\account_erp_settings.html" />
+    <Content Include="templates\viewdocument.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

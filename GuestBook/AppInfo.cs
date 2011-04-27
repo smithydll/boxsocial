@@ -85,7 +85,6 @@ namespace BoxSocial.Applications.GuestBook
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }
@@ -133,9 +132,6 @@ namespace BoxSocial.Applications.GuestBook
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician);
-            //aii.AddSlug("profile", @"^/profile/comments(|/)$", AppPrimitives.Member);
-            //aii.AddSlug("profile", @"^/profile/comments/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
-            //aii.AddSlug("comments", @"^/comments(|/)$", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application);
 
             aii.AddCommentType("USER");
             aii.AddCommentType("APPLICATION");
@@ -151,7 +147,6 @@ namespace BoxSocial.Applications.GuestBook
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                //slugs.Add("profile/comments", "Guest Book");
                 return slugs;
             }
         }
@@ -159,10 +154,6 @@ namespace BoxSocial.Applications.GuestBook
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            //core.RegisterApplicationPage(@"^/profile/comments(|/)$", showProfileGuestBook, 1);
-            //core.RegisterApplicationPage(@"^/comments(|/)$", showGuestBook, 2);
-            //core.RegisterApplicationPage(@"^/profile/comments/([A-Za-z0-9\-_]+)(|/)", showProfileGuestBookConversation, 3);
         }
 
         private bool userCanPostComment(ItemKey itemKey, User member)

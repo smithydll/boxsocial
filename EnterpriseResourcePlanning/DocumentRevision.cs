@@ -43,13 +43,80 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     {
         [DataField("document_revision_id", DataFieldKeys.Primary)]
         private long documentRevisionId;
-        [DataField("document_id")]
+        [DataField("document_id", new Index("u_document_id"))]
         private long documentId;
-        [DataField("document_revision", 3)]
+        [DataField("document_revision", 10, new Index("u_document_id"))]
         private string documentRevision;
         [DataField("document_revision_status")]
         private byte documentRevisionStatus;
+        [DataField("document_storage_path", 128)]
+        protected string storagePath;
+        [DataField("revision_created_date")]
+        private long documentRevisionCreatedDate;
+        [DataField("revision_released_date")]
+        private long documentRevisionReleasedDate;
         //private string revisionComment;
+
+        public long DocumentId
+        {
+            get
+            {
+                return documentId;
+            }
+        }
+
+        public string Revision
+        {
+            get
+            {
+                return documentRevision;
+            }
+        }
+
+        public DocumentStatus Status
+        {
+            get
+            {
+                return (DocumentStatus)documentRevisionStatus;
+            }
+            set
+            {
+                SetProperty(ref (object)documentRevisionStatus, value);
+            }
+        }
+
+        public string StoragePath
+        {
+            get
+            {
+                return storagePath;
+            }
+        }
+
+        public DateTime GetCreatedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(documentRevisionCreatedDate);
+        }
+
+        public DateTime GetReleasedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(documentRevisionReleasedDate);
+        }
+
+        public DocumentRevision(Core core, long documentId, string revision)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentRevision_ItemLoad);
+
+            try
+            {
+                LoadItem(new FieldValuePair("document_id", documentId), new FieldValuePair("document_revision", revision));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentRevisionException();
+            }
+        }
 
         public DocumentRevision(Core core, long documentRevisionId)
             : base (core)

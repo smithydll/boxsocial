@@ -85,7 +85,6 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }
@@ -125,11 +124,7 @@ namespace BoxSocial.Applications.Pages
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            //aii.AddSlug("lists", @"^/lists(|/)$", AppPrimitives.Member);
-            //aii.AddSlug("lists", @"^/lists/([A-Za-z0-9\-_]+)(|/)$", AppPrimitives.Member);
             aii.AddSlug("*", @"^/([A-Za-z0-9\-_/]+)(|/)$", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician);
-
-            //aii.AddModule("pages");
 
             return aii;
         }
@@ -146,8 +141,6 @@ namespace BoxSocial.Applications.Pages
 
         void core_LoadApplication(Core core, object sender)
         {
-            //core.RegisterApplicationPage(@"^/lists(|/)$", showLists, 1);
-            //core.RegisterApplicationPage(@"^/lists/([A-Za-z0-9\-_]+)(|/)$", showList, 2);
             core.RegisterApplicationPage(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, @"^/([A-Za-z0-9\-_/]+)(|/)$", showPage, int.MaxValue, false);
         }
 
@@ -172,7 +165,6 @@ namespace BoxSocial.Applications.Pages
         {
             if (sender is PPage)
             {
-                //List.ShowLists(core, (UPage)sender);
                 List.ShowLists(sender, new ShowPPageEventArgs((PPage)sender));
             }
         }

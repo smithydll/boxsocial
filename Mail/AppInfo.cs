@@ -82,7 +82,6 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }

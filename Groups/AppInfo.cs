@@ -84,7 +84,6 @@ namespace BoxSocial.Groups
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }
@@ -118,7 +117,6 @@ namespace BoxSocial.Groups
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
-            //core.primitivePermissionGroupHook += new Core.PermissionGroupHandler(GetGroupItems);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -126,9 +124,6 @@ namespace BoxSocial.Groups
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
             aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member);
-            /*aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Group);*/
-
-            //aii.AddModule("groups");
 
             return aii;
         }
@@ -138,15 +133,12 @@ namespace BoxSocial.Groups
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                //slugs.Add("profile", "Profile");
                 return slugs;
             }
         }
 
         void core_LoadApplication(Core core, object sender)
         {
-            /*core.RegisterApplicationPage(@"^/profile(|/)$", showGroup);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
         [Show(@"profile", AppPrimitives.Group)]

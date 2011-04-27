@@ -70,7 +70,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
             set
             {
-                SetProperty(ref ((object)fieldTitle), value);
+                SetProperty(ref (object)fieldTitle, value);
             }
         }
 
@@ -80,6 +80,25 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             {
                 return (DocumentCustomFieldTypes)fieldType;
             }
+        }
+
+        public DocumentCustomField(Core core, DataRow customFieldRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentCustomField_ItemLoad);
+
+            try
+            {
+                loadItemInfo(customFieldRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentCustomFieldException();
+            }
+        }
+
+        void DocumentCustomField_ItemLoad()
+        {
         }
 
         public override long Id
@@ -94,5 +113,9 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get { throw new NotImplementedException(); }
         }
+    }
+
+    public class InvalidDocumentCustomFieldException : Exception
+    {
     }
 }

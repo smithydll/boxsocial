@@ -42,7 +42,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private ItemKey ownerKey;
         [DataField("document_title", 63)]
         private string documentTitle;
-        [DataField("document_revision", 3)]
+        [DataField("document_revision", 10)]
         private string documentRevision;
         [DataField("document_superseded_by")]
         private long supersededById;
@@ -57,6 +57,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
 
         private Primitive owner;
         private DocumentTemplate template;
+        private Project project;
+        private DocumentRevision revision;
 
         private List<DocumentCustomFieldFixedPointValue> customFieldsFixedPoint = new List<DocumentCustomFieldFixedPointValue>();
         private List<DocumentCustomFieldFloatingPointValue> customFieldsFloatingPoint = new List<DocumentCustomFieldFloatingPointValue>();
@@ -71,6 +73,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public string DocumentRevision
+        {
+            get
+            {
+                return documentRevision;
+            }
+        }
+
         public string DocumentTitle
         {
             get
@@ -79,7 +89,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
             set
             {
-                SetProperty(ref ((object)documentTitle), value);
+                SetProperty(ref (object)documentTitle, value);
             }
         }
 
@@ -123,6 +133,30 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public Project Project
+        {
+            get
+            {
+                if (project == null || project.Id != projectId)
+                {
+                    project = (Project)core.ItemCache[new ItemKey(projectId, typeof(Project))];
+                }
+                return project;
+            }
+        }
+
+        public DocumentRevision Revision
+        {
+            get
+            {
+                if (revision == null || revision.DocumentId != Id || revision.Revision != DocumentRevision)
+                {
+                    revision = new DocumentRevision(core, Id, DocumentRevision);
+                }
+                return revision;
+            }
+        }
+
         public Document(Core core, Primitive owner, string key)
             : base(core)
         {
@@ -154,6 +188,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         }
 
         public Document(Core core, DataRow documentDataRow)
+            : this(core, documentDataRow, false)
+        {
+        }
+
+        public Document(Core core, DataRow documentDataRow, bool hasRevisionDataJoined)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(Document_ItemLoad);
@@ -165,6 +204,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             catch (InvalidItemException)
             {
                 throw new InvalidDocumentException();
+            }
+
+            if (hasRevisionDataJoined)
+            {
+                revision = new DocumentRevision(core, documentDataRow);
             }
         }
 
@@ -189,8 +233,28 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
-        public void Show(object sender, ShowPPageEventArgs e)
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
+            e.SetTemplate("viewdocument");
+
+            Document document = null;
+
+            try
+            {
+                document = new Document(e.Core, e.Page.Owner, e.Slug);
+            }
+            catch (InvalidDocumentException)
+            {
+                e.Core.Functions.Generate404();
+            }
+
+            e.Template.Parse("DOCUMENT_KEY", document.DocumentKey);
+            e.Template.Parse("DOCUMENT_REVISION", document.DocumentRevision);
+            e.Template.Parse("DOCUMENT_TITLE", document.DocumentTitle);
+            e.Template.Parse("DOCUMENT_CREATED", e.Core.Tz.DateTimeToString(document.GetCreatedDate(e.Core.Tz)));
+            e.Template.Parse("DOCUMENT_RELEASED", e.Core.Tz.DateTimeToString(document.GetReleasedDate(e.Core.Tz)));
+            e.Template.Parse("PROJECT_KEY", document.project.ProjectKey);
+            e.Template.Parse("U_PROJECT", document.project.Uri);
         }
     }
 

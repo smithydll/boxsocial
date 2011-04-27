@@ -84,7 +84,6 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }
@@ -209,13 +208,6 @@ namespace BoxSocial.Applications.News
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
-			
-			/*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-
-            aii.AddSlug("news", @"^/news(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-            aii.AddSlug("news", @"^/news/([0-9]+)(|/)$", AppPrimitives.Group | AppPrimitives.Network);
-
-            aii.AddModule("news");*/
 
             return aii;
         }
@@ -233,11 +225,6 @@ namespace BoxSocial.Applications.News
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            //core.RegisterApplicationPage(@"^/news(|/)$", showNews, 1);
-            /*core.RegisterApplicationPage(@"^/forum/topic\-([0-9])(|/)$", showTopic, 2);
-            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])/topic\-([0-9])(|/)$", showTopic, 3);
-            core.RegisterApplicationPage(@"^/forum/([a-zA-Z0-9])(|/)$", showForum, 4);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()

@@ -339,6 +339,14 @@ namespace BoxSocial.IO
             templateName = fileName;
         }
 
+        public void SetTemplate(Assembly assembly, string fileName)
+        {
+            AddPageAssembly(assembly);
+
+            templateAssembly = assembly.GetName().Name;
+            templateName = fileName;
+        }
+
         // TODO: reconsider this into the constructor
         public void SetProse(IProse prose)
         {

@@ -111,6 +111,47 @@ namespace BoxSocial.Internals
             return keyField;
         }
 
+        protected void LoadItem(params FieldValuePair[] keyFields)
+        {
+            LoadItem(this.GetType(), keyFields);
+        }
+
+        protected void LoadItem(Type type, params FieldValuePair[] keyFields)
+        {
+            // 1. Build query
+            // 2. Execute query
+            // 3. Fill results
+
+            string tableName = GetTable(type);
+            List<DataFieldInfo> fields = GetFields(type);
+
+            SelectQuery query = new SelectQuery(tableName);
+
+            foreach (DataFieldInfo field in fields)
+            {
+                query.AddFields(field.Name);
+            }
+
+            if (keyFields != null)
+            {
+                foreach (FieldValuePair fvp in keyFields)
+                {
+                    query.AddCondition(fvp.Field, fvp.Value);
+                }
+            }
+            else
+            {
+                throw new NoUniqueKeyException();
+            }
+
+            loadItemInfo(type, core.Db.ReaderQuery(query));
+
+            if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
+            {
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+        }
+
         protected void LoadItem(long primaryKey, params FieldValuePair[] keyFields)
         {
             LoadItem(this.GetType(), primaryKey, keyFields);
@@ -1523,6 +1564,10 @@ namespace BoxSocial.Internals
     }
 
     public class NoPrimaryKeyException : Exception
+    {
+    }
+
+    public class NoUniqueKeyException : Exception
     {
     }
 

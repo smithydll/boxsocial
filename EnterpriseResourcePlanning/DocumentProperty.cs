@@ -32,7 +32,45 @@ using BoxSocial.Groups;
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
     [DataTable("erp_document_properties")]
-    public class DocumentProperty
+    public class DocumentProperty : NumberedItem
+    {
+        [DataField("property_id", DataFieldKeys.Primary)]
+        private long propertyId;
+
+        public DocumentProperty(Core core, DataRow propertyRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentProperty_ItemLoad);
+
+            try
+            {
+                loadItemInfo(propertyRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentPropertyException();
+            }
+        }
+
+        void DocumentProperty_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return propertyId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidDocumentPropertyException : Exception
     {
     }
 }

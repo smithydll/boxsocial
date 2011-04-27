@@ -31,6 +31,15 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
+    public enum RevisionTypes : byte
+    {
+        Alphabetical = 0x01,
+        Numerical = 0x02,
+        TwoClassVersion = 0x03,
+        ThreeClassVersion = 0x04,
+        FourClassVersion = 0x05,
+    }
+
     [DataTable("erp_document_template")]
     public class DocumentTemplate : NumberedItem
     {
@@ -46,6 +55,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private int keyPaddingLength;
         [DataField("document_count")]
         private long documentCount;
+        [DataField("revision_type")]
+        private byte revisionType;
 
         public string KeyPrefix
         {

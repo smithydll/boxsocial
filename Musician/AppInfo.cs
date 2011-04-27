@@ -179,21 +179,12 @@ namespace BoxSocial.Musician
 
         private void gigAdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            /*core.db.UpdateQuery(string.Format("UPDATE music_gigs SET gig_comments = gig_comments + {1} WHERE gig_id = {0};",
-                itemKey.Id, adjustment));*/
-
             Item.IncrementItemColumn(core, typeof(Gig), itemKey.Id, "gig_comments", adjustment);
         }
 
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
-
-            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Musician);
-            aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Musician);
-            aii.AddSlug("fans", @"^/fans(|/)$", AppPrimitives.Musician);
-
-            aii.AddModule("music");*/
 
             return aii;
         }
@@ -203,18 +194,12 @@ namespace BoxSocial.Musician
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                //slugs.Add("profile", "Profile");
-                //slugs.Add("tours", "Tours");
-                //slugs.Add("gigs", "Gigs");
-                //slugs.Add("discography", "Discography");
                 return slugs;
             }
         }
 
         void core_LoadApplication(Core core, object sender)
         {
-            /*core.RegisterApplicationPage(@"^/profile(|/)$", showMusician);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()

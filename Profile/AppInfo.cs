@@ -123,11 +123,6 @@ namespace BoxSocial.Applications.Profile
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Application);
-            aii.AddSlug("profile", @"^/status-feed(|/)$", AppPrimitives.Member | AppPrimitives.Application);
-
-            aii.AddModule("profile");*/
-
             return aii;
         }
 
@@ -136,9 +131,6 @@ namespace BoxSocial.Applications.Profile
             get
             {
                 Dictionary<string, string> slugs = new Dictionary<string, string>();
-                //slugs.Add("profile", "Profile");
-                //slugs.Add("friends", "Friends");
-                //slugs.Add("status-feed", "Status Feed");
                 return slugs;
             }
         }
@@ -146,9 +138,6 @@ namespace BoxSocial.Applications.Profile
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-
-            /*core.RegisterApplicationPage(@"^/profile(|/)$", showProfile, 1);
-            core.RegisterApplicationPage(@"^/status-feed(|/)$", showStatusFeed, 1);*/
         }
 
         public override AppPrimitives GetAppPrimitiveSupport()

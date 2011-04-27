@@ -82,7 +82,6 @@ namespace BoxSocial.Networks
         {
             get
             {
-                //return System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("profile");
                 return null;
             }
         }
@@ -121,11 +120,6 @@ namespace BoxSocial.Networks
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();
 
-            /*aii.AddSlug("profile", @"^/profile(|/)$", AppPrimitives.Member | AppPrimitives.Network);
-            aii.AddSlug("members", @"^/members(|/)$", AppPrimitives.Network);
-
-            aii.AddModule("networks");*/
-
             return aii;
         }
 
@@ -140,8 +134,6 @@ namespace BoxSocial.Networks
 
         void core_LoadApplication(Core core, object sender)
         {
-            /*core.RegisterApplicationPage(@"^/profile(|/)$", showNetwork);
-            core.RegisterApplicationPage(@"^/members(|/)$", showMemberlist);*/
         }
 
         [Show("profile", AppPrimitives.Network)]

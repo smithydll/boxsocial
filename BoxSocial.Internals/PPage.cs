@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -109,6 +110,12 @@ namespace BoxSocial.Internals
             : base(page)
         {
             this.itemSlug = slug;
+        }
+
+        public void SetTemplate(string fileName)
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            Template.SetTemplate(assembly, fileName);
         }
     }
 }

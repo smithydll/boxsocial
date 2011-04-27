@@ -158,15 +158,9 @@ namespace BoxSocial.Applications.Gallery
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 			
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            //core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gallery)), galleryCanPostComment, galleryCanDeleteComment, galleryAdjustCommentCount, galleryCommentPosted);
 
             core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
-            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(UserGalleryItem)), photoRated);
-            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GroupGalleryItem)), photoRated);
-            //core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(NetworkGalleryItem)), photoRated);
         }
 
         /// <summary>

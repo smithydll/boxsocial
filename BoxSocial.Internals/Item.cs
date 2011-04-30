@@ -876,6 +876,27 @@ namespace BoxSocial.Internals
                 }
             }
 
+            if (this is IPermissibleSubItem)
+            {
+                EditPermissionAttribute[] editAttributes = (EditPermissionAttribute[])this.GetType().GetCustomAttributes(typeof(EditPermissionAttribute), false);
+
+                if (editAttributes.Length == 1)
+                {
+                    if (string.IsNullOrEmpty(editAttributes[0].Key))
+                    {
+                        throw new UnauthorisedToUpdateItemException();
+                    }
+                    else
+                    {
+                        IPermissibleSubItem isThis = (IPermissibleSubItem)this;
+                        if (!isThis.PermissiveParent.Access.Can(editAttributes[0].Key))
+                        {
+                            throw new UnauthorisedToUpdateItemException();
+                        }
+                    }
+                }
+            }
+
             ItemChangeAuthenticationProviderHandler itemChangeAuthenticationProviderHander = ItemChangeAuthenticationProvider;
             if (itemChangeAuthenticationProviderHander != null)
             {
@@ -1033,14 +1054,47 @@ namespace BoxSocial.Internals
 		
 		public static Item Create(Core core, Type type, params FieldValuePair[] fields)
 		{
-			return Create(core,  type, false, fields);
+			return Create(core, type, null, false, fields);
 		}
+
+        public static Item Create(Core core, Type type, IPermissibleItem parentItem, params FieldValuePair[] fields)
+        {
+            return Create(core, type, parentItem, false, fields);
+        }
+
+        public static Item Create(Core core, Type type, bool suppressReturnItem, params FieldValuePair[] fields)
+        {
+            return Create(core, type, null, suppressReturnItem, fields);
+        }
 		
-		public static Item Create(Core core, Type type, bool suppress, params FieldValuePair[] fields)
+		public static Item Create(Core core, Type type, IPermissibleItem parentItem, bool suppressReturnItem, params FieldValuePair[] fields)
 		{
             if (core == null)
             {
                 throw new NullCoreException();
+            }
+
+            if (parentItem != null)
+            {
+                if (type.IsSubclassOf(typeof(IPermissibleSubItem)))
+                {
+                    CreatePermissionAttribute[] createAttributes = (CreatePermissionAttribute[])type.GetCustomAttributes(typeof(CreatePermissionAttribute), false);
+
+                    if (createAttributes.Length == 1)
+                    {
+                        if (string.IsNullOrEmpty(createAttributes[0].Key))
+                        {
+                            throw new UnauthorisedToUpdateItemException();
+                        }
+                        else
+                        {
+                            if (!parentItem.Access.Can(createAttributes[0].Key))
+                            {
+                                throw new UnauthorisedToUpdateItemException();
+                            }
+                        }
+                    }
+                }
             }
 
             core.Db.BeginTransaction();
@@ -1085,7 +1139,7 @@ namespace BoxSocial.Internals
 			
 			if (id > 0)
 			{
-				if (!suppress)
+				if (!suppressReturnItem)
 				{
 					Item newItem = System.Activator.CreateInstance(type, new object[] { core, id }) as Item;
 					
@@ -1131,6 +1185,27 @@ namespace BoxSocial.Internals
                 if (!iThis.Access.Can("DELETE"))
                 {
                     throw new UnauthorisedToDeleteItemException();
+                }
+            }
+
+            if (this is IPermissibleSubItem)
+            {
+                DeletePermissionAttribute[] deleteAttributes = (DeletePermissionAttribute[])this.GetType().GetCustomAttributes(typeof(DeletePermissionAttribute), false);
+
+                if (deleteAttributes.Length == 1)
+                {
+                    if (string.IsNullOrEmpty(deleteAttributes[0].Key))
+                    {
+                        throw new UnauthorisedToUpdateItemException();
+                    }
+                    else
+                    {
+                        IPermissibleSubItem isThis = (IPermissibleSubItem)this;
+                        if (!isThis.PermissiveParent.Access.Can(deleteAttributes[0].Key))
+                        {
+                            throw new UnauthorisedToUpdateItemException();
+                        }
+                    }
                 }
             }
 

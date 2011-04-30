@@ -36,6 +36,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     [Permission("CREATE_DOCUMENTS", "Can create documents", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_SUPPLIERS", "Can create suppliers", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_PURCHASES", "Can create purchases", PermissionTypes.CreateAndEdit)]
+    [Permission("REVISE_DOCUMENTS", "Can revise documents", PermissionTypes.CreateAndEdit)]
     public class ErpSettings : NumberedItem, IPermissibleItem
     {
         [DataField("erp_settings_id", DataFieldKeys.Primary)]

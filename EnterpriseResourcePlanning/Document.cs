@@ -32,7 +32,10 @@ using BoxSocial.Groups;
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
     [DataTable("erp_documents")]
-    public class Document : NumberedItem
+    [CreatePermission("CREATE_DOCUMENTS")]
+    [EditPermission("EDIT_DOCUMENTS")]
+    [DeletePermission(null)]
+    public class Document : NumberedItem, IPermissibleSubItem
     {
         [DataField("document_id", DataFieldKeys.Primary)]
         private long documentId;
@@ -59,6 +62,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private DocumentTemplate template;
         private Project project;
         private DocumentRevision revision;
+        private ErpSettings settings;
 
         private List<DocumentCustomFieldFixedPointValue> customFieldsFixedPoint = new List<DocumentCustomFieldFixedPointValue>();
         private List<DocumentCustomFieldFloatingPointValue> customFieldsFloatingPoint = new List<DocumentCustomFieldFloatingPointValue>();
@@ -78,6 +82,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             get
             {
                 return documentRevision;
+            }
+            set
+            {
+                SetProperty(ref (object)documentRevision, value);
             }
         }
 
@@ -157,6 +165,18 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public ErpSettings Settings
+        {
+            get
+            {
+                if (settings == null || !settings.Owner.ItemKey.Equals(ownerKey))
+                {
+                    settings = new ErpSettings(core, Owner);
+                }
+                return settings;
+            }
+        }
+
         public Document(Core core, Primitive owner, string key)
             : base(core)
         {
@@ -233,6 +253,46 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public DocumentRevision Revise(string newRevision, bool autoIncrement, int incrementClass)
+        {
+            ErpSettings settings = new ErpSettings(core, Owner);
+
+            if (settings.Access.Can("REVISE_DOCUMENTS"))
+            {
+                if (autoIncrement)
+                {
+                    switch (Template.RevisionType)
+                    {
+                        case RevisionTypes.Alphabetical:
+                            if (DocumentRevision == "Z")
+                            {
+                                newRevision = "AB";
+                            }
+                            else
+                            {
+                                if (DocumentRevision.Length > 1)
+                                {
+                                    newRevision = DocumentRevision.Substring(0, DocumentRevision.Length - 1) + (DocumentRevision[DocumentRevision.Length - 1] + 1).ToString();
+                                }
+                                else
+                                {
+                                    newRevision = (DocumentRevision[0] + 1).ToString();
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                DocumentRevision newDocumentRevision = DocumentRevision.Create(core, this, newRevision, DocumentStatus.Unreleased);
+                this.DocumentRevision = newDocumentRevision.Revision;
+                this.Update();
+            }
+            else
+            {
+                throw new UnauthorisedToUpdateItemException();
+            }
+        }
+
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.SetTemplate("viewdocument");
@@ -255,6 +315,15 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             e.Template.Parse("DOCUMENT_RELEASED", e.Core.Tz.DateTimeToString(document.GetReleasedDate(e.Core.Tz)));
             e.Template.Parse("PROJECT_KEY", document.project.ProjectKey);
             e.Template.Parse("U_PROJECT", document.project.Uri);
+        }
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Settings;
+            }
         }
     }
 

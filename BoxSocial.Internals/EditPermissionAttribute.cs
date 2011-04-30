@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Box Social™
  * http://boxsocial.net/
  * Copyright © 2007, David Lachlan Smith
@@ -24,13 +24,11 @@ using System.Text;
 
 namespace BoxSocial.Internals
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
-    public sealed class PermissionAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    public sealed class EditPermissionAttribute : Attribute
     {
         private string permissionKey;
-        private string permissionDescription;
-        private PermissionTypes permissionType;
-        
+
         public string Key
         {
             get
@@ -38,28 +36,10 @@ namespace BoxSocial.Internals
                 return permissionKey;
             }
         }
-        
-        public string Description
-        {
-            get
-            {
-                return permissionDescription;
-            }
-        }
 
-        public PermissionTypes Type
-        {
-            get
-            {
-                return permissionType;
-            }
-        }
-        
-        public PermissionAttribute(string key, string description, PermissionTypes type)
+        public EditPermissionAttribute(string key)
         {
             this.permissionKey = key;
-            this.permissionDescription = description;
-            this.permissionType = type;
         }
     }
 }

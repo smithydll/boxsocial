@@ -45,6 +45,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long documentRevisionId;
         [DataField("document_id", new Index("u_document_id"))]
         private long documentId;
+        [DataField("document_item")]
+        private ItemKey ownerKey;
         [DataField("document_revision", 10, new Index("u_document_id"))]
         private string documentRevision;
         [DataField("document_revision_status")]
@@ -150,6 +152,32 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
 
         void DocumentRevision_ItemLoad()
         {
+        }
+
+        public static DocumentRevision Create(Core core, Document document, string newRevision, DocumentStatus newStatus)
+        {
+            Item item = Item.Create(core, typeof(DocumentRevision), new FieldValuePair("document_id", document.Id),
+                new FieldValuePair("document_revision", newRevision),
+                new FieldValuePair("document_revision_status", (byte)newStatus),
+                new FieldValuePair("document_storage_path", ""),
+                new FieldValuePair("revision_created_date", UnixTime.UnixTimeStamp()),
+                new FieldValuePair("revision_released_date", 0));
+
+            return (DocumentRevision)item;
+        }
+
+        public bool Release()
+        {
+            try
+            {
+                Status = DocumentStatus.Current;
+                this.Update();
+                return true;
+            }
+            catch (UnauthorisedToUpdateItemException)
+            {
+                return false;
+            }
         }
 
         public override long Id

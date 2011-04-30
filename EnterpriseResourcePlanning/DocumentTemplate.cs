@@ -98,6 +98,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public RevisionTypes RevisionType
+        {
+            get
+            {
+                return revisionType;
+            }
+        }
+
         public DocumentTemplate(Core core, long templateId)
             : base (core)
         {

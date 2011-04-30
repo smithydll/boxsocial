@@ -105,9 +105,12 @@
     <Compile Include="ControlPanelSubModule.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Country.cs" />
+    <Compile Include="CreatePermissionAttribute.cs" />
     <Compile Include="DateTimePicker.cs" />
+    <Compile Include="DeletePermissionAttribute.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="DnsRecord.cs" />
+    <Compile Include="EditPermissionAttribute.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Feed.cs" />
     <Compile Include="Functions.cs" />
@@ -118,6 +121,7 @@
     <Compile Include="ICommentableItem.cs" />
     <Compile Include="InviteKey.cs" />
     <Compile Include="IPermissibleItem.cs" />
+    <Compile Include="IPermissibleSubItem.cs" />
     <Compile Include="IRateableItem.cs" />
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />

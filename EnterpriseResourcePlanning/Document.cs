@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
             set
             {
-                SetProperty(ref (object)documentRevision, value);
+                SetProperty("documentRevision", value);
             }
         }
 
@@ -97,7 +97,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
             set
             {
-                SetProperty(ref (object)documentTitle, value);
+                SetProperty("documentTitle", value);
             }
         }
 
@@ -283,9 +283,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                     }
                 }
 
-                DocumentRevision newDocumentRevision = DocumentRevision.Create(core, this, newRevision, DocumentStatus.Unreleased);
+                DocumentRevision newDocumentRevision = EnterpriseResourcePlanning.DocumentRevision.Create(core, this, newRevision, DocumentStatus.Unreleased);
                 this.DocumentRevision = newDocumentRevision.Revision;
                 this.Update();
+
+                return newDocumentRevision;
             }
             else
             {

@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return revisionType;
+                return (RevisionTypes)revisionType;
             }
         }
 

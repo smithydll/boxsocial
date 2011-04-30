@@ -43,11 +43,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     {
         [DataField("document_revision_id", DataFieldKeys.Primary)]
         private long documentRevisionId;
-        [DataField("document_id", new Index("u_document_id"))]
+        [DataField("document_id", DataFieldKeys.Unique, "u_document_id")]
         private long documentId;
         [DataField("document_item")]
         private ItemKey ownerKey;
-        [DataField("document_revision", 10, new Index("u_document_id"))]
+        [DataField("document_revision", DataFieldKeys.Unique, "u_document_id", 10)]
         private string documentRevision;
         [DataField("document_revision_status")]
         private byte documentRevisionStatus;
@@ -83,7 +83,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
             set
             {
-                SetProperty(ref (object)documentRevisionStatus, value);
+                SetProperty("documentRevisionStatus", value);
             }
         }
 

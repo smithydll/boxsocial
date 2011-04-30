@@ -31,7 +31,7 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-    public class PurchaseOrder
+    public class PurchaseOrder : NumberedItem
     {
         [DataField("purchase_order_id", DataFieldKeys.Primary)]
         private long purchaseOrderId;
@@ -43,5 +43,92 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private int deliveryPrice;
         [DataField("purchase_order_total")]
         private int totalPrice;
+        [DataField("purchase_order_items")]
+        private long purchaseItemCount;
+
+        public long ItemCount
+        {
+            get
+            {
+                return purchaseItemCount;
+            }
+        }
+
+        public string GetPurchasePrice
+        {
+            get
+            {
+                Currency currency = new Currency(core, purchaseCurrency);
+                return currency.GetPriceString(purchasePrice);
+            }
+        }
+
+        public string GetDeliveryPrice
+        {
+            get
+            {
+                Currency currency = new Currency(core, purchaseCurrency);
+                return currency.GetPriceString(deliveryPrice);
+            }
+        }
+
+        public string GetTotalPrice
+        {
+            get
+            {
+                Currency currency = new Currency(core, purchaseCurrency);
+                return currency.GetPriceString(totalPrice);
+            }
+        }
+
+        public PurchaseOrder(Core core, long purchaseOrderId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(PurchaseOrder_ItemLoad);
+
+            try
+            {
+                LoadItem(purchaseOrderId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPurchaseOrderException();
+            }
+        }
+        public PurchaseOrder(Core core, DataRow purchaseOrderDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(PurchaseOrder_ItemLoad);
+
+            try
+            {
+                loadItemInfo(purchaseOrderDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPurchaseOrderException();
+            }
+        }
+
+        void PurchaseOrder_ItemLoad()
+        {
+        }
+
+        public override long Id
+        {
+            get
+            {
+                return purchaseOrderId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+    }
+
+    public class InvalidPurchaseOrderException : Exception
+    {
     }
 }

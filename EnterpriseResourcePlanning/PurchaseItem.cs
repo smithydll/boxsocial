@@ -48,6 +48,15 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         [DataField("purchase_item_price")]
         private int purchasePrice;
 
+        public string GetPrice
+        {
+            get
+            {
+                Currency currency = new Currency(core, purchaseCurrency);
+                return currency.GetPriceString(purchasePrice);
+            }
+        }
+
         public PurchaseItem(Core core, long purchaseItemId)
             : base (core)
         {

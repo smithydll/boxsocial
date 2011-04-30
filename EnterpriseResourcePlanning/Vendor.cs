@@ -38,6 +38,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long vendorId;
         [DataField("vendor_item")]
         private ItemKey ownerKey;
+        private string vendorTitle;
+        private string vendorABN;
+        private string vendorPhoneNumber;
+        private string vendorFaxNumber;
+        private string vendorAddress;
 
         public Vendor(Core core, long vendorId)
             : base (core)

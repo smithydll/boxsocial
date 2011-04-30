@@ -106,6 +106,7 @@
     <Compile Include="Core.cs" />
     <Compile Include="Country.cs" />
     <Compile Include="CreatePermissionAttribute.cs" />
+    <Compile Include="Currency.cs" />
     <Compile Include="DateTimePicker.cs" />
     <Compile Include="DeletePermissionAttribute.cs" />
     <Compile Include="Display.cs" />

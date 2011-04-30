@@ -47,5 +47,7 @@ namespace BoxSocial.Install
         public string Domain;
         [XmlElement("root-directory")]
         public string RootDirectory;
+        [XmlArray("applications")]
+        public string[] Applications;
     }
 }

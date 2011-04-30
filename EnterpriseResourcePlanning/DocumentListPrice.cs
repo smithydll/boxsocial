@@ -31,73 +31,62 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
-
-    public enum DocumentCustomFieldTypes : byte
+    [DataTable("erp_list_prices")]
+    public class DocumentListPrice : NumberedItem
     {
-        FixedPoint = 0x01,
-        FloatingPoint = 0x02,
-        ShortText = 0x03,
-        LongText = 0x04,
-    }
+        [DataField("list_price_id", DataFieldKeys.Primary)]
+        private long listPriceId;
+        [DataField("document_id", typeof(Document))]
+        private long documentId;
+        [DataField("currency_id")]
+        private long purchaseCurrency;
+        [DataField("list_price_price")]
+        private int listPrice;
+        [DataField("list_price_quantity")]
+        private int listPriceMinimumQuantity;
+        [DataField("list_price_updated")]
+        private long listPriceUpdated;
 
-    [DataTable("erp_custom_fields")]
-    public class DocumentCustomField : NumberedItem
-    {
-        [DataField("custom_field_id", DataFieldKeys.Primary)]
-        private long customFieldId;
-        [DataField("template_id", typeof(DocumentTemplate))]
-        private long templateId;
-        [DataField("custom_field_name", 15)]
-        private string fieldName;
-        [DataField("custom_field_title", 15)]
-        private string fieldTitle;
-        [DataField("custom_field_type")]
-        private byte fieldType;
-
-        public string FieldName
+        public string GetPrice
         {
             get
             {
-                return fieldName;
+                Currency currency = new Currency(core, purchaseCurrency);
+                return currency.GetPriceString(listPrice);
             }
         }
 
-        public string FieldTitle
+        public DocumentListPrice(Core core, long listPriceId)
+            : base (core)
         {
-            get
-            {
-                return fieldTitle;
-            }
-            set
-            {
-                SetProperty("fieldTitle", value);
-            }
-        }
-
-        public DocumentCustomFieldTypes FieldType
-        {
-            get
-            {
-                return (DocumentCustomFieldTypes)fieldType;
-            }
-        }
-
-        public DocumentCustomField(Core core, DataRow customFieldRow)
-            : base(core)
-        {
-            ItemLoad += new ItemLoadHandler(DocumentCustomField_ItemLoad);
+            ItemLoad += new ItemLoadHandler(DocumentListPrice_ItemLoad);
 
             try
             {
-                loadItemInfo(customFieldRow);
+                LoadItem(listPriceId);
             }
             catch (InvalidItemException)
             {
-                throw new InvalidDocumentCustomFieldException();
+                throw new InvalidDocumentListPriceException();
             }
         }
 
-        void DocumentCustomField_ItemLoad()
+        public DocumentListPrice(Core core, DataRow listPriceDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(DocumentListPrice_ItemLoad);
+
+            try
+            {
+                loadItemInfo(listPriceDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidDocumentListPriceException();
+            }
+        }
+
+        void DocumentListPrice_ItemLoad()
         {
         }
 
@@ -105,7 +94,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return customFieldId;
+                return listPriceId;
             }
         }
 
@@ -115,7 +104,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         }
     }
 
-    public class InvalidDocumentCustomFieldException : Exception
+    public class InvalidDocumentListPriceException : Exception
     {
     }
 }

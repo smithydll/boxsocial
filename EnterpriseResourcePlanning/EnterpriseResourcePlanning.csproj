@@ -74,6 +74,7 @@
     <Compile Include="DocumentCustomFieldFloatingPointValue.cs" />
     <Compile Include="DocumentCustomFieldLongTextValue.cs" />
     <Compile Include="DocumentCustomFieldShortTextValue.cs" />
+    <Compile Include="DocumentListPrice.cs" />
     <Compile Include="DocumentProperty.cs" />
     <Compile Include="DocumentRevision.cs" />
     <Compile Include="DocumentSearchKeywords.cs" />

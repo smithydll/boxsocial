@@ -147,6 +147,9 @@
   <data name="PURCHASE_ORDER" xml:space="preserve">
     <value>Purchase Order</value>
   </data>
+  <data name="REV" xml:space="preserve">
+    <value>Rev</value>
+  </data>
   <data name="SUPPLIER" xml:space="preserve">
     <value>Supplier</value>
   </data>

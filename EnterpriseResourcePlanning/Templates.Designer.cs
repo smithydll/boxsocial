@@ -61,6 +61,24 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_erp_document_templates_add {
+            get {
+                return ResourceManager.GetString("account_erp_document_templates_add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_erp_document_templates_manage {
+            get {
+                return ResourceManager.GetString("account_erp_document_templates_manage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Enterprise Resource Planning Permissions&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
@@ -95,7 +113,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///&lt;h2&gt;{DOCUMENT_NUMBER} {L_REV} {DOCUMENT_REVISION} - {DOCUMENT_TITLE}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewdocument {
             get {

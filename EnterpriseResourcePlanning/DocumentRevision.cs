@@ -52,7 +52,9 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         [DataField("document_revision_status")]
         private byte documentRevisionStatus;
         [DataField("document_storage_path", 128)]
-        protected string storagePath;
+        private string storagePath;
+        [DataField("document_source_storage_path", 128)]
+        private string sourceStoragePath;
         [DataField("revision_created_date")]
         private long documentRevisionCreatedDate;
         [DataField("revision_released_date")]

@@ -41,10 +41,16 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     }
 
     [DataTable("erp_document_template")]
-    public class DocumentTemplate : NumberedItem
+    public class DocumentTemplate : NumberedItem, IPermissibleSubItem
     {
         [DataField("template_id", DataFieldKeys.Primary)]
         private long templateId;
+        [DataField("document_template_title", 31)]
+        private string title;
+        [DataField("document_template_description", MYSQL_TEXT)]
+        private string description;
+        [DataField("document_template_item", DataFieldKeys.Unique, "document_key")]
+        private ItemKey ownerKey;
         [DataField("document_key_prefix", 8)]
         private string documentKeyPrefix;
         [DataField("document_last_key_id")]
@@ -57,6 +63,33 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long documentCount;
         [DataField("revision_type")]
         private byte revisionType;
+
+        private Primitive owner;
+        private ErpSettings settings;
+
+        public string Title
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                SetProperty("title", value);
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                SetProperty("description", value);
+            }
+        }
 
         public string KeyPrefix
         {
@@ -106,6 +139,35 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeString != owner.Type)
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public ErpSettings Settings
+        {
+            get
+            {
+                if (settings == null || !settings.Owner.ItemKey.Equals(ownerKey))
+                {
+                    settings = new ErpSettings(core, Owner);
+                }
+                return settings;
+            }
+        }
+
         public DocumentTemplate(Core core, long templateId)
             : base (core)
         {
@@ -136,6 +198,31 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         public override string Uri
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public string EditUri
+        {
+            get
+            {
+                return core.Uri.AppendSid(Owner.AccountUriStub + "templates/edit?id=" + Id, true);
+            }
+        }
+
+        public string DeleteUri
+        {
+            get
+            {
+                return core.Uri.AppendSid(Owner.AccountUriStub + "templates/delete?id=" + Id, true);
+            }
+        }
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Settings;
+            }
         }
     }
 

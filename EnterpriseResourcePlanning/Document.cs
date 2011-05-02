@@ -253,6 +253,28 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public BillOfMaterials GetBom()
+        {
+            BillOfMaterials bom = null;
+
+            SelectQuery query = BillOfMaterials.GetSelectQueryStub(typeof(BillOfMaterials));
+            query.AddCondition("document_id", Id);
+
+            DataTable bomDataTable = db.Query(query);
+
+            if (bomDataTable.Rows.Count == 1)
+            {
+                bom = new BillOfMaterials(core, bomDataTable.Rows[0]);
+            }
+
+            if (bom != null)
+            {
+                return bom;
+            }
+
+            throw new InvalidBillOfMaterialsException();
+        }
+
         public DocumentRevision Revise(string newRevision, bool autoIncrement, int incrementClass)
         {
             ErpSettings settings = new ErpSettings(core, Owner);
@@ -299,24 +321,50 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             e.SetTemplate("viewdocument");
 
-            Document document = null;
+            string[] parts = e.Slug.Split(new char[] { '/' });
 
-            try
+            Document document = null;
+            DocumentRevision revision = null;
+
+            if (parts.Length >= 1)
             {
-                document = new Document(e.Core, e.Page.Owner, e.Slug);
+                try
+                {
+                    document = new Document(e.Core, e.Page.Owner, parts[0]);
+                }
+                catch (InvalidDocumentException)
+                {
+                    e.Core.Functions.Generate404();
+                }
             }
-            catch (InvalidDocumentException)
+            else
             {
                 e.Core.Functions.Generate404();
             }
 
+            if (parts.Length == 2)
+            {
+                try
+                {
+                    revision = new DocumentRevision(e.Core, document.Id, parts[1]);
+                }
+                catch (InvalidDocumentRevisionException)
+                {
+                    e.Core.Functions.Generate404();
+                }
+            }
+            else
+            {
+                revision = document.Revision;
+            }
+
             e.Template.Parse("DOCUMENT_KEY", document.DocumentKey);
-            e.Template.Parse("DOCUMENT_REVISION", document.DocumentRevision);
+            e.Template.Parse("DOCUMENT_REVISION", revision.Revision);
             e.Template.Parse("DOCUMENT_TITLE", document.DocumentTitle);
             e.Template.Parse("DOCUMENT_CREATED", e.Core.Tz.DateTimeToString(document.GetCreatedDate(e.Core.Tz)));
             e.Template.Parse("DOCUMENT_RELEASED", e.Core.Tz.DateTimeToString(document.GetReleasedDate(e.Core.Tz)));
-            e.Template.Parse("PROJECT_KEY", document.project.ProjectKey);
-            e.Template.Parse("U_PROJECT", document.project.Uri);
+            e.Template.Parse("PROJECT_KEY", document.Project.ProjectKey);
+            e.Template.Parse("U_PROJECT", document.Project.Uri);
         }
 
 

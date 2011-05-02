@@ -75,6 +75,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         }
 
         public BillOfMaterials(Core core, DataRow bomDataRow)
+            : this(core, bomDataRow, false)
+        {
+        }
+
+        private BillOfMaterials(Core core, DataRow bomDataRow, bool containsDocument)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(BillOfMaterials_ItemLoad);
@@ -86,6 +91,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             catch (InvalidItemException)
             {
                 throw new InvalidBillOfMaterialsException();
+            }
+
+            if (containsDocument)
+            {
+                document = new Document(core, bomDataRow);
             }
         }
 
@@ -108,6 +118,25 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                 return core.Uri.AppendSid(string.Format("{0}bom/{1}",
                         BomDocument.Owner.UriStub, BomDocument.DocumentKey));
             }
+        }
+
+        public List<BillOfMaterials> GetBom()
+        {
+            List<BillOfMaterials> bom = new List<BillOfMaterials>();
+
+            SelectQuery query = BillOfMaterials.GetSelectQueryStub(typeof(BillOfMaterials));
+            query.AddFields(Document.GetFieldsPrefixed(typeof(Document)));
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(Document), "document_id"), new DataField(typeof(BillOfMaterials), "document_id"));
+            query.AddCondition("bom_parent_id", Id);
+
+            DataTable bomDataTable = db.Query(query);
+
+            if (bomDataTable.Rows.Count == 1)
+            {
+                bom.Add(new BillOfMaterials(core, bomDataTable.Rows[0], true));
+            }
+
+            return bom;
         }
     }
 

@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountEnterpriseResourcePlanning.cs" />
+    <Compile Include="AccountEnterpriseResourcePlanningDocumentTemplates.cs" />
     <Compile Include="AccountEnterpriseResourcePlanningPermissions.cs" />
     <Compile Include="AccountEnterpriseResourcePlanningSettings.cs" />
     <Compile Include="AppInfo.cs" />
@@ -112,6 +113,8 @@
     <Content Include="resources\enterpriseresourceplanning.svg" />
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_erp_document_templates_add.html" />
+    <Content Include="templates\account_erp_document_templates_manage.html" />
     <Content Include="templates\account_erp_permissions.html" />
     <Content Include="templates\account_erp_settings.html" />
     <Content Include="templates\viewdocument.html" />

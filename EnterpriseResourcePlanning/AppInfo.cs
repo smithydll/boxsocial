@@ -151,5 +151,24 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         void core_PageHooks(HookEventArgs e)
         {
         }
+
+        [Show(@"document/([a-zA-Z0-9\-\_\.\# ]+)", AppPrimitives.Group)]
+        private void showDocument(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Document.Show(sender, new ShowPPageEventArgs(page, core.PagePathParts[1].Value));
+            }
+        }
+        [Show(@"document/([a-zA-Z0-9\-\_\.\# ]+)/([a-zA-Z0-9\-\_\.\# ]+)", AppPrimitives.Group)]
+        private void showDocumentAtRevision(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Document.Show(sender, new ShowPPageEventArgs(page, core.PagePathParts[1].Value + "/" + core.PagePathParts[2].Value));
+            }
+        }
     }
 }

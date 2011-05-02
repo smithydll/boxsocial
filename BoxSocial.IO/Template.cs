@@ -358,6 +358,11 @@ namespace BoxSocial.IO
             variables.Parse(key, value);
         }
 
+        public void Parse(string key, object value)
+        {
+            variables.Parse(key, value.ToString());
+        }
+
         public void Parse(string key, FormField formField)
         {
             if (formField.GetType().Assembly.GetName().Name == "BoxSocial.Forms" ||

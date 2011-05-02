@@ -31,6 +31,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
 {
     [DataTable("erp_settings")]
     [Permission("VIEW_DOCUMENTS", "Can view documents", PermissionTypes.View)]
+    [Permission("VIEW_DOCUMENT_SOURCE", "Can view document source", PermissionTypes.View)]
+    [Permission("VIEW_SUPERSEDED_DOCUMENT_SOURCE", "Can view superseded document source", PermissionTypes.View)]
     [Permission("VIEW_SUPPLIERS", "Can view suppliers", PermissionTypes.View)]
     [Permission("VIEW_PURCHASES", "Can view purchases", PermissionTypes.View)]
     [Permission("CREATE_DOCUMENTS", "Can create documents", PermissionTypes.CreateAndEdit)]

@@ -32,6 +32,13 @@ using BoxSocial.Forms;
 
 namespace BoxSocial.IO
 {
+    public enum DisplayMedium
+    {
+        Desktop,
+        Mobile,
+        Tablet,
+    }
+
     public struct TemplateVariable
     {
         public string Name;
@@ -273,6 +280,8 @@ namespace BoxSocial.IO
         
         private static Object pathLock = new object();
         private static string templatePath = null;
+
+        private DisplayMedium medium;
         
         public static string Path
         {
@@ -289,6 +298,18 @@ namespace BoxSocial.IO
             get
             {
                 return templatePath;
+            }
+        }
+
+        public DisplayMedium Medium
+        {
+            get
+            {
+                return medium;
+            }
+            set
+            {
+                medium = value;
             }
         }
 
@@ -456,7 +477,31 @@ namespace BoxSocial.IO
             }
             else
             {
-                template = Template.OpenTextFile(System.IO.Path.Combine(path, templateName));
+                string templatePath = System.IO.Path.Combine(path, templateName);
+
+                switch (Medium)
+                {
+                    case DisplayMedium.Mobile:
+                        string mobileTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "mobile"), templateName);
+                        if (File.Exists(mobileTemplatePath))
+                        {
+                            templatePath = mobileTemplatePath;
+                        }
+                        break;
+                    case DisplayMedium.Tablet:
+                        string tabletTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "tablet"), templateName);
+                        if (File.Exists(tabletTemplatePath))
+                        {
+                            templatePath = tabletTemplatePath;
+                        }
+                        break;
+                    case DisplayMedium.Desktop:
+                    default:
+                        // default is defined as fallback
+                        break;
+                }
+
+                template = Template.OpenTextFile(templatePath);
                 if (template == null)
                 {
                     template = string.Format("Could not load template {0}",

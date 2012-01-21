@@ -1,6 +1,10 @@
 <!-- INCLUDE page_header.html -->
 
-<h2>{ACCOUNT_TITLE}</h2>
+<h2>{ACCOUNT_TITLE}
+<!-- IF PRIMITIVE_TITLE -->
+:: <a href="{U_PRIMITIVE}">{PRIMITIVE_TITLE}</a>
+<!-- ENDIF -->
+</h2>
 <!-- IF ERROR -->
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->

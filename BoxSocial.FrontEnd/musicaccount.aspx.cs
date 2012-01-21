@@ -157,7 +157,9 @@ namespace BoxSocial.FrontEnd
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this musician.");
             }
 
-            template.Parse("ACCOUNT_TITLE", "Musician Control Panel :: " + Musician.DisplayName);
+            template.Parse("ACCOUNT_TITLE", "Musician Control Panel");
+            template.Parse("PRIMITIVE_TITLE", Musician.DisplayName);
+            template.Parse("U_PRIMITIVE", Musician.Uri);
 
             Account accountObject = new Account(Core);
             loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, Musician), module);

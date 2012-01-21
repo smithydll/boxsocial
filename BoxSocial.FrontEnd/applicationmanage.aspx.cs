@@ -159,7 +159,9 @@ namespace BoxSocial.FrontEnd
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this application.");
             }
 
-            template.Parse("ACCOUNT_TITLE", "Application Control Panel :: " + AnApplication.DisplayName);
+            template.Parse("ACCOUNT_TITLE", "Application Control Panel");
+            template.Parse("PRIMITIVE_TITLE", AnApplication.DisplayName);
+            template.Parse("U_PRIMITIVE", AnApplication.Uri);
 
             Account accountObject = new Account(Core);
             loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, AnApplication), module);

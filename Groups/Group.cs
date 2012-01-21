@@ -1564,7 +1564,7 @@ namespace BoxSocial.Groups
 
         internal static void ShowRegister(object sender, ShowPageEventArgs e)
         {
-            e.Template.SetTemplate("creategroup.html");
+            e.Template.SetTemplate("Groups", "creategroup.html");
 
             if (e.Core.Session.IsLoggedIn == false)
             {

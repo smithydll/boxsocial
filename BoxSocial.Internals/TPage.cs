@@ -252,6 +252,7 @@ namespace BoxSocial.Internals
             if ((b.IsMatch(u) || v.IsMatch(u.Substring(0, 4))))
             {
                 template.Medium = DisplayMedium.Mobile;
+                template.Parse("IS_MOBILE", "TRUE");
             }
 
             core = new Core(db, template);

@@ -49,6 +49,8 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private ItemKey ownerKey;
         [DataField("document_revision", DataFieldKeys.Unique, "u_document_id", 10)]
         private string documentRevision;
+        [DataField("revision_sequence")]
+        private int revisionSequence;
         [DataField("document_revision_status")]
         private byte documentRevisionStatus;
         [DataField("document_storage_path", 128)]
@@ -74,6 +76,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             get
             {
                 return documentRevision;
+            }
+        }
+
+        public int Sequence
+        {
+            get
+            {
+                return revisionSequence;
             }
         }
 

@@ -161,6 +161,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                 Document.Show(sender, new ShowPPageEventArgs(page, core.PagePathParts[1].Value));
             }
         }
+
         [Show(@"document/([a-zA-Z0-9\-\_\.\# ]+)/([a-zA-Z0-9\-\_\.\# ]+)", AppPrimitives.Group)]
         private void showDocumentAtRevision(Core core, object sender)
         {
@@ -168,6 +169,16 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             {
                 PPage page = (PPage)sender;
                 Document.Show(sender, new ShowPPageEventArgs(page, core.PagePathParts[1].Value + "/" + core.PagePathParts[2].Value));
+            }
+        }
+
+        [Show(@"vendor/(\d+)", AppPrimitives.Group)]
+        private void showVendor(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Vendor.Show(sender, new ShowPPageEventArgs(page, long.Parse(core.PagePathParts[1].Value)));
             }
         }
     }

@@ -409,7 +409,7 @@ namespace BoxSocial.Internals
                     if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
                     {
                         // We will write it out as a comment to preserve html validation
-                        HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds -- {1} queries in {2} seconds -- template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                     }
                     //HttpContext.Current.Response.Write(db.QueryList.ToString());
                 }

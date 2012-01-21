@@ -396,7 +396,8 @@ namespace BoxSocial.Internals
                 {
                     if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
                     {
-                        //HttpContext.Current.Response.Write(string.Format("<p style=\"background-color: white; color: black;\">{0} seconds &bull; {1} queries in {2} seconds &bull; template in {3} seconds</p>", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
+                        // We will write it out as a comment to preserve html validation
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds -- {1} queries in {2} seconds -- template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                     }
                     //HttpContext.Current.Response.Write(db.QueryList.ToString());
                 }

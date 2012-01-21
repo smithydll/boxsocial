@@ -569,6 +569,15 @@ namespace BoxSocial.Internals
 
             if (record == null)
             {
+                // 1 in 100 chance of deleting stale sessions
+                // Move delete stale session code outside to allow guest sessions to clear stale sessions on low use websites
+                Random rand = new Random();
+                if (rand.NextDouble() * 100 < 1)
+                {
+                    db.UpdateQuery(string.Format("DELETE FROM user_sessions WHERE session_time_ut + {0} < UNIX_TIMESTAMP()",
+                        SessionState.SESSION_EXPIRES));
+                }
+
                 if (userId != 0)
                 {
                     TimeSpan ts = DateTime.Now - loggedInMember.Info.LastOnlineTime;
@@ -577,20 +586,10 @@ namespace BoxSocial.Internals
                     {
                         db.UpdateQuery(string.Format("UPDATE user_info SET user_last_visit_ut = UNIX_TIMESTAMP() where user_id = {0}",
                             loggedInMember.UserId));
-
-                        Random rand = new Random();
-
-                        // 1 in 10 chance of deleting stale sessions
-                        if (rand.NextDouble() * 10 < 1)
-                        {
-                            db.UpdateQuery(string.Format("DELETE FROM user_sessions WHERE session_time_ut + {0} < UNIX_TIMESTAMP()",
-                                SessionState.SESSION_EXPIRES));
-                        }
                     }
 
                     if (enableAutologin)
                     {
-                        Random rand = new Random();
                         string autoLoginKey = SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed").Substring(4, 16) + SessionState.SessionMd5(rand.NextDouble().ToString() + "zzseed").Substring(4, 16);
 
                         if (!string.IsNullOrEmpty(sessionData.autoLoginId))

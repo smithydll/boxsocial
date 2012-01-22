@@ -317,11 +317,23 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public static void ShowList(object sender, ShowPPageEventArgs e)
+        {
+            e.SetTemplate("viewdocuments");
+        }
+
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.SetTemplate("viewdocument");
 
             string[] parts = e.Slug.Split(new char[] { '/' });
+
+            ErpSettings settings = new ErpSettings(e.Core, e.Page.Owner);
+
+            if (!settings.Access.Can("VIEW_DOCUMENTS"))
+            {
+                e.Core.Functions.Generate403();
+            }
 
             Document document = null;
             DocumentRevision revision = null;
@@ -359,12 +371,27 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
 
             e.Template.Parse("DOCUMENT_KEY", document.DocumentKey);
-            e.Template.Parse("DOCUMENT_REVISION", revision.Revision);
             e.Template.Parse("DOCUMENT_TITLE", document.DocumentTitle);
             e.Template.Parse("DOCUMENT_CREATED", e.Core.Tz.DateTimeToString(document.GetCreatedDate(e.Core.Tz)));
             e.Template.Parse("DOCUMENT_RELEASED", e.Core.Tz.DateTimeToString(document.GetReleasedDate(e.Core.Tz)));
             e.Template.Parse("PROJECT_KEY", document.Project.ProjectKey);
             e.Template.Parse("U_PROJECT", document.Project.Uri);
+
+            if (revision != null)
+            {
+                e.Template.Parse("DOCUMENT_REVISION", revision.Revision);
+            }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "*documents", "Documents" });
+            breadCrumbParts.Add(new string[] { "document", document.DocumentTitle });
+
+            if (revision != null)
+            {
+                breadCrumbParts.Add(new string[] { revision.Revision, revision.Revision });
+            }
+
+            e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }
 
 

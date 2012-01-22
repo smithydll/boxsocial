@@ -191,6 +191,13 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             e.SetTemplate("viewvendor");
 
+            ErpSettings settings = new ErpSettings(e.Core, e.Page.Owner);
+
+            if (!settings.Access.Can("VIEW_VENDORS"))
+            {
+                e.Core.Functions.Generate403();
+            }
+
             Vendor vendor = null;
             try
             {

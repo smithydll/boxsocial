@@ -33,10 +33,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
     [Permission("VIEW_DOCUMENTS", "Can view documents", PermissionTypes.View)]
     [Permission("VIEW_DOCUMENT_SOURCE", "Can view document source", PermissionTypes.View)]
     [Permission("VIEW_SUPERSEDED_DOCUMENT_SOURCE", "Can view superseded document source", PermissionTypes.View)]
-    [Permission("VIEW_SUPPLIERS", "Can view suppliers", PermissionTypes.View)]
+    [Permission("VIEW_VENDORS", "Can view suppliers", PermissionTypes.View)]
     [Permission("VIEW_PURCHASES", "Can view purchases", PermissionTypes.View)]
     [Permission("CREATE_DOCUMENTS", "Can create documents", PermissionTypes.CreateAndEdit)]
-    [Permission("CREATE_SUPPLIERS", "Can create suppliers", PermissionTypes.CreateAndEdit)]
+    [Permission("CREATE_VENDORS", "Can create suppliers", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_PURCHASES", "Can create purchases", PermissionTypes.CreateAndEdit)]
     [Permission("REVISE_DOCUMENTS", "Can revise documents", PermissionTypes.CreateAndEdit)]
     public class ErpSettings : NumberedItem, IPermissibleItem
@@ -49,6 +49,12 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         private long projects;
         [DataField("erp_documents")]
         private long documents;
+        [DataField("erp_document_templates")]
+        private long documentTemplates;
+        [DataField("erp_vendors")]
+        private long vendors;
+        [DataField("erp_purchase_orders")]
+        private long purchaseOrders;
 
         private Primitive owner;
         private Access access;
@@ -66,6 +72,30 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             get
             {
                 return documents;
+            }
+        }
+
+        public long DocumentTemplates
+        {
+            get
+            {
+                return documentTemplates;
+            }
+        }
+
+        public long Vendors
+        {
+            get
+            {
+                return vendors;
+            }
+        }
+
+        public long PurchaseOrders
+        {
+            get
+            {
+                return purchaseOrders;
             }
         }
 

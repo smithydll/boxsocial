@@ -153,12 +153,22 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         }
 
         [Show(@"project/([a-zA-Z0-9\-\_\.\# ]+)", AppPrimitives.Group)]
-        private void showDocument(Core core, object sender)
+        private void showProject(Core core, object sender)
         {
             if (sender is PPage)
             {
                 PPage page = (PPage)sender;
                 Project.Show(sender, new ShowPPageEventArgs(page, core.PagePathParts[1].Value));
+            }
+        }
+
+        [Show(@"documents", AppPrimitives.Group)]
+        private void showDocuments(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Document.ShowList(sender, new ShowPPageEventArgs(page));
             }
         }
 

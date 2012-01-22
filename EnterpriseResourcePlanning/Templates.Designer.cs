@@ -132,6 +132,19 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        internal static string viewdocuments {
+            get {
+                return ResourceManager.GetString("viewdocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///&lt;h2&gt;{PROJECT_TITLE}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
+        /// </summary>
         internal static string viewproject {
             get {
                 return ResourceManager.GetString("viewproject", resourceCulture);

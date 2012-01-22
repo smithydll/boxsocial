@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
-        public string DocumentRevision
+        public string RevisionString
         {
             get
             {
@@ -157,9 +157,9 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                if (revision == null || revision.DocumentId != Id || revision.Revision != DocumentRevision)
+                if (revision == null || revision.DocumentId != Id || revision.Revision != RevisionString)
                 {
-                    revision = new DocumentRevision(core, Id, DocumentRevision);
+                    revision = new DocumentRevision(core, Id, RevisionString);
                 }
                 return revision;
             }
@@ -275,6 +275,23 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             throw new InvalidBillOfMaterialsException();
         }
 
+        public List<DocumentRevision> GetRevisions()
+        {
+            List<DocumentRevision> revisions = new List<DocumentRevision>();
+
+            SelectQuery query = DocumentRevision.GetSelectQueryStub(typeof(DocumentRevision));
+            query.AddCondition("document_id", Id);
+
+            DataTable revisionsDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in revisionsDataTable.Rows)
+            {
+                revisions.Add(new DocumentRevision(core, dr));
+            }
+
+            return revisions;
+        }
+
         public DocumentRevision Revise(string newRevision, bool autoIncrement, int incrementClass)
         {
             ErpSettings settings = new ErpSettings(core, Owner);
@@ -286,27 +303,33 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
                     switch (Template.RevisionType)
                     {
                         case RevisionTypes.Alphabetical:
-                            if (DocumentRevision == "Z")
+                            if (RevisionString == "Z")
                             {
                                 newRevision = "AB";
                             }
                             else
                             {
-                                if (DocumentRevision.Length > 1)
+                                if (RevisionString.Length > 1)
                                 {
-                                    newRevision = DocumentRevision.Substring(0, DocumentRevision.Length - 1) + (DocumentRevision[DocumentRevision.Length - 1] + 1).ToString();
+                                    newRevision = RevisionString.Substring(0, RevisionString.Length - 1) + (RevisionString[RevisionString.Length - 1] + 1).ToString();
                                 }
                                 else
                                 {
-                                    newRevision = (DocumentRevision[0] + 1).ToString();
+                                    newRevision = (RevisionString[0] + 1).ToString();
                                 }
                             }
+                            break;
+                        case RevisionTypes.Numerical:
+                            int revisionInt;
+                            int.TryParse(RevisionString, out revisionInt);
+                            revisionInt++;
+                            newRevision = revisionInt.ToString();
                             break;
                     }
                 }
 
                 DocumentRevision newDocumentRevision = EnterpriseResourcePlanning.DocumentRevision.Create(core, this, newRevision, DocumentStatus.Unreleased);
-                this.DocumentRevision = newDocumentRevision.Revision;
+                this.RevisionString = newDocumentRevision.Revision;
                 this.Update();
 
                 return newDocumentRevision;
@@ -320,6 +343,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         public static void ShowList(object sender, ShowPPageEventArgs e)
         {
             e.SetTemplate("viewdocuments");
+
+            ErpSettings settings = new ErpSettings(e.Core, e.Page.Owner);
+
+            if (!settings.Access.Can("VIEW_DOCUMENTS"))
+            {
+                e.Core.Functions.Generate403();
+            }
+
         }
 
         public static void Show(object sender, ShowPPageEventArgs e)

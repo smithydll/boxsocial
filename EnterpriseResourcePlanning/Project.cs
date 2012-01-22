@@ -47,6 +47,18 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
 
         private Primitive owner;
 
+        public string Title
+        {
+            get
+            {
+                return projectTitle;
+            }
+            set
+            {
+                SetProperty("projectTitle", value);
+            }
+        }
+
         public string ProjectKey
         {
             get
@@ -138,8 +150,22 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
-        public void Show(object sender, ShowPPageEventArgs e)
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
+            e.SetTemplate("viewproject");
+
+            Project project = null;
+
+            try
+            {
+                project = new Project(e.Core, e.Page.Owner, e.Slug);
+            }
+            catch (InvalidProjectException)
+            {
+                e.Core.Functions.Generate404();
+            }
+
+            e.Template.Parse("PROJECT_TITLE", project.Title);
         }
     }
 

@@ -117,6 +117,10 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
         ///&lt;h2&gt;{DOCUMENT_NUMBER} {L_REV} {DOCUMENT_REVISION} - {DOCUMENT_TITLE}&lt;/h2&gt;
         ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///
+        ///&lt;!-- BEGIN revision_list --&gt;
+        ///
+        ///&lt;!-- END revision_list --&gt;
+        ///
         ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewdocument {
@@ -127,6 +131,19 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning {
         
         /// <summary>
         ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string viewproject {
+            get {
+                return ResourceManager.GetString("viewproject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
+        ///&lt;h2&gt;{VENDOR_TITLE}&lt;/h2&gt;
+        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE page_footer.html --&gt;.
         /// </summary>
         internal static string viewvendor {
             get {

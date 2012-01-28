@@ -341,6 +341,8 @@ namespace BoxSocial.Internals
             {
                 Form.IsFormSubmission = true;
             }
+
+            core.Template.Parse("IS_CONTENT", "FALSE");
         }
 
         /// <summary>

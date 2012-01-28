@@ -565,6 +565,7 @@ namespace BoxSocial.Internals
         {
             core.Http.StatusCode = 404;
             core.Template.SetTemplate("404.html");
+            core.Template.Parse("IS_CONTENT", "FALSE");
             core.EndResponse();
         }
 
@@ -578,6 +579,7 @@ namespace BoxSocial.Internals
             {
                 core.Http.StatusCode = 404;
                 core.Template.Parse("IS_404", "TRUE");
+                core.Template.Parse("IS_CONTENT", "FALSE");
             }
         }
 
@@ -585,6 +587,7 @@ namespace BoxSocial.Internals
         {
             core.Http.StatusCode = 403;
             core.Template.SetTemplate("403.html");
+            core.Template.Parse("IS_CONTENT", "FALSE");
             core.EndResponse();
         }
 

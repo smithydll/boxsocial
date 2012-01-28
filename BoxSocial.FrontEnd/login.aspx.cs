@@ -42,6 +42,8 @@ namespace BoxSocial.FrontEnd
             string domain = (Request.Form["domain"] != null) ? Request.Form["domain"] : Request.QueryString["domain"];
             DnsRecord record = null;
 
+            template.Parse("IS_CONTENT", "FALSE");
+
             if (!string.IsNullOrEmpty(domain))
             {
                 try

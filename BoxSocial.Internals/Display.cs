@@ -268,6 +268,7 @@ namespace BoxSocial.Internals
         public void ShowMessage(string title, string message, ShowMessageOptions options)
         {
             core.Template.SetTemplate("std.message.html");
+            core.Template.Parse("IS_CONTENT", "FALSE");
             core.Template.Parse("MESSAGE_TITLE", title);
             switch (options)
             {
@@ -316,6 +317,7 @@ namespace BoxSocial.Internals
             }
 
             page.template.SetTemplate("std.confirm.html");
+            page.template.Parse("IS_CONTENT", "FALSE");
 
             page.template.Parse("S_FORM_ACTION", formAction);
             page.template.Parse("CONFIRM_TITLE", title);
@@ -677,6 +679,8 @@ namespace BoxSocial.Internals
                     template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
                 }
             }
+
+            template.Parse("IS_CONTENT", "TRUE");
         }
 
         public void ParsePageList(Primitive owner, bool fragment)

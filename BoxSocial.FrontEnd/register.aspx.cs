@@ -59,6 +59,8 @@ namespace BoxSocial.FrontEnd
                 // redirect to the homepage if we are already logged in
                 Response.Redirect("/");
             }
+
+            template.Parse("IS_CONTENT", "FALSE");
             
             string mode = Request.QueryString["mode"];
 

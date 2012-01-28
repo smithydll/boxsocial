@@ -304,7 +304,7 @@ namespace BoxSocial.Internals
                 {
                     if ((field.Key & DataFieldKeys.Unique) != DataFieldKeys.Unique)
                     {
-                        throw new FieldNotUniqueIndexException();
+                        throw new FieldNotUniqueIndexException(field.Name);
                     }
                 }
 

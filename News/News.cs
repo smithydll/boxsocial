@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.News
 	{
         [DataField("news_id", DataFieldKeys.Primary)]
         private long newsId;
-        [DataField("news_item", DataFieldKeys.Index)]
+        [DataField("news_item", DataFieldKeys.Unique)]
         private ItemKey ownerKey;
         [DataField("news_title", 127)]
         private string newsTitle;

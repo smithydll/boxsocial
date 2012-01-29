@@ -62,6 +62,9 @@ namespace BoxSocial.Applications.News
 
         void AccountNewsIconManage_Load(object sender, EventArgs e)
         {
+            AddModeHandler("edit", AccountNewsIconManage_Edit);
+            AddSaveHandler("edit", AccountNewsIconManage_Save);
+            AddModeHandler("delete", AccountNewsIconManage_Delete);
         }
 
         void AccountNewsIconManage_Show(object sender, EventArgs e)
@@ -84,6 +87,50 @@ namespace BoxSocial.Applications.News
                 articlesVariableCollection.Parse("U_DELETE", BuildUri("icon", "delete", icon.Id));
 
             }
+        }
+
+        void AccountNewsIconManage_Edit(object sender, EventArgs e)
+        {
+            long iconId = 0;
+            bool edit = false;
+            try
+            {
+                iconId = long.Parse(core.Http.Query["id"]);
+            }
+            catch
+            {
+                core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                return;
+            }
+
+            SetTemplate("account_news_icon_edit");
+
+            News news = new News(core, Owner);
+            NewsIcon icon = null;
+
+            if (iconId > 0)
+            {
+                edit = true;
+                try
+                {
+                    icon = new NewsIcon(core, iconId);
+                }
+                catch (InvalidNewsIconException)
+                {
+                    core.Display.ShowMessage("Invalid", "If you have stumbled onto this page by mistake, click back in your browser.");
+                }
+
+
+                template.Parse("ICON_TITLE", icon.Title);
+            }
+        }
+
+        void AccountNewsIconManage_Save(object sender, EventArgs e)
+        {
+        }
+
+        void AccountNewsIconManage_Delete(object sender, EventArgs e)
+        {
         }
     }
 }

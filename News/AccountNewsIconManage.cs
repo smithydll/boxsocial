@@ -30,7 +30,7 @@ using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.News
 {
-    [AccountSubModule(AppPrimitives.Group, "news", "icon", true)]
+    [AccountSubModule(AppPrimitives.Group, "news", "icon")]
     public class AccountNewsIconManage : AccountSubModule
     {
         public override string Title
@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return 2;
+                return 3;
             }
         }
 

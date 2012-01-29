@@ -47,5 +47,26 @@ namespace BoxSocial.Applications.Forum
         {
             get;
         }
+
+        /// <summary>
+        /// Creates an isolated template class for the module to render
+        /// inside.
+        /// </summary>
+        public new void CreateTemplate()
+        {
+            template = new Template(core.Http.TemplatePath, "1301.html");
+            template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
+            if (assembly != null)
+            {
+                template.AddPageAssembly(assembly);
+                template.SetProse(core.Prose);
+            }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+            breadCrumbParts.Add(new string[] { "mcp", "Moderator Control Panel" });
+
+            Owner.ParseBreadCrumbs(core.Template, "BREADCRUMBS", breadCrumbParts);
+        }
     }
 }

@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (module == accountModule.Key)
                 {
-                    accountModule.SetOwner = core.Session.LoggedInMember;
+                    accountModule.SetOwner = page.Owner;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
                     try

@@ -121,6 +121,8 @@ namespace BoxSocial.Internals
                 template.AddPageAssembly(assembly);
                 template.SetProse(core.Prose);
             }
+
+            core.Template.Parse("IS_CONTENT", "FALSE");
         }
 
         /// <summary>

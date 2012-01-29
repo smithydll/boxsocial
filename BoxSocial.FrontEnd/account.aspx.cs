@@ -176,6 +176,11 @@ namespace BoxSocial.FrontEnd
 
             template.Parse("ACCOUNT_TITLE", "My Account");
 
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "account", "My Account" });
+
+            core.Display.ParseBreadCrumbs(breadCrumbParts);
+
             /*if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {
                 template.ParseRaw("NO_PERMISSIONS", "You have not set any view permissions for your profile. No-one will be able to see your profile until you give they access. You can set access permissions from the <a href=\"/account/profile/permissions\">Profile Permissions</a> panel.");

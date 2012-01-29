@@ -260,6 +260,44 @@ namespace BoxSocial.Internals
             return pagination.ToString();
         }
 
+        public void ParseBreadCrumbs(List<string[]> parts)
+        {
+            ParseBreadCrumbs("BREADCRUMBS", parts);
+        }
+
+        public void ParseBreadCrumbs(string templateVar, List<string[]> parts)
+        {
+            ParseBreadCrumbs(core.Template, templateVar, parts);
+        }
+
+        public void ParseBreadCrumbs(Template template, string templateVar, List<string[]> parts)
+        {
+            template.ParseRaw(templateVar, GenerateBreadCrumbs(parts));
+        }
+
+        public string GenerateBreadCrumbs(List<string[]> parts)
+        {
+            string output = "";
+            string path = "/";
+            output = string.Format("<a href=\"{1}\">{0}</a>",
+                    "Zinzam.com", path);
+
+            for (int i = 0; i < parts.Count; i++)
+            {
+                if (parts[i][0] != "")
+                {
+                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
+                    if (!parts[i][0].StartsWith("*"))
+                    {
+                        path += parts[i][0] + "/";
+                    }
+                }
+            }
+
+            return output;
+        }
+
         public void ShowMessage(string title, string message)
         {
             ShowMessage(title, message, ShowMessageOptions.Unprocessed);

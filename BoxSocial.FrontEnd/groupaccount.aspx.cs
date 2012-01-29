@@ -161,6 +161,13 @@ namespace BoxSocial.FrontEnd
             template.Parse("PRIMITIVE_TITLE", Group.DisplayName);
             template.Parse("U_PRIMITIVE", Group.Uri);
 
+            template.Parse("IS_CONTENT", "FALSE");
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "account", "Group Control Panel" });
+
+            Owner.ParseBreadCrumbs(breadCrumbParts);
+
             Account accountObject = new Account(Core);
             loadModules(accountObject, BoxSocial.Internals.Application.GetModuleApplications(core, Group), module);
 

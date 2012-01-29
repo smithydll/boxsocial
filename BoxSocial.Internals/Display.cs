@@ -48,6 +48,13 @@ namespace BoxSocial.Internals
         Stripped,
     }
 
+    public enum PaginationOptions
+    {
+        Normal = 0x01,
+        Blog = 0x02,
+        Minimal = 0x04,
+    }
+
     public class Display
     {
         internal TPage page;
@@ -70,9 +77,9 @@ namespace BoxSocial.Internals
             ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages);
         }
 
-        public void ParsePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(string baseUri, int currentPage, int maxPages, PaginationOptions options)
         {
-            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages, isBlog);
+            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages, options);
         }
 
         public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
@@ -80,9 +87,9 @@ namespace BoxSocial.Internals
             ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages);
         }
 
-        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
         {
-            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages, isBlog);
+            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages, options);
         }
 
         public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
@@ -90,14 +97,24 @@ namespace BoxSocial.Internals
             template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
         }
 
-        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, bool isBlog)
+        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
         {
-            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, isBlog));
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, options));
+        }
+
+        public void ParsePagination(VariableCollection template, string templateVar, string baseUri, int currentPage, int maxPages)
+        {
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
+        }
+
+        public void ParsePagination(VariableCollection template, string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
+        {
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, options));
         }
 
         public string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
-            return GeneratePagination(baseUri, currentPage, maxPages, false);
+            return GeneratePagination(baseUri, currentPage, maxPages, PaginationOptions.Normal);
         }
 
         /// <summary>
@@ -107,14 +124,14 @@ namespace BoxSocial.Internals
         /// <param name="currentPage"></param>
         /// <param name="maxPages"></param>
         /// <returns></returns>
-        public string GeneratePagination(string baseUri, int currentPage, int maxPages, bool isBlog)
+        public string GeneratePagination(string baseUri, int currentPage, int maxPages, PaginationOptions options)
         {
             StringBuilder pagination = new StringBuilder();
             bool comma = false;
 			bool skipped = false;
             bool baseAmp = baseUri.Contains("?");
 
-            if (isBlog)
+            if ((options & PaginationOptions.Blog) == PaginationOptions.Blog)
             {
                 if (currentPage > 2)
                 {
@@ -151,25 +168,35 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (currentPage > 2)
+
+                if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
                 {
-                    if (baseAmp)
+                    if (currentPage > 2)
                     {
-                        pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Prev</a>",
-                            HttpUtility.HtmlEncode(baseUri + "&"), currentPage - 1));
+                        if (baseAmp)
+                        {
+                            pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Prev</a>",
+                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage - 1));
+                        }
+                        else
+                        {
+                            pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Prev</a>",
+                                HttpUtility.HtmlEncode(baseUri), currentPage - 1));
+                        }
+                        comma = true;
                     }
-                    else
+                    else if (currentPage > 1)
                     {
-                        pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Prev</a>",
-                            HttpUtility.HtmlEncode(baseUri), currentPage - 1));
+                        pagination.Append(string.Format("<a href=\"{0}\">&laquo; Prev</a>",
+                            HttpUtility.HtmlEncode(baseUri)));
+                        comma = true;
                     }
-                    comma = true;
                 }
-                else if (currentPage > 1)
+
+                int firstCount = 3;
+                if ((options & PaginationOptions.Minimal) == PaginationOptions.Minimal)
                 {
-                    pagination.Append(string.Format("<a href=\"{0}\">&laquo; Prev</a>",
-                        HttpUtility.HtmlEncode(baseUri)));
-                    comma = true;
+                    firstCount = 1;
                 }
 
                 for (int i = 1; i <= maxPages; i++)
@@ -192,7 +219,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-							if ((i > 3 && i < currentPage - 2) || (i < maxPages - 2 && i > currentPage + 2))
+                            if ((i > firstCount && i < currentPage - (firstCount - 1)) || (i < maxPages - 2 && i > currentPage + 2))
 							{
 								skipped = true;
 								continue;
@@ -241,18 +268,21 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                if (currentPage < maxPages)
+                if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
                 {
-                    pagination.Append(", ");
-                    if (baseAmp)
+                    if (currentPage < maxPages)
                     {
-                        pagination.Append(string.Format("<a href=\"{0}p={1}\">Next &raquo;</a>",
-                            HttpUtility.HtmlEncode(baseUri + "&"), currentPage + 1));
-                    }
-                    else
-                    {
-                        pagination.Append(string.Format("<a href=\"{0}?p={1}\">Next &raquo;</a>",
-                            HttpUtility.HtmlEncode(baseUri), currentPage + 1));
+                        pagination.Append(", ");
+                        if (baseAmp)
+                        {
+                            pagination.Append(string.Format("<a href=\"{0}p={1}\">Next &raquo;</a>",
+                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage + 1));
+                        }
+                        else
+                        {
+                            pagination.Append(string.Format("<a href=\"{0}?p={1}\">Next &raquo;</a>",
+                                HttpUtility.HtmlEncode(baseUri), currentPage + 1));
+                        }
                     }
                 }
             }

@@ -974,7 +974,7 @@ namespace BoxSocial.Applications.Forum
                         postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(postersList[post.UserId].Info.GetRegistrationDate(core.Tz)));
                         postVariableCollection.Parse("USER_COUNTRY", postersList[post.UserId].Profile.Country);
                         postVariableCollection.Parse("USER_POSTS", postersList[post.UserId].ForumPosts.ToString());
-                        postVariableCollection.Parse("SIGNATURE", postersList[post.UserId].ForumSignature);
+                        core.Display.ParseBbcode(postVariableCollection, "SIGNATURE", postersList[post.UserId].ForumSignature);
 
                         if (ranksList.ContainsKey(postersList[post.UserId].ForumRankId))
                         {

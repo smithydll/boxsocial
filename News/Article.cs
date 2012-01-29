@@ -247,7 +247,7 @@ namespace BoxSocial.Applications.News
             e.Template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
             e.Template.Parse("ARTICLE_DATE", e.Core.Tz.DateTimeToString(article.GetCreatedDate(e.Core.Tz)));
 
-            e.Core.Display.ParsePagination(e.Template, "PAGINATION", article.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)article.Comments / 10), false);
+            e.Core.Display.ParsePagination(e.Template, "PAGINATION", article.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)article.Comments / 10), PaginationOptions.Blog);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });

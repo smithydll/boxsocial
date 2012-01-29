@@ -12,13 +12,14 @@
   <!-- ENDIF -->
 </div>
 
-<p>{PAGINATION}</p>
+<p><strong>Go to page:</strong> {PAGINATION}</p>
 <!-- IF POSTS -->
 <ul id="posts">
   <!-- BEGIN post_list -->
   <li>
 	<span class="corners-top"><span></span><span></span></span>
   	<div class="post">
+      <div class="postbody">
   	<h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
   	<p>
     <!-- IF post_list.IS_READ -->
@@ -27,7 +28,6 @@
     <img src="/images/posticon_unread_sml.png" alt="New" />
     <!-- ENDIF -->
     by <strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong> on {post_list.POST_TIME}</p>
-      <div class="postbody">
       <div class="inner">
       	<p>{post_list.TEXT}</p>
       	<!-- IF post_list.SIGNATURE -->
@@ -64,7 +64,7 @@
   <!-- END post_list -->
 </ul>
 <!-- ENDIF -->
-<p>{PAGINATION}</p>
+<p><strong>Go to page:</strong> {PAGINATION}</p>
 
 	<!-- IF U_NEW_REPLY -->
 	<div class="new-stuff">

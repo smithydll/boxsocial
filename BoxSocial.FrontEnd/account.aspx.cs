@@ -179,7 +179,8 @@ namespace BoxSocial.FrontEnd
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "account", "My Account" });
 
-            core.Display.ParseBreadCrumbs(breadCrumbParts);
+            ParseCoreBreadCrumbs(breadCrumbParts);
+            //core.Display.ParseBreadCrumbs(breadCrumbParts);
 
             /*if ((loggedInMember.Permissions & 0x1111) == 0x0000)
             {

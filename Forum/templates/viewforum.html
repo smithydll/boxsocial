@@ -71,7 +71,7 @@
     <!-- IF IS_FORUM_MEMBER -->
     <a href="{U_MARK_TOPICS_READ}">{L_MARK_TOPICS_READ}</a>
     <!-- ENDIF -->
-    {PAGINATION}
+    <strong>Go to page:</strong> {PAGINATION}
   </p>
 			<ul id="topics" class="pane">
     <li id="topic-head">
@@ -124,7 +124,10 @@
     <!-- ENDIF -->
 
           <a href="{topic_list.URI}">{topic_list.TITLE}</a><br />
-          by <a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE}
+          by <a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE} 
+          <!-- IF topic_list.PAGINATION -->
+          <span style="float:right;">{topic_list.PAGINATION}</span>
+          <!-- ENDIF -->
           </div>
         </dt>
         <dd><div>{topic_list.VIEWS}</div></dd>
@@ -134,7 +137,7 @@
     </li>
     <!-- END topic_list -->
 	</ul>
-  <p>{PAGINATION}</p>
+  <p><strong>Go to page:</strong> {PAGINATION}</p>
   <!-- ELSE -->
   <p>{L_NO_TOPICS_FORUM}</p>
 	<!-- ENDIF -->

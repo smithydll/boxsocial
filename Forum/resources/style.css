@@ -181,6 +181,12 @@ ul#posts dl.profile {
 	float: right;
 	display: inline;
 	width: 25%;
+	border-left: solid 1px #FFFFFF;
+}
+
+ul#posts dl.profile dd {
+	margin: 0;
+	padding: 0;
 }
 
 ul#posts div.top {

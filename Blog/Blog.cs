@@ -908,7 +908,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post <= 0)
                 {
-                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(myBlog.Entries / 10.0), true);
+                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(myBlog.Entries / 10.0), PaginationOptions.Blog);
                 }
                 else
                 {

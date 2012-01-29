@@ -152,6 +152,15 @@ namespace BoxSocial.Applications.Forum
             return AppPrimitives.Group;
         }
 
+        [Show(@"forum/help", AppPrimitives.Group | AppPrimitives.Network)]
+        private void showHelp(Core core, object sender)
+        {
+            if (sender is GPage)
+            {
+                Default.ShowHelp(sender, new ShowPPageEventArgs((PPage)sender));
+            }
+        }
+
         [Show(@"forum", AppPrimitives.Group | AppPrimitives.Network)]
         private void showForums(Core core, object sender)
         {

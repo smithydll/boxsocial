@@ -16,7 +16,7 @@ body {
 	min-height: 100%;
         height: auto !important;
         height: 100%;
-        margin: 0 auto -10em;
+        margin: 0 auto -11em;
 }
 
 #page {
@@ -125,7 +125,7 @@ div#rc-bottom {
 	/*clear: both;*/
 	background-color: #e0e0e0;
 	/*background-image: url('/images/footer-gradient.png');*/
-	height: 10em;
+	height: 11em;
 }
 
 #footer {
@@ -133,7 +133,7 @@ div#rc-bottom {
 }
 
 #clear-space {
-	height: 10em;
+	height: 11em;
 }
 
 #foot * {

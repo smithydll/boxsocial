@@ -101,7 +101,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Entries / 25.0)), false);
+            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Entries / 25.0)), PaginationOptions.Blog);
         }
     }
 }

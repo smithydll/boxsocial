@@ -168,6 +168,11 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
 
         public static DocumentRevision Create(Core core, Document document, string newRevision, DocumentStatus newStatus)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Item item = Item.Create(core, typeof(DocumentRevision), new FieldValuePair("document_id", document.Id),
                 new FieldValuePair("document_revision", newRevision),
                 new FieldValuePair("document_revision_status", (byte)newStatus),

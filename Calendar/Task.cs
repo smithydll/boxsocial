@@ -226,6 +226,11 @@ namespace BoxSocial.Applications.Calendar
 
         public static Task Create(Core core, User creator, Primitive owner, string topic, string description, long dueTimestamp, TaskStatus status, byte percentComplete, TaskPriority priority)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery query = new InsertQuery("tasks");
             query.AddField("user_id", creator.UserId);
             query.AddField("task_item_id", owner.Id);

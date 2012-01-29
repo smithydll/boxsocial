@@ -117,27 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_news_article_write" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_news_article_write.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="CREATE_NEW_NEWS_ICON" xml:space="preserve">
+    <value>Create New News Icon</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_news_icon_edit" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_news_icon_edit.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="EDIT_NEWS_ICON" xml:space="preserve">
+    <value>Edit News Icon</value>
   </data>
-  <data name="account_news_icon_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_news_icon_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="NEWS" xml:space="preserve">
+    <value>News</value>
   </data>
-  <data name="account_news_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_news_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="NEWS_ARTICLE" xml:space="preserve">
+    <value>News Article</value>
   </data>
-  <data name="viewnews" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewnews.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="viewnewsarticle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewnewsarticle.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="viewprofilenews" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewprofilenews.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="NEWS_ICON" xml:space="preserve">
+    <value>News Icon</value>
   </data>
 </root>

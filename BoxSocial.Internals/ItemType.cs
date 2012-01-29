@@ -97,6 +97,11 @@ namespace BoxSocial.Internals
 		
 		public static ItemType Create(Core core, Type type, ApplicationEntry ae)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			string ns = Item.GetNamespace(type);
 			
 			ItemType it = (ItemType)Item.Create(core, typeof(ItemType),

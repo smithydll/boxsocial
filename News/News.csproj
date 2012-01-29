@@ -65,9 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountNewsIconManage.cs" />
     <Compile Include="AccountNewsWrite.cs" />
     <Compile Include="AppInfo.cs" />
     <Compile Include="Article.cs" />
+    <Compile Include="NewsIcon.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -78,6 +80,8 @@
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="AccountNews.cs" />
+    <Content Include="templates\account_news_icon_edit.html" />
+    <Content Include="templates\account_news_icon_manage.html" />
     <Content Include="templates\viewnews.html" />
     <Compile Include="News.cs" />
     <None Include="templates\viewnewsarticle.html" />
@@ -111,6 +115,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="languages\News.en.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -122,9 +127,7 @@
       <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="languages\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
@@ -148,6 +151,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\News.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\News.en.resx"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

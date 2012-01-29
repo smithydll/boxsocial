@@ -85,7 +85,15 @@ namespace BoxSocial.Applications.Mail
 			
 		public static MessageRecipient Create(Core core, Message message, User recipient, RecipientType type, bool suppress)
 		{
-			Item newItem = Item.Create(core, typeof(MessageRecipient), suppress, new FieldValuePair("message_id", message.Id), new FieldValuePair("user_id", recipient.Id), new FieldValuePair("recipient_type", (byte)type));
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+			Item newItem = Item.Create(core, typeof(MessageRecipient), suppress,
+                new FieldValuePair("message_id", message.Id),
+                new FieldValuePair("user_id", recipient.Id),
+                new FieldValuePair("recipient_type", (byte)type));
 			
 			if (newItem != null)
 			{

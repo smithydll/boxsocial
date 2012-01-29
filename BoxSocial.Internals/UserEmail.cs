@@ -189,6 +189,11 @@ namespace BoxSocial.Internals
 
         public static UserEmail Create(Core core, User owner, string email, EmailAddressTypes type, bool isRegistration)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (!User.CheckEmailValid(email))
             {
                 throw new EmailInvalidException();

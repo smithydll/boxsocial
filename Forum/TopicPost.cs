@@ -339,6 +339,11 @@ namespace BoxSocial.Applications.Forum
 
         internal static TopicPost Create(Core core, Forum forum, ForumTopic topic, string subject, string text)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (forum == null)
             {
                 if (topic.ForumId == forum.Id)

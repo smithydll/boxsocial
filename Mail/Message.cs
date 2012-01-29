@@ -125,6 +125,11 @@ namespace BoxSocial.Applications.Mail
 		
 		public static Message Create(Core core, string subject, string text, Dictionary<User, RecipientType> recipients)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			Item newItem = Item.Create(core, typeof(Message),
 			                           new FieldValuePair("message_subject", subject),
 			                           new FieldValuePair("message_text", text),

@@ -933,6 +933,11 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>An instance of the newly created gallery</returns>
         public static Gallery Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string description)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             string parents = "";
             // ensure we have generated a valid slug
             slug = Gallery.GetSlugFromTitle(title, slug);

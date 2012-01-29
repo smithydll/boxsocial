@@ -209,6 +209,11 @@ namespace BoxSocial.Musician
 
         public static MusicianMember Create(Core core, Musician musician, User member)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(typeof(MusicianMember));
             iQuery.AddField("user_id", member.Id);
             iQuery.AddField("musician_id", musician.Id);

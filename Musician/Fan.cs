@@ -130,6 +130,11 @@ namespace BoxSocial.Musician
 
         public static Fan Create(Core core)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             throw new NotImplementedException();
         }
 

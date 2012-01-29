@@ -94,6 +94,11 @@ namespace BoxSocial.Applications.Mail
 
         public MailFolder Create(Core core, MailFolder parent, string title)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             /* TODO: Fix */
             Item item = Item.Create(core, typeof(MailFolder), new FieldValuePair("owner_id", parent.ownerId),
                 new FieldValuePair("folder_parent", parent.Id),

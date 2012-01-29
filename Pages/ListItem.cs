@@ -135,6 +135,11 @@ namespace BoxSocial.Applications.Pages
 
         public static ListItem Create(Core core, List list, string text, ref string normalisedText)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (string.IsNullOrEmpty(normalisedText))
             {
                 normalisedText = text;
@@ -286,6 +291,11 @@ namespace BoxSocial.Applications.Pages
 
         internal static ListItemText Create(Core core, string text, ref string normalisedText)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             ListItem.NormaliseListItem(text, ref normalisedText);
 
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(ListItemText)));

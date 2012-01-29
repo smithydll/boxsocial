@@ -729,6 +729,11 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>New gallery item</returns>
         public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, byte license, Classifications classification)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
 
             if (owner is User)

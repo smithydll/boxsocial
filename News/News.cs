@@ -151,6 +151,25 @@ namespace BoxSocial.Applications.News
 			return articles;
 		}
 
+        public List<NewsIcon> GetIcons()
+        {
+            List<NewsIcon> icons = new List<NewsIcon>();
+
+            SelectQuery query = Article.GetSelectQueryStub(typeof(Article));
+            ItemKey ik = new ItemKey(owner.Id, owner.GetType().FullName);
+            query.AddCondition("icon_item_id", ik.Id);
+            query.AddCondition("icon_item_type_id", ik.TypeId);
+
+            DataTable iconsDataTable = db.Query(query);
+
+            foreach (DataRow dr in iconsDataTable.Rows)
+            {
+                icons.Add(new NewsIcon(core, dr));
+            }
+
+            return icons;
+        }
+
         public static News Create(Core core, Primitive owner, string title, int itemsPerPage)
         {
             Item item = Item.Create(core, typeof(News), new FieldValuePair("news_item_id", owner.Id),
@@ -198,7 +217,7 @@ namespace BoxSocial.Applications.News
                 e.Template.Parse("L_POST_NEWS_ARTICLE", "New Article");
             }
 
-            e.Core.Display.ParsePagination(e.Template, "PAGINATION", news.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)e.Page.Group.Info.NewsArticles / 10), PaginationOptions.Blog);
+            e.Core.Display.ParsePagination(e.Template, "PAGINATION", news.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)e.Page.Group.Info.NewsArticles / 10), PaginationOptions.Normal);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });
@@ -210,7 +229,7 @@ namespace BoxSocial.Applications.News
 		{
 			get
 			{
-				return owner.UriStub + "/news";
+				return owner.UriStub + "news";
 			}
 		}
 

@@ -173,6 +173,11 @@ namespace BoxSocial.Applications.Forum
 
         public static ForumSettings Create(Core core, Primitive owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             //if (!thisGroup.IsGroupOperator(core.session.LoggedInMember))
             {
                 // todo: throw new exception

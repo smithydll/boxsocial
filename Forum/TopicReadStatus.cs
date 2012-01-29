@@ -121,6 +121,11 @@ namespace BoxSocial.Applications.Forum
 
         internal static void Create(Core core, ForumTopic topic, TopicPost lastVisiblePost)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (core.LoggedInMemberId > 0)
             {
                 InsertQuery iQuery = new InsertQuery(GetTable(typeof(TopicReadStatus)));
@@ -135,6 +140,11 @@ namespace BoxSocial.Applications.Forum
 
         internal static void Create(Core core, ForumTopic topic)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (core.LoggedInMemberId > 0)
             {
                 InsertQuery iQuery = new InsertQuery(GetTable(typeof(TopicReadStatus)));

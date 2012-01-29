@@ -101,6 +101,11 @@ namespace BoxSocial.Internals
 
         public static Tag Create(Core core, string tag)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             string tagNormalised = string.Empty;
             NormaliseTag(tag, ref tagNormalised);
 

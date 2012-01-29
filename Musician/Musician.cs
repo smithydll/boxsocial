@@ -559,6 +559,11 @@ namespace BoxSocial.Musician
 
         public static Musician Create(Core core, string title, string slug)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
             SessionState session = core.Session;
 

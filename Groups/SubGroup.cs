@@ -700,6 +700,11 @@ namespace BoxSocial.Groups
 
         public static SubUserGroup Create(Core core, UserGroup parent, string groupTitle, string groupSlug, string groupDescription, string groupType)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
             SessionState session = core.Session;
 

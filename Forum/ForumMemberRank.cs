@@ -181,6 +181,11 @@ namespace BoxSocial.Applications.Forum
 
         public static ForumMemberRank Create(Core core, Primitive forumOwner, string title, int posts, bool special, int colour)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Item item = Item.Create(core, typeof(ForumMemberRank), new FieldValuePair("rank_owner_id", forumOwner.Id),
                 new FieldValuePair("rank_owner_type_id", forumOwner.TypeId),
                 new FieldValuePair("rank_title", title),

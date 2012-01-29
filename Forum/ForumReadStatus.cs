@@ -111,6 +111,11 @@ namespace BoxSocial.Applications.Forum
 
         internal static void Create(Core core, Forum forum)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (core.LoggedInMemberId > 0)
             {
                 InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumReadStatus)));

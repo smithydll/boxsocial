@@ -207,6 +207,11 @@ namespace BoxSocial.Internals
 
         public static AccessControlPermission Create(Core core, long typeId, string permissionName, string permissionDescription, PermissionTypes permissionType)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             AccessControlPermission acp = (AccessControlPermission)Item.Create(core, typeof(AccessControlPermission),
                                                                                new FieldValuePair("permission_item_type_id", typeId),
                                                                                new FieldValuePair("permission_name", permissionName),

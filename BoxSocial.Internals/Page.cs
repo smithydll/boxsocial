@@ -661,6 +661,11 @@ namespace BoxSocial.Internals
 
         public static Page Create(Core core, bool suppress, Primitive owner, string title, ref string slug, long parent, string pageBody, PageStatus status, byte license, Classifications classification, ApplicationEntry application)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             string parents = "";
             string parentPath = "";
             long pageId = 0;

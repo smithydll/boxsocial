@@ -343,6 +343,11 @@ namespace BoxSocial.Musician
 
         public static Gig Create(Core core, Musician owner, Tour tour, long time, ushort timezone, string city, string venue, string gigAbstract, bool allAges)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             // TODO: fix this
             Item item = Item.Create(core, typeof(Gig), new FieldValuePair("musician_id", owner.Id),
                 new FieldValuePair("tour_id", ((tour != null) ? tour.Id : 0)),

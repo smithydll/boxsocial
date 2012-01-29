@@ -99,6 +99,11 @@ namespace BoxSocial.Groups
 
         public GroupInvite Create(Core core, UserGroup group, User invitee)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             core.Db.BeginTransaction();
 
             InsertQuery iQuery = new InsertQuery(Table);

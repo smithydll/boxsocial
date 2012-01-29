@@ -31,7 +31,7 @@ using BoxSocial.Groups;
 namespace BoxSocial.Applications.News
 {
     [DataTable("news_article", "ARTICLE")]
-    public class Article : NumberedItem, ICommentableItem
+    public class Article : NumberedItem, ICommentableItem, ITagableItem
     {
         [DataField("article_id", DataFieldKeys.Primary)]
         private long articleId;
@@ -49,11 +49,12 @@ namespace BoxSocial.Applications.News
         private string articleBody;
 		[DataField("article_comments")]
         private long articleComments;
-        [DataField("article_icon_item_id")]
-        private long newsIconGalleryItemId;
+        [DataField("article_icon_item_id", typeof(NewsIcon))]
+        private long newsIconId;
 		
 		private Primitive owner;
 		private User poster;
+        private NewsIcon icon;
 		
 		public long ArticleId
 		{
@@ -84,6 +85,22 @@ namespace BoxSocial.Applications.News
             get
             {
                 return articleBody;
+            }
+        }
+
+        public NewsIcon Icon
+        {
+            get
+            {
+                if (icon == null || icon.Id != newsIconId)
+                {
+                    icon = new NewsIcon(core, newsIconId);
+                    return icon;
+                }
+                else
+                {
+                    return icon;
+                }
             }
         }
 		
@@ -259,6 +276,16 @@ namespace BoxSocial.Applications.News
             e.Template.Parse("CAN_COMMENT", "TRUE");
             e.Core.Display.DisplayComments(e.Template, e.Page.Group, article);
 		}
+
+        public List<ItemTag> GetTags()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ItemTag Add(string tag)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class InvalidArticleException : Exception

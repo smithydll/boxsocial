@@ -170,6 +170,11 @@ namespace BoxSocial.Applications.Forum
 		
 		public static ForumMember Create(Core core, Primitive owner, User user, bool firstPost)
 		{
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
 			InsertQuery iQuery = new InsertQuery(GetTable(typeof(ForumMember)));
 			iQuery.AddField("user_id", user.Id);
 			iQuery.AddField("item_id", owner.Id);

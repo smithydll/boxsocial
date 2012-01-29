@@ -333,6 +333,11 @@ namespace BoxSocial.Applications.Pages
 
         public static List Create(Core core, string title, ref string slug, string listAbstract, short listType)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Navigation.GenerateSlug(title, ref slug);
 
             if (!IsValidListType(core, listType))

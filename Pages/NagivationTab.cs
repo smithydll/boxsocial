@@ -204,6 +204,11 @@ namespace BoxSocial.Applications.Pages
 
         public static NagivationTab Create(Core core, Page page)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             byte order = 0;
 
             SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab));

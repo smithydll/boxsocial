@@ -119,6 +119,11 @@ namespace BoxSocial.Internals
 
         public static ItemTag Create(Core core, NumberedItem item, Tag tag)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Item newItem = Item.Create(core, typeof(ItemTag), new FieldValuePair("item_id", item.Id),
                 new FieldValuePair("item_type_id", item.ItemKey.TypeId),
                 new FieldValuePair("tag_id", tag.Id));

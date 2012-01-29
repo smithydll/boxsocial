@@ -211,6 +211,11 @@ namespace BoxSocial.Musician
 
         public static Tour Create(Core core, Musician owner, string title, short year, string tourAbstract)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             // TODO: fix this
             Item item = Item.Create(core, typeof(Tour), new FieldValuePair("musician_id", owner.Id),
                 new FieldValuePair("tour_title", title),

@@ -154,6 +154,11 @@ namespace BoxSocial.Applications.Gallery
 
         public static GallerySettings Create(Core core, Primitive owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery iQuery = new InsertQuery(GetTable(typeof(GallerySettings)));
             iQuery.AddField("gallery_item_id", owner.Id);
             iQuery.AddField("gallery_item_type_id", owner.TypeId);

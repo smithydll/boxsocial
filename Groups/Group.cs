@@ -748,6 +748,11 @@ namespace BoxSocial.Groups
 
         public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, long groupCategory, string groupType)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Mysql db = core.Db;
             SessionState session = core.Session;
 

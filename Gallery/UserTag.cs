@@ -247,6 +247,11 @@ namespace BoxSocial.Applications.Gallery
         /// <returns></returns>
         public static UserTag Create(Core core, GalleryItem galleryItem, User owner, User member, Point location)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             InsertQuery query = new InsertQuery("user_tags");
             query.AddField("user_id", owner.UserId);
             query.AddField("tag_user_id", member.UserId);

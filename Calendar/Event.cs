@@ -250,6 +250,11 @@ namespace BoxSocial.Applications.Calendar
 
         public static Event Create(Core core, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             Item item = Item.Create(core, typeof(Event), new FieldValuePair("user_id", core.Session.LoggedInMember.Id),
                 new FieldValuePair("event_item_id", owner.Id),
                 new FieldValuePair("event_item_type_id", owner.TypeId),

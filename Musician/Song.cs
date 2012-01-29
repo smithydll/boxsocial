@@ -213,6 +213,11 @@ namespace BoxSocial.Musician
         }
         public static Song Create(Core core, Musician owner, string title, string lyrics, byte licenseId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (owner.IsMusicianMember(core.Session.LoggedInMember))
             {
                 Item item = Item.Create(core, typeof(Song), new FieldValuePair("musician_id", owner.Id),

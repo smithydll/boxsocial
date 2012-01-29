@@ -1,0 +1,23 @@
+﻿<h3>Manage News Icons</h3>
+
+<table style="width: 100%">
+<tr>
+	<th></th>
+	<th>Title</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN icon_list -->
+<!-- IF icon_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td>{icon_list.I_ICON}</td>
+	<td>{icon_list.TITLE}</td>
+	<td><a href="{icon_list.U_EDIT}">Edit</a></td>
+	<td><a href="{icon_list.U_DELETE}">Delete</a></td>
+</tr>
+<!-- END icon_list -->
+</table>
+

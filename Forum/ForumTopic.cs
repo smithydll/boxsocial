@@ -428,8 +428,6 @@ namespace BoxSocial.Applications.Forum
 
         public static ForumTopic Create(Core core, Forum forum, string subject, string text, TopicStates status)
         {
-            core.Db.BeginTransaction();
-
             if (core == null)
             {
                 throw new NullCoreException();
@@ -439,6 +437,8 @@ namespace BoxSocial.Applications.Forum
             {
                 throw new InvalidForumException();
             }
+            
+            core.Db.BeginTransaction();
 
             if (!forum.Access.Can("CREATE_TOPICS"))
             {

@@ -201,6 +201,11 @@ namespace BoxSocial.Musician
 
         public static Release Create(Core core, Musician musician, ReleaseType releaseType, string title, long coverId)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             string slug = title;
             Navigation.GenerateSlug(title, ref slug);
 

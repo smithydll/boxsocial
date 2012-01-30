@@ -1124,12 +1124,12 @@ namespace BoxSocial.Internals
 
                     if (e.Attributes.HasAttribute("width"))
                     {
-                        styles = "; width: " + e.Attributes.GetAttribute("width") + "px";
+                        styles += "; width: " + e.Attributes.GetAttribute("width") + "px";
                     }
 
                     if (e.Attributes.HasAttribute("height"))
                     {
-                        styles = "; height: " + e.Attributes.GetAttribute("height") + "px";
+                        styles += "; height: " + e.Attributes.GetAttribute("height") + "px";
                     }
 
                     e.PrefixText = "</p><div style=\"" + styles + "\">";

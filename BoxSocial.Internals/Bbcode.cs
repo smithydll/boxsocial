@@ -1119,7 +1119,20 @@ namespace BoxSocial.Internals
                 {
                     if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$", RegexOptions.Compiled))
                         e.AbortParse();
-                    e.PrefixText = "</p><div style=\"float: " + e.Attributes.GetAttribute("default") + "\">";
+                    string styles = string.Empty;
+                    styles = "float: " + e.Attributes.GetAttribute("default");
+
+                    if (e.Attributes.HasAttribute("width"))
+                    {
+                        styles = "; width: " + e.Attributes.GetAttribute("width") + "px";
+                    }
+
+                    if (e.Attributes.HasAttribute("height"))
+                    {
+                        styles = "; height: " + e.Attributes.GetAttribute("height") + "px";
+                    }
+
+                    e.PrefixText = "</p><div style=\"" + styles + "\">";
                     e.SuffixText = "</div><p>";
                 }
                 else

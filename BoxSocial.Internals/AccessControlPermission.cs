@@ -185,6 +185,8 @@ namespace BoxSocial.Internals
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+            OnUpdate += new EventHandler(AccessControlPermission_OnUpdate);
+            OnDelete += new EventHandler(AccessControlPermission_OnDelete);
 
             try
             {
@@ -194,6 +196,16 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidAccessControlPermissionException();
             }
+        }
+
+        void AccessControlPermission_OnDelete(object sender, EventArgs e)
+        {
+            
+        }
+
+        void AccessControlPermission_OnUpdate(object sender, EventArgs e)
+        {
+            
         }
 		
 		private void AccessControlPermission_ItemLoad()

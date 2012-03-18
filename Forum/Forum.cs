@@ -373,6 +373,7 @@ namespace BoxSocial.Applications.Forum
         public Forum(Core core, ForumSettings settings, long forumId)
             : base(core)
         {
+            this.settings = settings;
             ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
 
             SelectQuery query = Forum_GetSelectQueryStub(core);
@@ -402,8 +403,14 @@ namespace BoxSocial.Applications.Forum
         }
 
         public Forum(Core core, DataRow forumDataRow)
+            : this(core, (ForumSettings)null, forumDataRow)
+        {
+        }
+
+        public Forum(Core core, ForumSettings settings, DataRow forumDataRow)
             : base(core)
         {
+            this.settings = settings;
             ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
 
             try
@@ -428,10 +435,15 @@ namespace BoxSocial.Applications.Forum
         }
 
         public Forum(Core core, UserGroup owner, DataRow forumDataRow)
+            : this(core, (ForumSettings)null, owner, forumDataRow)
+        {
+        }
+
+        public Forum(Core core, ForumSettings settings, UserGroup owner, DataRow forumDataRow)
             : base(core)
         {
             this.owner = owner;
-
+            this.settings = settings;
             ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
 
             try
@@ -661,11 +673,11 @@ namespace BoxSocial.Applications.Forum
 				Forum forum;
                 if (parent.Owner is UserGroup)
                 {
-                    forum = new Forum(core, (UserGroup)parent.Owner, dr);
+                    forum = new Forum(core, parent.Settings, (UserGroup)parent.Owner, dr);
                 }
                 else
                 {
-                    forum = new Forum(core, dr);
+                    forum = new Forum(core, parent.Settings, dr);
                 }
 				
 				if (isFirst)
@@ -1430,11 +1442,6 @@ namespace BoxSocial.Applications.Forum
             {
                 thisForum.ReadAll(true);
             }
-			
-			if (!thisForum.Access.Can("VIEW"))
-			{
-                core.Functions.Generate403();
-			}
 
             if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.Session.LoggedInMember)))
             {
@@ -1442,12 +1449,6 @@ namespace BoxSocial.Applications.Forum
             }
 
             topicsCount = thisForum.Topics;
-
-            if (!thisForum.Access.Can("VIEW"))
-            {
-                core.Functions.Generate403();
-                return;
-            }
 			
 			if (!string.IsNullOrEmpty(thisForum.Rules))
 			{
@@ -1455,10 +1456,19 @@ namespace BoxSocial.Applications.Forum
 			}
 			
 			List<Forum> forums = GetForumLevels(core, thisForum, 2);
+            List<IPermissibleItem> items = new List<IPermissibleItem>();
 
             //List<Forum> forums = thisForum.GetForums();
 			List<Forum> accessibleForums = new List<Forum>();
-			
+
+            foreach (Forum forum in forums)
+            {
+                items.Add(forum);
+            }
+            items.Add(thisForum);
+
+            core.AcessControlCache.CacheGrants(items);
+
 			foreach (Forum forum in forums)
 			{
 				if (forum.Access.Can("VIEW"))
@@ -1467,6 +1477,12 @@ namespace BoxSocial.Applications.Forum
 				}
 			}
 			forums = accessibleForums;
+
+            if (!thisForum.Access.Can("VIEW"))
+            {
+                core.Functions.Generate403();
+                return;
+            }
 
             page.template.Parse("FORUMS", forums.Count.ToString());
 

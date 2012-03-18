@@ -51,7 +51,7 @@ namespace BoxSocial.Musician
             get
             {
                 ItemKey ownerKey = new ItemKey(musicianId, ItemKey.GetTypeId(typeof(Musician)));
-                if (musician == null || ownerKey.Id != musician.Id || ownerKey.TypeString != musician.Type)
+                if (musician == null || ownerKey.Id != musician.Id || ownerKey.TypeId != musician.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     musician = (Musician)core.PrimitiveCache[ownerKey];

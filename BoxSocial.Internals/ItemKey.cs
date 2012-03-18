@@ -34,8 +34,10 @@ namespace BoxSocial.Internals
 	{
         private static Object itemTypeCacheLock = new object();
 		private static Dictionary<string, long> itemTypeCache = null;
+        private static Dictionary<string, long> itemApplicationCache = null;
 		private long itemId;
 		private long itemTypeId;
+        private long applicationId;
 		private string itemType;
         private Type type;
 		
@@ -54,6 +56,14 @@ namespace BoxSocial.Internals
 				return itemTypeId;
 			}
 		}
+
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
+            }
+        }
 		
 		public string TypeString
 		{
@@ -75,22 +85,30 @@ namespace BoxSocial.Internals
 		{
 			this.itemId = itemId;
 			this.itemType = itemType;
-			this.itemTypeId = itemTypeCache[itemType];
+            lock (itemTypeCacheLock)
+            {
+                this.itemTypeId = itemTypeCache[itemType];
+                this.applicationId = itemApplicationCache[itemType];
+            }
             this.type = null;
 		}
 		
 		public ItemKey(long itemId, long itemTypeId)
 		{
 			this.itemId = itemId;
-			foreach (string value in itemTypeCache.Keys)
-			{
-				if (itemTypeCache[value] == itemTypeId)
-				{
-					this.itemType = value;
-					break;
-				}
-			}
-			this.itemTypeId = itemTypeId;
+            lock (itemTypeCacheLock)
+            {
+                foreach (string value in itemTypeCache.Keys)
+                {
+                    if (itemTypeCache[value] == itemTypeId)
+                    {
+                        this.itemType = value;
+                        break;
+                    }
+                }
+                this.itemTypeId = itemTypeId;
+                this.applicationId = itemApplicationCache[this.itemType];
+            }
             this.type = null;
 		}
 
@@ -98,15 +116,19 @@ namespace BoxSocial.Internals
         {
             this.itemId = itemId;
             long itemTypeId = GetTypeId(itemType);
-            foreach (string value in itemTypeCache.Keys)
+            lock (itemTypeCacheLock)
             {
-                if (itemTypeCache[value] == itemTypeId)
+                foreach (string value in itemTypeCache.Keys)
                 {
-                    this.itemType = value;
-                    break;
+                    if (itemTypeCache[value] == itemTypeId)
+                    {
+                        this.itemType = value;
+                        break;
+                    }
                 }
+                this.itemTypeId = itemTypeId;
+                this.applicationId = itemApplicationCache[this.itemType];
             }
-            this.itemTypeId = itemTypeId;
             this.type = itemType;
         }
         
@@ -117,15 +139,19 @@ namespace BoxSocial.Internals
             long itemTypeId = long.Parse(keys[0]);
             
             this.itemId = itemId;
-            foreach (string value in itemTypeCache.Keys)
+            lock (itemTypeCacheLock)
             {
-                if (itemTypeCache[value] == itemTypeId)
+                foreach (string value in itemTypeCache.Keys)
                 {
-                    this.itemType = value;
-                    break;
+                    if (itemTypeCache[value] == itemTypeId)
+                    {
+                        this.itemType = value;
+                        break;
+                    }
                 }
+                this.itemTypeId = itemTypeId;
+                this.applicationId = itemApplicationCache[this.itemType];
             }
-            this.itemTypeId = itemTypeId;
             this.type = null;
         }
 		
@@ -138,6 +164,7 @@ namespace BoxSocial.Internals
 
             System.Web.Caching.Cache cache;
 			object o = null;
+            object b = null;
 			
 			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
 			{
@@ -157,6 +184,13 @@ namespace BoxSocial.Internals
                 catch (NullReferenceException)
                 {
                 }
+                try
+                {
+                    b = cache.Get("itemApplicationIds");
+                }
+                catch (NullReferenceException)
+                {
+                }
 			}
 
             lock (itemTypeCacheLock)
@@ -164,10 +198,12 @@ namespace BoxSocial.Internals
                 if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
                 {
                     itemTypeCache = (Dictionary<string, long>)o;
+                    itemApplicationCache = (Dictionary<string, long>)b;
                 }
                 else
                 {
                     itemTypeCache = new Dictionary<string, long>();
+                    itemApplicationCache = new Dictionary<string, long>();
                     SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
 
                     DataTable typesTable;
@@ -186,12 +222,14 @@ namespace BoxSocial.Internals
                         if (!(itemTypeCache.ContainsKey((string)dr["type_namespace"])))
                         {
                             itemTypeCache.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                            itemApplicationCache.Add((string)dr["type_namespace"], (long)dr["type_application_id"]);
                         }
                     }
 
                     if (cache != null)
                     {
                         cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("itemApplicationIds", itemApplicationCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
                     }
                 }
             }

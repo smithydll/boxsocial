@@ -827,15 +827,21 @@ namespace BoxSocial.Internals
             int parents = 0;
             int nextParents = 0;
 
+            List<IPermissibleItem> tempPages = new List<IPermissibleItem>();
             List<Page> pages = new List<Page>();
 
             for (int i = 0; i < pagesTable.Rows.Count; i++)
             {
-                Page page = new Page(core, owner, pagesTable.Rows[i]);
+                tempPages.Add(new Page(core, owner, pagesTable.Rows[i]));
+            }
 
+            core.AcessControlCache.CacheGrants(tempPages);
+
+            foreach (IPermissibleItem page in tempPages)
+            {
                 if (page.Access.Can("VIEW"))
                 {
-                    pages.Add(page);
+                    pages.Add((Page)page);
                 }
             }
 

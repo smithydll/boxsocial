@@ -57,6 +57,20 @@ namespace BoxSocial.Internals
 		
 		private IPermissibleItem item;
 		private Primitive owner;
+        private ItemKey itemKey;
+
+        public ItemKey ItemKey
+        {
+            get
+            {
+                if (itemKey == null)
+                {
+                    itemKey = new ItemKey(itemId, itemTypeId);
+                }
+
+                return itemKey;
+            }
+        }
 
         public ItemKey PrimitiveKey
         {
@@ -86,7 +100,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (owner == null || primitiveKey.Id != owner.Id || primitiveKey.TypeString != owner.Type)
+                if (owner == null || primitiveKey.Id != owner.Id || primitiveKey.TypeId != owner.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(primitiveKey);
                     owner = core.PrimitiveCache[primitiveKey];
@@ -100,7 +114,7 @@ namespace BoxSocial.Internals
         }
 
 		
-		private AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
+		internal AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
 			: base(core)
 		{
 			this.item = item;

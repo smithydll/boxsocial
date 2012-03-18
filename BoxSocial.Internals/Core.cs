@@ -58,6 +58,7 @@ namespace BoxSocial.Internals
 
         private PrimitivesCache userProfileCache;
         private NumberedItemsCache itemsCache;
+        private AccessControlCache accessControlCache;
 
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
@@ -377,6 +378,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public AccessControlCache AcessControlCache
+        {
+            get
+            {
+                return accessControlCache;
+            }
+        }
+
         public void LoadUserProfile(long userId)
         {
             userProfileCache.LoadUserProfile(userId);
@@ -486,6 +495,7 @@ namespace BoxSocial.Internals
 
             userProfileCache = new PrimitivesCache(this);
             itemsCache = new NumberedItemsCache(this);
+            accessControlCache = new AccessControlCache(this);
 
             AddPrimitiveType(typeof(User));
             AddPrimitiveType(typeof(ApplicationEntry));

@@ -248,12 +248,11 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            ItemType type = new ItemType(core, ik.TypeId);
             Type tType = null;
             
-            if (type.ApplicationId > 0)
+            if (ik.ApplicationId > 0)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+                ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
     
                 //Application a = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
                 string assemblyPath;
@@ -280,12 +279,12 @@ namespace BoxSocial.Internals
                     }
                 }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
-                
-                tType = assembly.GetType(type.TypeNamespace);
+
+                tType = assembly.GetType(ik.TypeString);
             }
             else
             {
-                tType = Type.GetType(type.TypeNamespace);
+                tType = Type.GetType(ik.TypeString);
             }
 
             return (Activator.CreateInstance(tType, new object[] { core, ik.Id }) as NumberedItem);

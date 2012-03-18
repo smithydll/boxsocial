@@ -45,7 +45,7 @@ namespace BoxSocial.Internals
             get
             {
                 ItemKey ownerKey = new ItemKey(applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry)));
-                if (application == null || ownerKey.Id != application.Id || ownerKey.TypeString != application.Type)
+                if (application == null || ownerKey.Id != application.Id || ownerKey.TypeId != application.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     application = (ApplicationEntry)core.PrimitiveCache[ownerKey];

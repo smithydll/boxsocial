@@ -159,10 +159,10 @@ namespace BoxSocial.IO
         public override void CopyFile(string fromBin, string toBin, string fileName)
         {
             string fromPath = RetrieveStoragePath(fromBin, fileName);
-            string toPath = RetrieveStoragePath(fromBin, fileName);
+            string toPath = RetrieveStoragePath(toBin, fileName);
             EnsureStoragePathExists(fromPath);
             EnsureStoragePathExists(toPath);
-            File.Copy(fromPath, toPath);
+            File.Copy(Path.Combine(fromPath, fileName), Path.Combine(toPath, fileName));
         }
 
         public override bool FileExists(string bin, string fileName)

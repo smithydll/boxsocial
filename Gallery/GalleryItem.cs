@@ -368,7 +368,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeString != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeId != owner.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];
@@ -796,7 +796,7 @@ namespace BoxSocial.Applications.Gallery
             if (itemId >= 0)
             {
                 //owner.UpdateGalleryInfo(parent, itemId, 1, (long)bytes);
-                if (owner is User)
+                //if (owner is User)
                 {
                     Gallery.UpdateGalleryInfo(core, parent, itemId, 1, (long)bytes);
                 }

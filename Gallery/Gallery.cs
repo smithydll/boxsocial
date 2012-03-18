@@ -276,7 +276,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeString != owner.Type)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeId != owner.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];
@@ -1464,7 +1464,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                     }
 
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0));
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0), PaginationOptions.Normal);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1593,7 +1593,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 e.Core.Display.DisplayComments(e.Template, e.Page.Owner, commentPage, gallery);
 
-                e.Core.Display.ParsePagination("COMMENT_PAGINATION", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), commentPage, (int)Math.Ceiling(gallery.Comments / 10.0));
+                e.Core.Display.ParsePagination("COMMENT_PAGINATION", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), commentPage, (int)Math.Ceiling(gallery.Comments / 10.0), PaginationOptions.Normal);
             }
 
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());

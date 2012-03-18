@@ -78,7 +78,7 @@ namespace BoxSocial.Internals
                 {
                     permissionsEnacted = new List<long>();
 
-                    grants = AccessControlGrant.GetGrants(core, this.item);
+                    grants = core.AcessControlCache.GetGrants(this.item);
 
                     foreach (AccessControlGrant grant in grants)
                     {
@@ -146,7 +146,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    acp = new AccessControlPermission(core, item.ItemKey.TypeId, permission);
+                    acp = core.AcessControlCache[item.ItemKey.TypeId, permission];
                 }
                 catch (InvalidAccessControlPermissionException)
                 {

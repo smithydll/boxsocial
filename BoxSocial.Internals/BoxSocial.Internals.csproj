@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Access.cs" />
+    <Compile Include="AccessControlCache.cs" />
     <Compile Include="AccessControlLists.cs" />
     <Compile Include="Account.cs" />
     <Compile Include="AccountApplications.cs" />

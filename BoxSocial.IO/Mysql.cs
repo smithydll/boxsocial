@@ -101,6 +101,7 @@ namespace BoxSocial.IO
 
         private void PushQuery(string query)
         {
+            //QueryList.Push(Environment.StackTrace + "\r\n" + query + "\r\n");
             QueryList.Push(query);
 
             if (QueryList.Count > 100)

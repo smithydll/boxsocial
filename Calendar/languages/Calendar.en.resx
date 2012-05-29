@@ -141,6 +141,9 @@
   <data name="HAVE_NOT_RESPONDED" xml:space="preserve">
     <value>Have not Responded</value>
   </data>
+  <data name="INVITE" xml:space="preserve">
+    <value>Invite</value>
+  </data>
   <data name="INVITEES" xml:space="preserve">
     <value>Invitees</value>
   </data>

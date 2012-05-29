@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -207,7 +207,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\Musician.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Musician.en.resx"</PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Musician.en.resx"</PostBuildEvent>
   </PropertyGroup>
 </Project>

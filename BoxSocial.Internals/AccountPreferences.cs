@@ -70,6 +70,9 @@ namespace BoxSocial.Internals
             //User loggedInMember = (User)loggedInMember;
             template.SetTemplate("account_preferences.html");
 
+            TextBox analyticsCodeTextBox = new TextBox("analytics-code");
+            analyticsCodeTextBox.Value = LoggedInMember.Info.AnalyticsCode;
+
             string radioChecked = " checked=\"checked\"";
 
             if (LoggedInMember.Info.EmailNotifications)
@@ -117,6 +120,8 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_VIDEOS_NO", radioChecked);
             }
 
+            template.Parse("S_ANALYTICS_CODE", analyticsCodeTextBox);
+
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
                 LoggedInMember.UserId, ItemKey.GetTypeId(typeof(User))));
 
@@ -157,6 +162,7 @@ namespace BoxSocial.Internals
             bool emailNotifications = true;
             BbcodeOptions showBbcode = BbcodeOptions.None;
             string homepage = "/profile";
+            string analyticsCode = string.Empty;
             ushort timeZoneCode = 30;
 
             try
@@ -168,6 +174,7 @@ namespace BoxSocial.Internals
                 showCustomStyles = (int.Parse(core.Http.Form["show-styles"]) == 1);
                 emailNotifications = (int.Parse(core.Http.Form["email-notifications"]) == 1);
                 homepage = core.Http.Form["homepage"];
+                analyticsCode = core.Http.Form["analytics-code"];
                 timeZoneCode = ushort.Parse(core.Http.Form["timezone"]);
             }
             catch
@@ -208,6 +215,7 @@ namespace BoxSocial.Internals
             LoggedInMember.Info.SetUserBbcodeOptions = showBbcode;
             LoggedInMember.Info.ProfileHomepage = homepage;
             LoggedInMember.Info.TimeZoneCode = timeZoneCode;
+            LoggedInMember.Info.AnalyticsCode = analyticsCode;
 
             LoggedInMember.Info.Update();
 

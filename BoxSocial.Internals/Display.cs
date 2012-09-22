@@ -749,6 +749,14 @@ namespace BoxSocial.Internals
             }
 
             template.Parse("IS_CONTENT", "TRUE");
+
+            if (WebConfigurationManager.AppSettings != null && WebConfigurationManager.AppSettings.HasKeys())
+            {
+                template.Parse("ANALYTICS_CODE", WebConfigurationManager.AppSettings["analytics-code"]);
+
+                template.ParseRaw("ADSENSE_CODE_HEADER", WebConfigurationManager.AppSettings["adsense-code-header"]);
+                template.ParseRaw("ADSENSE_CODE_FOOTER", WebConfigurationManager.AppSettings["adsense-code-footer"]);
+            }
         }
 
         public void ParsePageList(Primitive owner, bool fragment)
@@ -947,7 +955,7 @@ namespace BoxSocial.Internals
             ParseBbcode(templateVar, input, null);
         }
 
-        public void ParseBbcode(string templateVar, string input, User owner)
+        public void ParseBbcode(string templateVar, string input, Primitive owner)
         {
             ParseBbcode(core.Template, templateVar, input, owner);
         }
@@ -957,7 +965,7 @@ namespace BoxSocial.Internals
             ParseBbcode(template, templateVar, input, null);
         }
 
-        public void ParseBbcode(Template template, string templateVar, string input, User owner)
+        public void ParseBbcode(Template template, string templateVar, string input, Primitive owner)
         {
             if (owner != null)
             {
@@ -974,7 +982,7 @@ namespace BoxSocial.Internals
             ParseBbcode(template, templateVar, input, null);
         }
 
-        public void ParseBbcode(VariableCollection template, string templateVar, string input, User owner)
+        public void ParseBbcode(VariableCollection template, string templateVar, string input, Primitive owner)
         {
             if (core.Session.LoggedInMember == null)
             {

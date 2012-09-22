@@ -96,6 +96,8 @@ namespace BoxSocial.Internals
         private string userNewPassword;
         [DataField("user_subscription_level")]
         private byte userSubscriptionLevel;
+        [DataField("user_analytics_code", 15)]
+        protected string analyticsCode;
 
         private string userNameOwnership;
         private UnixTime timeZone;
@@ -141,6 +143,18 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("userDisplayName", value);
+            }
+        }
+
+        public string AnalyticsCode
+        {
+            get
+            {
+                return analyticsCode;
+            }
+            set
+            {
+                SetProperty("analyticsCode", value);
             }
         }
 

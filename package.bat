@@ -77,7 +77,7 @@ copy "%1"BoxSocial\templates\emails "%1"Package\templates\emails
 
 md "%1"Package\styles
 
-copy "%1"BoxSocial\style "%1"Package\styles
+copy "%1"BoxSocial\styles "%1"Package\styles
 
 md "%1"Package\scripts
 

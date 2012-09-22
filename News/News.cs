@@ -202,7 +202,7 @@ namespace BoxSocial.Applications.News
             {
                 VariableCollection articleVariableCollection = e.Template.CreateChild("news_list");
 
-                e.Core.Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody);
+                e.Core.Display.ParseBbcode(articleVariableCollection, "BODY", article.ArticleBody, e.Page.Owner);
                 articleVariableCollection.Parse("TITLE", article.ArticleSubject);
 				articleVariableCollection.Parse("U_ARTICLE", article.Uri);
 				articleVariableCollection.Parse("U_POSTER", article.Poster.Uri);

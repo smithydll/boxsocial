@@ -91,6 +91,11 @@ namespace BoxSocial.Internals
 
             PageTitle = User.DisplayName;
 
+            if (!string.IsNullOrEmpty(User.Info.AnalyticsCode))
+            {
+                template.Parse("ANALYTICS_CODE", User.Info.AnalyticsCode);
+            }
+
             if (loggedInMember != null)
             {
                 if (loggedInMember.Info.ShowCustomStyles)

@@ -35,6 +35,8 @@ namespace BoxSocial.FrontEnd
     {
         public _default() : base("default.html")
         {
+            template.Parse("IS_CONTENT", "FALSE");
+
             if (session.IsLoggedIn)
             {
                 template.SetTemplate("today.html");

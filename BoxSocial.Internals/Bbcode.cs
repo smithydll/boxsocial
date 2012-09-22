@@ -106,7 +106,7 @@ namespace BoxSocial.Internals
             private bool noContents;
             private string contents;
             private bool stripTag;
-            private User owner = null;
+            private Primitive owner = null;
 
             public BbcodeTag Tag
             {
@@ -219,12 +219,27 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public User Owner
+            public Primitive Owner
             {
                 get
                 {
                     return owner;
                 }
+            }
+
+            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Primitive postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            {
+                this.tag = tag;
+                this.options = options;
+                this.attributes = tag.GetAttributes();
+                this.contents = contents;
+                this.prefixText = prefixText;
+                this.suffixText = suffixText;
+                this.inList = inList;
+                this.stripTag = stripTag;
+                this.handled = handled;
+                this.abortParse = abortParse;
+                this.owner = postOwner;
             }
 
             public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
@@ -380,12 +395,12 @@ namespace BoxSocial.Internals
             return Parse(input, viewer, null);
         }
 
-        public string Parse(string input, User viewer, User postOwner)
+        public string Parse(string input, User viewer, Primitive postOwner)
         {
             return Parse(input, viewer, postOwner, false);
         }
 
-        private string Parse(string input, User viewer, User postOwner, bool stripTags)
+        private string Parse(string input, User viewer, Primitive postOwner, bool stripTags)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -1251,7 +1266,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"/" + HttpUtility.HtmlEncode(e.Owner.UserName) + "/images/_display/";
+                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_display/";
                 e.SuffixText = "\" />";
             }
         }
@@ -1268,7 +1283,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                e.PrefixText = "<img alt=\"Bbcode image\" src=\"/" + HttpUtility.HtmlEncode(e.Owner.UserName) + "/images/_icon/";
+                e.PrefixText = "<img alt=\"Bbcode image\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_icon/";
                 e.SuffixText = "\" />";
             }
         }
@@ -1538,7 +1553,7 @@ namespace BoxSocial.Internals
             return Parse(input, viewer, null, true);
         }
 
-        public string Strip(string input, User viewer, User postOwner)
+        public string Strip(string input, User viewer, Primitive postOwner)
         {
             return Parse(input, viewer, postOwner, true);
         }

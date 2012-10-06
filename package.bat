@@ -75,6 +75,14 @@ md "%1"Package\templates\emails
 
 copy "%1"BoxSocial\templates\emails "%1"Package\templates\emails
 
+md "%1"Package\templates\mobile
+
+copy "%1"BoxSocial\templates\mobile "%1"Package\templates\mobile
+
+md "%1"Package\templates\tablet
+
+copy "%1"BoxSocial\templates\tablet "%1"Package\templates\tablet
+
 md "%1"Package\styles
 
 copy "%1"BoxSocial\styles "%1"Package\styles

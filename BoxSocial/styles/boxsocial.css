@@ -1117,3 +1117,9 @@ dl#app-list {
 .datalist th {
 	
 }
+
+div.explore-area {
+    width: 48%;
+    float: left;
+    height: 4em;
+}

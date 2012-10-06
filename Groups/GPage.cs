@@ -107,6 +107,11 @@ namespace BoxSocial.Groups
                 template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", Group.Key));
             }
 
+            if (!string.IsNullOrEmpty(Group.Domain))
+            {
+                template.Parse("U_HOME", Group.Uri);
+            }
+
             if (!core.PagePath.StartsWith("/account"))
             {
                 BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, Group));

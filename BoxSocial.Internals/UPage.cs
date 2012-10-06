@@ -111,6 +111,11 @@ namespace BoxSocial.Internals
             template.Parse("USER_DISPLAY_NAME", User.DisplayName);
             template.Parse("USER_DISPLAY_NAME_OWNERSHIP", User.DisplayNameOwnership);
 
+            if (!string.IsNullOrEmpty(User.UserDomain))
+            {
+                template.Parse("U_HOME", User.ProfileUri);
+            }
+
             if (loggedInMember != null)
             {
                 if (loggedInMember.UserId == User.UserId)

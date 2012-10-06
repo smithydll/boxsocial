@@ -1652,6 +1652,7 @@ namespace BoxSocial.Install
                 File.Copy(file, Path.Combine(templatesDir.FullName, fi.Name), true);
             }
 
+            // email templates
             if (!Directory.Exists(Path.Combine(Path.Combine(root, "templates"), "emails")))
             {
                 Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "emails"));
@@ -1664,6 +1665,36 @@ namespace BoxSocial.Install
             {
                 FileInfo fi = new FileInfo(file);
                 File.Copy(file, Path.Combine(emailsDir.FullName, fi.Name), true);
+            }
+
+            // mobile templates
+            if (!Directory.Exists(Path.Combine(Path.Combine(root, "templates"), "mobile")))
+            {
+                Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "mobile"));
+            }
+            DirectoryInfo mobileDir = Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "mobile"));
+
+            files = Directory.GetFiles(Path.Combine("templates", "mobile"));
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(mobileDir.FullName, fi.Name), true);
+            }
+
+            // tablet template
+            if (!Directory.Exists(Path.Combine(Path.Combine(root, "templates"), "tablet")))
+            {
+                Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "tablet"));
+            }
+            DirectoryInfo tabletDir = Directory.CreateDirectory(Path.Combine(Path.Combine(root, "templates"), "tablet"));
+
+            files = Directory.GetFiles(Path.Combine("templates", "tablet"));
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(tabletDir.FullName, fi.Name), true);
             }
         }
 

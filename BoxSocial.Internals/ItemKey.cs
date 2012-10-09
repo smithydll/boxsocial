@@ -87,6 +87,14 @@ namespace BoxSocial.Internals
 			this.itemType = itemType;
             lock (itemTypeCacheLock)
             {
+                if (!itemTypeCache.ContainsKey(itemType))
+                {
+                    throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemTypeCache"));
+                }
+                if (!itemApplicationCache.ContainsKey(itemType))
+                {
+                    throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemApplicationCache"));
+                }
                 this.itemTypeId = itemTypeCache[itemType];
                 this.applicationId = itemApplicationCache[itemType];
             }

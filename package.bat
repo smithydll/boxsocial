@@ -90,3 +90,7 @@ copy "%1"BoxSocial\styles "%1"Package\styles
 md "%1"Package\scripts
 
 copy "%1"BoxSocial\scripts "%1"Package\scripts
+
+md "%1"Package\www
+
+copy "%1"BoxSocial "%1"Package\www

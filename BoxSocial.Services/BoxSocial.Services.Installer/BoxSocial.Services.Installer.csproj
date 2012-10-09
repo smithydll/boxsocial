@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoxSocial.Services.Installer</RootNamespace>
     <AssemblyName>BoxSocial.Services.Installer</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>BoxSocial.Services.Installer.Installer</StartupObject>
     <FileUpgradeFlags>

@@ -52,7 +52,8 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
+            ads.ShadowCopyDirectories = ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/");
+            //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
         }
 
@@ -68,7 +69,6 @@ namespace BoxSocial.FrontEnd
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
             string host = httpContext.Request.Url.Host.ToLower();
@@ -298,8 +298,10 @@ namespace BoxSocial.FrontEnd
                 int ioc = currentURI.IndexOf('/', 1);
                 if (ioc >= 1)
                 {
-                    foreach (string[] pattern in patterns)
+                    for (int i = 0; i < patterns.Count; i++) // (string[] pattern in patterns)
                     {
+                        string[] pattern = patterns[i];
+
                         int iop = pattern[0].IndexOf('/', 2);
                         if (iop >= 2)
                         {
@@ -326,8 +328,9 @@ namespace BoxSocial.FrontEnd
                 }
 
                 // full catch all
-                foreach (string[] pattern in patterns)
+                for (int i = 0; i < patterns.Count; i++) //foreach (string[] pattern in patterns)
                 {
+                    string[] pattern = patterns[i];
                     if (Regex.IsMatch(currentURI, pattern[0]))
                     {
                         Regex rex = new Regex(pattern[0]);

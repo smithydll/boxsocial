@@ -1011,6 +1011,8 @@ namespace BoxSocial.Install
                         Installer.adminPassword = administrationPassword;
                         Installer.adminEmail = administrationEmail;
 
+                        Installer.languageRoot = Path.Combine(Installer.root, "language");
+
                         FileStream fs = new FileStream("settings.xml", FileMode.OpenOrCreate);
                         XmlSerializer xs = new XmlSerializer(typeof(InstallSettings));
                         InstallSettings settings = new InstallSettings();
@@ -1586,7 +1588,7 @@ namespace BoxSocial.Install
 
         private static void InstallWebConfig()
         {
-            Configuration configuration = WebConfigurationManager.OpenWebConfiguration(root);
+            Configuration configuration = WebConfigurationManager.OpenWebConfiguration(Installer.root);
             AppSettingsSection appSettingsSection = (AppSettingsSection)configuration.GetSection("appSettings");
 
             if (appSettingsSection == null)
@@ -1632,8 +1634,9 @@ namespace BoxSocial.Install
                 systemWebSection.Authentication.Forms.SlidingExpiration = true;
                 systemWebSection.Authentication.Forms.Name = "zinzam";
             }
+            Console.WriteLine("web.config path: " + configuration.FilePath);
 
-            configuration.Save();
+            //configuration.Save(ConfigurationSaveMode.Full, true);
         }
 
         private static void InstallTemplates()
@@ -2320,6 +2323,8 @@ namespace BoxSocial.Install
 
         private static void InstallApplication(string repo)
         {
+            Console.WriteLine("Installing: " + repo);
+
             Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
             Template template = new Template(Path.Combine(root, "templates"), "default.html");
             Core core = new Core(db, template);
@@ -2366,6 +2371,8 @@ namespace BoxSocial.Install
                 BoxSocial.Internals.Application.InstallTables(core, loadApplication);
                 BoxSocial.Internals.Application.InstallTypes(core, loadApplication, 0);
 
+                BoxSocial.Internals.ItemKey.populateItemTypeCache(core);
+
                 Type[] types = loadApplication.GetTypes();
                 foreach (Type t in types)
                 {
@@ -2374,6 +2381,7 @@ namespace BoxSocial.Install
 
                     foreach (PermissionInfo pi in permissions)
                     {
+                        Console.WriteLine("Initilising permission (" + t.Name + "): " + pi.Key + ", " + pi.Description);
                         try
                         {
                             ItemType it = new ItemType(core, t.FullName);

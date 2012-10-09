@@ -235,7 +235,6 @@ namespace BoxSocial.Internals
 
         public TPage()
         {
-
             timer = new Stopwatch();
             timer.Start();
             rand = new Random();

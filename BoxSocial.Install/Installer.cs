@@ -135,6 +135,8 @@ namespace BoxSocial.Install
                         InstallLanguage("en", @"Pages");
 
                         InstallTemplates();
+                        InstallScripts();
+                        InstallStyles();
 
                         Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";
@@ -1580,8 +1582,11 @@ namespace BoxSocial.Install
             InstallLanguage("en", @"Mail");
             InstallLanguage("en", @"News");
 
+            InstallWww();
             InstallGDK();
             InstallTemplates();
+            InstallScripts();
+            InstallStyles();
 
             db.CloseConnection();
         }
@@ -1637,6 +1642,53 @@ namespace BoxSocial.Install
             Console.WriteLine("web.config path: " + configuration.FilePath);
 
             //configuration.Save(ConfigurationSaveMode.Full, true);
+        }
+
+        private static void InstallWww()
+        {
+            DirectoryInfo wwwDir = new DirectoryInfo(root);
+
+            string[] files = Directory.GetFiles("www");
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(wwwDir.FullName, fi.Name), true);
+            }
+        }
+
+        private static void InstallScripts()
+        {
+            if (!Directory.Exists(Path.Combine(root, "scripts")))
+            {
+                Directory.CreateDirectory(Path.Combine(root, "scripts"));
+            }
+            DirectoryInfo scriptsDir = new DirectoryInfo(Path.Combine(root, "scripts"));
+
+            string[] files = Directory.GetFiles("scripts");
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(scriptsDir.FullName, fi.Name), true);
+            }
+        }
+
+        private static void InstallStyles()
+        {
+            if (!Directory.Exists(Path.Combine(root, "styles")))
+            {
+                Directory.CreateDirectory(Path.Combine(root, "styles"));
+            }
+            DirectoryInfo stylesDir = new DirectoryInfo(Path.Combine(root, "styles"));
+
+            string[] files = Directory.GetFiles("styles");
+
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                File.Copy(file, Path.Combine(stylesDir.FullName, fi.Name), true);
+            }
         }
 
         private static void InstallTemplates()

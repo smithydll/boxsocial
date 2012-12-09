@@ -1,14 +1,14 @@
 <div id="today-statuses" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
-    <p id="status-message-p" onclick="hide('status-message-l');show('status-form');ge('message').focus();" style="cursor: pointer;">
+    <p id="status-message" onclick="$('#status-message').hide();$('#status-form').show();$('#message').focus().val('is ').width($('#status-form').width() - $('#status-submit').width());" style="cursor: pointer;">
 	    <!-- IF STATUS_MESSAGE -->
-	    {USER_DISPLAY_NAME} <span id="status-message-l"><span id="status-message">{STATUS_MESSAGE}</span> <em>Updated {STATUS_UPDATED}</em></span>
+	    {USER_DISPLAY_NAME} {STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em>
 	    <!-- ELSE -->
-	    <span id="status-message-l">Click here to change your status message.</span>
+	    Click here to change your status message.
 	    <!-- ENDIF -->
 	</p>
 	<div>
-		<form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
-			<p><input type="text" id="message" name="message" value="is " onblur="show('status-message-l');hide('status-form');" />
+		<form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus('{USER_DISPLAY_NAME}');">
+			<p><input type="text" id="message" name="message" value="is " onblur="$('#status-message').show();$('#status-form').hide();" />
 			<input type="submit" id="status-submit" value="Submit"/>
 			<input type="hidden" name="module" value="profile" />
 			<input type="hidden" name="sub" value="status" /></p>

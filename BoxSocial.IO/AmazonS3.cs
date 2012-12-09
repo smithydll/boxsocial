@@ -50,6 +50,19 @@ namespace BoxSocial.IO
             return bin.Replace('\\', '.').Replace('/', '.');
         }
 
+        public override string PathSeparator
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        public override string PathCombine(string path1, string path2)
+        {
+            return path1 + path2;
+        }
+
         public override void CreateBin(string bin)
         {
             PutBucketRequest pbr = new PutBucketRequest();
@@ -62,7 +75,7 @@ namespace BoxSocial.IO
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
-            request.GenerateMD5Digest = true;
+            //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.Standard;
@@ -74,7 +87,7 @@ namespace BoxSocial.IO
         {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
-            request.GenerateMD5Digest = true;
+            //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.Standard;
@@ -87,7 +100,7 @@ namespace BoxSocial.IO
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
-            request.GenerateMD5Digest = true;
+            //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
@@ -99,7 +112,7 @@ namespace BoxSocial.IO
         {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
-            request.GenerateMD5Digest = true;
+            //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
@@ -122,12 +135,21 @@ namespace BoxSocial.IO
 
         public override Stream RetrieveFile(string bin, string fileName)
         {
-            GetObjectRequest request = new GetObjectRequest();
-            request.BucketName = bin;
-            request.Key = fileName;
-            GetObjectResponse response = client.GetObject(request);
+            try
+            {
+                GetObjectRequest request = new GetObjectRequest();
+                request.BucketName = bin;
+                request.Key = fileName;
+                GetObjectResponse response = client.GetObject(request);
 
-            return response.ResponseStream;
+                MemoryStream ms = new MemoryStream();
+                response.ResponseStream.CopyTo(ms);
+                return ms;
+            }
+            catch (Amazon.S3.AmazonS3Exception ex)
+            {
+                throw new Exception("Bin: " + bin + "<br />" + "File: " + fileName + "<br />" + ex.ToString());
+            }
         }
 
         public override string RetrieveFileUri(string bin, string fileName)
@@ -135,7 +157,23 @@ namespace BoxSocial.IO
             GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
             request.BucketName = bin;
             request.Key = fileName;
-            return s3Client.GetPreSignedURL(request);
+            request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
+            request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
+            request.Expires = DateTime.Now.AddHours(1);
+            return client.GetPreSignedURL(request);
+        }
+
+        public override string RetrieveFileUri(string bin, string fileName, string contentType, string renderFileName)
+        {
+            GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+            request.ResponseHeaderOverrides.ContentType = contentType;
+            request.ResponseHeaderOverrides.ContentDisposition = "inline; filename=" + renderFileName;
+            request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
+            request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
+            request.Expires = DateTime.Now.AddHours(1);
+            return client.GetPreSignedURL(request);
         }
 
         public override void CopyFile(string fromBin, string toBin, string fileName)
@@ -168,6 +206,10 @@ namespace BoxSocial.IO
                 {
                     throw;
                 }
+            }
+            catch (System.Xml.XmlException)
+            {
+                return false;
             }
 
             return true;

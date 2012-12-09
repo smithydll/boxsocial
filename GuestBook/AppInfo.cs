@@ -489,6 +489,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
             {
@@ -498,6 +499,8 @@ namespace BoxSocial.Applications.GuestBook
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
+
+            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
 
             template.Parse("IS_USER_GUESTBOOK", "TRUE");
 
@@ -512,6 +515,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
             {
@@ -520,6 +524,8 @@ namespace BoxSocial.Applications.GuestBook
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
+
+            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
 
             core.Display.DisplayComments(template, thisGroup, thisGroup);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, thisGroup));
@@ -531,6 +537,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             Network theNetwork = (Network)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
             {
@@ -539,6 +546,8 @@ namespace BoxSocial.Applications.GuestBook
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
+
+            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
 
             core.Display.DisplayComments(template, theNetwork, theNetwork);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, theNetwork));
@@ -550,11 +559,14 @@ namespace BoxSocial.Applications.GuestBook
         {
             ApplicationEntry anApplication = (ApplicationEntry)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
             {
                 template.Parse("CAN_COMMENT", "TRUE");
             }
+
+            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
 
             core.Display.DisplayComments(template, anApplication, anApplication);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, anApplication));
@@ -566,6 +578,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             Musician.Musician musician = (Musician.Musician)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
             {
@@ -575,6 +588,8 @@ namespace BoxSocial.Applications.GuestBook
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
+
+            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
 
             core.Display.DisplayComments(template, musician, musician);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, musician));

@@ -87,6 +87,10 @@ md "%1"Package\styles
 
 copy "%1"BoxSocial\styles "%1"Package\styles
 
+md "%1"Package\styles\images
+
+copy "%1"BoxSocial\styles\images "%1"Package\styles\images
+
 md "%1"Package\scripts
 
 copy "%1"BoxSocial\scripts "%1"Package\scripts

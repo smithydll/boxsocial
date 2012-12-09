@@ -68,7 +68,10 @@ namespace BoxSocial.Internals
     [DataTable("user_keys", "USER")]
     [Primitive("USER", UserLoadOptions.All, "user_id", "user_name")]
     [Permission("VIEW", "Can view user profile", PermissionTypes.View)]
+    [Permission("VIEW_STATUS", "Can view your status", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
+    [Permission("COMMENT_STATUS", "Can comment on your status", PermissionTypes.Interact)]
+    [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
     [Permission("VIEW_NAME", "Can see your real name", PermissionTypes.View)]
     [Permission("VIEW_SEXUALITY", "Can see your sexuality", PermissionTypes.View)]
     [Permission("VIEW_CONTACT_INFO", "Can see your contact information (does not include e-mail addresses and phone numbers)", PermissionTypes.View)]
@@ -216,7 +219,23 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return userInfo.DisplayNameOwnership;
+                return Info.DisplayNameOwnership;
+            }
+        }
+
+        public string Preposition
+        {
+            get
+            {
+                switch (Profile.GenderRaw)
+                {
+                    case "MALE":
+                        return core.Prose.GetString("HIS");
+                    case "FEMALE":
+                        return core.Prose.GetString("HER");
+                    default:
+                        return core.Prose.GetString("THEIR");
+                }
             }
         }
 
@@ -224,7 +243,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return userInfo.DisplayName;
+                return Info.DisplayName;
             }
         }
 
@@ -248,7 +267,8 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Uri;
+                return core.Uri.AppendSid(string.Format("{0}profile",
+                    UriStub));
             }
         }
 
@@ -1019,6 +1039,15 @@ namespace BoxSocial.Internals
 
             try
             {
+                ApplicationEntry mailAe = new ApplicationEntry(core, null, "Mail");
+                mailAe.Install(core, newUser);
+            }
+            catch
+            {
+            }
+
+            try
+            {
                 ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
                 galleryAe.Install(core, newUser);
             }
@@ -1761,6 +1790,8 @@ namespace BoxSocial.Internals
                 return;
             }
 
+            page.CanonicalUri = page.User.ProfileUri;
+
             string age;
             int ageInt = page.User.Profile.Age;
             if (ageInt == 0)
@@ -1949,7 +1980,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return userProfile.Comments;
+                return Profile.Comments;
             }
         }
 
@@ -2176,6 +2207,11 @@ namespace BoxSocial.Internals
             {
                 return "User: " + DisplayName + " (" + UserName + ")";
             }
+        }
+
+        public override string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
 
         public static ItemKey CreatorKey

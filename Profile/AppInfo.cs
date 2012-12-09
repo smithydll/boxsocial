@@ -117,6 +117,7 @@ namespace BoxSocial.Applications.Profile
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+
         }
 
         public override ApplicationInstallationInfo Install()
@@ -173,7 +174,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                Contact.ShowAll(sender, new ShowUPageEventArgs((UPage)sender, int.Parse(core.PagePathParts[1].Value)));
+                Contact.ShowAll(sender, new ShowUPageEventArgs((UPage)sender, long.Parse(core.PagePathParts[1].Value)));
             }
         }
 
@@ -204,6 +205,16 @@ namespace BoxSocial.Applications.Profile
             {
                 UPage page = (UPage)sender;
                 StatusFeed.Show(core, page, page.User);
+            }
+        }
+
+        [Show("status-feed/([0-9]+)", AppPrimitives.Member | AppPrimitives.Application)]
+        private void showStatusMessage(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                UPage page = (UPage)sender;
+                StatusMessage.Show(core, new ShowUPageEventArgs((UPage)sender, long.Parse(core.PagePathParts[1].Value)));
             }
         }
 

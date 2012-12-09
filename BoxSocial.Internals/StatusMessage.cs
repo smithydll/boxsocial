@@ -30,7 +30,8 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("user_status_messages")]
-    public class StatusMessage : NumberedItem
+    [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
+    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
@@ -38,10 +39,17 @@ namespace BoxSocial.Internals
         private long ownerId;
         [DataField("status_message", 255)]
         private string statusMessage;
+        [DataField("comments")]
+        private long comments;
+        [DataField("status_likes")]
+        private byte likes;
+        [DataField("status_dislikes")]
+        private byte dislikes;
         [DataField("status_time_ut")]
         private long timeRaw;
 
         private User owner;
+        private Access access;
 
         public long StatusId
         {
@@ -51,11 +59,28 @@ namespace BoxSocial.Internals
             }
         }
 
-        public User Owner
+        public User Poster
         {
             get
             {
-                return owner;
+                return (User)Owner;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.PrimitiveCache[ownerId];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
             }
         }
 
@@ -78,6 +103,21 @@ namespace BoxSocial.Internals
         public DateTime GetTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(timeRaw);
+        }
+
+        public StatusMessage(Core core, long statusId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
+
+            try
+            {
+                LoadItem(statusId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidStatusMessageException();
+            }
         }
 
         public StatusMessage(Core core, User owner, DataRow statusRow)
@@ -125,6 +165,64 @@ namespace BoxSocial.Internals
             return new StatusMessage(core, creator, statusId, message);
         }
 
+        public static void Show(object sender, ShowUPageEventArgs e)
+        {
+            if (!e.Page.Owner.Access.Can("VIEW"))
+            {
+                e.Core.Functions.Generate403();
+                return;
+            }
+
+            e.Template.SetTemplate("Profile", "viewstatusfeed");
+
+            if (e.Core.Session.IsLoggedIn && e.Page.Owner == e.Core.Session.LoggedInMember)
+            {
+                e.Core.Template.Parse("OWNER", "TRUE");
+            }
+
+            try
+            {
+                StatusMessage item = new StatusMessage(e.Core, e.ItemId);
+
+                VariableCollection statusMessageVariableCollection = e.Core.Template.CreateChild("status_messages");
+
+                //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+                e.Core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", e.Core.Bbcode.FromStatusCode(item.Message), e.Page.Owner);
+                statusMessageVariableCollection.Parse("STATUS_UPDATED", e.Core.Tz.DateTimeToString(item.GetTime(e.Core.Tz)));
+
+                statusMessageVariableCollection.Parse("ID", item.Id.ToString());
+                statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
+                statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
+                statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
+                statusMessageVariableCollection.Parse("U_QUOTE", e.Core.Uri.BuildCommentQuoteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_REPORT", e.Core.Uri.BuildCommentReportUri(item.Id));
+                statusMessageVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+
+                if (item.Likes > 0)
+                {
+                    statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Likes));
+                    statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Dislikes));
+                }
+
+                /* pages */
+                e.Core.Display.ParsePageList(e.Page.Owner, true);
+
+                List<string[]> breadCrumbParts = new List<string[]>();
+
+                breadCrumbParts.Add(new string[] { "*profile", "Profile" });
+                breadCrumbParts.Add(new string[] { "status-feed", "Status Feed" });
+                breadCrumbParts.Add(new string[] { item.Id.ToString(), "Status" });
+
+                e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
+            }
+            catch (InvalidStatusMessageException)
+            {
+                e.Core.Functions.Generate404();
+                return;
+            }
+        }
+
         public override long Id
         {
             get
@@ -137,8 +235,101 @@ namespace BoxSocial.Internals
         {
             get
             {
-                throw new NotImplementedException();
+                return core.Uri.AppendSid(string.Format("{0}status-feed/{1}",
+                        Owner.UriStub, Id));
             }
         }
+
+        public long Comments
+        {
+            get
+            {
+                return comments;
+            }
+        }
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Message: " + Message;
+            }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
+        public long Likes
+        {
+            get
+            {
+                return likes;
+            }
+        }
+
+        public long Dislikes
+        {
+            get
+            {
+                return dislikes;
+            }
+        }
+    }
+
+    public class InvalidStatusMessageException : Exception
+    {
     }
 }

@@ -30,7 +30,7 @@ namespace BoxSocial.Forms
     {
 
         public SubmitButton(string name, string caption)
-            : base(name, caption)
+            : base(name, caption, string.Empty)
         {
         }
 

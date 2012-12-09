@@ -1,4 +1,6 @@
-{HACK}Hack<div id="acl-list"><!-- BEGIN permision_types -->
+{HACK}<!-- Hack -->
+<div id="acl-list">
+<!-- BEGIN permision_types -->
   <h3>{permision_types.TITLE}</h3>
   <div class="perm-type">
   <div class="permission-type-simple">
@@ -20,6 +22,9 @@
         <dd>
           {L_INHERIT}
         </dd>
+        <dd>
+          &nbsp;
+        </dd>
       </dl>
       <ul class="permission-grant-list">
         <!-- BEGIN permision_types.permission.grant -->
@@ -39,6 +44,9 @@
             </dd>
             <dd>
               {permision_types.permission.grant.S_INHERIT}
+            </dd>
+            <dd>
+              {permision_types.permission.grant.S_DELETE}
             </dd>
           </dl>
         </li>

@@ -60,11 +60,15 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:\Users\Lachlan\Downloads\Json45r11\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Security" />
@@ -121,15 +125,18 @@
     <Compile Include="IAppInfo.cs" />
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
+    <Compile Include="ILikeableItem.cs" />
     <Compile Include="InviteKey.cs" />
     <Compile Include="IPermissibleItem.cs" />
     <Compile Include="IPermissibleSubItem.cs" />
     <Compile Include="IRateableItem.cs" />
+    <Compile Include="ISubscribeableItem.cs" />
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemTag.cs" />
     <Compile Include="IUniqueKeyedItem.cs" />
     <Compile Include="License.cs" />
+    <Compile Include="Like.cs" />
     <Compile Include="Navigation.cs" />
     <Compile Include="Notification.cs" />
     <Compile Include="NumberedItem.cs" />
@@ -147,6 +154,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="StaticShowAttribute.cs" />
+    <Compile Include="Subscription.cs" />
     <Compile Include="UPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

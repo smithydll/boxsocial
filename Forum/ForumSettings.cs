@@ -334,6 +334,11 @@ namespace BoxSocial.Applications.Forum
                 return "Forum Settings: " + Owner.DisplayName + " (" + Owner.Key + ")";
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class InvalidForumSettingsException : Exception

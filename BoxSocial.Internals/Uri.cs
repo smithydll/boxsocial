@@ -335,20 +335,26 @@ namespace BoxSocial.Internals
 
         public string BuildCommentQuoteUri(long commentId)
         {
-            return AppendSid(string.Format("/comment/?mode=quote&id={0}",
+            return AppendSid(string.Format("/api/comment?mode=quote&id={0}",
                 commentId));
         }
 
         public string BuildCommentReportUri(long commentId)
         {
-            return AppendSid(string.Format("/comment/?mode=report&id={0}",
+            return AppendSid(string.Format("/api/comment?mode=report&id={0}",
                 commentId));
         }
 
         public string BuildCommentDeleteUri(long commentId)
         {
-            return AppendSid(string.Format("/comment/?mode=delete&id={0}",
+            return AppendSid(string.Format("/api/comment?mode=delete&id={0}",
                 commentId));
+        }
+
+        public string BuildLikeItemUri(long typeId, long id)
+        {
+            return AppendSid(string.Format("/api/like?mode=like&item={0}&type={1}",
+                id, typeId));
         }
 
         public string AppendSid(string uri)

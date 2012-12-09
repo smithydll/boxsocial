@@ -433,6 +433,11 @@ namespace BoxSocial.Groups
             }
         }
 
+        public override string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
         public SubUserGroup(Core core, long groupId)
             : this(core, groupId, UserSubGroupLoadOptions.Info)
         {

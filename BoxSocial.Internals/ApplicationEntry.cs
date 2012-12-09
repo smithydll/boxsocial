@@ -907,6 +907,7 @@ namespace BoxSocial.Internals
                     case "groups":
                     case "gallery":
                     case "calendar":
+                    case "mail":
                         return false;
                 }
             }
@@ -1309,6 +1310,11 @@ namespace BoxSocial.Internals
             {
                 return "Application: " + Title;
             }
+        }
+
+        public override string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
 
         public static ItemKey ApplicationDevelopersGroupKey

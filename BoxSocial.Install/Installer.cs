@@ -2292,6 +2292,17 @@ namespace BoxSocial.Install
 
             try
             {
+                ApplicationEntry mailAe = new ApplicationEntry(core, newUser, "Mail");
+                mailAe.Install(core, newUser);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Mail");
+                Console.WriteLine(ex.ToString());
+            }
+
+            try
+            {
                 ApplicationEntry guestbookAe = new ApplicationEntry(core, newUser, "GuestBook");
                 guestbookAe.Install(core, newUser);
             }

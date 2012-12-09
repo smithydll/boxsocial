@@ -190,6 +190,36 @@ namespace BoxSocial.Internals
 
             core.Http.End();
         }
+
+        public void SendUserDictionary(string ajaxCode, Dictionary<long, string[]> arrayItems)
+        {
+            XmlSerializer xs;
+            StringWriter stw;
+
+            AjaxUserDictionary am = new AjaxUserDictionary();
+            am.ResponseCode = ajaxCode;
+
+            List<AjaxUserDictionaryItem> ajaxArrayItems = new List<AjaxUserDictionaryItem>();
+
+            foreach (long id in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new AjaxUserDictionaryItem(id, arrayItems[id][0], arrayItems[id][1]));
+            }
+
+            am.ResponseDictionary = ajaxArrayItems.ToArray();
+
+            xs = new XmlSerializer(typeof(AjaxUserDictionary));
+            stw = new StringWriter();
+
+            core.Http.WriteXml(xs, am);
+
+            if (core.Db != null)
+            {
+                core.Db.CloseConnection();
+            }
+
+            core.Http.End();
+        }
     }
 
     [XmlRoot("ajax")]
@@ -274,6 +304,42 @@ namespace BoxSocial.Internals
         {
             this.Id = id;
             this.Value = value;
+        }
+    }
+
+    [XmlRoot("ajax")]
+    public class AjaxUserDictionary
+    {
+        [XmlElement("type")]
+        public string AjaxType = "UserDictionary";
+
+        [XmlElement("code")]
+        public string ResponseCode;
+
+        [XmlArray("array")]
+        [XmlArrayItem("item")]
+        public AjaxUserDictionaryItem[] ResponseDictionary;
+    }
+
+    public class AjaxUserDictionaryItem
+    {
+        [XmlElement("id")]
+        public long Id;
+        [XmlElement("value")]
+        public string Value;
+        [XmlElement("tile")]
+        public string Tile;
+
+        public AjaxUserDictionaryItem()
+        {
+
+        }
+
+        public AjaxUserDictionaryItem(long id, string value, string tile)
+        {
+            this.Id = id;
+            this.Value = value;
+            this.Tile = tile;
         }
     }
 }

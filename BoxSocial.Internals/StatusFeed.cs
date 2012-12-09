@@ -155,7 +155,18 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            if (!owner.Access.Can("VIEW"))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
             core.Template.SetTemplate("Profile", "viewstatusfeed");
+
+            if (core.Session.IsLoggedIn && owner == core.Session.LoggedInMember)
+            {
+                core.Template.Parse("OWNER", "TRUE");
+            }
 
             List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber);
 
@@ -163,16 +174,35 @@ namespace BoxSocial.Internals
             {
                 VariableCollection statusMessageVariableCollection = core.Template.CreateChild("status_messages");
 
-                statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+                //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(item.Message), owner);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(item.GetTime(core.Tz)));
+
+                statusMessageVariableCollection.Parse("ID", item.Id.ToString());
+                statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
+                statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
+                statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
+                statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(item.Id));
+                statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+
+                if (item.Likes > 0)
+                {
+                    statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Likes));
+                    statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Dislikes));
+                }
             }
 
             core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.Info.StatusMessages / 10.0));
 
+            /* pages */
+            core.Display.ParsePageList(owner, true);
+
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "profile", "Profile" });
-            breadCrumbParts.Add(new string[] { "status", "Status Feed" });
+            breadCrumbParts.Add(new string[] { "*profile", "Profile" });
+            breadCrumbParts.Add(new string[] { "status-feed", "Status Feed" });
 
             owner.ParseBreadCrumbs(breadCrumbParts);
         }

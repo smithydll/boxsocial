@@ -25,24 +25,28 @@
 		<div class="comment-text">
 			<p>{comment-list.COMMENT}</p>
 		</div>
-		<!-- IF LOGGED_IN -->
-		<p class="extra">
-		<!-- IF CAN_COMMENT -->
+        <div class="r-stuff light">
+        <span class="img-button like-item"><a href="#" onclick="return LikeItem({comment-list.ID},{comment-list.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{comment-list.LIKES}</span></a></span><!--
+        --><span class="img-button share-item"><a href="#" onclick="return ShareItem({comment-list.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
+        <!-- IF LOGGED_IN -->
 		<!-- IF IS_USER_GUESTBOOK -->
 		<!-- IF U_CONVERSATION -->
-		(<a href="{comment-list.U_CONVERSATION}">View as Conversation</a>)
+        --><span class="img-button conversation-item"><a href="{comment-list.U_CONVERSATION}" title="View as Conversation"><span class="sprite conversation-sprite"></span></a></span><!--
 		<!-- ENDIF -->
+        <!-- IF CAN_COMMENT -->
 		<!-- IF U_REPLY -->
-		(<a href="{comment-list.U_REPLY}">Reply</a>)
+        --><span class="img-button reply-item"><a href="{comment-list.U_REPLY}" title="Reply to Post">Reply</a></span><!--
 		<!-- ENDIF -->
 		<!-- ENDIF -->
-		(<a href="{comment-list.U_QUOTE}" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});">Quote</a>)
+        --><span class="img-button quote-item"><a href="#" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});" title="Quote Comment">Quote</a></span><!--
 		<!-- ENDIF -->
 		<!-- IF comment-list.MODERATE -->
-		(<a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="Delete comment">Delete</a>)
+        --><span class="img-button delete-item"><a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="Delete Comment"><span class="sprite delete-sprite"></span></a></span><!--
 		<!-- ENDIF -->
-		(<a href="{comment-list.U_REPORT}" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="Report as SPAM">Report</a>)</p>
-		<!-- ENDIF -->
+        --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="Report as SPAM"><span class="sprite report-sprite"></span></a></span><!--
+        <!-- ENDIF -->
+        -->
+        </div>
 		<div class="cheat-clear-left"></div>
 		</div>
 	</li>

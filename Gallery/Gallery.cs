@@ -52,6 +52,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("CREATE_ITEMS", "Can upload photos to gallery", PermissionTypes.CreateAndEdit)]
     [Permission("EDIT_ITEMS", "Can edit photos", PermissionTypes.CreateAndEdit)]
     [Permission("DELETE_ITEMS", "Can delete photos", PermissionTypes.Delete)]
+    [Permission("DOWNLOAD_ORIGINAL", "Can download the original photo. This will include EXIF data which may include personally identifiable information.", PermissionTypes.View)]
     public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem
     {
 
@@ -81,7 +82,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gallery title
         /// </summary>
-        [DataField("gallery_title", 31)]
+        [DataField("gallery_title", 63)]
         private string galleryTitle;
 
         /// <summary>
@@ -185,6 +186,7 @@ namespace BoxSocial.Applications.Gallery
         List<AccessControlPermission> permissionsList;
 
         private GallerySettings settings;
+        private GalleryItem highlightItem;
 
         /// <summary>
         /// Gets the gallery Id
@@ -458,11 +460,55 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (this.Access.Can("VIEW_ITEMS"))
                     {
+                        if (HighlightItem != null)
+                        {
+                            try
+                            {
+                                return HighlightItem.ThumbUri;
+                            }
+                            catch (GalleryItemNotFoundException)
+                            {
+                                return "FALSE";
+                            }
+                        }
+                        else
+                        {
+                            return "FALSE";
+                        }
+                    }
+                    else
+                    {
+                        return "FALSE";
+                    }
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery highlighted item thumbnail URI
+        /// </summary>
+        public string LargeTileUri
+        {
+            get
+            {
+                if (this.Access.Can("VIEW_ITEMS"))
+                {
+                    if (HighlightItem != null)
+                    {
                         try
                         {
-                            GalleryItem item = new GalleryItem(core, HighlightId);
-
-                            return item.ThumbUri;
+                            if (HighlightItem.LargeTileUri != null)
+                            {
+                                return HighlightItem.LargeTileUri;
+                            }
+                            else
+                            {
+                                return "FALSE";
+                            }
                         }
                         catch (GalleryItemNotFoundException)
                         {
@@ -1464,7 +1510,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                     }
 
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0), PaginationOptions.Normal);
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 16.0), PaginationOptions.Normal);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1531,6 +1577,7 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
                 galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
+                galleryVariableCollection.Parse("LARGETILE", galleryGallery.LargeTileUri);
                 e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                 long items = galleryGallery.Items;
@@ -1545,7 +1592,7 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12);
+            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 16);
 
             e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 
@@ -1563,9 +1610,8 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
 				galleryVariableCollection.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
 
-                string thumbUri = string.Format("{0}images/_thumb/{1}/{2}",
-                    e.Page.Owner.UriStub, galleryPath, galleryItem.Path);
-                galleryVariableCollection.Parse("THUMBNAIL", thumbUri);
+                galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
+                galleryVariableCollection.Parse("LARGETILE", galleryItem.LargeTileUri);
 
                 Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
@@ -1661,7 +1707,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("/acl.aspx?id={0}&type={1}", Id, ItemKey.TypeId), true);
+                return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", Id, ItemKey.TypeId), true);
             }
         }
 
@@ -1706,6 +1752,47 @@ namespace BoxSocial.Applications.Gallery
                 else
                 {
                     return settings;
+                }
+            }
+        }
+
+        internal GalleryItem HighlightItem
+        {
+            get
+            {
+                if (highlightItem == null)
+                {
+                    if (HighlightId > 0)
+                    {
+                        highlightItem = new GalleryItem(core, Owner, HighlightId);
+                    }
+                    else
+                    {
+                        if (Items > 0)
+                        {
+                            List<GalleryItem> items = GetItems(core, 1, 1);
+                            if (items.Count > 0)
+                            {
+                                highlightItem = items[0];
+                                return highlightItem;
+                            }
+                        }
+                        List<Gallery> galleries = GetGalleries();
+                        for (int i =0; i <galleries.Count; i++)
+                        {
+                            if (galleries[i].Access.Can("VIEW_ITEMS"))
+                            {
+                                highlightItem = galleries[i].HighlightItem;
+                                break;
+                            }
+                        }
+                        return highlightItem;
+                    }
+                    return highlightItem;
+                }
+                else
+                {
+                    return highlightItem;
                 }
             }
         }
@@ -1798,6 +1885,11 @@ namespace BoxSocial.Applications.Gallery
             {
                 return "Gallery: " + GalleryTitle + " (" + FullPath + ")";
             }
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
 
         /// <summary>

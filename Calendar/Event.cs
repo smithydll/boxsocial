@@ -741,8 +741,8 @@ namespace BoxSocial.Applications.Calendar
 
                         listVariableCollection.Parse("U_PROFILE", user.Uri);
                         listVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
-                        listVariableCollection.Parse("ICON", user.UserTile);
-                        listVariableCollection.Parse("ICON", user.UserTile);
+                        listVariableCollection.Parse("ICON", user.UserIcon);
+                        listVariableCollection.Parse("TILE", user.UserTile);
                     }
                 }
             }
@@ -831,6 +831,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 return "Event: " + Subject + " (" + core.Tz.DateTimeToString(GetStartTime(core.Tz),false) + ")";
             }
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
 
         public static List<PrimitivePermissionGroup> Event_GetItemGroups(Core core)

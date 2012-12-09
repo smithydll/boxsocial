@@ -174,6 +174,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (owner is User)
             {
+                Access.CreateAllGrantsForOwner(core, settings);
                 settings.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
                 settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
             }
@@ -270,6 +271,11 @@ namespace BoxSocial.Applications.Gallery
             {
                 return "Gallery Settings: " + Owner.DisplayName + " (" + Owner.Key + ")";
             }
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
     }
 

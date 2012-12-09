@@ -70,6 +70,14 @@ namespace BoxSocial.Applications.GuestBook
                     core.Uri.StripSid(Uri), user.UserName));
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                return owner;
+            }
+        }
+
         #region ICommentableItem Members
 
 

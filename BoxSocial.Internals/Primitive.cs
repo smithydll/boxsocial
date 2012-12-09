@@ -286,6 +286,8 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string ParentPermissionKey(Type parentType, string permission);
+
         public abstract string StoreFile(MemoryStream file);
     }
 

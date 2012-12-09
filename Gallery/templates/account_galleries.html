@@ -4,7 +4,9 @@
 	<!-- IF U_UPLOAD_PHOTO -->
 	<span id="new-photo" class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
 	<!-- ENDIF -->
+    <!-- IF U_NEW_GALLERY -->
 	<span id="new-gallery" class="post-button"><a href="{U_NEW_GALLERY}">New Gallery</a></span>
+    <!-- ENDIF -->
   <span id="gallery-permissions" class="post-button"><a href="{U_PERMISSIONS}">{L_EDIT_PERMISSIONS}</a></span>
 </div>
 
@@ -27,8 +29,8 @@
 	<td>{gallery_list.ITEMS}</td>
 	<td><a href="{gallery_list.U_VIEW}">{L_VIEW}</a></td>
 	<td><a href="{gallery_list.U_EDIT}">{L_EDIT}</a></td>
-    <td><a href="{gallery_list.U_PERMISSIONS}">Permissions</a></td>   
-	<td><a href="{gallery_list.U_DELETE}">{L_DELETE}</a></td>
+    <td><a href="{gallery_list.U_PERMISSIONS}"><img src="/images/permissions.png" alt="{L_EDIT_PERMISSIONS}" title="{L_EDIT_PERMISSIONS}"/></a></td>   
+	<td><a href="{gallery_list.U_DELETE}"><img src="/images/delete.png" alt="{L_DELETE}" title="{L_DELETE}"/></a></td>
 </tr>
 <!-- END gallery_list -->
 </table>

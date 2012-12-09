@@ -5,32 +5,26 @@
 }
 
 ul#gallery-list li {
-	background-color: #CCCCCC;
 	margin-bottom: 1px;
-}
-
-ul#gallery-list li dt {
 	float: left;
-	width: 180px;
-	padding: 3px;
-	text-align: center;
+	margin: 0 10px 20px 10px;
 }
 
-ul#gallery-list li dd {
-	margin-left: 180px;
+ul#gallery-list li div.gallery-item {
 	padding: 3px;
+	background-color: White;
+	border: solid 1px #999999;
+	font-size: 0;
 }
 
 ul#gallery-list li h3 {
 	padding: 0px;
 	margin: 0px;
+	font-size: 120% !important;
 }
 
-ul#gallery-list li dt img {
-	padding: 3px;
-	background-color: White;
-	border: solid 1px black;
-	font-size: 0px;
+ul#gallery-list li .photo-canvas {
+    font-size: 10px;
 }
 
 ul#photo-list {
@@ -39,15 +33,10 @@ ul#photo-list {
 	margin: 0px;
 }
 
-ul#photo-list dl {
-	padding: 0px;
-	margin: 0px;
-}
-
 ul#photo-list li {
+	margin-bottom: 1px;
 	float: left;
-	width: 180px;
-	height: 260px;
+	margin: 0 10px 20px 10px;
 }
 
 #profile-gallery-pane ul#photo-list li {
@@ -59,19 +48,21 @@ ul#photo-list li dt {
 	text-align: center;
 }
 
-ul#photo-list li dt img {
+ul#photo-list li div.gallery-item {
 	padding: 3px;
 	background-color: White;
-	border: solid 1px black;
-	font-size: 0px;
+	border: solid 1px #999999;
+	font-size: 0;
 }
 
-ul#photo-list li dd {
-	background-color: #CCCCCC;
-	margin: 1px;
-	padding: 1px;
-	width: 160px;
-	margin-left: 10px;
+ul#photo-list li h3 {
+	padding: 0px;
+	margin: 0px;
+	font-size: 120% !important;
+}
+
+ul#photo-list li .photo-canvas {
+    font-size: 10px;
 }
 
 #view-photo #x-stuff{
@@ -83,7 +74,7 @@ ul#photo-list li dd {
 #view-photo dl dt img {
 	padding: 3px;
 	background-color: White;
-	border: solid 1px black;
+	border: solid 1px #999999;
 	font-size: 0px;
 }
 
@@ -92,4 +83,155 @@ ul#photo-list li dd {
 	margin: 1px auto;
 	padding: 1px;
 	width: 640px;
+}
+
+.previous-photo, .next-photo {
+    display: block;
+    opacity: 0;
+    width: 32px;
+    height: 48px;
+    font-size: 350%;
+    font-weight: bold;
+    text-shadow: 0 0 0.2em black;
+    position: absolute;
+    top: 50%;
+    text-align: center;
+    margin-top: -24px;
+    z-index: 1000;
+}
+
+.previous-photo {
+    left: 4px;
+    float: left;
+}
+
+.next-photo {
+    right: 4px;
+    float: right;
+}
+
+.previous-photo a, .next-photo a {
+    color: #ffffff;
+    display: block;
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.photo-canvas:hover .previous-photo, .photo-canvas:hover .next-photo {
+    opacity: 0.7;
+    background-color: rgba(17,17,17,0.8);
+}
+
+.photo-canvas .previous-photo:hover, .photo-canvas .next-photo:hover {
+    opacity: 1;
+    background-color: rgba(17,17,17,0.7);
+}
+
+#display-hd {
+    display: none;
+    position: fixed;
+    width: 95%;
+    height: 95%;
+    left: 0;
+    top: 0;
+    background: rgba(17,17,17,0.95);
+    z-index: 10000;
+    text-align: center;
+    vertical-align: middle;
+    padding: 2.5%;
+}
+
+#display-hd #photo-hd {
+    max-height: 100%;
+    max-width: 100%;
+    position: relative;
+}
+
+#display-hd .content-block 
+{
+    margin-right: 355px;
+    height: 95%;
+    vertical-align: middle;
+    position: static;
+}
+
+#display-hd .comment-block
+{
+    float: right;
+    position: relative;
+    background-color: #ffffff;
+    height: 95%;
+    width: 350px;
+    border-radius: 5px;
+    text-align: left;
+    padding: 5px;
+    overflow: auto;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.hd-blackout
+{
+    margin: 0 5px;
+    background: rgba(17,17,17,1);
+    border-radius: 5px;
+    height: 100%;
+}
+
+#photo-640 {
+    cursor: pointer;
+}
+
+.gallery-title {
+    display: block;
+    height: 24px;
+    margin-top: -24px;
+    font-size: 100%;
+    text-shadow: 0 0 0.3em white;
+    position: absolute;
+    top: 100%;
+    text-align: left;
+    z-index: 1000;
+    padding: 5px;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.gallery-title a 
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #111111;
+    cursor: pointer;
+    vertical-align: bottom;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-title p {
+    display: none;
+}
+
+.photo-canvas:hover .gallery-title {
+    color: #ffffff;
+    text-shadow: 0 0 0.2em black;
+    background-color: rgba(17,17,17,0.7);
+    height: 36px;
+    margin-top: -36px;
+}
+
+.photo-canvas:hover .gallery-title a {
+    color: #ffffff;
+}
+
+.photo-canvas:hover .gallery-title p {
+    display: inline;
 }

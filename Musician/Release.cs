@@ -140,6 +140,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                return (Primitive)Musician;
+            }
+        }
+
         public Release(Core core, long releaseId)
             : base (core)
         {

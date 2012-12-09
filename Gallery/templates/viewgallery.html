@@ -18,35 +18,21 @@
   <ul id="gallery-list">
     <!-- BEGIN gallery_list -->
     <li>
-      <dl>
-        <!-- IF gallery_list.THUMBNAIL -->
-        <dt>
-          <a href="{gallery_list.URI}">
-            <img src="{gallery_list.THUMBNAIL}" alt="{gallery_list.TITLE}" />
-          </a>
-        </dt>
-        <!-- ELSE -->
-        <dt>
-          <a href="{gallery_list.URI}"></a>
-        </dt>
-        <!-- ENDIF -->
-        <dd>
-          <h3>
-            <a href="{gallery_list.URI}">{gallery_list.TITLE}</a>
-          </h3>
-        </dd>
-        <dd>
-          <!-- IF gallery_list.ABSTRACT -->
-          <p>{gallery_list.ABSTRACT}</p>
-          <!-- ENDIF -->
-        </dd>
-        <dd>
-          {gallery_list.ITEMS}<div class="cheat-clear"></div>
-        </dd>
-      </dl>
+
+          <div class="gallery-item" style="text-align: center;">
+            <span class="photo-canvas" style="display: inline-block; margin: auto; position: relative;">
+            <span class="gallery-title"><h3><a href="{gallery_list.URI}" alt="{gallery_list.TITLE}">{gallery_list.TITLE}</a></h3><p style="padding: 0;">{gallery_list.ITEMS}</p></span>
+            <!-- IF gallery_list.LARGETILE -->
+            <p style="font-size: 0; padding: 0;"><a href="{gallery_list.URI}"><img src="{gallery_list.LARGETILE}" alt="{gallery_list.TITLE}" width="200" height="200" /></a></p>
+            <!-- ELSE -->
+            <p style="font-size: 0; padding: 0;"><a href="{gallery_list.URI}"><span class="no-photos" style="display: inline-block; width: 200px; height: 200px;" title="{gallery_list.TITLE}"></span></a></p>
+            <!-- ENDIF -->
+            </span>
+          </div>
     </li>
     <!-- END gallery_list -->
   </ul>
+  <div class="cheat-clear-left"></div>
   <!-- ENDIF -->
   <!-- IF PHOTOS -->
   <!-- IF PAGINATION -->
@@ -57,36 +43,12 @@
   <ul id="photo-list">
     <!-- BEGIN photo_list -->
     <li>
-      <dl>
-        <dt>
-          <a href="{photo_list.PHOTO_URI}">
-            <img src="{photo_list.THUMBNAIL}" alt="{photo_list.TITLE}" />
-          </a>
-        </dt>
-        <dd>{photo_list.TITLE}</dd>
-        <dd>{photo_list.COMMENTS} comments</dd>
-        <dd>
-          <!-- IF photo_list.S_RATEBAR -->
-          <div class="ratebar">
-            <p class="ratebar" style="margin: 0;">
-              <a onmouseover="StarOver(1,{photo_list.INDEX},{photo_list.TYPEID})" onmouseout="StarOver(0,{photo_list.INDEX},{photo_list.TYPEID})" onclick="SubmitRating(1,{photo_list.ID},{photo_list.TYPEID})">
-                <img src="{photo_list.STAR_ONE}" alt="Rate this item as 1 star" id="rate-1s-{photo_list.INDEX}-{photo_list.TYPEID}" class="{photo_list.STAR_ONE_CLASS}" />
-              </a><a onmouseover="StarOver(2,{photo_list.INDEX},{photo_list.TYPEID})" onmouseout="StarOver(0,{photo_list.INDEX},{photo_list.TYPEID})" onclick="SubmitRating(2,{photo_list.ID},{photo_list.TYPEID})">
-                <img src="{photo_list.STAR_TWO}" alt="Rate this item as 1 star" id="rate-2s-{photo_list.INDEX}-{photo_list.TYPEID}" class="{photo_list.STAR_TWO_CLASS}" />
-              </a><a onmouseover="StarOver(3,{photo_list.INDEX},{photo_list.TYPEID})" onmouseout="StarOver(0,{photo_list.INDEX},{photo_list.TYPEID})" onclick="SubmitRating(3,{photo_list.ID},{photo_list.TYPEID})">
-                <img src="{photo_list.STAR_THREE}" alt="Rate this item as 1 star" id="rate-3s-{photo_list.INDEX}-{photo_list.TYPEID}" class="{photo_list.STAR_THREE_CLASS}" />
-              </a><a onmouseover="StarOver(4,{photo_list.INDEX},{photo_list.TYPEID})" onmouseout="StarOver(0,{photo_list.INDEX},{photo_list.TYPEID})" onclick="SubmitRating(4,{photo_list.ID},{photo_list.TYPEID})">
-                <img src="{photo_list.STAR_FOUR}" alt="Rate this item as 1 star" id="rate-4s-{photo_list.INDEX}-{photo_list.TYPEID}" class="{photo_list.STAR_FOUR_CLASS}" />
-              </a><a onmouseover="StarOver(5,{photo_list.INDEX},{photo_list.TYPEID})" onmouseout="StarOver(0,{photo_list.INDEX},{photo_list.TYPEID})" onclick="SubmitRating(5,{photo_list.ID},{photo_list.TYPEID})">
-                <img src="{photo_list.STAR_FIVE}" alt="Rate this item as 1 star" id="rate-5s-{photo_list.INDEX}-{photo_list.TYPEID}" class="{photo_list.STAR_FIVE_CLASS}" />
-              </a>
-              {photo_list.RATE_RATING}
-            </p>
+          <div class="gallery-item" style="text-align: center;">
+            <span class="photo-canvas" style="display: inline-block; margin: auto; position: relative;">
+            <span class="gallery-title"><h3><a href="{photo_list.PHOTO_URI}" alt="{photo_list.TITLE}">{photo_list.TITLE}</a></h3><p style="padding: 0;">{photo_list.VIEWS} Views</p></span>
+            <p style="font-size: 0; padding: 0;"><a href="{photo_list.PHOTO_URI}"><img src="{photo_list.LARGETILE}" alt="{photo_list.TITLE}" width="200" height="200" /></a></p>
+            </span>
           </div>
-          <!-- ENDIF -->
-        </dd>
-        <dd>Viewed {photo_list.VIEWS} times</dd>
-      </dl>
     </li>
     <!-- END photo_list -->
   </ul>
@@ -98,8 +60,7 @@
   <!-- ENDIF -->
   <!-- ENDIF -->
   <!-- IF ALBUM_COMMENTS -->
-  <p>{COMMENTS} comments.</p>
-  <div class="comment-pane" style="margin: 0 auto; width: 640px;">
+    <div class="comment-pane" style="margin: 0 auto; width: 700px;">
     <!-- INCLUDE pane.comments.html -->
   </div>
   <!-- ENDIF -->

@@ -98,6 +98,13 @@ namespace BoxSocial.Internals
 
                     core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
                     core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId]);
+
+                    feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
+
+                    if (feedAction.Owner is User)
+                    {
+                        feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).UserTile);
+                    }
                 }
             }
 

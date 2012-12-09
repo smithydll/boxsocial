@@ -14,56 +14,6 @@
 	<!-- IF REDIRECT_URI -->
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->
-	<style type="text/css">
-		<!--
-
-#head {
-	background-color: #{HEAD_COLOUR};
-	color: {HEAD_FORE_COLOUR};
-	background-image: url('/images/corners-middle-{HEAD_COLOUR}-1-1.png');
-}
-
-#head a {
-	color: {HEAD_FORE_COLOUR};
-}
-
-div#rc-top {
-	background-image: url('/images/corners-top-{HEAD_COLOUR}-900-5.png');
-}
-
-div#rc-bottom {
-	background-image: url('/images/corners-bottom-{HEAD_COLOUR}-900-5.png');
-}
-
---></style>
-	<!--[if lt IE 7]>
-	<style type="text/css">
-#head {
-	background-color: #{HEAD_COLOUR};
-	color: {HEAD_FORE_COLOUR};
-	background-image: url('/images/corners-middle-{HEAD_COLOUR}-1-1.gif');
-}
-
-#head h1 {
-	float: left;
-	margin: 0px;
-	padding: 0px;
-	background: url('/images/zinzam-wl.gif');
-	background-repeat: no-repeat;
-}
-
-div#rc-top {
-	background-image: url('/images/corners-top-{HEAD_COLOUR}-900-5.gif');
-}
-
-div#rc-bottom {
-	background-image: url('/images/corners-bottom-{HEAD_COLOUR}-900-5.gif');
-}
-	</style>
-	<![endif]-->
-	<!-- IF USER_STYLE_SHEET -->
-	<link href="/styles/{USER_STYLE_SHEET}" rel="Stylesheet" media="screen, projection" type="text/css"/>
-	<!-- ENDIF -->
 	<script type="text/javascript">
 	<!--
 		var sid = '{SID}';
@@ -77,7 +27,6 @@ div#rc-bottom {
 <body>
 	<div id="wrapper">
 	<div id="page">
-		<span class="head corners-top"><span></span><span></span></span>
 		<div id="head">
 			<h1 id="page-title"><a href="{U_HOME}"><span>{HEADING}</span></a></h1>
 			<h2 id="sub-title">A Global Community</h2>
@@ -101,7 +50,6 @@ div#rc-bottom {
 				</form>
 			</div>
 		</div>
-		<span class="head corners-bottom"><span></span><span></span></span>
 	    <!-- BEGIN head_hook -->
 {head_hook.BODY}
 		<!-- END head_hook -->

@@ -9,39 +9,135 @@
     </span>
   </div>
   <!-- ENDIF -->
+  <!-- IF U_VIEW_FULL -->
   <p style="text-align: right;">
     <span id="view-full" class="post-button">
       <a href="{U_VIEW_FULL}">View Full Size</a>
     </span>
-    <!-- IF U_PREVIOUS_PHOTO -->
-    <a href="{U_PREVIOUS_PHOTO}">Previous Photo</a>
-    <!-- ENDIF -->
-    <!-- IF U_NEXT_PHOTO -->
-    <a href="{U_NEXT_PHOTO}">Next Photo</a>
-    <!-- ENDIF -->
   </p>
+  <!-- ENDIF -->
   <div id="view-photo">
     <script type="text/javascript">
       <!--
+
+        $(document).keydown(function(e){
+        <!-- IF U_PREVIOUS_PHOTO -->
+            if (e.keyCode == 37) { /* left */
+                window.location.href = "{U_PREVIOUS_PHOTO}" + parent.location.hash;
+                return false;
+            }
+        <!-- ENDIF -->
+        <!-- IF U_NEXT_PHOTO -->
+            if (e.keyCode == 39) { /* right */
+                window.location.href = "{U_NEXT_PHOTO}" + parent.location.hash;
+                return false;
+            }
+        <!-- ENDIF -->
+            if (e.keyCode == 27) { /* escape */
+                showNormal();
+            }
+        });
+
+        $(document).ready(function(){
+            if (parent.location.hash == '#hd') {
+                showHd();
+            }
+
+          $("#display-hd div").click(function(event){
+            event.stopPropagation();  
+          });
+
+          $(window).resize(function() {
+            positionHd();
+          });
+
+        });
+
+        var hdDisplay = '{PHOTO_HD_DISPLAY}';
+        var normalDisplay = '{PHOTO_DISPLAY}';
 		var user_tags = new Array();
 	<!-- BEGIN user_tags -->
       user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
       <!-- END user_tags -->
+
+      function positionHd() {
+        $('#photo-hd').css('top', (($('#hd-padding-block').height() - Math.min($('#hd-padding-block').height(), Math.min($('#hd-padding-block').width(), {HD_WIDTH}) * {HD_HEIGHT} / {HD_WIDTH})) / 2) + 'px');
+      }
+
+      function toggleHd() {
+        if (parent.location.hash != '#hd') {
+          showHd();
+        } else {
+          showNormal();
+        }
+      }
+
+      function showHd() {
+        document.body.style.overflow = 'hidden';
+        $('#photo-hd').attr('src', hdDisplay);
+        $('#display-hd').show();
+        parent.location.hash = 'hd';
+        positionHd();
+      }
+
+      function showNormal() {
+        document.body.style.overflow = 'auto';
+        $('#display-hd').hide();
+        parent.location.hash = '';
+      }
       -->
     </script>
-    <dl>
-      <dt style="text-align: center;">
-        <span style="display: block; margin: auto; height: 0px; width: 640px; overflow:visible; text-align: left;">
+    <div id="display-hd" onclick="showNormal();">
+        <div class="comment-block">
+            <!-- INCLUDE pane.comments.html -->
+        </div>
+        <div id="hd-content-block" class="content-block">
+            <div class="hd-blackout">
+            <div id="hd-padding-block" style="margin: auto; position: relative; max-width: 100%; max-height: 100%; height: 100%; padding: 10px; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;">
+        <span class="photo-canvas" style="display: inline-block; margin: auto; position: relative; max-width: 100%; max-height: 100%; height: 100%;">
+        <!-- IF U_PREVIOUS_PHOTO -->
+        <span class="previous-photo"><a href="{U_PREVIOUS_PHOTO}#hd">‹</a></span>
+        <!-- ENDIF -->
+        <!-- IF U_NEXT_PHOTO -->
+        <span class="next-photo"><a href="{U_NEXT_PHOTO}#hd">›</a></span>
+        <!-- ENDIF -->
+        <span style="position: relative; /*width: 640px;*/ display: block; height: 0; overflow:visible; text-align: left;">
           <!-- BEGIN user_tags -->
           <span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
           <span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
           <!-- END user_tags -->
         </span>
-        <img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onmousemove="ShowTagNearPointer(event);"
+        <img id="photo-hd" alt="Photo" onmousemove="ShowTagNearPointer(event);" style="margin: auto;" onload="positionHd();"
+		<!-- IF OWNER -->
+        onmousedown="CreateUserTagNearPointer({ID}, event);"
+        <!-- ENDIF -->
+        />
+        </span>
+        </div>
+            </div>
+        </div>
+    </div>
+    <dl>
+      <dt style="text-align: center;">
+        <span class="photo-canvas" style="display: inline-block; margin: auto; position: relative;">
+        <!-- IF U_PREVIOUS_PHOTO -->
+        <span class="previous-photo"><a href="{U_PREVIOUS_PHOTO}">‹</a></span>
+        <!-- ENDIF -->
+        <!-- IF U_NEXT_PHOTO -->
+        <span class="next-photo"><a href="{U_NEXT_PHOTO}">›</a></span>
+        <!-- ENDIF -->
+        <span style="position: relative; /*width: 640px;*/ display: block; height: 0; overflow:visible; text-align: left;">
+          <!-- BEGIN user_tags -->
+          <span id="tag-{user_tags.TAG_ID}" style="display: block; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; height: 100px; width: 100px; background-color: transparent; border: solid 2px transparent;"></span>
+          <span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
+          <!-- END user_tags -->
+        </span>
+        <img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onclick="toggleHd()" onmousemove="ShowTagNearPointer(event);"
 					<!-- IF OWNER -->
         onmousedown="CreateUserTagNearPointer({ID}, event);"
         <!-- ENDIF -->
         />
+        </span>
       </dt>
       <!-- IF HAS_USER_TAGS -->
       <dd>
@@ -55,30 +151,11 @@
         </ul>
       </dd>
       <!-- ENDIF -->
-      <dd>
-        <div class="ratebar">
-          <p class="ratebar" style="margin: 0;">
-            <a onmouseover="StarOver(1,1,{TYPEID})" onmouseout="StarOver(0,1,{TYPEID})" onclick="SubmitRating(1,{ID},{TYPEID})">
-              <img src="{STAR_ONE}" alt="Rate this item as 1 star" id="rate-1s-1-{TYPEID}" class="{STAR_ONE_CLASS}" />
-            </a><a onmouseover="StarOver(2,1,{TYPEID})" onmouseout="StarOver(0,1,{TYPEID})" onclick="SubmitRating(2,{ID},{TYPEID})">
-              <img src="{STAR_TWO}" alt="Rate this item as 2 star" id="rate-2s-1-{TYPEID}" class="{STAR_TWO_CLASS}" />
-            </a><a onmouseover="StarOver(3,1,{TYPEID})" onmouseout="StarOver(0,1,{TYPEID})" onclick="SubmitRating(3,{ID},{TYPEID})">
-              <img src="{STAR_THREE}" alt="Rate this item as 3 star" id="rate-3s-1-{TYPEID}" class="{STAR_THREE_CLASS}" />
-            </a><a onmouseover="StarOver(4,1,{TYPEID})" onmouseout="StarOver(0,1,{TYPEID})" onclick="SubmitRating(4,{ID},{TYPEID})">
-              <img src="{STAR_FOUR}" alt="Rate this item as 4 star" id="rate-4s-1-{TYPEID}" class="{STAR_FOUR_CLASS}" />
-            </a><a onmouseover="StarOver(5,1,{TYPEID})" onmouseout="StarOver(0,1,{TYPEID})" onclick="SubmitRating(5,{ID},{TYPEID})">
-              <img src="{STAR_FIVE}" alt="Rate this item as 5 star" id="rate-5s-1-{TYPEID}" class="{STAR_FIVE_CLASS}" />
-            </a>
-            {RATE_RATING}
-          </p>
-        </div>
-      </dd>
       <!-- IF PHOTO_DESCRIPTION -->
       <dd>
         <p>{PHOTO_DESCRIPTION}</p>
       </dd>
       <!-- ENDIF -->
-      <dd>{PHOTO_COMMENTS} comments.</dd>
     </dl>
     <!-- IF OWNER -->
     <div id="x-stuff">
@@ -91,26 +168,7 @@
       <span id="make-gallery-cover" class="post-button">
         <a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a>
       </span>
-      <span id="rotate-left" class="img-button">
-        <a href="{U_ROTATE_LEFT}">
-          <img src="/images/rotate_left.png" alt="Rotate Left" />
-        </a>
-      </span>
-      <span id="rotate-right" class="img-button">
-        <a href="{U_ROTATE_RIGHT}">
-          <img src="/images/rotate_right.png" alt="Rotate Right" />
-        </a>
-      </span>
-      <span id="delete" class="img-button">
-        <a href="{U_DELETE}">
-          <img src="/images/delete.png" alt="Delete" />
-        </a>
-      </span>
-      <span id="tag" class="img-button">
-        <a href="{U_TAG}">
-          <img src="/images/tag.png" alt="Tag Photo" />
-        </a>
-      </span>
+      <span id="rotate-left" class="img-button"><a href="{U_ROTATE_LEFT}" title="Rotate Left"><span class="font-sprite">&#8634;</span></a></span><span id="rotate-right" class="img-button"><a href="{U_ROTATE_RIGHT}" title="Rotate Right"><span class="font-sprite">&#8635;</span></a></span><span id="delete" class="img-button"><a href="{U_DELETE}" title="Delete Photo"><span class="sprite delete-sprite"></span></a></span><span id="tag" class="img-button"><a href="{U_TAG}" title="Tag Photo"><span class="sprite tag-sprite"></span></a></span>
     </div>
     <!-- ENDIF -->
     <div class="comment-pane" style="margin: 0 auto; width: 640px;">

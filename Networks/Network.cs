@@ -1073,6 +1073,11 @@ namespace BoxSocial.Networks
             }
         }
 
+        public override string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
         public static ItemKey NetworkMembersGroupKey
         {
             get

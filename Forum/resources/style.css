@@ -165,6 +165,7 @@ ul#posts li h3 {
 .post {
 	background-color: #ffffff;
 	padding: 5px;
+	border-radius: 5px;
 }
 
 .postbody {
@@ -182,6 +183,14 @@ ul#posts dl.profile {
 	display: inline;
 	width: 25%;
 	border-left: solid 1px #FFFFFF;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+ul#posts dl.profile p {
+    padding-top: 0;
 }
 
 ul#posts dl.profile dd {
@@ -227,7 +236,9 @@ dl.icon {
 dl.icon dt div {
 	padding-left: 45px;		
 	background-repeat: no-repeat;
-	background-position: 10px 50%;		
+	background-position: 10px 50%;
+	font-weight: normal;
+	text-align: left;
 }
 
 dl.title-row {
@@ -244,6 +255,37 @@ div#forum-head {
 
 div#forum-head a {
 	padding-left: 16px;
+}
+
+div#forum-head a span
+{
+    background-image: url(../images/ui-icons_0044aa_256x240.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    top: 4px;
+    position: relative;
+}
+
+div#forum-head a#forum-index span
+{
+    background-position: 0 -112px;
+}
+
+div#forum-head a#forum-help span
+{
+    background-position: -48px -144px;
+}
+
+div#forum-head a#forum-profile span
+{
+    background-position: -144px -96px;
+}
+
+div#forum-head a#forum-join span
+{
+    background-position: -32px -128px;
 }
 
 /* colours */

@@ -54,7 +54,10 @@ namespace BoxSocial.Applications.Blog
     /// Represents a blog entry
     /// </summary>
     [DataTable("blog_postings", "BLOGPOST")]
-    public class BlogEntry : NumberedItem, ICommentableItem
+    [Permission("VIEW", "Can view this blog entry", PermissionTypes.View)]
+    [Permission("COMMENT", "Can comment on this blog entry", PermissionTypes.Interact)]
+    [Permission("RATE", "Can rate this blog entry", PermissionTypes.Interact)]
+    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -96,6 +99,7 @@ namespace BoxSocial.Applications.Blog
 
         private Primitive owner;
         private Blog blog;
+        private Access access;
 
         /// <summary>
         /// Gets the blog entry id
@@ -535,11 +539,62 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return Owner;
+                return Blog;
             }
         }
 
         #endregion
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
+            }
+        }
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool IsItemGroupMember(User viewer, ItemKey key)
+        {
+            return false;
+        }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Blog Entry: " + Title;
+            }
+        }
+
+        public bool GetDefaultCan(string permission)
+        {
+            return false;
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            switch (permission)
+            {
+                case "COMMENT":
+                    return "COMMENT_ITEMS";
+                case "RATE":
+                    return "RATE_ITEMS";
+                default:
+                    return permission;
+            }
+        }
     }
 
     /// <summary>

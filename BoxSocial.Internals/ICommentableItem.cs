@@ -84,5 +84,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        Primitive Owner
+        {
+            get;
+        }
     }
 }

@@ -1,1 +1,53 @@
 ﻿
+.status-feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.status-post, #compose-status {
+    list-style: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+	margin: 0 1px 10px 1px;
+    padding: 4px 5px 5px 5px;
+    border-top: 1px solid #dddddd !important;
+}
+
+.status-post {
+    min-height: 62px;
+}
+
+.status-post:hover, #compose-status:hover {
+    background-color: #eeeeee;
+    border: 1px solid #dddddd;
+    border-top: none;
+    padding-bottom: 4px;
+    margin: 0 0 10px 0;
+}
+
+#compose-status h3 {
+    margin-top: 0;
+    margin-bottom: 0px;
+    font-size: 120%;
+}
+
+.status-disp-pic {
+	float:left;
+	width: 60px;
+	height: 60px;
+	padding: 0 5px;
+	margin-top: 2px;
+}
+
+.status-disp-pic img {
+	padding: 2px;
+	background-color: White;
+	border: solid 1px #999999;
+}
+
+.status-body {
+    padding: 2px;
+	margin-left: 70px;
+	position: relative;
+}

@@ -5,7 +5,7 @@
   <p>Use access control lists to control who can and cannot interact with your content.</p>
 
   <div id="acl">
-    <form action="./acl.aspx" method="POST">
+    <form action="/api/acl" method="POST">
       {S_PERMISSIONS}
         <input type="submit" name="save" value="Save" />
         <input type="hidden" name="id" value="{S_ITEM_ID}" />

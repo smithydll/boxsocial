@@ -177,10 +177,9 @@ namespace BoxSocial.Applications.Calendar {
             }
         }
         
-        internal static byte[] user_event_notification {
+        internal static string user_event_notification {
             get {
-                object obj = ResourceManager.GetObject("user_event_notification", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("user_event_notification", resourceCulture);
             }
         }
         

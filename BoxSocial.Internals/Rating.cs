@@ -34,14 +34,12 @@ namespace BoxSocial.Internals
     [DataTable("ratings")]
     public class Rating : Item
     {
-        /*[DataField("rate_item_id")]
-        private long itemId;
-        [DataField("rate_item_type", NAMESPACE)]
-        private string itemType;*/
 		[DataField("rate_item", DataFieldKeys.Index, "i_rating")]
         private ItemKey itemKey;
         [DataField("user_id", DataFieldKeys.Index, "i_rating")]
         private long ownerId;
+        [DataField("rate_rating")]
+        private float rating;
         [DataField("rate_time_ut")]
         private long timeRaw;
         [DataField("rate_ip", 55)]
@@ -100,7 +98,7 @@ namespace BoxSocial.Internals
             ItemLoad += new ItemLoadHandler(Rating_ItemLoad);
 
             //
-            // Because this class does not have an ID, only it should
+            // Because this class does not have an ID, it should only
             // be able to construct itself from raw data.
             //
 

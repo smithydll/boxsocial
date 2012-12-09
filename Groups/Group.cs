@@ -1929,6 +1929,11 @@ namespace BoxSocial.Groups
                 return "Group: " + DisplayName;
             }
         }
+        public override  string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
 
         public static ItemKey GroupOperatorsGroupKey
         {

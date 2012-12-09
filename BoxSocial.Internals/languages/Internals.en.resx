@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ADD_FRIEND" xml:space="preserve">
     <value>Add friend</value>
@@ -408,6 +408,15 @@
   <data name="HEIGHT" xml:space="preserve">
     <value>Height</value>
   </data>
+  <data name="HELP" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HER" xml:space="preserve">
+    <value>her</value>
+  </data>
+  <data name="HIS" xml:space="preserve">
+    <value>his</value>
+  </data>
   <data name="HOMOSEXUAL" xml:space="preserve">
     <value>Homosexual</value>
   </data>
@@ -437,6 +446,9 @@
   </data>
   <data name="LEAVE" xml:space="preserve">
     <value>Leave</value>
+  </data>
+  <data name="LIKE" xml:space="preserve">
+    <value>Like</value>
   </data>
   <data name="LOCATION" xml:space="preserve">
     <value>Location</value>
@@ -479,6 +491,9 @@
   </data>
   <data name="MOVE_UP" xml:space="preserve">
     <value>Move Up</value>
+  </data>
+  <data name="MY_ACCOUNT" xml:space="preserve">
+    <value>My Account</value>
   </data>
   <data name="MY_INFORMATION" xml:space="preserve">
     <value>My Information</value>
@@ -560,11 +575,20 @@
   <data name="SAVE_DRAFT" xml:space="preserve">
     <value>Save (Draft)</value>
   </data>
+  <data name="SEARCH" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="SECOND" xml:space="preserve">
     <value>Second</value>
   </data>
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
+  </data>
+  <data name="SIGNIN" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="SIGNOUT" xml:space="preserve">
+    <value>Sign out</value>
   </data>
   <data name="STRAIGHT" xml:space="preserve">
     <value>Straight</value>
@@ -574,6 +598,9 @@
   </data>
   <data name="SUBMIT" xml:space="preserve">
     <value>Submit</value>
+  </data>
+  <data name="SUBSCRIBE" xml:space="preserve">
+    <value>Subscribe</value>
   </data>
   <data name="SUNDAY" xml:space="preserve">
     <value>Sunday</value>
@@ -586,6 +613,9 @@
   </data>
   <data name="TAGS" xml:space="preserve">
     <value>Tags</value>
+  </data>
+  <data name="THEIR" xml:space="preserve">
+    <value>their</value>
   </data>
   <data name="THREE_STAR" xml:space="preserve">
     <value>Three stars</value>
@@ -622,6 +652,9 @@
   </data>
   <data name="UNSPECIFIED" xml:space="preserve">
     <value>Unspecified</value>
+  </data>
+  <data name="UNSUBSCRIBE" xml:space="preserve">
+    <value>Unsubscribe</value>
   </data>
   <data name="UNSURE" xml:space="preserve">
     <value>Unsure</value>

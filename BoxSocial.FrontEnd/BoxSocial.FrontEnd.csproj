@@ -159,6 +159,9 @@
     <Compile Include="statistics.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="subscribe.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="tos.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -206,6 +209,11 @@
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
       <Name>Networks</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="like.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

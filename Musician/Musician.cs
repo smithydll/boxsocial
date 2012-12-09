@@ -1160,6 +1160,11 @@ namespace BoxSocial.Musician
             }
         }
 
+        public override string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
         public static List<Musician> GetFeaturedMusicians(Core core)
         {
             List<Musician> musicians = new List<Musician>();

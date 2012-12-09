@@ -39,12 +39,10 @@ namespace BoxSocial.Internals
         private string body;
         [DataField("action_application")]
         private long applicationId;
-        /*[DataField("action_primitive_id")]
-        private long primitiveId;
-        [DataField("action_primitive_type", 15)]
-        private string primitiveType;*/
 		[DataField("action_primitive", DataFieldKeys.Index)]
         private ItemKey ownerKey;
+        [DataField("action_item", DataFieldKeys.Index)]
+        private ItemKey itemKey;
         [DataField("action_time_ut")]
         private long timeRaw;
 

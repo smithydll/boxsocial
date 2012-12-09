@@ -66,6 +66,8 @@ namespace BoxSocial.Applications.Profile
 
         void AccountStyle_Show(object sender, EventArgs e)
         {
+            Save(new EventHandler(AccountStyle_Save));
+
             SetTemplate("account_style");
 
             string mode = core.Http["mode"];
@@ -279,8 +281,6 @@ namespace BoxSocial.Applications.Profile
                 css.Generator = StyleGenerator.Advanced;
                 template.Parse("STYLE", css.ToString());
             }
-
-            Save(new EventHandler(AccountStyle_Save));
         }
 
         void AccountStyle_Save(object sender, EventArgs e)
@@ -438,8 +438,9 @@ namespace BoxSocial.Applications.Profile
             LoggedInMember.Style.RawCss = css.ToString();
             LoggedInMember.Style.Update();
 
-            SetRedirectUri(BuildUri());
-            core.Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.");
+            /*SetRedirectUri(BuildUri());
+            core.Display.ShowMessage("Style Saved", "Your profile style has been saved in the database.");*/
+            SetInformation("Your profile style has been saved in the database.");
         }
     }
 }

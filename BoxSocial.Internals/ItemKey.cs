@@ -103,6 +103,15 @@ namespace BoxSocial.Internals
 		
 		public ItemKey(long itemId, long itemTypeId)
 		{
+            if (itemTypeId < 1)
+            {
+                this.itemId = itemId;
+                this.itemTypeId = 0;
+                this.applicationId = 0;
+                this.type = null;
+                return;
+            }
+
 			this.itemId = itemId;
             lock (itemTypeCacheLock)
             {

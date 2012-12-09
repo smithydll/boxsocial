@@ -1,14 +1,14 @@
 ﻿<div id="forum-head">
-  <a href="{U_FORUM_INDEX}">{L_FORUM_INDEX}</a>
-  <a href="{U_FAQ}">{L_FORUM_HELP}</a>
+  <a href="{U_FORUM_INDEX}" id="forum-index"><span></span>{L_FORUM_INDEX}</a>
+  <a href="{U_FAQ}" id="forum-help"><span></span>{L_FORUM_HELP}</a>
 <!-- IF LOGGED_IN -->
   <!-- IF U_JOIN -->
-  <a href="{U_JOIN}">{L_JOIN_GROUP}</a>
+  <a href="{U_JOIN}" id="forum-join"><span></span>{L_JOIN_GROUP}</a>
   <!-- ELSE -->
-  <a href="{U_UCP}">{L_FORUM_PROFILE}</a>
+  <a href="{U_UCP}" id="forum-profile"><span></span>{L_FORUM_PROFILE}</a>
   <a href="{U_MEMBERS}">{L_GROUP_MEMBERS}</a>
   <!-- ENDIF -->
 <!-- ELSE -->
-  <a href="{U_REGISTER}">{L_REGISTER}</a>
+  <a href="{U_REGISTER}" id="forum-join"><span></span>{L_REGISTER}</a>
 <!-- ENDIF -->
 </div>

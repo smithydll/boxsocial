@@ -31,6 +31,7 @@ namespace BoxSocial.Forms
         private bool disabled;
         protected bool visible;
         private string caption;
+        private string value;
 
         public string Caption
         {
@@ -41,6 +42,18 @@ namespace BoxSocial.Forms
             set
             {
                 caption = value;
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                return value;
+            }
+            set
+            {
+                value = value;
             }
         }
 
@@ -68,10 +81,11 @@ namespace BoxSocial.Forms
             }
         }
 
-        public Button(string name, string caption)
+        public Button(string name, string caption, string value)
         {
             this.name = name;
             this.caption = caption;
+            this.value = value;
 
             disabled = false;
             visible = true;
@@ -79,8 +93,9 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
-            return string.Format("<input type=\"button\" name=\"{0}\" value=\"{1}\" style=\"{3}\"{2}/>",
+            return string.Format("<button name=\"{0}\" value=\"{1}\" style=\"{4}\"{3}>{2}</button>",
                 HttpUtility.HtmlEncode(name),
+                HttpUtility.HtmlEncode(value),
                 HttpUtility.HtmlEncode(caption),
                 (IsDisabled) ? " disabled=\"disabled\"" : "",
                 (!IsVisible) ? " display: none;" : "");

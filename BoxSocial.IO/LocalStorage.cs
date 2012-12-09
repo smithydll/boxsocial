@@ -15,6 +15,19 @@ namespace BoxSocial.IO
             this.path = path;
         }
 
+        public override string PathSeparator
+        {
+            get
+            {
+                return System.IO.Path.PathSeparator.ToString();
+            }
+        }
+
+        public override string PathCombine(string path1, string path2)
+        {
+            return System.IO.Path.Combine(path1, path2);
+        }
+
         public override void CreateBin(string bin)
         {
             // do nothing, bins are automatically created and destroyed in local storage mode
@@ -109,23 +122,7 @@ namespace BoxSocial.IO
 
         public override string SaveFileWithReducedRedundancy(string bin, string fileName, MemoryStream file)
         {
-            string path = RetrieveStoragePath(bin, fileName);
-            EnsureStoragePathExists(path);
-            FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
-
-            file.WriteTo(fs);
-            //byte[] bytes = file.ToArray();
-            //fs.Write(bytes, 0, bytes.Length);
-            /*byte[] buffer = new byte[8192];
-            int len;
-            while ((len = file.Read(buffer, 0, buffer.Length)) > 0)
-            {
-                fs.Write(buffer, 0, len);
-            }*/
-
-            fs.Close();
-
-            return fileName;
+            return SaveFileWithReducedRedundancy(bin, fileName, file);
         }
 
         public override void DeleteFile(string bin, string fileName)
@@ -152,6 +149,11 @@ namespace BoxSocial.IO
         }
 
         public override string RetrieveFileUri(string bin, string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string RetrieveFileUri(string bin, string fileName, string contentType, string renderFileName)
         {
             throw new NotImplementedException();
         }

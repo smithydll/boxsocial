@@ -28,7 +28,7 @@ namespace BoxSocial.Forms
     public class ResetButton : Button
     {
         public ResetButton(string name, string caption)
-            : base(name, caption)
+            : base(name, caption, string.Empty)
         {
         }
 

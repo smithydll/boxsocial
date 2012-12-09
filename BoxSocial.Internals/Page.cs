@@ -1375,6 +1375,11 @@ namespace BoxSocial.Internals
                 return "Page: " + FullPath;
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class PageNotFoundException : Exception

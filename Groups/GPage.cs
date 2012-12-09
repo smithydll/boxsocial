@@ -112,6 +112,11 @@ namespace BoxSocial.Groups
                 template.Parse("U_HOME", Group.Uri);
             }
 
+            if (core.LoggedInMemberId > 0 && (!Group.IsGroupMember(core.Session.LoggedInMember)))
+            {
+                template.Parse("U_JOIN", Group.JoinUri);
+            }
+
             if (!core.PagePath.StartsWith("/account"))
             {
                 BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, Group));

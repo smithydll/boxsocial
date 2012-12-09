@@ -152,8 +152,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\calendar.svg" />
-    <None Include="templates\email_event_invite.eml" />
-    <None Include="templates\user_event_notification.eml" />
+    <Content Include="templates\email_event_invite.html" />
+    <Content Include="templates\user_event_notification.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

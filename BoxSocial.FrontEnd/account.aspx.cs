@@ -244,6 +244,7 @@ namespace BoxSocial.FrontEnd
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].Info.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
 
+                    modulesVariableCollection.Parse("CURRENT", "TRUE");
                     if (ae != null && ae.HasJavascript)
                     {
                         VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
@@ -267,6 +268,12 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
                     modulesVariableCollection.Parse("URI", asm.BuildUri(core));
+
+
+                    if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                    {
+                        modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    }
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

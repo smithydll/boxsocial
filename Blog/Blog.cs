@@ -258,7 +258,13 @@ namespace BoxSocial.Applications.Blog
                 core.Db.UpdateQuery(string.Format("INSERT INTO user_blog (user_id) VALUES ({0});",
                         core.LoggedInMemberId));
 
-                return new Blog(core, core.Session.LoggedInMember);
+                Blog newBlog =  new Blog(core, core.Session.LoggedInMember);
+
+                Access.CreateAllGrantsForOwner(core, newBlog);
+                newBlog.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW", "COMMENT_ITEMS", "RATE_ITEMS");
+                newBlog.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+
+                return newBlog;
             }
             else
             {
@@ -271,11 +277,10 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="page">Page calling</param>
         /// <param name="post">Post id to get</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A blog entry as a list</returns>
-        public List<BlogEntry> GetEntry(UPage page, int post, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int post)
         {
-            return GetEntries(null, null, post, -1, -1, 1, 1, ref readAccessLevel);
+            return GetEntries(null, null, post, -1, -1, 1, 1);
         }
 
         /// <summary>
@@ -285,11 +290,10 @@ namespace BoxSocial.Applications.Blog
         /// <param name="category">Category to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(UPage page, string category, string tag, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, string category, string tag, int currentPage, int perPage)
         {
-            return GetEntries(category, tag, -1, -1, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(category, tag, -1, -1, -1, currentPage, perPage);
         }
 
         /// <summary>
@@ -299,11 +303,10 @@ namespace BoxSocial.Applications.Blog
         /// <param name="year">Year to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(UPage page, int year, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int year, int currentPage, int perPage)
         {
-            return GetEntries(null, null, -1, year, -1, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, null, -1, year, -1, currentPage, perPage);
         }
 
         /// <summary>
@@ -314,11 +317,10 @@ namespace BoxSocial.Applications.Blog
         /// /// <param name="month">Month to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
-        public List<BlogEntry> GetEntry(UPage page, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        public List<BlogEntry> GetEntry(UPage page, int year, int month, int currentPage, int perPage)
         {
-            return GetEntries(null, null, -1, year, month, currentPage, perPage, ref readAccessLevel);
+            return GetEntries(null, null, -1, year, month, currentPage, perPage);
         }
 
         /// <summary>
@@ -330,12 +332,12 @@ namespace BoxSocial.Applications.Blog
         /// <param name="month">Month to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        internal List<BlogEntry> GetDrafts(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        internal List<BlogEntry> GetDrafts(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, ref readAccessLevel, true);
+            bool moreContent = false;
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, true, out moreContent);
         }
 
         /// <summary>
@@ -347,12 +349,12 @@ namespace BoxSocial.Applications.Blog
         /// <param name="month">Month to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel)
+        internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, ref readAccessLevel, false);
+            bool moreContent = false;
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, false, out moreContent);
         }
 
         /// <summary>
@@ -364,22 +366,22 @@ namespace BoxSocial.Applications.Blog
         /// <param name="month">Month to select</param>
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
-        /// <param name="readAccessLevel">Access level user has to read</param>
         /// <param name="drafts">Flag to select draft posts or published posts (true for drafts)</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, ref ushort readAccessLevel, bool drafts)
+        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, bool drafts, out bool moreContent)
         {
             List<BlogEntry> entries = new List<BlogEntry>();
+            moreContent = false;
 
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
-            readAccessLevel = Owner.GetAccessLevel(core.Session.LoggedInMember);
 
             SelectQuery query = null;
 
             if (string.IsNullOrEmpty(category) && string.IsNullOrEmpty(tag))
             {
                 query = Item.GetSelectQueryStub(typeof(BlogEntry));
+                query.AddField(new DataField(typeof(BlogEntry), "post_id"));
 
                 if (post > 0)
                 {
@@ -398,7 +400,8 @@ namespace BoxSocial.Applications.Blog
             }
             else if (string.IsNullOrEmpty(tag))
             {
-                query = Item.GetSelectQueryStub(typeof(BlogEntry));
+                Item.GetSelectQueryStub(typeof(BlogEntry));
+                query.AddField(new DataField(typeof(BlogEntry), "post_id"));
 
                 query.AddCondition("category_path", category);
                 query.AddJoin(JoinTypes.Inner, "global_categories", "post_category", "category_id");
@@ -419,19 +422,60 @@ namespace BoxSocial.Applications.Blog
                 bpage = 1;
             }
 
+            int limitStart = (bpage - 1) * perPage;
+
             PublishStatuses status = (drafts) ? PublishStatuses.Draft : PublishStatuses.Publish;
 
             query.AddCondition("post_status", (byte)status);
             query.AddCondition("user_id", UserId);
             query.AddSort(SortOrder.Descending, "post_time_ut");
-            query.LimitStart = (bpage - 1) * perPage;
-            query.LimitCount = perPage;
+            /*query.LimitStart = (bpage - 1) * perPage;
+            query.LimitCount = perPage;*/
 
             DataTable blogEntriesTable = db.Query(query);
 
-            foreach (DataRow dr in blogEntriesTable.Rows)
+            /* Check ACLs, not the most efficient, but will only check mostly newer content which should be viewed first. */
+
+            int offset = 0;
+            int i = 0;
+
+            while (i < limitStart + perPage + 1 && offset < blogEntriesTable.Rows.Count)
             {
-                entries.Add(new BlogEntry(core, owner, dr));
+                List<IPermissibleItem> tempBlogEntries = new List<IPermissibleItem>();
+                int j = 0;
+                for (j = offset; j < Math.Min(offset + perPage * 2, blogEntriesTable.Rows.Count); j++)
+                {
+                    BlogEntry entry = new BlogEntry(core, owner, blogEntriesTable.Rows[j]);
+                    tempBlogEntries.Add(entry);
+                }
+
+                if (tempBlogEntries.Count > 0)
+                {
+                    core.AcessControlCache.CacheGrants(tempBlogEntries);
+
+                    foreach (IPermissibleItem entry in tempBlogEntries)
+                    {
+                        if (entry.Access.Can("VIEW"))
+                        {
+                            if (i >= limitStart + perPage)
+                            {
+                                moreContent = true;
+                                break;
+                            }
+                            if (i >= limitStart)
+                            {
+                                entries.Add((BlogEntry)entry);
+                            }
+                            i++;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+                offset = j;
             }
 
             return entries;
@@ -636,8 +680,6 @@ namespace BoxSocial.Applications.Blog
                 return;
             }
 
-            ushort readAccessLevel = 0x0000;
-
             if (!myBlog.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
@@ -657,6 +699,9 @@ namespace BoxSocial.Applications.Blog
 
             page.User.LoadProfileInfo();
 
+            bool moreContent = false;
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, false, out moreContent);
+
             if (!rss)
             {
                 core.Display.ParsePageList(page.User, true);
@@ -668,11 +713,6 @@ namespace BoxSocial.Applications.Blog
                     page.template.Parse("U_POST", core.Uri.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
                 }
             }
-
-            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, ref readAccessLevel);
-            long entriesCount = core.Db.LastQueryRows;
-
-            page.template.Parse("BLOGPOSTS", blogEntries.Count.ToString());
 
             if (!rss)
             {
@@ -807,8 +847,12 @@ namespace BoxSocial.Applications.Blog
             }
             else
             {
+                int postsOnPage = 0;
+
+
                 for (int i = 0; i < blogEntries.Count; i++)
                 {
+                    postsOnPage++;
                     VariableCollection blogPostVariableCollection = page.template.CreateChild("blog_list");
 
                     blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
@@ -821,7 +865,6 @@ namespace BoxSocial.Applications.Blog
 
                     blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
                     blogPostVariableCollection.Parse("URL", postUrl);
-                    //blogPostVariableCollection.ParseRaw("POST", Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.session.LoggedInMember, page.ProfileOwner));
                     core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
                     if (blogEntries[i].PostId == post)
                     {
@@ -834,23 +877,29 @@ namespace BoxSocial.Applications.Blog
                     {
                         postTitle = blogEntries[i].Title;
                     }
+
                 }
 
                 if (post > 0)
                 {
-                    if (blogEntries.Count != 1)
+                    if (postsOnPage != 1)
                     {
                         core.Functions.Generate404();
                         return;
                     }
 
-                    if (myBlog.Access.Can("COMMENT_ITEMS"))
+                    //if (myBlog.Access.Can("COMMENT_ITEMS"))
                     {
-                        page.template.Parse("CAN_COMMENT", "TRUE");
+                        if (blogEntries[0].Access.Can("COMMENT"))
+                        {
+                            page.template.Parse("CAN_COMMENT", "TRUE");
+                        }
                     }
                     core.Display.DisplayComments(page.template, page.User, blogEntries[0]);
                     page.template.Parse("SINGLE", "TRUE");
                 }
+
+                page.template.Parse("BLOGPOSTS", postsOnPage.ToString());
 
                 string pageUri = "";
                 string breadcrumbExtension = (page.User.Info.ProfileHomepage == "/blog") ? "" : "blog/";
@@ -908,7 +957,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post <= 0)
                 {
-                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(myBlog.Entries / 10.0), PaginationOptions.Blog);
+                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, page.TopLevelPageNumber + (moreContent ? 1 : 0), PaginationOptions.Blog);
                 }
                 else
                 {
@@ -1197,6 +1246,17 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return "Blog: " + Owner.DisplayName + " (" + Owner.Key + ")";
+            }
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            switch (permission)
+            {
+                case "COMMENT_ITEMS":
+                    return "COMMENT";
+                default:
+                    return permission;
             }
         }
     }

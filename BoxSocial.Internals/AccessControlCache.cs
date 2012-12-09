@@ -122,7 +122,7 @@ namespace BoxSocial.Internals
 
             lock (permissionCacheLock)
             {
-                if (permissionCache == null || permissionCache.Count > 1000)
+                if (permissionCache == null || permissionCache.Count > 10000)
                 {
                     permissionCache = new Dictionary<AccessControlPermissionKey, AccessControlPermission>();
                 }
@@ -172,6 +172,15 @@ namespace BoxSocial.Internals
                     grantsCache.Add(key, new List<AccessControlGrant>());
                 }
                 grantsCache[key].Add(grant);
+            }
+
+            foreach (IPermissibleItem item in items)
+            {
+                AccessControlGrantKey key = keys[item.ItemKey.Id];
+                if (!grantsCache.ContainsKey(key))
+                {
+                    grantsCache.Add(key, new List<AccessControlGrant>());
+                }
             }
         }
 

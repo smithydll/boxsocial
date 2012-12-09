@@ -46,6 +46,7 @@ namespace BoxSocial.IO
             current.Response.Clear();
             current.Response.ContentType = contextType;
             current.Response.Cache.SetLastModified(lastModified);
+            current.Response.Cache.SetExpires(DateTime.Now.AddDays(1));
             current.Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
         }
         

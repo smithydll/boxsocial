@@ -93,5 +93,7 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <returns></returns>
         bool GetDefaultCan(string permission);
+
+        string ParentPermissionKey(Type parentType, string permission);
     }
 }

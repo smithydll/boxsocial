@@ -128,7 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\guestbook.svg" />
-    <None Include="templates\user_guestbook_notification.eml" />
+    <Content Include="templates\user_guestbook_notification.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

@@ -35,40 +35,40 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string function = Request.Form["fun"];
+            string function = core.Http["fun"];
 
             switch (function)
             {
                 case "date":
-                    string date = core.Functions.InterpretDate(Request.Form["date"]);
+                    string date = core.Functions.InterpretDate(core.Http.Form["date"]);
                     core.Ajax.SendRawText("date", date);
                     return;
                 case "time":
-                    string time = core.Functions.InterpretTime(Request.Form["time"]);
+                    string time = core.Functions.InterpretTime(core.Http.Form["time"]);
                     core.Ajax.SendRawText("time", time);
                     return;
-                case "user-list":
-                    ReturnUserList();
+                case "friend-list":
+                    ReturnFriendList();
                     return;
             }
         }
 
-        private void ReturnUserList()
+        private void ReturnFriendList()
         {
-            string namePart = Request.Form["name-field"];
+            string namePart = core.Http.Form["name-field"];
 
             if (core.Session.IsLoggedIn)
             {
                 List<Friend> friends = core.Session.LoggedInMember.GetFriends(namePart);
 
-                Dictionary<long, string> friendNames = new Dictionary<long, string>();
+                Dictionary<long, string[]> friendNames = new Dictionary<long, string[]>();
 
                 foreach (Friend friend in friends)
                 {
-                    friendNames.Add(friend.Id, friend.DisplayName);
+                    friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.UserTile });
                 }
 
-                core.Ajax.SendDictionary("user-select", friendNames);
+                core.Ajax.SendUserDictionary("friendSelect", friendNames);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿div.month 
 {
+    position: relative;
 }
 
 div.month div.week
@@ -30,6 +31,23 @@ div.month div.week div.day
 	text-align: left;
 	border: solid 1px #F7F7F7;
 	background-color: #FFFFFF;
+	position: relative;
+}
+
+div.month div.week div.day.today
+{
+    background-color: #d7d7FF;
+}
+
+div.month div.week div.day:hover {
+    background-color: #eeeeee;
+}
+
+div.month div.week div.day a
+{
+    display: block;
+    width: 100%;
+    height: 100%;
 }
 
 div.month div.week div.day ul
@@ -37,6 +55,8 @@ div.month div.week div.day ul
 	list-style: none;
 	padding: 0px;
 	margin: 0 2px;
+	position: absolute;
+	top: 1em;
 }
 
 div.month div.week div.day ul li
@@ -48,7 +68,14 @@ div.month div.week div.day ul li
 	background-color: #EEEEEE;
 	overflow: hidden;
 	font-size: 10px;
+    text-overflow: ellipsis;
 }
+
+div.month div.week div.day:hover ul li 
+{
+    background-color: #dddddd;
+}
+
 
 div.month-small 
 {

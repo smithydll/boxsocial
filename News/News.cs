@@ -306,6 +306,11 @@ namespace BoxSocial.Applications.News
             }
         }
 
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

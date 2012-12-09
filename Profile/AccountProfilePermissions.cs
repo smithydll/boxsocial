@@ -66,6 +66,10 @@ namespace BoxSocial.Applications.Profile
         void AccountProfilePermissions_Show(object sender, EventArgs e)
         {
 			Save(new EventHandler(AccountProfilePermissions_Save));
+            if (core.Http.Form["delete"] != null)
+            {
+                acl_Delete();
+            }
 
             SetTemplate("account_permissions");
 
@@ -79,12 +83,48 @@ namespace BoxSocial.Applications.Profile
             acl.ParseACL(template, LoggedInMember, "S_PROFILE_PERMS");
         }
 
-        void AccountProfilePermissions_Save(object sender, EventArgs e)
+        private void AccountProfilePermissions_Save(object sender, EventArgs e)
         {
             AccessControlLists acl = new AccessControlLists(core, LoggedInMember);
             acl.SavePermissions();
 
 			SetInformation("Your profile permissions have been saved in the database.");
+        }
+
+        private void acl_Delete()
+        {
+            AccessControlLists acl = new AccessControlLists(core, LoggedInMember);
+
+            string value = core.Http.Form["delete"];
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                string[] vals = value.Split(new char[] { ',' });
+
+                if (vals.Length == 3)
+                {
+                    int permissionId = 0;
+                    int primitiveTypeId = 0;
+                    int primitiveId = 0;
+
+                    int.TryParse(vals[0], out permissionId);
+                    int.TryParse(vals[1], out primitiveTypeId);
+                    int.TryParse(vals[2], out primitiveId);
+
+                    if (permissionId != 0 && primitiveTypeId != 0 && primitiveId != 0)
+                    {
+                        try
+                        {
+                            acl.DeleteGrant(permissionId, primitiveTypeId, primitiveId);
+                        }
+                        catch
+                        {
+                            core.Functions.Generate403();
+                            return;
+                        }
+                    }
+                }
+            }
         }
     }
 }

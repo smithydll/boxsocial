@@ -8,10 +8,10 @@
 <!-- ENDIF -->
 </h2>
 <!-- IF ERROR -->
-<p class="error">{ERROR}</p>
+<p class="error"><span class="icon"></span>{ERROR}</p>
 <!-- ENDIF -->
 <!-- IF INFO -->
-<p class="information">{INFO}</p>
+<p class="information"><span class="icon"></span>{INFO}</p>
 <!-- ENDIF -->
 <!-- IF NO_PERMISSIONS -->
 <p class="no-permissions">{NO_PERMISSIONS}</p>
@@ -23,16 +23,22 @@
 <div id="tabs">
 	<ul>
 		<!-- BEGIN module_list -->
-		<li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
+        <!-- IF module_list.CURRENT -->
+		<li class="current"><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
+        <!-- ELSE -->
+        <li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
+        <!-- ENDIF -->
 		<!-- END module_list -->
-		<!--li><a href="/account/?module=preferences"><span>Preferences</span></a></li-->
-		<!--li><a href="/account/?module=networks"><span>Networks</span></a></li-->
 	</ul>
 </div>
 <div id="account-panel">
 <ul id="account-links">
 	<!-- BEGIN account_links -->
-	<li><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></li>
+    <!-- IF account_links.CURRENT -->
+	<li class="current"><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></li>
+    <!-- ELSE -->
+    <li><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></li>
+    <!-- ENDIF -->
 	<!-- END account_links -->
 </ul>
 <div class="account-pane">

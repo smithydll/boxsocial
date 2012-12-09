@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -113,17 +114,24 @@ namespace BoxSocial.Applications.Profile
 
                 try
                 {
-                    string saveFileName = GalleryItem.HashFileUpload(core.Http.Files["photo-file"].InputStream);
-                    if (!File.Exists(TPage.GetStorageFilePath(saveFileName)))
-                    {
-                        TPage.EnsureStoragePathExists(saveFileName);
-                        core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
-                    }
+                    MemoryStream stream = new MemoryStream();
+                    core.Http.Files["photo-file"].InputStream.CopyTo(stream);
 
-                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone);
+                    db.BeginTransaction();
+
+                    Image image = Image.FromStream(stream);
+                    int width = image.Width;
+                    int height = image.Height;
+
+                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
+
+                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, width, height);
 
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
                         galleryItem.Id, LoggedInMember.UserId));
+
+                    db.CommitTransaction();
+                    stream.Close();
 
                     SetRedirectUri(BuildUri());
                     core.Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");

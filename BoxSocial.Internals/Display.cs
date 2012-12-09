@@ -137,18 +137,18 @@ namespace BoxSocial.Internals
                 {
                     if (baseAmp)
                     {
-                        pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}p={1}\">Next Entries &raquo;</a>",
+                        pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}p={1}\">Newer Entries &raquo;</a>",
                             HttpUtility.HtmlEncode(baseUri + "&"), currentPage - 1));
                     }
                     else
                     {
-                        pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}?p={1}\">Next Entries &raquo;</a>",
+                        pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}?p={1}\">Newer Entries &raquo;</a>",
                             HttpUtility.HtmlEncode(baseUri), currentPage - 1));
                     }
                 }
                 else if (currentPage > 1)
                 {
-                    pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}\">Next Entries &raquo;</a>",
+                    pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}\">Newer Entries &raquo;</a>",
                         HttpUtility.HtmlEncode(baseUri)));
                 }
                 pagination.Append("&nbsp;");
@@ -156,12 +156,12 @@ namespace BoxSocial.Internals
                 {
                     if (baseAmp)
                     {
-                        pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Previous Entries</a>",
+                        pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Older Entries</a>",
                             HttpUtility.HtmlEncode(baseUri + "&"), currentPage + 1));
                     }
                     else
                     {
-                        pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Previous Entries</a>",
+                        pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Older Entries</a>",
                             HttpUtility.HtmlEncode(baseUri), currentPage + 1));
                     }
                 }
@@ -496,6 +496,13 @@ namespace BoxSocial.Internals
                 }
             }
 
+            if (core.Session.IsLoggedIn && core.Session.LoggedInMember != null)
+            {
+                template.Parse("LOGGED_IN", "TRUE");
+                template.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
+                template.Parse("USER_TILE", core.Session.LoggedInMember.UserTile);
+            }
+
             List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, page, item.CommentsPerPage, commenters);
             Comment.LoadUserInfoCache(core, comments);
 
@@ -541,14 +548,22 @@ namespace BoxSocial.Internals
                 {
                     User commentPoster = core.PrimitiveCache[comment.UserId];
 
-                    commentsVariableCollection.Parse("ID", comment.CommentId.ToString());
+                    commentsVariableCollection.Parse("ID", comment.Id.ToString());
+                    commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(typeof(Comment)));
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
                     commentsVariableCollection.Parse("U_PROFILE", commentPoster.ProfileUri);
-                    commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(comment.CommentId));
-                    commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(comment.CommentId));
-                    commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(comment.CommentId));
+                    commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(comment.Id));
+                    commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(comment.Id));
+                    commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(comment.Id));
+                    commentsVariableCollection.Parse("U_LIKE", core.Uri.BuildLikeItemUri(comment.ItemTypeId, comment.Id));
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
+
+                    if (comment.Likes > 0)
+                    {
+                        commentsVariableCollection.Parse("LIKES", string.Format(" {0:d}", comment.Likes));
+                        commentsVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", comment.Dislikes));
+                    }
 
                     if (hook != null)
                     {
@@ -653,11 +668,11 @@ namespace BoxSocial.Internals
             loopVars.Add("STAR_FOUR_CLASS", four_class);
             loopVars.Add("STAR_FIVE_CLASS", five_class);
 
-            loopVars.Add("U_RATE_ONE_STAR", string.Format("/rate.aspx?rating=1&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
-            loopVars.Add("U_RATE_TWO_STAR", string.Format("/rate.aspx?rating=2&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
-            loopVars.Add("U_RATE_THREE_STAR", string.Format("/rate.aspx?rating=3&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
-            loopVars.Add("U_RATE_FOUR_STAR", string.Format("/rate.aspx?rating=4&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
-            loopVars.Add("U_RATE_FIVE_STAR", string.Format("/rate.aspx?rating=5&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_ONE_STAR", string.Format("/api/rate?rating=1&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_TWO_STAR", string.Format("/api/rate?rating=2&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_THREE_STAR", string.Format("/api/rate?rating=3&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_FOUR_STAR", string.Format("/api/rate?rating=4&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
+            loopVars.Add("U_RATE_FIVE_STAR", string.Format("/api/rate?rating=5&amp;item={0}&amp;type={1}", itemKey.Id, itemKey.TypeId));
 
             loopVars.Add("RATE_RATING", string.Format("{0:0.0}", existingRating));
             loopVars.Add("RATE_ACTIVE", RANK_ACTIVE);
@@ -743,6 +758,8 @@ namespace BoxSocial.Internals
                     template.Parse("LOGGED_IN", "TRUE");
                     template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
+                    template.Parse("USER_DISPLAY_NAME", session.LoggedInMember.DisplayName);
+                    template.Parse("USER_TILE", session.LoggedInMember.UserTile);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                     template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
                 }
@@ -888,15 +905,15 @@ namespace BoxSocial.Internals
 
                 if (!string.IsNullOrEmpty(pages[i].Icon))
                 {
-                    output.Append("<li style=\"list-style-image: url('" + HttpUtility.HtmlEncode(pages[i].Icon) + "');\"> ");
+                    output.Append("<li style=\"background-image: url('" + HttpUtility.HtmlEncode(pages[i].Icon) + "');\" class=\"page-li\"> ");
                 }
                 else
                 {
-                    output.Append("<li>");
+                    output.Append("<li class=\"page-li\">");
                 }
                 output.Append("<a href=\"");
                 output.Append(HttpUtility.HtmlEncode(pages[i].Uri));
-                output.Append("\">");
+                output.Append("\"><span>");
                 if (current != null)
                 {
                     if (pages[i].Id == current.Id)
@@ -913,7 +930,7 @@ namespace BoxSocial.Internals
                 {
                     output.Append(HttpUtility.HtmlEncode(pages[i].Title));
                 }
-                output.Append("</a>");
+                output.Append("</span></a>");
 
                 if (!hasChildren)
                 {

@@ -196,7 +196,21 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    throw new InvalidAccessControlPermissionException(permission);
+                    /* Fall through to owner, this is useful where items can
+                     * only have the same VIEW status as their parent (usually
+                     * a Primitive). Normally you would call on the parent
+                     * directly, however there are a few use cases where you
+                     * don't know if the item has a separately defined VIEW
+                     * permission or not.
+                     */
+                    if (item != item.PermissiveParent)
+                    {
+                        return item.PermissiveParent.Access.Can(permission, item, true);
+                    }
+                    else
+                    {
+                        throw new InvalidAccessControlPermissionException(permission);
+                    }
                 }
             }
 
@@ -332,7 +346,7 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                return CachePermission(permission, item.PermissiveParent.Access.Can(permission, leaf, true));
+                                return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParent.GetType(), permission), leaf, true));
                             }
                         }
                         else
@@ -342,7 +356,14 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        return CachePermission(permission, owner.Access.Can(permission, leaf, true));
+                        if (item.PermissiveParent == null)
+                        {
+                            return CachePermission(permission, owner.Access.Can(permission, leaf, true));
+                        }
+                        else
+                        {
+                            return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParent.GetType(), permission), leaf, true));
+                        }
                     }
                 }
             }
@@ -357,7 +378,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("acl.aspx?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
+            return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
         }
 
         public static void LoadGrants(Core core, List<IPermissibleItem> items)

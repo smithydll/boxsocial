@@ -1,14 +1,60 @@
 ﻿<!-- INCLUDE page_header.html -->
 <h2>{L_STATUS_FEED}</h2>
+<p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span></p>
 <!-- IF BREADCRUMBS -->
 <p>{BREADCRUMBS}</p>
 <!-- ENDIF -->
-<ul>
+
+<script type="text/javascript">
+<!--
+    $(document).ready(function () {
+        $('#message').focus().val('is ').outerWidth($('#status-div').width() - $('#status-submit').outerWidth(true));
+    });
+-->
+</script>
+
+	<div id="pane-profile">
+		<div id="pane-pages" class="pane">
+			<h3>Pages</h3>
+			<ul class="page-tiles">
+				{PAGE_LIST}
+			</ul>
+		</div>
+	</div>
+	<div id="profile">
+    <!-- IF OWNER -->
+	<div id="compose-status">
+        <h3>Post Status</h3>
+        <div id="status-div">
+		<form action="/account" method="post" id="status-form" onsubmit="return SendStatus('{USER_DISPLAY_NAME}');">
+			<p><input type="text" id="message" name="message" value="is " style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+			<input type="hidden" name="module" value="profile" />
+			<input type="hidden" name="sub" value="status" /></p>
+		</form>
+        </div>
+	</div>
+    <!-- ENDIF -->
+
+<ul class="status-feed">
   <!-- BEGIN status_messages -->
-  <li>
-    <a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a>
-    {status_messages.STATUS_MESSAGE} <em>{status_messages.STATUS_UPDATED}</em>
+  <li class="status-post">
+        <!-- IF status_messages.USER_TILE -->
+		<div class="status-disp-pic">
+			<img src="{status_messages.USER_TILE}" alt="{status_messages.USER_DISPLAY_NAME}" />
+		</div>
+		<!-- ENDIF -->
+		<div class="status-body" style="cursor: pointer;" onclick="LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-{status_messages.ID}'));">
+            <p><a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
+			<p>{status_messages.STATUS_MESSAGE}</p>
+		</div>
+        <div class="r-stuff light">
+            <span class="img-button like-item"><a href="#" onclick="return LikeItem({status_messages.ID},{status_messages.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{status_messages.LIKES}</span></a></span><!--
+            --><span class="img-button share-item"><a href="#" onclick="return ShareItem({status_messages.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
+            --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-{status_messages.ID}'));" title="Expand comments">Comments</a></span>
+        </div>
+        <div class="status-body comment-pane" id="status-{status_messages.ID}" style="display: none;"></div>
   </li>
   <!-- END status_messages -->
 </ul>
+    </div>
 <!-- INCLUDE page_footer.html -->

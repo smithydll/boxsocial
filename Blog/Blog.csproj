@@ -136,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\blog.svg" />
-    <None Include="templates\user_blog_notification.eml" />
+    <Content Include="templates\user_blog_notification.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

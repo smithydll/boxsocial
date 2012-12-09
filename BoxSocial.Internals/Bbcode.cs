@@ -23,9 +23,12 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace BoxSocial.Internals
 {
@@ -83,6 +86,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeImage);
             BbcodeHooks += new BbcodeHookHandler(BbcodeYouTube);
             BbcodeHooks += new BbcodeHookHandler(BbcodeLaTeX);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeTwitter);
             // TODO: flash
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
@@ -385,6 +389,51 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string FromStatusCode(string input)
+        {
+            string output = input;
+
+            // http://weblogs.asp.net/farazshahkhan/archive/2008/08/09/regex-to-find-url-within-text-and-make-them-as-link.aspx
+            MatchCollection matches = Regex.Matches(input, "(?:^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", RegexOptions.IgnoreCase);
+
+            int offset = 0;
+            foreach (Match match in matches)
+            {
+                string domain = match.Groups[4].Value;
+                string path = match.Groups[5].Value;
+                if (domain.ToLower().EndsWith("youtube.com") && path.ToLower().StartsWith("/watch?v="))
+                {
+                    //output = output.Replace(match.Value, "\n[youtube]" + match.Groups[1].Value + "[/youtube]");
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[youtube]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 10, "[/youtube]");
+                    offset += 20;
+                }
+
+                if (domain.ToLower().EndsWith("twitter.com") && path.ToLower().Contains("/status/"))
+                {
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[tweet]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/tweet]");
+                    offset += 16;
+                }
+            }
+
+            return output;
+        }
+
+        public string ParseUrls(string input)
+        {
+            //MatchCollection matches = 
+
+            input = Regex.Replace(input, "(?:^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", "[url]$1[/url]", RegexOptions.IgnoreCase);
+
+            /*int offset = 0;
+            foreach (Match match in matches)
+            {
+                output = output.Insert(match.Groups[1].Index + offset, "[url]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 5,"[/url]");
+                offset += 11;
+            }*/
+
+            return input;
+        }
+
         public string Parse(string input)
         {
             return Parse(input, null);
@@ -406,6 +455,9 @@ namespace BoxSocial.Internals
             {
                 return string.Empty;
             }
+
+            // Convert all URLs that aren't BB Coded into BB Code
+            input = ParseUrls(input);
 
             StringBuilder debugLog = new StringBuilder();
 
@@ -682,6 +734,7 @@ namespace BoxSocial.Internals
             input = input.Replace("<p> </p>", string.Empty);
             input = input.Replace("<p>\n</p>", string.Empty);
             input = input.Replace("<p>\r\n</p>", string.Empty);
+            
             return input;
         }
 
@@ -1331,7 +1384,7 @@ namespace BoxSocial.Internals
                 string youTubeUrl = e.Contents;
                 e.RemoveContents();
 
-                if (youTubeUrl.ToLower().StartsWith("http://"))
+                if (youTubeUrl.ToLower().StartsWith("http://") || youTubeUrl.ToLower().StartsWith("https://"))
                 {
                     char[] splitChars = { '=', '?', '&' };
                     string[] argh = youTubeUrl.Split(splitChars);
@@ -1354,15 +1407,75 @@ namespace BoxSocial.Internals
 
                 if (TagAllowed(e.Tag.Tag, e.Options))
                 {
-                    youTubeUrl = "http://www.youtube.com/v/" + youTubeUrl;
+                    youTubeUrl = "http://www.youtube.com/embed/" + youTubeUrl;
 
-                    e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
+                    // Old YouTube Flash Embed Code
+                    //e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
+                    // New YouTube Embed Code
+                    e.PrefixText = "<iframe class=\"youtube-player\" type=\"text/html\" width=\"560\" height=\"340\" src=\"" + youTubeUrl + "\" frameborder=\"0\"></iframe>";
                     e.SuffixText = string.Empty;
                 }
                 else
                 {
                     youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
                     e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
+                    e.SuffixText = "</a>";
+                }
+            }
+        }
+
+        private static void BbcodeTwitter(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "tweet") return;
+
+            e.SetHandled();
+
+            if (e.StripTag)
+            {
+                e.PrefixText = string.Empty;
+                e.SuffixText = string.Empty;
+            }
+            else
+            {
+                string tweetUrl = e.Contents;
+                string tweetId = tweetUrl;
+                //if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+
+                e.RemoveContents();
+
+                if (tweetUrl.ToLower().StartsWith("http://") || tweetUrl.ToLower().StartsWith("https://"))
+                {
+                    char[] splitChars = { '/' };
+                    string[] argh = tweetUrl.Split(splitChars);
+                    if (argh.Length > 0)
+                    {
+                        tweetId = argh[argh.Length - 1];
+                    }
+                }
+
+
+                if (TagAllowed(e.Tag.Tag, e.Options))
+                {
+                    string apiUri = "https://api.twitter.com/1/statuses/oembed.json?id=" + tweetId + "&align=center";
+                    WebClient wc = new WebClient();
+                    string response = wc.DownloadString(apiUri);
+
+                    Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
+
+                    if (strings.ContainsKey("html"))
+                    {
+                        e.PrefixText = strings["html"];
+                        e.SuffixText = string.Empty;
+                    }
+                    else
+                    {
+                        e.PrefixText = "<a href=\"" + tweetUrl + "\"><strong>IMG</strong>: ";
+                        e.SuffixText = "</a>";
+                    }
+                }
+                else
+                {
+                    e.PrefixText = "<a href=\"" + tweetUrl + "\"><strong>IMG</strong>: ";
                     e.SuffixText = "</a>";
                 }
             }
@@ -1572,7 +1685,7 @@ namespace BoxSocial.Internals
             string val = string.Empty;
             for (int i = 0; i < length; i++)
             {
-                if (input[i].Equals('&') && i + 6 < input.Length && input.Substring(i, 6).Equals("&quot;"))
+                if (input[i].Equals('&') && i + 5 < length && input.Substring(i, 6).Equals("&quot;"))
                 {
                     inQuote = !inQuote;
                     i += 5;

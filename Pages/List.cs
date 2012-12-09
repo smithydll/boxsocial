@@ -553,6 +553,11 @@ namespace BoxSocial.Applications.Pages
                 return "List: " + Title;
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class InvalidListException : Exception

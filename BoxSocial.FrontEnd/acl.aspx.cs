@@ -96,6 +96,11 @@ namespace BoxSocial.FrontEnd
             List<AccessControlPermission> permissions = AccessControlLists.GetPermissions(core, itemKey);
             
             AccessControlLists acl = new AccessControlLists(core, pi);
+
+            if (Request.Form["delete"] != null)
+            {
+                acl_Delete(acl);
+            }
             
             if (Request.Form["save"] != null)
             {
@@ -132,6 +137,40 @@ namespace BoxSocial.FrontEnd
             {
                 core.Functions.Generate403();
                 return;
+            }
+        }
+
+        private void acl_Delete(AccessControlLists acl)
+        {
+            string value = Request.Form["delete"];
+
+            if (!string.IsNullOrEmpty(value))
+            {
+                string[] vals = value.Split(new char[] { ',' });
+
+                if (vals.Length == 3)
+                {
+                    int permissionId = 0;
+                    int primitiveTypeId = 0;
+                    int primitiveId = 0;
+
+                    int.TryParse(vals[0], out permissionId);
+                    int.TryParse(vals[1], out primitiveTypeId);
+                    int.TryParse(vals[2], out primitiveId);
+
+                    if (permissionId != 0 && primitiveTypeId != 0 && primitiveId != 0)
+                    {
+                        try
+                        {
+                            acl.DeleteGrant(permissionId, primitiveTypeId, primitiveId);
+                        }
+                        catch
+                        {
+                            core.Functions.Generate403();
+                            return;
+                        }
+                    }
+                }
             }
         }
     }

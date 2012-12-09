@@ -281,6 +281,11 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

@@ -2,7 +2,7 @@
 
 function CreateUserTagNearPointer(id, event)
 {
-	var photo = ge("photo-640");
+	var photo = $("#photo-640");
 	photox = (event.offsetX) ? event.offsetX : event.pageX-document.getElementById("photo-640").offsetLeft;
 	photoy = (event.offsetY) ? event.offsetY : event.pageY-document.getElementById("photo-640").offsetTop;
 	
@@ -11,30 +11,27 @@ function CreateUserTagNearPointer(id, event)
 	
 	//PostToAccount(UserTagCreated, "gallery", "tag", id, null);
 	
-	var tags = ge("tags").value;
+	var tags = $("#tags").val();
 	
-	var nli = document.createElement('li');
+	var nli = $('<li>');
 	
-	apc("user-tags", nli);
+	$("#user-tags").append(nli);
 	
-	var nlii = document.createElement('input');
+	var nlii = $('<input>');
 	nlii.type = 'input';
 	nlii.name = 'name[' + tags + ']';
-	nli.appendChild(nlii);
+	nli.append(nlii);
 	
-	var nih = document.createElement('input');
+	var nih = $('<input>');
 	nih.type = 'hidden';
 	nih.name = 'tag[' + tags + ']';
 	nih.value = photox + ',' + photoy;
 	
-	apc("fieldlist", nih);
+	$("#fieldlist").append(nih);
 
-	ge("tags").value = parseInt(tags) + 1;
+	$("#tags").val(parseInt(tags) + 1);
 	
-	try
-	{
-		hide("no-tags");
-	} catch (e) {};
+	$("#no-tags").hide();
 }
 
 function UserTagCreated(texts)
@@ -43,27 +40,27 @@ function UserTagCreated(texts)
 
 function ShowUserTag(id)
 {
-	ge("tag-" + id).style.border = "solid 2px white";
+	$("#tag-" + id).style.border = "solid 2px white";
 }
 
 function HideUserTag(id)
 {
-	ge("tag-" + id).style.border = "solid 2px transparent";
+	$("#tag-" + id).style.border = "solid 2px transparent";
 }
 
 function ShowUserTagName(id)
 {
-	show("tag-name-" + id);
+	$("#tag-name-" + id).show();
 }
 
 function HideUserTagName(id)
 {
-	hide("tag-name-" + id);
+	$("#tag-name-" + id).hide();
 }
 
 function ShowTagNearPointer(event)
 {
-	var photo = ge("photo-640");
+	var photo = $("#photo-640");
 	photox = (event.offsetX) ? event.offsetX : event.pageX-document.getElementById("photo-640").offsetLeft;
 	photoy = (event.offsetY) ? event.offsetY : event.pageY-document.getElementById("photo-640").offsetTop;
 	

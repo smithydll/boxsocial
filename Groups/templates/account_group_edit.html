@@ -11,17 +11,14 @@
 			<dd class="top">{S_CATEGORIES}</dd>
 			<dt class="top"><label for="description">Group Description:</label></dt>
 			<dd class="top">
-				<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 78px; border: solid 1px #666666;" rows="4" cols="75">{GROUP_DESCRIPTION}</textarea>
-				<div style="background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;">
-					<div style="background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;"></div>
-				</div>
+				<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 78px;" rows="4" cols="75">{GROUP_DESCRIPTION}</textarea>
 			</dd>
 			<dt class="top"><label>Group Type:</label></dt>
 			<dd class="top">
-				<dl>
+				<dl class="form-sub-list">
 					<dt><label><input type="radio" name="type" value="open" {S_OPEN_CHECKED}/> Open Group</label></dt>
 					<dd>A group open for anyone to join.</dd>
-          <dt><label><input type="radio" name="type" value="open" {S_REQUEST_CHECKED}/> Open Group</label></dt>
+                    <dt><label><input type="radio" name="type" value="open" {S_REQUEST_CHECKED}/> Open Group</label></dt>
 					<dd>A group with open registration, but a group operator must approve new memberships to the group.</dd>
 					<dt><label><input type="radio" name="type" value="closed" {S_CLOSED_CHECKED}/> Closed Group</label></dt>
 					<dd>A group with closed registration, but still visible to non-members.</dd>

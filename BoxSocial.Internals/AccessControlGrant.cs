@@ -94,6 +94,20 @@ namespace BoxSocial.Internals
             {
                 return (AccessControlGrants)grantAllow;
             }
+            set
+            {
+                grantAllow = (sbyte)value;
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(AccessControlGrant));
+                uQuery.AddCondition("grant_primitive_id", PrimitiveKey.Id);
+                uQuery.AddCondition("grant_primitive_type_id", PrimitiveKey.TypeId);
+                uQuery.AddCondition("grant_item_id", ItemKey.Id);
+                uQuery.AddCondition("grant_item_type_id", ItemKey.TypeId);
+                uQuery.AddCondition("grant_permission_id", PermissionId);
+                uQuery.AddField("grant_allow", grantAllow);
+
+                core.Db.Query(uQuery);
+            }
         }
 		
 		public Primitive Owner
@@ -123,7 +137,7 @@ namespace BoxSocial.Internals
             loadItemInfo(grantRow);
 		}
         
-        private AccessControlGrant(Core core, ItemKey primitive, ItemKey item, long permissionId)
+        internal AccessControlGrant(Core core, ItemKey primitive, ItemKey item, long permissionId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
@@ -275,6 +289,20 @@ namespace BoxSocial.Internals
 
             return grants;
         }
+
+        internal new long Delete()
+        {
+            DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
+            dQuery.AddCondition("grant_primitive_id", PrimitiveKey.Id);
+            dQuery.AddCondition("grant_primitive_type_id", PrimitiveKey.TypeId);
+            dQuery.AddCondition("grant_item_id", ItemKey.Id);
+            dQuery.AddCondition("grant_item_type_id", ItemKey.TypeId);
+            dQuery.AddCondition("grant_permission_id", permissionId);
+
+            long result = db.Query(dQuery);
+
+            return result;
+        }
 		
 		public override string Uri 
 		{
@@ -289,9 +317,26 @@ namespace BoxSocial.Internals
     {
         private long permissionId;
         private sbyte grantAllow;
-        
-        private ItemKey key;
+
+        private ItemKey itemKey;
+        private ItemKey primitiveKey;
         private Core core;
+
+        public ItemKey ItemKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
+        public ItemKey PrimitiveKey
+        {
+            get
+            {
+                return primitiveKey;
+            }
+        }
 
         public long PermissionId
         {
@@ -312,11 +357,12 @@ namespace BoxSocial.Internals
                 grantAllow = (sbyte)value;
             }
         }
-        
-        public UnsavedAccessControlGrant(Core core, ItemKey key, long permissionId, AccessControlGrants grantAllow)
+
+        public UnsavedAccessControlGrant(Core core, ItemKey primitiveKey, ItemKey itemKey, long permissionId, AccessControlGrants grantAllow)
         {
             this.core = core;
-            this.key = key;
+            this.itemKey = itemKey;
+            this.primitiveKey = primitiveKey;
             this.permissionId = permissionId;
             this.grantAllow = (sbyte)grantAllow;
         }

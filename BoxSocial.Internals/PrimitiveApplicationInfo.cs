@@ -175,6 +175,11 @@ namespace BoxSocial.Internals
                 return "Application (" + Owner.DisplayTitle + ")";
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class InvalidPrimitiveAppInfoException : Exception

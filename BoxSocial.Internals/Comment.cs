@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
 {
 
     [DataTable("comments")]
-    public sealed class Comment : NumberedItem
+    public sealed class Comment : NumberedItem, ILikeableItem
     {
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 1023;
@@ -48,6 +48,10 @@ namespace BoxSocial.Internals
         private string itemType;*/
 		[DataField("comment_item", DataFieldKeys.Index)]
         private ItemKey itemKey;
+        [DataField("comment_likes")]
+        private byte likes;
+        [DataField("comment_dislikes")]
+        private byte dislikes;
         [DataField("comment_spam_score")]
         private byte spamScore;
         [DataField("comment_time_ut")]
@@ -98,6 +102,14 @@ namespace BoxSocial.Internals
             get
             {
                 return itemKey.TypeString;
+            }
+        }
+
+        public long ItemTypeId
+        {
+            get
+            {
+                return itemKey.TypeId;
             }
         }
 
@@ -431,6 +443,22 @@ namespace BoxSocial.Internals
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public long Likes
+        {
+            get
+            {
+                return likes;
+            }
+        }
+
+        public long Dislikes
+        {
+            get
+            {
+                return dislikes;
             }
         }
     }

@@ -69,6 +69,9 @@ namespace BoxSocial.Internals
             List<Notification> notifications = Notification.GetRecentNotifications(core);
             List<long> ids = new List<long>();
 
+            template.Parse("USAGE_USAGE", Math.Round(core.Session.LoggedInMember.Info.BytesUsed / 1024.0 / 1024.0, 2).ToString());
+            template.Parse("USAGE_LIMIT", "5120 MiB");
+
             if (notifications.Count > 0)
             {
                 template.Parse("IS_NOTIFICATIONS", "TRUE");

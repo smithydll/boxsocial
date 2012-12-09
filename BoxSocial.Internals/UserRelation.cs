@@ -39,7 +39,7 @@ namespace BoxSocial.Internals
         [DataField("relation_you")]
         private new long userId;
         [DataField("relation_order")]
-        private byte relationOrder;
+        private int relationOrder;
         [DataField("relation_type", DataFieldKeys.Index, "i_relation", 15)]
         private string relationType;
         [DataField("relation_time_ut")]
@@ -53,7 +53,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public byte RelationOrder
+        public int RelationOrder
         {
             get
             {

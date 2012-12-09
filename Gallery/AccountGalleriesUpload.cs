@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -142,44 +143,58 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    string saveFileName = GalleryItem.HashFileUpload(core.Http.Files["photo-file"].InputStream);
-                    if (!File.Exists(TPage.GetStorageFilePath(saveFileName)))
-                    {
-                        TPage.EnsureStoragePathExists(saveFileName);
-                        core.Http.Files["photo-file"].SaveAs(TPage.GetStorageFilePath(saveFileName));
-                    }
+                    MemoryStream stream = new MemoryStream();
+                    core.Http.Files["photo-file"].InputStream.CopyTo(stream);
+
                     // start here for new storage framework
                     //Owner.StoreFile(core.Http.Files["photo-file"].InputStream);
 
-                    GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification());
+                    db.BeginTransaction();
+
+                    Image image = Image.FromStream(stream);
+                    int width = image.Width;
+                    int height = image.Height;
+
+                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
+
+                    GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
+                    stream.Close();
+
+                    db.CommitTransaction();
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+
                     return;
                 }
                 catch (GalleryItemTooLargeException)
                 {
-                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                    db.RollBackTransaction();
+                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 5 MiB in size.");
                     return;
                 }
                 catch (GalleryQuotaExceededException)
                 {
+                    db.RollBackTransaction();
                     core.Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                     return;
                 }
                 catch (InvalidGalleryItemTypeException)
                 {
+                    db.RollBackTransaction();
                     core.Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                     return;
                 }
                 catch (InvalidGalleryFileNameException)
                 {
+                    db.RollBackTransaction();
                     core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
                     return;
                 }
             }
             catch (InvalidGalleryException)
             {
+                db.RollBackTransaction();
                 core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                 return;
             }

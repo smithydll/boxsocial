@@ -67,6 +67,9 @@ namespace BoxSocial.Internals
         public delegate void CommentCountHandler(ItemKey itemKey, int adjustment);
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
+        public delegate void LikeHandler(ItemLikedEventArgs e);
+        public delegate void SubscribeHandler(ItemSubscribedEventArgs e);
+        public delegate void UnsubscribeHandler(ItemUnsubscribedEventArgs e);
         public delegate List<PrimitivePermissionGroup> PermissionGroupHandler(Core core, Primitive owner);
 
         public event HookHandler HeadHooks;
@@ -80,6 +83,9 @@ namespace BoxSocial.Internals
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
         private Dictionary<long, RatingHandler> ratingHandles = new Dictionary<long, RatingHandler>();
+        private Dictionary<long, LikeHandler> likeHandles = new Dictionary<long, LikeHandler>();
+        private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
+        private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
         /// <summary>
         /// A cache of application entries.
@@ -500,6 +506,87 @@ namespace BoxSocial.Internals
             AddPrimitiveType(typeof(User));
             AddPrimitiveType(typeof(ApplicationEntry));
             FindAllPrimitivesLoaded();
+
+            RegisterCoreCommentHandles();
+            RegisterCoreLikeHandles();
+        }
+
+        private void RegisterCoreCommentHandles()
+        {
+            RegisterCommentHandle(ItemKey.GetTypeId(typeof(StatusMessage)), statusMessageCanPostComment, statusMessageCanDeleteComment, statusMessageAdjustCommentCount, statusMessageCommentPosted, statusMessageCommentDeleted);
+        }
+
+        private void RegisterCoreLikeHandles()
+        {
+            RegisterLikeHandle(ItemKey.GetTypeId(typeof(Comment)), commentLiked);
+            RegisterLikeHandle(ItemKey.GetTypeId(typeof(StatusMessage)), statusLiked);
+        }
+
+        private void commentLiked(ItemLikedEventArgs e)
+        {
+            if (e.Likeing == LikeType.Like)
+            {
+                Db.UpdateQuery(string.Format("UPDATE comments SET comment_likes = comment_likes + {1} WHERE comment_id = {0};",
+                    e.ItemId, 1));
+            }
+        }
+
+        private void statusLiked(ItemLikedEventArgs e)
+        {
+            if (e.Likeing == LikeType.Like)
+            {
+                Db.UpdateQuery(string.Format("UPDATE user_status_messages SET status_likes = status_likes + {1} WHERE status_id = {0};",
+                    e.ItemId, 1));
+            }
+        }
+
+        private bool statusMessageCanPostComment(ItemKey itemKey, User member)
+        {
+            try
+            {
+                StatusMessage message = new StatusMessage(this, itemKey.Id);
+
+                if (message.Access.Can("COMMENT"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        private bool statusMessageCanDeleteComment(ItemKey itemKey, User member)
+        {
+            StatusMessage message = new StatusMessage(this, itemKey.Id);
+
+            if (message.Owner.Id == member.UserId)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void statusMessageCommentPosted(CommentPostedEventArgs e)
+        {
+        }
+
+        private void statusMessageCommentDeleted(CommentPostedEventArgs e)
+        {
+        }
+
+        private void statusMessageAdjustCommentCount(ItemKey itemKey, int adjustment)
+        {
+            Db.UpdateQuery(string.Format("UPDATE user_status_messages SET comments = comments + {1} WHERE status_id = {0};",
+                itemKey.Id, adjustment));
         }
 
         public void DisposeOf()
@@ -651,6 +738,42 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void ItemLiked(ItemKey itemKey, LikeType like, User liker)
+        {
+            if (likeHandles.ContainsKey(itemKey.TypeId))
+            {
+                likeHandles[itemKey.TypeId](new ItemLikedEventArgs(like, liker, itemKey));
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        public void ItemSubscribed(ItemKey itemKey, User subscriber)
+        {
+            if (subscribeHandles.ContainsKey(itemKey.TypeId))
+            {
+                subscribeHandles[itemKey.TypeId](new ItemSubscribedEventArgs(subscriber, itemKey));
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        public void ItemUnsubscribed(ItemKey itemKey, User subscriber)
+        {
+            if (unsubscribeHandles.ContainsKey(itemKey.TypeId))
+            {
+                unsubscribeHandles[itemKey.TypeId](new ItemUnsubscribedEventArgs(subscriber, itemKey));
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, bool staticPage)
         {
             // register with a moderately high priority leaving room for higher priority registration
@@ -681,6 +804,21 @@ namespace BoxSocial.Internals
         public void RegisterRatingHandle(long itemTypeId, Core.RatingHandler itemRated)
         {
             ratingHandles.Add(itemTypeId, itemRated);
+        }
+
+        public void RegisterLikeHandle(long itemTypeId, Core.LikeHandler itemliked)
+        {
+            likeHandles.Add(itemTypeId, itemliked);
+        }
+
+        public void RegisterSubscribeHandle(long itemTypeId, Core.SubscribeHandler itemSubscribed)
+        {
+            subscribeHandles.Add(itemTypeId, itemSubscribed);
+        }
+
+        public void RegisterUnsubscribeHandle(long itemTypeId, Core.UnsubscribeHandler itemUnsubscribed)
+        {
+            unsubscribeHandles.Add(itemTypeId, itemUnsubscribed);
         }
 
         private VariableCollection createHeadPanel()

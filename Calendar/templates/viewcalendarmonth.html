@@ -1,6 +1,8 @@
 <!-- INCLUDE page_header.html -->
 	<h2>{CURRENT_MONTH} {CURRENT_YEAR}</h2>
 	<p>{BREADCRUMBS}</p>
+
+<div id="pane-calendar" class="pane">
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
 		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></span>
@@ -25,7 +27,7 @@
 			<!-- BEGIN week -->
 			<div class="week">
 				<!-- BEGIN week.day -->
-				<div class="day">
+				<div class="day {week.day.CLASS}">
 					<a href="{week.day.URI}">{week.day.DATE}</a>
 					<!-- IF week.day.EVENTS -->
 					<ul>
@@ -39,4 +41,5 @@
 			</div>
 			<!-- END week -->
 		</div>
+</div>
 <!-- INCLUDE page_footer.html -->

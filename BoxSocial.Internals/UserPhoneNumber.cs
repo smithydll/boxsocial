@@ -240,6 +240,11 @@ namespace BoxSocial.Internals
                 return "Phone Number (" + PhoneNumber + ")";
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class InvalidUserPhoneNumberException : Exception

@@ -31,7 +31,19 @@ namespace BoxSocial.Applications.Forum
     {
         public static void ShowHelp(object sender, ShowPPageEventArgs e)
         {
+            ForumSettings settings;
+            try
+            {
+                settings = new ForumSettings(e.Core, e.Page.Owner);
+            }
+            catch (InvalidForumSettingsException)
+            {
+                ForumSettings.Create(e.Core, e.Page.Owner);
+                settings = new ForumSettings(e.Core, e.Page.Owner);
+            }
+
             e.Template.SetTemplate("Forum", "help");
+            ForumSettings.ShowForumHeader(e.Core, e.Page);
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });

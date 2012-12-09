@@ -214,6 +214,14 @@ namespace BoxSocial.Musician
             }
         }
 
+        public Primitive Owner
+        {
+            get
+            {
+                return (Primitive)Musician;
+            }
+        }
+
         public Tour Tour
         {
             get

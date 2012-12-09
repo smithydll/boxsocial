@@ -79,7 +79,7 @@ namespace BoxSocial.Applications.Profile
             {
                 VariableCollection friendsVariableCollection = template.CreateChild("friend_list");
 
-                byte order = friend.RelationOrder;
+                int order = friend.RelationOrder;
 
                 friendsVariableCollection.Parse("NAME", friend.DisplayName);
 

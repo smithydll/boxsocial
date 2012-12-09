@@ -1,6 +1,8 @@
 <!-- INCLUDE page_header.html -->
 
+<!-- IF BREADCRUMBS -->
 <p>{BREADCRUMBS}</p>
+<!-- ENDIF -->
 
 	<div id="overview-profile" class="pane">
 		<div class="img-wb img-fl">
@@ -13,17 +15,16 @@
 		<div class="info">
 			<h2><a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a></h2>
 			<!-- IF OWNER -->
-			<p id="status-message" onclick="hide('status-message');show('status-form');ge('message').focus();" style="cursor: pointer;">
+			<p id="status-message" onclick="$('#status-message').hide();$('#status-form').show();$('#message').focus().val('is ').outerWidth($('#status-div').width() - $('#status-submit').outerWidth(true));" style="cursor: pointer;">
 			    <!-- IF STATUS_MESSAGE -->
 			    {STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em>
 			    <!-- ELSE -->
 			    Click here to change your status message.
 			    <!-- ENDIF -->
 			</p>
-			<div>
-			    <form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();">
-			        <p><input type="text" id="message" name="message" value="is " onblur="show('status-message');hide('status-form');" />
-			        <input type="submit" id="status-submit" value="Submit"/>
+			<div id="status-div">
+			    <form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();" onblur="$('#status-message').show();$('#status-form').hide();">
+			        <p><input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
 			        <input type="hidden" name="module" value="profile" />
 			        <input type="hidden" name="sub" value="status" /></p>
 			    </form>
@@ -55,7 +56,7 @@
 	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
 			<h3>Pages</h3>
-			<ul>
+			<ul class="page-tiles">
 				{PAGE_LIST}
 			</ul>
 		</div>

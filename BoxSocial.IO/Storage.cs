@@ -60,11 +60,20 @@ namespace BoxSocial.IO
 
         public abstract string RetrieveFileUri(string bin, string fileName);
 
+        public abstract string RetrieveFileUri(string bin, string fileName, string contentType, string renderFileName);
+
         public abstract string RetrieveFilePath(string bin, string fileName);
 
         public abstract void CopyFile(string fromBin, string toBin, string fileName);
 
         public abstract bool FileExists(string bin, string fileName);
+
+        public abstract string PathSeparator
+        {
+            get;
+        }
+
+        public abstract string PathCombine(string path1, string path2);
 
         public static string HashFile(Stream fileStream)
         {

@@ -1,0 +1,134 @@
+html, body {
+	margin: 0px;
+	padding: 0px;
+	font-size: 100%;
+	height: 100%;
+}
+
+body {
+	background: white;
+	font-size: 3mm;
+	font-family: Verdana, Helvetica, Arial, sans-serif;
+	text-align: center;
+}
+
+#page {
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 0 10px 0;
+	text-align: left;
+}
+
+#head {
+	padding: 0px;
+	
+}
+
+a {
+	text-decoration: none;
+	color: #002299;
+}
+
+p {
+	padding: 6px 0;
+	margin: 0 0;
+}
+
+#head h1 {
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	background: url('/images/zinzam-wl.png');
+	background-repeat: no-repeat;
+	height: 10mm;
+	background-color: #333333;
+	position: relative;
+	width: 100%;
+}
+
+#head h1 a {
+	display: block;
+	width: 100%;
+	height: 10mm;
+}
+
+#head h1 a span {
+	text-indent: -5000px;
+	display: block;
+}
+
+#head h2 {
+	display: none;
+}
+
+#body h2 {
+	font-size: 220%;
+}
+
+#body h3 {
+	font-size: 180%;
+}
+
+#body h4 {
+	font-size: 150%;
+}
+
+#body h5 {
+	font-size: 135%;
+}
+
+#body h6 {
+	font-size: 120%;
+}
+
+.page-tiles {
+    padding: 0;
+    margin: 5px;
+}
+
+.page-tiles li {
+    padding: 1px 5px;
+    background-color: #333333;
+    color: #FFFFFF;
+}
+
+.page-tiles li a {
+    color: #FFFFFF;
+    display: block;
+}
+
+.page-tiles li a span {
+    display: inline;
+}
+
+.page-li {
+    background-repeat: no-repeat;
+    background-position: 4px center;
+    line-height: 9mm;
+    padding-left: 24px !important;
+    margin: 4px;
+}
+
+#foot {
+	/*clear: both;*/
+	background-color: #e0e0e0;
+	/*background-image: url('/images/footer-gradient.png');*/
+	height: 11em;
+}
+
+#footer {
+	border-top: solid 1px #D7D7D7;
+}
+
+#clear-space {
+	height: 11em;
+}
+
+#foot * {
+	color: #333333;
+}
+
+#body {
+	width: 100%;
+	margin: 5px 0;
+}

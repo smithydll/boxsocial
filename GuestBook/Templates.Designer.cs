@@ -60,10 +60,9 @@ namespace BoxSocial.Applications.GuestBook {
             }
         }
         
-        internal static byte[] user_guestbook_notification {
+        internal static string user_guestbook_notification {
             get {
-                object obj = ResourceManager.GetObject("user_guestbook_notification", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("user_guestbook_notification", resourceCulture);
             }
         }
         

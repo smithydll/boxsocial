@@ -29,7 +29,7 @@ namespace BoxSocial.Forms
     public class TextBox : FormField
     {
         private string value;
-        private bool disabled;
+        protected bool disabled;
         protected bool visible;
         private int maxLength;
         private bool isFormatted;
@@ -169,7 +169,7 @@ namespace BoxSocial.Forms
         {
             if (isFormatted)
             {
-                return string.Format("<textarea id=\"{0}\" name=\"{0}\" style=\"margin: 0px; width: {6}; height: {3}px; border: solid 1px #666666;{5}\" cols=\"70\" rows=\"{2}\"{4}{7}>{1}</textarea><div style=\"background-image: url('/images/tab_shadow.png'); background-repeat: repeat-x; position: relative; top: -2px; margin-left: 77px;\"><div style=\"background-image: url('/images/bbcode_tab.png'); width: 77px; height: 18px; margin: 0px; padding: 0px; margin-left: -77px;\"></div></div>",
+                return string.Format("<textarea id=\"{0}\" name=\"{0}\" style=\"margin: 0px; width: {6}; height: {3}px;{5}\" cols=\"70\" rows=\"{2}\"{4}{7}>{1}</textarea><div class=\"bbcode-enabled\"></div>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     lines,

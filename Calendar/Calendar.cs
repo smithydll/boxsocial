@@ -602,6 +602,13 @@ namespace BoxSocial.Applications.Calendar
             VariableCollection dayVariableCollection = weekVariableCollection.CreateChild("day");
             dayVariableCollection.Parse("DATE", day.ToString());
             dayVariableCollection.Parse("URI", Calendar.BuildDateUri(core, owner, year, month, day));
+
+            DateTime now = core.Tz.Now;
+            if (year == now.Year && month == now.Month && day == now.Day)
+            {
+                dayVariableCollection.Parse("CLASS", "today");
+            }
+
             bool hasEvents = false;
 
             List<Event> expired = new List<Event>();
@@ -615,7 +622,7 @@ namespace BoxSocial.Applications.Calendar
 
                 VariableCollection eventVariableCollection = dayVariableCollection.CreateChild("event");
 
-                eventVariableCollection.Parse("TITLE", calendarEvent.Subject.Substring(0, Math.Min(7, calendarEvent.Subject.Length)));
+                eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
                 if (calendarEvent.GetStartTime(core.Tz).Day != day)
                 {
                     eventVariableCollection.Parse("START_TIME", calendarEvent.GetStartTime(core.Tz).ToString("d MMMM h:mmt").ToLower());

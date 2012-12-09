@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.Calendar
         private byte priority;
         #endregion
 
-        private Access taskAccess;
+        private Access access;
         private Primitive owner;
 
         public long TaskId
@@ -123,11 +123,15 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public Access TaskAccess
+        public Access Access
         {
             get
             {
-                return taskAccess;
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
             }
         }
 
@@ -355,7 +359,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 Task calendarTask = new Task(core, owner, taskId);
 
-                if (!calendarTask.TaskAccess.Can("VIEW"))
+                if (!calendarTask.Access.Can("VIEW"))
                 {
                     core.Functions.Generate403();
                     return;
@@ -373,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
 
                 owner.ParseBreadCrumbs(calendarPath);
             }
-            catch
+            catch (InvalidTaskException)
             {
                 core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
             }
@@ -433,18 +437,6 @@ namespace BoxSocial.Applications.Calendar
 
         #endregion
 
-        public Access Access
-        {
-            get
-            {
-                if (taskAccess == null)
-                {
-                    taskAccess = new Access(core, this);
-                }
-                return taskAccess;
-            }
-        }
-
         public Primitive Owner
         {
             get
@@ -494,6 +486,11 @@ namespace BoxSocial.Applications.Calendar
             {
                 return "Task: " + Topic;
             }
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
         }
     }
 

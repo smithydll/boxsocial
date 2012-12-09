@@ -24,12 +24,13 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Mail
 {
-    [AccountSubModule(AppPrimitives.Member, "mail", "compose", true)]
+    [AccountSubModule(AppPrimitives.Member, "mail", "compose")]
     public class AccountCompose : AccountSubModule
     {
         public override string Title
@@ -66,6 +67,21 @@ namespace BoxSocial.Applications.Mail
         void AccountCompose_Show(object sender, EventArgs e)
         {
             SetTemplate("account_compose");
+
+            UserSelectBox toUserSelectBox = new UserSelectBox(core, "to");
+            TextBox subjectTextBox = new TextBox("subject");
+            TextBox messageTextBox = new TextBox("message");
+            messageTextBox.IsFormatted = true;
+            
+
+        }
+
+        void AccountCompose_Save(object sender, EventArgs e)
+        {
+        }
+
+        void AccountCompose_Send(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -108,8 +108,8 @@ namespace BoxSocial.FrontEnd
 
                 if (commentsTable.Rows.Count == 1)
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
-                        HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["user_name"]), HttpUtility.HtmlEncode((string)commentsTable.Rows[0]["comment_text"]))));
+                    core.Ajax.SendRawText("commentFetched", (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
+                        (string)commentsTable.Rows[0]["user_name"], (string)commentsTable.Rows[0]["comment_text"])));
                 }
                 else
                 {
@@ -117,6 +117,83 @@ namespace BoxSocial.FrontEnd
                 }
 
                 return;
+            }
+
+            if (mode == "load")
+            {
+                try
+                {
+                    itemId = long.Parse((string)core.Http.Query["item"]);
+                    itemTypeId = long.Parse((string)core.Http.Query["type"]);
+                }
+                catch
+                {
+                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    return;
+                }
+
+                try
+                {
+                    // This isn't the most elegant fix, but it works
+                    ApplicationEntry ae = null;
+                    if (core.IsPrimitiveType(itemTypeId))
+                    {
+                        ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                    }
+                    else
+                    {
+                        ItemType itemType = new ItemType(core, itemTypeId);
+                        if (itemType.ApplicationId == 0)
+                        {
+                            ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                        }
+                        else
+                        {
+                            ae = new ApplicationEntry(core, itemType.ApplicationId);
+                        }
+                    }
+
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                }
+                catch (InvalidApplicationException)
+                {
+                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
+                    return;
+                }
+
+                Item thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+
+                Template template = new Template("pane.comments.html");
+                template.SetProse(core.Prose);
+
+                template.Parse("U_SIGNIN", Core.Uri.BuildLoginUri());
+
+                if (thisItem is IPermissibleItem)
+                {
+                    if (!((IPermissibleItem)thisItem).Access.Can("VIEW"))
+                    {
+                        core.Ajax.ShowMessage(isAjax, "accessDenied", "Access Denied", "The you do not have access to these comments");
+                        return;
+                    }
+
+                    if (((IPermissibleItem)thisItem).Access.Can("COMMENT"))
+                    {
+                        template.Parse("CAN_COMMENT", "TRUE");
+                    }
+                }
+
+                if (thisItem is ICommentableItem)
+                {
+                    core.Display.DisplayComments(template, ((ICommentableItem)thisItem).Owner, 1, (ICommentableItem)thisItem);
+                    //List<Comment> comments = Comment.GetComments(core, new ItemKey(itemId, itemTypeId), SortOrder.Ascending, 1, 10, null);
+
+                    core.Ajax.SendRawText("fetchSuccess", template.ToString());
+                }
+                else
+                {
+                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x07)");
+                    return;
+                }
             }
 
             if (mode == "report")
@@ -173,13 +250,29 @@ namespace BoxSocial.FrontEnd
                 {
                     Comment thisComment = new Comment(core, itemId);
 
-                    long commentItemId = thisComment.ItemId;
-                    string commentItemType = thisComment.ItemType;
+                    itemId = thisComment.ItemId;
+                    itemTypeId = thisComment.ItemTypeId;
 
                     try
                     {
-                        ItemType type = new ItemType(core, commentItemType);
-                        ApplicationEntry ae = new ApplicationEntry(core, type.ApplicationId);
+                        // This isn't the most elegant fix, but it works
+                        ApplicationEntry ae = null;
+                        if (core.IsPrimitiveType(itemTypeId))
+                        {
+                            ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                        }
+                        else
+                        {
+                            ItemType itemType = new ItemType(core, itemTypeId);
+                            if (itemType.ApplicationId == 0)
+                            {
+                                ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                            }
+                            else
+                            {
+                                ae = new ApplicationEntry(core, itemType.ApplicationId);
+                            }
+                        }
 
                         BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
                     }
@@ -211,9 +304,15 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
+                        
                         // do not need to keep
-                        db.UpdateQuery(string.Format("DELETE FROM comments WHERE comment_id = {0}",
-                            itemId));
+                        db.BeginTransaction();
+                        thisComment.Delete();
+                        /*db.UpdateQuery(string.Format("DELETE FROM comments WHERE comment_id = {0}",
+                            itemId));*/
+
+                        ItemType itemType = new ItemType(core, itemTypeId);
+                        //Notification.DeleteItem(itemType, itemId);
                     }
 
                     core.LoadUserProfile(thisComment.UserId);
@@ -226,7 +325,7 @@ namespace BoxSocial.FrontEnd
                     core.Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                 }
 
-                core.Ajax.ShowMessage(isAjax, "commentDeleted", "Comment Deleted", "You have successfully deleted the comment.");
+                core.Ajax.SendRawText("commentDeleted", "You have successfully deleted the comment.");
             }
 
             try
@@ -285,9 +384,10 @@ namespace BoxSocial.FrontEnd
                 core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
             }
 
+            Comment commentObject = null;
             try
             {
-                Comment commentObject = Comment.Create(Core, itemKey, comment);
+                commentObject = Comment.Create(Core, itemKey, comment);
                 commentId = commentObject.CommentId;
 
                 Core.AdjustCommentCount(itemKey, 1);
@@ -321,6 +421,7 @@ namespace BoxSocial.FrontEnd
             if (Request.Form["ajax"] == "true")
             {
                 Template ct = new Template(Server.MapPath("./templates"), "pane.comment.html");
+                ct.SetProse(core.Prose);
 
                 VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
 

@@ -1922,6 +1922,11 @@ namespace BoxSocial.Applications.Forum
                 return "Forum: " + Title;
             }
         }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
     }
 
     public class InvalidForumException : Exception

@@ -175,6 +175,7 @@ namespace BoxSocial.Internals
                                 }
         
                                 RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() +"]");
+                                Button deleteButton = new Button("delete", "Delete", itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString());
         
                                 allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                                 allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
@@ -201,6 +202,8 @@ namespace BoxSocial.Internals
                                 grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
                                 grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
                                 grantVariableCollection.Parse("S_INHERIT", allowrl["inherit"]);
+
+                                grantVariableCollection.Parse("S_DELETE", deleteButton);
                                 
                                 grantVariableCollection.Parse("ID", string.Format("{0},{1}", itemGrant.PrimitiveKey.TypeId, itemGrant.PrimitiveKey.Id));
                                 grantVariableCollection.Parse("PERMISSION_ID", itemPermission.Id.ToString());
@@ -222,7 +225,7 @@ namespace BoxSocial.Internals
                         {
                             ItemKey ik = new ItemKey(gsbi.Key);
                         
-                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, itemPermission.Id, AccessControlGrants.Inherit);
+                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, item.ItemKey, itemPermission.Id, AccessControlGrants.Inherit);
                             
                             VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
                             
@@ -272,8 +275,8 @@ namespace BoxSocial.Internals
                         string groupSelectBoxId = core.Http.Form[string.Format("new-permission-group[{0}]", itemPermission.Id)];
                         
                         ItemKey ik = new ItemKey(groupSelectBoxId);
-                        
-                        UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, itemPermission.Id, AccessControlGrants.Inherit);
+
+                        UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, item.ItemKey, itemPermission.Id, AccessControlGrants.Inherit);
                         
                         VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
                         
@@ -413,6 +416,12 @@ namespace BoxSocial.Internals
             return permissions;
         }
 
+        public void DeleteGrant(int permissionId, int primitiveTypeId, int primitiveId)
+        {
+            AccessControlGrant acg = new AccessControlGrant(core, new ItemKey(primitiveId, primitiveTypeId), item.ItemKey, permissionId);
+            acg.Delete();
+        }
+
         public void SavePermissions()
         {
             if (itemPermissions == null)
@@ -427,24 +436,24 @@ namespace BoxSocial.Internals
             {
                 unsavedGrants = new List<UnsavedAccessControlGrant>();
             }
-            
+
             if (itemPermissions != null)
             {
                 foreach (AccessControlPermission itemPermission in itemPermissions)
                 {
                     SelectBox groupsSelectBox = BuildGroupsSelectBox(string.Format("new-permission-group[{0}]", itemPermission.Id), item.Owner);
-                    
+
                     foreach (SelectBoxItem gsbi in groupsSelectBox)
                     {
                         if (core.Http.Form[string.Format("new-grant[{0},{1}]", itemPermission.Id, gsbi.Key)] != null)
                         {
                             ItemKey ik = new ItemKey(gsbi.Key);
-                        
-                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, itemPermission.Id, AccessControlGrants.Inherit);
-                                                        
-                            if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"] != null)
+
+                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, ik, item.ItemKey, itemPermission.Id, AccessControlGrants.Inherit);
+
+                            if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]"] != null)
                             {
-                                switch (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() +"]"])
+                                switch (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]"])
                                 {
                                     case "allow":
                                         uacg.Allow = AccessControlGrants.Allow;
@@ -457,7 +466,7 @@ namespace BoxSocial.Internals
                                         break;
                                 }
                             }
-                            
+
                             try
                             {
                                 AccessControlGrant newACG = AccessControlGrant.Create(core, ik, item.ItemKey, itemPermission.Id, uacg.Allow);
@@ -465,6 +474,58 @@ namespace BoxSocial.Internals
                             }
                             catch (InvalidAccessControlGrantException)
                             {
+                            }
+                        }
+                    }
+
+
+                }
+                foreach (string key in core.Http.Form.AllKeys)
+                {
+                    if (key.StartsWith("allow[") && key.EndsWith("]"))
+                    {
+                        string[] parts = key.Substring(6, key.Length - 7).Split(new char[] { ',' });
+
+                        if (parts.Length == 3)
+                        {
+                            long itemPermissionId = 0;
+                            long primitiveKeyTypeId = 0;
+                            long primitiveKeyId = 0;
+
+                            long.TryParse(parts[0], out itemPermissionId);
+                            long.TryParse(parts[1], out primitiveKeyTypeId);
+                            long.TryParse(parts[2], out primitiveKeyId);
+
+                            ItemKey pk = new ItemKey(primitiveKeyId, primitiveKeyTypeId);
+
+                            UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, pk, item.ItemKey, itemPermissionId, AccessControlGrants.Inherit);
+
+                            if (core.Http.Form[key] != null)
+                            {
+                                switch (core.Http.Form[key])
+                                {
+                                    case "allow":
+                                        uacg.Allow = AccessControlGrants.Allow;
+                                        break;
+                                    case "deny":
+                                        uacg.Allow = AccessControlGrants.Deny;
+                                        break;
+                                    case "inherit":
+                                        uacg.Allow = AccessControlGrants.Inherit;
+                                        break;
+                                }
+                            }
+
+                            foreach (AccessControlGrant grant in itemGrants)
+                            {
+                                if (grant.ItemKey.Equals(uacg.ItemKey) && grant.PrimitiveKey.Equals(uacg.PrimitiveKey))
+                                {
+                                    // We only want to trigger a database update if things have changed
+                                    if (grant.Allow != uacg.Allow)
+                                    {
+                                        grant.Allow = uacg.Allow;
+                                    }
+                                }
                             }
                         }
                     }

@@ -181,10 +181,9 @@ namespace BoxSocial.Applications.Blog {
             }
         }
         
-        internal static byte[] user_blog_notification {
+        internal static string user_blog_notification {
             get {
-                object obj = ResourceManager.GetObject("user_blog_notification", resourceCulture);
-                return ((byte[])(obj));
+                return ResourceManager.GetString("user_blog_notification", resourceCulture);
             }
         }
         

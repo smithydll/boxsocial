@@ -139,10 +139,12 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
-            ae.PublishToFeed(core.Session.LoggedInMember, message, "");
+            StatusMessage statusMessage = StatusMessage.Create(core, core.Session.LoggedInMember, message);
 
-            return StatusMessage.Create(core, core.Session.LoggedInMember, message);
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+            ae.PublishToFeed(core.Session.LoggedInMember, statusMessage.ItemKey, "updated " + core.Session.LoggedInMember.Preposition + " status", core.Bbcode.FromStatusCode(message));
+
+            return statusMessage;
         }
 
         /*
@@ -186,6 +188,14 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(item.Id));
                 statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(item.Id));
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+
+                if (core.Session.IsLoggedIn)
+                {
+                    if (item.Owner.Id == core.Session.LoggedInMember.Id)
+                    {
+                        statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+                    }
+                }
 
                 if (item.Likes > 0)
                 {

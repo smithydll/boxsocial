@@ -398,3 +398,11 @@ $(document).ready(function () {
         };
     };
 });
+
+function DeleteStatus(i) {
+    return PostToAccount(DeletedStatus, "profile", "status", -1, { mode: "delete", id: i }, i);
+}
+
+function DeletedStatus(r, e, a) {
+    $("#status-" + a).remove();
+}

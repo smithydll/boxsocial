@@ -172,15 +172,29 @@ namespace BoxSocial.Internals
                 {
 					SelectQuery query = new SelectQuery(Item.GetTable(typeof(ItemType)));
 					query.AddCondition("type_namespace", type.FullName);
-					
-					if (core.Db.Query(query).Rows.Count == 0)
-					{
-						InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(ItemType)));
-						iQuery.AddField("type_namespace", type.FullName);
-						iQuery.AddField("type_application_id", applicationId);
-						
-						core.Db.Query(iQuery);
-					}
+
+                    if (core.Db.Query(query).Rows.Count == 0)
+                    {
+                        InsertQuery iQuery = new InsertQuery(Item.GetTable(typeof(ItemType)));
+                        iQuery.AddField("type_namespace", type.FullName);
+                        iQuery.AddField("type_application_id", applicationId);
+                        iQuery.AddField("type_commentable", typeof(ICommentableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_likeable", typeof(ILikeableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_rateable", typeof(IRateableItem).IsAssignableFrom(type));
+
+                        core.Db.Query(iQuery);
+                    }
+                    else
+                    {
+                        UpdateQuery uQuery = new UpdateQuery(Item.GetTable(typeof(ItemType)));
+                        uQuery.AddCondition("type_namespace", type.FullName);
+                        uQuery.AddCondition("type_application_id", applicationId);
+                        uQuery.AddField("type_commentable", typeof(ICommentableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_likeable", typeof(ILikeableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_rateable", typeof(IRateableItem).IsAssignableFrom(type));
+
+                        core.Db.Query(uQuery);
+                    }
 				}
 			}
 		}

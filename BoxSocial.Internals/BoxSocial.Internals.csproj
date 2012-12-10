@@ -133,6 +133,7 @@
     <Compile Include="ISubscribeableItem.cs" />
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemTag.cs" />
     <Compile Include="IUniqueKeyedItem.cs" />
     <Compile Include="License.cs" />

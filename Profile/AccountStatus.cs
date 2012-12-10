@@ -61,6 +61,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountStatus_Load(object sender, EventArgs e)
         {
+            AddModeHandler("delete", new ModuleModeHandler(AccountStatus_Delete));
         }
 
         void AccountStatus_Show(object sender, EventArgs e)
@@ -73,5 +74,37 @@ namespace BoxSocial.Applications.Profile
 
             core.Ajax.SendRawText("Success", message);
         }
+
+        void AccountStatus_Delete(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long messageId = core.Functions.FormLong("id", 0);
+
+            if (messageId > 0)
+            {
+                StatusMessage message = new StatusMessage(core, messageId);
+
+                if (message.Owner.Id == Owner.Id)
+                {
+                    ItemKey messageKey = message.ItemKey;
+                    long count = message.Delete();
+
+                    DeleteQuery dQuery = new DeleteQuery(typeof(BoxSocial.Internals.Action));
+                    dQuery.AddCondition("action_primitive_id", Owner.Id);
+                    dQuery.AddCondition("action_primitive_type_id", Owner.TypeId);
+                    dQuery.AddCondition("action_item_id", messageKey.Id);
+                    dQuery.AddCondition("action_item_type_id", messageKey.TypeId);
+
+                    core.Db.Query(dQuery);
+
+                    core.Ajax.SendStatus("messageDeleted");
+                    return;
+                }
+            }
+
+            core.Ajax.ShowMessage(true, "permissionDenied", "Permission Denied", "You cannot delete this item.");
+        }
+
     }
 }

@@ -798,7 +798,10 @@ namespace BoxSocial.Internals
 
         public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
         {
-            commentHandles.Add(itemTypeId, new CommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
+            if (!commentHandles.ContainsKey(itemTypeId))
+            {
+                commentHandles.Add(itemTypeId, new CommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
+            }
         }
 
         public void RegisterRatingHandle(long itemTypeId, Core.RatingHandler itemRated)
@@ -808,7 +811,10 @@ namespace BoxSocial.Internals
 
         public void RegisterLikeHandle(long itemTypeId, Core.LikeHandler itemliked)
         {
-            likeHandles.Add(itemTypeId, itemliked);
+            if (!likeHandles.ContainsKey(itemTypeId))
+            {
+                likeHandles.Add(itemTypeId, itemliked);
+            }
         }
 
         public void RegisterSubscribeHandle(long itemTypeId, Core.SubscribeHandler itemSubscribed)

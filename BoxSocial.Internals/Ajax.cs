@@ -63,7 +63,6 @@ namespace BoxSocial.Internals
             {
                 core.Db.CloseConnection();
             }
-
             core.Http.End();
         }
 

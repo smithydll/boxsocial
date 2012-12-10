@@ -6,15 +6,22 @@
 			<li>
 				<h4>{feed_days_list.DAY}</h4>
 				<!-- BEGIN feed_days_list.feed_item -->
-				<ul>
-                    <li>
+				<ul class="feed-list">
+                    <li class="feed-item" id="feed-item-{feed_days_list.feed_item.ID}">
 					<h5>{feed_days_list.feed_item.TITLE}</h5>
                     <!-- IF feed_days_list.feed_item.USER_TILE -->
 		            <div class="feed-disp-pic">
 			            <img src="{feed_days_list.feed_item.USER_TILE}" alt="{feed_days_list.feed_item.USER_DISPLAY_NAME}" />
 		            </div>
 		            <!-- ENDIF -->
-					<p>{feed_days_list.feed_item.TEXT}</p>
+                    <div class="feed-text">
+					    <p>{feed_days_list.feed_item.TEXT}</p>
+                    </div>
+                    <div class="r-stuff light">
+                        <!-- IF feed_days_list.feed_item.LIKEABLE -->
+                        <span class="img-button like-item"><a href="#" onclick="return LikeItem({feed_days_list.feed_item.ID},{feed_days_list.feed_item.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{feed_days_list.feed_item.LIKES}</span></a></span>
+                        <!-- ENDIF -->
+                    </div>
                     </li>
 				</ul>
 				<!-- END feed_days_list.feed_item -->

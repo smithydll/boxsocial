@@ -309,7 +309,13 @@ namespace BoxSocial.Internals
 
         public string ParentPermissionKey(Type parentType, string permission)
         {
-            return permission;
+            switch (permission)
+            {
+                case "DELETE":
+                    return "DELETE_STATUS";
+                default:
+                    return permission;
+            }
         }
 
         public long Likes

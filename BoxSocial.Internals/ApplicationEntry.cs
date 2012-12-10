@@ -1006,12 +1006,12 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public void PublishToFeed(User owner, string title)
+        public void PublishToFeed(User owner, ItemKey item, string title)
         {
-            PublishToFeed(owner, title, string.Empty);
+            PublishToFeed(owner, item, title, string.Empty);
         }
 
-        public void PublishToFeed(User owner, string title, string message)
+        public void PublishToFeed(User owner, ItemKey item, string title, string message)
         {
             if (title.Length > 63)
             {
@@ -1025,8 +1025,8 @@ namespace BoxSocial.Internals
 
             SelectQuery query = new SelectQuery("actions");
             query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
-            query.AddCondition("action_primitive_id", owner.Id);
-            query.AddCondition("action_primitive_type_id", owner.TypeId);
+            query.AddCondition("action_primitive_id", owner.ItemKey.Id);
+            query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
             query.AddCondition("action_application", applicationId);
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
@@ -1034,8 +1034,10 @@ namespace BoxSocial.Internals
             if ((long)db.Query(query).Rows[0]["twentyfour"] < 5)
             {
                 InsertQuery iquery = new InsertQuery("actions");
-                iquery.AddField("action_primitive_id", owner.Id);
-                iquery.AddField("action_primitive_type_id", owner.TypeId);
+                iquery.AddField("action_primitive_id", owner.ItemKey.Id);
+                iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
+                iquery.AddField("action_item_id", item.Id);
+                iquery.AddField("action_item_type_id", item.TypeId);
                 iquery.AddField("action_title", title);
                 iquery.AddField("action_body", message);
                 iquery.AddField("action_application", applicationId);

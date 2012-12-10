@@ -88,6 +88,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey ActionItemKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

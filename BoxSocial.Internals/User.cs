@@ -72,6 +72,7 @@ namespace BoxSocial.Internals
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     [Permission("COMMENT_STATUS", "Can comment on your status", PermissionTypes.Interact)]
     [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
+    [Permission("DELETE_STATUS", "Can status messages", PermissionTypes.Delete)]
     [Permission("VIEW_NAME", "Can see your real name", PermissionTypes.View)]
     [Permission("VIEW_SEXUALITY", "Can see your sexuality", PermissionTypes.View)]
     [Permission("VIEW_CONTACT_INFO", "Can see your contact information (does not include e-mail addresses and phone numbers)", PermissionTypes.View)]

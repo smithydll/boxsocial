@@ -101,6 +101,13 @@ namespace BoxSocial.Internals
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 
+                    if (feedAction.ActionItemKey.ImplementsLikeable)
+                    {
+                        feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
+                        feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                        feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+                    }
+
                     if (feedAction.Owner is User)
                     {
                         feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).UserTile);

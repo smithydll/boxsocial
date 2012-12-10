@@ -223,6 +223,27 @@ namespace BoxSocial.Internals
                 }
             }
 
+            if (this is IPermissibleSubItem)
+            {
+                DeletePermissionAttribute[] deleteAttributes = (DeletePermissionAttribute[])this.GetType().GetCustomAttributes(typeof(DeletePermissionAttribute), false);
+
+                if (deleteAttributes.Length == 1)
+                {
+                    if (string.IsNullOrEmpty(deleteAttributes[0].Key))
+                    {
+                        throw new UnauthorisedToUpdateItemException();
+                    }
+                    else
+                    {
+                        IPermissibleSubItem isThis = (IPermissibleSubItem)this;
+                        if (!isThis.PermissiveParent.Access.Can(deleteAttributes[0].Key))
+                        {
+                            throw new UnauthorisedToUpdateItemException();
+                        }
+                    }
+                }
+            }
+
             AuthenticateAction(ItemChangeAction.Delete);
 
             db.BeginTransaction();

@@ -36,6 +36,12 @@ namespace BoxSocial.Internals
 		string typeNamespace;
 		[DataField("type_application_id")]
 		long applicationId;
+        [DataField("type_likeable")]
+        private bool typeImplementsILikeable;
+        [DataField("type_commentable")]
+        private bool typeImplementsICommentable;
+        [DataField("type_rateable")]
+        private bool typeImplementsIRateable;
 			
 		public long TypeId
 		{
@@ -60,6 +66,45 @@ namespace BoxSocial.Internals
 				return applicationId;
 			}
 		}
+
+        public bool Likeable
+        {
+            get
+            {
+                return typeImplementsILikeable;
+            }
+        }
+
+        public bool Commentable
+        {
+            get
+            {
+                return typeImplementsICommentable;
+            }
+        }
+
+        public bool Rateable
+        {
+            get
+            {
+                return typeImplementsIRateable;
+            }
+        }
+
+        internal ItemType(Core core, DataRow typeRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemType_ItemLoad);
+
+            try
+            {
+                loadItemInfo(typeRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidItemTypeException();
+            }
+        }
 		
 		public ItemType(Core core, long typeId)
 			: base(core)
@@ -106,7 +151,10 @@ namespace BoxSocial.Internals
 			
 			ItemType it = (ItemType)Item.Create(core, typeof(ItemType),
 			                          new FieldValuePair("type_namespace", ns),
-			                          new FieldValuePair("type_application_id", ae.Id.ToString()));
+			                          new FieldValuePair("type_application_id", ae.Id.ToString()),
+                                      new FieldValuePair("type_commentable", (typeof(ICommentableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_likeable", (typeof(ILikeableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_rateable", (typeof(IRateableItem).IsAssignableFrom(type))));
 			
 			return it;
 		}

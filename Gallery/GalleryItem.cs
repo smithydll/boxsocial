@@ -43,7 +43,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem, ILikeableItem
     {
         /// <summary>
         /// Owner of the photo's user Id
@@ -2367,6 +2367,22 @@ namespace BoxSocial.Applications.Gallery
         }
 
         #endregion
+
+        public long Likes
+        {
+            get
+            {
+                return Info.Likes;
+            }
+        }
+
+        public long Dislikes
+        {
+            get
+            {
+                return Info.Dislikes;
+            }
+        }
     }
 
     /// <summary>

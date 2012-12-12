@@ -197,10 +197,15 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                if (item.Likes > 0)
+                if (item.Info.Likes > 0)
                 {
-                    statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Likes));
-                    statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Dislikes));
+                    statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Info.Likes));
+                    statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Info.Dislikes));
+                }
+
+                if (item.Info.Comments > 0)
+                {
+                    statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", item.Info.Comments));
                 }
             }
 

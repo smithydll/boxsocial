@@ -31,31 +31,51 @@ namespace BoxSocial.Internals
     [DataTable("item_info")]
     public class ItemInfo : Item
     {
-        [DataField("item", DataFieldKeys.Index)]
+        [DataField("info_item", DataFieldKeys.Unique)]
         private ItemKey itemKey;
-        [DataField("comments")]
+        [DataField("info_comments")]
         private long comments;
-        [DataField("likes")]
+        [DataField("info_likes")]
         private long likes;
-        [DataField("dislikes")]
+        [DataField("info_dislikes")]
         private long dislikes;
-        [DataField("ratings")]
+        [DataField("info_ratings")]
         private long ratings;
-        [DataField("subscriptions")]
+        [DataField("info_subscriptions")]
         private long subscriptions;
-        [DataField("tags")]
+        [DataField("info_tags")]
         private long tags;
-        [DataField("item_time_ut")]
+        [DataField("shares")]
+        private long shares;
+        [DataField("info_item_time_ut")]
         private long timeRaw;
+
+        public ItemInfo(Core core, ItemKey itemKey)
+            : this(core, itemKey.Id, itemKey.TypeId)
+        {
+        }
 
         public ItemInfo(Core core, long itemId, long itemTypeId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
 
+            SelectQuery query = ItemInfo.GetSelectQueryStub(typeof(ItemInfo));
+            query.AddCondition("info_item_id", itemId);
+            query.AddCondition("info_item_type_id", itemTypeId);
+
+            DataTable infoTable = db.Query(query);
+
             try
             {
-                LoadItem("item", new ItemKey(itemId, itemTypeId));
+                if (infoTable.Rows.Count == 1)
+                {
+                    loadItemInfo(infoTable.Rows[0]);
+                }
+                else
+                {
+                    throw new InvalidIteminfoException();
+                }
             }
             catch (InvalidItemException)
             {
@@ -68,11 +88,42 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
 
-            loadItemInfo(itemRow);
+            try
+            {
+                loadItemInfo(itemRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidIteminfoException();
+            }
         }
 
         private void ItemInfo_ItemLoad()
         {
+        }
+
+        public static ItemInfo Create(Core core, ItemKey itemKey)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            /*Item.Create(core, typeof(ItemInfo), true,
+                new FieldValuePair("info_item_id", itemKey.Id),
+                new FieldValuePair("info_item_type_id", itemKey.TypeId),
+                new FieldValuePair("info_item_time_ut", UnixTime.UnixTimeStamp()));*/
+
+            InsertQuery iQuery = new InsertQuery(typeof(ItemInfo));
+            iQuery.AddField("info_item_id", itemKey.Id);
+            iQuery.AddField("info_item_type_id", itemKey.TypeId);
+            iQuery.AddField("info_item_time_ut", UnixTime.UnixTimeStamp());
+            
+            core.Db.Query(iQuery);
+
+            ItemInfo ii = new ItemInfo(core, itemKey.Id, itemKey.TypeId);
+
+            return ii;
         }
 
         public long Comments
@@ -83,7 +134,7 @@ namespace BoxSocial.Internals
             }
             internal set
             {
-                SetProperty("comments", value);
+                SetPropertyByRef(new { comments }, value);
             }
         }
 
@@ -95,7 +146,7 @@ namespace BoxSocial.Internals
             }
             internal set
             {
-                SetProperty("likes", value);
+                SetPropertyByRef(new { likes }, value);
             }
         }
 
@@ -107,7 +158,7 @@ namespace BoxSocial.Internals
             }
             internal set
             {
-                SetProperty("dislikes", value);
+                SetPropertyByRef(new { dislikes }, value);
             }
         }
 
@@ -119,7 +170,7 @@ namespace BoxSocial.Internals
             }
             internal set
             {
-                SetProperty("ratings", value);
+                SetPropertyByRef(new { ratings }, value);
             }
         }
 
@@ -131,7 +182,19 @@ namespace BoxSocial.Internals
             }
             internal set
             {
-                SetProperty("subscriptions", value);
+                SetPropertyByRef(new { subscriptions }, value);
+            }
+        }
+
+        public long Shares
+        {
+            get
+            {
+                return shares;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { shares }, value);
             }
         }
 
@@ -148,9 +211,9 @@ namespace BoxSocial.Internals
         internal void AdjustLikes(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-            uQuery.AddCondition("item_id", itemKey.Id);
-            uQuery.AddCondition("item_type_id", itemKey.TypeId);
-            uQuery.AddField("likes", new QueryOperation("likes", QueryOperations.Addition, by));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_likes", new QueryOperation("info_likes", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }
@@ -168,9 +231,9 @@ namespace BoxSocial.Internals
         internal void AdjustDislikes(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-            uQuery.AddCondition("item_id", itemKey.Id);
-            uQuery.AddCondition("item_type_id", itemKey.TypeId);
-            uQuery.AddField("dislikes", new QueryOperation("dislikes", QueryOperations.Addition, by));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_dislikes", new QueryOperation("info_dislikes", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }
@@ -188,9 +251,9 @@ namespace BoxSocial.Internals
         internal void AdjustComments(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-            uQuery.AddCondition("item_id", itemKey.Id);
-            uQuery.AddCondition("item_type_id", itemKey.TypeId);
-            uQuery.AddField("comments", new QueryOperation("comments", QueryOperations.Addition, by));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_comments", new QueryOperation("info_comments", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }
@@ -208,9 +271,9 @@ namespace BoxSocial.Internals
         internal void AdjustRatings(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-            uQuery.AddCondition("item_id", itemKey.Id);
-            uQuery.AddCondition("item_type_id", itemKey.TypeId);
-            uQuery.AddField("ratings", new QueryOperation("ratings", QueryOperations.Addition, by));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_ratings", new QueryOperation("info_ratings", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }
@@ -228,9 +291,29 @@ namespace BoxSocial.Internals
         internal void AdjustSubscriptions(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-            uQuery.AddCondition("item_id", itemKey.Id);
-            uQuery.AddCondition("item_type_id", itemKey.TypeId);
-            uQuery.AddField("subscriptions", new QueryOperation("subscriptions", QueryOperations.Addition, by));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_subscriptions", new QueryOperation("info_subscriptions", QueryOperations.Addition, by));
+
+            core.Db.Query(uQuery);
+        }
+
+        internal void IncrementShares()
+        {
+            AdjustShares(1);
+        }
+
+        internal void DecrementShares()
+        {
+            AdjustShares(-1);
+        }
+
+        internal void AdjustShares(int by)
+        {
+            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_shares", new QueryOperation("info_shares", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }

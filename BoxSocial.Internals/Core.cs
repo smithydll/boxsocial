@@ -700,6 +700,20 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidItemException();
             }
+
+            ItemInfo ii = null;
+
+            try
+            {
+                ii = new ItemInfo(this, itemKey);
+            }
+            catch (InvalidIteminfoException)
+            {
+                ii = ItemInfo.Create(this, itemKey);
+            }
+
+            ii.AdjustComments(adjustment);
+            ii.Update();
         }
 
         public void CommentPosted(ItemKey itemKey, Comment comment, User poster)
@@ -710,7 +724,10 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsCommentable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 
@@ -722,7 +739,10 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsCommentable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 
@@ -734,7 +754,10 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsRateable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 
@@ -742,11 +765,15 @@ namespace BoxSocial.Internals
         {
             if (likeHandles.ContainsKey(itemKey.TypeId))
             {
+                
                 likeHandles[itemKey.TypeId](new ItemLikedEventArgs(like, liker, itemKey));
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsLikeable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 
@@ -758,7 +785,10 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsSubscribeable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 
@@ -770,7 +800,10 @@ namespace BoxSocial.Internals
             }
             else
             {
-                throw new InvalidItemException();
+                if (!itemKey.ImplementsSubscribeable)
+                {
+                    throw new InvalidItemException();
+                }
             }
         }
 

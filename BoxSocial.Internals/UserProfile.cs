@@ -368,7 +368,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("nameMiddle", value);
+                SetPropertyByRef(new { nameMiddle }, value);
             }
         }
 
@@ -380,7 +380,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("nameLast", value);
+                SetPropertyByRef(new { nameLast }, value);
             }
         }
 

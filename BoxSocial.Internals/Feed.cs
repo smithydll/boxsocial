@@ -101,11 +101,28 @@ namespace BoxSocial.Internals
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 
+                    feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+
                     if (feedAction.ActionItemKey.ImplementsLikeable)
                     {
                         feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
-                        feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
-                        feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+
+                        if (feedAction.Info.Likes > 0)
+                        {
+                            feedItemVariableCollection.Parse("LIKES", string.Format(" {0:d}", feedAction.Info.Likes));
+                            feedItemVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", feedAction.Info.Dislikes));
+                        }
+                    }
+
+                    if (feedAction.ActionItemKey.ImplementsCommentable)
+                    {
+                        feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
+
+                        if (feedAction.Info.Comments > 0)
+                        {
+                            feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", feedAction.Info.Comments));
+                        }
                     }
 
                     if (feedAction.Owner is User)

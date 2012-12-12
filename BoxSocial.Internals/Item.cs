@@ -440,6 +440,20 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected static string GetName<T>(T item) where T : class
+        {
+            var properties = typeof(T).GetProperties();
+            return properties[0].Name;
+        }
+
+        protected void SetPropertyByRef<T>(T item, object value) where T : class
+        {
+            var properties = typeof(T).GetProperties();
+            string key = properties[0].Name;
+
+            SetProperty(key, value);
+        }
+
         protected bool HasPropertyUpdated(string key)
         {
             if (updatedItems.Contains(key))
@@ -612,7 +626,46 @@ namespace BoxSocial.Internals
             {
                 query = new SelectQuery(GetTable(type));
                 query.AddFields(GetFieldsPrefixed(type));
-				
+                if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
+                    (typeof(ILikeableItem).IsAssignableFrom(type) || 
+                    typeof(IRateableItem).IsAssignableFrom(type) || 
+                    typeof(ICommentableItem).IsAssignableFrom(type) || 
+                    typeof(ISubscribeableItem).IsAssignableFrom(type)))
+                {
+                    List<DataFieldInfo> fields = GetFields(type);
+                    bool foundKey = false;
+                    bool continueJoin = true;
+                    string idField = string.Empty;
+
+                    foreach (DataFieldInfo field in fields)
+                    {
+                        if ((field.Key & (DataFieldKeys.Primary)) != DataFieldKeys.None)
+                        {
+                            if (foundKey)
+                            {
+                                continueJoin = false;
+                                throw new ComplexKeyException(GetTable(type));
+                            }
+                            idField = field.Name;
+                            foundKey = true;
+                        }
+                    }
+
+                    if (!foundKey)
+                    {
+                        // Error
+                        //throw new NoPrimaryKeyException();
+                        continueJoin = false;
+                    }
+
+                    if (continueJoin)
+                    {
+                        query.AddFields(Item.GetFieldsPrefixed(typeof(ItemInfo)));
+                        TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(GetTable(type), idField), new DataField(typeof(ItemInfo), "info_item_id"));
+                        join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(type));
+                    }
+                }
+
 				/*Type[] interfaces = type.GetInterfaces();
 				foreach (Type i in interfaces)
 				{
@@ -1188,9 +1241,11 @@ namespace BoxSocial.Internals
                 }
             }
 
+            Type type = this.GetType();
+
             if (this is IPermissibleSubItem)
             {
-                DeletePermissionAttribute[] deleteAttributes = (DeletePermissionAttribute[])this.GetType().GetCustomAttributes(typeof(DeletePermissionAttribute), false);
+                DeletePermissionAttribute[] deleteAttributes = (DeletePermissionAttribute[])type.GetCustomAttributes(typeof(DeletePermissionAttribute), false);
 
                 if (deleteAttributes.Length == 1)
                 {
@@ -1213,9 +1268,9 @@ namespace BoxSocial.Internals
 
             db.BeginTransaction();
 
-            DeleteQuery dQuery = new DeleteQuery(Item.GetTable(this.GetType()));
+            DeleteQuery dQuery = new DeleteQuery(Item.GetTable(type));
 
-            List<DataFieldInfo> fields = GetFields(this.GetType());
+            List<DataFieldInfo> fields = GetFields(type);
             bool foundKey = false;
 
             foreach (DataFieldInfo field in fields)
@@ -1231,6 +1286,15 @@ namespace BoxSocial.Internals
             {
                 // Error
                 throw new NoPrimaryKeyException();
+            }
+
+            /* Delete any ItemInfo rows */
+            if (type.IsSubclassOf(typeof(NumberedItem)))
+            {
+                DeleteQuery idQuery = new DeleteQuery(Item.GetTable(typeof(ItemInfo)));
+                idQuery.AddCondition("info_item", ((NumberedItem)this).ItemKey);
+
+                db.Query(idQuery);
             }
 
             long result = db.Query(dQuery);
@@ -1528,6 +1592,34 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }
 
+            if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo")
+            {
+                if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                    typeof(ILikeableItem).IsAssignableFrom(type) ||
+                    typeof(IRateableItem).IsAssignableFrom(type) ||
+                    typeof(ISubscribeableItem).IsAssignableFrom(type))
+                {
+                    // the column most likely to be unique
+                    if (columns.Contains("info_item_time_ut"))
+                    {
+                        try
+                        {
+                            ((NumberedItem)this).info = new ItemInfo(core, itemRow);
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            // not all rows will have one yet, but be ready
+                        }
+                        catch //(Exception ex)
+                        {
+                            //HttpContext.Current.Response.Write(ex.ToString());
+                            //HttpContext.Current.Response.End();
+                            // catch all remaining errors
+                        }
+                    }
+                }
+            }
+
             if (ItemLoad != null)
             {
                 ItemLoad();
@@ -1644,6 +1736,19 @@ namespace BoxSocial.Internals
 
     public class NoUniqueKeyException : Exception
     {
+    }
+
+    public class ComplexKeyException : Exception
+    {
+        public ComplexKeyException()
+			: base ()
+		{
+		}
+
+        public ComplexKeyException(string table)
+            : base("Table: " + table)
+        {
+        }
     }
 
     public class RecordNotUniqueException : Exception

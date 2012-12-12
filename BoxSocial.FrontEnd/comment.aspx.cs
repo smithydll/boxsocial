@@ -161,12 +161,14 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                Item thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                NumberedItem thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
 
                 Template template = new Template("pane.comments.html");
                 template.SetProse(core.Prose);
 
                 template.Parse("U_SIGNIN", Core.Uri.BuildLoginUri());
+
+                template.Parse("COMMENTS", thisItem.Info.Comments);
 
                 if (thisItem is IPermissibleItem)
                 {
@@ -319,6 +321,7 @@ namespace BoxSocial.FrontEnd
                     User poster = core.PrimitiveCache[thisComment.UserId];
                     Core.CommentDeleted(thisComment.ItemKey, thisComment, poster);
                     Core.AdjustCommentCount(thisComment.ItemKey, -1);
+
                 }
                 catch (InvalidCommentException)
                 {

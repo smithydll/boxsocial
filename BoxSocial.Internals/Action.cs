@@ -48,6 +48,25 @@ namespace BoxSocial.Internals
 
         private Primitive owner;
 
+        public ItemInfo Info
+        {
+            get
+            {
+                if (info == null)
+                {
+                    try
+                    {
+                        info = new ItemInfo(core, ActionItemKey.Id, ActionItemKey.TypeId);
+                    }
+                    catch (InvalidIteminfoException)
+                    {
+                        info = ItemInfo.Create(core, ActionItemKey);
+                    }
+                }
+                return info;
+            }
+        }
+
         public long ActionId
         {
             get
@@ -120,10 +139,35 @@ namespace BoxSocial.Internals
             ItemLoad += new ItemLoadHandler(Action_ItemLoad);
 
             loadItemInfo(actionRow);
+
+            try
+            {
+                this.info = new ItemInfo(core, actionRow);
+            }
+            catch (InvalidIteminfoException)
+            {
+                // not all rows will have one yet, but be ready
+            }
+            catch //(Exception ex)
+            {
+                //HttpContext.Current.Response.Write(ex.ToString());
+                //HttpContext.Current.Response.End();
+                // catch all remaining errors
+            }
         }
 
         private void Action_ItemLoad()
         {
+        }
+
+        public static SelectQuery Action_GetSelectQueryStub()
+        {
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action), false);
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(Action), "action_item_id"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(Action), "action_item_type_id"), new DataField(typeof(ItemInfo), "info_item_type_id"));
+
+            return query;
         }
 
         public DateTime GetTime(UnixTime tz)

@@ -473,8 +473,8 @@ namespace BoxSocial.Internals
             SelectQuery query = Item.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
             query.AddFields(Item.GetFieldsPrefixed(typeof(ApplicationEntry)));
             query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(ApplicationEntry)), "application_id", "application_id");
-            query.AddCondition("item_id", owner.ItemKey.Id);
-            query.AddCondition("item_type_id", owner.ItemKey.TypeId);
+            query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_id"), owner.ItemKey.Id);
+            query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_type_id"), owner.ItemKey.TypeId);
             query.AddCondition("application_update", false);
             query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
 

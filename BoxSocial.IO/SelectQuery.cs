@@ -393,6 +393,18 @@ namespace BoxSocial.IO
             }
         }
 
+        public QueryCondition AddCondition(DataField field, object value)
+        {
+            if (conditions.Count == 0)
+            {
+                return conditions.AddCondition(ConditionRelations.First, field.ToString(), ConditionEquality.Equal, value);
+            }
+            else
+            {
+                return conditions.AddCondition(ConditionRelations.And, field.ToString(), ConditionEquality.Equal, value);
+            }
+        }
+
         public QueryCondition AddCondition(DataField field, ConditionEquality equality, object value)
         {
             if (conditions.Count == 0)

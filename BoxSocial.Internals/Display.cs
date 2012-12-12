@@ -559,10 +559,15 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
 
-                    if (comment.Likes > 0)
+                    if (comment.Info.Likes > 0)
                     {
-                        commentsVariableCollection.Parse("LIKES", string.Format(" {0:d}", comment.Likes));
-                        commentsVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", comment.Dislikes));
+                        commentsVariableCollection.Parse("LIKES", string.Format(" {0:d}", comment.Info.Likes));
+                        commentsVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", comment.Info.Dislikes));
+                    }
+
+                    if (comment.Info.Shares > 0)
+                    {
+                        commentsVariableCollection.Parse("SHARES", string.Format(" ({0:d})", comment.Info.Shares));
                     }
 
                     if (hook != null)

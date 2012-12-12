@@ -1608,12 +1608,18 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                 galleryVariableCollection.Parse("INDEX", i.ToString());
                 galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
-				galleryVariableCollection.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
+				galleryVariableCollection.Parse("TYPE_ID", galleryItem.ItemKey.TypeId.ToString());
 
                 galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
                 galleryVariableCollection.Parse("LARGETILE", galleryItem.LargeTileUri);
 
                 Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
+
+                if (galleryItem.Info.Likes > 0)
+                {
+                    galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryItem.Info.Likes));
+                    galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryItem.Info.Dislikes));
+                }
 
                 galleryComments += galleryItem.ItemComments;
                 i++;

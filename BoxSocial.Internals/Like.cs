@@ -162,6 +162,20 @@ namespace BoxSocial.Internals
                 return;
             }
 
+            ItemInfo ii = null;
+
+            try
+            {
+                ii = new ItemInfo(core, itemKey);
+            }
+            catch (InvalidIteminfoException)
+            {
+                ii = ItemInfo.Create(core, itemKey);
+            }
+
+            ii.IncrementLikes();
+            ii.Update();
+
             InsertQuery iQuery = new InsertQuery("likes");
             iQuery.AddField("like_item_id", itemKey.Id);
             iQuery.AddField("like_item_type_id", itemKey.TypeId);

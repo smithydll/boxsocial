@@ -93,6 +93,7 @@ namespace BoxSocial.Internals
     public abstract class NumberedItem : Item
     {
         protected ItemKey key = null;
+        internal ItemInfo info = null;
 
         protected NumberedItem(Core core)
             : base (core)
@@ -118,6 +119,25 @@ namespace BoxSocial.Internals
                     key = new ItemKey(Id, this.GetType().FullName);
                 }
                 return key;
+            }
+        }
+
+        public ItemInfo Info
+        {
+            get
+            {
+                if (info == null)
+                {
+                    try
+                    {
+                        info = new ItemInfo(core, ItemKey.Id, ItemKey.TypeId);
+                    }
+                    catch (InvalidIteminfoException)
+                    {
+                        info = ItemInfo.Create(core, ItemKey);
+                    }
+                }
+                return info;
             }
         }
 

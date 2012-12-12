@@ -958,6 +958,26 @@ span.subscribe-button a {
     color: #0044aa;
 }
 
+.white span.img-button, .white span.post-button {
+	border: none;
+	background: none;
+	color: #ffffff;
+	margin: 0 2px;
+	padding: 3px 3px;
+}
+
+.white span.img-button:hover, .white span.post-button:hover {
+    background: rgba(221, 221, 221, 0.4);
+}
+
+.white span.img-button a, .white span.post-button a {
+    color: #ffffff;
+}
+
+.white span.img-button:hover a, .white span.post-button:hover a {
+    color: #ffffff;
+}
+
 span.img-button {
 	padding: 4px 4px;
 	text-align: center;
@@ -1028,6 +1048,10 @@ span.img-button .sprite {
 
 span.img-button:hover .tag-sprite:hover, span.img-button:hover .sprite {
     background-image: url(images/ui-icons_0044aa_256x240.png);
+}
+
+.white span.img-button:hover .sprite {
+    background-image: url(images/ui-icons_ffffff_256x240.png);
 }
 
 #std-message {

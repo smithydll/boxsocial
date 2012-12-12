@@ -203,8 +203,11 @@ ul#photo-list li .photo-canvas {
     overflow: hidden;
 }
 
-.gallery-title a 
-{
+.gallery-title h3 a {
+    color: #111111;
+}
+
+.gallery-title a.photo-link {
     display: block;
     width: 100%;
     height: 100%;
@@ -218,6 +221,14 @@ ul#photo-list li .photo-canvas {
 
 .gallery-title p {
     display: none;
+}
+
+.gallery-title p.gallery-item-buttons 
+{
+    float: right;
+    text-align: right;
+    padding: 0;
+    white-space: nowrap;
 }
 
 .photo-canvas:hover .gallery-title {
@@ -234,4 +245,8 @@ ul#photo-list li .photo-canvas {
 
 .photo-canvas:hover .gallery-title p {
     display: inline;
+}
+
+.photo-canvas:hover .gallery-title p {
+    display: block;
 }

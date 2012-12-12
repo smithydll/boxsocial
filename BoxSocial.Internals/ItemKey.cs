@@ -126,6 +126,21 @@ namespace BoxSocial.Internals
                 }
             }
         }
+
+        public bool ImplementsSubscribeable
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.Subscribeable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 		
 		public ItemKey(long itemId, string itemType)
 		{

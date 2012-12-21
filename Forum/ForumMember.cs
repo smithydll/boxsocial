@@ -105,7 +105,7 @@ namespace BoxSocial.Applications.Forum
             ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
 
             // load the info into a the new object being created
-            this.userInfo = user.Info;
+            this.userInfo = user.UserInfo;
             this.userProfile = user.Profile;
             this.userStyle = user.Style;
             this.userId = user.UserId;

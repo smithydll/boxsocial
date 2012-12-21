@@ -123,9 +123,12 @@ namespace BoxSocial.Internals
                 if (permissionDescription.StartsWith("{L_") && permissionDescription.EndsWith("}"))
                 {
                     string key = permissionDescription.Substring(3, permissionDescription.Length - 4);
-                    if (core.Prose.ContainsKey(key))
+                    /*if (core.Prose.ContainsKey(key))
                     {
                         permissionDescriptionCache = core.Prose.GetString(key);
+                    }*/
+                    if (core.Prose.TryGetString(key, out permissionDescriptionCache))
+                    {
                     }
                     else if ((!string.IsNullOrEmpty(permissionAssembly)) && core.Prose.ContainsKey(permissionAssembly, key))
                     {

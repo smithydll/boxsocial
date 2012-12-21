@@ -71,11 +71,11 @@ namespace BoxSocial.Internals
             template.SetTemplate("account_preferences.html");
 
             TextBox analyticsCodeTextBox = new TextBox("analytics-code");
-            analyticsCodeTextBox.Value = LoggedInMember.Info.AnalyticsCode;
+            analyticsCodeTextBox.Value = LoggedInMember.UserInfo.AnalyticsCode;
 
             string radioChecked = " checked=\"checked\"";
 
-            if (LoggedInMember.Info.EmailNotifications)
+            if (LoggedInMember.UserInfo.EmailNotifications)
             {
                 template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
             }
@@ -84,7 +84,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
             }
 
-            if (LoggedInMember.Info.ShowCustomStyles)
+            if (LoggedInMember.UserInfo.ShowCustomStyles)
             {
                 template.Parse("S_SHOW_STYLES_YES", radioChecked);
             }
@@ -93,7 +93,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_SHOW_STYLES_NO", radioChecked);
             }
 
-            if (LoggedInMember.Info.BbcodeShowImages)
+            if (LoggedInMember.UserInfo.BbcodeShowImages)
             {
                 template.Parse("S_DISPLAY_IMAGES_YES", radioChecked);
             }
@@ -102,7 +102,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_IMAGES_NO", radioChecked);
             }
 
-            if (LoggedInMember.Info.BbcodeShowFlash)
+            if (LoggedInMember.UserInfo.BbcodeShowFlash)
             {
                 template.Parse("S_DISPLAY_FLASH_YES", radioChecked);
             }
@@ -111,7 +111,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_FLASH_NO", radioChecked);
             }
 
-            if (LoggedInMember.Info.BbcodeShowVideos)
+            if (LoggedInMember.UserInfo.BbcodeShowVideos)
             {
                 template.Parse("S_DISPLAY_VIDEOS_YES", radioChecked);
             }
@@ -140,9 +140,9 @@ namespace BoxSocial.Internals
             }
 
             SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
-            timezoneSelectBox.SelectedKey = LoggedInMember.Info.TimeZoneCode.ToString();
+            timezoneSelectBox.SelectedKey = LoggedInMember.UserInfo.TimeZoneCode.ToString();
 
-            pagesSelectBox.SelectedKey = LoggedInMember.Info.ProfileHomepage;
+            pagesSelectBox.SelectedKey = LoggedInMember.UserInfo.ProfileHomepage;
             template.Parse("S_HOMEPAGE", pagesSelectBox);
             template.Parse("S_TIMEZONE", timezoneSelectBox);
             //core.Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
@@ -210,14 +210,14 @@ namespace BoxSocial.Internals
                 showBbcode |= BbcodeOptions.ShowAudio;
             }
 
-            LoggedInMember.Info.ShowCustomStyles = showCustomStyles;
-            LoggedInMember.Info.EmailNotifications = emailNotifications;
-            LoggedInMember.Info.SetUserBbcodeOptions = showBbcode;
-            LoggedInMember.Info.ProfileHomepage = homepage;
-            LoggedInMember.Info.TimeZoneCode = timeZoneCode;
-            LoggedInMember.Info.AnalyticsCode = analyticsCode;
+            LoggedInMember.UserInfo.ShowCustomStyles = showCustomStyles;
+            LoggedInMember.UserInfo.EmailNotifications = emailNotifications;
+            LoggedInMember.UserInfo.SetUserBbcodeOptions = showBbcode;
+            LoggedInMember.UserInfo.ProfileHomepage = homepage;
+            LoggedInMember.UserInfo.TimeZoneCode = timeZoneCode;
+            LoggedInMember.UserInfo.AnalyticsCode = analyticsCode;
 
-            LoggedInMember.Info.Update();
+            LoggedInMember.UserInfo.Update();
 
             //SetRedirectUri(BuildUri());
             //Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");

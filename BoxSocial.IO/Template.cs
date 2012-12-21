@@ -54,8 +54,8 @@ namespace BoxSocial.IO
     public class VariableCollection
     {
         private string loopName;
-        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>();
-        private Dictionary<string, string> variables = new Dictionary<string, string>();
+        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(StringComparer.Ordinal);
+        private Dictionary<string, string> variables = new Dictionary<string, string>(StringComparer.Ordinal);
         private VariableCollection parentCollection = null;
 
         internal VariableCollection()
@@ -269,7 +269,7 @@ namespace BoxSocial.IO
     {
         private IProse prose;
         protected VariableCollection variables = new VariableCollection();
-        private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>();
+        private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>(StringComparer.Ordinal);
 
         private string template;
         //private Dictionary<string, string> loopTemplates;
@@ -423,90 +423,193 @@ namespace BoxSocial.IO
             return variables.CreateChild(name);
         }
 
+        // We want to cache the template file as accessing resources can be slow
+        private static Object templatesLock = new object();
+        private static Dictionary<string, string> templates = new Dictionary<string, string>(StringComparer.Ordinal);
+
+        public static bool populateTemplateCache()
+        {
+            System.Web.Caching.Cache cache;
+            object o = null;
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            if (cache != null)
+            {
+                try
+                {
+                    o = cache.Get("templates");
+                    return true;
+                }
+                catch (NullReferenceException)
+                {
+                }
+            }
+
+            lock (templatesLock)
+            {
+                if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, string>))
+                {
+                    templates = (Dictionary<string, string>)o;
+                }
+                else
+                {
+                    templates = new Dictionary<string, string>(StringComparer.Ordinal);
+
+                    if (cache != null)
+                    {
+                        cache.Add("templates", templates, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.High, null);
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static void saveTemplateCache(Dictionary<string, string> templates)
+        {
+            System.Web.Caching.Cache cache;
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            if (cache != null)
+            {
+                cache.Add("templates", templates, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.High, null);
+            }
+        }
+
         public string LoadTemplateFile(string templateName)
         {
             string template;
 
+            bool loadedCache = populateTemplateCache();
+            bool loadedFromCache = false;
+
             if (templateAssembly != null && (!templateName.EndsWith(".html")))
             {
-                try
+                lock (templatesLock)
                 {
-                    ResourceManager rm;
-
-                    switch (templateAssembly)
+                    if (!templates.TryGetValue(templateAssembly + "." + templateName, out template))
                     {
-                        case "Groups":
-                        case "Networks":
-                        case "Musician":
-                            rm = new ResourceManager("BoxSocial." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
-                            break;
-                        default:
-                            rm = new ResourceManager("BoxSocial.Applications." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
-                            break;
-                    }
-
-                    object templateObject = rm.GetObject(templateName);
-
-                    if (templateObject is string)
-                    {
-                        template = (string)templateObject;
-                    }
-                    else if (templateObject is byte[])
-                    {
-                        template = System.Text.UTF8Encoding.UTF8.GetString((byte[])templateObject);
-                        if (template.StartsWith("\xEF\xBB\xBF"))
+                        try
                         {
-                            template = template.Remove(0, 3);
+                            ResourceManager rm;
+
+                            switch (templateAssembly)
+                            {
+                                case "Groups":
+                                case "Networks":
+                                case "Musician":
+                                    rm = new ResourceManager("BoxSocial." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                                    break;
+                                default:
+                                    rm = new ResourceManager("BoxSocial.Applications." + templateAssembly + ".Templates", pageAssembly[templateAssembly]);
+                                    break;
+                            }
+
+                            object templateObject = rm.GetObject(templateName);
+
+                            if (templateObject is string)
+                            {
+                                template = (string)templateObject;
+                            }
+                            else if (templateObject is byte[])
+                            {
+                                template = System.Text.UTF8Encoding.UTF8.GetString((byte[])templateObject);
+                                if (template.StartsWith("\xEF\xBB\xBF"))
+                                {
+                                    template = template.Remove(0, 3);
+                                }
+                                if (template.StartsWith("\xBF"))
+                                {
+                                    template = template.Remove(0, 1);
+                                }
+
+                                templates.Add(templateAssembly + "." + templateName, template);
+                            }
+                            else
+                            {
+                                template = string.Format("Unknown template type {1} in assembly {0}",
+                                templateAssembly, templateName);
+                            }
                         }
-                        if (template.StartsWith("\xBF"))
+                        catch (Exception ex)
                         {
-                            template = template.Remove(0, 1);
+                            template = string.Format("Could not load template {1} from assembly {0}.<hr />Additionally the following exception was thrown.<br />{2}",
+                                templateAssembly, templateName, ex.ToString().Replace("\n", "\n<br />"));
                         }
                     }
                     else
                     {
-                        template = string.Format("Unknown template type {1} in assembly {0}",
-                        templateAssembly, templateName);
+                        loadedFromCache = true;
                     }
-                }
-                catch (Exception ex)
-                {
-                    template = string.Format("Could not load template {1} from assembly {0}.<hr />Additionally the following exception was thrown.<br />{2}",
-                        templateAssembly, templateName, ex.ToString().Replace("\n", "\n<br />"));
                 }
             }
             else
             {
-                string templatePath = System.IO.Path.Combine(path, templateName);
-
-                switch (Medium)
+                lock (templatesLock)
                 {
-                    case DisplayMedium.Mobile:
-                        string mobileTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "mobile"), templateName);
-                        if (File.Exists(mobileTemplatePath))
-                        {
-                            templatePath = mobileTemplatePath;
-                        }
-                        break;
-                    case DisplayMedium.Tablet:
-                        string tabletTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "tablet"), templateName);
-                        if (File.Exists(tabletTemplatePath))
-                        {
-                            templatePath = tabletTemplatePath;
-                        }
-                        break;
-                    case DisplayMedium.Desktop:
-                    default:
-                        // default is defined as fallback
-                        break;
-                }
+                    if (!templates.TryGetValue(templateName, out template))
+                    {
+                        string templatePath = System.IO.Path.Combine(path, templateName);
 
-                template = Template.OpenTextFile(templatePath);
-                if (template == null)
-                {
-                    template = string.Format("Could not load template {0}",
-                        templateName);
+                        switch (Medium)
+                        {
+                            case DisplayMedium.Mobile:
+                                string mobileTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "mobile"), templateName);
+                                if (File.Exists(mobileTemplatePath))
+                                {
+                                    templatePath = mobileTemplatePath;
+                                }
+                                break;
+                            case DisplayMedium.Tablet:
+                                string tabletTemplatePath = System.IO.Path.Combine(System.IO.Path.Combine(path, "tablet"), templateName);
+                                if (File.Exists(tabletTemplatePath))
+                                {
+                                    templatePath = tabletTemplatePath;
+                                }
+                                break;
+                            case DisplayMedium.Desktop:
+                            default:
+                                // default is defined as fallback
+                                break;
+                        }
+
+                        template = Template.OpenTextFile(templatePath);
+                        if (template == null)
+                        {
+                            template = string.Format("Could not load template {0}",
+                                templateName);
+                        }
+                        else
+                        {
+                            templates.Add(templateName, template);
+                        }
+                    }
+                    else
+                    {
+                        loadedFromCache = true;
+                    }
                 }
+            }
+
+            // If we didn't load the template from some form of cache, save it to the cache
+            if (!loadedFromCache)
+            {
+                saveTemplateCache(templates);
             }
 
             return template;

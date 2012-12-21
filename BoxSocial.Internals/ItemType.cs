@@ -44,6 +44,10 @@ namespace BoxSocial.Internals
         private bool typeImplementsIRateable;
         [DataField("type_subscribeable")]
         private bool typeImplementsISubscribeable;
+        [DataField("type_shareable")]
+        private bool typeImplementsIShareable;
+        [DataField("type_viewable")]
+        private bool typeImplementsIViewable;
 			
 		public long TypeId
 		{
@@ -98,6 +102,22 @@ namespace BoxSocial.Internals
             get
             {
                 return typeImplementsISubscribeable;
+            }
+        }
+
+        public bool Shareable
+        {
+            get
+            {
+                return typeImplementsIShareable;
+            }
+        }
+
+        public bool Viewable
+        {
+            get
+            {
+                return typeImplementsIViewable;
             }
         }
 
@@ -165,7 +185,9 @@ namespace BoxSocial.Internals
                                       new FieldValuePair("type_commentable", (typeof(ICommentableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_likeable", (typeof(ILikeableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_rateable", (typeof(IRateableItem).IsAssignableFrom(type))),
-                                      new FieldValuePair("type_subscribeable", (typeof(ISubscribeableItem).IsAssignableFrom(type))));
+                                      new FieldValuePair("type_subscribeable", (typeof(ISubscribeableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_viewable", (typeof(IViewableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_shareable", (typeof(IShareableItem).IsAssignableFrom(type))));
 			
 			return it;
 		}

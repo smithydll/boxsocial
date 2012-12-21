@@ -131,7 +131,7 @@ namespace BoxSocial.Applications.Profile
                         }
 
                         emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", LoggedInMember.Info.PrimaryEmail);
+                        emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
                         emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
@@ -195,7 +195,7 @@ namespace BoxSocial.Applications.Profile
                             RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_invitation.eml");
 
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("FROM_EMAIL", LoggedInMember.Info.PrimaryEmail);
+                            emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                             emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
                             emailTemplate.Parse("U_REGISTER", "http://zinzam.com/register/");
                             emailTemplate.Parse("U_PROFILE", "http://zinzam.com/" + LoggedInMember.UserName);
@@ -212,7 +212,7 @@ namespace BoxSocial.Applications.Profile
                     else
                     {
                         // ignore already a member, plough on
-                        if (friendEmail.ToLower() != LoggedInMember.Info.PrimaryEmail.ToLower())
+                        if (friendEmail.ToLower() != LoggedInMember.UserInfo.PrimaryEmail.ToLower())
                         {
                             SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                             query.AddCondition("LCASE(user_alternate_email)", Mysql.Escape(friendEmail.ToLower()));
@@ -236,7 +236,7 @@ namespace BoxSocial.Applications.Profile
 
                                 // send e-mail notification
                                 // only send a notification if they have subscribed to them
-                                if (friendProfile.Info.EmailNotifications)
+                                if (friendProfile.UserInfo.EmailNotifications)
                                 {
                                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_notification.eml");
 
@@ -244,7 +244,7 @@ namespace BoxSocial.Applications.Profile
                                     emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                                     emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
-                                    core.Email.SendEmail(friendProfile.Info.PrimaryEmail, string.Format("{0} added you as a friend on ZinZam.",
+                                    core.Email.SendEmail(friendProfile.UserInfo.PrimaryEmail, string.Format("{0} added you as a friend on ZinZam.",
                                         LoggedInMember.DisplayName),
                                         emailTemplate.ToString());
                                 }

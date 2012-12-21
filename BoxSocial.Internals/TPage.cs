@@ -332,7 +332,7 @@ namespace BoxSocial.Internals
 
             if (loggedInMember != null)
             {
-                tz = loggedInMember.Info.GetTimeZone;
+                tz = loggedInMember.UserInfo.GetTimeZone;
             }
 
             // move it here
@@ -405,10 +405,10 @@ namespace BoxSocial.Internals
                 double seconds = (timer.ElapsedTicks) / 10000000.0;
                 if (core != null)
                 {
+                    HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                     if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
                     {
                         // We will write it out as a comment to preserve html validation
-                        HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
                         HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
                     }
                 }

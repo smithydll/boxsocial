@@ -86,7 +86,7 @@ namespace BoxSocial.Musician
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.Info.ShowCustomStyles)
+                if (loggedInMember.UserInfo.ShowCustomStyles)
                 {
                     template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", primitive.Key));
                 }

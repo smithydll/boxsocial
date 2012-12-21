@@ -94,6 +94,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public LikeType Liking
+        {
+            get
+            {
+                return (LikeType)liking;
+            }
+            set
+            {
+                SetPropertyByRef(new { liking }, value);
+            }
+        }
+
         public DateTime GetTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(timeRaw);
@@ -143,8 +155,7 @@ namespace BoxSocial.Internals
             }
 
             /* after 7 days release the IP for dynamics ip fairness */
-            SelectQuery query = new SelectQuery("likes l");
-            query.AddFields("user_id");
+            SelectQuery query = Like.GetSelectQueryStub(typeof(Like));
             query.AddCondition("like_item_id", itemKey.Id);
             query.AddCondition("like_item_type_id", itemKey.TypeId);
             QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);
@@ -155,12 +166,6 @@ namespace BoxSocial.Internals
                 itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));*/
 
             DataTable likesTable = core.Db.Query(query);
-
-            if (likesTable.Rows.Count > 0)
-            {
-                throw new AlreadyLikedException();
-                return;
-            }
 
             ItemInfo ii = null;
 
@@ -173,19 +178,62 @@ namespace BoxSocial.Internals
                 ii = ItemInfo.Create(core, itemKey);
             }
 
-            ii.IncrementLikes();
-            ii.Update();
+            if (likesTable.Rows.Count > 0)
+            {
+                Like liked = new Like(core, likesTable.Rows[0]);
 
-            InsertQuery iQuery = new InsertQuery("likes");
-            iQuery.AddField("like_item_id", itemKey.Id);
-            iQuery.AddField("like_item_type_id", itemKey.TypeId);
-            iQuery.AddField("user_id", core.LoggedInMemberId);
-            iQuery.AddField("like_time_ut", UnixTime.UnixTimeStamp());
-            iQuery.AddField("like_liking", (sbyte)like);
-            iQuery.AddField("like_ip", core.Session.IPAddress.ToString());
+                if (liked.Liking == like)
+                {
+                    throw new AlreadyLikedException();
+                }
 
-            // commit the transaction
-            core.Db.Query(iQuery);
+                switch (like)
+                {
+                    case LikeType.Like:
+                        ii.DecrementDislikes();
+                        ii.IncrementLikes();
+                        break;
+                    case LikeType.Dislike:
+                        ii.DecrementLikes();
+                        ii.IncrementDislikes();
+                        break;
+                }
+
+                UpdateQuery uQuery = new UpdateQuery("likes");
+                uQuery.AddField("like_time_ut", UnixTime.UnixTimeStamp());
+                uQuery.AddField("like_liking", (sbyte)like);
+                uQuery.AddField("like_ip", core.Session.IPAddress.ToString());
+                uQuery.AddCondition("user_id", core.LoggedInMemberId);
+                uQuery.AddCondition("like_item_id", itemKey.Id);
+                uQuery.AddCondition("like_item_type_id", itemKey.TypeId);
+
+                // commit the transaction
+                core.Db.Query(uQuery);
+                
+            }
+            else
+            {
+                switch (like)
+                {
+                    case LikeType.Like:
+                        ii.IncrementLikes();
+                        break;
+                    case LikeType.Dislike:
+                        ii.IncrementDislikes();
+                        break;
+                }
+
+                InsertQuery iQuery = new InsertQuery("likes");
+                iQuery.AddField("like_item_id", itemKey.Id);
+                iQuery.AddField("like_item_type_id", itemKey.TypeId);
+                iQuery.AddField("user_id", core.LoggedInMemberId);
+                iQuery.AddField("like_time_ut", UnixTime.UnixTimeStamp());
+                iQuery.AddField("like_liking", (sbyte)like);
+                iQuery.AddField("like_ip", core.Session.IPAddress.ToString());
+
+                // commit the transaction
+                core.Db.Query(iQuery);
+            }
 
             return;
         }

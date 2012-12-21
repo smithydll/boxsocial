@@ -11,14 +11,14 @@ namespace BoxSocial.IO
 
         public InsertQuery(string tableName)
         {
-            fieldValues = new Dictionary<string, object>();
+            fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
 
             table = tableName;
         }
         
         public InsertQuery(Type type)
         {
-            fieldValues = new Dictionary<string, object>();
+            fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
 
             table = DataFieldAttribute.GetTable(type);
         }

@@ -260,6 +260,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

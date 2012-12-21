@@ -56,6 +56,8 @@ namespace BoxSocial.Internals
         private string language;
         private CultureInfo culture;
         private Dictionary<string, ResourceManager> languageResources;
+        private static Object stringCacheLock = new object();
+        private static Dictionary<string, string> stringCache = new Dictionary<string,string>(StringComparer.Ordinal);
 
         public string Language
         {
@@ -84,7 +86,7 @@ namespace BoxSocial.Internals
             this.core = core;
             Language = language;
 
-            languageResources = new Dictionary<string, ResourceManager>();
+            languageResources = new Dictionary<string, ResourceManager>(StringComparer.Ordinal);
 
             AddApplication("Internals");
         }
@@ -115,18 +117,36 @@ namespace BoxSocial.Internals
         {
             try
             {
-                return languageResources["Internals"].GetString(key, culture);
+                string value = string.Empty;
+
+                lock (stringCacheLock)
+                {
+                    if (!stringCache.TryGetValue("Internals" + "-" + culture + "." + key, out value))
+                    {
+                        value = languageResources["Internals"].GetString(key, culture);
+                        stringCache.Add("Internals" + "-" + culture + "." + key, value);
+                    }
+                }
+
+                return value;
             }
             catch
             {
                 foreach (string akey in languageResources.Keys)
                 {
-                    try
+                    string value = string.Empty;
+
+                    if (!stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
                     {
-                        return languageResources[akey].GetString(key, culture);
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            value = languageResources[akey].GetString(key, culture);
+                            stringCache.Add(akey + "-" + culture + "." + key, value);
+                            return value;
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }
@@ -154,7 +174,17 @@ namespace BoxSocial.Internals
         {
             try
             {
-                return languageResources[applicationKey].GetString(languageKey, culture);
+                string value = string.Empty;
+
+                lock (stringCacheLock)
+                {
+                    if (!stringCache.TryGetValue(applicationKey + "-" + culture + "." + languageKey, out value))
+                    {
+                        value = languageResources[applicationKey].GetString(languageKey, culture);
+                        stringCache.Add(applicationKey + "-" + culture + "." + languageKey, value);
+                    }
+                }
+                return value;
             }
             catch
             {
@@ -209,6 +239,27 @@ namespace BoxSocial.Internals
             }
             catch
             {
+                return false;
+            }
+        }
+
+        public bool TryGetString(string key, out string value)
+        {
+            try
+            {
+                value = languageResources["Internals"].GetString(key);
+                if (string.IsNullOrEmpty(value))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                value = null;
                 return false;
             }
         }

@@ -665,7 +665,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public override bool IsCommentOwner(User member)
+        public override bool IsItemOwner(User member)
         {
             if (member != null)
             {
@@ -963,9 +963,9 @@ namespace BoxSocial.Internals
             {
                 Notification.Create(core, this, receiver, subject, body);
 
-                if (receiver.Info.EmailNotifications)
+                if (receiver.UserInfo.EmailNotifications)
                 {
-                    core.Email.SendEmail(receiver.Info.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
                 }
             }
         }
@@ -976,14 +976,14 @@ namespace BoxSocial.Internals
             {
                 Notification.Create(core, this, receiver, subject, body);
 
-                if (receiver.Info.EmailNotifications)
+                if (receiver.UserInfo.EmailNotifications)
                 {
                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "notification.eml");
 
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
                     emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
 
-                    core.Email.SendEmail(receiver.Info.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
                 }
             }
         }
@@ -1232,6 +1232,14 @@ namespace BoxSocial.Internals
             get
             {
                 return Owner;
+            }
+        }
+
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ItemKey;
             }
         }
 

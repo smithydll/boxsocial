@@ -96,8 +96,8 @@ namespace BoxSocial.Applications.Gallery
                 if (true)
                 {
 
-                    LoggedInMember.Info.DisplayPictureId = pictureId;
-                    LoggedInMember.Info.Update();
+                    LoggedInMember.UserInfo.DisplayPictureId = pictureId;
+                    LoggedInMember.UserInfo.Update();
 
                     core.Display.ShowMessage("Display Picture Changed", "You have successfully changed your display picture.");
                     return;

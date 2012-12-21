@@ -181,6 +181,9 @@ namespace BoxSocial.Internals
                         iQuery.AddField("type_commentable", typeof(ICommentableItem).IsAssignableFrom(type));
                         iQuery.AddField("type_likeable", typeof(ILikeableItem).IsAssignableFrom(type));
                         iQuery.AddField("type_rateable", typeof(IRateableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_subscribeable", typeof(ISubscribeableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_viewable", typeof(IViewableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_shareable", typeof(IShareableItem).IsAssignableFrom(type));
 
                         core.Db.Query(iQuery);
                     }
@@ -192,6 +195,9 @@ namespace BoxSocial.Internals
                         uQuery.AddField("type_commentable", typeof(ICommentableItem).IsAssignableFrom(type));
                         uQuery.AddField("type_likeable", typeof(ILikeableItem).IsAssignableFrom(type));
                         uQuery.AddField("type_rateable", typeof(IRateableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_subscribeable", typeof(ISubscribeableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_viewable", typeof(IViewableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_shareable", typeof(IShareableItem).IsAssignableFrom(type));
 
                         core.Db.Query(uQuery);
                     }
@@ -366,7 +372,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                slugs = new Dictionary<string, string>();
+                slugs = new Dictionary<string, string>(StringComparer.Ordinal);
             }
 
 

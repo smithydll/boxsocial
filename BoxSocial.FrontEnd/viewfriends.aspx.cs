@@ -42,11 +42,11 @@ namespace BoxSocial.FrontEnd
             BeginProfile();
             int page = core.Functions.RequestInt("p", 1);
 
-            string langFriends = (User.Info.Friends != 1) ? "friends" : "friend";
+            string langFriends = (User.UserInfo.Friends != 1) ? "friends" : "friend";
 
             template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", User.DisplayNameOwnership));
 
-            template.Parse("FRIENDS", User.Info.Friends.ToString());
+            template.Parse("FRIENDS", User.UserInfo.Friends.ToString());
             template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = User.GetFriends(page, 18);
@@ -60,7 +60,7 @@ namespace BoxSocial.FrontEnd
             }
 
             string pageUri = core.Uri.BuildFriendsUri(User);
-            core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(User.Info.Friends / 18.0));
+            core.Display.ParsePagination(pageUri, page, (int)Math.Ceiling(User.UserInfo.Friends / 18.0));
 
             /* pages */
             core.Display.ParsePageList(User, true);

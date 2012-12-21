@@ -273,6 +273,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return rankOwner;
+            }
+        }
+
         public string DisplayTitle
         {
             get

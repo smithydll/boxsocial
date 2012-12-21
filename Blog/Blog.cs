@@ -856,7 +856,6 @@ namespace BoxSocial.Applications.Blog
                     VariableCollection blogPostVariableCollection = page.template.CreateChild("blog_list");
 
                     blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
-                    blogPostVariableCollection.Parse("COMMENTS", blogEntries[i].Comments.ToString());
 
                     DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
 
@@ -865,7 +864,31 @@ namespace BoxSocial.Applications.Blog
 
                     blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
                     blogPostVariableCollection.Parse("URL", postUrl);
+                    blogPostVariableCollection.Parse("ID", blogEntries[i].Id);
+                    blogPostVariableCollection.Parse("TYPE_ID", blogEntries[i].ItemKey.TypeId);
+
                     core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
+
+                    if (core.Session.IsLoggedIn)
+                    {
+                        if (blogEntries[i].Owner.IsItemOwner(core.Session.LoggedInMember))
+                        {
+                            blogPostVariableCollection.Parse("IS_OWNER", "TRUE");
+                            blogPostVariableCollection.Parse("U_DELETE", blogEntries[i].DeleteUri);
+                        }
+                    }
+
+                    if (blogEntries[i].Info.Likes > 0)
+                    {
+                        blogPostVariableCollection.Parse("LIKES", string.Format(" {0:d}", blogEntries[i].Info.Likes));
+                        blogPostVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", blogEntries[i].Info.Dislikes));
+                    }
+
+                    if (blogEntries[i].Info.Comments > 0)
+                    {
+                        blogPostVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", blogEntries[i].Info.Comments));
+                    }
+
                     if (blogEntries[i].PostId == post)
                     {
                         comments = blogEntries[i].Comments;
@@ -902,7 +925,7 @@ namespace BoxSocial.Applications.Blog
                 page.template.Parse("BLOGPOSTS", postsOnPage.ToString());
 
                 string pageUri = "";
-                string breadcrumbExtension = (page.User.Info.ProfileHomepage == "/blog") ? "" : "blog/";
+                string breadcrumbExtension = (page.User.UserInfo.ProfileHomepage == "/blog") ? "" : "blog/";
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "blog", "Blog" });
@@ -1003,7 +1026,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            if (member.Info.ProfileHomepage == "/blog")
+            if (member.UserInfo.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendSid(string.Format("{0}",
                     member.UriStub));
@@ -1028,7 +1051,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            if (member.Info.ProfileHomepage == "/blog")
+            if (member.UserInfo.ProfileHomepage == "/blog")
             {
                 return core.Uri.AppendAbsoluteSid(string.Format("{0}",
                     member.UriStubAbsolute));
@@ -1225,6 +1248,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return Owner;
+            }
+        }
+
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return new ItemKey(userId, typeof(User));
             }
         }
 

@@ -284,7 +284,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (tag.tagApproved)
             {
-                if (tag.TaggedMember.Info.EmailNotifications)
+                if (tag.TaggedMember.UserInfo.EmailNotifications)
                 {
                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "photo_tag_notification.eml");
 
@@ -293,7 +293,7 @@ namespace BoxSocial.Applications.Gallery
                     emailTemplate.Parse("FROM_USERNAME", core.Session.LoggedInMember.UserName);
                     emailTemplate.Parse("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
 
-                    core.Email.SendEmail(tag.TaggedMember.Info.PrimaryEmail, string.Format("{0} tagged you in a photo",
+                    core.Email.SendEmail(tag.TaggedMember.UserInfo.PrimaryEmail, string.Format("{0} tagged you in a photo",
                         core.Session.LoggedInMember.DisplayName),
                         emailTemplate.ToString());
                 }

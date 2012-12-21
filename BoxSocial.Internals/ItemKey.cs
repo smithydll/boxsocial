@@ -148,17 +148,17 @@ namespace BoxSocial.Internals
 			this.itemType = itemType;
             lock (itemTypeCacheLock)
             {
-                if (!itemTypeCache.ContainsKey(itemType))
+                if (!itemTypeCache.TryGetValue(itemType, out this.typeRow))
                 {
                     throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemTypeCache"));
                 }
-                if (!itemApplicationCache.ContainsKey(itemType))
+                if (!itemApplicationCache.TryGetValue(itemType, out this.applicationId))
                 {
                     throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemApplicationCache"));
                 }
-                this.typeRow = itemTypeCache[itemType];
-                this.itemTypeId = itemTypeCache[itemType].TypeId;
-                this.applicationId = itemApplicationCache[itemType];
+                //this.typeRow = itemTypeCache[itemType];
+                this.itemTypeId = this.typeRow.TypeId;
+                //this.applicationId = itemApplicationCache[itemType];
             }
             this.type = null;
 		}
@@ -285,8 +285,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    itemTypeCache = new Dictionary<string, ItemType>();
-                    itemApplicationCache = new Dictionary<string, long>();
+                    itemTypeCache = new Dictionary<string, ItemType>(StringComparer.Ordinal);
+                    itemApplicationCache = new Dictionary<string, long>(StringComparer.Ordinal);
                     SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
 
                     DataTable typesTable;
@@ -321,9 +321,11 @@ namespace BoxSocial.Internals
 
         public static long GetTypeId(Type type)
         {
-            if (itemTypeCache.ContainsKey(type.FullName))
+            ItemType it = null;
+
+            if (itemTypeCache.TryGetValue(type.FullName, out it))
             {
-                return itemTypeCache[type.FullName].TypeId;
+                return it.TypeId;
             }
             else
             {

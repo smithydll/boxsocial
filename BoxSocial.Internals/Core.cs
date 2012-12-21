@@ -90,7 +90,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// A cache of application entries.
         /// </summary>
-        private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>();
+        private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>(StringComparer.Ordinal);
 
         /// <summary>
         /// The applicaton domain from which the web application is executed.

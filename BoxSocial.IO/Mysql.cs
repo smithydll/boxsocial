@@ -228,12 +228,28 @@ namespace BoxSocial.IO
 
         private DataTable SelectQuery(SelectQuery query)
         {
-            return SelectQuery(query.ToString());
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            string q = query.ToString();
+
+            timer.Stop();
+            queryTime += timer.ElapsedTicks;
+
+            return SelectQuery(q);
         }
 
         private long UpdateQuery(Query query)
         {
-            return UpdateQuery(query.ToString());
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            string q = query.ToString();
+
+            timer.Stop();
+            queryTime += timer.ElapsedTicks;
+
+            return UpdateQuery(q);
         }
 
         public string Status()
@@ -398,29 +414,37 @@ namespace BoxSocial.IO
 
         public override System.Data.Common.DbDataReader ReaderQuery(SelectQuery query)
         {
-            return SelectReaderQuery(query.ToString());
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
+            string q = query.ToString();
+
+            timer.Stop();
+            queryTime += timer.ElapsedTicks;
+
+            return SelectReaderQuery(q);
         }
 
         public override DataTable Query(SelectQuery query)
         {
-            DataTable selectDataTable = SelectQuery(query.ToString());
+            DataTable selectDataTable = SelectQuery(query);
 
             return selectDataTable;
         }
 
         public override long Query(InsertQuery query)
         {
-            return UpdateQuery(query.ToString());
+            return UpdateQuery(query);
         }
 
         public override long Query(UpdateQuery query)
         {
-            return UpdateQuery(query.ToString());
+            return UpdateQuery(query);
         }
 
         public override long Query(DeleteQuery query)
         {
-            return UpdateQuery(query.ToString());
+            return UpdateQuery(query);
         }
 
         public override DataTable Query(string query)
@@ -445,7 +469,7 @@ namespace BoxSocial.IO
 
         public override Dictionary<string, DataFieldInfo> GetColumns(string tableName)
         {
-            Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>();
+            Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>(StringComparer.Ordinal);
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW COLUMNS FROM `{0}`",
                 Mysql.Escape(tableName)));

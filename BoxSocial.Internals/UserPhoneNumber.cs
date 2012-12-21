@@ -228,6 +228,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return new ItemKey(userId, typeof(User));
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

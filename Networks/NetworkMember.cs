@@ -92,7 +92,7 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, long networkId, User user)
             : base(core)
         {
-            this.userInfo = user.Info;
+            this.userInfo = user.UserInfo;
             this.userProfile = user.Profile;
         }
 

@@ -510,14 +510,15 @@ namespace BoxSocial.Internals
             {
                 template.Parse("COMMENTS", commentCount.ToString());
             }
-            else if (item.Comments >= 0)
+            else if (((NumberedItem)item).Info.Comments >= 0)
             {
-                template.Parse("COMMENTS", item.Comments.ToString());
+                template.Parse("COMMENTS", ((NumberedItem)item).Info.Comments.ToString());
             }
             else
             {
                 template.Parse("COMMENTS", comments.Count.ToString());
             }
+
             template.Parse("ITEM_ID", item.Id.ToString());
             template.Parse("ITEM_TYPE", item.ItemKey.TypeId.ToString());
 
@@ -537,6 +538,8 @@ namespace BoxSocial.Internals
                 core.PrimitiveCache.LoadUserProfile(comment.UserId);
             }
 
+            long lastId = 0;
+
             foreach (Comment comment in comments)
             {
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
@@ -547,6 +550,8 @@ namespace BoxSocial.Internals
                 try
                 {
                     User commentPoster = core.PrimitiveCache[comment.UserId];
+
+                    lastId = comment.Id;
 
                     commentsVariableCollection.Parse("ID", comment.Id.ToString());
                     commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(typeof(Comment)));
@@ -561,13 +566,17 @@ namespace BoxSocial.Internals
 
                     if (comment.Info.Likes > 0)
                     {
-                        commentsVariableCollection.Parse("LIKES", string.Format(" {0:d}", comment.Info.Likes));
+                        commentsVariableCollection.Parse("LIKES", string.Format("{0:d} ", comment.Info.Likes));
+                    }
+
+                    if (comment.Info.Dislikes > 0)
+                    {
                         commentsVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", comment.Info.Dislikes));
                     }
 
-                    if (comment.Info.Shares > 0)
+                    if (comment.Info.SharedTimes > 0)
                     {
-                        commentsVariableCollection.Parse("SHARES", string.Format(" ({0:d})", comment.Info.Shares));
+                        commentsVariableCollection.Parse("SHARES", string.Format(" ({0:d})", comment.Info.SharedTimes));
                     }
 
                     if (hook != null)
@@ -583,7 +592,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
-                    if (owner.IsCommentOwner(commentPoster))
+                    if (owner.IsItemOwner(commentPoster))
                     {
                         commentsVariableCollection.Parse("OWNER", "TRUE");
                         commentsVariableCollection.Parse("NORMAL", "FALSE");
@@ -609,6 +618,8 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("NORMAL", "TRUE");
                 }
             }
+
+            template.Parse("LAST_ID", "lastId");
         }
 
         public static void RatingBlock(float existingRating, Template template, ItemKey itemKey)

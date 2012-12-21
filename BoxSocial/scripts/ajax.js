@@ -65,6 +65,10 @@ function LikeItem(itemId, itemType, node) {
     return PostToPage(ItemLiked, "api/like?ajax=true&like=like&item=" + itemId + "&type=" + itemType, node, null, null);
 }
 
+function DislikeItem(itemId, itemType, node) {
+    return PostToPage(ItemLiked, "api/like?ajax=true&like=dislike&item=" + itemId + "&type=" + itemType, node, null, null);
+}
+
 function ItemLiked(r, e) {
     if (e.text() == '') {
         e.text(' 1');

@@ -130,12 +130,14 @@
     <Compile Include="IPermissibleItem.cs" />
     <Compile Include="IPermissibleSubItem.cs" />
     <Compile Include="IRateableItem.cs" />
+    <Compile Include="IShareableItem.cs" />
     <Compile Include="ISubscribeableItem.cs" />
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemTag.cs" />
     <Compile Include="IUniqueKeyedItem.cs" />
+    <Compile Include="IViewableItem.cs" />
     <Compile Include="License.cs" />
     <Compile Include="Like.cs" />
     <Compile Include="Navigation.cs" />

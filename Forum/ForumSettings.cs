@@ -314,6 +314,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

@@ -209,7 +209,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.Info.StatusMessages / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.UserInfo.StatusMessages / 10.0));
 
             /* pages */
             core.Display.ParsePageList(owner, true);

@@ -345,7 +345,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return itemRating;
+                return Info.Rating;
             }
         }
 
@@ -764,6 +764,7 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+
                 licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
             catch (InvalidItemException)
@@ -919,7 +920,7 @@ namespace BoxSocial.Applications.Gallery
             }
 
             // 5 giB
-            if (core.Session.LoggedInMember.Info.BytesUsed + bytes > (ulong)5 * 1024 * 1024 * 1024)
+            if (core.Session.LoggedInMember.UserInfo.BytesUsed + bytes > (ulong)5 * 1024 * 1024 * 1024)
             {
                 throw new GalleryQuotaExceededException();
             }
@@ -2222,12 +2223,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }
@@ -2242,12 +2243,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_hd/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_hd/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }
@@ -2262,12 +2263,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tile/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_tile/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }
@@ -2282,12 +2283,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_largetile/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/_largetile/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }
@@ -2302,12 +2303,12 @@ namespace BoxSocial.Applications.Gallery
                 if (parentId > 0)
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/{1}",
-                        owner.UriStub, FullPath));
+                        Owner.UriStub, FullPath));
                 }
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/{1}",
-                        owner.UriStub, path));
+                        Owner.UriStub, path));
                 }
             }
         }

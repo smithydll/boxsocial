@@ -203,6 +203,12 @@ ul#photo-list li .photo-canvas {
     overflow: hidden;
 }
 
+.gallery-title h3 {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .gallery-title h3 a {
     color: #111111;
 }
@@ -235,8 +241,8 @@ ul#photo-list li .photo-canvas {
     color: #ffffff;
     text-shadow: 0 0 0.2em black;
     background-color: rgba(17,17,17,0.7);
-    height: 36px;
-    margin-top: -36px;
+    height: 46px;
+    margin-top: -46px;
 }
 
 .photo-canvas:hover .gallery-title a {

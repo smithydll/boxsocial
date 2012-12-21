@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -157,18 +158,29 @@ namespace BoxSocial.FrontEnd
                 }
                 catch (InvalidApplicationException)
                 {
-                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
+                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x01)");
                     return;
                 }
 
-                NumberedItem thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                NumberedItem thisItem = null;
+                try
+                {
+                    thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                }
+                catch (Exception ex)
+                {
+                    // Only catch genuine InvalidItemException throws
+                    if ((ex.GetType() == typeof(TargetInvocationException) && ex.InnerException.GetType().IsSubclassOf(typeof(InvalidItemException))) || ex.GetType().IsSubclassOf(typeof(InvalidItemException)))
+                    {
+                        core.Ajax.ShowMessage(isAjax, "invalidItem", "Item no longer exists", "Cannot load the comments as the item no longer exists.");
+                    }
+                    throw ex;
+                }
 
                 Template template = new Template("pane.comments.html");
                 template.SetProse(core.Prose);
 
                 template.Parse("U_SIGNIN", Core.Uri.BuildLoginUri());
-
-                template.Parse("COMMENTS", thisItem.Info.Comments);
 
                 if (thisItem is IPermissibleItem)
                 {
@@ -193,7 +205,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x07)");
+                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x07)");
                     return;
                 }
             }

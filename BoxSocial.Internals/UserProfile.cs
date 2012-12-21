@@ -396,13 +396,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        public long Comments
+        private long Comments
         {
             get
             {
                 return profileComments;
             }
         }
+
         public string Religion
         {
             get
@@ -523,9 +524,9 @@ namespace BoxSocial.Internals
             {
                 if (core.Tz == null)
                 {
-                    if (user.Info != null)
+                    if (user.UserInfo != null)
                     {
-                        return user.Info.GetTimeZone.DateTimeFromMysql(dateofBirthRaw);
+                        return user.UserInfo.GetTimeZone.DateTimeFromMysql(dateofBirthRaw);
                     }
                     else
                     {

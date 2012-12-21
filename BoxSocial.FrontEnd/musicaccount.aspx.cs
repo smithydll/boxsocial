@@ -207,7 +207,7 @@ namespace BoxSocial.FrontEnd
                         ApplicationEntry ae = new ApplicationEntry(core, Musician, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].Info.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
+                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
                     }
                 }
             }

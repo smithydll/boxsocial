@@ -123,7 +123,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public UserInfo Info
+        public UserInfo UserInfo
         {
             get
             {
@@ -220,7 +220,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Info.DisplayNameOwnership;
+                return UserInfo.DisplayNameOwnership;
             }
         }
 
@@ -244,7 +244,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Info.DisplayName;
+                return UserInfo.DisplayName;
             }
         }
 
@@ -739,7 +739,7 @@ namespace BoxSocial.Internals
             foreach (DataRow dr in friendsTable.Rows)
             {
                 UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
-                UnixTime tz = new UnixTime(core, friend.Info.TimeZoneCode);
+                UnixTime tz = new UnixTime(core, friend.UserInfo.TimeZoneCode);
                 DateTime dob = new DateTime(st.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
                 long dobUt = tz.GetUnixTimeStamp(dob);
 
@@ -905,6 +905,10 @@ namespace BoxSocial.Internals
         {
             SelectQuery query = new SelectQuery(GetTable(typeof(User)));
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(User), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
@@ -1252,6 +1256,7 @@ namespace BoxSocial.Internals
             disallowedNames.Add("feature");
             disallowedNames.Add("featured");
             disallowedNames.Add("favourites");
+            disallowedNames.Add("likes");
             disallowedNames.Add("dev");
             disallowedNames.Add("dcma");
             disallowedNames.Add("coppa");
@@ -1329,6 +1334,7 @@ namespace BoxSocial.Internals
             disallowedNames.Add("calendar");
             disallowedNames.Add("events");
             disallowedNames.Add("feed");
+            disallowedNames.Add("rss");
             disallowedNames.Add("tasks");
             disallowedNames.Add("application");
             disallowedNames.Add("applications");
@@ -1339,6 +1345,8 @@ namespace BoxSocial.Internals
             disallowedNames.Add("sale");
             disallowedNames.Add("donate");
             disallowedNames.Add("comedian");
+            disallowedNames.Add("cart");
+            disallowedNames.Add("api");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(userName.ToLower()) >= 0)
@@ -1539,7 +1547,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool IsCommentOwner(User member)
+        public override bool IsItemOwner(User member)
         {
             if (member.userId == userId)
             {
@@ -1809,10 +1817,10 @@ namespace BoxSocial.Internals
             core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Profile.Autobiography);
             core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.Profile.MaritialStatus);
             core.Template.Parse("USER_AGE", age);
-            core.Template.Parse("USER_JOINED", core.Tz.DateTimeToString(page.User.Info.RegistrationDate));
-            core.Template.Parse("USER_LAST_SEEN", core.Tz.DateTimeToString(page.User.Info.LastOnlineTime, true));
+            core.Template.Parse("USER_JOINED", core.Tz.DateTimeToString(page.User.UserInfo.RegistrationDate));
+            core.Template.Parse("USER_LAST_SEEN", core.Tz.DateTimeToString(page.User.UserInfo.LastOnlineTime, true));
             core.Template.Parse("USER_PROFILE_VIEWS", core.Functions.LargeIntegerToString(page.User.Profile.ProfileViews));
-            core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.Info.BlogSubscriptions));
+            core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.UserInfo.BlogSubscriptions));
             core.Template.Parse("USER_COUNTRY", page.User.Profile.Country);
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
             core.Template.Parse("USER_ICON", page.User.UserThumbnail);
@@ -1846,9 +1854,9 @@ namespace BoxSocial.Internals
                 core.Template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
             }
 
-            string langFriends = (page.User.Info.Friends != 1) ? "friends" : "friend";
+            string langFriends = (page.User.UserInfo.Friends != 1) ? "friends" : "friend";
 
-            core.Template.Parse("FRIENDS", page.User.Info.Friends.ToString());
+            core.Template.Parse("FRIENDS", page.User.UserInfo.Friends.ToString());
             core.Template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = page.User.GetFriends(1, 8);
@@ -1895,7 +1903,7 @@ namespace BoxSocial.Internals
                 e.Core.Functions.Generate403();
             }
 
-            string langFriends = (e.Page.User.Info.Friends != 1) ? "friends" : "friend";
+            string langFriends = (e.Page.User.UserInfo.Friends != 1) ? "friends" : "friend";
 
             e.Template.Parse("U_FILTER_ALL", GenerateFriendsUri(e.Core, e.Page.User));
             e.Template.Parse("U_FILTER_BEGINS_A", GenerateFriendsUri(e.Core, e.Page.User, "a"));
@@ -1927,7 +1935,7 @@ namespace BoxSocial.Internals
 
             e.Template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", e.Page.User.DisplayNameOwnership));
 
-            e.Template.Parse("FRIENDS", e.Page.User.Info.Friends.ToString());
+            e.Template.Parse("FRIENDS", e.Page.User.UserInfo.Friends.ToString());
             e.Template.Parse("L_FRIENDS", langFriends);
 
             List<Friend> friends = e.Page.User.GetFriends(e.Page.TopLevelPageNumber, 18);
@@ -1941,7 +1949,7 @@ namespace BoxSocial.Internals
             }
 
             string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
-            e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(e.Page.User.Info.Friends / 18.0));
+            e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(e.Page.User.UserInfo.Friends / 18.0));
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);
@@ -1981,7 +1989,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Profile.Comments;
+                return Info.Comments;
             }
         }
 
@@ -2098,6 +2106,14 @@ namespace BoxSocial.Internals
         }
 
         private new IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public ItemKey PermissiveParentKey
         {
             get
             {

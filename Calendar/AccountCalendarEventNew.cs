@@ -352,7 +352,7 @@ namespace BoxSocial.Applications.Calendar
                         RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_event_invite.eml");
 
                         emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", core.Session.LoggedInMember.Info.PrimaryEmail);
+                        emailTemplate.Parse("FROM_EMAIL", core.Session.LoggedInMember.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", core.Session.LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
                         /* TODO: EMAIL KEY PERMS */

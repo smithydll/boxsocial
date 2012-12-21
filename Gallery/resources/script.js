@@ -89,3 +89,45 @@ function ShowTagNearPointer(event)
 		}
 	}
 }
+
+function toggleHd() {
+    if (parent.location.hash != '#hd') {
+        showHd();
+    } else {
+        showNormal();
+    }
+}
+
+function showHd() {
+    document.body.style.overflow = 'hidden';
+    $('#photo-hd').attr('src', hdDisplay);
+    $('#display-hd').show();
+    //parent.location.hash = 'hd';
+
+    var Title = $(this).text();
+    var History = window.History;
+
+    if (!History.enabled) {
+        parent.location.hash = 'hd';
+        return false;
+    }
+    else {
+        History.replaceState({ data: 'hd' }, Title + " • HD", "#hd");
+    }
+
+    positionHd();
+}
+
+function showNormal() {
+    document.body.style.overflow = 'auto';
+    $('#display-hd').hide();
+    //parent.location.hash = '';
+
+    var Title = $(this).text();
+    var History = window.History;
+    if (!History.enabled) {
+        parent.location.hash = '#normal';
+        return false;
+    }
+    History.replaceState({ data: 'normal' }, Title.replace(" • HD", ""), "#normal");
+}

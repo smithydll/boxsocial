@@ -152,8 +152,15 @@ namespace BoxSocial.Internals
             if (ratingsTable.Rows.Count > 0)
             {
                 throw new AlreadyRatedException();
-				return;
             }
+
+            /* Impossible using object query model */
+            /*UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+            uQuery.AddField("rating", new QueryOperation("info_rating", QueryOperations.Division, new QueryOperation(QueryOperations.Addition, new QueryOperation("info_rating", QueryOperations.Multiplication, new DataField(typeof(ItemInfo), "info_ratings"))));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);*/
+            core.Db.UpdateQuery(string.Format("UPDATE item_info SET info_rating = (info_rating * info_ratings + {0}) / (info_ratings + 1), info_ratings = info_ratings + 1 WHERE info_item_id = {1} AND info_item_type_id = {2}",
+                rating, itemKey.Id, itemKey.TypeId));
 
             InsertQuery iQuery = new InsertQuery("ratings");
             iQuery.AddField("rate_item_id", itemKey.Id);

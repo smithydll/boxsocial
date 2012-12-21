@@ -475,6 +475,14 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;
@@ -494,7 +502,7 @@ namespace BoxSocial.Applications.Calendar
         }
     }
 
-    public class InvalidTaskException : Exception
+    public class InvalidTaskException : InvalidItemException
     {
     }
 }

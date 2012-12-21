@@ -114,7 +114,7 @@ namespace BoxSocial.Musician
         }
     }
 
-    public class InvalidInstrumentException : Exception
+    public class InvalidInstrumentException : InvalidItemException
     {
     }
 }

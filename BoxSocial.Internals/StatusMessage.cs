@@ -294,6 +294,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, typeof(User));
+            }
+        }
+
         public string DisplayTitle
         {
             get

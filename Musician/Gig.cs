@@ -505,7 +505,7 @@ namespace BoxSocial.Musician
         }
     }
 
-    public class InvalidGigException : Exception
+    public class InvalidGigException : InvalidItemException
     {
     }
 }

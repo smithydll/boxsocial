@@ -97,7 +97,7 @@ namespace BoxSocial.Groups
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.Info.ShowCustomStyles)
+                if (loggedInMember.UserInfo.ShowCustomStyles)
                 {
                     template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", Group.Key));
                 }

@@ -48,7 +48,7 @@ namespace BoxSocial.Internals
 
         private Primitive owner;
 
-        public ItemInfo Info
+        public new ItemInfo Info
         {
             get
             {
@@ -56,7 +56,7 @@ namespace BoxSocial.Internals
                 {
                     try
                     {
-                        info = new ItemInfo(core, ActionItemKey.Id, ActionItemKey.TypeId);
+                        info = new ItemInfo(core, ActionItemKey);
                     }
                     catch (InvalidIteminfoException)
                     {

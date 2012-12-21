@@ -1036,6 +1036,34 @@ span.img-button img {
     background-position: -240px -112px;
 }
 
+.light .voteup-sprite {
+    background-image: url(images/like-888888.png);
+}
+
+span.img-button:hover .voteup-sprite.sprite {
+    background-image: url(images/like-007F00.png);
+}
+
+.light .votedown-sprite {
+    background-image: url(images/dislike-888888.png);
+}
+
+span.img-button:hover .votedown-sprite.sprite {
+    background-image: url(images/dislike-ff0000.png);
+}
+
+span.img-button.voteup-item {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+}
+
+span.img-button.votedown-item {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+}
+
 span.img-button .sprite {
     background-repeat: no-repeat;
     display: inline-block;
@@ -1052,6 +1080,14 @@ span.img-button:hover .tag-sprite:hover, span.img-button:hover .sprite {
 
 .white span.img-button:hover .sprite {
     background-image: url(images/ui-icons_ffffff_256x240.png);
+}
+
+.upvotes {
+    color: #007f00;
+}
+
+.downvotes {
+    color: #ff0000;
 }
 
 #std-message {
@@ -1542,6 +1578,16 @@ li.droplist-user img {
         display: inline-block;
         border-radius: 3px;
         cursor: default;
+}
+
+ul.feed-list {
+    padding: 0;
+    margin: 0;
+}
+
+ul.feed-list li.feed-item {
+    margin: 5px 0;
+    padding: 5px 0;
 }
 
 ul.feed-list li div.feed-disp-pic {

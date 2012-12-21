@@ -12,7 +12,7 @@ namespace BoxSocial.IO
 
         public UpdateQuery(string tableName)
         {
-            fieldValues = new Dictionary<string, object>();
+            fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
             conditions = new QueryCondition();
 
             table = tableName;
@@ -20,7 +20,7 @@ namespace BoxSocial.IO
 
         public UpdateQuery(Type type)
         {
-            fieldValues = new Dictionary<string, object>();
+            fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
             conditions = new QueryCondition();
 
             table = DataFieldAttribute.GetTable(type);

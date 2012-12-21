@@ -628,9 +628,13 @@ namespace BoxSocial.Internals
                 query.AddFields(GetFieldsPrefixed(type));
                 if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
                     (typeof(ILikeableItem).IsAssignableFrom(type) || 
-                    typeof(IRateableItem).IsAssignableFrom(type) || 
+                    typeof(IRateableItem).IsAssignableFrom(type) ||
+                    typeof(ITagableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type) || 
                     typeof(ICommentableItem).IsAssignableFrom(type) || 
-                    typeof(ISubscribeableItem).IsAssignableFrom(type)))
+                    typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                    typeof(IShareableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type)))
                 {
                     List<DataFieldInfo> fields = GetFields(type);
                     bool foundKey = false;
@@ -747,9 +751,14 @@ namespace BoxSocial.Internals
 			
 			if  (itemFieldsCache != null)
 			{
-				if (itemFieldsCache.ContainsKey(type) && (!getRawFields))
+				if (!getRawFields)
 				{
-					return itemFieldsCache[type];
+                    List<DataFieldInfo> dfis = null;
+
+                    if (itemFieldsCache.TryGetValue(type, out dfis))
+                    {
+                        return dfis;
+                    }
 				}
 			}
 			else
@@ -1288,13 +1297,31 @@ namespace BoxSocial.Internals
                 throw new NoPrimaryKeyException();
             }
 
-            /* Delete any ItemInfo rows */
             if (type.IsSubclassOf(typeof(NumberedItem)))
             {
+                /* Delete any ItemInfo rows */
                 DeleteQuery idQuery = new DeleteQuery(Item.GetTable(typeof(ItemInfo)));
-                idQuery.AddCondition("info_item", ((NumberedItem)this).ItemKey);
+                idQuery.AddCondition("info_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("info_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
 
                 db.Query(idQuery);
+
+                /* Delete any Action rows */
+                idQuery = new DeleteQuery(Item.GetTable(typeof(Action)));
+                idQuery.AddCondition("action_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("action_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+
+                db.Query(idQuery);
+
+                /* Delete any ActionItem rows */
+                idQuery = new DeleteQuery(Item.GetTable(typeof(ActionItem)));
+                idQuery.AddCondition("item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+
+                db.Query(idQuery);
+
+                /* Select action sub items so we can inform the action to re-calculate it's view */
+
             }
 
             long result = db.Query(dQuery);
@@ -1320,7 +1347,7 @@ namespace BoxSocial.Internals
         {
             int fieldsLoaded = 0;
             int objectFields = 0;
-            Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
+            Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(StringComparer.Ordinal);
 
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
@@ -1375,10 +1402,10 @@ namespace BoxSocial.Internals
                         string column = reader.GetName(i);
                         object value = null;
 
-                        if (fields.ContainsKey(column))
-                        {
-                            FieldInfo fi = fields[column];
+                        FieldInfo fi = null;
 
+                        if (fields.TryGetValue(column, out fi))
+                        {
                             if (!reader.IsDBNull(i))
                             {
                                 value = reader.GetValue(i);
@@ -1597,7 +1624,11 @@ namespace BoxSocial.Internals
                 if (typeof(ICommentableItem).IsAssignableFrom(type) ||
                     typeof(ILikeableItem).IsAssignableFrom(type) ||
                     typeof(IRateableItem).IsAssignableFrom(type) ||
-                    typeof(ISubscribeableItem).IsAssignableFrom(type))
+                    typeof(ITagableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type) ||
+                    typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                    typeof(IShareableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type))
                 {
                     // the column most likely to be unique
                     if (columns.Contains("info_item_time_ut"))

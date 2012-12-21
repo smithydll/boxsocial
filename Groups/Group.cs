@@ -932,6 +932,7 @@ namespace BoxSocial.Groups
             disallowedNames.Add("feature");
             disallowedNames.Add("featured");
             disallowedNames.Add("favourites");
+            disallowedNames.Add("likes");
             disallowedNames.Add("dev");
             disallowedNames.Add("dcma");
             disallowedNames.Add("coppa");
@@ -1008,6 +1009,10 @@ namespace BoxSocial.Groups
             disallowedNames.Add("sid");
             disallowedNames.Add("network");
             disallowedNames.Add("networks");
+            disallowedNames.Add("cart");
+            disallowedNames.Add("api");
+            disallowedNames.Add("feed");
+            disallowedNames.Add("rss");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(groupName.ToLower()) >= 0)
@@ -1134,7 +1139,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public override bool IsCommentOwner(User member)
+        public override bool IsItemOwner(User member)
         {
             return false;
         }

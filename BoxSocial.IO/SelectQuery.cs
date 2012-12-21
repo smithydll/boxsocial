@@ -491,16 +491,16 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            string query = "SELECT";
+            StringBuilder query = new StringBuilder("SELECT");
 
             if (isDistinct)
             {
-                query += " DISTINCT";
+                query.Append(" DISTINCT");
             }
 
             if (limitCount >= 0)
             {
-                query += " SQL_CALC_FOUND_ROWS";
+                query.Append(" SQL_CALC_FOUND_ROWS");
             }
 
             if (fields.Count > 0)
@@ -510,21 +510,26 @@ namespace BoxSocial.IO
                 {
                     if (first)
                     {
-                        query = string.Format("{0} {1}",
-                            query, field);
+                        /*query = string.Format("{0} {1}",
+                            query, field);*/
+                        query.Append(" ");
+                        query.Append(field);
                         first = false;
                     }
                     else
                     {
-                        query = string.Format("{0}, {1}",
-                            query, field);
+                        /*query = string.Format("{0}, {1}",
+                            query, field);*/
+                        query.Append(", ");
+                        query.Append(field);
                     }
                 }
             }
             else
             {
-                query = string.Format("{0} *",
-                            query);
+                /*query = string.Format("{0} *",
+                            query);*/
+                query.Append(" *");
             }
 
             if (tables.Count > 0)
@@ -534,14 +539,18 @@ namespace BoxSocial.IO
                 {
                     if (first)
                     {
-                        query = string.Format("{0} FROM {1}",
-                            query, table);
+                        /*query = string.Format("{0} FROM {1}",
+                            query, table);*/
+                        query.Append(" FROM ");
+                        query.Append(table);
                         first = false;
                     }
                     else
                     {
-                        query = string.Format("{0}, {1}",
-                            query, table);
+                        /*query = string.Format("{0}, {1}",
+                            query, table);*/
+                        query.Append(", ");
+                        query.Append(table);
                     }
                 }
             }
@@ -550,15 +559,19 @@ namespace BoxSocial.IO
             {
                 foreach (TableJoin join in joins)
                 {
-                    query = string.Format("{0} {1}",
-                            query, join.ToString());
+                    /*query = string.Format("{0} {1}",
+                            query, join.ToString());*/
+                    query.Append(" ");
+                    query.Append(join.ToString());
                 }
             }
 
             if (conditions.Count > 0)
             {
-                query = string.Format("{0} WHERE {1}",
-                            query, conditions.ToString());
+                /*query = string.Format("{0} WHERE {1}",
+                            query, conditions.ToString());*/
+                query.Append(" WHERE ");
+                query.Append(conditions.ToString());
             }
 
             if (sorts.Count > 0)
@@ -568,14 +581,18 @@ namespace BoxSocial.IO
                 {
                     if (first)
                     {
-                        query = string.Format("{0} ORDER BY {1}",
-                            query, sort.ToString());
+                        /*query = string.Format("{0} ORDER BY {1}",
+                            query, sort.ToString());*/
+                        query.Append(" ORDER BY ");
+                        query.Append(sort.ToString());
                         first = false;
                     }
                     else
                     {
-                        query = string.Format("{0}, {1}",
-                            query, sort.ToString());
+                        /*query = string.Format("{0}, {1}",
+                            query, sort.ToString());*/
+                        query.Append(", ");
+                        query.Append(sort.ToString());
                     }
                 }
             }
@@ -587,30 +604,39 @@ namespace BoxSocial.IO
                 {
                     if (first)
                     {
-                        query = string.Format("{0} GROUP BY {1}",
-                            query, field);
+                        /*query = string.Format("{0} GROUP BY {1}",
+                            query, field);*/
+                        query.Append(" GROUP BY ");
+                        query.Append(field);
                         first = false;
                     }
                     else
                     {
-                        query = string.Format("{0}, {1}",
-                            query, field);
+                        /*query = string.Format("{0}, {1}",
+                            query, field);*/
+                        query.Append(", ");
+                        query.Append(field);
                     }
                 }
             }
 
             if (limitCount >= 0 && limitStart >= 0)
             {
-                query = string.Format("{0} LIMIT {2}, {1}",
-                            query, limitCount, limitStart);
+                /*query = string.Format("{0} LIMIT {2}, {1}",
+                            query, limitCount, limitStart);*/
+                query.AppendFormat(" LIMIT {1}, {0}", limitCount, limitStart);
             }
             else if (limitCount >= 0)
             {
-                query = string.Format("{0} LIMIT {1}",
-                            query, limitCount);
+                /*query = string.Format("{0} LIMIT {1}",
+                            query, limitCount);*/
+                query.Append(" LIMIT ");
+                query.Append(limitCount.ToString());
             }
 
-            return string.Format("{0};", query);
+            /*return string.Format("{0};", query);*/
+            query.Append(";");
+            return query.ToString();
         }
     }
 }

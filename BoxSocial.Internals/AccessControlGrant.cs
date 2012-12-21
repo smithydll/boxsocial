@@ -127,6 +127,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        internal AccessControlGrant(Core core, DataRow grantRow)
+            : base(core)
+        {
+            this.item = null;
+            ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
+
+            loadItemInfo(grantRow);
+        }
 		
 		internal AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
 			: base(core)
@@ -137,7 +145,7 @@ namespace BoxSocial.Internals
             loadItemInfo(grantRow);
 		}
         
-        internal AccessControlGrant(Core core, ItemKey primitive, ItemKey item, long permissionId)
+        internal AccessControlGrant(Core core, ItemKey primitive, ItemKey itemKey, long permissionId)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
@@ -146,8 +154,8 @@ namespace BoxSocial.Internals
             
             query.AddCondition("grant_primitive_id", primitive.Id);
             query.AddCondition("grant_primitive_type_id", primitive.TypeId);
-            query.AddCondition("grant_item_id", item.Id);
-            query.AddCondition("grant_item_type_id", item.TypeId);
+            query.AddCondition("grant_item_id", itemKey.Id);
+            query.AddCondition("grant_item_type_id", itemKey.TypeId);
             query.AddCondition("grant_permission_id", permissionId);
             
             DataTable grantDataTable = core.Db.Query(query);
@@ -177,7 +185,7 @@ namespace BoxSocial.Internals
 
 		
 		// Cannot use the built-in for un-numbered stuffs 
-		public static AccessControlGrant Create(Core core, ItemKey primitive, ItemKey item, long permissionId, AccessControlGrants allow)
+		public static AccessControlGrant Create(Core core, ItemKey primitive, ItemKey itemKey, long permissionId, AccessControlGrants allow)
 		{
             if (core == null)
             {
@@ -188,14 +196,14 @@ namespace BoxSocial.Internals
             
             iQuery.AddField("grant_primitive_id", primitive.Id);
             iQuery.AddField("grant_primitive_type_id", primitive.TypeId);
-            iQuery.AddField("grant_item_id", item.Id);
-            iQuery.AddField("grant_item_type_id", item.TypeId);
+            iQuery.AddField("grant_item_id", itemKey.Id);
+            iQuery.AddField("grant_item_type_id", itemKey.TypeId);
             iQuery.AddField("grant_permission_id", permissionId);
             iQuery.AddField("grant_allow", (sbyte)allow);
             
             core.Db.Query(iQuery);
-			
-			return new AccessControlGrant(core, primitive, item, permissionId);
+
+            return new AccessControlGrant(core, primitive, itemKey, permissionId);
 		}
 		
 		public bool Can(User user)
@@ -242,6 +250,66 @@ namespace BoxSocial.Internals
 
             return grants;
         }
+
+        public static List<AccessControlGrant> GetGrants(Core core, List<ItemKey> itemKeys)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            List<AccessControlGrant> grants = new List<AccessControlGrant>();
+
+            Dictionary<long, ItemKey> itemDictionary = new Dictionary<long, ItemKey>();
+            List<long> itemIds = new List<long>();
+            long itemTypeId = 0;
+
+            foreach (ItemKey itemKey in itemKeys)
+            {
+                if (itemTypeId == itemKey.TypeId || itemTypeId == 0)
+                {
+                    itemIds.Add(itemKey.Id);
+                    itemTypeId = itemKey.TypeId;
+                    itemDictionary.Add(itemKey.Id, itemKey);
+                }
+            }
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
+            sQuery.AddCondition("grant_item_type_id", itemTypeId);
+
+            DataTable grantsTable = core.Db.Query(sQuery);
+
+            foreach (DataRow dr in grantsTable.Rows)
+            {
+                grants.Add(new AccessControlGrant(core, dr));
+            }
+
+            return grants;
+        }
+
+        public static List<AccessControlGrant> GetGrants(Core core, ItemKey itemKey)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            List<AccessControlGrant> grants = new List<AccessControlGrant>();
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            sQuery.AddCondition("grant_item_id", itemKey.Id);
+            sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
+
+            DataTable grantsTable = core.Db.Query(sQuery);
+
+            foreach (DataRow dr in grantsTable.Rows)
+            {
+                grants.Add(new AccessControlGrant(core, dr));
+            }
+
+            return grants;
+        }
 		
 		public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item)
 		{
@@ -265,6 +333,30 @@ namespace BoxSocial.Internals
 			
 			return grants;
 		}
+
+        public static List<AccessControlGrant> GetGrants(Core core, ItemKey itemKey, long permissionId)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            List<AccessControlGrant> grants = new List<AccessControlGrant>();
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            sQuery.AddCondition("grant_item_id", itemKey.Id);
+            sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
+            sQuery.AddCondition("grant_permission_id", permissionId);
+
+            DataTable grantsTable = core.Db.Query(sQuery);
+
+            foreach (DataRow dr in grantsTable.Rows)
+            {
+                grants.Add(new AccessControlGrant(core, dr));
+            }
+
+            return grants;
+        }
 
         public static List<AccessControlGrant> GetGrants(Core core, IPermissibleItem item, long permissionId)
         {

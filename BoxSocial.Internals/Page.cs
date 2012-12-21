@@ -1357,6 +1357,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             switch (permission)

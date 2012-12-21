@@ -53,7 +53,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("EDIT_ITEMS", "Can edit photos", PermissionTypes.CreateAndEdit)]
     [Permission("DELETE_ITEMS", "Can delete photos", PermissionTypes.Delete)]
     [Permission("DOWNLOAD_ORIGINAL", "Can download the original photo. This will include EXIF data which may include personally identifiable information.", PermissionTypes.View)]
-    public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem
+    public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem, ILikeableItem
     {
 
         /// <summary>
@@ -460,7 +460,11 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (this.Access.Can("VIEW_ITEMS"))
                     {
-                        if (HighlightItem != null)
+                        if (Items == 0)
+                        {
+                            return "FALSE";
+                        }
+                        else if (HighlightItem != null)
                         {
                             try
                             {
@@ -723,6 +727,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="galleryRow">Raw data row of blog entry</param>
         protected void loadGalleryIcon(DataRow galleryRow)
         {
+            if (!(galleryRow["gallery_item_parent_path"] is DBNull))
+            {
+                highlightItem = new GalleryItem(core, galleryRow);
+            }
             if (!(galleryRow["gallery_item_uri"] is DBNull))
             {
                 highlightUri = (string)galleryRow["gallery_item_uri"];
@@ -743,7 +751,7 @@ namespace BoxSocial.Applications.Gallery
 
             foreach (DataRow dr in GetGalleryDataRows(core))
             {
-                items.Add(new Gallery(core, owner, dr, false));
+                items.Add(new Gallery(core, owner, dr, true));
             }
 
             return items;
@@ -762,6 +770,8 @@ namespace BoxSocial.Applications.Gallery
             SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
             query.AddJoin(JoinTypes.Left, new DataField(typeof(Gallery), "gallery_highlight_id"), new DataField(typeof(GalleryItem), "gallery_item_id"));
+            /*query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(ContentLicense)));
+            query.AddJoin(JoinTypes.Left, new DataField(typeof(GalleryItem), "gallery_item_license"), new DataField(typeof(ContentLicense), "license_id"));*/
             query.AddCondition("gallery_parent_id", Id);
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
@@ -797,7 +807,8 @@ namespace BoxSocial.Applications.Gallery
 		{
 			List<GalleryItem> items = new List<GalleryItem>();
 
-            foreach (DataRow dr in GetItemDataRows(core, currentPage, perPage))
+            DataRowCollection drc = GetItemDataRows(core, currentPage, perPage);
+            foreach (DataRow dr in drc)
             {
                 items.Add(new GalleryItem(core, owner, dr));
             }
@@ -1177,6 +1188,8 @@ namespace BoxSocial.Applications.Gallery
             List<string> disallowedNames = new List<string>();
             disallowedNames.Add("comments");
             disallowedNames.Add("page");
+            disallowedNames.Add("favourites");
+            disallowedNames.Add("from-posts");
 
             if (disallowedNames.BinarySearch(slug.ToLower()) >= 0)
             {
@@ -1578,7 +1591,16 @@ namespace BoxSocial.Applications.Gallery
                 galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
                 galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
                 galleryVariableCollection.Parse("LARGETILE", galleryGallery.LargeTileUri);
+                galleryVariableCollection.Parse("ID", galleryGallery.Id.ToString());
+                galleryVariableCollection.Parse("TYPE_ID", galleryGallery.ItemKey.TypeId.ToString());
+
                 e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+
+                if (galleryGallery.Info.Likes > 0)
+                {
+                    galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryGallery.Info.Likes));
+                    galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryGallery.Info.Dislikes));
+                }
 
                 long items = galleryGallery.Items;
 
@@ -1592,42 +1614,45 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 16);
-
-            e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
-
             long galleryComments = 0;
-            int i = 0;
-            foreach (GalleryItem galleryItem in galleryItems)
+            if (gallery.Items > 0)
             {
-                VariableCollection galleryVariableCollection = e.Template.CreateChild("photo_list");
+                List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 16);
 
-                galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
-                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(e.Core, e.Page.Owner, galleryItem.ParentPath, galleryItem.Path));
-                galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
-                galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
-                galleryVariableCollection.Parse("INDEX", i.ToString());
-                galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
-				galleryVariableCollection.Parse("TYPE_ID", galleryItem.ItemKey.TypeId.ToString());
+                e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 
-                galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
-                galleryVariableCollection.Parse("LARGETILE", galleryItem.LargeTileUri);
-
-                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
-
-                if (galleryItem.Info.Likes > 0)
+                int i = 0;
+                foreach (GalleryItem galleryItem in galleryItems)
                 {
-                    galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryItem.Info.Likes));
-                    galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryItem.Info.Dislikes));
+                    VariableCollection galleryVariableCollection = e.Template.CreateChild("photo_list");
+
+                    galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
+                    galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(e.Core, e.Page.Owner, galleryItem.ParentPath, galleryItem.Path));
+                    galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                    galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
+                    galleryVariableCollection.Parse("INDEX", i.ToString());
+                    galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
+                    galleryVariableCollection.Parse("TYPE_ID", galleryItem.ItemKey.TypeId.ToString());
+
+                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
+                    galleryVariableCollection.Parse("LARGETILE", galleryItem.LargeTileUri);
+
+                    Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
+
+                    if (galleryItem.Info.Likes > 0)
+                    {
+                        galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryItem.Info.Likes));
+                        galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryItem.Info.Dislikes));
+                    }
+
+                    galleryComments += galleryItem.ItemComments;
+                    i++;
                 }
 
-                galleryComments += galleryItem.ItemComments;
-                i++;
-            }
-
-            if (galleryItems.Count > 0)
-            {
-                e.Template.Parse("S_RATEBAR", "TRUE");
+                if (galleryItems.Count > 0)
+                {
+                    e.Template.Parse("S_RATEBAR", "TRUE");
+                }
             }
 
             if (gallery.Id > 0)
@@ -1770,9 +1795,17 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (HighlightId > 0)
                     {
-                        highlightItem = new GalleryItem(core, Owner, HighlightId);
+                        try
+                        {
+                            highlightItem = new GalleryItem(core, Owner, HighlightId);
+                        }
+                        catch (InvalidGalleryException)
+                        {
+                            highlightItem = null;
+                        }
                     }
-                    else
+                    
+                    if (highlightItem == null)
                     {
                         if (Items > 0)
                         {
@@ -1780,11 +1813,18 @@ namespace BoxSocial.Applications.Gallery
                             if (items.Count > 0)
                             {
                                 highlightItem = items[0];
+
+                                UpdateQuery uQuery = new UpdateQuery(typeof(Gallery));
+                                uQuery.AddCondition("gallery_id", Id);
+                                uQuery.AddField("gallery_highlight_id", highlightItem.Id);
+
+                                db.Query(uQuery);
+
                                 return highlightItem;
                             }
                         }
                         List<Gallery> galleries = GetGalleries();
-                        for (int i =0; i <galleries.Count; i++)
+                        for (int i = 0; i < galleries.Count; i++)
                         {
                             if (galleries[i].Access.Can("VIEW_ITEMS"))
                             {
@@ -1832,6 +1872,21 @@ namespace BoxSocial.Applications.Gallery
                 else
                 {
                     return new Gallery(core, ParentId);
+                }
+            }
+        }
+
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                if (parentId == 0)
+                {
+                    return Settings.ItemKey;
+                }
+                else
+                {
+                    return new ItemKey(parentId, typeof(Gallery));
                 }
             }
         }
@@ -1928,6 +1983,22 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return 10;
+            }
+        }
+
+        public long Likes
+        {
+            get
+            {
+                return Info.Likes;
+            }
+        }
+
+        public long Dislikes
+        {
+            get
+            {
+                return Info.Dislikes;
             }
         }
     }

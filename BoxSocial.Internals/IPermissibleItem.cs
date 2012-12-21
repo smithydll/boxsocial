@@ -83,6 +83,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        ItemKey PermissiveParentKey
+        {
+            get;
+        }
+
         string DisplayTitle
         {
             get;

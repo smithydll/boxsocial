@@ -295,7 +295,7 @@ namespace BoxSocial.Musician
         }
     }
 
-    public class InvalidMusicGenreException : Exception
+    public class InvalidMusicGenreException : InvalidItemException
     {
     }
 }

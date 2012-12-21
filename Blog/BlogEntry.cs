@@ -57,7 +57,7 @@ namespace BoxSocial.Applications.Blog
     [Permission("VIEW", "Can view this blog entry", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this blog entry", PermissionTypes.Interact)]
     [Permission("RATE", "Can rate this blog entry", PermissionTypes.Interact)]
-    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem
+    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Blog
         private byte status;
         [DataField("post_license")]
         private byte license;
-        [DataField("post_category")]
+        [DataField("post_category", DataFieldKeys.Index)]
         private short category;
         [DataField("post_guid", 255)]
         private string guid;
@@ -232,7 +232,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return comments;
+                return Info.Comments;
             }
         }
 
@@ -503,8 +503,16 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                UnixTime tz = new UnixTime(core, ((User)owner).Info.TimeZoneCode);
+                UnixTime tz = new UnixTime(core, ((User)owner).UserInfo.TimeZoneCode);
                 return core.Uri.BuildBlogPostUri((User)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+            }
+        }
+
+        public string DeleteUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("blog", "write", "delete", Id, true);
             }
         }
 
@@ -540,6 +548,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return Blog;
+            }
+        }
+
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, typeof(Blog));
             }
         }
 
@@ -595,12 +611,28 @@ namespace BoxSocial.Applications.Blog
                     return permission;
             }
         }
+
+        public long Likes
+        {
+            get
+            {
+                return Info.Likes;
+            }
+        }
+
+        public long Dislikes
+        {
+            get
+            {
+                return Info.Dislikes;
+            }
+        }
     }
 
     /// <summary>
     /// The exception that is thrown when a blog entry has not been found.
     /// </summary>
-    public class InvalidBlogEntryException : Exception
+    public class InvalidBlogEntryException : InvalidItemException
     {
     }
 }

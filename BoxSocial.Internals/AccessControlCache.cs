@@ -114,6 +114,7 @@ namespace BoxSocial.Internals
         private Core core;
         private static Object permissionCacheLock = new Object();
         private static Dictionary<AccessControlPermissionKey, AccessControlPermission> permissionCache = null;
+        private static Object grantsCacheLock = new Object();
         private static Dictionary<AccessControlGrantKey, List<AccessControlGrant>> grantsCache = null;
 
         public AccessControlCache(Core core)
@@ -127,7 +128,10 @@ namespace BoxSocial.Internals
                     permissionCache = new Dictionary<AccessControlPermissionKey, AccessControlPermission>();
                 }
             }
-            grantsCache = new Dictionary<AccessControlGrantKey, List<AccessControlGrant>>();
+            lock (grantsCacheLock)
+            {
+                grantsCache = new Dictionary<AccessControlGrantKey, List<AccessControlGrant>>();
+            }
         }
 
         public AccessControlPermission this[long typeId, string permission]
@@ -138,14 +142,27 @@ namespace BoxSocial.Internals
 
                 lock (permissionCacheLock)
                 {
-                    if (permissionCache.ContainsKey(key))
+                    AccessControlPermission acp = null;
+                    if (permissionCache.TryGetValue(key, out acp))
+                    {
+                        return acp;
+                    }
+
+                    /*if (permissionCache.ContainsKey(key))
                     {
                         return permissionCache[key];
-                    }
+                    }*/
                 }
 
                 AccessControlPermission p = new AccessControlPermission(core, typeId, permission);
-                permissionCache.Add(key, p);
+
+                lock (permissionCacheLock)
+                {
+                    if (!permissionCache.ContainsKey(key))
+                    {
+                        permissionCache.Add(key, p);
+                    }
+                }
 
                 return p;
             }
@@ -167,34 +184,61 @@ namespace BoxSocial.Internals
             foreach (AccessControlGrant grant in grants)
             {
                 AccessControlGrantKey key = keys[grant.ItemKey.Id];
-                if (!grantsCache.ContainsKey(key))
+
+                lock (grantsCacheLock)
                 {
-                    grantsCache.Add(key, new List<AccessControlGrant>());
+                    if (!grantsCache.ContainsKey(key))
+                    {
+                        grantsCache.Add(key, new List<AccessControlGrant>());
+                    }
+                    grantsCache[key].Add(grant);
                 }
-                grantsCache[key].Add(grant);
             }
 
             foreach (IPermissibleItem item in items)
             {
                 AccessControlGrantKey key = keys[item.ItemKey.Id];
-                if (!grantsCache.ContainsKey(key))
+                lock (grantsCacheLock)
                 {
-                    grantsCache.Add(key, new List<AccessControlGrant>());
+                    if (!grantsCache.ContainsKey(key))
+                    {
+                        grantsCache.Add(key, new List<AccessControlGrant>());
+                    }
                 }
             }
         }
 
         public List<AccessControlGrant> GetGrants(IPermissibleItem item)
         {
-            AccessControlGrantKey key = new AccessControlGrantKey(item.ItemKey.TypeId, item.Id);
+            return GetGrants(item.ItemKey);
+        }
 
-            if (grantsCache.ContainsKey(key))
+        internal List<AccessControlGrant> GetGrants(ItemKey itemKey)
+        {
+            AccessControlGrantKey key = new AccessControlGrantKey(itemKey.TypeId, itemKey.Id);
+
+            lock (grantsCacheLock)
             {
-                return grantsCache[key];
+                List<AccessControlGrant> acgs = null;
+                if (grantsCache.TryGetValue(key, out acgs))
+                {
+                    return acgs;
+                }
+
+                /*if (grantsCache.ContainsKey(key))
+                {
+                    return grantsCache[key];
+                }*/
             }
 
-            List<AccessControlGrant> g = AccessControlGrant.GetGrants(core, item);
-            grantsCache.Add(key, g);
+            List<AccessControlGrant> g = AccessControlGrant.GetGrants(core, itemKey);
+            lock (grantsCacheLock)
+            {
+                if (!grantsCache.ContainsKey(key))
+                {
+                    grantsCache.Add(key, g);
+                }
+            }
 
             return g;
         }

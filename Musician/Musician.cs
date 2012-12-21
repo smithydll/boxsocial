@@ -674,6 +674,7 @@ namespace BoxSocial.Musician
             disallowedNames.Add("feature");
             disallowedNames.Add("featured");
             disallowedNames.Add("favourites");
+            disallowedNames.Add("likes");
             disallowedNames.Add("dev");
             disallowedNames.Add("dcma");
             disallowedNames.Add("coppa");
@@ -756,6 +757,10 @@ namespace BoxSocial.Musician
             disallowedNames.Add("genres");
             disallowedNames.Add("artist");
             disallowedNames.Add("artists");
+            disallowedNames.Add("cart");
+            disallowedNames.Add("api");
+            disallowedNames.Add("feed");
+            disallowedNames.Add("rss");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(musicianName.ToLower()) >= 0)
@@ -997,7 +1002,7 @@ namespace BoxSocial.Musician
             throw new NotImplementedException();
         }
 
-        public override bool IsCommentOwner(User member)
+        public override bool IsItemOwner(User member)
         {
             throw new NotImplementedException();
         }

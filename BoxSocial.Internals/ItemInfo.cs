@@ -41,23 +41,40 @@ namespace BoxSocial.Internals
         private long dislikes;
         [DataField("info_ratings")]
         private long ratings;
+        [DataField("info_rating")]
+        private float rating;
         [DataField("info_subscriptions")]
         private long subscriptions;
         [DataField("info_tags")]
         private long tags;
-        [DataField("shares")]
-        private long shares;
+        [DataField("info_shared_times")]
+        private long sharedTimes;
+        [DataField("info_viewed_times")]
+        private long viewedTimes;
         [DataField("info_item_time_ut")]
         private long timeRaw;
 
+        private NumberedItem item;
+
         public ItemInfo(Core core, ItemKey itemKey)
-            : this(core, itemKey.Id, itemKey.TypeId)
+            : this(core, null, itemKey.Id, itemKey.TypeId)
         {
         }
 
         public ItemInfo(Core core, long itemId, long itemTypeId)
+            : this(core, null, itemId, itemTypeId)
+        {
+        }
+
+        public ItemInfo(Core core, NumberedItem item)
+            : this(core, item, item.ItemKey.Id, item.ItemKey.TypeId)
+        {
+        }
+
+        public ItemInfo(Core core, NumberedItem item, long itemId, long itemTypeId)
             : base(core)
         {
+            this.item = item;
             ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
 
             SelectQuery query = ItemInfo.GetSelectQueryStub(typeof(ItemInfo));
@@ -104,6 +121,16 @@ namespace BoxSocial.Internals
 
         public static ItemInfo Create(Core core, ItemKey itemKey)
         {
+            return Create(core, null, itemKey);
+        }
+
+        public static ItemInfo Create(Core core, NumberedItem item)
+        {
+            return Create(core, item, item.ItemKey);
+        }
+
+        private static ItemInfo Create(Core core, NumberedItem item, ItemKey itemKey)
+        {
             if (core == null)
             {
                 throw new NullCoreException();
@@ -121,7 +148,7 @@ namespace BoxSocial.Internals
             
             core.Db.Query(iQuery);
 
-            ItemInfo ii = new ItemInfo(core, itemKey.Id, itemKey.TypeId);
+            ItemInfo ii = new ItemInfo(core, item, itemKey.Id, itemKey.TypeId);
 
             return ii;
         }
@@ -174,6 +201,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public float Rating
+        {
+            get
+            {
+                return rating;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { rating }, value);
+            }
+        }
+
         public long Subscriptions
         {
             get
@@ -186,15 +225,27 @@ namespace BoxSocial.Internals
             }
         }
 
-        public long Shares
+        public long SharedTimes
         {
             get
             {
-                return shares;
+                return sharedTimes;
             }
             internal set
             {
-                SetPropertyByRef(new { shares }, value);
+                SetPropertyByRef(new { sharedTimes }, value);
+            }
+        }
+
+        public long ViewedTimes
+        {
+            get
+            {
+                return viewedTimes;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { viewedTimes }, value);
             }
         }
 
@@ -298,29 +349,79 @@ namespace BoxSocial.Internals
             core.Db.Query(uQuery);
         }
 
-        internal void IncrementShares()
+        internal void IncrementSharedTimes()
         {
-            AdjustShares(1);
+            AdjustSharedTimes(1);
         }
 
-        internal void DecrementShares()
+        internal void DecrementSharedTimes()
         {
-            AdjustShares(-1);
+            AdjustSharedTimes(-1);
         }
 
-        internal void AdjustShares(int by)
+        internal void AdjustSharedTimes(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
             uQuery.AddCondition("info_item_id", itemKey.Id);
             uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
-            uQuery.AddField("info_shares", new QueryOperation("info_shares", QueryOperations.Addition, by));
+            uQuery.AddField("info_shared_times", new QueryOperation("info_shared_times", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }
 
+        internal void IncrementViewedTimes()
+        {
+            AdjustViewedTimes(1);
+        }
+
+        internal void DecrementViewedTimes()
+        {
+            AdjustViewedTimes(-1);
+        }
+
+        internal void AdjustViewedTimes(int by)
+        {
+            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+            uQuery.AddCondition("info_item_id", itemKey.Id);
+            uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
+            uQuery.AddField("info_viewed_times", new QueryOperation("info_viewed_times", QueryOperations.Addition, by));
+
+            core.Db.Query(uQuery);
+        }
+
+        private ItemKey ItemKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
+        private NumberedItem Item
+        {
+            get
+            {
+                if (item == null || item.ItemKey != ItemKey)
+                {
+                    item = NumberedItem.Reflect(core, ItemKey);
+                }
+                return item;
+            }
+        }
+
         public override string Uri
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                if (Item != null)
+                {
+                    return Item.Uri;
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
         }
     }
 

@@ -106,39 +106,45 @@ namespace BoxSocial.Internals
             Dictionary<long, List<long>> idList = new Dictionary<long, List<long>>();
             foreach (PrimitiveId id in primitiveIds)
             {
-                if (!primitivesCached.ContainsKey(id))
+                if (id.Id > 0)
                 {
-                    if (!idList.ContainsKey(id.TypeId))
+                    if (!primitivesCached.ContainsKey(id))
                     {
-                        idList.Add(id.TypeId, new List<long>());
+                        if (!idList.ContainsKey(id.TypeId))
+                        {
+                            idList.Add(id.TypeId, new List<long>());
+                        }
+                        idList[id.TypeId].Add(id.Id);
                     }
-                    idList[id.TypeId].Add(id.Id);
                 }
             }
 
             foreach (long typeId in idList.Keys)
             {
-                Type t = core.GetPrimitiveType(typeId);
-                if (t != null)
+                if (idList[typeId].Count > 0)
                 {
-                    string keysTable = Primitive.GetTable(t);
-					PrimitiveAttribute attr = core.GetPrimitiveAttributes(typeId);
-					if (attr == null)
-					{
-						continue;
-					}
-                    string idField = attr.IdField;
-
-                    SelectQuery query = Primitive.GetSelectQueryStub(t);
-                    query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[typeId]);
-
-                    DataTable primitivesTable = db.Query(query);
-
-                    foreach (DataRow primitiveRow in primitivesTable.Rows)
+                    Type t = core.GetPrimitiveType(typeId);
+                    if (t != null)
                     {
-                        Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(typeId).DefaultLoadOptions }) as Primitive;
-                        primitivesCached.Add(new PrimitiveId(newPrimitive.Id, typeId), newPrimitive);
-                        primitivesKeysCached.Add(new PrimitiveKey(newPrimitive.Key, typeId), new PrimitiveId(newPrimitive.Id, typeId));
+                        string keysTable = Primitive.GetTable(t);
+                        PrimitiveAttribute attr = core.GetPrimitiveAttributes(typeId);
+                        if (attr == null)
+                        {
+                            continue;
+                        }
+                        string idField = attr.IdField;
+
+                        SelectQuery query = Primitive.GetSelectQueryStub(t);
+                        query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[typeId]);
+
+                        DataTable primitivesTable = db.Query(query);
+
+                        foreach (DataRow primitiveRow in primitivesTable.Rows)
+                        {
+                            Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(typeId).DefaultLoadOptions }) as Primitive;
+                            primitivesCached.Add(new PrimitiveId(newPrimitive.Id, typeId), newPrimitive);
+                            primitivesKeysCached.Add(new PrimitiveKey(newPrimitive.Key, typeId), new PrimitiveId(newPrimitive.Id, typeId));
+                        }
                     }
                 }
             }
@@ -229,9 +235,10 @@ namespace BoxSocial.Internals
         public long LoadUserProfile(string username)
         {
             PrimitiveKey key = new PrimitiveKey(username, ItemKey.GetTypeId(typeof(User)));
-            if (primitivesKeysCached.ContainsKey(key))
+            PrimitiveId pid = null;
+            if (primitivesKeysCached.TryGetValue(key, out pid))
             {
-                return primitivesKeysCached[key].Id;
+                return pid.Id;
             }
 
             User newUser = new User(core, username, UserLoadOptions.All);

@@ -81,7 +81,7 @@ namespace BoxSocial.Internals
             }
             if (core.PagePath.Trim(new char[] { '/' }) == "")
             {
-                core.PagePath = User.Info.ProfileHomepage;
+                core.PagePath = User.UserInfo.ProfileHomepage;
             }
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, User));
@@ -91,14 +91,14 @@ namespace BoxSocial.Internals
 
             PageTitle = User.DisplayName;
 
-            if (!string.IsNullOrEmpty(User.Info.AnalyticsCode))
+            if (!string.IsNullOrEmpty(User.UserInfo.AnalyticsCode))
             {
-                template.Parse("ANALYTICS_CODE", User.Info.AnalyticsCode);
+                template.Parse("ANALYTICS_CODE", User.UserInfo.AnalyticsCode);
             }
 
             if (loggedInMember != null)
             {
-                if (loggedInMember.Info.ShowCustomStyles)
+                if (loggedInMember.UserInfo.ShowCustomStyles)
                 {
                     template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
                 }

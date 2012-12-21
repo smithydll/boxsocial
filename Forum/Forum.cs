@@ -1910,6 +1910,21 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                if (parentId == 0)
+                {
+                    return Settings.ItemKey;
+                }
+                else
+                {
+                    return new ItemKey(parentId, typeof(Forum));
+                }
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

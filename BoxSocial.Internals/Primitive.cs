@@ -218,7 +218,7 @@ namespace BoxSocial.Internals
 
         public abstract bool CanModerateComments(User member);
 
-        public abstract bool IsCommentOwner(User member);
+        public abstract bool IsItemOwner(User member);
 
         public abstract ushort GetAccessLevel(User viewer);
 
@@ -267,6 +267,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ItemKey;
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -289,6 +297,21 @@ namespace BoxSocial.Internals
         public abstract string ParentPermissionKey(Type parentType, string permission);
 
         public abstract string StoreFile(MemoryStream file);
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType().IsSubclassOf(typeof(Primitive)) || obj.GetType() == typeof(Primitive))
+            {
+                Primitive p = (Primitive)obj;
+
+                if (TypeId != p.TypeId)
+                    return false;
+                if (Id != p.Id)
+                    return false;
+                return true;
+            }
+            return false;
+        }
     }
 
     /// <summary>

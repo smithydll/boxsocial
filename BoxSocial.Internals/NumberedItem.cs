@@ -130,11 +130,11 @@ namespace BoxSocial.Internals
                 {
                     try
                     {
-                        info = new ItemInfo(core, ItemKey.Id, ItemKey.TypeId);
+                        info = new ItemInfo(core, this);
                     }
                     catch (InvalidIteminfoException)
                     {
-                        info = ItemInfo.Create(core, ItemKey);
+                        info = ItemInfo.Create(core, this);
                     }
                 }
                 return info;

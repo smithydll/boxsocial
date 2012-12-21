@@ -186,7 +186,7 @@ namespace BoxSocial.Applications.Calendar
         }
     }
 
-    public class InvalidEventInviteException : Exception
+    public class InvalidEventInviteException : InvalidItemException
     {
     }
 }

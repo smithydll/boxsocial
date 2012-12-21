@@ -541,6 +541,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, typeof(User));
+            }
+        }
+
         public bool GetDefaultCan(string permission)
         {
             return false;

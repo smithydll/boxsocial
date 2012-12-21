@@ -706,7 +706,7 @@ namespace BoxSocial.Networks
             return false;
         }
 
-        public override bool IsCommentOwner(User member)
+        public override bool IsItemOwner(User member)
         {
             return false;
         }

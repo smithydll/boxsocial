@@ -298,6 +298,14 @@ namespace BoxSocial.Applications.News
             }
         }
 
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public string DisplayTitle
         {
             get

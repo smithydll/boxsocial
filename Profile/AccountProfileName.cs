@@ -123,9 +123,9 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            LoggedInMember.Info.DisplayName = core.Http.Form["display"];
+            LoggedInMember.UserInfo.DisplayName = core.Http.Form["display"];
 
-            LoggedInMember.Info.Update();
+            LoggedInMember.UserInfo.Update();
 
             LoggedInMember.Profile.Title = core.Http.Form["title"];
             LoggedInMember.Profile.FirstName = core.Http.Form["firstname"];

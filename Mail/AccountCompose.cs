@@ -72,8 +72,10 @@ namespace BoxSocial.Applications.Mail
             TextBox subjectTextBox = new TextBox("subject");
             TextBox messageTextBox = new TextBox("message");
             messageTextBox.IsFormatted = true;
-            
 
+            template.Parse("S_TO", toUserSelectBox);
+            //template.Parse("S_SUBJECT", subjectTextBox);
+            //template.Parse("S_MESSAGE", messageTextBox);
         }
 
         void AccountCompose_Save(object sender, EventArgs e)

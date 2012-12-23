@@ -102,6 +102,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        internal IPermissibleItem Item
+        {
+            get
+            {
+                if (item == null)
+                {
+                    item = (IPermissibleItem)NumberedItem.Reflect(core, ItemKey);
+                }
+                return item;
+            }
+        }
+
         private List<AccessControlGrant> Grants
         {
             get
@@ -178,7 +190,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    acp = core.AcessControlCache[item.ItemKey.TypeId, permission];
+                    acp = core.AcessControlCache[ItemKey.TypeId, permission];
                 }
                 catch (InvalidAccessControlPermissionException)
                 {
@@ -229,10 +241,10 @@ namespace BoxSocial.Internals
                      * don't know if the item has a separately defined VIEW
                      * permission or not.
                      */
-                    if (item.ItemKey != item.PermissiveParentKey)
+                    if (ItemKey != Item.PermissiveParentKey)
                     {
-                        Access parentAccess = new Access(core, item.PermissiveParentKey, leaf);
-                        return parentAccess.Can(permission, item, true);
+                        Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
+                        return parentAccess.Can(permission, Item, true);
                         //return item.PermissiveParent.Access.Can(permission, item, true);
                     }
                     else
@@ -289,7 +301,7 @@ namespace BoxSocial.Internals
                                 }
                             }
                         }
-                        if (item.IsItemGroupMember(viewer, grant.PrimitiveKey))
+                        if (Item.IsItemGroupMember(viewer, grant.PrimitiveKey))
                         {
                             switch (grant.Allow)
                             {
@@ -348,7 +360,7 @@ namespace BoxSocial.Internals
                         return CachePermission(permission, leaf.GetDefaultCan(permission));
                     }
                 }
-                else if (item.ItemKey.Equals(owner.ItemKey))
+                else if (ItemKey.Equals(owner.ItemKey))
                 {
                     if (viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
                     {
@@ -361,21 +373,21 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (item is INestableItem)
+                    if ((typeof(INestableItem).IsAssignableFrom(ItemKey.Type)))
                     {
-                        INestableItem ni = (INestableItem)item;
+                        INestableItem ni = (INestableItem)Item;
                         ParentTree parents = ni.GetParents();
 
                         if (parents == null || parents.Nodes.Count == 0)
                         {
-                            if (item.PermissiveParentKey == null)
+                            if (Item.PermissiveParentKey == null)
                             {
                                 return CachePermission(permission, Owner.Access.Can(permission, leaf, true));
                             }
                             else
                             {
-                                Access parentAccess = new Access(core, item.PermissiveParentKey, leaf);
-                                return CachePermission(permission, parentAccess.Can(item.ParentPermissionKey(item.PermissiveParentKey.Type, permission), leaf, true));
+                                Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
+                                return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true));
                                 //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParentKey.Type, permission), leaf, true));
                             }
                         }
@@ -388,14 +400,14 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        if (item.PermissiveParentKey == null)
+                        if (Item.PermissiveParentKey == null)
                         {
                             return CachePermission(permission, Owner.Access.Can(permission, leaf, true));
                         }
                         else
                         {
-                            Access parentAccess = new Access(core, item.PermissiveParentKey, leaf);
-                            return CachePermission(permission, parentAccess.Can(item.ParentPermissionKey(item.PermissiveParentKey.Type, permission), leaf, true));
+                            Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
+                            return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true));
                             //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParent.GetType(), permission), leaf, true));
                         }
                     }
@@ -436,7 +448,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            SelectQuery query = AccessControlPermission.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
             query.AddSort(SortOrder.Ascending, "permission_type");
@@ -457,7 +469,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            SelectQuery query = AccessControlPermission.GetSelectQueryStub(typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", itemTypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
             query.AddSort(SortOrder.Ascending, "permission_type");
@@ -491,7 +503,7 @@ namespace BoxSocial.Internals
 
             foreach (AccessControlPermission permission in permissions.Values)
             {
-                AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, Owner.ItemKey, ItemKey, permission.PermissionId, AccessControlGrants.Allow);
             }
         }
 
@@ -501,7 +513,7 @@ namespace BoxSocial.Internals
 
             foreach (AccessControlPermission permission in permissions.Values)
             {
-                AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, grantee, ItemKey, permission.PermissionId, AccessControlGrants.Allow);
             }
         }
 
@@ -512,7 +524,7 @@ namespace BoxSocial.Internals
             foreach (string permissionName in permissionNames)
             {
                 AccessControlPermission permission = permissions[permissionName];
-                AccessControlGrant.Create(core, grantee, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+                AccessControlGrant.Create(core, grantee, ItemKey, permission.PermissionId, AccessControlGrants.Allow);
             }
         }
     }

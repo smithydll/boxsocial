@@ -64,6 +64,8 @@ namespace BoxSocial.Applications.Calendar
         protected ushort category;
         [DataField("event_location", 127)]
         protected string location;
+        [DataField("event_simple_permissions")]
+        private bool simplePermissions;
         #endregion
 
         protected Access access;
@@ -789,6 +791,18 @@ namespace BoxSocial.Applications.Calendar
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

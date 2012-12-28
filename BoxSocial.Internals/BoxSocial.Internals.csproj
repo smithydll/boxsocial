@@ -120,6 +120,7 @@
     <Compile Include="EditPermissionAttribute.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Feed.cs" />
+    <Compile Include="FriendGroup.cs" />
     <Compile Include="Functions.cs" />
     <Compile Include="HookEventArgs.cs" />
     <Compile Include="IActionableItem.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="PerformanceMeter.cs" />
     <Compile Include="PermissionCache.cs" />
     <Compile Include="PermissionCacheParentItem.cs" />
+    <Compile Include="PermissionGroupSelectBox.cs" />
     <Compile Include="PermissionsList.cs" />
     <Compile Include="PPage.cs">
       <SubType>ASPXCodeBehind</SubType>

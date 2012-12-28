@@ -39,6 +39,8 @@ namespace BoxSocial.Internals
         private ItemKey ownerKey;
         [DataField("application_id")]
         private long applicationId;
+        [DataField("app_simple_permissions")]
+        private bool simplePermissions;
 
         private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
@@ -78,6 +80,18 @@ namespace BoxSocial.Internals
                 }
 
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

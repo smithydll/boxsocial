@@ -45,6 +45,8 @@ namespace BoxSocial.Applications.News
         private string newsTitle;
         [DataField("news_items_per_page")]
         private int newsItemsPerPage;
+        [DataField("news_simple_permissions")]
+        private bool simplePermissions;
 
 		private Primitive owner;
         private Access newsAccess;
@@ -257,6 +259,18 @@ namespace BoxSocial.Applications.News
                     }
                     return newsAccess;
                 }
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

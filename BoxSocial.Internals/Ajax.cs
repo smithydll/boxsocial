@@ -219,6 +219,36 @@ namespace BoxSocial.Internals
 
             core.Http.End();
         }
+
+        public void SendPermissionGroupDictionary(string ajaxCode, Dictionary<ItemKey, string[]> arrayItems)
+        {
+            XmlSerializer xs;
+            StringWriter stw;
+
+            AjaxPermissionGroupDictionary am = new AjaxPermissionGroupDictionary();
+            am.ResponseCode = ajaxCode;
+
+            List<AjaxPermissionGroupDictionaryItem> ajaxArrayItems = new List<AjaxPermissionGroupDictionaryItem>();
+
+            foreach (ItemKey ik in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new AjaxPermissionGroupDictionaryItem(ik, arrayItems[ik][0], arrayItems[ik][1]));
+            }
+
+            am.ResponseDictionary = ajaxArrayItems.ToArray();
+
+            xs = new XmlSerializer(typeof(AjaxPermissionGroupDictionary));
+            stw = new StringWriter();
+
+            core.Http.WriteXml(xs, am);
+
+            if (core.Db != null)
+            {
+                core.Db.CloseConnection();
+            }
+
+            core.Http.End();
+        }
     }
 
     [XmlRoot("ajax")]
@@ -337,6 +367,45 @@ namespace BoxSocial.Internals
         public AjaxUserDictionaryItem(long id, string value, string tile)
         {
             this.Id = id;
+            this.Value = value;
+            this.Tile = tile;
+        }
+    }
+
+    [XmlRoot("ajax")]
+    public class AjaxPermissionGroupDictionary
+    {
+        [XmlElement("type")]
+        public string AjaxType = "PermissionGroupDictionary";
+
+        [XmlElement("code")]
+        public string ResponseCode;
+
+        [XmlArray("array")]
+        [XmlArrayItem("item")]
+        public AjaxPermissionGroupDictionaryItem[] ResponseDictionary;
+    }
+
+    public class AjaxPermissionGroupDictionaryItem
+    {
+        [XmlElement("id")]
+        public long Id;
+        [XmlElement("type-id")]
+        public long TypeId;
+        [XmlElement("value")]
+        public string Value;
+        [XmlElement("tile")]
+        public string Tile;
+
+        public AjaxPermissionGroupDictionaryItem()
+        {
+
+        }
+
+        public AjaxPermissionGroupDictionaryItem(ItemKey ik, string value, string tile)
+        {
+            this.Id = ik.Id;
+            this.TypeId = ik.TypeId;
             this.Value = value;
             this.Tile = tile;
         }

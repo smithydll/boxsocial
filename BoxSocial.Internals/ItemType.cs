@@ -36,6 +36,8 @@ namespace BoxSocial.Internals
 		string typeNamespace;
 		[DataField("type_application_id")]
 		long applicationId;
+        [DataField("type_primitive")]
+        private bool typeInheritsPrimitive;
         [DataField("type_likeable")]
         private bool typeImplementsILikeable;
         [DataField("type_commentable")]
@@ -72,6 +74,14 @@ namespace BoxSocial.Internals
 				return applicationId;
 			}
 		}
+
+        public bool IsPrimitive
+        {
+            get
+            {
+                return typeInheritsPrimitive;
+            }
+        }
 
         public bool Likeable
         {
@@ -187,7 +197,8 @@ namespace BoxSocial.Internals
                                       new FieldValuePair("type_rateable", (typeof(IRateableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_subscribeable", (typeof(ISubscribeableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_viewable", (typeof(IViewableItem).IsAssignableFrom(type))),
-                                      new FieldValuePair("type_shareable", (typeof(IShareableItem).IsAssignableFrom(type))));
+                                      new FieldValuePair("type_shareable", (typeof(IShareableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_primitive", type.IsSubclassOf(typeof(Primitive))));
 			
 			return it;
 		}

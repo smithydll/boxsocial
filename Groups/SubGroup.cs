@@ -69,6 +69,8 @@ namespace BoxSocial.Groups
         private long leaderCount;
         [DataField("sub_group_abstract", MYSQL_TEXT)]
         private string description;
+        [DataField("sub_group_simple_permissions")]
+        private bool simplePermissions;
 
         private string displayNameOwnership = null;
         private UserGroup parent;
@@ -373,6 +375,18 @@ namespace BoxSocial.Groups
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get { throw new NotImplementedException(); }
@@ -388,6 +402,34 @@ namespace BoxSocial.Groups
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
             return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<SubGroupMember> members = GetMembers(1, 10);
+
+            List<User> users = new List<User>();
+
+            foreach (SubGroupMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<SubGroupMember> members = GetMembers(1, 10, namePart);
+
+            List<User> users = new List<User>();
+
+            foreach (SubGroupMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
         }
 
         public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
@@ -622,7 +664,7 @@ namespace BoxSocial.Groups
             query.AddCondition("sub_group_member_approved", true);
             if (!string.IsNullOrEmpty(filter))
             {
-                query.AddCondition("user_keys.user_name_first", filter);
+                query.AddCondition(new DataField("user_keys", "user_name_first"), filter[0]);
             }
             query.AddSort(SortOrder.Ascending, "sub_group_member_date_ut");
             query.LimitStart = (page - 1) * perPage;

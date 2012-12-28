@@ -108,6 +108,17 @@ namespace BoxSocial.FrontEnd
             }
 
             template.Parse("ITEM_TITLE", pi.DisplayTitle);
+
+            try
+            {
+                if (!string.IsNullOrEmpty(pi.Uri))
+                {
+                    template.Parse("U_ITEM", pi.Uri);
+                }
+            }
+            catch (NotImplementedException)
+            {
+            }
             
             acl.ParseACL(template, pi.Owner, "S_PERMISSIONS");
             

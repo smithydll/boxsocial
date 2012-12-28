@@ -81,6 +81,8 @@ namespace BoxSocial.Applications.Forum
         private int forumLevel;
         [DataField("forum_parents", MYSQL_TEXT)]
         private string parents;
+        [DataField("forum_simple_permissions")]
+        private bool simplePermissions;
 
         private ForumSettings settings;
         private Primitive owner;
@@ -218,7 +220,7 @@ namespace BoxSocial.Applications.Forum
             }
             set
             {
-                SetProperty("forumOrder", value);
+                SetPropertyByRef(new { forumOrder }, value);
             }
         }
 		
@@ -228,6 +230,10 @@ namespace BoxSocial.Applications.Forum
 			{
 				return forumLevel;
 			}
+            internal set
+            {
+                SetPropertyByRef(new { forumLevel }, value);
+            }
 		}
 
         public long ParentTypeId
@@ -246,7 +252,7 @@ namespace BoxSocial.Applications.Forum
             }
             set
             {
-                SetProperty("parentId", value);
+                SetPropertyByRef(new { parentId }, value);
 
                 Forum parent;
                 if (parentId > 0)
@@ -268,9 +274,12 @@ namespace BoxSocial.Applications.Forum
 
                 parentTree = new ParentTree();
 
-                foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                if (parent.Parents != null)
                 {
-                    parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                    foreach (ParentTreeNode ptn in parent.Parents.Nodes)
+                    {
+                        parentTree.Nodes.Add(new ParentTreeNode(ptn.ParentTitle, ptn.ParentId));
+                    }
                 }
 
                 if (parent.Id > 0)
@@ -278,7 +287,7 @@ namespace BoxSocial.Applications.Forum
                     parentTree.Nodes.Add(new ParentTreeNode(parent.Title, parent.Id));
                 }
 
-                XmlSerializer xs = new XmlSerializer(typeof(ParentTreeNode));
+                XmlSerializer xs = new XmlSerializer(typeof(ParentTree));
                 StringBuilder sb = new StringBuilder();
                 StringWriter stw = new StringWriter(sb);
 
@@ -306,6 +315,18 @@ namespace BoxSocial.Applications.Forum
 		{
 			return Parents;
 		}
+
+        internal string ParentsRaw
+        {
+            get
+            {
+                return parents;
+            }
+            set
+            {
+                SetPropertyByRef(new { parents }, value);
+            }
+        }
 
         public ParentTree Parents
         {
@@ -978,6 +999,7 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_order", ConditionEquality.GreaterThan, parent.Order);
 			query.AddCondition("forum_item_id", parent.Owner.Id);
             query.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+            query.AddCondition("forum_parent_id", parent.Id);
             query.AddSort(SortOrder.Descending, "forum_order");
             query.LimitCount = 1;
 
@@ -1048,15 +1070,20 @@ namespace BoxSocial.Applications.Forum
             Forum forum = new Forum(core, forumId);
 
             /* LOAD THE DEFAULT ITEM PERMISSIONS */
-            /*Access.CreateAllGrantsForOwner(core, forum);
+            //Access.CreateAllGrantsForOwner(core, forum);
 
             if (parent.Owner is UserGroup)
             {
-                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "VIEW");
-                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "VIEW_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "REPLY_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember))), "CREATE_TOPICS");
-            }*/
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "VIEW");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "VIEW_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "LIST_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "REPLY_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "CREATE_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "REPORT_POSTS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOperatorsGroupKey, "CREATE_STICKY");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOfficersGroupKey, "CREATE_STICKY");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOperatorsGroupKey, "CREATE_ANNOUNCEMENT");
+            }
 
             return forum;
         }
@@ -1070,6 +1097,8 @@ namespace BoxSocial.Applications.Forum
 
             SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
+            query.AddCondition("forum_item_id", Owner.Id);
+            query.AddCondition("forum_item_type_id", Owner.TypeId);
             query.AddCondition("forum_order", ConditionEquality.LessThan, Order);
             query.AddSort(SortOrder.Descending, "forum_order");
             query.LimitCount = 2;
@@ -1078,6 +1107,33 @@ namespace BoxSocial.Applications.Forum
 
             Forum record0 = null;
             Forum record1 = null;
+            int difference = 0;
+            int differenceAbove = 0;
+
+            if (levelForumsDataTable.Rows.Count == 0)
+            {
+                /* Cannot move up */
+                return;
+            }
+
+            if (levelForumsDataTable.Rows.Count >= 1)
+            {
+                record0 = new Forum(core, levelForumsDataTable.Rows[0]);
+                difference = record0.Order - Order;
+            }
+
+            if (levelForumsDataTable.Rows.Count >= 2)
+            {
+                record1 = new Forum(core, levelForumsDataTable.Rows[1]);
+                differenceAbove = record1.Order - record0.Order;
+            }
+
+            // Get IDs of forums from this to next forum down
+            // move all up by difference
+
+            // Get IDs of foruns from next forum up to this
+            // move all down by difference2
+
         }
 
         public void MoveDown()
@@ -1843,6 +1899,18 @@ namespace BoxSocial.Applications.Forum
                     }
                     return forumAccess;
                 }
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

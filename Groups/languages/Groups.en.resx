@@ -112,13 +112,16 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BAN_FROM_GROUP" xml:space="preserve">
     <value>Ban From Group</value>
+  </data>
+  <data name="CREATE_NEW_GROUP" xml:space="preserve">
+    <value>Create New Group</value>
   </data>
   <data name="GROUP" xml:space="preserve">
     <value>Group</value>
@@ -144,6 +147,9 @@
   <data name="MAKE_OPERATOR" xml:space="preserve">
     <value>Make Operator</value>
   </data>
+  <data name="MEMBERS" xml:space="preserve">
+    <value>Members</value>
+  </data>
   <data name="OFFICER" xml:space="preserve">
     <value>Officer</value>
   </data>
@@ -155,5 +161,11 @@
   </data>
   <data name="OPERATORS" xml:space="preserve">
     <value>Operators</value>
+  </data>
+  <data name="TITLE" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TYPE" xml:space="preserve">
+    <value>Type</value>
   </data>
 </root>

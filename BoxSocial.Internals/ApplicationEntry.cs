@@ -83,6 +83,8 @@ namespace BoxSocial.Internals
         private bool isLocked;
         [DataField("application_update")]
         private bool updateQueued;
+        [DataField("application_simple_permissions")]
+        private bool simplePermissions;
 
         //TODO: USER_APPLICATION_FIELDS
         private ushort permissions;
@@ -1204,6 +1206,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -1225,6 +1239,20 @@ namespace BoxSocial.Internals
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null));
 
             return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<User> users = new List<User>();
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<User> users = new List<User>();
+
+            return users;
         }
 
         public new IPermissibleItem PermissiveParent

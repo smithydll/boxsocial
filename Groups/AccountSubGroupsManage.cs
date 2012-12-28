@@ -43,7 +43,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return "Manage Groups";
+                return "Manage Sub Groups";
             }
         }
 

@@ -427,6 +427,16 @@ namespace BoxSocial.Internals
             return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
         }
 
+        public static string BuildAclUri(Core core, IPermissibleItem item, bool simple)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}&aclmode={2}", item.Id, item.ItemKey.TypeId, (simple ? "simple" : "detailed")), true);
+        }
+
         public static void LoadGrants(Core core, List<IPermissibleItem> items)
         {
         }
@@ -438,6 +448,25 @@ namespace BoxSocial.Internals
             foreach (AccessControlPermission permission in permissions)
             {
                 AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+            }
+        }
+
+        public static void CreateDefaultSimpleGrantsForOthers(Core core, IPermissibleItem item)
+        {
+            List<AccessControlPermission> permissions = AccessControlPermission.GetPermissions(core, item);
+
+            foreach (AccessControlPermission permission in permissions)
+            {
+                // View Permissions
+                if (permission.PermissionType == PermissionTypes.View)
+                {
+                    //AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+                }
+                // Interact Permissions
+                if (permission.PermissionType == PermissionTypes.Interact)
+                {
+                    //AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, permission.PermissionId, AccessControlGrants.Allow);
+                }
             }
         }
 

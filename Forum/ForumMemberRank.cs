@@ -49,6 +49,8 @@ namespace BoxSocial.Applications.Forum
         private bool rankSpecial;
         [DataField("rank_image_id")]
         private long rankImageId;
+        [DataField("rank_simple_permissions")]
+        private bool simplePermissions;
 
         private Primitive owner;
         private Access access;
@@ -127,6 +129,18 @@ namespace BoxSocial.Applications.Forum
                 }
 
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

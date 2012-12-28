@@ -1531,20 +1531,27 @@ div.explore-area {
     margin-bottom: 5px;
 }
 
+li.droplist-user, li.droplist-group {
+    text-align: left;
+}
+
 li.droplist-user a {
         min-height: 38px;
+}
+
+li.droplist-group a {
+        min-height: 22px;
 }
 
 li.droplist-user img {
         margin-right: 10px;
         float: left;
         padding: 2px;
-        border: 1px solid #999999;
         height: 32px;
         width: 32px;
 }
 
-.user-droplist .delete {
+.user-droplist .delete, .permission-group-droplist .delete {
         margin-left: 4px;
         display: inline-block;
         width: 1em;
@@ -1552,24 +1559,24 @@ li.droplist-user img {
         border-radius: 3px;
 }
 
-.user-droplist .delete:hover {
+.user-droplist .delete:hover, .permission-group-droplist .delete:hover {
         color: #2244aa;
         background-color: #ffffff;
 }
 
-.user-droplist {
+.user-droplist, .permission-group-droplist {
         border: 1px solid #028;
         background-color: #ffffff;
 }
 
-.user-droplist input {
+.user-droplist input, .permission-group-droplist input {
         border: none;
         outline: none;
         background-color: #ffffff;
         margin: 0;
 }
 
-.user-droplist .username {
+.user-droplist .username, .permission-group-droplist .username {
         border: 1px solid #002288;
 	    background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
         color: #ffffff;
@@ -1579,6 +1586,18 @@ li.droplist-user img {
         border-radius: 3px;
         cursor: default;
 }
+
+.permission-group-droplist .group {
+        border: 1px solid #008822;
+	    background: #22aa44;
+        color: #ffffff;
+        padding: 2px;
+        margin: 2px;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: default;
+}
+
 
 ul.feed-list {
     padding: 0;

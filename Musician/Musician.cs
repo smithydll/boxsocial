@@ -116,6 +116,8 @@ namespace BoxSocial.Musician
         private long downloadsTotal;
         [DataField("musician_downloads_week")]
         private long downloadsWeek;
+        [DataField("musician_simple_permissions")]
+        private bool simplePermissions;
 
         private Access access;
 
@@ -1088,6 +1090,18 @@ namespace BoxSocial.Musician
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -1106,10 +1120,24 @@ namespace BoxSocial.Musician
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MusicianMember)), -1, "GROUP_MEMBERS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Fan)), -1, "FANS"));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(Fan.FanGroupKey, "FANS"));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE"));
 
             return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<User> users = new List<User>();
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<User> users = new List<User>();
+
+            return users;
         }
 
         public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)

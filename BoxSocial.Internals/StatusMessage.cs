@@ -47,6 +47,8 @@ namespace BoxSocial.Internals
         private byte dislikes;
         [DataField("status_time_ut")]
         private long timeRaw;
+        [DataField("status_simple_permissions")]
+        private bool simplePermissions;
 
         private User owner;
         private Access access;
@@ -273,6 +275,18 @@ namespace BoxSocial.Internals
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

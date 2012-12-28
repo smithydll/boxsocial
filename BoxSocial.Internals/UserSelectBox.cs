@@ -130,21 +130,33 @@ namespace BoxSocial.Internals
             core.PrimitiveCache.LoadUserProfiles(userIds);
 
             StringBuilder users = new StringBuilder();
+            StringBuilder idList = new StringBuilder();
 
+            bool first = true;
             foreach (long userId in userIds)
             {
-                users.Append(string.Format("<span class=\"username\">{1}<span class=\"delete\" onclick=\"$(this).parent().remove();\">x</span><input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, core.PrimitiveCache[userId].DisplayName));
+                if (!first)
+                {
+                    idList.Append(",");
+                }
+                else
+                {
+                    first = false;
+                }
+                idList.Append(userId.ToString());
+
+                users.Append(string.Format("<span class=\"username\">{1}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, core.PrimitiveCache[userId].DisplayName));
             }
 
-
-            return string.Format("<div id=\"{0}\" class=\"user-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\"/></div>",
+            return string.Format("<div id=\"{0}\" class=\"user-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"/></div>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(string.Empty),
                     (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
                     (!IsVisible) ? " display: none;" : string.Empty,
                     width,
                     Script.ToString(),
-                    users.ToString());
+                    users.ToString(),
+                    idList.ToString());
         }
 
         public static List<long> FormUsers(Core core, string name)

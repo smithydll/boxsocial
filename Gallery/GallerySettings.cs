@@ -60,6 +60,8 @@ namespace BoxSocial.Applications.Gallery
         private bool allowItemsAtRoot;
         [DataField("gallery_items_root")]
         private long galleryItemsAtRoot;
+        [DataField("gallery_simple_permissions")]
+        private bool simplePermissions;
 
         private Primitive owner;
         private Access access;
@@ -219,6 +221,18 @@ namespace BoxSocial.Applications.Gallery
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

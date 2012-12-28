@@ -61,6 +61,8 @@ namespace BoxSocial.Networks
         private long networkId;
         [DataField("network_network", DataFieldKeys.Unique, 24)]
         private string networkNetwork;
+        [DataField("network_simple_permissions")]
+        private bool simplePermissions;
 
         private NetworkInfo networkInfo;
         private Access access;
@@ -383,12 +385,21 @@ namespace BoxSocial.Networks
 
         public List<NetworkMember> GetMembers(int page, int perPage)
         {
+            return GetMembers(page, perPage, null);
+        }
+
+        public List<NetworkMember> GetMembers(int page, int perPage, string filter)
+        {
             List<NetworkMember> members = new List<NetworkMember>();
 
             SelectQuery query = new SelectQuery(NetworkMember.GetTable(typeof(NetworkMember)));
             query.AddFields(NetworkMember.GetFieldsPrefixed(typeof(NetworkMember)));
             query.AddCondition("network_id", networkId);
             query.AddSort(SortOrder.Ascending, "member_join_date_ut");
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query.AddCondition(new DataField("user_keys", "user_name_first"), filter[0]);
+            }
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
@@ -995,6 +1006,18 @@ namespace BoxSocial.Networks
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -1016,6 +1039,34 @@ namespace BoxSocial.Networks
             ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null));
 
             return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<NetworkMember> members = GetMembers(1, 10);
+
+            List<User> users = new List<User>();
+
+            foreach (NetworkMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<NetworkMember> members = GetMembers(1, 10, namePart);
+
+            List<User> users = new List<User>();
+
+            foreach (NetworkMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
         }
 
         public static List<PrimitivePermissionGroup> Network_GetPrimitiveGroups(Core core, Primitive owner)

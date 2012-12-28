@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -50,6 +51,9 @@ namespace BoxSocial.FrontEnd
                 case "friend-list":
                     ReturnFriendList();
                     return;
+                case "permission-groups-list":
+                    ReturnPermissionGroupList();
+                    return;
             }
         }
 
@@ -69,6 +73,79 @@ namespace BoxSocial.FrontEnd
                 }
 
                 core.Ajax.SendUserDictionary("friendSelect", friendNames);
+            }
+        }
+
+        private void ReturnPermissionGroupList()
+        {
+            string namePart = core.Http.Form["name-field"];
+            long itemId = core.Functions.FormLong("item", 0);
+            long itemTypeId = core.Functions.FormLong("type", 0);
+
+            if (itemId > 0 && itemTypeId > 0)
+            {
+                ItemKey ik = new ItemKey(itemId, itemTypeId);
+
+                List<PrimitivePermissionGroup> groups = null;
+                NumberedItem ni = NumberedItem.Reflect(core, ik);
+                Primitive primitive = null;
+                Dictionary<ItemKey, string[]> permissiveNames = new Dictionary<ItemKey, string[]>();
+
+                if (ni.GetType().IsSubclassOf(typeof(Primitive)))
+                {
+                    primitive = (Primitive)ni;
+                }
+                else
+                {
+                    primitive = ((IPermissibleItem)ni).Owner;
+                }
+
+                groups = new List<PrimitivePermissionGroup>();
+                int itemGroups = 0;
+
+                Type type = ni.GetType();
+                if (type.GetMethod(type.Name + "_GetItemGroups", new Type[] { typeof(Core) }) != null)
+                {
+                    groups.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetItemGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }));
+                    itemGroups = groups.Count;
+                }
+
+                groups.AddRange(core.GetPrimitivePermissionGroups(primitive));
+
+                foreach (PrimitivePermissionGroup group in groups)
+                {
+                    if (!string.IsNullOrEmpty(group.LanguageKey))
+                    {
+                        permissiveNames.Add(group.ItemKey, new string[] { core.Prose.GetString(group.LanguageKey), string.Empty });
+                    }
+                    else
+                    {
+                        permissiveNames.Add(group.ItemKey, new string[] { group.DisplayName, string.Empty });
+                    }
+                }
+
+                List<User> friends = primitive.GetPermissionUsers(namePart);
+
+                foreach (User friend in friends)
+                {
+                    permissiveNames.Add(friend.ItemKey, new string[] { friend.DisplayName, friend.UserTile });
+                }
+
+                core.Ajax.SendPermissionGroupDictionary("permissionSelect", permissiveNames);
+
+                /*if (core.Session.IsLoggedIn)
+                {
+                    List<Friend> friends = core.Session.LoggedInMember.GetFriends(namePart);
+
+                    Dictionary<long, string[]> friendNames = new Dictionary<long, string[]>();
+
+                    foreach (Friend friend in friends)
+                    {
+                        friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.UserTile });
+                    }
+
+                    core.Ajax.SendUserDictionary("friendSelect", friendNames);
+                }*/
             }
         }
     }

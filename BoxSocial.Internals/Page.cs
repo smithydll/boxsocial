@@ -91,6 +91,8 @@ namespace BoxSocial.Internals
         private string hierarchy;
 		[DataField("page_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
+        [DataField("page_simple_permissions")]
+        private bool simplePermissions;
 
         private User creator;
         private Primitive owner;
@@ -171,6 +173,18 @@ namespace BoxSocial.Internals
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

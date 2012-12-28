@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         private byte phoneType;
         [DataField("phone_time_ut")]
         private long phoneTimeRaw;
+        [DataField("phone_simple_permissions")]
+        private bool simplePermissions;
 
         private User owner;
         private Access access;
@@ -99,6 +101,18 @@ namespace BoxSocial.Internals
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

@@ -78,6 +78,8 @@ namespace BoxSocial.Applications.Calendar
         private byte percentageComplete;
         [DataField("task_priority")]
         private byte priority;
+        [DataField("task_simple_permissions")]
+        private bool simplePermissions;
         #endregion
 
         private Access access;
@@ -132,6 +134,18 @@ namespace BoxSocial.Applications.Calendar
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

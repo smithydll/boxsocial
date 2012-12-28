@@ -24,6 +24,8 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -158,6 +160,9 @@ namespace BoxSocial.Applications.Forum
             forumTypesSelectBox.Add(new SelectBoxItem("CAT", "Category"));
             //forumTypes.Add("LINK", "Link");
 
+            /* Forum Types SelectBox */
+            SelectBox forumParentSelectBox = new SelectBox("parent");
+
             /* Title TextBox */
             TextBox titleTextBox = new TextBox("title");
             titleTextBox.MaxLength = 127;
@@ -172,12 +177,36 @@ namespace BoxSocial.Applications.Forum
             rulesTextBox.IsFormatted = true;
             rulesTextBox.Lines = 6;
 
+            ForumSettings settings = new ForumSettings(core, Owner);
+            List<Forum> forums = settings.GetForums();
+
+            forumParentSelectBox.Add(new SelectBoxItem("0", ""));
+            foreach (Forum forum in forums)
+            {
+                string levelString = string.Empty;
+
+                for (int i = 0; i < forum.Level; i++)
+                {
+                    levelString += "--";
+                }
+
+                SelectBoxItem item = new SelectBoxItem(forum.Id.ToString(), levelString + " " + forum.Title);
+
+                if (forum.Id == id && e.Mode == "edit")
+                {
+                    item.Selectable = false;
+                }
+
+                forumParentSelectBox.Add(item);
+            }
+
             switch (e.Mode)
             {
                 case "new":
                     forumTypesSelectBox.SelectedKey = "FORUM";
 
                     template.Parse("S_ID", id.ToString());
+                    forumParentSelectBox.SelectedKey = id.ToString();
 				
                     break;
                 case "edit":
@@ -193,6 +222,7 @@ namespace BoxSocial.Applications.Forum
                         }
 
                         titleTextBox.Value = forum.Title;
+                        forumParentSelectBox.SelectedKey = forum.ParentId.ToString();
                         descriptionTextBox.Value = forum.Description;
                         rulesTextBox.Value = forum.Rules;
 
@@ -219,13 +249,14 @@ namespace BoxSocial.Applications.Forum
             template.Parse("S_DESCRIPTION", descriptionTextBox);
             template.Parse("S_RULES", rulesTextBox);
             template.Parse("S_FORUM_TYPE", forumTypesSelectBox);
+            template.Parse("S_FORUM_PARENT", forumParentSelectBox);
         }
 
         void AccountForumManage_New_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
 
-            long parentId = core.Functions.FormLong("id", 0);
+            long parentId = core.Functions.FormLong("parent", 0);
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
             string rules = core.Http.Form["rules"];
@@ -280,6 +311,7 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
+            long parentId = core.Functions.FormLong("parent", 0);
             long forumId = core.Functions.FormLong("id", 0);
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
@@ -296,6 +328,116 @@ namespace BoxSocial.Applications.Forum
             {
                 DisplayGenericError();
                 return;
+            }
+
+            if (parentId != forum.ParentId)
+            {
+                db.BeginTransaction();
+                int order = 0;
+                int level = 0;
+
+                Forum parent = null;
+
+                if (parentId > 0)
+                {
+                    parent = new Forum(core, parentId);
+                }
+                else
+                {
+                    parent = new Forum(core, Owner);
+                }
+
+                if (!parent.Owner.Equals(Owner))
+                {
+                    DisplayError("Cannot move forum to another owner");
+                    return;
+                }
+
+                forum.ParentId = parentId;
+
+                level = parent.Level + 1;
+
+                forum.Level = level;
+
+                SelectQuery query = new SelectQuery(typeof(Forum));
+                query.AddFields("forum_order");
+                query.AddCondition("forum_order", ConditionEquality.GreaterThan, parent.Order);
+                query.AddCondition("forum_item_id", parent.Owner.Id);
+                query.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+                query.AddCondition("forum_parent_id", parent.Id);
+                query.AddSort(SortOrder.Descending, "forum_order");
+                query.LimitCount = 1;
+
+                DataTable orderTable = core.Db.Query(query);
+
+                if (orderTable.Rows.Count == 1)
+                {
+                    int tableorder = (int)orderTable.Rows[0]["forum_order"];
+                    if (forum.Order < tableorder)
+                    {
+                        order = tableorder;
+                    }
+                    else
+                    {
+                        order = tableorder + 1;
+                    }
+                }
+                else
+                {
+                    if (forum.Order < parent.Order)
+                    {
+                        order = parent.Order;
+                    }
+                    else
+                    {
+                        order = parent.Order + 1;
+                    }
+                }
+
+                if (order > forum.Order)
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                    uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, 1));
+                    uQuery.AddCondition("forum_order", ConditionEquality.GreaterThan, forum.Order);
+                    uQuery.AddCondition("forum_order", ConditionEquality.LessThanEqual, order);
+                    uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+                    uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+
+                    core.Db.Query(uQuery);
+                }
+
+                if (order < forum.Order)
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                    uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+                    uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
+                    uQuery.AddCondition("forum_order", ConditionEquality.LessThan, forum.Order);
+                    uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+                    uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+
+                    core.Db.Query(uQuery);
+                }
+
+                /*
+                // decrement all items below old order in the order
+                UpdateQuery uQuery = new UpdateQuery(typeof(Forum));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, forum.Order);
+                uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+                uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+
+                core.Db.Query(uQuery);
+
+                // increment all items below in the order
+                uQuery = new UpdateQuery(typeof(Forum));
+                uQuery.AddField("forum_order", new QueryOperation("forum_order", QueryOperations.Addition, 1));
+                uQuery.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, order);
+                uQuery.AddCondition("forum_item_id", parent.Owner.Id);
+                uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
+
+                core.Db.Query(uQuery);*/
+
+                forum.Order = order;
             }
 
             forum.Title = title;

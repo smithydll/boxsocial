@@ -96,6 +96,8 @@ namespace BoxSocial.Applications.Blog
         private long modifiedRaw;
         [DataField("post_allow_comment")]
         private bool allowComment;
+        [DataField("post_simple_permissions")]
+        private bool simplePermissions;
 
         private Primitive owner;
         private Blog blog;
@@ -472,7 +474,7 @@ namespace BoxSocial.Applications.Blog
             {
             }*/
 
-            Item item = Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", blog.UserId),
+            BlogEntry blogEntry = (BlogEntry)Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", blog.UserId),
                 new FieldValuePair("post_time_ut", postTime),
                 new FieldValuePair("post_title", title),
                 new FieldValuePair("post_modified_ut", postTime),
@@ -480,9 +482,13 @@ namespace BoxSocial.Applications.Blog
                 new FieldValuePair("post_text", body),
                 new FieldValuePair("post_license", license),
                 new FieldValuePair("post_status", status),
-                new FieldValuePair("post_category", category));
+                new FieldValuePair("post_category", category),
+                new FieldValuePair("post_simple_permissions", true));
 
-            return (BlogEntry)item;
+            Access.CreateAllGrantsForOwner(core, blogEntry);
+            Access.CreateDefaultSimpleGrantsForOthers(core, blogEntry);
+
+            return blogEntry;
         }
 
         /// <summary>
@@ -570,6 +576,18 @@ namespace BoxSocial.Applications.Blog
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

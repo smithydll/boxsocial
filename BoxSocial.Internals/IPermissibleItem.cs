@@ -40,6 +40,12 @@ namespace BoxSocial.Internals
             get;
         }
 
+        bool IsSimplePermissions
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Owner of the item
         /// </summary>
@@ -100,5 +106,7 @@ namespace BoxSocial.Internals
         bool GetDefaultCan(string permission);
 
         string ParentPermissionKey(Type parentType, string permission);
+
+        long Update();
     }
 }

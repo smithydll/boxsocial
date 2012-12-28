@@ -123,6 +123,14 @@ namespace BoxSocial.Internals
                 {
                     if (!stringCache.TryGetValue("Internals" + "-" + culture + "." + key, out value))
                     {
+                        foreach (string akey in languageResources.Keys)
+                        {
+                            if (stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
+                            {
+                                return value;
+                            }
+                        }
+
                         value = languageResources["Internals"].GetString(key, culture);
                         stringCache.Add("Internals" + "-" + culture + "." + key, value);
                     }

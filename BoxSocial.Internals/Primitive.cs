@@ -244,6 +244,12 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract bool IsSimplePermissions
+        {
+            get;
+            set;
+        }
+
         public Primitive Owner
         {
             get
@@ -281,6 +287,9 @@ namespace BoxSocial.Internals
         /// <returns>A dictionary of Item Type with language keys</returns>
         public abstract List<PrimitivePermissionGroup> GetPrimitivePermissionGroups();
 
+        public abstract List<User> GetPermissionUsers();
+        public abstract List<User> GetPermissionUsers(string namePart);
+
         public abstract bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey);
 
         public abstract bool CanEditPermissions();
@@ -317,12 +326,20 @@ namespace BoxSocial.Internals
     /// <summary>
     /// 
     /// </summary>
-    public struct PrimitivePermissionGroup
+    public class PrimitivePermissionGroup
     {
         private long typeId;
         private long itemId;
         private string languageKey;
         private string displayName;
+
+        public ItemKey ItemKey
+        {
+            get
+            {
+                return new ItemKey(itemId, typeId);
+            }
+        }
 
         public long TypeId
         {
@@ -380,6 +397,26 @@ namespace BoxSocial.Internals
         public PrimitivePermissionGroup(ItemKey item, string languageKey, string displayName)
             : this(item.TypeId, item.Id, languageKey, displayName)
         {
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj.GetType() != typeof(PrimitivePermissionGroup))
+                return false;
+            PrimitivePermissionGroup ppg = (PrimitivePermissionGroup)obj;
+
+            if (TypeId != ppg.TypeId)
+                return false;
+            if (ItemId != ppg.ItemId)
+                return false;
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return ItemKey.GetHashCode();
         }
     }
 }

@@ -61,6 +61,8 @@ namespace BoxSocial.Applications.Forum
         private int postsPerPage;
         [DataField("forum_allow_topics_root")]
         private bool allowTopicsAtRoot;
+        [DataField("forum_simple_permissions")]
+        private bool simplePermissions;
 
         private Primitive owner;
         private Access access;
@@ -276,6 +278,18 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public Primitive Owner
         {
             get
@@ -346,6 +360,32 @@ namespace BoxSocial.Applications.Forum
         public string ParentPermissionKey(Type parentType, string permission)
         {
             return permission;
+        }
+
+        public List<Forum> GetForums()
+        {
+            List<Forum> forums = new List<Forum>();
+
+            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            query.AddCondition("forum_item_id", ownerKey.Id);
+            query.AddCondition("forum_item_type_id", ownerKey.TypeId);
+            query.AddSort(SortOrder.Ascending, "forum_order");
+
+            DataTable forumsTable = db.Query(query);
+
+            foreach (DataRow dr in forumsTable.Rows)
+            {
+                if (Owner is UserGroup)
+                {
+                    forums.Add(new Forum(core, (UserGroup)Owner, dr));
+                }
+                else
+                {
+                    forums.Add(new Forum(core, dr));
+                }
+            }
+
+            return forums;
         }
     }
 

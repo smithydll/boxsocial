@@ -175,6 +175,12 @@ namespace BoxSocial.Applications.Gallery
         private int galleryOrder;
 
         /// <summary>
+        /// 
+        /// </summary>
+        [DataField("app_simple_permissions")]
+        private bool simplePermissions;
+
+        /// <summary>
         /// Parent Tree
         /// </summary>
         private ParentTree parentTree;
@@ -1761,6 +1767,21 @@ namespace BoxSocial.Applications.Gallery
                     }
                     return access;
                 }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

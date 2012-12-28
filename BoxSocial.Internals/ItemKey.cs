@@ -78,6 +78,10 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (type == null)
+                {
+                    type = Type.GetType(ItemKey.GetItemType(TypeId).TypeNamespace);
+                }
                 return type;
             }
         }
@@ -134,6 +138,21 @@ namespace BoxSocial.Internals
                 if (typeRow != null)
                 {
                     return typeRow.Subscribeable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool InheritsPrimitive
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.IsPrimitive;
                 }
                 else
                 {
@@ -331,6 +350,21 @@ namespace BoxSocial.Internals
             {
                 return 0;
             }
+        }
+
+        public static ItemType GetItemType(long typeId)
+        {
+            ItemType it = null;
+
+            foreach (ItemType type in itemTypeCache.Values)
+            {
+                if (type.Id == typeId)
+                {
+                    it = type;
+                }
+            }
+
+            return it;
         }
         
         public override string ToString ()

@@ -56,6 +56,8 @@ namespace BoxSocial.Internals
         private long emailTimeRaw;
         [DataField("email_activate_code", 32)]
         private string emailActivateKey;
+        [DataField("email_simple_permissions")]
+        private bool simplePermissions;
 
         private User owner;
         private Access access;
@@ -105,6 +107,18 @@ namespace BoxSocial.Internals
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

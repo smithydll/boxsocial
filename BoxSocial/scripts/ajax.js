@@ -37,6 +37,18 @@ function rvl(e, i) {
 	e.val(m.join(','));
 }
 
+// count Values
+function cv(e, i) {
+    var l = e.val().split(',');
+    var c = 0;
+    for (j in l) {
+        if (l[j] == i) {
+            c++;
+        }
+    }
+    return c;
+}
+
 function StarOver(stars, itemId, itemType) {
 	var i = 1;
 	for (i = 1; i <= stars; i++)
@@ -264,6 +276,15 @@ function ProcessAjaxResult(doc) {
         });
         return a;
     }
+    else if (type == 'PermissionGroupDictionary') {
+        var a = new Array();
+        var xmlDoc = $.parseXML(doc);
+        var xml = $(doc);
+        var e = xml.find('array').find('item').each(function () {
+            a.push({ id: $(this).find('id').text(), typeId: $(this).find('type-id').text(), value: $(this).find('value').text(), tile: $(this).find('tile').text() });
+        });
+        return a;
+    }
 	else
 	{
 		return doc;
@@ -387,7 +408,7 @@ $(document).ready(function () {
             },
             select: function (event, ui) {
                 this.value = "";
-                if ($('#user-' + ui.item.id).length == 0) {
+                if (cv($(this).siblings('.ids'), ui.item.id) == 0) {
                     $(this).before($('<span class="username">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),' + ui.item.id + '); $(this).parent().remove();">x</span><input type="hidden" id="user-' + ui.item.id + '" name="user[' + ui.item.id + ']" value="' + ui.item.id + '" /></span>'));
                     avl($(this).siblings('.ids'), ui.item.id);
                 }
@@ -400,6 +421,49 @@ $(document).ready(function () {
                 .append('<a><img src="' + item.tile + '" />' + item.value + '</a>')
                 .appendTo(ul);
         };
+    };
+});
+
+$(document).ready(function () {
+    if ($(".permission-group-droplist .textbox").length > 0) {
+        $(".permission-group-droplist .textbox").each(function () {
+            var itemId = $(this).siblings('.item-id').val();
+            var itemTypeId = $(this).siblings('.item-type-id').val();
+
+            $(this).bind("keydown", function (event) {
+                if (event.keyCode === $.ui.keyCode.TAB &&
+                        $(this).data("autocomplete").menu.active) {
+                    event.preventDefault();
+                }
+            })
+            .bind("click", function (event) {
+                $(this).autocomplete( "search", "" );
+            })
+            .autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    PostToPage(namesRequested, "api/acl/get-groups", response, { ajax: "true", "name-field": request.term, item: itemId, type: itemTypeId });
+                },
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    this.value = "";
+                    if (cv($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id) == 0) {
+                        $(this).before($('<span class="' + ((ui.item.id > 0) ? 'username' : 'group') + '">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),\'' + ui.item.typeId + '-' + ui.item.id + '\'); $(this).parent().remove();">x</span><input type="hidden" id="group-' + ui.item.typeId + '-' + ui.item.id + '" name="group[' + ui.item.TypeId + ',' + ui.item.id + ']" value="' + ui.item.typeId + ',' + ui.item.id + '" /></span>'));
+                        avl($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id);
+                    }
+                    return false;
+                }
+            })
+            .data("autocomplete")._renderItem = function (ul, item) {
+                return $('<li class="droplist-' + ((item.id > 0) ? 'user' : 'group') + '">')
+                    .data("item.autocomplete", item)
+                    .append('<a>' + ((item.tile != '') ? '<img src="' + item.tile + '" />' : '') + item.value + '</a>')
+                    .appendTo(ul);
+            };
+        });
     };
 });
 

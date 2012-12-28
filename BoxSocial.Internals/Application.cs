@@ -184,6 +184,7 @@ namespace BoxSocial.Internals
                         iQuery.AddField("type_subscribeable", typeof(ISubscribeableItem).IsAssignableFrom(type));
                         iQuery.AddField("type_viewable", typeof(IViewableItem).IsAssignableFrom(type));
                         iQuery.AddField("type_shareable", typeof(IShareableItem).IsAssignableFrom(type));
+                        iQuery.AddField("type_primitive", type.IsSubclassOf(typeof(Primitive)));
 
                         core.Db.Query(iQuery);
                     }
@@ -198,6 +199,7 @@ namespace BoxSocial.Internals
                         uQuery.AddField("type_subscribeable", typeof(ISubscribeableItem).IsAssignableFrom(type));
                         uQuery.AddField("type_viewable", typeof(IViewableItem).IsAssignableFrom(type));
                         uQuery.AddField("type_shareable", typeof(IShareableItem).IsAssignableFrom(type));
+                        uQuery.AddField("type_primitive", type.IsSubclassOf(typeof(Primitive)));
 
                         core.Db.Query(uQuery);
                     }

@@ -648,7 +648,8 @@ namespace BoxSocial.Internals
                             if (foundKey)
                             {
                                 continueJoin = false;
-                                throw new ComplexKeyException(GetTable(type));
+                                break;
+                                //throw new ComplexKeyException(GetTable(type));
                             }
                             idField = field.Name;
                             foundKey = true;

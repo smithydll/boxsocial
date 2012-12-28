@@ -63,6 +63,8 @@ namespace BoxSocial.Applications.Blog
         private bool allowTrackBack;
         [DataField("allow_pingback")]
         private bool allowPingBack;
+        [DataField("blog_simple_permissions")]
+        private bool simplePermissions;
 
         private User owner;
         private Access access;
@@ -142,6 +144,18 @@ namespace BoxSocial.Applications.Blog
                     access = new Access(core, this);
                 }
                 return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

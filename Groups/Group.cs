@@ -58,6 +58,8 @@ namespace BoxSocial.Groups
         private string slug;
         [DataField("group_domain", DataFieldKeys.Index, 63)]
         private string domain;
+        [DataField("group_simple_permissions")]
+        private bool simplePermissions;
 
         private UserGroupInfo groupInfo;
         private Access access;
@@ -478,7 +480,7 @@ namespace BoxSocial.Groups
             query.AddCondition("group_member_approved", true);
             if (!string.IsNullOrEmpty(filter))
             {
-                query.AddCondition("user_keys.user_name_first", filter);
+                query.AddCondition(new DataField("user_keys", "user_name_first"), filter[0]);
             }
             query.AddSort(SortOrder.Ascending, "group_member_date_ut");
             query.LimitStart = (page - 1) * perPage;
@@ -1801,6 +1803,18 @@ namespace BoxSocial.Groups
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -1825,6 +1839,34 @@ namespace BoxSocial.Groups
             ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupMembersGroupKey, "MEMBERS", null));
 
             return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<GroupMember> members = GetMembers(1, 10);
+
+            List<User> users = new List<User>();
+
+            foreach (GroupMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<GroupMember> members = GetMembers(1, 10, namePart);
+
+            List<User> users = new List<User>();
+
+            foreach (GroupMember member in members)
+            {
+                users.Add(member);
+            }
+
+            return users;
         }
 
         public static List<PrimitivePermissionGroup> UserGroup_GetPrimitiveGroups(Core core, Primitive owner)

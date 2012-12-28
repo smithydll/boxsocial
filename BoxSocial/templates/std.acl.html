@@ -1,10 +1,31 @@
 {HACK}<!-- Hack -->
+<ul>
+    <!-- IF IS_SIMPLE -->
+    <li>Simple Permissions</li>
+    <li><a href="{U_DETAILED}">Detailed Permissions</a></li>
+    <!-- ELSE -->
+    <li><a href="{U_SIMPLE}">Simple Permissions</a></li>
+    <li>Detailed Permissions</li>
+    <!-- ENDIF -->
+</ul>
 <div id="acl-list">
 <!-- BEGIN permision_types -->
   <h3>{permision_types.TITLE}</h3>
   <div class="perm-type">
+  <!-- IF IS_SIMPLE -->
   <div class="permission-type-simple">
+    <p>{permision_types.S_SIMPLE_SELECT}</p>
+    <p><strong>Permissions:</strong><!--
+    <!-- BEGIN permision_types.permission_desc -->
+    <!-- IF permision_types.permission_desc.$_INDEX_FIRST -->
+    --> <span>{permision_types.permission_desc.DESCRIPTION}</span><!--
+    <!-- ELSE -->
+    -->, <span>{permision_types.permission_desc.DESCRIPTION}</span><!--
+    <!-- ENDIF -->
+    <!-- END permision_types.permission_desc -->
+    --></p>
   </div>
+  <!-- ELSE -->
   <div class="permission-type-detailed">
   <ul id="permission-list">
     <!-- BEGIN permision_types.permission -->
@@ -64,6 +85,8 @@
   <!-- BEGIN permision_types.grants -->
   <input type="hidden" name="{permision_types.grants.S_GRANT_INDEX}" value="{permision_types.grants.S_GRANT_KEY}" />
   <!-- END permision_types.grants -->
-</div>
+  <!-- ENDIF -->
+  </div>
 <!-- END permision_types -->
+{S_ACLMODE}
 </div>

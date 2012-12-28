@@ -181,6 +181,14 @@ namespace BoxSocial.Musician
                 fanVariableCollection.Parse("DISPLAY_NAME", fan.DisplayName);
             }
         }
+
+        public static ItemKey FanGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(Fan)));
+            }
+        }
     }
 
     public class InvalidFanException : InvalidItemException

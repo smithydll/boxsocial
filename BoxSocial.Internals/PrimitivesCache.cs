@@ -175,6 +175,20 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void LoadPrimitiveProfiles(List<ItemKey> itemkeys)
+        {
+            foreach (ItemKey ik in itemkeys)
+            {
+                if (ik.InheritsPrimitive)
+                {
+                    if (!primitivesCached.ContainsKey(new PrimitiveId(ik.Id, ik.TypeId)))
+                    {
+                        batchedPrimitivesIds.Add(new PrimitiveId(ik.Id, ik.TypeId));
+                    }
+                }
+            }
+        }
+
         public List<long> LoadUserProfiles(List<string> usernames)
         {
             long userTypeId = ItemKey.GetTypeId(typeof(User));

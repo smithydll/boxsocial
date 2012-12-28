@@ -96,6 +96,8 @@ namespace BoxSocial.Internals
         protected string domain;
         [DataField("user_name_first", DataFieldKeys.Index, 1)]
         protected string userNameFirstCharacter;
+        [DataField("user_simple_permissions")]
+        private bool simplePermissions;
 
         private string userIconUri;
 
@@ -2027,6 +2029,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public override bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -2047,9 +2061,49 @@ namespace BoxSocial.Internals
             ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null));
             ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null));
             ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -1, "FRIENDS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -2, "FAMILY_MEMBERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(Friend)), -3, "BLOCKED_USERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.FriendsGroupKey, "FRIENDS", null));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.FamilyGroupKey, "FAMILY_MEMBERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.BlockedGroupKey, "BLOCKED_USERS", null));
+
+            return ppgs;
+        }
+
+        public override List<User> GetPermissionUsers()
+        {
+            List<Friend> friends = GetFriends();
+
+            List<User> users = new List<User>();
+
+            foreach (Friend friend in friends)
+            {
+                users.Add(friend);
+            }
+
+            return users;
+        }
+
+        public override List<User> GetPermissionUsers(string namePart)
+        {
+            List<Friend> friends = GetFriends(namePart);
+
+            List<User> users = new List<User>();
+
+            foreach (Friend friend in friends)
+            {
+                users.Add(friend);
+            }
+
+            return users;
+        }
+
+        public /*override*/ List<ItemKey> GetPrimitiveDefaultViewGroups()
+        {
+            List<ItemKey> ppgs = new List<ItemKey>();
+
+            ppgs.Add(User.EveryoneGroupKey);
+            ppgs.Add(User.RegisteredUsersGroupKey);
+            ppgs.Add(Friend.FriendsGroupKey);
+            ppgs.Add(Friend.FamilyGroupKey);
 
             return ppgs;
         }

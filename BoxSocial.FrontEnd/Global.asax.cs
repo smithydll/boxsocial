@@ -214,6 +214,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/search(/|)$", @"/search.aspx" });
                     patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
+                    patterns.Add(new string[] { @"^/api/acl/get-groups(/|)$", @"/functions.aspx?fun=permission-groups-list" });
                     patterns.Add(new string[] { @"^/api/acl(/|)$", @"/acl.aspx" });
                     patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
                     patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });

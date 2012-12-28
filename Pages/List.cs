@@ -58,6 +58,8 @@ namespace BoxSocial.Applications.Pages
         private string listAbstract;
         [DataField("list_path", DataFieldKeys.Unique, "u_user_path", 31)]
         private string path;
+        [DataField("list_simple_permissions")]
+        private bool simplePermissions;
 
         private User owner;
         private Access listAccess;
@@ -509,6 +511,18 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 return ListAccess;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
             }
         }
 

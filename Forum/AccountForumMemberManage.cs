@@ -93,7 +93,8 @@ namespace BoxSocial.Applications.Forum
 
             /* Signature TextBox */
             TextBox signatureTextBox = new TextBox("signature");
-            signatureTextBox.IsDisabled = true;
+            signatureTextBox.IsFormatted = true;
+            //signatureTextBox.IsDisabled = true;
             signatureTextBox.Lines = 7;
 
             /* Ranks SelectBox */

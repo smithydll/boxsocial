@@ -564,7 +564,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal UserProfile(Core core, User user, DataRow memberRow)
+        public UserProfile(Core core, User user, DataRow memberRow)
             : base(core)
         {
             this.user = user;
@@ -582,7 +582,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal UserProfile(Core core, User user, DataRow memberRow, UserLoadOptions loadOptions)
+        public UserProfile(Core core, User user, DataRow memberRow, UserLoadOptions loadOptions)
             : this(core, user, memberRow)
         {
         }

@@ -662,11 +662,17 @@ ul.comment-list li p.extra a {
 	cursor: pointer;
 }
 
-#tabs li.current a span {
+#tabs li > span {
+	display: block;
+	padding-left: 2px;
+	margin-right: 2px;
+}
+
+#tabs li.current a span, #tabs li.current span {
     color: #aa5500;
 }
 
-#tabs li a span {
+#tabs li span {
 	display: block;
 	height: 22px;
 	line-height: 22px;
@@ -750,27 +756,35 @@ ul.comment-list li p.extra a {
 	position: relative;
 }
 
-.account-pane legend {
+.account-pane legend, .account-wide-pane legend {
 	display: none;
 }
 
-.account-pane fieldset {
+.account-pane fieldset, .account-wide-pane fieldset {
 	border: none;
 	padding-top: 0px;
 }
 
-.account-pane h3 {
+.account-pane h3, .account-wide-pane h3 {
+	margin-top: 0.2em;
 	margin-bottom: 0px;
+	font-size: 140%;
 }
 
-.account-pane dt {
+.account-pane h4, .account-wide-pane h4 {
+	margin-top: 0.2em;
+	margin-bottom: 0px;
+	font-size: 120%;
+}
+
+.account-pane dt, .account-wide-pane dt {
 	font-weight: bold;
 	float: left;
 	width: 150px;
 	text-align: right;
 }
 
-.account-pane dd {
+.account-pane dd, .account-wide-pane dd {
 	margin: 0 0 5px 160px;
 	position: relative;
 }

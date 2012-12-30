@@ -40,7 +40,7 @@ namespace BoxSocial.Applications.Forum
         [DataField("user_id", DataFieldKeys.Unique, "u_key")]
         private new long userId;
         [DataField("item", DataFieldKeys.Unique, "u_key")]
-        private ItemKey itemKey;
+        private new ItemKey itemKey;
         [DataField("posts")]
         private long forumPosts;
         [DataField("rank")]
@@ -49,6 +49,7 @@ namespace BoxSocial.Applications.Forum
         private string forumSignature;
 
         private Access access;
+        private Primitive owner;
 
 		public long ForumRankId
 		{
@@ -82,7 +83,7 @@ namespace BoxSocial.Applications.Forum
 			}
 			set
 			{
-				SetProperty("forumSignature", value);
+                SetPropertyByRef(new { forumSignature }, value);
 			}
 		}
 
@@ -150,12 +151,25 @@ namespace BoxSocial.Applications.Forum
 
             if (memberTable.Rows.Count == 1)
             {
-				loadItemInfo(typeof(User), memberTable.Rows[0]);
-				loadItemInfo(typeof(UserInfo), memberTable.Rows[0]);
-				loadItemInfo(typeof(UserProfile), memberTable.Rows[0]);
-				loadItemInfo(typeof(ForumMember), memberTable.Rows[0]);
-                /*loadUserInfo(memberTable.Rows[0]);
-                loadUserIcon(memberTable.Rows[0]);*/
+                DataRow userRow = memberTable.Rows[0];
+
+                loadItemInfo(typeof(ForumMember), userRow);
+                loadItemInfo(typeof(User), userRow);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    userInfo = new UserInfo(core, userRow);
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    userProfile = new UserProfile(core, this, userRow, loadOptions);
+                }
+
+                if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                {
+                    loadUserIcon(userRow);
+                }
             }
             else
             {
@@ -188,6 +202,23 @@ namespace BoxSocial.Applications.Forum
 			
 			return new ForumMember(core, owner, user);
 		}
+
+        public new Primitive Owner
+        {
+            get
+            {
+                if (owner == null || itemKey.Id != owner.Id || itemKey.TypeId != owner.TypeId)
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(itemKey);
+                    owner = core.PrimitiveCache[itemKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
 
         public override bool CanEditItem()
         {

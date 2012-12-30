@@ -33,6 +33,10 @@ namespace BoxSocial.IO
             {
                 return string.Format("'{0}'", Mysql.Escape((string)value));
             }
+            if (value == null)
+            {
+                return "''";
+            }
             else if (value is long)
             {
                 return ((long)value).ToString();

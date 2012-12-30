@@ -448,7 +448,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal UserInfo(Core core, DataRow memberRow)
+        public UserInfo(Core core, DataRow memberRow)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(UserInfo_ItemLoad);

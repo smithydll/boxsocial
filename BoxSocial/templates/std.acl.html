@@ -1,13 +1,23 @@
 {HACK}<!-- Hack -->
+<div id="tabs">
 <ul>
     <!-- IF IS_SIMPLE -->
-    <li>Simple Permissions</li>
-    <li><a href="{U_DETAILED}">Detailed Permissions</a></li>
+    <li class="current"><span>Simple Permissions</span></li>
+    <li><a href="{U_DETAILED}"><span>Detailed Permissions</span></a></li>
     <!-- ELSE -->
-    <li><a href="{U_SIMPLE}">Simple Permissions</a></li>
-    <li>Detailed Permissions</li>
+    <li><a href="{U_SIMPLE}"><span>Simple Permissions</span></a></li>
+    <li class="current"><span>Detailed Permissions</span></li>
     <!-- ENDIF -->
 </ul>
+</div>
+<div id="account-panel">
+<div class="account-wide-pane">
+    <!-- IF IS_SIMPLE -->
+    <p>Simple permissions replaces all detailed permissions with the simple permissions below once you hit save. This may enable extra permissions to people who could not access content or a function beforehand.</p>
+    <p>If a permission block is empty, permissions are inherited from the next level up. It is recommended to set view permissions for each content item.</p>
+    <!-- ELSE -->
+    <p>Detailed permissions are for people who understand an access control lists base permissions system. Permissions can be set granularly for each function of each content item.</p>
+    <!-- ENDIF -->
 <div id="acl-list">
 <!-- BEGIN permision_types -->
   <h3>{permision_types.TITLE}</h3>
@@ -89,4 +99,6 @@
   </div>
 <!-- END permision_types -->
 {S_ACLMODE}
+</div>
+</div>
 </div>

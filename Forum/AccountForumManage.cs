@@ -330,7 +330,7 @@ namespace BoxSocial.Applications.Forum
                 return;
             }
 
-            if (parentId != forum.ParentId)
+            /*if (parentId != forum.ParentId)
             {
                 db.BeginTransaction();
                 int order = 0;
@@ -435,10 +435,10 @@ namespace BoxSocial.Applications.Forum
                 uQuery.AddCondition("forum_item_id", parent.Owner.Id);
                 uQuery.AddCondition("forum_item_type_id", parent.Owner.TypeId);
 
-                core.Db.Query(uQuery);*/
+                core.Db.Query(uQuery);/
 
                 forum.Order = order;
-            }
+            }*/
 
             forum.Title = title;
             forum.Description = description;

@@ -1,13 +1,13 @@
 ﻿/*
  * Box Social™
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+  * Copyright © 2007, David Smith
  * 
  * $Id:$
  * 
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3 as
- * published by the Free Software Foundation.
+ * it under the terms of the GNU General Public License version 2 of
+ * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -533,6 +533,115 @@ namespace BoxSocial.Internals
         {
             AccessControlGrant acg = new AccessControlGrant(core, new ItemKey(primitiveId, primitiveTypeId), item.ItemKey, permissionId);
             acg.Delete();
+        }
+
+        public void SaveNewItemPermissions()
+        {
+            SaveNewItemPermissions("permissions");
+        }
+
+        public void SaveNewItemPermissions(string fieldName)
+        {
+            if (itemPermissions == null)
+            {
+                itemPermissions = GetPermissions(core, item);
+            }
+            if (itemGrants == null)
+            {
+                itemGrants = AccessControlGrant.GetGrants(core, item);
+            }
+            if (unsavedGrants == null)
+            {
+                unsavedGrants = new List<UnsavedAccessControlGrant>();
+            }
+
+            if (itemPermissions != null)
+            {
+                List<PrimitivePermissionGroup> groups = PermissionGroupSelectBox.FormPermissionGroups(core, fieldName);
+
+                if (groups.Count > 0)
+                {
+                    foreach (AccessControlPermission itemPermission in itemPermissions)
+                    {
+                        List<ItemKey> keysGranted = new List<ItemKey>();
+                        foreach (AccessControlGrant grant in itemGrants)
+                        {
+                            if (grant.PermissionId == itemPermission.Id)
+                            {
+                                if (grant.Allow == AccessControlGrants.Allow)
+                                {
+                                    keysGranted.Add(grant.PrimitiveKey);
+                                }
+                            }
+                        }
+
+                        List<ItemKey> keysPosted = new List<ItemKey>();
+                        if (itemPermission.PermissionType == PermissionTypes.View ||
+                            itemPermission.PermissionType == PermissionTypes.Interact)
+                        {
+                            foreach (PrimitivePermissionGroup ppg in groups)
+                            {
+                                bool flag = true;
+                                if (ppg.ItemKey.Equals(User.EveryoneGroupKey) &&
+                                    itemPermission.PermissionType == PermissionTypes.Interact)
+                                {
+                                    flag = false;
+
+                                    // Add registered users instead of everyone for interact by default
+                                    if (!keysGranted.Contains(User.RegisteredUsersGroupKey))
+                                    {
+                                        AccessControlGrant newACG = AccessControlGrant.Create(core, User.RegisteredUsersGroupKey, item.ItemKey, itemPermission.Id, AccessControlGrants.Allow);
+                                        itemGrants.Add(newACG);
+                                    }
+                                    keysPosted.Add(User.RegisteredUsersGroupKey);
+                                }
+
+                                if (flag)
+                                {
+                                    // Only create if not exists
+                                    if (!keysGranted.Contains(ppg.ItemKey))
+                                    {
+                                        AccessControlGrant newACG = AccessControlGrant.Create(core, ppg.ItemKey, item.ItemKey, itemPermission.Id, AccessControlGrants.Allow);
+                                        itemGrants.Add(newACG);
+                                    }
+                                    keysPosted.Add(ppg.ItemKey);
+                                }
+                            }
+                        }
+
+                        if (!keysGranted.Contains(item.Owner.ItemKey))
+                        {
+                            AccessControlGrant newACG = AccessControlGrant.Create(core, item.Owner.ItemKey, item.ItemKey, itemPermission.Id, AccessControlGrants.Allow);
+                            itemGrants.Add(newACG);
+                        }
+                        if (!keysPosted.Contains(item.Owner.ItemKey))
+                        {
+                            keysPosted.Add(item.Owner.ItemKey);
+                        }
+
+                        List<AccessControlGrant> grantsGrandfathered = new List<AccessControlGrant>();
+                        foreach (AccessControlGrant grant in itemGrants)
+                        {
+                            if (grant.PermissionId == itemPermission.Id)
+                            {
+                                if (!keysPosted.Contains(grant.PrimitiveKey))
+                                {
+                                    grantsGrandfathered.Add(grant);
+                                }
+                            }
+                        }
+
+                        foreach (AccessControlGrant grant in grantsGrandfathered)
+                        {
+                            itemGrants.Remove(grant);
+                            grant.Delete();
+                        }
+                    }
+
+                    item.IsSimplePermissions = true;
+                    item.Update();
+                }
+            }
         }
 
         public void SavePermissions()

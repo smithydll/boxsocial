@@ -28,8 +28,10 @@
         <div id="status-div">
 		<form action="/account" method="post" id="status-form" onsubmit="return SendStatus('{USER_DISPLAY_NAME}');">
 			<p><input type="text" id="message" name="message" value="is " style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+            <input type="hidden" name="aclmode" value="simple" />
 			<input type="hidden" name="module" value="profile" />
 			<input type="hidden" name="sub" value="status" /></p>
+            {S_STATUS_PERMISSIONS}
 		</form>
         </div>
 	</div>
@@ -52,6 +54,7 @@
             --><span class="img-button share-item"><a href="#" onclick="return ShareItem({status_messages.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
             --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));" title="Expand comments">Comments<span class="likes">{status_messages.COMMENTS}</span></a></span><!--
             <!-- IF status_messages.IS_OWNER -->
+            --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="Permissions"><span class="sprite permissions-sprite"></span></a></span><!--
             --><span class="img-button delete-item"><a href="{status_messages.U_DELETE}" onclick="return DeleteStatus({status_messages.ID});" title="Delete Status"><span class="sprite delete-sprite"></span></a></span><!--
             <!-- ENDIF -->
             -->

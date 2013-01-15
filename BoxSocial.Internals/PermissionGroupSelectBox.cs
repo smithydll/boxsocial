@@ -1,13 +1,13 @@
 ﻿/*
  * Box Social™
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+  * Copyright © 2007, David Smith
  * 
  * $Id:$
  * 
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3 as
- * published by the Free Software Foundation.
+ * it under the terms of the GNU General Public License version 2 of
+ * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -181,6 +181,7 @@ namespace BoxSocial.Internals
                         }
                         else if (ppg.ItemKey.Id > 0)
                         {
+                            //HttpContext.Current.Response.Write(ppg.ItemKey.TypeString.ToString() + " " + ppg.ItemKey.TypeId.ToString() + ", " + ppg.ItemKey.Id.ToString() + "<br />");
                             users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
                         }
                         else if (!string.IsNullOrEmpty(ppg.LanguageKey))
@@ -206,7 +207,7 @@ namespace BoxSocial.Internals
                 }
 
 
-                return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
+                return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\"><span class=\"empty\" style=\"{10}\">Type names to set permissions, or leave blank to inherit.</span>{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
                         HttpUtility.HtmlEncode(name),
                         HttpUtility.HtmlEncode(string.Empty),
                         (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
@@ -214,9 +215,10 @@ namespace BoxSocial.Internals
                         width,
                         Script.ToString(),
                         users.ToString(),
-                        permissibleItem.Id.ToString(),
-                        permissibleItem.TypeId.ToString(),
-                        idList.ToString());
+                        (permissibleItem != null) ? permissibleItem.Id.ToString() : "0",
+                        (permissibleItem != null) ? permissibleItem.TypeId.ToString() : "0",
+                        idList.ToString(),
+                        (idList.Length > 0) ? "display: none" : string.Empty);
             }
             catch (Exception ex)
             {

@@ -14,6 +14,10 @@
 			<dd>{S_BLOG_CATEGORY}</dd>
 			<dt><label for="license">{L_POST_LICENSE}</label></dt>
 			<dd>{S_BLOG_LICENSE} <a href="">{L_LEARN_MORE}</a></dd>
+            <!-- IF IS_NEW -->
+            <dt>Permissions:</dt>
+            <dd>{S_PERMISSIONS}{S_ACLMODE}</dd>
+            <!-- ENDIF -->
 			<dt><label>{L_EDIT_TIMESTAMP}: <input type="checkbox" id="edit-timestamp" name="edit-timestamp" value="1" onclick="if (document.getElementById('edit-timestamp').checked) { document.getElementById('timestamp-dd').style.display = 'block'; } else { document.getElementById('timestamp-dd').style.display = 'none'; }" /></label></dt>
 			<dd id="timestamp-dd" style="display: none; ">
 				<label>{L_YEAR}: {S_POST_YEAR}</label>

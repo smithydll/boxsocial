@@ -97,7 +97,7 @@ function ItemShared(r, e) {
 }
 
 function SendStatus(u) {
-	return PostToAccount(SentStatus, "profile", "status", -1, { message: $('#message').val() }, u );
+    return PostToAccount(SentStatus, "profile", "status", -1, { message: $('#message').val(), 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
 }
 
 function SentStatus(r, e, a) {
@@ -413,7 +413,8 @@ $(document).ready(function () {
                     avl($(this).siblings('.ids'), ui.item.id);
                 }
                 return false;
-            }
+            },
+            position: { collision: "flip" }
         })
         .data("autocomplete")._renderItem = function (ul, item) {
             return $('<li class="droplist-user">')
@@ -429,15 +430,29 @@ $(document).ready(function () {
         $(".permission-group-droplist .textbox").each(function () {
             var itemId = $(this).siblings('.item-id').val();
             var itemTypeId = $(this).siblings('.item-type-id').val();
+            var textbox = $(this);
+            var empty = $(this).parent().children(".empty");
+            var border = textbox.outerWidth() - textbox.width();
 
-            $(this).bind("keydown", function (event) {
+            textbox.bind("keydown", function (event) {
                 if (event.keyCode === $.ui.keyCode.TAB &&
                         $(this).data("autocomplete").menu.active) {
                     event.preventDefault();
                 }
             })
+            .bind("focus", function (event) {
+                textbox.width(textbox.parent().width() - textbox.position().left - border + 'px');
+                empty.hide();
+            })
             .bind("click", function (event) {
-                $(this).autocomplete( "search", "" );
+                textbox.autocomplete("search", "");
+                empty.hide();
+            })
+            .bind("blur", function (event) {
+                if (textbox.siblings('.ids').val() == '') {
+                    empty.show();
+                }
+                textbox.width('48px').width(textbox.parent().width() - textbox.position().left - border + 'px');
             })
             .autocomplete({
                 minLength: 0,
@@ -453,9 +468,12 @@ $(document).ready(function () {
                     if (cv($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id) == 0) {
                         $(this).before($('<span class="' + ((ui.item.id > 0) ? 'username' : 'group') + '">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),\'' + ui.item.typeId + '-' + ui.item.id + '\'); $(this).parent().remove();">x</span><input type="hidden" id="group-' + ui.item.typeId + '-' + ui.item.id + '" name="group[' + ui.item.TypeId + ',' + ui.item.id + ']" value="' + ui.item.typeId + ',' + ui.item.id + '" /></span>'));
                         avl($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id);
+                        empty.hide();
+                        textbox.width('48px').width(textbox.parent().width() - textbox.position().left - border + 'px');
                     }
                     return false;
-                }
+                },
+                position: { collision: "flip" }
             })
             .data("autocomplete")._renderItem = function (ul, item) {
                 return $('<li class="droplist-' + ((item.id > 0) ? 'user' : 'group') + '">')
@@ -463,6 +481,11 @@ $(document).ready(function () {
                     .append('<a>' + ((item.tile != '') ? '<img src="' + item.tile + '" />' : '') + item.value + '</a>')
                     .appendTo(ul);
             };
+
+            empty.bind("click", function (event) {
+                textbox.autocomplete("search", "");
+                empty.hide();
+            });
         });
     };
 });

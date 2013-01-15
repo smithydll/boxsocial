@@ -1,13 +1,13 @@
 ﻿/*
  * Box Social™
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+  * Copyright © 2007, David Smith
  * 
  * $Id:$
  * 
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3 as
- * published by the Free Software Foundation.
+ * it under the terms of the GNU General Public License version 2 of
+ * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -90,6 +90,8 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_post");
 
+            Blog blog = new Blog(core, (User)Owner);
+
             /* Title TextBox */
             TextBox titleTextBox = new TextBox("title");
             titleTextBox.MaxLength = 127;
@@ -132,49 +134,57 @@ namespace BoxSocial.Applications.Blog
 
             postDaysSelectBox.SelectedKey = postTime.Day.ToString();
 
-            if (postId > 0)
+            if (postId > 0 && core.Http.Query["mode"] == "edit")
             {
-                if (core.Http.Query["mode"] == "edit")
+                try
                 {
-                    try
+                    BlogEntry be = new BlogEntry(core, postId);
+
+                    titleTextBox.Value = be.Title;
+                    postTextBox.Value = be.Body;
+
+                    licenseId = be.License;
+                    categoryId = be.Category;
+
+                    postTime = be.GetCreatedDate(tz);
+
+                    List<Tag> tags = Tag.GetTags(core, be);
+
+                    string tagList = string.Empty;
+
+                    foreach (Tag tag in tags)
                     {
-                        BlogEntry be = new BlogEntry(core, postId);
-
-                        titleTextBox.Value = be.Title;
-                        postTextBox.Value = be.Body;
-
-                        licenseId = be.License;
-                        categoryId = be.Category;
-
-                        postTime = be.GetCreatedDate(tz);
-
-                        List<Tag> tags = Tag.GetTags(core, be);
-
-                        string tagList = string.Empty;
-
-                        foreach (Tag tag in tags)
+                        if (tagList != string.Empty)
                         {
-                            if (tagList != string.Empty)
-                            {
-                                tagList += ", ";
-                            }
-                            tagList += tag.TagText;
+                            tagList += ", ";
                         }
-
-                        tagsTextBox.Value = tagList;
-
-                        if (be.OwnerId != core.LoggedInMemberId)
-                        {
-                            DisplayError("You must be the owner of the blog entry to modify it.");
-                            return;
-                        }
+                        tagList += tag.TagText;
                     }
-                    catch (InvalidBlogEntryException)
+
+                    tagsTextBox.Value = tagList;
+
+                    if (be.OwnerId != core.LoggedInMemberId)
                     {
-                        DisplayError(core.Prose.GetString("Blog", "BLOG_ENTRY_DOES_NOT_EXIST"));
+                        DisplayError("You must be the owner of the blog entry to modify it.");
                         return;
                     }
                 }
+                catch (InvalidBlogEntryException)
+                {
+                    DisplayError(core.Prose.GetString("Blog", "BLOG_ENTRY_DOES_NOT_EXIST"));
+                    return;
+                }
+            }
+            else
+            {
+                template.Parse("IS_NEW", "TRUE");
+
+                PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", blog.ItemKey);
+                HiddenField aclModeField = new HiddenField("aclmode");
+                aclModeField.Value = "simple";
+
+                template.Parse("S_PERMISSIONS", permissionSelectBox);
+                template.Parse("S_ACLMODE", aclModeField);
             }
 
             template.Parse("S_POST_YEAR", postYearsSelectBox);
@@ -369,6 +379,9 @@ namespace BoxSocial.Applications.Blog
                 db.BeginTransaction();
 
                 BlogEntry myBlogEntry = BlogEntry.Create(core, myBlog, title, postBody, license, status, category, postTimeRaw);
+
+                AccessControlLists acl = new AccessControlLists(core, myBlogEntry);
+                acl.SaveNewItemPermissions();
 
                 postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);

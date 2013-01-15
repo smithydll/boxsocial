@@ -1062,8 +1062,18 @@ span.img-button:hover .voteup-sprite.sprite {
     background-image: url(images/dislike-888888.png);
 }
 
+
 span.img-button:hover .votedown-sprite.sprite {
     background-image: url(images/dislike-ff0000.png);
+}
+
+.light .permissions-sprite {
+    background-image: url(images/permissions-888888.png);
+}
+
+
+span.img-button:hover .permissions-sprite.sprite {
+    background-image: url(images/permissions-red.png);
 }
 
 span.img-button.voteup-item {
@@ -1565,6 +1575,14 @@ li.droplist-user img {
         width: 32px;
 }
 
+.user-droplist .empty, .permission-group-droplist .empty {
+        color: #999999;
+        padding: 2px;
+        margin: 2px;
+        display: inline-block;
+        cursor: pointer;
+}
+
 .user-droplist .delete, .permission-group-droplist .delete {
         margin-left: 4px;
         display: inline-block;
@@ -1581,6 +1599,7 @@ li.droplist-user img {
 .user-droplist, .permission-group-droplist {
         border: 1px solid #028;
         background-color: #ffffff;
+        position: relative;
 }
 
 .user-droplist input, .permission-group-droplist input {
@@ -1602,8 +1621,8 @@ li.droplist-user img {
 }
 
 .permission-group-droplist .group {
-        border: 1px solid #008822;
-	    background: #22aa44;
+        border: 1px solid #0088aa;
+	    background: #22aacc;
         color: #ffffff;
         padding: 2px;
         margin: 2px;
@@ -1643,4 +1662,10 @@ ul.feed-list li div.feed-text
     padding: 2px;
 	margin-left: 70px;
 	position: relative;
+}
+
+.ui-autocomplete {
+    max-height: 220px; 
+    overflow-y: auto; 
+    overflow-x: hidden;
 }

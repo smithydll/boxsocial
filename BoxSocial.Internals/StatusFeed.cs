@@ -1,13 +1,13 @@
 ﻿/*
  * Box Social™
  * http://boxsocial.net/
- * Copyright © 2007, David Lachlan Smith
+  * Copyright © 2007, David Smith
  * 
  * $Id:$
  * 
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3 as
- * published by the Free Software Foundation.
+ * it under the terms of the GNU General Public License version 2 of
+ * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,18 +44,67 @@ namespace BoxSocial.Internals
             }
 
             List<StatusMessage> feedItems = new List<StatusMessage>();
+            bool moreContent = false;
+
+            int bpage = page;
+            int perPage = 20;
+            int limitStart = (bpage - 1) * perPage;
 
             SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
             query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
-            query.LimitCount = 50;
-            query.LimitStart = (page - 1) * 50;
+            /*query.LimitCount = 50;
+            query.LimitStart = (page - 1) * 50;*/
 
             DataTable feedTable = core.Db.Query(query);
 
-            foreach (DataRow dr in feedTable.Rows)
+            /*foreach (DataRow dr in feedTable.Rows)
             {
                 feedItems.Add(new StatusMessage(core, owner, dr));
+            }
+
+            return feedItems;*/
+
+            int offset = 0;
+            int i = 0;
+
+            while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
+            {
+                List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
+                int j = 0;
+                for (j = offset; j < Math.Min(offset + perPage * 2, feedTable.Rows.Count); j++)
+                {
+                    StatusMessage message = new StatusMessage(core, owner, feedTable.Rows[j]);
+                    tempMessages.Add(message);
+                }
+
+                if (tempMessages.Count > 0)
+                {
+                    core.AcessControlCache.CacheGrants(tempMessages);
+
+                    foreach (IPermissibleItem message in tempMessages)
+                    {
+                        if (message.Access.Can("VIEW"))
+                        {
+                            if (i >= limitStart + perPage)
+                            {
+                                moreContent = true;
+                                break;
+                            }
+                            if (i >= limitStart)
+                            {
+                                feedItems.Add((StatusMessage)message);
+                            }
+                            i++;
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+
+                offset = j;
             }
 
             return feedItems;
@@ -168,7 +217,12 @@ namespace BoxSocial.Internals
             if (core.Session.IsLoggedIn && owner == core.Session.LoggedInMember)
             {
                 core.Template.Parse("OWNER", "TRUE");
+
             }
+
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", owner.ItemKey);
+
+            core.Template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
 
             List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber);
 
@@ -187,6 +241,7 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(item.Id));
                 statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(item.Id));
                 statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_PERMISSIONS", item.Access.AclUri);
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
 
                 if (core.Session.IsLoggedIn)

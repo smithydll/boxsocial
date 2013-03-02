@@ -208,6 +208,17 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        [PageSlug("Feed")]
+        [Show("feed", AppPrimitives.Member | AppPrimitives.Application)]
+        private void showFeed(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                UPage page = (UPage)sender;
+                CombinedFeed.Show(core, page, page.User);
+            }
+        }
+
         [Show("status-feed/([0-9]+)", AppPrimitives.Member | AppPrimitives.Application)]
         private void showStatusMessage(Core core, object sender)
         {

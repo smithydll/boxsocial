@@ -55,7 +55,11 @@
 	</div>
 	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
+            <!-- IF $_IS_MOBILE -->
+            <h3 onclick="ShowPages()">Pages</h3>
+            <!-- ELSE -->
 			<h3>Pages</h3>
+            <!-- ENDIF -->
 			<ul class="page-tiles">
 				{PAGE_LIST}
 			</ul>

@@ -99,6 +99,7 @@ namespace BoxSocial.Internals
 
         private sealed class BbcodeEventArgs
         {
+            private Core core;
             private BbcodeTag tag;
             private BbcodeAttributes attributes;
             private BbcodeOptions options;
@@ -111,6 +112,14 @@ namespace BoxSocial.Internals
             private string contents;
             private bool stripTag;
             private Primitive owner = null;
+
+            public Core Core
+            {
+                get
+                {
+                    return core;
+                }
+            }
 
             public BbcodeTag Tag
             {
@@ -231,8 +240,9 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, Primitive postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, Primitive postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
+                this.core = core;
                 this.tag = tag;
                 this.options = options;
                 this.attributes = tag.GetAttributes();
@@ -246,8 +256,9 @@ namespace BoxSocial.Internals
                 this.owner = postOwner;
             }
 
-            public BbcodeEventArgs(string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, bool stripTag, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
+                this.core = core;
                 this.tag = tag;
                 this.options = options;
                 this.attributes = tag.GetAttributes();
@@ -589,7 +600,7 @@ namespace BoxSocial.Internals
                                     int tempIndex = tempTag.indexStart + tempTag.StartLength;
                                     string contents = input.Substring(tempIndex, i - tempIndex - tempTag.EndLength + 1);
 
-                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(contents, tempTag, options, postOwner, (inList > 0), stripTags, ref insertStart, ref insertEnd, ref handled, ref abortParse);
+                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(core, contents, tempTag, options, postOwner, (inList > 0), stripTags, ref insertStart, ref insertEnd, ref handled, ref abortParse);
                                     BbcodeHooks(eventArgs);
 
                                     insertStart = eventArgs.PrefixText;
@@ -1412,7 +1423,15 @@ namespace BoxSocial.Internals
                     // Old YouTube Flash Embed Code
                     //e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";
                     // New YouTube Embed Code
-                    e.PrefixText = "<iframe class=\"youtube-player\" type=\"text/html\" width=\"560\" height=\"340\" src=\"" + youTubeUrl + "\" frameborder=\"0\"></iframe>";
+
+                    if (e.Core.IsMobile)
+                    {
+                        e.PrefixText = "<iframe class=\"youtube-player\" type=\"text/html\" width=\"300\" height=\"194\" src=\"" + youTubeUrl + "\" frameborder=\"0\"></iframe>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<iframe class=\"youtube-player\" type=\"text/html\" width=\"560\" height=\"340\" src=\"" + youTubeUrl + "\" frameborder=\"0\"></iframe>";
+                    }
                     e.SuffixText = string.Empty;
                 }
                 else

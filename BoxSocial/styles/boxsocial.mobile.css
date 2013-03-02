@@ -2,12 +2,12 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	font-size: 100%;
-	height: 100%;
+	min-height: 1280px;
 }
 
 body {
 	background: white;
-	font-size: 3mm;
+	font-size: 9pt;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	text-align: center;
 }
@@ -34,62 +34,85 @@ p {
 	margin: 0 0;
 }
 
-#head h1 {
+h1#page-title {
 	float: left;
 	margin: 0px;
 	padding: 0px;
-	background: url('/images/zinzam-wl.png');
+	background: url('/images/boxsocial-logo-mobile.png');
 	background-repeat: no-repeat;
-	height: 10mm;
-	background-color: #333333;
+	background-size: auto 32pt;
+	height: 32pt;
+	background-color: #fe6600;
 	position: relative;
 	width: 100%;
 }
 
-#head h1 a {
+h1#page-title a {
 	display: block;
 	width: 100%;
-	height: 10mm;
+	height: 32pt;
 }
 
-#head h1 a span {
+h1#page-title a span {
 	text-indent: -5000px;
 	display: block;
 }
 
-#head h2 {
+#mobile-nav 
+{
+    clear: both;
+}
+
+h2#sub-title {
 	display: none;
 }
 
 #body h2 {
-	font-size: 220%;
+	font-size: 160%;
 }
 
 #body h3 {
-	font-size: 180%;
+	font-size: 140%;
 }
 
 #body h4 {
-	font-size: 150%;
+	font-size: 130%;
 }
 
 #body h5 {
-	font-size: 135%;
+	font-size: 12%;
 }
 
 #body h6 {
-	font-size: 120%;
+	font-size: 110%;
+}
+
+#head #search {
+	float: right;
+}
+
+#head #search fieldset {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+#head #search #search-text {
+	width: 150px;
 }
 
 .page-tiles {
     padding: 0;
     margin: 5px;
+    display: none;
+    list-style: none;
 }
 
 .page-tiles li {
     padding: 1px 5px;
     background-color: #333333;
     color: #FFFFFF;
+    list-style: none;
 }
 
 .page-tiles li a {
@@ -104,15 +127,13 @@ p {
 .page-li {
     background-repeat: no-repeat;
     background-position: 4px center;
-    line-height: 9mm;
+    line-height: 23pt;
     padding-left: 24px !important;
     margin: 4px;
 }
 
 #foot {
 	/*clear: both;*/
-	background-color: #e0e0e0;
-	/*background-image: url('/images/footer-gradient.png');*/
 	height: 11em;
 }
 
@@ -125,10 +146,454 @@ p {
 }
 
 #foot * {
-	color: #333333;
+	color: #cccccc;
 }
 
 #body {
 	width: 100%;
+	margin: 0;
+	text-align: left;
+}
+
+#new-stuff, #x-stuff, .r-stuff
+{
+	padding: 10px 2px;
+}
+
+#x-stuff {
+    text-align: center;
+}
+
+.r-stuff {
+    text-align: right;
+}
+
+/* Fixes button height rendering in gecko to same as trident and webkit */
+button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner {
+  border: 0;
+}
+
+input[type="text"], input[type="password"], textarea
+{
+	border: 1px solid #002288;
+	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
+	padding: 4px;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+select
+{
+	border: 1px solid #002288;
+	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
+	vertical-align: -4px;
+}
+
+span.post-button, span.img-button, button {
+	border-radius: 5px;
+	border: 1px solid #002288;
+	background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
+	color: #ffffff;
+	margin: 2px;
+	padding: 4px 16px;
+}
+
+span.subscribe-button {
+	border-radius: 5px;
+	border: 1px solid #eecc22;
+	background: #ffee22;
+	color: #664422;
+	margin: 2px;
+	padding: 6px 16px;
+	font-size: 110%;
+}
+
+input[type="submit"] {
+	border-radius: 5px;
+	border: 1px solid #008822;
+	background: #22aa44;
+	color: #ffffff;
+	margin: 2px;
+	padding: 4px 16px;
+}
+
+input[type="cancel"], input[type="reset"] {
+	border-radius: 5px;
+	border: 1px solid #888888;
+	background: #dddddd;
+	color: #666666;
+	margin: 2px;
+	padding: 4px 16px;
+}
+
+input[type="cancel"]:hover, input[type="reset"]:hover {
+    background: #ffffff;
+    color: #333333;
+}
+
+#search input[type="submit"] {
+    border: 1px solid #aaaaaa;
+	background: #eeeeee;
+	color: #888888;
+    border-left: none;
+    margin-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+#search input[type="submit"]:hover {
+    background: #cccccc;
+    color: #666666;
+}
+
+#search #search-text {
+    border: 1px solid #aaaaaa;
+    border-right: none;
+    outline: none;
+}
+
+span.post-button:hover, span.img-button:hover, button:hover {
+    background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
+    color: #0044aa;
+}
+
+span.subscribe-button:hover {
+    background: #f7f722;
+    color: #664422;
+}
+
+input[type="submit"]:hover {
+    background: #ffffff;
+    color: #00aa44;
+}
+
+span.post-button a, span.img-button a {
+    color: #ffffff;
+}
+
+span.post-button:hover a, span.img-button:hover a {
+    color: #0044aa;
+}
+
+span.subscribe-button a {
+    color: #664422;
+}
+
+.light span.img-button {
+	border-radius: 3px;
+	border: none;
+	background: none;
+	color: #888888;
+	margin: 2px;
+	padding: 5px 5px;
+}
+
+.light span.img-button:hover {
+    border: 1px solid #cccccc;
+    background: #dddddd;
+    padding: 4px 4px;
+}
+
+.light span.img-button a {
+    color: #888888;
+}
+
+.light span.img-button:hover a {
+    color: #0044aa;
+}
+
+.white span.img-button, .white span.post-button {
+	border: none;
+	background: none;
+	color: #ffffff;
+	margin: 0 2px;
+	padding: 3px 3px;
+}
+
+.white span.img-button:hover, .white span.post-button:hover {
+    background: rgba(221, 221, 221, 0.4);
+}
+
+.white span.img-button a, .white span.post-button a {
+    color: #ffffff;
+}
+
+.white span.img-button:hover a, .white span.post-button:hover a {
+    color: #ffffff;
+}
+
+span.img-button {
+	padding: 4px 4px;
+	text-align: center;
+}
+
+span.img-button img {
+	margin: 0px;
+	padding: 0px;
+	position: relative;
+	top: 2px;
+}
+
+.font-sprite {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    position: relative;
+    top: 2px;
+    text-align: center;
+}
+
+.sprite {
+    background-image: url(images/ui-icons_ffffff_256x240.png);
+}
+
+.light .sprite {
+    background-image: url(images/ui-icons_888888_256x240.png);
+}
+
+.tag-sprite {
+    background-position: -240px -96px;
+}
+
+.delete-sprite {
+    background-position: -176px -96px;
+}
+
+.exclaim-sprite {
+    background-position: -32px -144px;
+}
+
+.report-sprite {
+    background-position: -16px -112px;
+}
+
+.conversation-sprite {
+    background-position: -128px -96px;
+}
+
+.like-sprite {
+    background-position: -208px -112px;
+}
+
+.share-sprite {
+    background-position: -240px -112px;
+}
+
+.light .voteup-sprite {
+    background-image: url(images/like-888888.png);
+}
+
+span.img-button:hover .voteup-sprite.sprite {
+    background-image: url(images/like-007F00.png);
+}
+
+.light .votedown-sprite {
+    background-image: url(images/dislike-888888.png);
+}
+
+
+span.img-button:hover .votedown-sprite.sprite {
+    background-image: url(images/dislike-ff0000.png);
+}
+
+.light .permissions-sprite {
+    background-image: url(images/permissions-888888.png);
+}
+
+
+span.img-button:hover .permissions-sprite.sprite {
+    background-image: url(images/permissions-red.png);
+}
+
+span.img-button.voteup-item {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+}
+
+span.img-button.votedown-item {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+}
+
+span.img-button .sprite {
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top: 3px;
+    text-align: center;
+}
+
+span.img-button:hover .tag-sprite:hover, span.img-button:hover .sprite {
+    background-image: url(images/ui-icons_0044aa_256x240.png);
+}
+
+.white span.img-button:hover .sprite {
+    background-image: url(images/ui-icons_ffffff_256x240.png);
+}
+
+.upvotes {
+    color: #007f00;
+}
+
+.downvotes {
+    color: #ff0000;
+}
+
+
+#m-nav-buttons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 32pt;
+    width: 100%;
+    position: relative;
+    clear: both;
+}
+
+#m-nav-buttons li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+    height: 28pt;
+    border: 1px solid #CCCCCC;
+    background-color: #EEEEEE;
+    width: 20%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+    text-align: center;
+}
+
+#m-nav-buttons li a
+{
+    display: block;
+    width: 100%;
+    height: 28pt;
+    color: #666666;
+}
+
+#m-nav-buttons li a span
+{
+    display: block;
+    padding-top: 14pt;
+}
+
+#m-nav-buttons li:first-child 
+{
+    border-top-left-radius: 7pt;
+    border-bottom-left-radius: 7pt;
+}
+
+#m-nav-buttons li:last-child 
+{
+    border-top-right-radius: 7pt;
+    border-bottom-right-radius: 7pt;
+}
+
+#search {
+    display: none;
+}
+
+#post-status-div
+{
+    display: none;
+}
+
+ul.comment-list {
+	list-style: none;
+	padding: 0px;
 	margin: 5px 0;
 }
+
+ul.comment-list li {
+	list-style: none;
+	padding: 0 0 1px 0;
+	margin: 0 1px 4px 1px;
+	overflow: hidden;
+	border-radius: 5px;
+	background-color: #ffffff;
+}
+
+ul.comment-list li:hover {
+    background-color: #eeeeee;
+    border: 1px solid #dddddd;
+    border-top: none;
+    padding-bottom: 0;
+    margin: 0 0 4px 0;
+}
+
+ul.comment-list li h4 {
+	font-size: 115%;
+	padding: 2px;
+	margin: 0px;
+	font-weight: normal;
+	font-size: 120% !important;
+	border-top: 2px solid #dddddd;
+}
+
+ul.comment-list li h4.owner {
+	border-top: 2px solid #BBDDEE;
+}
+
+ul.comment-list li p.time {
+	float: right;
+	position: relative;
+	top: -1.4em;
+	padding: 0px;
+	margin: 0px;
+	padding-right: 5px;
+}
+
+ul.comment-list li div.comment-disp-pic {
+	float:left;
+	width: 60px;
+	height: 60px;
+	padding: 0 5px;
+	margin-top: 2px;
+}
+
+ul.comment-list li div.comment-disp-pic img 
+{
+	padding: 2px;
+	background-color: White;
+	border: solid 1px #999999;
+}
+
+ul.comment-list li div.comment-text 
+{
+    clear: left;
+    padding: 2px;
+	position: relative;
+}
+
+ul.comment-list li p.extra {
+	text-align: right;
+	margin: 4px 0;
+}
+ul.comment-list li p.extra a {
+	color: #0033CC;
+}
+
+.comment-form fieldset, #list-add-form fieldset {
+	border: none;
+	padding: 0px;
+	margin: 0;
+}
+
+.comment-form legend, #list-add-form legend {
+	font-size: 125%;
+	font-weight: bold;
+	margin: 0px;
+}
+
+.ui-content {padding: 8px !important;}
+.ui-listview-filter {margin: 8px !important;}
+.ui-content .ui-listview {margin: 8px !important;}

@@ -502,7 +502,7 @@ namespace BoxSocial.IO
             {
                 lock (templatesLock)
                 {
-                    if (!templates.TryGetValue(templateAssembly + "." + templateName, out template))
+                    if (!templates.TryGetValue(templateAssembly + "." + templateName + "." + Medium.ToString(), out template))
                     {
                         try
                         {
@@ -520,7 +520,25 @@ namespace BoxSocial.IO
                                     break;
                             }
 
-                            object templateObject = rm.GetObject(templateName);
+                            object templateObject = null;
+
+                            switch (Medium)
+                            {
+                                case DisplayMedium.Mobile:
+                                    templateObject = rm.GetObject(templateName + "_mobile");
+                                    break;
+                                case DisplayMedium.Tablet:
+                                    templateObject = rm.GetObject(templateName + "_tablet");
+                                    break;
+                                default:
+                                    templateObject = rm.GetObject(templateName);
+                                    break;
+                            }
+
+                            if (!(templateObject is string || templateObject is byte[]))
+                            {
+                                templateObject = rm.GetObject(templateName);
+                            }
 
                             if (templateObject is string)
                             {
@@ -538,12 +556,12 @@ namespace BoxSocial.IO
                                     template = template.Remove(0, 1);
                                 }
 
-                                templates.Add(templateAssembly + "." + templateName, template);
+                                templates.Add(templateAssembly + "." + templateName + "." + Medium.ToString(), template);
                             }
                             else
                             {
-                                template = string.Format("Unknown template type {1} in assembly {0}",
-                                templateAssembly, templateName);
+                                template = string.Format("Unknown template type {1} in assembly {0}, medium = {2}",
+                                templateAssembly, templateName, Medium.ToString());
                             }
                         }
                         catch (Exception ex)
@@ -562,7 +580,7 @@ namespace BoxSocial.IO
             {
                 lock (templatesLock)
                 {
-                    if (!templates.TryGetValue(templateName, out template))
+                    if (!templates.TryGetValue(templateName + "." + Medium.ToString(), out template))
                     {
                         string templatePath = System.IO.Path.Combine(path, templateName);
 
@@ -596,7 +614,7 @@ namespace BoxSocial.IO
                         }
                         else
                         {
-                            templates.Add(templateName, template);
+                            //templates.Add(templateName + "." + Medium.ToString(), template);
                         }
                     }
                     else
@@ -674,6 +692,21 @@ namespace BoxSocial.IO
             else
             {
                 variables.Parse("$_INDEX_FIRST", "FALSE");
+            }
+
+            if (Medium == DisplayMedium.Mobile)
+            {
+                variables.Parse("$_IS_MOBILE", "TRUE");
+            }
+
+            if (Medium == DisplayMedium.Tablet)
+            {
+                variables.Parse("$_IS_TABLET", "TRUE");
+            }
+
+            if (Medium == DisplayMedium.Desktop)
+            {
+                variables.Parse("$_IS_DESKTOP", "TRUE");
             }
 
             for (int i = 0; i < lines.Length; i++)

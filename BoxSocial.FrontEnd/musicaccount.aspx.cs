@@ -185,6 +185,12 @@ namespace BoxSocial.FrontEnd
 
                 if (module == accountModule.Key)
                 {
+                    ApplicationEntry ae = null;
+                    if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
+                    {
+                        ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
+                    }
+
                     accountModule.SetOwner = loggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
@@ -204,10 +210,16 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, Musician, accountModule.assembly.GetName().Name);
-
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at ZinZam.com", ex.ToString());
+                    }
+
+                    modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    if (ae != null && ae.HasJavascript)
+                    {
+                        VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+
+                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
                 }
             }
@@ -226,6 +238,11 @@ namespace BoxSocial.FrontEnd
                     modulesVariableCollection.Parse("SUB", asm.Key);
                     modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
                     modulesVariableCollection.Parse("URI", asm.BuildUri(core));
+
+                    if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                    {
+                        modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    }
                 }
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)

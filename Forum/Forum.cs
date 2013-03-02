@@ -1594,6 +1594,8 @@ namespace BoxSocial.Applications.Forum
 
                 if (lastPosts.ContainsKey(forum.LastPostId))
                 {
+                    forumVariableCollection.Parse("LAST_POST_URI", lastPosts[forum.LastPostId].Uri);
+                    forumVariableCollection.Parse("LAST_POST_TITLE", lastPosts[forum.LastPostId].Title);
                     core.Display.ParseBbcode(forumVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
                         lastPosts[forum.LastPostId].Uri, Functions.TrimStringToWord(lastPosts[forum.LastPostId].Title, 20), core.Tz.DateTimeToString(lastPosts[forum.LastPostId].GetCreatedDate(core.Tz))));
                 }
@@ -1690,6 +1692,8 @@ namespace BoxSocial.Applications.Forum
 
                     if (topicLastPosts.ContainsKey(topic.LastPostId))
                     {
+                        topicVariableCollection.Parse("LAST_POST_URI", topicLastPosts[topic.LastPostId].Uri);
+                        topicVariableCollection.Parse("LAST_POST_TITLE", topicLastPosts[topic.LastPostId].Title);
                         core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
                             topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
                     }

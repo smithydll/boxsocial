@@ -362,7 +362,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        [Show(@"images/([A-Za-z0-9\-_/\.]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
+        [Show(@"images/([A-Za-z0-9\-_/\.@]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
         private void showImage(Core core, object sender)
         {
             if (sender is PPage)
@@ -422,7 +422,7 @@ namespace BoxSocial.Applications.Gallery
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
                     galleryVariableCollection.Parse("PHOTO_URI", galleryItem.Uri);
 
-                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
+                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbnailUri);
                 }
 
                 template.Parse("U_GROUP_GALLERY", Gallery.BuildGalleryUri(core, thisGroup));

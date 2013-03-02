@@ -100,7 +100,13 @@ function toggleHd() {
 
 function showHd() {
     document.body.style.overflow = 'hidden';
-    $('#photo-hd').attr('src', hdDisplay);
+
+    if ($("#display-hd").height() > 1280) {
+        $('#photo-hd').attr('src', hdDisplay);
+    }
+    else {
+        $('#photo-hd').attr('src', retinaDisplay);
+    }
     $('#display-hd').show();
     //parent.location.hash = 'hd';
 

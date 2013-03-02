@@ -39,12 +39,43 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Gallery
 {
+    public enum PictureScale : int
+    {
+        Icon = 50,
+        Tile = 100,
+        Square = 200,
+        High = 400,
+
+        Tiny = 80,
+        Thumbnail = 160,
+        Mobile = 320,
+        Display = 640,
+        Full = 1280,
+        Ultra = 2560,
+
+        Original = 0,
+    }
+
     /// <summary>
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
     public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem, ILikeableItem
     {
+        // Square
+        static string IconPrefix = "_icon"; // 50
+        static string TilePrefix = "_tile"; // 100
+        static string SquarePrefix = "_square"; // 200
+        static string HighPrefix = "_high"; // 400
+
+        // Ratio
+        static string TinyPrefix = "_tiny"; // 80
+        static string ThumbnailPrefix = "_thumb"; // 160
+        static string MobilePrefix = "_mobile"; // 320
+        static string DisplayPrefix = "_display"; // 640
+        static string FullPrefix = "_full"; // 1280
+        static string UltraPrefix = "_ultra"; // 2560
+
         /// <summary>
         /// Owner of the photo's user Id
         /// </summary>
@@ -163,32 +194,8 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
-        [DataField("gallery_item_display_exists")]
-        protected bool displayExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataField("gallery_item_hd_exists")]
-        protected bool hdExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_icon_exists")]
         protected bool iconExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataField("gallery_item_thumb_exists")]
-        protected bool thumbExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [DataField("gallery_item_large_tile_exists")]
-        protected bool largeTileExists;
 
         /// <summary>
         /// 
@@ -199,8 +206,50 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [DataField("gallery_item_square_exists")]
+        protected bool squareExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_high_exists")]
+        protected bool highExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
         [DataField("gallery_item_tiny_exists")]
         protected bool tinyExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_thumb_exists")]
+        protected bool thumbnailExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_mobile_exists")]
+        protected bool mobileExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_display_exists")]
+        protected bool displayExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_full_exists")]
+        protected bool fullExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_ultra_exists")]
+        protected bool ultraExists;
 
         /// <summary>
         /// Owner of the photo
@@ -465,30 +514,6 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        public bool DisplayExists
-        {
-            get
-            {
-                return displayExists;
-            }
-            internal set
-            {
-                SetProperty("displayExists", value);
-            }
-        }
-
-        public bool HdExists
-        {
-            get
-            {
-                return hdExists;
-            }
-            internal set
-            {
-                SetProperty("hdExists", value);
-            }
-        }
-
         public bool IconExists
         {
             get
@@ -497,19 +522,7 @@ namespace BoxSocial.Applications.Gallery
             }
             internal set
             {
-                SetProperty("iconExists", value);
-            }
-        }
-
-        public bool ThumbExists
-        {
-            get
-            {
-                return thumbExists;
-            }
-            internal set
-            {
-                SetProperty("thumbExists", value);
+                SetPropertyByRef(new { iconExists }, value);
             }
         }
 
@@ -521,19 +534,31 @@ namespace BoxSocial.Applications.Gallery
             }
             internal set
             {
-                SetProperty("tileExists", value);
+                SetPropertyByRef(new { tileExists }, value);
             }
         }
 
-        public bool LargeTileExists
+        public bool SquareExists
         {
             get
             {
-                return largeTileExists;
+                return squareExists;
             }
             internal set
             {
-                SetProperty("largeTileExists", value);
+                SetPropertyByRef(new { squareExists }, value);
+            }
+        }
+
+        public bool HighExists
+        {
+            get
+            {
+                return highExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { highExists }, value);
             }
         }
 
@@ -545,7 +570,67 @@ namespace BoxSocial.Applications.Gallery
             }
             internal set
             {
-                SetProperty("tinyExists", value);
+                SetPropertyByRef(new { tinyExists }, value);
+            }
+        }
+
+        public bool ThumbnailExists
+        {
+            get
+            {
+                return thumbnailExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { thumbnailExists }, value);
+            }
+        }
+
+        public bool MobileExists
+        {
+            get
+            {
+                return mobileExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { mobileExists }, value);
+            }
+        }
+
+        public bool DisplayExists
+        {
+            get
+            {
+                return displayExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { displayExists }, value);
+            }
+        }
+
+        public bool FullExists
+        {
+            get
+            {
+                return fullExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { fullExists }, value);
+            }
+        }
+
+        public bool UltraExists
+        {
+            get
+            {
+                return ultraExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { ultraExists }, value);
             }
         }
 
@@ -958,13 +1043,16 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_item_id", owner.Id);
             iQuery.AddField("gallery_item_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_item_classification", (byte)classification);
-            iQuery.AddField("gallery_item_display_exists", false);
-            iQuery.AddField("gallery_item_hd_exists", false);
             iQuery.AddField("gallery_item_icon_exists", false);
-            iQuery.AddField("gallery_item_thumb_exists", false);
             iQuery.AddField("gallery_item_tile_exists", false);
-            iQuery.AddField("gallery_item_large_tile_exists", false);
+            iQuery.AddField("gallery_item_square_exists", false);
+            iQuery.AddField("gallery_item_high_exists", false);
             iQuery.AddField("gallery_item_tiny_exists", false);
+            iQuery.AddField("gallery_item_thumb_exists", false);
+            iQuery.AddField("gallery_item_mobile_exists", false);
+            iQuery.AddField("gallery_item_display_exists", false);
+            iQuery.AddField("gallery_item_full_exists", false);
+            iQuery.AddField("gallery_item_ultra_exists", false);
             iQuery.AddField("gallery_item_width", width);
             iQuery.AddField("gallery_item_height", height);
 
@@ -1045,13 +1133,16 @@ namespace BoxSocial.Applications.Gallery
             {
                 UpdateQuery uquery = new UpdateQuery("gallery_items");
                 uquery.AddField("gallery_item_storage_path", newFileName);
-                uquery.AddField("gallery_item_display_exists", false);
-                uquery.AddField("gallery_item_hd_exists", false);
                 uquery.AddField("gallery_item_icon_exists", false);
-                uquery.AddField("gallery_item_thumb_exists", false);
                 uquery.AddField("gallery_item_tile_exists", false);
-                uquery.AddField("gallery_item_large_tile_exists", false);
+                uquery.AddField("gallery_item_square_exists", false);
+                uquery.AddField("gallery_item_high_exists", false);
                 uquery.AddField("gallery_item_tiny_exists", false);
+                uquery.AddField("gallery_item_thumb_exists", false);
+                uquery.AddField("gallery_item_mobile_exists", false);
+                uquery.AddField("gallery_item_display_exists", false);
+                uquery.AddField("gallery_item_full_exists", false);
+                uquery.AddField("gallery_item_ultra_exists", false);
                 uquery.AddCondition("gallery_item_id", itemId);
 
                 db.Query(uquery);
@@ -1197,8 +1288,6 @@ namespace BoxSocial.Applications.Gallery
 
                 Size hdSize = galleryItem.GetSize(new Size(1920, 1080));
 
-                e.Template.Parse("PHOTO_DISPLAY", galleryItem.DisplayUri);
-                e.Template.Parse("PHOTO_HD_DISPLAY", galleryItem.HdUri);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
@@ -1213,6 +1302,11 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
                 e.Template.Parse("U_TAG", galleryItem.TagUri);
 
+                e.Template.Parse("PHOTO_MOBILE", galleryItem.MobileUri);
+                e.Template.Parse("PHOTO_DISPLAY", galleryItem.DisplayUri);
+                e.Template.Parse("PHOTO_FULL", galleryItem.FullUri);
+                e.Template.Parse("PHOTO_ULTRA", galleryItem.UltraUri);
+
                 if (gallery.Access.Can("CREATE_ITEMS"))
                 {
                     e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
@@ -1220,7 +1314,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (gallery.Access.Can("DOWNLOAD_ORIGINAL"))
                 {
-                    e.Template.Parse("U_VIEW_FULL", galleryItem.FullUri);
+                    e.Template.Parse("U_VIEW_FULL", galleryItem.OriginalUri);
                 }
 
                 switch (galleryItem.Classification)
@@ -1404,53 +1498,186 @@ namespace BoxSocial.Applications.Gallery
         public static void ShowImage(object sender, ShowPPageEventArgs e)
         {
             string photoName = e.Slug;
-            bool thumbnailRequest = false; // large 160px thumbnail
-            bool displayRequest = false;
-            bool hdRequest = false;
-            bool iconRequest = false;
-            bool tileRequest = false;
-            bool largeTileRequest = false;
-            bool tinyRequest = false; // small 80px thumbnail
-            bool fullRequest = false;
 
-            if (photoName.StartsWith("_thumb"))
+            // Square
+            bool iconRequest = false; // 50
+            bool tileRequest = false; // 100
+            bool squareRequest = false; // 200
+            bool highRequest = false; // 400
+
+            // Ratio
+            bool tinyRequest = false; // 80
+            bool thumbnailRequest = false; // 160
+            bool mobileRequest = false; // 320
+            bool displayRequest = false; // 640
+            bool fullRequest = false; // 1280
+            bool ultraRequest = false; // 2560
+
+            bool originalRequest = false;
+   
+            bool retinaModifier = false;
+            string storagePrefix = string.Empty;
+            PictureScale scale = PictureScale.Original;
+
+            int extensionIndex = photoName.LastIndexOf('.');
+
+            //HttpContext.Current.Response.Write("Here " + photoName.Substring(extensionIndex - 3, 3));
+            //HttpContext.Current.Response.End();
+            if (photoName.Substring(extensionIndex - 3, 3).Equals("@2x"))
+            {
+                retinaModifier = true;
+                photoName = photoName.Remove(extensionIndex - 3, 3);
+            }
+
+            //photoName.
+
+            if (photoName.StartsWith(IconPrefix))
+            {
+                photoName = photoName.Remove(0, 6);
+                if (!retinaModifier)
+                {
+                    iconRequest = true;
+                    storagePrefix = IconPrefix;
+                    scale = PictureScale.Icon;
+                }
+                else
+                {
+                    tileRequest = true;
+                    storagePrefix = TilePrefix;
+                    scale = PictureScale.Tile;
+                }
+            }
+            else if (photoName.StartsWith(TilePrefix))
+            {
+                photoName = photoName.Remove(0, 6);
+                if (!retinaModifier)
+                {
+                    tileRequest = true;
+                    storagePrefix = TilePrefix;
+                    scale = PictureScale.Tile;
+                }
+                else
+                {
+                    squareRequest = true;
+                    storagePrefix = SquarePrefix;
+                    scale = PictureScale.Square;
+                }
+            }
+            else if (photoName.StartsWith(SquarePrefix))
+            {
+                photoName = photoName.Remove(0, 8);
+                if (!retinaModifier)
+                {
+                    squareRequest = true;
+                    storagePrefix = SquarePrefix;
+                    scale = PictureScale.Square;
+                }
+                else
+                {
+                    highRequest = true;
+                    storagePrefix = HighPrefix;
+                    scale = PictureScale.High;
+                }
+            }
+            else if (photoName.StartsWith(HighPrefix))
+            {
+                photoName = photoName.Remove(0, 6);
+                highRequest = true;
+                storagePrefix = HighPrefix;
+                scale = PictureScale.High;
+                // There is no retina version of high, it is the retina version
+            }
+            else if (photoName.StartsWith(TinyPrefix))
+            {
+                photoName = photoName.Remove(0, 6);
+                if (!retinaModifier)
+                {
+                    tinyRequest = true;
+                    storagePrefix = TinyPrefix;
+                    scale = PictureScale.Tiny;
+                }
+                else
+                {
+                    thumbnailRequest = true;
+                    storagePrefix = ThumbnailPrefix;
+                    scale = PictureScale.Thumbnail;
+                }
+            }
+            else if (photoName.StartsWith(ThumbnailPrefix))
             {
                 photoName = photoName.Remove(0, 7);
-                thumbnailRequest = true;
+                if (!retinaModifier)
+                {
+                    thumbnailRequest = true;
+                    storagePrefix = ThumbnailPrefix;
+                    scale = PictureScale.Thumbnail;
+                }
+                else
+                {
+                    mobileRequest = true;
+                    storagePrefix = MobilePrefix;
+                    scale = PictureScale.Mobile;
+                }
             }
-            else if (photoName.StartsWith("_display"))
+            else if (photoName.StartsWith(MobilePrefix))
+            {
+                photoName = photoName.Remove(0, 8);
+                if (!retinaModifier)
+                {
+                    mobileRequest = true;
+                    storagePrefix = MobilePrefix;
+                    scale = PictureScale.Mobile;
+                }
+                else
+                {
+                    displayRequest = true;
+                    storagePrefix = DisplayPrefix;
+                    scale = PictureScale.Display;
+                }
+            }
+            else if (photoName.StartsWith(DisplayPrefix))
             {
                 photoName = photoName.Remove(0, 9);
-                displayRequest = true;
+                if (!retinaModifier)
+                {
+                    displayRequest = true;
+                    storagePrefix = DisplayPrefix;
+                    scale = PictureScale.Display;
+                }
+                else
+                {
+                    fullRequest = true;
+                    storagePrefix = FullPrefix;
+                    scale = PictureScale.Full;
+                }
             }
-            else if (photoName.StartsWith("_hd"))
-            {
-                photoName = photoName.Remove(0, 3);
-                hdRequest = true;
-            }
-            else if (photoName.StartsWith("_icon"))
-            {
-                photoName = photoName.Remove(0, 6);
-                iconRequest = true;
-            }
-            else if (photoName.StartsWith("_tile"))
-            {
-                photoName = photoName.Remove(0, 6);
-                tileRequest = true;
-            }
-            else if (photoName.StartsWith("_largetile"))
-            {
-                photoName = photoName.Remove(0, 11);
-                largeTileRequest = true;
-            }
-            else if (photoName.StartsWith("_tiny"))
+            else if (photoName.StartsWith(FullPrefix))
             {
                 photoName = photoName.Remove(0, 6);
-                tinyRequest = true;
+                if (!retinaModifier)
+                {
+                    fullRequest = true;
+                    storagePrefix = FullPrefix;
+                    scale = PictureScale.Full;
+                }
+                else
+                {
+                    ultraRequest = true;
+                    storagePrefix = UltraPrefix;
+                    scale = PictureScale.Ultra;
+                }
+            }
+            else if (photoName.StartsWith(UltraPrefix))
+            {
+                photoName = photoName.Remove(0, 7);
+                ultraRequest = true;
+                storagePrefix = UltraPrefix;
+                scale = PictureScale.Ultra;
             }
             else
             {
-                fullRequest = true;
+                originalRequest = true;
+                scale = PictureScale.Original;
             }
 
             string[] paths = photoName.Split('/');
@@ -1479,7 +1706,7 @@ namespace BoxSocial.Applications.Gallery
                     return;
                 }
 
-                if (fullRequest)
+                if (originalRequest)
                 {
                     if (!gallery.Access.Can("DOWNLOAD_ORIGINAL"))
                     {
@@ -1501,22 +1728,113 @@ namespace BoxSocial.Applications.Gallery
                     e.Core.Http.SetToImageResponse(galleryItem.ContentType, fi.LastWriteTimeUtc);
                 }
 
-                if (thumbnailRequest)
+                bool scaleExists = false;
+
+                if (scale != PictureScale.Original)
                 {
-                    if (!galleryItem.ThumbExists)
+                    switch (scale)
                     {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.StoragePath))
+                        case PictureScale.Icon:
+                            scaleExists = galleryItem.IconExists;
+                            break;
+                        case PictureScale.Tile:
+                            scaleExists = galleryItem.TileExists;
+                            break;
+                        case PictureScale.Square:
+                            scaleExists = galleryItem.SquareExists;
+                            break;
+                        case PictureScale.High:
+                            scaleExists = galleryItem.HighExists;
+                            break;
+                        case PictureScale.Tiny:
+                            scaleExists = galleryItem.TinyExists;
+                            break;
+                        case PictureScale.Thumbnail:
+                            scaleExists = galleryItem.ThumbnailExists;
+                            break;
+                        case PictureScale.Mobile:
+                            scaleExists = galleryItem.MobileExists;
+                            break;
+                        case PictureScale.Display:
+                            scaleExists = galleryItem.DisplayExists;
+                            break;
+                        case PictureScale.Full:
+                            scaleExists = galleryItem.FullExists;
+                            break;
+                        case PictureScale.Ultra:
+                            scaleExists = galleryItem.UltraExists;
+                            break;
+                    }
+
+                    if (!scaleExists)
+                    {
+                        scaleExists = e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.StoragePath);
+                    }
+
+                    if (!scaleExists)
+                    {
+                        switch (scale)
                         {
-                            CreateThumbnail(e.Core, galleryItem.StoragePath);
+                            case PictureScale.Icon:
+                            case PictureScale.Tile:
+                            case PictureScale.Square:
+                            case PictureScale.High:
+                                CreateScaleWithSquareRatio(e.Core, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+
+                                switch (scale)
+                                {
+                                    case PictureScale.Icon:
+                                        galleryItem.IconExists = true;
+                                        break;
+                                    case PictureScale.Tile:
+                                        galleryItem.TileExists = true;
+                                        break;
+                                    case PictureScale.Square:
+                                        galleryItem.SquareExists = true;
+                                        break;
+                                    case PictureScale.High:
+                                        galleryItem.HighExists = true;
+                                        break;
+                                }
+                                break;
+                            case PictureScale.Tiny:
+                            case PictureScale.Thumbnail:
+                            case PictureScale.Mobile:
+                            case PictureScale.Display:
+                            case PictureScale.Full:
+                            case PictureScale.Ultra:
+                                CreateScaleWithRatioPreserved(e.Core, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+
+                                switch (scale)
+                                {
+                                    case PictureScale.Tiny:
+                                        galleryItem.TinyExists = true;
+                                        break;
+                                    case PictureScale.Thumbnail:
+                                        galleryItem.ThumbnailExists = true;
+                                        break;
+                                    case PictureScale.Mobile:
+                                        galleryItem.MobileExists = true;
+                                        break;
+                                    case PictureScale.Display:
+                                        galleryItem.DisplayExists = true;
+                                        break;
+                                    case PictureScale.Full:
+                                        galleryItem.FullExists = true;
+                                        break;
+                                    case PictureScale.Ultra:
+                                        galleryItem.UltraExists = true;
+                                        break;
+                                }
+                                break;
                         }
 
-                        galleryItem.ThumbExists = true;
                         galleryItem.Update();
                     }
 
                     if (e.Core.Storage.IsCloudStorage)
                     {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
+                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
                         e.Core.Http.Redirect(imageUri);
                     }
                     else
@@ -1525,7 +1843,7 @@ namespace BoxSocial.Applications.Gallery
                         {
                             MemoryStream newStream = new MemoryStream();
 
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.StoragePath);
+                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.StoragePath);
                             Image hoi = Image.FromStream(image);
 
                             hoi.Save(newStream, hoi.RawFormat);
@@ -1534,235 +1852,7 @@ namespace BoxSocial.Applications.Gallery
                         }
                         else
                         {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_thumb"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (displayRequest)
-                {
-                    if (!galleryItem.DisplayExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_display"), galleryItem.StoragePath))
-                        {
-                            CreateDisplay(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.DisplayExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_display"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_display"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_display"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (hdRequest)
-                {
-                    if (!galleryItem.HdExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_hd"), galleryItem.StoragePath))
-                        {
-                            CreateHd(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.HdExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_hd"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_hd"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_hd"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (iconRequest)
-                {
-                    if (!galleryItem.IconExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_icon"), galleryItem.StoragePath))
-                        {
-                            CreateIcon(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.IconExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_icon"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_icon"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_icon"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (tileRequest)
-                {
-                    if (!galleryItem.TileExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tile"), galleryItem.StoragePath))
-                        {
-                            CreateTile(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.TileExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tile"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tile"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tile"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (largeTileRequest)
-                {
-                    if (!galleryItem.LargeTileExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_largetile"), galleryItem.StoragePath))
-                        {
-                            CreateLargeTile(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.LargeTileExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_largetile"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_largetile"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_largetile"), galleryItem.storagePath);
-                            e.Core.Http.TransmitFile(imagePath);
-                        }
-                    }
-                }
-                else if (tinyRequest)
-                {
-                    if (!galleryItem.TinyExists)
-                    {
-                        if (!e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tiny"), galleryItem.StoragePath))
-                        {
-                            CreateTiny(e.Core, galleryItem.StoragePath);
-                        }
-
-                        galleryItem.TinyExists = true;
-                        galleryItem.Update();
-                    }
-
-                    if (e.Core.Storage.IsCloudStorage)
-                    {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tiny"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
-                    }
-                    else
-                    {
-                        if (galleryItem.ContentType == "image/png")
-                        {
-                            MemoryStream newStream = new MemoryStream();
-
-                            Stream image = e.Core.Storage.RetrieveFile(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tiny"), galleryItem.StoragePath);
-                            Image hoi = Image.FromStream(image);
-
-                            hoi.Save(newStream, hoi.RawFormat);
-
-                            e.Core.Http.WriteStream(newStream);
-                        }
-                        else
-                        {
-                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_tiny"), galleryItem.storagePath);
+                            string imagePath = e.Core.Storage.RetrieveFilePath(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.storagePath);
                             e.Core.Http.TransmitFile(imagePath);
                         }
                     }
@@ -1861,238 +1951,104 @@ namespace BoxSocial.Applications.Gallery
             return new Size(width, height);
         }
 
-        /// <summary>
-        /// Tile size fits into a 50 x 50 display area. Icons are trimmed to an exact 50 x 50 pixel display size.
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="fileName"></param>
-        public static void CreateTile(Core core, string fileName)
+        public static ImageCodecInfo GetEncoderInfo(ImageFormat format)
         {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Bitmap displayImage;
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
 
-            displayImage = new Bitmap(50, 50, image.PixelFormat);
-            displayImage.Palette = image.Palette;
-
-            Graphics g = Graphics.FromImage(displayImage);
-            g.Clear(Color.Transparent);
-            g.CompositingMode = CompositingMode.SourceOver;
-            g.CompositingQuality = CompositingQuality.AssumeLinear;
-
-            int square = Math.Min(image.Width, image.Height);
-            g.DrawImage(image, new Rectangle(0, 0, 50, 50), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
-
-            MemoryStream stream = new MemoryStream();
-            displayImage.Save(stream, image.RawFormat);
-            core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_tile"), fileName, stream);
-            stream.Close();
-            fs.Close();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
 
+
         /// <summary>
-        /// Tile size fits into a 240 x 240 display area. Icons are trimmed to an exact 50 x 50 pixel display size.
+        /// Thumbnail size fits into a x * y display area. Icons are trimmed to an exact x * y pixel display size.
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateLargeTile(Core core, string fileName)
+        public static void CreateScaleWithSquareRatio(Core core, string fileName, string bin, int width, int height)
         {
             Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
             Image image = Image.FromStream(fs);
             Bitmap displayImage;
 
-            displayImage = new Bitmap(240, 240, image.PixelFormat);
+            displayImage = new Bitmap(width, height, image.PixelFormat);
             displayImage.Palette = image.Palette;
 
             Graphics g = Graphics.FromImage(displayImage);
             g.Clear(Color.Transparent);
             g.CompositingMode = CompositingMode.SourceOver;
-            g.CompositingQuality = CompositingQuality.AssumeLinear;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-            if (image.Width > 240 && image.Height > 240)
+            int square = Math.Min(image.Width, image.Height);
+            g.DrawImage(image, new Rectangle(0, 0, width, height), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
+
+            MemoryStream stream = new MemoryStream();
+            if (image.RawFormat == ImageFormat.Jpeg)
             {
-                int square = Math.Min(image.Width, image.Height);
-                g.DrawImage(image, new Rectangle(0, 0, 240, 240), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
+                ImageCodecInfo codecInfo = GetEncoderInfo(ImageFormat.Jpeg);
+                System.Drawing.Imaging.Encoder encoder = System.Drawing.Imaging.Encoder.Quality;
+                EncoderParameters myEncoderParameters = new EncoderParameters(2);
+                EncoderParameter myEncoderParameter = new EncoderParameter(encoder, 90L);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                myEncoderParameters.Param[1] = new EncoderParameter(System.Drawing.Imaging.Encoder.RenderMethod, (int)EncoderValue.RenderProgressive);
+
+                displayImage.Save(stream, codecInfo, myEncoderParameters);
             }
             else
             {
-                g.DrawImage(image, new Rectangle((240 - image.Width) / 2, (240 - image.Height) / 2, image.Width, image.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+                displayImage.Save(stream, image.RawFormat);
             }
-
-            MemoryStream stream = new MemoryStream();
-            displayImage.Save(stream, image.RawFormat);
-            core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_largetile"), fileName, stream);
+            core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
             stream.Close();
             fs.Close();
         }
 
         /// <summary>
-        /// Icon size fits into a 100 x 100 display area. Icons are trimmed to an exact 100 x 100 pixel display size.
+        /// Thumbnail size fits into a x * y display area. The aspect ratio is preserved.
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateIcon(Core core, string fileName)
-        {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Bitmap displayImage;
-
-            displayImage = new Bitmap(100, 100, image.PixelFormat);
-            displayImage.Palette = image.Palette;
-
-            Graphics g = Graphics.FromImage(displayImage);
-            g.Clear(Color.Transparent);
-            g.CompositingMode = CompositingMode.SourceOver;
-            g.CompositingQuality = CompositingQuality.AssumeLinear;
-
-            int square = Math.Min(image.Width, image.Height);
-            g.DrawImage(image, new Rectangle(0, 0, 100, 100), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
-
-            MemoryStream stream = new MemoryStream();
-            displayImage.Save(stream, image.RawFormat);
-            core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_icon"), fileName, stream);
-            stream.Close();
-            fs.Close();
-        }
-
-        /// <summary>
-        /// Thumbnail size fits into a 160 x 160 display area. The aspect ratio is preserved.
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="fileName"></param>
-        private static void CreateThumbnail(Core core, string fileName)
+        private static void CreateScaleWithRatioPreserved(Core core, string fileName, string bin, int width, int height)
         {
             Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
             Image image = Image.FromStream(fs);
             Image thumbImage;
 
-            if (image.Width > 160 || image.Height > 160)
+            if (image.Width > width || image.Height > height)
             {
-                Size newSize = GetSize(image.Size, new Size(160, 160));
+                Size newSize = GetSize(image.Size, new Size(width, height));
 
-                Image.GetThumbnailImageAbort abortCallBack = new Image.GetThumbnailImageAbort(abortResize);
-                thumbImage = image.GetThumbnailImage(newSize.Width, newSize.Height, abortCallBack, IntPtr.Zero);
+                thumbImage = new Bitmap(newSize.Width, newSize.Height, image.PixelFormat);
                 thumbImage.Palette = image.Palette;
+                Graphics g = Graphics.FromImage(thumbImage);
+                g.Clear(Color.Transparent);
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                g.DrawImage(image, new Rectangle(0, 0, newSize.Width, newSize.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
 
                 MemoryStream stream = new MemoryStream();
                 thumbImage.Save(stream, image.RawFormat);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
                 stream.Close();
                 fs.Close();
             }
             else
             {
                 fs.Close();
-                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_thumb"), fileName);
+                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
             }
         }
-
-        /// <summary>
-        /// Thumbnail size fits into a 80 x 80 display area. The aspect ratio is preserved.
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="fileName"></param>
-        private static void CreateTiny(Core core, string fileName)
-        {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Image tinyImage;
-
-            if (image.Width > 80 || image.Height > 80)
-            {
-                Size newSize = GetSize(image.Size, new Size(80, 80));
-
-                Image.GetThumbnailImageAbort abortCallBack = new Image.GetThumbnailImageAbort(abortResize);
-                tinyImage = image.GetThumbnailImage(newSize.Width, newSize.Height, abortCallBack, IntPtr.Zero);
-                tinyImage.Palette = image.Palette;
-
-                MemoryStream stream = new MemoryStream();
-                tinyImage.Save(stream, image.RawFormat);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_tiny"), fileName, stream);
-                stream.Close();
-                fs.Close();
-            }
-            else
-            {
-                fs.Close();
-                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_tiny"), fileName);
-            }
-        }
-
-        /// <summary>
-        /// Display size fits into a 640 x 640 display area. The aspect ratio is preserved.
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="fileName"></param>
-        public static void CreateDisplay(Core core, string fileName)
-        {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Bitmap displayImage;
-
-            if (image.Width > 640 || image.Height > 640)
-            {
-                Size newSize = GetSize(image.Size, new Size(640, 640));
-
-                displayImage = new Bitmap(newSize.Width, newSize.Height, image.PixelFormat);
-                displayImage.Palette = image.Palette;
-                Graphics g = Graphics.FromImage(displayImage);
-                g.Clear(Color.Transparent);
-                g.CompositingMode = CompositingMode.SourceOver;
-                g.CompositingQuality = CompositingQuality.AssumeLinear;
-
-                g.DrawImage(image, new Rectangle(0, 0, newSize.Width, newSize.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
-
-                MemoryStream stream = new MemoryStream();
-                displayImage.Save(stream, image.RawFormat);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_display"), fileName, stream);
-                stream.Close();
-                fs.Close();
-            }
-            else
-            {
-                fs.Close();
-                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_display"), fileName);
-            }
-        }
-
-        /// <summary>
-        /// Display size fits into a 1920 x 1080 display area. The aspect ratio is preserved.
-        /// </summary>
-        /// <param name="core"></param>
-        /// <param name="fileName"></param>
-        public static void CreateHd(Core core, string fileName)
-        {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Bitmap displayImage;
-
-            if (image.Width > 1920 || image.Height > 1080)
-            {
-                Size newSize = GetSize(image.Size, new Size(1920, 1080));
-
-                displayImage = new Bitmap(newSize.Width, newSize.Height, image.PixelFormat);
-                displayImage.Palette = image.Palette;
-                Graphics g = Graphics.FromImage(displayImage);
-                g.Clear(Color.Transparent);
-                g.CompositingMode = CompositingMode.SourceOver;
-                g.CompositingQuality = CompositingQuality.AssumeLinear;
-
-                g.DrawImage(image, new Rectangle(0, 0, newSize.Width, newSize.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
-
-                MemoryStream stream = new MemoryStream();
-                displayImage.Save(stream, image.RawFormat);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_hd"), fileName, stream);
-                stream.Close();
-                fs.Close();
-            }
-            else
-            {
-                fs.Close();
-                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_hd"), fileName);
-            }
-        }
-
 
         /// <summary>
         /// Abort image resize handler
@@ -2194,60 +2150,20 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
-        /// Returns the gallery item thumbnail uri
+        /// Returns the gallery item icon uri
         /// </summary>
-        public string ThumbUri
+        public string IconUri
         {
             get
             {
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
+                    return core.Uri.AppendSid(string.Format("{0}images/_icon/{1}",
                         Owner.UriStub, FullPath));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
-                        Owner.UriStub, path));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the gallery item thumbnail uri
-        /// </summary>
-        public string DisplayUri
-        {
-            get
-            {
-                if (parentId > 0)
-                {
-                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        Owner.UriStub, FullPath));
-                }
-                else
-                {
-                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        Owner.UriStub, path));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the gallery item thumbnail uri
-        /// </summary>
-        public string HdUri
-        {
-            get
-            {
-                if (parentId > 0)
-                {
-                    return core.Uri.AppendSid(string.Format("{0}images/_hd/{1}",
-                        Owner.UriStub, FullPath));
-                }
-                else
-                {
-                    return core.Uri.AppendSid(string.Format("{0}images/_hd/{1}",
+                    return core.Uri.AppendSid(string.Format("{0}images/_icon/{1}",
                         Owner.UriStub, path));
                 }
             }
@@ -2276,18 +2192,118 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns the gallery item thumbnail uri
         /// </summary>
-        public string LargeTileUri
+        public string SquareUri
         {
             get
             {
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_largetile/{1}",
+                    return core.Uri.AppendSid(string.Format("{0}images/_square/{1}",
                         Owner.UriStub, FullPath));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_largetile/{1}",
+                    return core.Uri.AppendSid(string.Format("{0}images/_square/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string HighUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_high/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_high/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string TinyUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string ThumbnailUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string MobileUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_mobile/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_mobile/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string DisplayUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
                         Owner.UriStub, path));
                 }
             }
@@ -2297,6 +2313,46 @@ namespace BoxSocial.Applications.Gallery
         /// Returns the gallery item thumbnail uri
         /// </summary>
         public string FullUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string UltraUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_ultra/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_ultra/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item thumbnail uri
+        /// </summary>
+        public string OriginalUri
         {
             get
             {

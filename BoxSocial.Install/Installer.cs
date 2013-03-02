@@ -1807,6 +1807,23 @@ namespace BoxSocial.Install
 
                     p1.WaitForExit();
                 }
+
+                // Retina
+                output = Path.Combine(imagesRoot, image + "@2x.png");
+                if (File.Exists(input))
+                {
+                    if (File.Exists(output))
+                    {
+                        File.Delete(output);
+                    }
+
+                    Process p1 = new Process();
+                    p1.StartInfo.FileName = "rsvg-convert";
+                    p1.StartInfo.Arguments = input + " -z 2.0 -o " + output;
+                    p1.Start();
+
+                    p1.WaitForExit();
+                }
             }
         }
 
@@ -2519,8 +2536,11 @@ namespace BoxSocial.Install
 
                                     string input = Path.Combine("GDK", updateApplication.Key + ".svg");
                                     string output = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon.png");
+                                    string retinaOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "icon@2x.png");
                                     string thumbOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "thumb.png");
+                                    string retinaThumbOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "thumb@2x.png");
                                     string tileOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "tile.png");
+                                    string retinaTileOutput = Path.Combine(Path.Combine(imagesRoot, updateApplication.Key), "tile@2x.png");
 
                                     FileStream fs = new FileStream(input, FileMode.Create);
                                     fs.Write(newApplication.SvgIcon, 0, newApplication.SvgIcon.Length);
@@ -2546,6 +2566,13 @@ namespace BoxSocial.Install
 
                                         p1 = new Process();
                                         p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -z 2.0 -o " + retinaOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
                                         p1.StartInfo.Arguments = input + " -w 160 -d 160 -o " + thumbOutput;
                                         p1.Start();
 
@@ -2553,7 +2580,21 @@ namespace BoxSocial.Install
 
                                         p1 = new Process();
                                         p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 320 -d 320 -o " + retinaThumbOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
                                         p1.StartInfo.Arguments = input + " -w 50 -d 50 -o " + tileOutput;
+                                        p1.Start();
+
+                                        p1.WaitForExit();
+
+                                        p1 = new Process();
+                                        p1.StartInfo.FileName = "rsvg-convert";
+                                        p1.StartInfo.Arguments = input + " -w 100 -d 100 -o " + retinaTileOutput;
                                         p1.Start();
 
                                         p1.WaitForExit();

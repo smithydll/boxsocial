@@ -458,7 +458,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
-        public string ThumbUri
+        public string TinyUri
         {
             get
             {
@@ -474,7 +474,14 @@ namespace BoxSocial.Applications.Gallery
                         {
                             try
                             {
-                                return HighlightItem.ThumbUri;
+                                if (HighlightItem.TinyUri != null)
+                                {
+                                    return HighlightItem.TinyUri;
+                                }
+                                else
+                                {
+                                    return "FALSE";
+                                }
                             }
                             catch (GalleryItemNotFoundException)
                             {
@@ -501,7 +508,57 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
-        public string LargeTileUri
+        public string ThumbnailUri
+        {
+            get
+            {
+                if (HighlightId > 0)
+                {
+                    if (this.Access.Can("VIEW_ITEMS"))
+                    {
+                        if (Items == 0)
+                        {
+                            return "FALSE";
+                        }
+                        else if (HighlightItem != null)
+                        {
+                            try
+                            {
+                                if (HighlightItem.ThumbnailUri != null)
+                                {
+                                    return HighlightItem.ThumbnailUri;
+                                }
+                                else
+                                {
+                                    return "FALSE";
+                                }
+                            }
+                            catch (GalleryItemNotFoundException)
+                            {
+                                return "FALSE";
+                            }
+                        }
+                        else
+                        {
+                            return "FALSE";
+                        }
+                    }
+                    else
+                    {
+                        return "FALSE";
+                    }
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery highlighted item thumbnail URI
+        /// </summary>
+        public string IconUri
         {
             get
             {
@@ -511,9 +568,87 @@ namespace BoxSocial.Applications.Gallery
                     {
                         try
                         {
-                            if (HighlightItem.LargeTileUri != null)
+                            if (HighlightItem.IconUri != null)
                             {
-                                return HighlightItem.LargeTileUri;
+                                return HighlightItem.IconUri;
+                            }
+                            else
+                            {
+                                return "FALSE";
+                            }
+                        }
+                        catch (GalleryItemNotFoundException)
+                        {
+                            return "FALSE";
+                        }
+                    }
+                    else
+                    {
+                        return "FALSE";
+                    }
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery highlighted item thumbnail URI
+        /// </summary>
+        public string TileUri
+        {
+            get
+            {
+                if (this.Access.Can("VIEW_ITEMS"))
+                {
+                    if (HighlightItem != null)
+                    {
+                        try
+                        {
+                            if (HighlightItem.TileUri != null)
+                            {
+                                return HighlightItem.TileUri;
+                            }
+                            else
+                            {
+                                return "FALSE";
+                            }
+                        }
+                        catch (GalleryItemNotFoundException)
+                        {
+                            return "FALSE";
+                        }
+                    }
+                    else
+                    {
+                        return "FALSE";
+                    }
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the gallery highlighted item thumbnail URI
+        /// </summary>
+        public string SquareUri
+        {
+            get
+            {
+                if (this.Access.Can("VIEW_ITEMS"))
+                {
+                    if (HighlightItem != null)
+                    {
+                        try
+                        {
+                            if (HighlightItem.SquareUri != null)
+                            {
+                                return HighlightItem.SquareUri;
                             }
                             else
                             {
@@ -829,7 +964,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>Raw data for a list of gallery photos</returns>
         protected DataRowCollection GetItemDataRows(Core core)
         {
-            return GetItemDataRows(core, 1, 16);
+            return GetItemDataRows(core, 1, 12);
         }
 
         /// <summary>
@@ -1529,7 +1664,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                     }
 
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 16.0), PaginationOptions.Normal);
+                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0), PaginationOptions.Normal);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1595,10 +1730,15 @@ namespace BoxSocial.Applications.Gallery
 
                 galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
                 galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
-                galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbUri);
-                galleryVariableCollection.Parse("LARGETILE", galleryGallery.LargeTileUri);
                 galleryVariableCollection.Parse("ID", galleryGallery.Id.ToString());
                 galleryVariableCollection.Parse("TYPE_ID", galleryGallery.ItemKey.TypeId.ToString());
+
+                galleryVariableCollection.Parse("ICON", galleryGallery.IconUri);
+                galleryVariableCollection.Parse("TILE", galleryGallery.TileUri);
+                galleryVariableCollection.Parse("SQUARE", galleryGallery.SquareUri);
+
+                galleryVariableCollection.Parse("TINY", galleryGallery.TinyUri);
+                galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbnailUri);
 
                 e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
@@ -1623,7 +1763,7 @@ namespace BoxSocial.Applications.Gallery
             long galleryComments = 0;
             if (gallery.Items > 0)
             {
-                List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 16);
+                List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12);
 
                 e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 
@@ -1640,8 +1780,12 @@ namespace BoxSocial.Applications.Gallery
                     galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
                     galleryVariableCollection.Parse("TYPE_ID", galleryItem.ItemKey.TypeId.ToString());
 
-                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbUri);
-                    galleryVariableCollection.Parse("LARGETILE", galleryItem.LargeTileUri);
+                    galleryVariableCollection.Parse("ICON", galleryItem.IconUri);
+                    galleryVariableCollection.Parse("TILE", galleryItem.TileUri);
+                    galleryVariableCollection.Parse("SQUARE", galleryItem.SquareUri);
+
+                    galleryVariableCollection.Parse("TINY", galleryItem.TinyUri);
+                    galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbnailUri);
 
                     Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
 
@@ -1649,6 +1793,35 @@ namespace BoxSocial.Applications.Gallery
                     {
                         galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryItem.Info.Likes));
                         galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryItem.Info.Dislikes));
+                    }
+
+                    switch (i % 3)
+                    {
+                        case 0:
+                            galleryVariableCollection.Parse("ABC", "a");
+                            break;
+                        case 1:
+                            galleryVariableCollection.Parse("ABC", "b");
+                            break;
+                        case 2:
+                            galleryVariableCollection.Parse("ABC", "c");
+                            break;
+                    }
+
+                    switch (i % 4)
+                    {
+                        case 0:
+                            galleryVariableCollection.Parse("ABCD", "a");
+                            break;
+                        case 1:
+                            galleryVariableCollection.Parse("ABCD", "b");
+                            break;
+                        case 2:
+                            galleryVariableCollection.Parse("ABCD", "c");
+                            break;
+                        case 3:
+                            galleryVariableCollection.Parse("ABCD", "d");
+                            break;
                     }
 
                     galleryComments += galleryItem.ItemComments;

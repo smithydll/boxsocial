@@ -479,6 +479,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsMobile
+        {
+            get
+            {
+                return page.IsMobile;
+            }
+        }
+
+
         /// <summary>
         /// Loads the application entry for the calling application
         /// </summary>

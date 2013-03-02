@@ -106,7 +106,6 @@ namespace BoxSocial.FrontEnd
 
             Bitmap captchaImage = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             Graphics g = Graphics.FromImage(captchaImage);
-            g.Clear(Color.LightYellow);
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
@@ -117,7 +116,68 @@ namespace BoxSocial.FrontEnd
                 PaintLetter(g, confirmString[i], i * letterWidth, letterWidth, height);
             }
 
+            PaintForeground(g, width, height, chars);
+
             return captchaImage;
+        }
+
+        private void PaintForeground(Graphics g, int width, int height, int letters)
+        {
+            Random rand = new Random((int)(DateTime.Now.Ticks & 0x0000FFFF));
+
+            int specs = rand.Next(100, 300);
+
+            for (int i = 0; i < specs; i++)
+            {
+                Pen specPen = new Pen(RandomBackgroundColour());
+
+                int x = rand.Next(1, width);
+                int y = rand.Next(1, height);
+
+                int left = rand.Next(0, 3);
+
+                if (left == 0)
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x + 3, y + 3));
+                    g.DrawLine(specPen, new Point(x + 3, y), new Point(x, y + 3));
+                }
+                else if (left == 1)
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x + 1, y + 1));
+                    g.DrawLine(specPen, new Point(x + 1, y + 1), new Point(x, y + 2));
+                }
+                else
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x - 1, y + 1));
+                    g.DrawLine(specPen, new Point(x - 1, y + 1), new Point(x, y + 2));
+                }
+            }
+
+            for (int i = 0; i < specs; i++)
+            {
+                Pen specPen = new Pen(RandomClearColour(), 3F);
+
+                int x = rand.Next(1, width);
+                int y = rand.Next(1, height);
+
+                int left = rand.Next(0, 3);
+
+                if (left == 0)
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x + 3, y + 3));
+                    g.DrawLine(specPen, new Point(x + 3, y), new Point(x, y + 3));
+                }
+                else if (left == 1)
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x + 1, y + 1));
+                    g.DrawLine(specPen, new Point(x + 1, y + 1), new Point(x, y + 2));
+                }
+                else
+                {
+                    g.DrawLine(specPen, new Point(x, y), new Point(x - 1, y + 1));
+                    g.DrawLine(specPen, new Point(x - 1, y + 1), new Point(x, y + 2));
+                }
+            }
         }
 
         private void PaintBackground(Graphics g, int width, int height, int letters)
@@ -128,6 +188,8 @@ namespace BoxSocial.FrontEnd
             Random rand = new Random((int)(DateTime.Now.Ticks & 0x0000FFFF));
 
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+
+            g.Clear(RandomClearColour());
 
             int firstOffsetX = (int)(BoxSocial.Internals.SessionState.GetDoubleRNG(rng) * 5);
             int offsetY = 0;
@@ -155,6 +217,7 @@ namespace BoxSocial.FrontEnd
             blockWidth = blockHeight = Math.Min(blockWidth, blockHeight);
             int offsetX = (width - 5 * blockWidth) / 2;
             int offsetY = (height - 7 * blockHeight) / 2;
+            int halfWidth = (int)(blockWidth * 0.5);
             
             byte[] b = GetLetter(letter);
 
@@ -162,8 +225,33 @@ namespace BoxSocial.FrontEnd
 
             int upDown = rand.Next(-1 * offsetY / 2, offsetY / 2);
 
+            Pen letterPen = new Pen(RandomColour());
+
+            int chanelChange = rand.Next(0, 3);
+            int rleft = rand.Next(0, 2);
+
             for (int i = 0; i < 7; i++)
             {
+                byte blue = letterPen.Color.B;
+                byte green = letterPen.Color.G;
+                byte red = letterPen.Color.R;
+
+                switch (chanelChange)
+                {
+                    case 0:
+                        blue = (byte)(letterPen.Color.B * rand.NextDouble());
+                        break;
+                    case 1:
+
+                        green = (byte)(letterPen.Color.G * rand.NextDouble());
+                        break;
+                    case 2:
+                        red = (byte)(letterPen.Color.R * rand.NextDouble());
+                        break;
+                }
+
+                letterPen = new Pen(Color.FromArgb(red, green, blue));
+
                 for (int j = 0; j < 5; j++)
                 {
                     if (b[i * 5 + j] > 0)
@@ -172,7 +260,26 @@ namespace BoxSocial.FrontEnd
                         int heightVariation = rand.Next(-2, 2);
                         int leftVariation = rand.Next(-2, 2);
                         int topVariation = rand.Next(-2, 2);
-                        g.DrawRectangle(new Pen(RandomColour()), new Rectangle(offsetX + left + blockWidth * j + leftVariation, offsetY + blockHeight * i + upDown + topVariation, blockWidth + widthVariation, blockHeight + heightVariation));
+                        //g.DrawRectangle(new Pen(RandomColour()), new Rectangle(offsetX + left + blockWidth * j + leftVariation, offsetY + blockHeight * i + upDown + topVariation, blockWidth + widthVariation, blockHeight + heightVariation));
+
+                        Point[] points = new Point[4];
+
+                        if (i % 2 == rleft)
+                        {
+                            points[0] = new Point(offsetX + left + blockWidth * j + leftVariation + halfWidth, offsetY + blockHeight * i + upDown + topVariation);
+                            points[1] = new Point(offsetX + left + blockWidth * j + leftVariation + halfWidth + blockWidth + widthVariation, offsetY + blockHeight * i + upDown + topVariation);
+                            points[2] = new Point(offsetX + left + blockWidth * j + leftVariation + blockWidth + widthVariation, offsetY + blockHeight * i + upDown + topVariation + blockHeight + heightVariation);
+                            points[3] = new Point(offsetX + left + blockWidth * j + leftVariation, offsetY + blockHeight * i + upDown + topVariation + blockHeight + heightVariation);
+                        }
+                        else
+                        {
+                            points[0] = new Point(offsetX + left + blockWidth * j + leftVariation, offsetY + blockHeight * i + upDown + topVariation);
+                            points[1] = new Point(offsetX + left + blockWidth * j + leftVariation + blockWidth + widthVariation, offsetY + blockHeight * i + upDown + topVariation);
+                            points[2] = new Point(offsetX + left + blockWidth * j + leftVariation + halfWidth + blockWidth + widthVariation, offsetY + blockHeight * i + upDown + topVariation + blockHeight + heightVariation);
+                            points[3] = new Point(offsetX + left + blockWidth * j + leftVariation + halfWidth, offsetY + blockHeight * i + upDown + topVariation + blockHeight + heightVariation);
+                        }
+
+                        g.DrawPolygon(letterPen, points);
                     }
                 }
             }
@@ -530,7 +637,17 @@ namespace BoxSocial.FrontEnd
 
             double d = BoxSocial.Internals.SessionState.GetDoubleRNG(rng);
 
-            return Display.HlsToRgb(d * 360, 0.75, 0.95);
+            return Display.HlsToRgb(d * 360, 0.75, 0.90);
+        }
+
+        private Color RandomClearColour()
+        {
+            //Random rand = new Random((int)(DateTime.Now.Ticks & 0x0000FFFF));
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+
+            double d = BoxSocial.Internals.SessionState.GetDoubleRNG(rng);
+
+            return Display.HlsToRgb(d * 360, 0.95, 0.98);
         }
     }
 }

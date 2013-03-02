@@ -71,7 +71,20 @@ ul#photo-list li .photo-canvas {
 	width: 640px;
 }
 
+#mobile-photo #x-stuff{
+	margin: 1px auto;
+	padding: 1px;
+	width: 100%;
+}
+
 #view-photo dl dt img {
+	padding: 3px;
+	background-color: White;
+	border: solid 1px #999999;
+	font-size: 0px;
+}
+
+#mobile-photo dl dt img {
 	padding: 3px;
 	background-color: White;
 	border: solid 1px #999999;
@@ -83,6 +96,13 @@ ul#photo-list li .photo-canvas {
 	margin: 1px auto;
 	padding: 1px;
 	width: 640px;
+}
+
+#mobile-photo dl dd {
+	background-color: #CCCCCC;
+	margin: 1px auto;
+	padding: 1px;
+	width: 100%;
 }
 
 .previous-photo, .next-photo {
@@ -182,6 +202,10 @@ ul#photo-list li .photo-canvas {
 }
 
 #photo-640 {
+    cursor: pointer;
+}
+
+#photo-mobile {
     cursor: pointer;
 }
 

@@ -146,6 +146,7 @@
     <Content Include="templates\account_style.html">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="templates\viewfeed.html" />
     <Content Include="templates\viewstatusfeed.html" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

@@ -103,6 +103,7 @@
     <Compile Include="CascadingStyleSheet.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Classification.cs" />
+    <Compile Include="CombinedFeed.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="CommentHandle.cs" />
     <Compile Include="Confirmation.cs" />

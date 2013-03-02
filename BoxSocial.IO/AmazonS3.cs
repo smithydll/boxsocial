@@ -73,25 +73,35 @@ namespace BoxSocial.IO
         public override string SaveFile(string bin, MemoryStream file)
         {
             string fileName = HashFile(file);
-            PutObjectRequest request = new PutObjectRequest();
-            request.BucketName = bin;
-            //request.GenerateMD5Digest = true;
-            request.InputStream = file;
-            request.Key = fileName;
-            request.StorageClass = S3StorageClass.Standard;
-            PutObjectResponse response = client.PutObject(request);
+
+            // Do not overwrite or double work files
+            if (!FileExists(bin, fileName))
+            {
+                PutObjectRequest request = new PutObjectRequest();
+                request.BucketName = bin;
+                //request.GenerateMD5Digest = true;
+                request.InputStream = file;
+                request.Key = fileName;
+                request.StorageClass = S3StorageClass.Standard;
+                PutObjectResponse response = client.PutObject(request);
+            }
             return fileName;
         }
 
         public override string SaveFile(string bin, string fileName, MemoryStream file)
         {
-            PutObjectRequest request = new PutObjectRequest();
-            request.BucketName = bin;
-            //request.GenerateMD5Digest = true;
-            request.InputStream = file;
-            request.Key = fileName;
-            request.StorageClass = S3StorageClass.Standard;
-            PutObjectResponse response = client.PutObject(request);
+            // Do not overwrite or double work files
+            if (!FileExists(bin, fileName))
+            {
+                PutObjectRequest request = new PutObjectRequest();
+                request.BucketName = bin;
+                //request.GenerateMD5Digest = true;
+                request.InputStream = file;
+                request.Key = fileName;
+                request.StorageClass = S3StorageClass.Standard;
+                PutObjectResponse response = client.PutObject(request);
+            }
+
             return fileName;
         }
 

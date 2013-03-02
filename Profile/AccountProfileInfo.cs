@@ -167,8 +167,9 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.Profile.Update();
 
-            SetRedirectUri(BuildUri());
-            core.Display.ShowMessage("Information Saved", "Your information has been saved in the database.");
+            SetInformation("Your information has been saved in the database.");
+            //SetRedirectUri(BuildUri());
+            //core.Display.ShowMessage("Information Saved", "Your information has been saved in the database.");
         }
     }
 }

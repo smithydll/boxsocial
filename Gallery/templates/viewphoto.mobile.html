@@ -1,0 +1,168 @@
+<!-- INCLUDE page_header.html -->
+<div>
+  <h2>{PHOTO_TITLE}</h2>
+  <p>{BREADCRUMBS}</p>
+  <!-- IF U_UPLOAD_PHOTO -->
+  <a href="{U_UPLOAD_PHOTO}" data-role="button" data-theme="a" data-inline="true">Upload Photo</a>
+  <!-- ENDIF -->
+  <div id="mobile-photo">
+    <script type="text/javascript">
+      <!--
+
+        $(document).keydown(function(e){
+        <!-- IF U_PREVIOUS_PHOTO -->
+            if (e.keyCode == 37) { /* left */
+                window.location.href = "{U_PREVIOUS_PHOTO}" + parent.location.hash;
+                return false;
+            }
+        <!-- ENDIF -->
+        <!-- IF U_NEXT_PHOTO -->
+            if (e.keyCode == 39) { /* right */
+                window.location.href = "{U_NEXT_PHOTO}" + parent.location.hash;
+                return false;
+            }
+        <!-- ENDIF -->
+            if (e.keyCode == 27) { /* escape */
+                showNormal();
+            }
+        });
+
+        $(document).ready(function(){
+            if (parent.location.hash == '#hd') {
+                //showHd();
+            }
+
+          $("#display-hd div").click(function(event){
+            event.stopPropagation();  
+          });
+
+          $(window).resize(function() {
+            //positionHd();
+          });
+
+        });
+
+         $(function(){
+            $("#photo-mobile").bind('swipeleft', swipeLeftHandler);
+            $("#photo-mobile").bind('swiperight', swipeRightHandler);
+
+            function swipeRightHandler( event ){
+                <!-- IF U_PREVIOUS_PHOTO -->
+                window.location.href = '{U_PREVIOUS_PHOTO}';
+                <!-- ENDIF -->
+            }
+
+            function swipeLeftHandler( event ){
+                <!-- IF U_NEXT_PHOTO -->
+                window.location.href = '{U_NEXT_PHOTO}';
+                <!-- ENDIF -->
+            }
+
+            <!-- IF OWNER -->
+            /*function absorbEvent_(event) {
+                var e = event || window.event;
+                e.preventDefault && e.preventDefault();
+                e.stopPropagation && e.stopPropagation();
+                e.cancelBubble = true;
+                e.returnValue = false;
+                return false;
+            }
+
+            function preventLongPressMenu(node) {
+                node.ontouchstart = absorbEvent_;
+                node.ontouchmove = absorbEvent_;
+                node.ontouchend = absorbEvent_;
+                node.ontouchcancel = absorbEvent_;
+            }*/
+
+            $(document).ready(function(){
+                preventLongPressMenu(document.getElementById('photo-mobile'));
+            });
+
+            $("#photo-mobile").bind('taphold', tapholdHandler);
+
+            function tapholdHandler( e ){
+                e.preventDefault();
+                $("#photo-menu").popup("open");
+                return false;
+            }
+
+            document.oncontextmenu = function() {return false;};
+            $("#photo-mobile").mousedown(function(e){
+                if ( e.button == 2 )
+                {
+                    e.preventDefault();
+                    return false;
+                }
+                return true;
+            });
+            <!-- ENDIF -->
+         });
+
+        var hdDisplay = '{PHOTO_DISPLAY}';
+        var retinaDisplay = '{PHOTO_FULL}';
+        var normalDisplay = '{PHOTO_MOBILE}';
+		var user_tags = new Array();
+	<!-- BEGIN user_tags -->
+      user_tags[{user_tags.INDEX}] = new Array({user_tags.TAG_ID}, {user_tags.TAG_X}, {user_tags.TAG_Y});
+      <!-- END user_tags -->
+      -->
+    </script>
+    <div data-role="popup" id="hd" data-overlay-theme="a" data-theme="b" data-corners="false" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">
+        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img class="popphoto" src="{PHOTO_MOBILE}" style="max-height: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" alt="Photo">
+    </div>
+    <dl>
+      <dt style="text-align: center;">
+        <a href="#hd" data-rel="popup" data-position-to="window" data-transition=""><img id="photo-mobile" src="{PHOTO_MOBILE}" alt="Photo" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" /></a>
+      </dt>
+      <!-- IF HAS_USER_TAGS -->
+      <dd>
+        Tags:
+        <ul>
+          <!-- BEGIN user_tags -->
+          <li onmouseover="ShowUserTag({user_tags.TAG_ID});" onmouseout="HideUserTag({user_tags.TAG_ID});">
+            <a href="{user_tags.U_MEMBER}">{user_tags.DISPLAY_NAME}</a>
+          </li>
+          <!-- END user_tags -->
+        </ul>
+      </dd>
+      <!-- ENDIF -->
+      <!-- IF PHOTO_DESCRIPTION -->
+      <dd>
+        <p>{PHOTO_DESCRIPTION}</p>
+      </dd>
+      <!-- ENDIF -->
+    </dl>
+    <!-- IF OWNER -->
+    <div data-role="popup" id="photo-menu">
+        <ul data-role="listview">
+            <li><a href="{U_EDIT}">Edit</a></li>
+            <li><a href="{U_MARK_DISPLAY_PIC}">Set as My Picture</a></li>
+            <li><a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a></li>
+            <li data-icon="back"><a href="{U_ROTATE_LEFT}" title="Rotate Left">Rotate left</a></li>
+            <li data-icon="forward"><a href="{U_ROTATE_RIGHT}" title="Rotate Right">Rotate Right</a></li>
+            <li data-icon="delete"><a href="{U_DELETE}" title="Delete Photo">Delete</a></li>
+            <li><a href="{U_TAG}" title="Tag Photo">Tag</a></li>
+        </ul>
+    </div>
+    <!-- ENDIF -->
+    <div class="comment-pane" style="margin: 0 auto; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">
+      <!-- INCLUDE pane.comments.html -->
+    </div>
+    <!-- IF PAGE_LICENSE -->
+    <p>
+      <!-- IF I_PAGE_LICENSE -->
+      <a href="{U_PAGE_LICENSE}">
+        <img src="/images/{I_PAGE_LICENSE}" title="{PAGE_LICENSE}" alt="{PAGE_LICENSE}" />
+      </a>
+      <!-- ELSE -->
+      <a href="{U_PAGE_LICENSE}">This page is licensed under the following license: {PAGE_LICENSE}</a>
+      <!-- ENDIF -->
+      <!-- IF I_PAGE_CLASSIFICATION -->
+      <img src="/images/{I_PAGE_CLASSIFICATION}" title="{PAGE_CLASSIFICATION}" alt="{PAGE_CLASSIFICATION}" />
+      <!-- ENDIF -->
+    </p>
+    <!-- ENDIF -->
+  </div>
+</div>
+<!-- INCLUDE page_footer.html -->

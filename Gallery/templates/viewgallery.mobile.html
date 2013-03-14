@@ -1,0 +1,65 @@
+<!-- INCLUDE page_header.html -->
+<div>
+  <h2>{GALLERY_TITLE}</h2>
+  <p>{BREADCRUMBS}</p>
+
+    <div data-role="controlgroup" data-type="horizontal">
+    <!-- IF U_UPLOAD_PHOTO -->
+      <a href="{U_UPLOAD_PHOTO}" data-role="button" data-theme="a" data-inline="true">Upload Photo</a>
+    <!-- ENDIF -->
+    <!-- IF U_NEW_GALLERY -->
+      <a href="{U_NEW_GALLERY}" data-role="button" data-theme="a" data-inline="true">New Gallery</a>
+    <!-- ENDIF -->
+    </div>
+
+  <!-- IF GALLERIES -->
+  <ul data-role="listview" data-inset="true" data-count-theme="b">
+    <!-- BEGIN gallery_list -->
+    <li>
+            <a href="{gallery_list.URI}">
+            <!-- IF gallery_list.TILE -->
+            <img src="{gallery_list.TILE}" alt="{gallery_list.TITLE}" width="100" height="100" />
+            <!-- ELSE -->
+            <!-- ENDIF -->
+            {gallery_list.TITLE}
+            <span class="ui-li-count">{gallery_list.ITEMS}</span>
+            </a>
+    </li>
+    <!-- END gallery_list -->
+  </ul>
+  <div class="cheat-clear-left"></div>
+  <!-- ENDIF -->
+  <!-- IF PHOTOS -->
+  <!-- IF PAGINATION -->
+  <p>
+    <strong>Go to page:</strong> {PAGINATION}
+  </p>
+  <!-- ENDIF -->
+  <div class="ui-grid-b">
+    <!-- BEGIN photo_list -->
+    <div class="ui-block-{photo_list.ABC}" style="text-align: center;">
+    <a href="{photo_list.PHOTO_URI}">
+    <img src="{photo_list.TILE}" alt="{photo_list.TITLE}" width="100" height="100" />
+                <!-- IF photo_list.TITLE -->
+                <p>{photo_list.TITLE}</p>
+                <!-- ELSE -->
+                <p>&nbsp;</p>
+                <!-- ENDIF -->
+            </a>
+    </div>
+    <!-- END photo_list -->
+  </div><!-- /grid-b -->
+  <div class="cheat-clear-left"></div>
+  <!-- IF PAGINATION -->
+  <p>
+    <strong>Go to page:</strong> {PAGINATION}
+  </p>
+  <!-- ENDIF -->
+  <!-- ENDIF -->
+  <!-- IF ALBUM_COMMENTS -->
+    <div class="comment-pane" style="margin: 0 auto; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">
+    <!-- INCLUDE pane.comments.html -->
+  </div>
+  <!-- ENDIF -->
+</div>
+<!-- INCLUDE page_footer.html -->

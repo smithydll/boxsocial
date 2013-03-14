@@ -1,0 +1,27 @@
+	<div id="today-calendar">
+		<h4><a href="{U_CALENDAR}">{L_CALENDAR}</a></h4>
+    <div id="new-stuff">
+      <span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></span>
+    </div>
+		<!-- IF HAS_EVENTS -->
+		<ul id="today-events">
+			<!-- BEGIN appointment_days_list -->
+			<li>
+				<h5>{appointment_days_list.DAY}</h5>
+				<dl>
+					<!-- BEGIN appointment_days_list.appointments_list -->
+					<dt>{appointment_days_list.appointments_list.TIME}</dt>
+					<dd><a href="{appointment_days_list.appointments_list.URI}">{appointment_days_list.appointments_list.SUBJECT}
+					<!-- IF appointment_days_list.appointments_list.LOCATION -->
+					({appointment_days_list.appointments_list.LOCATION})
+					<!-- ENDIF --></a>
+					</dd>
+					<!-- END appointment_days_list.appointments_list -->
+				</dl>
+			</li>
+			<!-- END appointment_days_list -->
+		</ul>
+		<!-- ELSE -->
+		<p>{L_NO_EVENTS_UPCOMING_WEEK}</p>
+		<!-- ENDIF -->
+	</div>

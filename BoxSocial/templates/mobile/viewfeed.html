@@ -1,0 +1,40 @@
+	<div id="today-feed">
+		<h4><!--a href="/{USERNAME}/feed"-->Feed<!--/a--></h4>
+		<!-- IF HAS_FEED_ITEMS -->
+		<ul id="today-feeds">
+			<!-- BEGIN feed_days_list -->
+			<li>
+				<h4>{feed_days_list.DAY}</h4>
+				<!-- BEGIN feed_days_list.feed_item -->
+				<ul class="feed-list">
+                    <li class="feed-item" id="feed-item-{feed_days_list.feed_item.ID}">
+					<h5>{feed_days_list.feed_item.TITLE}</h5>
+                    <!-- IF feed_days_list.feed_item.USER_TILE -->
+		            <div class="feed-disp-pic">
+			            <img src="{feed_days_list.feed_item.USER_TILE}" alt="{feed_days_list.feed_item.USER_DISPLAY_NAME}" />
+		            </div>
+		            <!-- ENDIF -->
+                    <div class="feed-text">
+					    <p>{feed_days_list.feed_item.TEXT}</p>
+                    </div>
+                    <div class="r-stuff light">
+                        <!--
+                        <!-- IF feed_days_list.feed_item.LIKEABLE -->
+                        --><span class="img-button like-item"><a href="#" onclick="return LikeItem({feed_days_list.feed_item.ID},{feed_days_list.feed_item.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{feed_days_list.feed_item.LIKES}</span></a></span><!--
+                        <!-- ENDIF -->
+                        <!-- IF feed_days_list.feed_item.COMMENTABLE -->
+                        --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({feed_days_list.feed_item.ID}, {feed_days_list.feed_item.TYPE_ID}, $('#feed-comments-{feed_days_list.feed_item.ID}'));" title="Expand comments">Comments<span class="likes">{feed_days_list.feed_item.COMMENTS}</span></a></span><!--
+                        <!-- ENDIF -->
+                        -->
+                    </div>
+                    <div class="feed-text comment-pane" id="feed-comments-{feed_days_list.feed_item.ID}" style="display: none;"></div>
+                    </li>
+				</ul>
+				<!-- END feed_days_list.feed_item -->
+			</li>
+			<!-- END feed_days_list -->
+		</ul>
+		<!-- ELSE -->
+		<p>There are no recent items in your friend's feeds.</p>
+		<!-- ENDIF -->
+	</div>

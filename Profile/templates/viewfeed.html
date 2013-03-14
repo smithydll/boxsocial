@@ -1,0 +1,42 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>{L_FEED}</h2>
+
+<!-- IF BREADCRUMBS -->
+<p>{BREADCRUMBS}</p>
+<!-- ENDIF -->
+
+<script type="text/javascript">
+<!--
+    $(document).ready(function () {
+        $('#message').focus().val('is ').outerWidth($('#status-div').width() - $('#status-submit').outerWidth(true));
+    });
+-->
+</script>
+
+	<div id="pane-profile">
+		<div id="pane-pages" class="pane">
+			<h3>Pages</h3>
+			<ul class="page-tiles">
+				{PAGE_LIST}
+			</ul>
+		</div>
+	</div>
+	<div id="profile">
+    <!-- IF OWNER -->
+	<div id="compose-status">
+        <h3>Post Status</h3>
+        <div id="status-div">
+		<form action="/account" method="post" id="status-form" onsubmit="return SendStatus('{USER_DISPLAY_NAME}');">
+			<p><input type="text" id="message" name="message" value="is " style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+            <input type="hidden" name="aclmode" value="simple" />
+			<input type="hidden" name="module" value="profile" />
+			<input type="hidden" name="sub" value="status" /></p>
+            {S_STATUS_PERMISSIONS}
+		</form>
+        </div>
+	</div>
+    <!-- ENDIF -->
+
+
+
+<!-- INCLUDE page_footer.html -->

@@ -46,6 +46,16 @@ namespace BoxSocial.FrontEnd
         
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Mobile doesn't include jQuery UI by default, but is needed to userselectbox
+            if (core.IsMobile)
+            {
+                VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+                javaScriptVariableCollection.Parse("URI", @"/scripts/jquery-ui-1.9.1.boxsocial.min.js");
+
+                VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                styleSheetVariableCollection.Parse("URI", @"/styles/jquery-ui-1.9.1.boxsocial.min.css");
+            }
+
             long itemId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
             long itemTypeId = core.Functions.FormLong("type", core.Functions.RequestLong("type", 0));
             

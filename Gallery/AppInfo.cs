@@ -407,6 +407,8 @@ namespace BoxSocial.Applications.Gallery
             if (!(!thisGroup.IsGroupMember(e.core.Session.LoggedInMember) && thisGroup.GroupType == "CLOSED"))
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
 
                 // show recent photographs in the gallery
                 Gallery gallery = new Gallery(e.core, thisGroup);
@@ -440,6 +442,8 @@ namespace BoxSocial.Applications.Gallery
             Network theNetwork = (Network)e.Owner;
 
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
 
             Gallery gallery = new Gallery(e.core, theNetwork);
 

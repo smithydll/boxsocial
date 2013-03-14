@@ -501,6 +501,7 @@ namespace BoxSocial.Internals
                 template.Parse("LOGGED_IN", "TRUE");
                 template.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
                 template.Parse("USER_TILE", core.Session.LoggedInMember.UserTile);
+                template.Parse("USER_ICON", core.Session.LoggedInMember.UserIcon);
             }
 
             List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, page, item.CommentsPerPage, commenters);
@@ -563,6 +564,7 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("U_LIKE", core.Uri.BuildLikeItemUri(comment.ItemTypeId, comment.Id));
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
+                    commentsVariableCollection.Parse("USER_ICON", commentPoster.UserIcon);
 
                     if (comment.Info.Likes > 0)
                     {
@@ -919,17 +921,29 @@ namespace BoxSocial.Internals
                     hasChildren = true;
                 }
 
-                if (!string.IsNullOrEmpty(pages[i].Icon))
-                {
-                    output.Append("<li style=\"background-image: url('" + HttpUtility.HtmlEncode(pages[i].Icon) + "');\" class=\"page-li\"> ");
-                }
-                else
+                if (core.IsMobile)
                 {
                     output.Append("<li class=\"page-li\">");
                 }
+                else
+                {
+                    if (!string.IsNullOrEmpty(pages[i].Icon))
+                    {
+                        output.Append("<li style=\"background-image: url('" + HttpUtility.HtmlEncode(pages[i].Icon) + "');\" class=\"page-li\"> ");
+                    }
+                    else
+                    {
+                        output.Append("<li class=\"page-li\">");
+                    }
+                }
                 output.Append("<a href=\"");
                 output.Append(HttpUtility.HtmlEncode(pages[i].Uri));
-                output.Append("\"><span>");
+                output.Append("\">");
+                if (core.IsMobile && (!string.IsNullOrEmpty(pages[i].Icon)))
+                {
+                    output.Append("<img src=\"" + HttpUtility.HtmlEncode(pages[i].Icon) + "\" class=\"ui-li-icon\" />");
+                }
+                output.Append("<span>");
                 if (current != null)
                 {
                     if (pages[i].Id == current.Id)
@@ -948,7 +962,7 @@ namespace BoxSocial.Internals
                 }
                 output.Append("</span></a>");
 
-                if (!hasChildren)
+                if ((!hasChildren) || core.IsMobile)
                 {
                     output.Append("</li>\n");
                 }
@@ -969,9 +983,12 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                for (int j = nextParents; j < parents; j++)
+                if (!core.IsMobile)
                 {
-                    output.Append("</ul>\n</li>\n");
+                    for (int j = nextParents; j < parents; j++)
+                    {
+                        output.Append("</ul>\n</li>\n");
+                    }
                 }
             }
 

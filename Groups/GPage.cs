@@ -135,6 +135,8 @@ namespace BoxSocial.Groups
             if (e.PageType == AppPrimitives.Group)
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "group_footer");
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
 
                 if (e.Owner.Type == "GROUP")
                 {

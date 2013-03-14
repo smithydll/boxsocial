@@ -105,7 +105,7 @@ namespace BoxSocial.Applications.Gallery
 
                     photo.Rotate(core, rotation);
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, photo.ParentPath, photo.Path));
+                    SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, photo.ParentPath, photo.Path, true));
                     core.Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
                     return;
                 }

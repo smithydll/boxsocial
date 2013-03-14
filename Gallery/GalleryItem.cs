@@ -32,6 +32,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -1143,6 +1144,8 @@ namespace BoxSocial.Applications.Gallery
                 uquery.AddField("gallery_item_display_exists", false);
                 uquery.AddField("gallery_item_full_exists", false);
                 uquery.AddField("gallery_item_ultra_exists", false);
+                uquery.AddField("gallery_item_width", ItemHeight);
+                uquery.AddField("gallery_item_height", ItemWidth);
                 uquery.AddCondition("gallery_item_id", itemId);
 
                 db.Query(uquery);
@@ -1779,7 +1782,7 @@ namespace BoxSocial.Applications.Gallery
                             case PictureScale.Tile:
                             case PictureScale.Square:
                             case PictureScale.High:
-                                CreateScaleWithSquareRatio(e.Core, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+                                CreateScaleWithSquareRatio(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
 
                                 switch (scale)
                                 {
@@ -1971,44 +1974,88 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateScaleWithSquareRatio(Core core, string fileName, string bin, int width, int height)
+        public static void CreateScaleWithSquareRatio(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
         {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Bitmap displayImage;
-
-            displayImage = new Bitmap(width, height, image.PixelFormat);
-            displayImage.Palette = image.Palette;
-
-            Graphics g = Graphics.FromImage(displayImage);
-            g.Clear(Color.Transparent);
-            g.CompositingMode = CompositingMode.SourceOver;
-            g.CompositingQuality = CompositingQuality.HighQuality;
-            g.SmoothingMode = SmoothingMode.HighQuality;
-            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-            int square = Math.Min(image.Width, image.Height);
-            g.DrawImage(image, new Rectangle(0, 0, width, height), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
-
-            MemoryStream stream = new MemoryStream();
-            if (image.RawFormat == ImageFormat.Jpeg)
+            // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
+            if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
-                ImageCodecInfo codecInfo = GetEncoderInfo(ImageFormat.Jpeg);
-                System.Drawing.Imaging.Encoder encoder = System.Drawing.Imaging.Encoder.Quality;
-                EncoderParameters myEncoderParameters = new EncoderParameters(2);
-                EncoderParameter myEncoderParameter = new EncoderParameter(encoder, 90L);
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                myEncoderParameters.Param[1] = new EncoderParameter(System.Drawing.Imaging.Encoder.RenderMethod, (int)EncoderValue.RenderProgressive);
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                fs.Position = 0;
+                long newLength = fs.Length;
+                byte[] data = new byte[newLength];
 
-                displayImage.Save(stream, codecInfo, myEncoderParameters);
+                int bytesRead = 0;
+                int totalBytesRead = 0;
+                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                {
+                    totalBytesRead += bytesRead;
+                }
+
+                ImageMagick.WandGenesis();
+                IntPtr wand = ImageMagick.NewWand();
+
+                ImageMagick.ReadImageBlob(wand, data);
+
+                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
+                Size newSize = GetTileSize(imageSize, new Size(width, height));
+
+                int square = Math.Min(imageSize.Width, imageSize.Height);
+                int cropX = imageSize.Width - square;
+                int cropY = imageSize.Height - square;
+
+                ImageMagick.CropImage(wand, (IntPtr)square, (IntPtr)square, (IntPtr)(cropX / 2), (IntPtr)(cropY / 2));
+                ImageMagick.ResizeImage(wand, (IntPtr)(width), (IntPtr)(height), ImageMagick.Filter.Lanczos, 1.0);
+
+                byte[] newdata = ImageMagick.GetImageBlob(wand);
+
+                ImageMagick.DestroyWand(wand);
+                ImageMagick.WandTerminus();
+
+                MemoryStream stream = new MemoryStream();
+                stream.Write(newdata, 0, newdata.Length);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                stream.Close();
+                fs.Close();
             }
             else
             {
-                displayImage.Save(stream, image.RawFormat);
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                Image image = Image.FromStream(fs);
+                Bitmap displayImage;
+
+                displayImage = new Bitmap(width, height, image.PixelFormat);
+                displayImage.Palette = image.Palette;
+
+                Graphics g = Graphics.FromImage(displayImage);
+                g.Clear(Color.Transparent);
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                int square = Math.Min(image.Width, image.Height);
+                g.DrawImage(image, new Rectangle(0, 0, width, height), new Rectangle((image.Width - square) / 2, (image.Height - square) / 2, square, square), GraphicsUnit.Pixel);
+
+                MemoryStream stream = new MemoryStream();
+                if (image.RawFormat == ImageFormat.Jpeg)
+                {
+                    ImageCodecInfo codecInfo = GetEncoderInfo(ImageFormat.Jpeg);
+                    System.Drawing.Imaging.Encoder encoder = System.Drawing.Imaging.Encoder.Quality;
+                    EncoderParameters myEncoderParameters = new EncoderParameters(2);
+                    EncoderParameter myEncoderParameter = new EncoderParameter(encoder, 90L);
+                    myEncoderParameters.Param[0] = myEncoderParameter;
+                    myEncoderParameters.Param[1] = new EncoderParameter(System.Drawing.Imaging.Encoder.RenderMethod, (int)EncoderValue.RenderProgressive);
+
+                    displayImage.Save(stream, codecInfo, myEncoderParameters);
+                }
+                else
+                {
+                    displayImage.Save(stream, image.RawFormat);
+                }
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                stream.Close();
+                fs.Close();
             }
-            core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
-            stream.Close();
-            fs.Close();
         }
 
         /// <summary>
@@ -2018,35 +2065,85 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="fileName"></param>
         private static void CreateScaleWithRatioPreserved(Core core, string fileName, string bin, int width, int height)
         {
-            Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-            Image image = Image.FromStream(fs);
-            Image thumbImage;
-
-            if (image.Width > width || image.Height > height)
+            // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
+            if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
-                Size newSize = GetSize(image.Size, new Size(width, height));
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                fs.Position = 0;
+                long newLength = fs.Length;
+                byte[] data = new byte[newLength];
 
-                thumbImage = new Bitmap(newSize.Width, newSize.Height, image.PixelFormat);
-                thumbImage.Palette = image.Palette;
-                Graphics g = Graphics.FromImage(thumbImage);
-                g.Clear(Color.Transparent);
-                g.CompositingMode = CompositingMode.SourceOver;
-                g.CompositingQuality = CompositingQuality.HighQuality;
-                g.SmoothingMode = SmoothingMode.HighQuality;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                int bytesRead = 0;
+                int totalBytesRead = 0;
+                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                {
+                    totalBytesRead += bytesRead;
+                }
 
-                g.DrawImage(image, new Rectangle(0, 0, newSize.Width, newSize.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+                ImageMagick.WandGenesis();
+                IntPtr wand = ImageMagick.NewWand();
 
-                MemoryStream stream = new MemoryStream();
-                thumbImage.Save(stream, image.RawFormat);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
-                stream.Close();
-                fs.Close();
+                ImageMagick.ReadImageBlob(wand, data);
+
+                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
+
+                if (imageSize.Width > width || imageSize.Height > height)
+                {
+                    Size newSize = GetSize(imageSize, new Size(width, height));
+                    int newWidth = newSize.Width;
+                    int newHeight = newSize.Height;
+
+                    ImageMagick.ResizeImage(wand, (IntPtr)newWidth, (IntPtr)newHeight, ImageMagick.Filter.Lanczos, 1.0);
+
+                    byte[] newdata = ImageMagick.GetImageBlob(wand);
+
+                    ImageMagick.DestroyWand(wand);
+                    ImageMagick.WandTerminus();
+
+                    MemoryStream stream = new MemoryStream();
+                    stream.Write(newdata, 0, newdata.Length);
+                    core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                    stream.Close();
+                    fs.Close();
+                }
+                else
+                {
+                    fs.Close();
+                    core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
+                }
             }
             else
             {
-                fs.Close();
-                core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                Image image = Image.FromStream(fs);
+                Image thumbImage;
+
+                if (image.Width > width || image.Height > height)
+                {
+                    Size newSize = GetSize(image.Size, new Size(width, height));
+
+                    thumbImage = new Bitmap(newSize.Width, newSize.Height, image.PixelFormat);
+                    thumbImage.Palette = image.Palette;
+                    Graphics g = Graphics.FromImage(thumbImage);
+                    g.Clear(Color.Transparent);
+                    g.CompositingMode = CompositingMode.SourceOver;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
+                    g.SmoothingMode = SmoothingMode.HighQuality;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                    g.DrawImage(image, new Rectangle(0, 0, newSize.Width, newSize.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+
+                    MemoryStream stream = new MemoryStream();
+                    thumbImage.Save(stream, image.RawFormat);
+                    core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                    stream.Close();
+                    fs.Close();
+                }
+                else
+                {
+                    fs.Close();
+                    core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
+                }
             }
         }
 
@@ -2298,13 +2395,29 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        Owner.UriStub, FullPath));
+                    if (!string.IsNullOrEmpty(core.Http["reload"]))
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, FullPath));
+                    }
+                    else
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
+                            Owner.UriStub, FullPath));
+                    }
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                        Owner.UriStub, path));
+                    if (!string.IsNullOrEmpty(core.Http["reload"]))
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, path));
+                    }
+                    else
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
+                            Owner.UriStub, path));
+                    }
                 }
             }
         }
@@ -2318,13 +2431,29 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
-                        Owner.UriStub, FullPath));
+                    if (!string.IsNullOrEmpty(core.Http["reload"]))
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_full/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, FullPath));
+                    }
+                    else
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
+                            Owner.UriStub, FullPath));
+                    }
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
-                        Owner.UriStub, path));
+                    if (!string.IsNullOrEmpty(core.Http["reload"]))
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_full/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, path));
+                    }
+                    else
+                    {
+                        return core.Uri.AppendSid(string.Format("{0}images/_full/{1}",
+                            Owner.UriStub, path));
+                    }
                 }
             }
         }

@@ -1416,6 +1416,7 @@ namespace BoxSocial.Groups
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 membersVariableCollection.Parse("U_PROFILE", member.Uri);
                 membersVariableCollection.Parse("ICON", member.UserIcon);
+                membersVariableCollection.Parse("TILE", member.UserTile);
             }
 
             List<GroupMember> operators = page.Group.GetOperators();
@@ -1547,6 +1548,7 @@ namespace BoxSocial.Groups
                     }
                 }
                 memberVariableCollection.Parse("ICON", member.UserIcon);
+                memberVariableCollection.Parse("TILE", member.UserTile);
             }
 
             string pageUri = page.Group.MemberlistUri;

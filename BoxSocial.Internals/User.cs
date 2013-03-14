@@ -292,7 +292,7 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// 100x100 display tile
+        /// 50x50 display tile
         /// </summary>
         public string UserIcon
         {
@@ -311,7 +311,7 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// 50x50 display tile
+        /// 100x100 display tile
         /// </summary>
         public string UserTile
         {
@@ -1869,6 +1869,7 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
+                friendVariableCollection.Parse("TILE", friend.UserTile);
             }
 
             ushort readAccessLevel = page.User.GetAccessLevel(core.Session.LoggedInMember);
@@ -1948,6 +1949,7 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.UserIcon);
+                friendVariableCollection.Parse("TILE", friend.UserTile);
             }
 
             string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);

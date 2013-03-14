@@ -1529,8 +1529,30 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(Core core, Primitive owner, string galleryPath, string photoPath)
         {
-            return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
-                owner.UriStub, galleryPath, photoPath));
+            return BuildPhotoUri(core, owner, galleryPath, photoPath, false);
+        }
+
+        /// <summary>
+        /// Generates a URI pointing to a gallery photo from a given photo path
+        /// </summary>
+        /// <param name="core">Core token</param>
+        /// <param name="owner">Photo owner</param>
+        /// <param name="galleryPath">Gallery path</param>
+        /// <param name="photoPath">Photo slug</param>
+        /// <param name="reload">Tell the page to append a unique identifier to the end of pictures as a cache buster to force reload</param>
+        /// <returns>URI pointing to the photo</returns>
+        public static string BuildPhotoUri(Core core, Primitive owner, string galleryPath, string photoPath, bool reload)
+        {
+            if (reload)
+            {
+                return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}?reload=true",
+                    owner.UriStub, galleryPath, photoPath));
+            }
+            else
+            {
+                return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
+                    owner.UriStub, galleryPath, photoPath));
+            }
         }
 
         /// <summary>

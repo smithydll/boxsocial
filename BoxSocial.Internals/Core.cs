@@ -87,6 +87,15 @@ namespace BoxSocial.Internals
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
         private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
+        public static bool IsUnix
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
         /// <summary>
         /// A cache of application entries.
         /// </summary>

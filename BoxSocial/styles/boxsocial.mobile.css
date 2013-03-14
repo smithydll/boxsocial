@@ -80,7 +80,7 @@ h2#sub-title {
 }
 
 #body h5 {
-	font-size: 12%;
+	font-size: 120%;
 }
 
 #body h6 {
@@ -125,11 +125,6 @@ h2#sub-title {
 }
 
 .page-li {
-    background-repeat: no-repeat;
-    background-position: 4px center;
-    line-height: 23pt;
-    padding-left: 24px !important;
-    margin: 4px;
 }
 
 #foot {
@@ -597,3 +592,190 @@ ul.comment-list li p.extra a {
 .ui-content {padding: 8px !important;}
 .ui-listview-filter {margin: 8px !important;}
 .ui-content .ui-listview {margin: 8px !important;}
+
+li.droplist-user, li.droplist-group {
+    text-align: left;
+}
+
+li.droplist-user a {
+        min-height: 32pt;
+}
+
+li.droplist-group a {
+        min-height: 32pt;
+}
+
+li.droplist-user img {
+        margin-right: 10px;
+        float: left;
+        padding: 2px;
+        height: 32px;
+        width: 32px;
+}
+
+.user-droplist .empty, .permission-group-droplist .empty {
+        color: #999999;
+        padding: 2px;
+        margin: 2px;
+        display: inline-block;
+        cursor: pointer;
+}
+
+.user-droplist .delete, .permission-group-droplist .delete {
+        margin-left: 4px;
+        display: inline-block;
+        width: 1.5em;
+        text-align: center;
+        border-radius: 3px;
+}
+
+.user-droplist .delete:hover, .permission-group-droplist .delete:hover {
+        color: #2244aa;
+        background-color: #ffffff;
+}
+
+.user-droplist, .permission-group-droplist {
+        border: 1px solid #028;
+        background-color: #ffffff;
+        position: relative;
+}
+
+.user-droplist input, .permission-group-droplist input {
+        border: none;
+        outline: none;
+        background-color: #ffffff;
+        margin: 0;
+        min-height: 19pt;
+        width: 100%;
+}
+
+.user-droplist .username, .permission-group-droplist .username {
+        border: 1px solid #002288;
+	    background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
+        color: #ffffff;
+        padding: 5pt;
+        margin: 2px;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: default;
+}
+
+.permission-group-droplist .group {
+        border: 1px solid #0088aa;
+	    background: #22aacc;
+        color: #ffffff;
+        padding: 5pt;
+        margin: 2px;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: default;
+}
+
+#tabs ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	height: 24px;
+	margin-left: 8px;
+}
+
+#tabs li {
+	float: left;
+	height: 19pt;
+	list-style-type: none;
+	background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
+	margin-left: 1px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border: 1px solid #002288;
+	border-bottom: none;
+	color: #ffffff;
+}
+
+#tabs li.current {
+    background: #ffffff url(images/ui-bg_flat_100_ffffff_40x100.png) 50% 50% repeat-x;
+}
+
+#tabs li a {
+	display: block;
+	padding-left: 2px;
+	margin-right: 2px;
+	cursor: pointer;
+}
+
+#tabs li > span {
+	display: block;
+	padding-left: 2px;
+	margin-right: 2px;
+}
+
+#tabs li.current a span, #tabs li.current span {
+    color: #aa5500;
+}
+
+#tabs li span {
+	display: block;
+	height: 19pt;
+	line-height: 19pt;
+	padding: 0 8px;
+	margin-top: 2px;
+	font-weight: bold;
+	color: #ffffff;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#tabs li:hover {
+	background: #ffffff url(images/ui-bg_flat_100_ffffff_40x100.png) 50% 50% repeat-x;
+}
+
+#tabs li:hover a span {
+    color: #0044aa;
+}
+
+ul#today-feeds {
+	list-style: none;
+	padding: 0px;
+	margin: 0 5px;
+}
+
+ul#today-feeds li {
+	list-style: none;
+	margin: 5px 0;
+	padding: 5px 3px;
+	border-top: solid 1px #EEEEEE;
+	border-bottom: solid 1px #EEEEEE;
+}
+
+ul.feed-list {
+    padding: 0;
+    margin: 0;
+}
+
+ul.feed-list li.feed-item {
+    margin: 5px 0;
+    padding: 5px 0;
+}
+
+ul.feed-list li div.feed-disp-pic {
+	float:left;
+	width: 60px;
+	height: 60px;
+	padding: 0 5px;
+	margin-top: 2px;
+}
+
+ul.feed-list li div.feed-disp-pic img 
+{
+	padding: 2px;
+	background-color: White;
+	border: solid 1px #999999;
+}
+
+ul.feed-list li div.feed-text 
+{
+    padding: 2px;
+	margin-left: 70px;
+	position: relative;
+}

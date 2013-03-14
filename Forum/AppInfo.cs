@@ -262,6 +262,7 @@ namespace BoxSocial.Applications.Forum
         public void ShowGroupForum(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileforum");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             Forum forum = new Forum(core, (UserGroup)e.Owner);

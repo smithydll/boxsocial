@@ -137,11 +137,14 @@ function QuotedComment(r, e) {
 
 var csort;
 var cid;
-function SubmitComment(id, type, zero, sort)
+function SubmitComment(id, type, zero, sort, text)
 {
 	csort = sort;
 	cid = id;
-	return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", item: id, type: type, comment: $("#comment-text-" + id).val() } );
+	if (text == null) {
+	    text = $("#comment-text-" + id).val();
+	}
+	return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", item: id, type: type, comment: text } );
 }
 
 function SubmitedComment(r, e) {

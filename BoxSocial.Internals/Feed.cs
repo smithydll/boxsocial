@@ -72,6 +72,7 @@ namespace BoxSocial.Internals
             }
 
             Template template = new Template(core.Http.TemplatePath, "viewfeed.html");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             List<Action> feedActions = Feed.GetItems(core, owner);

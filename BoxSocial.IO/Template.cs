@@ -282,6 +282,8 @@ namespace BoxSocial.IO
         private static string templatePath = null;
 
         private DisplayMedium medium;
+
+        private Dictionary<string, int> instances = new Dictionary<string,int>();
         
         public static string Path
         {
@@ -1046,11 +1048,20 @@ namespace BoxSocial.IO
                     {
                         string file = line.Substring(iou + 13, ioue - (iou + 13));
 
+                        if (instances.ContainsKey(file))
+                        {
+                            instances[file]++;
+                        }
+                        else
+                        {
+                            instances.Add(file, 1);
+                        }
+
                         StringBuilder includeOutput = new StringBuilder();
                         //string[] includeLines = Template.OpenTextFile(Path.Combine(path, ma.Groups[1].Value)).Replace("\r", "").Split('\n');
                         //string[] includeLines = LoadTemplateFile(mc[j].Groups[1].Value).Replace("\r", String.Empty).Split('\n');
                         string[] includeLines = LoadTemplateFile(file).Replace("\r", String.Empty).Split('\n');
-                        ProcessLines(includeLines, includeOutput, variables);
+                        ProcessLines(includeLines, includeOutput, variables, instances[file] - 1);
                         //line = line.Replace(string.Format("<!-- INCLUDE {0} -->", mc[j].Groups[1].Value), includeOutput.ToString());
                         line = line.Replace(string.Format("<!-- INCLUDE {0} -->", file), includeOutput.ToString());
                     }

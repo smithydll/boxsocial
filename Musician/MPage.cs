@@ -114,6 +114,8 @@ namespace BoxSocial.Musician
             if (e.PageType == AppPrimitives.Musician)
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "music_footer");
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
 
                 if (e.Owner.Type == "MUSIC")
                 {

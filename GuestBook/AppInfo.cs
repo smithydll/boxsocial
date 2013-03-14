@@ -489,6 +489,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
@@ -515,6 +516,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
@@ -537,6 +539,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             Network theNetwork = (Network)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
@@ -559,6 +562,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             ApplicationEntry anApplication = (ApplicationEntry)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)
@@ -578,6 +582,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             Musician.Musician musician = (Musician.Musician)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofileguestbook");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             if (e.core.Session.IsLoggedIn)

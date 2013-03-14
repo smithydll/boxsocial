@@ -216,6 +216,8 @@ namespace BoxSocial.Groups
         {
             User profileOwner = (User)e.Owner;
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegroups");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
 
             List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);
             if (groups.Count > 0)

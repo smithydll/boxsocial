@@ -23,20 +23,21 @@
 	-->
 	</script>
 	<script type="text/javascript" src="/scripts/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="/scripts/jquery.mobile-1.3.0.min.js"></script>
-    <script type="text/javascript" src="/scripts/ajax.js"></script>
 	<!-- BEGIN javascript_list -->
 	<script type="text/javascript" src="{javascript_list.URI}"></script>
 	<!-- END javascript_list -->
+    <script type="text/javascript" src="/scripts/ajax.js"></script>
     <script type="text/javascript">
-        $(document).bind("mobileinit", function () {
+        $(document).on("mobileinit", function () {
             $.mobile.defaultTransition = 'none';
+            //$.mobile.ignoreContentEnabled = true;
         });
     </script>
+    <script type="text/javascript" src="/scripts/jquery.mobile-1.3.0.min.js"></script>
 </head>
 <body>
-<div data-role="page" id="main-page">
-	<div data-theme="a" data-role="header">
+<div data-role="page" id="main-page" data-theme="a">
+	<div data-theme="a" data-role="header" data-position="fixed">
 			<h1 id="page-title"><a data-rel="panel" data-inline="true" href="#boxsocial-menu"><span>{HEADING}</span></a></h1>
 			<h2 id="sub-title">A Global Community</h2>
 		<div id="mobile-nav" data-role="navbar" data-iconpos="top">
@@ -46,7 +47,7 @@
 				</li>
                 <!-- IF PAGE_LIST -->
 				<li>
-					<a href="#pages-menu" data-rel="popup" data-role="button" data-inline="true" data-theme="" data-icon="">Pages</a>
+					<a href="#pages-menu" data-rel="panel" data-role="button" data-inline="true" data-theme="" data-icon="">Pages</a>
 				</li>
                 <!-- ENDIF -->
                 <!-- IF TAB_LIST -->
@@ -68,7 +69,7 @@
 			</ul>
 		</div>
 	</div>
-    <div data-role="panel" id="boxsocial-menu" data-display="push" data-theme="b">
+    <div data-role="panel" id="boxsocial-menu" data-display="push" data-theme="b" style="position:fixed">
         <ul data-role="listview" data-inset="true" data-theme="b">
 <!-- IF LOGGED_IN -->
             <li><a href="{U_ACCOUNT}">My Account</a>
@@ -114,8 +115,8 @@
         <p><a href="{U_COPYRIGHT}">Copyright</a> &copy; {YEAR} {SITE_TITLE}, Powered By <a href="http://boxsocial.net/">Box Social</a></p>
     </div>
     <!-- IF PAGE_LIST -->
-    <div data-role="popup" data-position-to="window" id="pages-menu" data-theme="a">
-        <ul data-role="listview" data-inset="true" style="min-width:210px;" data-theme="a">
+    <div data-role="panel" id="pages-menu" data-display="overlay" data-position="right" data-theme="b">
+        <ul data-role="listview" data-inset="true" data-theme="b">
             <li data-role="divider" data-theme="">Pages</li>
             {PAGE_LIST}
         </ul>
@@ -133,7 +134,7 @@
         </div>
     </div>
         <!-- IF LOGGED_IN -->
-    <div data-role="popup" data-position-to="window" id="post-menu" data-theme="a">
+    <div data-role="popup" data-position-to="window" id="post-menu" data-theme="a" style="position:fixed">
         <div style="padding:10px 20px;">
             <h2>Post status</h2>
 			    <form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
@@ -148,5 +149,5 @@
 	    <!-- BEGIN head_hook -->
 {head_hook.BODY}
 		<!-- END head_hook -->
-		<div id="body">
+		<div id="body" data-enhance="false">
 

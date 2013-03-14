@@ -207,7 +207,7 @@ namespace BoxSocial.Internals
                 }
 
 
-                return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\"><span class=\"empty\" style=\"{10}\">Type names to set permissions, or leave blank to inherit.</span>{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
+                return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\"><span class=\"empty\" style=\"{10}\">Type names to set permissions, or leave blank to inherit.</span>{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" {11}value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
                         HttpUtility.HtmlEncode(name),
                         HttpUtility.HtmlEncode(string.Empty),
                         (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
@@ -218,7 +218,8 @@ namespace BoxSocial.Internals
                         (permissibleItem != null) ? permissibleItem.Id.ToString() : "0",
                         (permissibleItem != null) ? permissibleItem.TypeId.ToString() : "0",
                         idList.ToString(),
-                        (idList.Length > 0) ? "display: none" : string.Empty);
+                        (idList.Length > 0) ? "display: none" : string.Empty,
+                        (core.IsMobile) ? "data-role=\"none\" " : "");
             }
             catch (Exception ex)
             {

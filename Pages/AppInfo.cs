@@ -199,6 +199,7 @@ namespace BoxSocial.Applications.Pages
                 core.Template.Parse("TAB_LIST", "TRUE");
                 Template template = new Template(Assembly.GetExecutingAssembly(), "header_navigation_tabs");
                 template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
 
                 List<NagivationTab> tabs = NagivationTab.GetTabs(core, e.Owner);
 

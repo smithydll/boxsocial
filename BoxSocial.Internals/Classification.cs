@@ -46,6 +46,8 @@ namespace BoxSocial.Internals
             }
 
             Template template = new Template(core.Http.TemplatePath, "std.classifications_box.html");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
 
             switch (classification)
             {

@@ -305,6 +305,7 @@ namespace BoxSocial.Applications.Calendar
         void ShowMiniCalendar(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todaymonthpanel");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             Calendar.DisplayMiniCalendar(e.core, template, e.core.Session.LoggedInMember, e.core.Tz.Now.Year, e.core.Tz.Now.Month);
@@ -315,6 +316,7 @@ namespace BoxSocial.Applications.Calendar
         void ShowToday(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todayupcommingevents");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             long startTime = e.core.Tz.GetUnixTimeStamp(new DateTime(e.core.Tz.Now.Year, e.core.Tz.Now.Month, e.core.Tz.Now.Day, 0, 0, 0));

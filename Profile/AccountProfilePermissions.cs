@@ -73,6 +73,16 @@ namespace BoxSocial.Applications.Profile
 
             SetTemplate("account_permissions");
 
+            // Mobile doesn't include jQuery UI by default, but is needed to userselectbox
+            if (core.IsMobile)
+            {
+                VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+                javaScriptVariableCollection.Parse("URI", @"/scripts/jquery-ui-1.9.1.boxsocial.min.js");
+
+                VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                styleSheetVariableCollection.Parse("URI", @"/styles/jquery-ui-1.9.1.boxsocial.min.css");
+            }
+
             /*List<string> permissions = new List<string>();
             permissions.Add("Can Read");
             permissions.Add("Can Comment");*/

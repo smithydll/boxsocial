@@ -178,6 +178,7 @@ namespace BoxSocial.FrontEnd
                 }
 
                 Template template = new Template("pane.comments.html");
+                template.Medium = core.Template.Medium;
                 template.SetProse(core.Prose);
 
                 template.Parse("U_SIGNIN", Core.Uri.BuildLoginUri());
@@ -436,7 +437,16 @@ namespace BoxSocial.FrontEnd
             if (Request.Form["ajax"] == "true")
             {
                 Template ct = new Template(Server.MapPath("./templates"), "pane.comment.html");
+                template.Medium = core.Template.Medium;
                 ct.SetProse(core.Prose);
+
+                if (core.Session.IsLoggedIn && loggedInMember != null)
+                {
+                    ct.Parse("LOGGED_IN", "TRUE");
+                    ct.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
+                    ct.Parse("USER_TILE", core.Session.LoggedInMember.UserTile);
+                    ct.Parse("USER_ICON", core.Session.LoggedInMember.UserIcon);
+                }
 
                 VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
 
@@ -451,8 +461,41 @@ namespace BoxSocial.FrontEnd
                 commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(commentId));
                 commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
                 commentsVariableCollection.Parse("USER_TILE", loggedInMember.UserTile);
+                commentsVariableCollection.Parse("USER_ICON", loggedInMember.UserIcon);
 
-                commentsVariableCollection.Parse("NORMAL", "TRUE");
+                ICommentableItem thisItem = null;
+                try
+                {
+                    thisItem = (ICommentableItem)NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+
+                    if (core.Session.IsLoggedIn)
+                    {
+                        if (thisItem.Owner.CanModerateComments(loggedInMember))
+                        {
+                            commentsVariableCollection.Parse("MODERATE", "TRUE");
+                        }
+
+                        if (thisItem.Owner.IsItemOwner(loggedInMember))
+                        {
+                            commentsVariableCollection.Parse("OWNER", "TRUE");
+                            commentsVariableCollection.Parse("NORMAL", "FALSE");
+                        }
+                        else
+                        {
+                            commentsVariableCollection.Parse("OWNER", "FALSE");
+                            commentsVariableCollection.Parse("NORMAL", "TRUE");
+                        }
+                    }
+                    else
+                    {
+                        commentsVariableCollection.Parse("OWNER", "FALSE");
+                        commentsVariableCollection.Parse("NORMAL", "TRUE");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    commentsVariableCollection.Parse("NORMAL", "FALSE");
+                }
 
                 core.Ajax.SendRawText("comment", ct.ToString());
 

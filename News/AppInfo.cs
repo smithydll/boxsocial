@@ -261,6 +261,8 @@ namespace BoxSocial.Applications.News
         public void ShowGroupNews(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilenews");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
 
 			if (e.Owner is UserGroup)
 			{

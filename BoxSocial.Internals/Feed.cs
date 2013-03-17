@@ -129,6 +129,7 @@ namespace BoxSocial.Internals
                     if (feedAction.Owner is User)
                     {
                         feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).UserTile);
+                        feedItemVariableCollection.Parse("USER_ICON", ((User)feedAction.Owner).UserIcon);
                     }
                 }
             }

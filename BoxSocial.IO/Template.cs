@@ -792,109 +792,60 @@ namespace BoxSocial.IO
                     if (ioie >= 0)
                     {
                         string condition = line.Substring(ioi + 8, ioie - (ioi + 8));
+                        bool conditionEvaluated = false;
+                        
                         if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
                         {
                             inIf++;
-                            string value1 = null;
-                            //if (variables.ContainsKey(rm.Groups[1].Value))
-                            //if (variables.TryGetValue(rm.Groups[1].Value, out value1))
 
-                            // TODO: OR AND NOT
-                            /*bool conditionFlag = false;
-                            string[] conditionPhrases = condition.Split(new char[] { ' ' });
-                            string lastOperator = null;
+                            string[] conditionPhrases = condition.Split(new char[] { ' ', '\t' });
 
-                            foreach (string phrase in condition)
+                            condition = string.Empty;
+                            bool lastOR = false;
+                            bool lastAND = false;
+                            bool lastNOT = false;
+                            for (int j = 0; j < conditionPhrases.Length; j++)
                             {
-                                value1 = null;
-
-                                if (phrase == "OR" || phrase == "AND")
+                                if (conditionPhrases[j] == "OR")
                                 {
-                                    lastOperator = phrase;
+                                    lastOR = true;
+                                }
+                                else if (conditionPhrases[j] == "AND")
+                                {
+                                    lastAND = true;
+                                }
+                                else if (conditionPhrases[j] == "NOT")
+                                {
+                                    lastNOT = true;
                                 }
                                 else
                                 {
-                                    variables.TryGetValue(condition, out value1);
-                                    bool flag = (value1.ToLower() != "false" && value1 != "0" && value1 != String.Empty);
-                                    switch (lastOperator)
+                                    if (lastOR)
                                     {
-                                        case "OR":
-                                            conditionFlag = (conditionFlag || flag);
-                                        case "AND":
-                                            conditionFlag = (conditionFlag && flag);
-                                        default:
-                                            conditionFlag = flag;
+                                        conditionEvaluated = conditionEvaluated || ((!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex));
                                     }
-                                }
-                            }*/
-
-                            if (variables.TryGetValue(condition, out value1))
-                            {
-                                //if (variables[rm.Groups[1].Value] != null)
-                                if (value1 != null)
-                                {
-                                    //if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
-                                    if (value1.ToLower() != "false" && value1 != "0" && value1 != String.Empty)
+                                    else if (lastAND)
                                     {
-                                        conditionTrue.Push(true);
+                                        conditionEvaluated = conditionEvaluated && ((!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex));
                                     }
                                     else
                                     {
-                                        conditionTrue.Push(false);
-                                        rootFalse = inIf;
+                                        conditionEvaluated = (!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex);
                                     }
+                                    lastOR = false;
+                                    lastAND = false;
+                                    lastNOT = false;
                                 }
-                                else
-                                {
-                                    conditionTrue.Push(false);
-                                    rootFalse = inIf;
-                                }
+                            }
+
+                            if (conditionEvaluated)
+                            {
+                                conditionTrue.Push(true);
                             }
                             else
                             {
-                                if (childIndex >= 0)
-                                {
-                                    //string loopConditionVar = rm.Groups[1].Value;
-                                    string loopConditionVar = condition;
-                                    if (loopConditionVar.StartsWith(variables.Path + "."))
-                                    {
-                                        loopConditionVar = loopConditionVar.Substring(variables.Path.Length + 1);
-                                    }
-                                    string value2 = null;
-                                    if (variables.TryGetValue(loopConditionVar, out value2))
-                                    //if (variables.ContainsKey(loopConditionVar))
-                                    {
-                                        //if (variables[loopConditionVar] == null)
-                                        if (value2 == null)
-                                        {
-                                            conditionTrue.Push(false);
-                                            rootFalse = inIf;
-                                        }
-                                        else
-                                        {
-                                            //if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != String.Empty)
-                                            if (value2.ToLower() != "false" && value2 != "0" && value2 != String.Empty)
-                                            {
-                                                conditionTrue.Push(true);
-                                            }
-                                            else
-                                            {
-                                                conditionTrue.Push(false);
-                                                rootFalse = inIf;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        conditionTrue.Push(false);
-                                        rootFalse = inIf;
-                                    }
-                                }
-                                else
-                                {
-                                    conditionTrue.Push(false);
-                                    rootFalse = inIf;
-                                }
+                                conditionTrue.Push(false);
+                                rootFalse = inIf;
                             }
                         }
                         else
@@ -1160,6 +1111,83 @@ namespace BoxSocial.IO
                 }
                 output.AppendLine(line);
             }
+        }
+
+        public bool EvaluateCondition(VariableCollection variables, string condition, int childIndex)
+        {
+            string value1 = null;
+            bool returnFlag = false;
+
+            if (variables.TryGetValue(condition, out value1))
+            {
+                //if (variables[rm.Groups[1].Value] != null)
+                if (value1 != null)
+                {
+                    //if (variables[rm.Groups[1].Value].ToLower() != "false" && variables[rm.Groups[1].Value] != "0" && variables[rm.Groups[1].Value] != String.Empty)
+                    if (value1.ToLower() != "false" && value1 != "0" && value1 != String.Empty)
+                    {
+                        returnFlag = true;
+                    }
+                    else
+                    {
+                        returnFlag = false;
+                        //rootFalse = inIf;
+                    }
+                }
+                else
+                {
+                    returnFlag = false;
+                    //rootFalse = inIf;
+                }
+            }
+            else
+            {
+                if (childIndex >= 0)
+                {
+                    //string loopConditionVar = rm.Groups[1].Value;
+                    string loopConditionVar = condition;
+                    if (loopConditionVar.StartsWith(variables.Path + "."))
+                    {
+                        loopConditionVar = loopConditionVar.Substring(variables.Path.Length + 1);
+                    }
+                    string value2 = null;
+                    if (variables.TryGetValue(loopConditionVar, out value2))
+                    //if (variables.ContainsKey(loopConditionVar))
+                    {
+                        //if (variables[loopConditionVar] == null)
+                        if (value2 == null)
+                        {
+                            returnFlag = false;
+                            //rootFalse = inIf;
+                        }
+                        else
+                        {
+                            //if (variables[loopConditionVar].ToLower() != "false" && variables[loopConditionVar] != "0" && variables[loopConditionVar] != String.Empty)
+                            if (value2.ToLower() != "false" && value2 != "0" && value2 != String.Empty)
+                            {
+                                returnFlag = true;
+                            }
+                            else
+                            {
+                                returnFlag = false;
+                                //rootFalse = inIf;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        returnFlag = false;
+                        //rootFalse = inIf;
+                    }
+                }
+                else
+                {
+                    returnFlag = false;
+                    //rootFalse = inIf;
+                }
+            }
+
+            return returnFlag;
         }
 
         public static TemplateVariable GetConstructFromLine(string constructType, string line)

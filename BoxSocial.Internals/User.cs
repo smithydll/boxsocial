@@ -125,6 +125,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string Domain
+        {
+            get
+            {
+                return domain;
+            }
+        }
+
         public UserInfo UserInfo
         {
             get
@@ -1701,11 +1709,11 @@ namespace BoxSocial.Internals
                 {
                     if (core.Http.Domain != Linker.Domain)
                     {
-                        return Linker.Uri + UserName.ToLower() + "/";
+                        return Linker.Uri + "user/" + UserName.ToLower() + "/";
                     }
                     else
                     {
-                        return string.Format("/{0}/", 
+                        return string.Format("/user/{0}/", 
                             UserName.ToLower());
                     }
                 }

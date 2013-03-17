@@ -83,8 +83,8 @@ namespace BoxSocial.Internals
                 VariableCollection notificationVariableCollection = template.CreateChild("notifications_list");
 
                 notificationVariableCollection.Parse("DATE", tz.DateTimeToString(notification.GetTime(tz)));
-                core.Display.ParseBbcode(notificationVariableCollection, "ACTION", notification.Title);
-                core.Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.PrimitiveCache[core.LoggedInMemberId]);
+                core.Display.ParseBbcode(notificationVariableCollection, "ACTION", notification.Title, true, null, null);
+                core.Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.PrimitiveCache[core.LoggedInMemberId], true, null, null);
 
                 if (notification.IsSeen)
                 {

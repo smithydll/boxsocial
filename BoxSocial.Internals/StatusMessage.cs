@@ -201,6 +201,7 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("U_REPORT", e.Core.Uri.BuildCommentReportUri(item.Id));
                 statusMessageVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildCommentDeleteUri(item.Id));
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+                statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
 
                 if (item.Likes > 0)
                 {

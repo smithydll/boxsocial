@@ -323,8 +323,16 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}?m={2}#p{2}",
-                    Forum.Owner.UriStub, topicId, postId));
+                if (core.IsMobile)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}?m={2}",
+                        Forum.Owner.UriStub, topicId, postId));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}?m={2}#p{2}",
+                        Forum.Owner.UriStub, topicId, postId));
+                }
             }
         }
 

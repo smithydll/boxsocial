@@ -24,8 +24,7 @@
               <!-- ENDIF -->
               <!-- ENDIF -->
 						<a href="{task_days.task_list.URI}">{task_days.task_list.TOPIC}</a>
-						<!-- IF task_days.task_list.COMPLETE -->
-						<!-- ELSE -->
+						<!-- IF NOT task_days.task_list.COMPLETE -->
 						<a href="{task_days.task_list.U_MARK_COMPLETE}" onclick="return MarkTaskComplete({task_days.task_list.ID});" title="Mark Task Complete">[O]</a>
 						<!-- ENDIF -->
 						</span>

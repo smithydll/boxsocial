@@ -7,9 +7,9 @@
 
 <!-- IF IS_NOTIFICATIONS -->
 <h4>Notifications</h4>
-<table style="width: 100%">
+<table class="account-table" style="width: 100%">
 <!-- BEGIN notifications_list -->
-<!-- IF notifications_list.INDEX_EVEN -->
+<!-- IF notifications_list.$_INDEX_EVEN -->
 <tr class="even">
 <!-- ELSE -->
 <tr class="odd">
@@ -17,7 +17,9 @@
 	<!--td>{notifications_list.DATE}</td>
 	<td>{notifications_list.ACTION}</td>
 	<td>{notifications_list.DESCRIPTION}</td-->
-    <td>{notifications_list.ACTION}<br />{notifications_list.DESCRIPTION}<br />{notifications_list.DATE}</td>
+    <td>{notifications_list.ACTION}
+     <p class="time">{notifications_list.DATE}</p>
+     {notifications_list.DESCRIPTION}</td>
 </tr>
 <!-- END notifications_list -->
 </table>
@@ -27,7 +29,7 @@
 <h4>Group Invitations</h4>
 <table style="width: 100%">
 <!-- BEGIN invitations_list -->
-<!-- IF invitations_list.INDEX_EVEN -->
+<!-- IF invitations_list.$_INDEX_EVEN -->
 <tr class="even">
 <!-- ELSE -->
 <tr class="odd">

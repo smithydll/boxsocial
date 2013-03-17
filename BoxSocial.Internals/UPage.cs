@@ -75,6 +75,10 @@ namespace BoxSocial.Internals
                 return;
             }
 
+            if (string.IsNullOrEmpty(User.Domain) || Linker.Domain == core.Http.Domain)
+            {
+                core.PagePath = core.PagePath.Substring(User.UserName.Length + 1 + 5);
+            }
             if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower()))
             {
                 core.PagePath = core.PagePath.Substring(User.UserName.Length + 1);
@@ -100,12 +104,12 @@ namespace BoxSocial.Internals
             {
                 if (loggedInMember.UserInfo.ShowCustomStyles)
                 {
-                    template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
+                    template.Parse("USER_STYLE_SHEET", string.Format("user/{0}.css", User.UserName));
                 }
             }
             else
             {
-                template.Parse("USER_STYLE_SHEET", string.Format("{0}.css", User.UserName));
+                template.Parse("USER_STYLE_SHEET", string.Format("user/{0}.css", User.UserName));
             }
             template.Parse("USER_NAME", User.UserName);
             template.Parse("USER_DISPLAY_NAME", User.DisplayName);

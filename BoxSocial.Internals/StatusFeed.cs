@@ -243,6 +243,7 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(item.Id));
                 statusMessageVariableCollection.Parse("U_PERMISSIONS", item.Access.AclUri);
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+                statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
                 statusMessageVariableCollection.Parse("URI", item.Uri);
 
                 if (core.Session.IsLoggedIn)

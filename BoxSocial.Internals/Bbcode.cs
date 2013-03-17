@@ -450,17 +450,32 @@ namespace BoxSocial.Internals
             return Parse(input, null);
         }
 
+        public string Parse(string input, bool appendP, string id, string styleClass)
+        {
+            return Parse(input, null, appendP, id, styleClass);
+        }
+
         public string Parse(string input, User viewer)
         {
             return Parse(input, viewer, null);
         }
 
-        public string Parse(string input, User viewer, Primitive postOwner)
+        public string Parse(string input, User viewer, bool appendP, string id, string styleClass)
         {
-            return Parse(input, viewer, postOwner, false);
+            return Parse(input, viewer, null, appendP, id, styleClass);
         }
 
-        private string Parse(string input, User viewer, Primitive postOwner, bool stripTags)
+        public string Parse(string input, User viewer, Primitive postOwner)
+        {
+            return Parse(input, viewer, postOwner, false, string.Empty, string.Empty, false);
+        }
+
+        public string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass)
+        {
+            return Parse(input, viewer, postOwner, appendP, id, styleClass, false);
+        }
+
+        private string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass, bool stripTags)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -496,6 +511,25 @@ namespace BoxSocial.Internals
 
             StringBuilder newOutput = new StringBuilder();
             int lastEndIndex = 0;
+
+            if (appendP)
+            {
+                newOutput.Append("<p");
+                if (!string.IsNullOrEmpty(id))
+                {
+                    newOutput.Append(" id=\"");
+                    newOutput.Append(id);
+                    newOutput.Append("\"");
+                }
+
+                if (!string.IsNullOrEmpty(styleClass))
+                {
+                    newOutput.Append(" class=\"");
+                    newOutput.Append(styleClass);
+                    newOutput.Append("\"");
+                }
+                newOutput.Append(">");
+            }
 
             List<BbcodeTaglet> taglets = new List<BbcodeTaglet>();
 
@@ -729,6 +763,11 @@ namespace BoxSocial.Internals
                 newOutput.Append(input.Substring(lastEndIndex, input.Length - lastEndIndex));
             }
 
+            if (appendP)
+            {
+                newOutput.Append("</p>");
+            }
+
             input = newOutput.ToString();
             double time = ((double)(DateTime.Now.Ticks - start)) / 10000000;
             input = input.Replace("\r\n", "\n");
@@ -741,7 +780,7 @@ namespace BoxSocial.Internals
             input = input.Replace("<br /></ul>", "</ul>");
             input = input.Replace("<br /></ol>", "</ol>");
             input = input.Replace("<blockquote></blockquote>", "<blockquote>&nbsp;</blockquote>");
-            //input = Regex.Replace(input, @"\<p\>(\s)\<\/p\>", "", RegexOptions.Compiled);
+            //input = Regex.Replace(input, @"\<p\>(\s+)\<\/p\>", string.Empty, RegexOptions.Compiled);
             input = input.Replace("<p> </p>", string.Empty);
             input = input.Replace("<p>\n</p>", string.Empty);
             input = input.Replace("<p>\r\n</p>", string.Empty);
@@ -847,7 +886,7 @@ namespace BoxSocial.Internals
             {
                 if (e.Attributes.HasAttributes())
                 {
-                    e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default"), null, e.Owner, e.StripTag) + " wrote: ---\n";
+                    e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default"), null, e.Owner, false, null, null, e.StripTag) + " wrote: ---\n";
                 }
                 else
                 {
@@ -1677,17 +1716,17 @@ namespace BoxSocial.Internals
 
         public string Strip(string input)
         {
-            return Parse(input, null, null, true);
+            return Parse(input, null, null, false, null, null, true);
         }
 
         public string Strip(string input, User viewer)
         {
-            return Parse(input, viewer, null, true);
+            return Parse(input, viewer, null, false, null, null, true);
         }
 
         public string Strip(string input, User viewer, Primitive postOwner)
         {
-            return Parse(input, viewer, postOwner, true);
+            return Parse(input, viewer, postOwner, false, null, null, true);
         }
     }
 

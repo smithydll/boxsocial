@@ -123,7 +123,8 @@ namespace BoxSocial.Applications.Forum
                     core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);
                     postVariableCollection.Parse("U_USER", post.Poster.Uri);
                     postVariableCollection.Parse("USER_DISPLAY_NAME", post.Poster.UserInfo.DisplayName);
-                    postVariableCollection.Parse("USER_TILE", post.Poster.UserIcon);
+                    postVariableCollection.Parse("USER_TILE", post.Poster.UserTile);
+                    postVariableCollection.Parse("USER_ICON", post.Poster.UserIcon);
                     postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(post.Poster.UserInfo.GetRegistrationDate(core.Tz)));
                     postVariableCollection.Parse("USER_COUNTRY", post.Poster.Profile.Country);
 

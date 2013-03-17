@@ -539,12 +539,8 @@ ul.comment-list li h4.owner {
 }
 
 ul.comment-list li p.time {
-	float: right;
-	position: relative;
-	top: -1.4em;
 	padding: 0px;
 	margin: 0px;
-	padding-right: 5px;
 }
 
 ul.comment-list li div.comment-disp-pic {
@@ -560,6 +556,11 @@ ul.comment-list li div.comment-disp-pic img
 	padding: 2px;
 	background-color: White;
 	border: solid 1px #999999;
+}
+
+ul.comment-list li div.comment-head
+{
+    margin-left: 70px;
 }
 
 ul.comment-list li div.comment-text 
@@ -758,6 +759,14 @@ ul.feed-list li.feed-item {
     padding: 5px 0;
 }
 
+ul.feed-list li.feed-item h5 {
+	font-size: 115%;
+	padding: 2px;
+	margin: 0px;
+	font-weight: normal;
+	font-size: 120% !important;
+}
+
 ul.feed-list li div.feed-disp-pic {
 	float:left;
 	width: 60px;
@@ -778,4 +787,10 @@ ul.feed-list li div.feed-text
     padding: 2px;
 	margin-left: 70px;
 	position: relative;
+}
+
+blockquote {
+    border: 1px solid #CCCCCC;
+    margin: 2px;
+    padding: 3px;
 }

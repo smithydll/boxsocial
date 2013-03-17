@@ -810,12 +810,12 @@ table {
 }
 
 tr.even td {
-	background-color: #EEEEEE;
+	background-color: #F8F8F8;
 	padding: 5px;
 }
 
 tr.odd td {
-	background-color: #F8F8F8;
+	background-color: #F2F2F2;
 	padding: 5px;
 }
 
@@ -1641,6 +1641,14 @@ ul.feed-list li.feed-item {
     padding: 5px 0;
 }
 
+ul.feed-list li.feed-item h5 {
+	font-size: 115%;
+	padding: 2px;
+	margin: 0px;
+	font-weight: normal;
+	font-size: 120% !important;
+}
+
 ul.feed-list li div.feed-disp-pic {
 	float:left;
 	width: 60px;
@@ -1667,4 +1675,19 @@ ul.feed-list li div.feed-text
     max-height: 220px; 
     overflow-y: auto; 
     overflow-x: hidden;
+}
+
+blockquote {
+    border: 1px solid #CCCCCC;
+    margin: 2px;
+    padding: 3px;
+}
+
+.account-table p.time {
+	float: right;
+	position: relative;
+	top: -1.8em;
+	padding: 0px;
+	margin: 0px;
+	padding-right: 5px;
 }

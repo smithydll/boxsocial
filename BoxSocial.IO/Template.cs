@@ -698,17 +698,32 @@ namespace BoxSocial.IO
 
             if (Medium == DisplayMedium.Mobile)
             {
+                //HttpContext.Current.Response.Write("mobile\n");
                 variables.Parse("$_IS_MOBILE", "TRUE");
+            }
+            else
+            {
+                variables.Parse("$_IS_MOBILE", "FALSE");
             }
 
             if (Medium == DisplayMedium.Tablet)
             {
+                //HttpContext.Current.Response.Write("tablet\n");
                 variables.Parse("$_IS_TABLET", "TRUE");
+            }
+            else
+            {
+                variables.Parse("$_IS_TABLET", "FALSE");
             }
 
             if (Medium == DisplayMedium.Desktop)
             {
+                //HttpContext.Current.Response.Write("desktop\n");
                 variables.Parse("$_IS_DESKTOP", "TRUE");
+            }
+            else
+            {
+                variables.Parse("$_IS_DESKTOP", "FALSE");
             }
 
             for (int i = 0; i < lines.Length; i++)
@@ -754,9 +769,13 @@ namespace BoxSocial.IO
                             if (variables.ContainsLoop(loopName))
                             //if (loopVariables.ContainsKey(loopName))
                             {
-                                for (l = 0; l < variables.GetChildCollection(loopName).Count; l++)
+                                // Fix a bug where loops are evaluated in false conditions
+                                if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
                                 {
-                                    ProcessLines(loopCache.ToArray(), output, variables.GetChildCollection(loopName)[l], l);
+                                    for (l = 0; l < variables.GetChildCollection(loopName).Count; l++)
+                                    {
+                                        ProcessLines(loopCache.ToArray(), output, variables.GetChildCollection(loopName)[l], l);
+                                    }
                                 }
                             }
                             //line = line.Remove(lm.Index, lm.Length);
@@ -800,38 +819,45 @@ namespace BoxSocial.IO
 
                             string[] conditionPhrases = condition.Split(new char[] { ' ', '\t' });
 
-                            condition = string.Empty;
+                           // condition = string.Empty;
                             bool lastOR = false;
                             bool lastAND = false;
                             bool lastNOT = false;
                             for (int j = 0; j < conditionPhrases.Length; j++)
                             {
+                                conditionPhrases[j] = conditionPhrases[j].Trim();
+
                                 if (conditionPhrases[j] == "OR")
                                 {
                                     lastOR = true;
+                                    continue;
                                 }
                                 else if (conditionPhrases[j] == "AND")
                                 {
                                     lastAND = true;
+                                    continue;
                                 }
                                 else if (conditionPhrases[j] == "NOT")
                                 {
+                                    //HttpContext.Current.Response.Write(condition + "\n");
                                     lastNOT = true;
+                                    continue;
                                 }
                                 else
                                 {
                                     if (lastOR)
                                     {
-                                        conditionEvaluated = conditionEvaluated || ((!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex));
+                                        conditionEvaluated = conditionEvaluated || ((!lastNOT) == EvaluateCondition(variables, conditionPhrases[j], childIndex));
                                     }
                                     else if (lastAND)
                                     {
-                                        conditionEvaluated = conditionEvaluated && ((!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex));
+                                        conditionEvaluated = conditionEvaluated && ((!lastNOT) == EvaluateCondition(variables, conditionPhrases[j], childIndex));
                                     }
                                     else
                                     {
-                                        conditionEvaluated = (!lastNOT) && EvaluateCondition(variables, conditionPhrases[j], childIndex);
+                                        conditionEvaluated = (!lastNOT) == EvaluateCondition(variables, conditionPhrases[j], childIndex);
                                     }
+                                    //HttpContext.Current.Response.Write((lastNOT ? "TRUE " : "FALSE ") + conditionPhrases[j] + (EvaluateCondition(variables, conditionPhrases[j], childIndex) ? " TRUE " : " FALSE ") + "\n");
                                     lastOR = false;
                                     lastAND = false;
                                     lastNOT = false;

@@ -740,7 +740,7 @@ namespace BoxSocial.Applications.Forum
                 SelectQuery query = new SelectQuery(TopicPost.GetTable(typeof(TopicPost)));
                 query.AddFields("COUNT(*) AS total");
                 query.AddCondition("topic_id", topicId);
-                query.AddCondition("post_id", ConditionEquality.LessThanEqual, m);
+                query.AddCondition("post_id", ConditionEquality.LessThan, m);
 
                 query.AddSort(SortOrder.Ascending, "post_time_ut");
 

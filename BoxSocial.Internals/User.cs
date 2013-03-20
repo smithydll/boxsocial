@@ -100,6 +100,7 @@ namespace BoxSocial.Internals
         private bool simplePermissions;
 
         private string userIconUri;
+        private string userCoverPhotoUri;
 
         private bool sessionRelationsSet = false;
         private Relation sessionRelations;
@@ -332,6 +333,49 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cover photo
+        /// </summary>
+        public string CoverPhoto
+        {
+            get
+            {
+                if (userCoverPhotoUri == "FALSE")
+                {
+                    return "FALSE";
+                }
+                else if (userCoverPhotoUri != null)
+                {
+                    return string.Format("{0}images/_cover{1}",
+                        UriStub, userCoverPhotoUri);
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
+
+                    DataTable coverTable = db.Query(query);
+
+                    if (coverTable.Rows.Count == 1)
+                    {
+                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        {
+                            userCoverPhotoUri = string.Format("/{0}/{1}",
+                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+
+                            return string.Format("{0}images/_cover{1}",
+                                UriStub, userCoverPhotoUri);
+                        }
+                    }
+
+                    userCoverPhotoUri = "FALSE";
                     return "FALSE";
                 }
             }
@@ -662,7 +706,7 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public List<Friend> GetFriends()
         {
-            return GetFriends(1, 255);
+            return GetFriends(1, 255, null);
         }
 
         public List<Friend> GetFriends(string namePart)
@@ -698,7 +742,7 @@ namespace BoxSocial.Internals
             return friends;
         }
 
-        public List<Friend> GetFriends(int page, int perPage)
+        public List<Friend> GetFriends(int page, int perPage, string filter)
         {
             List<Friend> friends = new List<Friend>();
 
@@ -717,6 +761,10 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
+            if ((!string.IsNullOrEmpty(filter)) && filter.Length == 1)
+            {
+                query.AddCondition(new DataField(typeof(User), "user_name_first"), filter);
+            }
             query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
@@ -1763,7 +1811,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}friends",
+            return core.Uri.AppendSid(string.Format("{0}contacts/friends",
                 primitive.UriStub));
         }
 
@@ -1774,7 +1822,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}friends?filter={1}",
+            return core.Uri.AppendSid(string.Format("{0}contacts/friends?filter={1}",
                 primitive.UriStub, filter));
         }
 
@@ -1834,6 +1882,7 @@ namespace BoxSocial.Internals
             core.Template.Parse("USER_COUNTRY", page.User.Profile.Country);
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
             core.Template.Parse("USER_ICON", page.User.UserThumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
 
             core.Template.Parse("U_PROFILE", page.User.Uri);
             core.Template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
@@ -1869,7 +1918,7 @@ namespace BoxSocial.Internals
             core.Template.Parse("FRIENDS", page.User.UserInfo.Friends.ToString());
             core.Template.Parse("L_FRIENDS", langFriends);
 
-            List<Friend> friends = page.User.GetFriends(1, 8);
+            List<Friend> friends = page.User.GetFriends(1, 8, null);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = core.Template.CreateChild("friend_list");
@@ -1914,6 +1963,14 @@ namespace BoxSocial.Internals
                 e.Core.Functions.Generate403();
             }
 
+            string filter = e.Core.Http["filter"];
+
+            e.Template.Parse("USER_THUMB", e.Page.User.UserThumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.User, true);
+
             string langFriends = (e.Page.User.UserInfo.Friends != 1) ? "friends" : "friend";
 
             e.Template.Parse("U_FILTER_ALL", GenerateFriendsUri(e.Core, e.Page.User));
@@ -1949,7 +2006,7 @@ namespace BoxSocial.Internals
             e.Template.Parse("FRIENDS", e.Page.User.UserInfo.Friends.ToString());
             e.Template.Parse("L_FRIENDS", langFriends);
 
-            List<Friend> friends = e.Page.User.GetFriends(e.Page.TopLevelPageNumber, 18);
+            List<Friend> friends = e.Page.User.GetFriends(e.Page.TopLevelPageNumber, 18, filter);
             foreach (UserRelation friend in friends)
             {
                 VariableCollection friendVariableCollection = e.Template.CreateChild("friend_list");

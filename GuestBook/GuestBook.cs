@@ -76,6 +76,12 @@ namespace BoxSocial.Applications.GuestBook
                 return;
             }
 
+            /* pages */
+            core.Display.ParsePageList(page.User, true);
+
+            page.template.Parse("USER_THUMB", page.User.UserThumbnail);
+            page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+
             if (core.Session.IsLoggedIn)
             {
                 if (page.User.Access.Can("COMMENT"))
@@ -108,6 +114,12 @@ namespace BoxSocial.Applications.GuestBook
                 core.Functions.Generate403();
                 return;
             }
+
+            /* pages */
+            core.Display.ParsePageList(page.User, true);
+
+            page.template.Parse("USER_THUMB", page.User.UserThumbnail);
+            page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
 
             if (core.Session.IsLoggedIn)
             {

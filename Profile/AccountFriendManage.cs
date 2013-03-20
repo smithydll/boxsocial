@@ -73,7 +73,7 @@ namespace BoxSocial.Applications.Profile
 
             int p = core.Functions.RequestInt("p", 1);
 
-            List<Friend> friends = LoggedInMember.GetFriends(p, 50);
+            List<Friend> friends = LoggedInMember.GetFriends(p, 50, null);
 
             foreach (UserRelation friend in friends)
             {

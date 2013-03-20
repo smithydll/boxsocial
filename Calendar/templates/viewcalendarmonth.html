@@ -1,19 +1,41 @@
 <!-- INCLUDE page_header.html -->
-	<h2>{CURRENT_MONTH} {CURRENT_YEAR}</h2>
-	<p>{BREADCRUMBS}</p>
 
-<div id="pane-calendar" class="pane">
+<!-- IF BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<div id="content">
+	<div id="overview-profile" class="pane">
+        <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+	<h2>{CURRENT_MONTH} {CURRENT_YEAR}</h2>
+</div>
+</div>
+
+	<div id="pane-profile">
+		<div id="pane-pages" class="pane">
+			<h3>Pages</h3>
+			<ul class="page-tiles">
+				{PAGE_LIST}
+			</ul>
+		</div>
+	</div>
+	<div id="profile">
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
 		<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></span>
 	</div>
+    <!-- ENDIF -->
 <div>
   <p>
     <a href="{U_PREVIOUS_MONTH}">&lt;&lt; {L_PREVIOUS_MONTH}</a> | 
     <a href="{U_NEXT_MONTH}">{L_NEXT_MONTH}&gt;&gt;</a>
   </p>
 </div>
-	<!-- ENDIF -->
+	
 		<div class="month">
 			<div class="week-head">
 				<div class="day">{L_MONDAY}</div>
@@ -41,5 +63,7 @@
 			</div>
 			<!-- END week -->
 		</div>
+</div>
+</div>
 </div>
 <!-- INCLUDE page_footer.html -->

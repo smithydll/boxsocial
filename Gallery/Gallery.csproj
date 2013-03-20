@@ -80,6 +80,7 @@
     <Compile Include="AccountGalleriesSettings.cs" />
     <Compile Include="AccountGalleriesUpload.cs" />
     <Compile Include="AppInfo.cs" />
+    <Compile Include="AccountGalleriesPhotoProfileCover.cs" />
     <Compile Include="Exif.cs" />
     <Compile Include="Gallery.cs" />
     <Compile Include="GalleryItem.cs" />

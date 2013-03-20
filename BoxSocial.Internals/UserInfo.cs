@@ -60,6 +60,8 @@ namespace BoxSocial.Internals
         private long blogSubscriptions;
         [DataField("user_icon")]
         private long displayPictureId;
+        [DataField("user_cover")]
+        private long coverPhotoId;
         [DataField("user_auto_login_id", 128)]
         private string autoLoginId;
         [DataField("user_friends")]
@@ -346,7 +348,22 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("displayPictureId", value);
+                SetPropertyByRef(new { displayPictureId }, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets the user's display picture Id
+        /// </summary>
+        public long CoverPhotoId
+        {
+            get
+            {
+                return coverPhotoId;
+            }
+            set
+            {
+                SetPropertyByRef(new { coverPhotoId }, value);
             }
         }
 

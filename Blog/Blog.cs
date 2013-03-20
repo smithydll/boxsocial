@@ -722,6 +722,9 @@ namespace BoxSocial.Applications.Blog
                 page.template.Parse("U_PROFILE", page.User.Uri);
                 page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
 
+                page.template.Parse("USER_THUMB", page.User.UserThumbnail);
+                page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+
                 if (page.User.UserId == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_POST", core.Uri.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));

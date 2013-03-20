@@ -178,9 +178,6 @@ namespace BoxSocial.FrontEnd
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
-                                patterns.Add(new string[] { @"^/friends(/|)$", string.Format(@"/viewfriends.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/friends/([0-9]+)(/|)$", string.Format(@"/viewfriends.aspx?un={0}&page=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-
                                 patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 break;
@@ -283,9 +280,6 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/user/([A-Za-z0-9\-_\.]+)(/|)$", @"/memberpage.aspx?un=$1&path=" });
 
                     //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/profile(/|)$", @"/viewprofile.aspx?un=$1" });
-
-                    patterns.Add(new string[] { @"^/user/([A-Za-z0-9\-_\.]+)/friends(/|)$", @"/viewfriends.aspx?un=$1" });
-                    patterns.Add(new string[] { @"^/user/([A-Za-z0-9\-_\.]+)/friends/([0-9]+)(/|)$", @"/viewfriends.aspx?un=$1&page=$2" });
 
                     //patterns.Add(new string[] { @"^/([A-Za-z0-9\-_]+)/images/([A-Za-z0-9\-_/\.]+)$", @"/viewimage.aspx?un=$1&path=$2" });
 

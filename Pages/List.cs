@@ -265,14 +265,14 @@ namespace BoxSocial.Applications.Pages
 
         public static string BuildListsUri(Core core, User member)
         {
-            return core.Uri.AppendSid(string.Format("/{0}/lists",
-                member.UserName.ToLower()));
+            return core.Uri.AppendSid(string.Format("{0}lists",
+                member.UriStub));
         }
 
         public static string BuildListUri(Core core, List list)
         {
-            return core.Uri.AppendSid(string.Format("/{0}/lists/{1}",
-                list.owner.UserName.ToLower(), list.path));
+            return core.Uri.AppendSid(string.Format("{0}lists/{1}",
+                list.owner.UriStub, list.path));
         }
 
         public static bool IsValidListType(Core core, short listType)
@@ -404,6 +404,9 @@ namespace BoxSocial.Applications.Pages
 
             e.Core.Display.ParsePageList(e.Page.Owner, true, page);
 
+            e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+
             e.Template.Parse("LIST_TITLE", string.Format("{0} Lists", e.Page.Owner.DisplayNameOwnership));
             e.Template.Parse("LIST_ABSTRACT", "FALSE");
 
@@ -444,6 +447,9 @@ namespace BoxSocial.Applications.Pages
                 }
 
                 e.Core.Display.ParsePageList(e.Page.Owner, true, page);
+
+                e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
+                e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
 
                 e.Template.Parse("LIST_TITLE", list.title);
                 e.Template.Parse("LIST_ID", list.ListId.ToString());

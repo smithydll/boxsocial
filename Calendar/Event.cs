@@ -554,6 +554,15 @@ namespace BoxSocial.Applications.Calendar
         {
             e.Template.SetTemplate("Calendar", "viewcalendarevent");
 
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.Owner, true);
+
+            if (e.Page.Owner is User)
+            {
+                e.Template.Parse("USER_ICON", ((User)e.Page.Owner).UserThumbnail);
+                e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+            }
+
             Event calendarEvent = null;
 
             if (e.ItemId <= 0)

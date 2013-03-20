@@ -296,6 +296,15 @@ namespace BoxSocial.Applications.Calendar
 
             List<Task> tasks = cal.GetTasks(core, owner, startTime, endTime, true);
 
+            /* pages */
+            core.Display.ParsePageList(owner, true);
+
+            if (owner is User)
+            {
+                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+            }
+
             VariableCollection taskDaysVariableCollection = null;
             string lastDay = core.Tz.ToStringPast(core.Tz.Now);
 
@@ -377,6 +386,15 @@ namespace BoxSocial.Applications.Calendar
                 {
                     core.Functions.Generate403();
                     return;
+                }
+
+                /* pages */
+                core.Display.ParsePageList(owner, true);
+
+                if (owner is User)
+                {
+                    page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                    page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
                 }
 
                 page.template.Parse("TOPIC", calendarTask.Topic);

@@ -31,6 +31,23 @@ body {
 	padding: 0 5px;
 }
 
+#head {
+    border-radius: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.breadcrumbs {
+    border-radius: 5px;
+	padding: 5px 10px;
+	margin: 0 0 10px 0;
+}
+
+.breadcrumbs p {
+    padding: 0;
+    margin: 0;
+}
+
 div.pane 
 {
 	height: 1%;
@@ -233,12 +250,14 @@ dl.form-sub-list dd
 }
 
 #pane-profile {
-	width: 290px;
+	width: 280px;
 	float: right;
+	padding-left: 10px;
+	margin: 10px 10px 0 0;
 }
 
 #pane-profile div.pane {
-	margin-bottom: 5px;
+	/*margin-bottom: 5px;*/
 }
 
 #pane-profile div.pane h3 {
@@ -306,10 +325,6 @@ dl.form-sub-list dd
 	padding-left: 0;
 }
 
-#pane-pages ul ul {
-    margin-left: 20px;
-}
-
 #pane-pages ul li {
 	margin: 2px 0 0;
 	padding: 0;
@@ -321,12 +336,18 @@ li.empty {
 }
 
 #profile {
-	margin-right: 310px;
+	margin: 10px 300px 10px 10px;
+	position: relative;
+}
+
+#content {
+    background-color: #FFFFFF;
+    overflow: auto;
 }
 
 #profile div.pane {
 	border: none;
-	margin-bottom: 5px;
+	/*margin-bottom: 5px;*/
 }
 
 #profile div.pane h3 {
@@ -877,6 +898,10 @@ span.subscribe-button {
 	font-size: 110%;
 }
 
+span.subscribe-button a {
+    color: #664422 !important;
+}
+
 input[type="submit"] {
 	border-radius: 5px;
 	border: 1px solid #008822;
@@ -1181,8 +1206,8 @@ ul#group-members li.member div.frame ul.actions li {
 }
 
 #overview-profile {
-	border: solid 2px #333333;
-	margin-bottom: 5px;
+	/*border: solid 2px #333333;*/
+	/*margin-bottom: 5px;*/
 	background-color: white;
 }
 
@@ -1512,7 +1537,7 @@ div.explore-area {
     height: 4em;
 }
 
-.page-tiles {
+.page-tiles, .page-tiles ul {
     padding: 0;
     margin: 5px;
     list-style-type: none;

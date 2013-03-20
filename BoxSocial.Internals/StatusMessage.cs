@@ -183,6 +183,9 @@ namespace BoxSocial.Internals
                 e.Core.Template.Parse("OWNER", "TRUE");
             }
 
+            e.Template.Parse("U_PROFILE", e.Page.User.ProfileUri);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+
             try
             {
                 StatusMessage item = new StatusMessage(e.Core, e.ItemId);

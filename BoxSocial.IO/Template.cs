@@ -770,7 +770,7 @@ namespace BoxSocial.IO
                             //if (loopVariables.ContainsKey(loopName))
                             {
                                 // Fix a bug where loops are evaluated in false conditions
-                                if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
+                                if (inIf == 0 || inIf > 0 && conditionTrue.Peek() || inElse.Peek() && (!conditionTrue.Peek()))
                                 {
                                     for (l = 0; l < variables.GetChildCollection(loopName).Count; l++)
                                     {
@@ -812,8 +812,9 @@ namespace BoxSocial.IO
                     {
                         string condition = line.Substring(ioi + 8, ioie - (ioi + 8));
                         bool conditionEvaluated = false;
-                        
-                        if (inIf == 0 || inIf > 0 && conditionTrue.Peek())
+
+                        // we should understand if we are in an ELSE section then IF can appear in here as well
+                        if (inIf == 0 || inIf > 0 && conditionTrue.Peek() || inElse.Peek() && (!conditionTrue.Peek()))
                         {
                             inIf++;
 

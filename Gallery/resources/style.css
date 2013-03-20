@@ -1,13 +1,14 @@
 ﻿ul#gallery-list {
 	list-style: none;
-	padding: 5px;
+	padding: 0px;
 	margin: 0px;
+	overflow: auto;
 }
 
 ul#gallery-list li {
 	margin-bottom: 1px;
 	float: left;
-	margin: 0 10px 20px 10px;
+	margin: 0 4px 8px 4px;
 }
 
 ul#gallery-list li div.gallery-item {
@@ -29,14 +30,14 @@ ul#gallery-list li .photo-canvas {
 
 ul#photo-list {
 	list-style: none;
-	padding: 5px;
+	padding: 0px;
 	margin: 0px;
 }
 
 ul#photo-list li {
 	margin-bottom: 1px;
 	float: left;
-	margin: 0 10px 20px 10px;
+	margin: 0 4px 8px 4px;
 }
 
 #profile-gallery-pane ul#photo-list li {

@@ -1,10 +1,20 @@
 <!-- INCLUDE page_header.html -->
-<h2>{L_BLOG}</h2>
-<p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span></p>
+
 <!-- IF BREADCRUMBS -->
-<p>{BREADCRUMBS}</p>
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
 <!-- ENDIF -->
 
+<div id="content">
+	<div id="overview-profile" class="pane">
+        <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+<h2>{L_BLOG}</h2>
+<p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span></p>
+</div>
+</div>
 <!-- IF NOT $_IS_MOBILE -->
 <div id="pane-profile">
 	<div id="pane-pages" class="pane">
@@ -91,6 +101,7 @@
 <!-- IF PAGINATION -->
 <p>{PAGINATION}</p>
 <!-- ENDIF -->
+</div>
 </div>
 </div>
 <!-- INCLUDE page_footer.html -->

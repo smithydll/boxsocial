@@ -278,20 +278,20 @@ namespace BoxSocial.Applications.Calendar
 
         private static string BuildDateUri(Core core, Primitive owner, int year, int month, int day)
         {
-            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}/{2}/{3}",
-                owner.Key, year, month, day));
+            return core.Uri.AppendSid(string.Format("{0}calendar/{1}/{2}/{3}",
+                owner.UriStub, year, month, day));
         }
 
         private static string BuildMonthUri(Core core, Primitive owner, int year, int month)
         {
-            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}/{2}",
-                owner.Key, year, month));
+            return core.Uri.AppendSid(string.Format("{0}calendar/{1}/{2}",
+                owner.UriStub, year, month));
         }
 
         private static string BuildYearUri(Core core, Primitive owner, int year)
         {
-            return core.Uri.AppendSid(string.Format("/{0}/calendar/{1}",
-                owner.Key, year));
+            return core.Uri.AppendSid(string.Format("{0}calendar/{1}",
+                owner.UriStub, year));
         }
 
         private static int GetFirstDayOfMonthOffset(DayOfWeek firstDay)
@@ -380,6 +380,15 @@ namespace BoxSocial.Applications.Calendar
                 core.Functions.Generate404();
             }
 
+            /* pages */
+            core.Display.ParsePageList(owner, true);
+
+            if (owner is User)
+            {
+                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+            }
+
             page.template.Parse("CURRENT_YEAR", year.ToString());
 
             if (year - 1 >= DateTime.Now.Year - 10)
@@ -415,6 +424,15 @@ namespace BoxSocial.Applications.Calendar
             if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
             {
                 core.Functions.Generate404();
+            }
+
+            /* pages */
+            core.Display.ParsePageList(owner, true);
+
+            if (owner is User)
+            {
+                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
             page.template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
@@ -539,6 +557,15 @@ namespace BoxSocial.Applications.Calendar
             if (day < 1 || day > DateTime.DaysInMonth(year, month))
             {
                 core.Functions.Generate404();
+            }
+
+            /* pages */
+            core.Display.ParsePageList(owner, true);
+
+            if (owner is User)
+            {
+                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
             page.template.Parse("CURRENT_DAY", day.ToString());

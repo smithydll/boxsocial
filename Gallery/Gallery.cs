@@ -1714,6 +1714,15 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.Owner, true);
+
+            if (e.Page.Owner is User)
+            {
+                e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
+                e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+            }
+
             if (gallery.Id == 0)
             {
                 e.Template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");

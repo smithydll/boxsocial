@@ -54,6 +54,8 @@ namespace BoxSocial.Applications.Gallery
         Full = 1280,
         Ultra = 2560,
 
+        Cover = 960,
+
         Original = 0,
     }
 
@@ -76,6 +78,9 @@ namespace BoxSocial.Applications.Gallery
         static string DisplayPrefix = "_display"; // 640
         static string FullPrefix = "_full"; // 1280
         static string UltraPrefix = "_ultra"; // 2560
+
+        // Cover
+        static string CoverPrefix = "_cover"; // 960
 
         /// <summary>
         /// Owner of the photo's user Id
@@ -251,6 +256,24 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_item_ultra_exists")]
         protected bool ultraExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_cover_exists")]
+        protected bool coverExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_vcrop")]
+        protected int cropPositionVertical;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_hcrop")]
+        protected int cropPositionHorizontal;
 
         /// <summary>
         /// Owner of the photo
@@ -632,6 +655,42 @@ namespace BoxSocial.Applications.Gallery
             internal set
             {
                 SetPropertyByRef(new { ultraExists }, value);
+            }
+        }
+
+        public bool CoverExists
+        {
+            get
+            {
+                return coverExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { coverExists }, value);
+            }
+        }
+
+        public int CropPositionVertical
+        {
+            get
+            {
+                return cropPositionVertical;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { cropPositionVertical }, value);
+            }
+        }
+
+        public int CropPositionHorizontal
+        {
+            get
+            {
+                return cropPositionHorizontal;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { cropPositionHorizontal }, value);
             }
         }
 
@@ -1054,8 +1113,11 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_display_exists", false);
             iQuery.AddField("gallery_item_full_exists", false);
             iQuery.AddField("gallery_item_ultra_exists", false);
+            iQuery.AddField("gallery_item_cover_exists", false);
             iQuery.AddField("gallery_item_width", width);
             iQuery.AddField("gallery_item_height", height);
+            iQuery.AddField("gallery_item_vcrop", 0);
+            iQuery.AddField("gallery_item_hcrop", 0);
 
             // we want to use transactions
             long itemId = db.Query(iQuery);
@@ -1144,6 +1206,7 @@ namespace BoxSocial.Applications.Gallery
                 uquery.AddField("gallery_item_display_exists", false);
                 uquery.AddField("gallery_item_full_exists", false);
                 uquery.AddField("gallery_item_ultra_exists", false);
+                uquery.AddField("gallery_item_cover_exists", false);
                 uquery.AddField("gallery_item_width", ItemHeight);
                 uquery.AddField("gallery_item_height", ItemWidth);
                 uquery.AddCondition("gallery_item_id", itemId);
@@ -1271,6 +1334,15 @@ namespace BoxSocial.Applications.Gallery
                 {
                     e.Core.Functions.Generate403();
                     return;
+                }
+
+                /* pages */
+                e.Core.Display.ParsePageList(e.Page.Owner, true);
+
+                if (e.Page.Owner is User)
+                {
+                    e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
+                    e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
                 }
 
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
@@ -1516,6 +1588,9 @@ namespace BoxSocial.Applications.Gallery
             bool fullRequest = false; // 1280
             bool ultraRequest = false; // 2560
 
+            // Cover
+            bool coverRequest = false; // 960
+
             bool originalRequest = false;
    
             bool retinaModifier = false;
@@ -1677,6 +1752,13 @@ namespace BoxSocial.Applications.Gallery
                 storagePrefix = UltraPrefix;
                 scale = PictureScale.Ultra;
             }
+            else if (photoName.StartsWith(CoverPrefix))
+            {
+                photoName = photoName.Remove(0, 7);
+                coverRequest = true;
+                storagePrefix = CoverPrefix;
+                scale = PictureScale.Cover;
+            }
             else
             {
                 originalRequest = true;
@@ -1767,6 +1849,9 @@ namespace BoxSocial.Applications.Gallery
                         case PictureScale.Ultra:
                             scaleExists = galleryItem.UltraExists;
                             break;
+                        case PictureScale.Cover:
+                            scaleExists = galleryItem.CoverExists;
+                            break;
                     }
 
                     if (!scaleExists)
@@ -1829,6 +1914,10 @@ namespace BoxSocial.Applications.Gallery
                                         galleryItem.UltraExists = true;
                                         break;
                                 }
+                                break;
+                            case PictureScale.Cover:
+                                CreateCoverPhoto(e.Core, galleryItem, galleryItem.StoragePath);
+                                galleryItem.CoverExists = true;
                                 break;
                         }
 
@@ -2148,6 +2237,100 @@ namespace BoxSocial.Applications.Gallery
         }
 
         /// <summary>
+        /// Thumbnail size fits into a x * y display area. Icons are trimmed to an exact x * y pixel display size.
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="fileName"></param>
+        public static void CreateCoverPhoto(Core core, GalleryItem gi, string fileName)
+        {
+            string bin = "_cover";
+            int width = 960;
+            int height = 200;
+            int crop = gi.CropPositionVertical;
+            // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
+            if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
+            {
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                fs.Position = 0;
+                long newLength = fs.Length;
+                byte[] data = new byte[newLength];
+
+                int bytesRead = 0;
+                int totalBytesRead = 0;
+                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                {
+                    totalBytesRead += bytesRead;
+                }
+
+                ImageMagick.WandGenesis();
+                IntPtr wand = ImageMagick.NewWand();
+
+                ImageMagick.ReadImageBlob(wand, data);
+
+                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
+                double scale = width / imageSize.Width;
+                int newHeight = (int)(imageSize.Height * scale);
+                int cropY = (int)(crop * scale);
+
+                ImageMagick.ResizeImage(wand, (IntPtr)(width), (IntPtr)(newHeight), ImageMagick.Filter.Lanczos, 1.0);
+                ImageMagick.CropImage(wand, (IntPtr)width, (IntPtr)height, (IntPtr)(0), (IntPtr)(cropY));
+
+                byte[] newdata = ImageMagick.GetImageBlob(wand);
+
+                ImageMagick.DestroyWand(wand);
+                ImageMagick.WandTerminus();
+
+                MemoryStream stream = new MemoryStream();
+                stream.Write(newdata, 0, newdata.Length);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                stream.Close();
+                fs.Close();
+            }
+            else
+            {
+                Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
+                Image image = Image.FromStream(fs);
+                Bitmap displayImage;
+
+                displayImage = new Bitmap(width, height, image.PixelFormat);
+                displayImage.Palette = image.Palette;
+
+                Graphics g = Graphics.FromImage(displayImage);
+                g.Clear(Color.Transparent);
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+                double scale = width / image.Width;
+                int newHeight = (int)(image.Height * scale);
+                int oldHeight = (int)(height / scale);
+
+                g.DrawImage(image, new Rectangle(0, 0, width, height), new Rectangle(0, crop, image.Width, oldHeight), GraphicsUnit.Pixel);
+
+                MemoryStream stream = new MemoryStream();
+                if (image.RawFormat == ImageFormat.Jpeg)
+                {
+                    ImageCodecInfo codecInfo = GetEncoderInfo(ImageFormat.Jpeg);
+                    System.Drawing.Imaging.Encoder encoder = System.Drawing.Imaging.Encoder.Quality;
+                    EncoderParameters myEncoderParameters = new EncoderParameters(2);
+                    EncoderParameter myEncoderParameter = new EncoderParameter(encoder, 90L);
+                    myEncoderParameters.Param[0] = myEncoderParameter;
+                    myEncoderParameters.Param[1] = new EncoderParameter(System.Drawing.Imaging.Encoder.RenderMethod, (int)EncoderValue.RenderProgressive);
+
+                    displayImage.Save(stream, codecInfo, myEncoderParameters);
+                }
+                else
+                {
+                    displayImage.Save(stream, image.RawFormat);
+                }
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                stream.Close();
+                fs.Close();
+            }
+        }
+
+        /// <summary>
         /// Abort image resize handler
         /// </summary>
         /// <returns></returns>
@@ -2197,6 +2380,17 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return core.Uri.BuildAccountSubModuleUri("galleries", "display-pic", itemId, true);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string MakeProfileCoverPhotoUri
+        {
+            get
+            {
+                return core.Uri.BuildAccountSubModuleUri("galleries", "profile-cover", itemId, true);
             }
         }
 
@@ -2493,6 +2687,26 @@ namespace BoxSocial.Applications.Gallery
                 else
                 {
                     return core.Uri.AppendSid(string.Format("{0}images/{1}",
+                        Owner.UriStub, path));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the gallery item cover uri
+        /// </summary>
+        public string CoverUri
+        {
+            get
+            {
+                if (parentId > 0)
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_cover/{1}",
+                        Owner.UriStub, FullPath));
+                }
+                else
+                {
+                    return core.Uri.AppendSid(string.Format("{0}images/_cover/{1}",
                         Owner.UriStub, path));
                 }
             }

@@ -1,6 +1,19 @@
 <!-- INCLUDE page_header.html -->
 
-<p>{BREADCRUMBS}</p>
+<!-- IF BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<div id="content">
+	<div id="overview-profile" class="pane">
+        <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+        <h2>{PAGE_TITLE}</h2>
+</div>
+</div>
 
 <div id="pane-profile">
 	<div id="pane-pages" class="pane">
@@ -13,7 +26,6 @@
 <div id="profile">
 <div id="pane-page" class="pane">
 	<div id="page-body" class="normal-writing">
-		<h2>{PAGE_TITLE}</h2>
 		<p>{PAGE_BODY}</p>
 	</div>
   <div class="cheat-clear"></div>
@@ -36,6 +48,8 @@
 		<span id="edit-page" class="post-button"><a href="{U_EDIT}">Edit Page</a></span>
 	</div>
 	<!-- ENDIF -->
+</div>
+</div>
 </div>
 </div>
 <!-- INCLUDE page_footer.html -->

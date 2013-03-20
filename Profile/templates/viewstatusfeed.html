@@ -1,9 +1,20 @@
 ﻿<!-- INCLUDE page_header.html -->
+
+<!-- IF BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<div id="content">
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
 <h2>{L_STATUS_FEED}</h2>
 <p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span></p>
-<!-- IF BREADCRUMBS -->
-<p>{BREADCRUMBS}</p>
-<!-- ENDIF -->
+</div>
+</div>
 
 <script type="text/javascript">
 <!--
@@ -50,7 +61,7 @@
         <!-- ELSE -->
 		<div class="status-body" style="cursor: pointer;" onclick="LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));">
         <!-- ENDIF -->
-            <p><a href="/{USER_NAME}">{USER_DISPLAY_NAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
+            <p><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
 			<p>{status_messages.STATUS_MESSAGE}</p>
 		</div>
         <!-- IF $_IS_MOBILE -->
@@ -70,5 +81,6 @@
   </li>
   <!-- END status_messages -->
 </ul>
+    </div>
     </div>
 <!-- INCLUDE page_footer.html -->

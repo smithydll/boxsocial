@@ -21,6 +21,9 @@ div.month div.week-head div.day
 	font-weight: bold;
 	text-align: center;
 	border: solid 1px #F7F7F7;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 div.month div.week div.day
@@ -32,6 +35,9 @@ div.month div.week div.day
 	border: solid 1px #F7F7F7;
 	background-color: #FFFFFF;
 	position: relative;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 div.month div.week div.day.today
@@ -226,4 +232,8 @@ span.low-priority {
 span.high-priority {
 	font-weight: bold;
 	color: #CC0000;
+}
+
+ul.year h3 {
+    margin: 5px 0;
 }

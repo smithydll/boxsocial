@@ -1202,6 +1202,9 @@ namespace BoxSocial.Internals
             if (owner is User)
             {
                 ((User)owner).LoadProfileInfo();
+
+                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
             core.Display.ParsePageList(owner, true, thePage);

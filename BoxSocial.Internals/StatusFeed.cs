@@ -220,6 +220,9 @@ namespace BoxSocial.Internals
 
             }
 
+            core.Template.Parse("U_PROFILE", owner.ProfileUri);
+            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+
             PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", owner.ItemKey);
 
             core.Template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);

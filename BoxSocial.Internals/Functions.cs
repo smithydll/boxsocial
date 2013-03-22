@@ -790,7 +790,7 @@ namespace BoxSocial.Internals
             DateTime result = DateTime.Now;
             if (DateTime.TryParse(date, out result))
             {
-                return date;
+                return result.ToString("dd/MM/yyyy"); ;
             }
 
             return core.Tz.Now.ToString("dd/MM/yyyy");
@@ -801,16 +801,23 @@ namespace BoxSocial.Internals
             switch (time.ToLower())
             {
                 case "midday":
-                    return "12:00";
+                    return "12:00:00";
                 case "midnight":
-                    return "00:00";
+                    return "00:00:00";
                 case "end of the day":
-                    return "23:59";
+                    return "23:59:00";
                 case "close of business":
                 case "end of business":
-                    return "17:00";
+                    return "17:00:00";
             }
-            return time;
+
+            DateTime result = DateTime.Now;
+            if (DateTime.TryParse(time, out result))
+            {
+                return result.ToString("hh:mm:ss");
+            }
+
+            return core.Tz.Now.ToString("hh:mm:ss");
         }
 
         public string InterpretDateTime(string date)

@@ -270,11 +270,120 @@ namespace BoxSocial.Applications.Forum
 
             List<ForumTopic> recentTopics = forum.GetTopicsFlat(0, 10);
 
+            // PostId, TopicPost
+            Dictionary<long, TopicPost> topicLastPosts;
+
+            topicLastPosts = TopicPost.GetTopicLastPosts(core, recentTopics);
+
+            template.Parse("TOPICS", recentTopics.Count.ToString());
+
+            foreach (ForumTopic topic in recentTopics)
+            {
+                core.LoadUserProfile(topic.PosterId);
+            }
+
             foreach (ForumTopic topic in recentTopics)
             {
                 VariableCollection topicVariableCollection = template.CreateChild("topic_list");
+
                 topicVariableCollection.Parse("TITLE", topic.Title);
                 topicVariableCollection.Parse("URI", topic.Uri);
+                topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
+                topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
+                topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
+                topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
+                topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
+
+                if (topicLastPosts.ContainsKey(topic.LastPostId))
+                {
+                    topicVariableCollection.Parse("LAST_POST_URI", topicLastPosts[topic.LastPostId].Uri);
+                    topicVariableCollection.Parse("LAST_POST_TITLE", topicLastPosts[topic.LastPostId].Title);
+                    core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                        topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
+                }
+                else
+                {
+                    topicVariableCollection.Parse("LAST_POST", "No posts");
+                }
+
+                switch (topic.Status)
+                {
+                    case TopicStates.Normal:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_NORMAL_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+                        break;
+                    case TopicStates.Sticky:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_STICKY_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+
+                        break;
+                    case TopicStates.Announcement:
+                    case TopicStates.Global:
+                        if (topic.IsRead)
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_UNLOCKED", "TRUE");
+                            }
+                        }
+                        else
+                        {
+                            if (topic.IsLocked)
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_LOCKED", "TRUE");
+                            }
+                            else
+                            {
+                                topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_UNLOCKED", "TRUE");
+                            }
+                        }
+
+                        break;
+                }
             }
 
             e.core.AddMainPanel(template);

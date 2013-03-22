@@ -89,11 +89,8 @@ namespace BoxSocial.Applications.Gallery
 
                 GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
 
-                /* TODO: change to building path in photo class */
-                string displayUri = string.Format("/{0}/images/_display/{1}/{2}",
-                    Owner.Key, photo.ParentPath, photo.Path);
                 template.Parse("S_PHOTO_TITLE", photo.ItemTitle);
-                template.Parse("S_PHOTO_DISPLAY", displayUri);
+                template.Parse("S_PHOTO_DISPLAY", photo.DisplayUri);
                 template.Parse("S_PHOTO_ID", photo.Id.ToString());
 
                 List<UserTag> tags = UserTag.GetTags(core, photo);

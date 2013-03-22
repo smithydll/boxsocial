@@ -29,6 +29,7 @@ namespace BoxSocial.Forms
     public class HiddenField : FormField
     {
         private string value;
+        private string styleClass;
 
         public string Value
         {
@@ -42,6 +43,18 @@ namespace BoxSocial.Forms
             }
         }
 
+        public string Class
+        {
+            get
+            {
+                return styleClass;
+            }
+            set
+            {
+                this.styleClass = value;
+            }
+        }
+
         public HiddenField(string name)
         {
             this.name = name;
@@ -49,9 +62,10 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
-            return string.Format("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />",
+            return string.Format("<input type=\"hidden\" name=\"{0}\" id=\"{0}\"{2} value=\"{1}\" />",
                     HttpUtility.HtmlEncode(name),
-                    HttpUtility.HtmlEncode(Value));
+                    HttpUtility.HtmlEncode(Value),
+                    (!string.IsNullOrEmpty(Class)) ? " class=\"" + Class + "\"" : "");
         }
 
         public override void SetValue(string value)

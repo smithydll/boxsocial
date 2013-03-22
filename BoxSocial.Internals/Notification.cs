@@ -160,6 +160,12 @@ namespace BoxSocial.Internals
 
             long notificationId = core.Db.Query(iQuery);
 
+            UpdateQuery query = new UpdateQuery(typeof(UserInfo));
+            query.AddField("user_unread_notifications", new QueryOperation("user_unread_notifications", QueryOperations.Addition, 1));
+            query.AddCondition("user_id", receiver.Id);
+
+            core.Db.Query(query);
+
             return new Notification(core, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
         }
 

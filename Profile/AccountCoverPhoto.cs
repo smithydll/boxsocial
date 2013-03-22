@@ -72,9 +72,29 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.LoadProfileInfo();
 
-            if (!string.IsNullOrEmpty(LoggedInMember.UserThumbnail))
+            if (LoggedInMember.UserInfo.CoverPhotoId > 0)
             {
-                template.Parse("I_DISPLAY_PICTURE", LoggedInMember.UserThumbnail);
+                GalleryItem gi = new GalleryItem(core, LoggedInMember.UserInfo.CoverPhotoId);
+                template.Parse("I_COVER_PHOTO", gi.DisplayUri);
+
+                Size newSize = GalleryItem.GetSize(new Size(gi.ItemWidth, gi.ItemHeight), new Size(640,640));
+
+                double scale = (double)newSize.Width / gi.ItemWidth;
+                int crop = (int)(gi.CropPositionVertical * scale);
+
+                double scale2 = newSize.Width / 960F;
+
+                int cropS = (int)(200 * scale2);
+                int cropB = newSize.Height - crop - cropS;
+
+                template.Parse("CROP_T", crop);
+                template.Parse("CROP_S", cropS);
+                template.Parse("CROP_B", cropB);
+                template.Parse("WIDTH", newSize.Width);
+                template.Parse("HEIGHT", newSize.Height);
+                template.Parse("CROP", gi.CropPositionVertical);
+                template.Parse("SCALE", scale);
+
             }
 
             Save(new EventHandler(AccountDisplayPic_Save));
@@ -84,136 +104,154 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
-            string meSlug = "cover-photos";
-
-            BoxSocial.Applications.Gallery.Gallery profileGallery;
-            try
+            if (core.Http.Files["photo-file"].ContentLength == 0)
             {
-                profileGallery = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember, meSlug);
-            }
-            catch (InvalidGalleryException)
-            {
-                BoxSocial.Applications.Gallery.Gallery root = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember);
-                profileGallery = BoxSocial.Applications.Gallery.Gallery.Create(core, LoggedInMember, root, "Cover Photos", ref meSlug, "All my uploaded cover photos");
-            }
+                int vcrop = core.Functions.FormInt("vcrop", 0);
 
-            if (profileGallery != null)
-            {
-                string title = "";
-                string description = "";
-                string slug = "";
-
-                try
+                if (LoggedInMember.UserInfo.CoverPhotoId > 0)
                 {
-                    slug = core.Http.Files["photo-file"].FileName;
-                }
-                catch
-                {
-                    DisplayGenericError();
-                    return;
-                }
-
-                try
-                {
-                    MemoryStream stream = new MemoryStream();
-                    core.Http.Files["photo-file"].InputStream.CopyTo(stream);
-
-                    db.BeginTransaction();
-
-                    Image image = Image.FromStream(stream);
-                    int width = image.Width;
-                    int height = image.Height;
-
-                    RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
-                    foreach (PropertyItem p in image.PropertyItems)
-                    {
-                        if (p.Id == 274)
-                        {
-                            switch ((int)p.Value[0])
-                            {
-                                case 1:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                                case 2:
-                                    rotate = RotateFlipType.RotateNoneFlipX;
-                                    break;
-                                case 3:
-                                    rotate = RotateFlipType.Rotate180FlipNone;
-                                    break;
-                                case 4:
-                                    rotate = RotateFlipType.Rotate180FlipX;
-                                    break;
-                                case 5:
-                                    rotate = RotateFlipType.Rotate90FlipX;
-                                    break;
-                                case 6:
-                                    rotate = RotateFlipType.Rotate90FlipNone;
-                                    break;
-                                case 7:
-                                    rotate = RotateFlipType.Rotate270FlipX;
-                                    break;
-                                case 8:
-                                    rotate = RotateFlipType.Rotate270FlipNone;
-                                    break;
-                                default:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                            }
-                        }
-                    }
-
-                    if (rotate != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        image.RotateFlip(rotate);
-
-                        width = image.Width;
-                        height = image.Height;
-
-                        ImageFormat iF = ImageFormat.Jpeg;
-                        stream = new MemoryStream();
-                        image.Save(stream, iF);
-                        rotate = RotateFlipType.RotateNoneFlipNone;
-                    }
-
-                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
-
-                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, width, height);
-
-                    db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
-                        galleryItem.Id, LoggedInMember.UserId));
-
-                    db.CommitTransaction();
-                    stream.Close();
+                    GalleryItem coverItem = new GalleryItem(core, LoggedInMember.UserInfo.CoverPhotoId);
+                    coverItem.CropPositionVertical = vcrop;
+                    coverItem.Update();
 
                     SetRedirectUri(BuildUri());
-                    core.Display.ShowMessage("Display Picture set", "You have successfully uploaded a new display picture.");
-                    return;
-                }
-                catch (GalleryItemTooLargeException)
-                {
-                    SetError("The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
-                    return;
-                }
-                catch (GalleryQuotaExceededException)
-                {
-                    SetError("You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
-                    return;
-                }
-                catch (InvalidGalleryItemTypeException)
-                {
-                    SetError("You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
-                    return;
-                }
-                catch (InvalidGalleryFileNameException)
-                {
-                    core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                    core.Display.ShowMessage("Cover photo set", "You have successfully uploaded a new cover photo.");
                     return;
                 }
             }
             else
             {
-                DisplayGenericError();
-                return;
+                string meSlug = "cover-photos";
+
+                BoxSocial.Applications.Gallery.Gallery profileGallery;
+                try
+                {
+                    profileGallery = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember, meSlug);
+                }
+                catch (InvalidGalleryException)
+                {
+                    BoxSocial.Applications.Gallery.Gallery root = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember);
+                    profileGallery = BoxSocial.Applications.Gallery.Gallery.Create(core, LoggedInMember, root, "Cover Photos", ref meSlug, "All my uploaded cover photos");
+                }
+
+                if (profileGallery != null)
+                {
+                    string title = "";
+                    string description = "";
+                    string slug = "";
+
+                    try
+                    {
+                        slug = core.Http.Files["photo-file"].FileName;
+                    }
+                    catch
+                    {
+                        DisplayGenericError();
+                        return;
+                    }
+
+                    try
+                    {
+                        MemoryStream stream = new MemoryStream();
+                        core.Http.Files["photo-file"].InputStream.CopyTo(stream);
+
+                        db.BeginTransaction();
+
+                        Image image = Image.FromStream(stream);
+                        int width = image.Width;
+                        int height = image.Height;
+
+                        RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
+                        foreach (PropertyItem p in image.PropertyItems)
+                        {
+                            if (p.Id == 274)
+                            {
+                                switch ((int)p.Value[0])
+                                {
+                                    case 1:
+                                        rotate = RotateFlipType.RotateNoneFlipNone;
+                                        break;
+                                    case 2:
+                                        rotate = RotateFlipType.RotateNoneFlipX;
+                                        break;
+                                    case 3:
+                                        rotate = RotateFlipType.Rotate180FlipNone;
+                                        break;
+                                    case 4:
+                                        rotate = RotateFlipType.Rotate180FlipX;
+                                        break;
+                                    case 5:
+                                        rotate = RotateFlipType.Rotate90FlipX;
+                                        break;
+                                    case 6:
+                                        rotate = RotateFlipType.Rotate90FlipNone;
+                                        break;
+                                    case 7:
+                                        rotate = RotateFlipType.Rotate270FlipX;
+                                        break;
+                                    case 8:
+                                        rotate = RotateFlipType.Rotate270FlipNone;
+                                        break;
+                                    default:
+                                        rotate = RotateFlipType.RotateNoneFlipNone;
+                                        break;
+                                }
+                            }
+                        }
+
+                        if (rotate != RotateFlipType.RotateNoneFlipNone)
+                        {
+                            image.RotateFlip(rotate);
+
+                            width = image.Width;
+                            height = image.Height;
+
+                            ImageFormat iF = ImageFormat.Jpeg;
+                            stream = new MemoryStream();
+                            image.Save(stream, iF);
+                            rotate = RotateFlipType.RotateNoneFlipNone;
+                        }
+
+                        string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
+
+                        GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, width, height);
+
+                        db.UpdateQuery(string.Format("UPDATE user_info SET user_cover = {0} WHERE user_id = {1}",
+                            galleryItem.Id, LoggedInMember.UserId));
+
+                        db.CommitTransaction();
+                        stream.Close();
+
+                        SetRedirectUri(BuildUri());
+                        core.Display.ShowMessage("Cover photo set", "You have successfully uploaded a new cover photo.");
+                        return;
+                    }
+                    catch (GalleryItemTooLargeException)
+                    {
+                        SetError("The photo you have attempted to upload is too big, you can upload photos up to 1.2 MiB in size.");
+                        return;
+                    }
+                    catch (GalleryQuotaExceededException)
+                    {
+                        SetError("You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                        return;
+                    }
+                    catch (InvalidGalleryItemTypeException)
+                    {
+                        SetError("You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                        return;
+                    }
+                    catch (InvalidGalleryFileNameException)
+                    {
+                        core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                        return;
+                    }
+                }
+                else
+                {
+                    DisplayGenericError();
+                    return;
+                }
             }
         }
     }

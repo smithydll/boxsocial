@@ -113,25 +113,29 @@ namespace BoxSocial.Internals
         {
             // This will be a complicated mishmash of javascript
 
-            TextBox dateExpressionTextBox = new TextBox(name + "[expression]");
+            HiddenField modeHiddenField = new HiddenField(name + "--mode");
+            modeHiddenField.Class = "date-mode";
+            modeHiddenField.Value = "forms";
+
+            TextBox dateExpressionTextBox = new TextBox(name + "--expression");
             //dateExpressionTextBox.IsVisible = false;
-            dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "[expression]" + "')";
+            dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "--expression" + "')";
             dateExpressionTextBox.Width.Length = Width.Length * 0.4F;
             dateExpressionTextBox.Width.Unit = Width.Unit;
 
-            TextBox timeExpressionTextBox = new TextBox(name + "[time]");
+            TextBox timeExpressionTextBox = new TextBox(name + "--time");
             //timeExpressionTextBox.IsVisible = false;
-            timeExpressionTextBox.Script.OnChange = "ParseTimePicker('" + name + "[time]" + "')";
+            timeExpressionTextBox.Script.OnChange = "ParseTimePicker('" + name + "--time" + "')";
             timeExpressionTextBox.Width.Length = Width.Length * 0.4F;
             timeExpressionTextBox.Width.Unit = Width.Unit;
 
-            SelectBox dateYearsSelectBox = new SelectBox(name + "[date-year]");
-            SelectBox dateMonthsSelectBox = new SelectBox(name + "[date-month]");
-            SelectBox dateDaysSelectBox = new SelectBox(name + "[date-day]");
+            SelectBox dateYearsSelectBox = new SelectBox(name + "--date-year");
+            SelectBox dateMonthsSelectBox = new SelectBox(name + "--date-month");
+            SelectBox dateDaysSelectBox = new SelectBox(name + "--date-day");
 
-            SelectBox dateHoursSelectBox = new SelectBox(name + "[date-hour]");
-            SelectBox dateMinutesSelectBox = new SelectBox(name + "[date-minute]");
-            SelectBox dateSecondsSelectBox = new SelectBox(name + "[date-second]");
+            SelectBox dateHoursSelectBox = new SelectBox(name + "--date-hour");
+            SelectBox dateMinutesSelectBox = new SelectBox(name + "--date-minute");
+            SelectBox dateSecondsSelectBox = new SelectBox(name + "--date-second");
 
             for (int i = DateTime.Now.AddYears(-30).Year; i < DateTime.Now.AddYears(5).Year; i++)
             {
@@ -149,7 +153,7 @@ namespace BoxSocial.Internals
                 dateDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
 
-            for (int i = 1; i < 13; i++)
+            for (int i = 0; i < 24; i++)
             {
                 dateHoursSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
@@ -175,6 +179,7 @@ namespace BoxSocial.Internals
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("<div class=\"date-field\">");
+            sb.AppendLine(modeHiddenField.ToString());
 
             sb.AppendLine("<p id=\"" + name + "[date-drop]\" class=\"date-drop\">");
             sb.Append("Year: ");
@@ -238,10 +243,11 @@ namespace BoxSocial.Internals
             long datetime = 0;
             DateTime dt = tz.Now;
 
-            string dateExpression = core.Http.Form[name + "[expression]"];
-            string timeExpression = core.Http.Form[name + "[time]"];
+            string dateExpression = core.Http.Form[name + "--expression"];
+            string timeExpression = core.Http.Form[name + "--time"];
+            string dateMode = core.Http.Form[name + "--mode"];
 
-            if (!string.IsNullOrEmpty(dateExpression))
+            if (dateMode == "ajax" && (!string.IsNullOrEmpty(dateExpression)))
             {
                 dateExpression = core.Functions.InterpretDate(dateExpression);
                 timeExpression = core.Functions.InterpretTime(timeExpression);
@@ -251,24 +257,24 @@ namespace BoxSocial.Internals
                 if (!DateTime.TryParse(expression, out dt))
                 {
                     HttpContext.Current.Response.Write("Line 221 FAIL " + expression + "<br />");
-                    int year = core.Functions.FormInt(name + "[date-year]", dt.Year);
-                    int month = core.Functions.FormInt(name + "[date-month]", dt.Month);
-                    int day = core.Functions.FormInt(name + "[date-day]", dt.Day);
-                    int hour = core.Functions.FormInt(name + "[date-hour]", dt.Hour);
-                    int minute = core.Functions.FormInt(name + "[date-minute]", dt.Minute);
-                    int second = core.Functions.FormInt(name + "[date-second]", 0);
+                    int year = core.Functions.FormInt(name + "--date-year", dt.Year);
+                    int month = core.Functions.FormInt(name + "--date-month", dt.Month);
+                    int day = core.Functions.FormInt(name + "--date-day", dt.Day);
+                    int hour = core.Functions.FormInt(name + "--date-hour", dt.Hour);
+                    int minute = core.Functions.FormInt(name + "--date-minute", dt.Minute);
+                    int second = core.Functions.FormInt(name + "--date-second", 0);
 
                     dt = new DateTime(year, month, day, hour, minute, second);
                 }
             }
             else
             {
-                int year = core.Functions.FormInt(name + "[date-year]", dt.Year);
-                int month = core.Functions.FormInt(name + "[date-month]", dt.Month);
-                int day = core.Functions.FormInt(name + "[date-day]", dt.Day);
-                int hour = core.Functions.FormInt(name + "[date-hour]", dt.Hour);
-                int minute = core.Functions.FormInt(name + "[date-minute]", dt.Minute);
-                int second = core.Functions.FormInt(name + "[date-second]", 0);
+                int year = core.Functions.FormInt(name + "--date-year", dt.Year);
+                int month = core.Functions.FormInt(name + "--date-month", dt.Month);
+                int day = core.Functions.FormInt(name + "--date-day", dt.Day);
+                int hour = core.Functions.FormInt(name + "--date-hour", dt.Hour);
+                int minute = core.Functions.FormInt(name + "--date-minute", dt.Minute);
+                int second = core.Functions.FormInt(name + "--date-second", 0);
 
                 dt = new DateTime(year, month, day, hour, minute, second);
             }

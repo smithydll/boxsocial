@@ -79,9 +79,11 @@ namespace BoxSocial.Applications.Calendar
             if (eventId > 0)
             {
                 Event calendarEvent = new Event(core, eventId);
-                UpdateQuery uQuery = new UpdateQuery("event_invites");
+                EventInvite invite = new EventInvite(core, eventId, LoggedInMember);
 
-                UpdateQuery uEventQuery = new UpdateQuery("events");
+                UpdateQuery uQuery = new UpdateQuery(typeof(EventInvite));
+
+                UpdateQuery uEventQuery = new UpdateQuery(typeof(Event));
                 uEventQuery.AddCondition("event_id", calendarEvent.EventId);
 
                 switch (e.Mode)
@@ -90,15 +92,40 @@ namespace BoxSocial.Applications.Calendar
                         uQuery.AddField("invite_accepted", true);
                         uQuery.AddField("invite_status", (byte)EventAttendance.Yes);
 
-                        uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Addition, 1));
+                        switch (invite.InviteStatus)
+                        {
+                            case EventAttendance.Yes:
+                                break;
+                            default:
+                                uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Addition, 1));
+                                break;
+                        }
                         break;
                     case "reject":
                         uQuery.AddField("invite_accepted", false);
                         uQuery.AddField("invite_status", (byte)EventAttendance.No);
+
+                        switch (invite.InviteStatus)
+                        {
+                            case EventAttendance.Yes:
+                                uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Subtraction, 1));
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case "maybe":
                         uQuery.AddField("invite_accepted", false);
                         uQuery.AddField("invite_status", (byte)EventAttendance.Maybe);
+
+                        switch (invite.InviteStatus)
+                        {
+                            case EventAttendance.Yes:
+                                uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Subtraction, 1));
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     default:
                         DisplayGenericError();
@@ -108,7 +135,7 @@ namespace BoxSocial.Applications.Calendar
                 // TODO: look into this
                 uQuery.AddCondition("event_id", eventId);
                 uQuery.AddCondition("item_id", LoggedInMember.Id);
-                uQuery.AddCondition("item_type", "USER");
+                uQuery.AddCondition("item_type_id", LoggedInMember.TypeId);
 
                 db.BeginTransaction();
                 db.Query(uQuery);

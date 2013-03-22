@@ -836,6 +836,8 @@ namespace BoxSocial.Internals
                     template.Parse("USER_ICON", session.LoggedInMember.UserIcon);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                     template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
+
+                    template.Parse("U_UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
                 }
             }
 

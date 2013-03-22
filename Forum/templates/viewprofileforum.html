@@ -1,11 +1,69 @@
 ﻿	<div id="profile-forum-pane" class="pane">
-		<h3>{L_FORUM}</h3>
-		<a href="{U_FORUM}">{L_GO_TO_FORUM}</a>
+		<h3><a href="{U_FORUM}">{L_FORUM}</a></h3>
     <!-- IF topic_list -->
-    <dl>
-      <!-- BEGIN topic_list -->
-      <dt><a href="{topic_list.URI}">{topic_list.TITLE}</a></dt>
-      <!-- END topic_list -->
-    </dl>
+			<ul id="topics" class="pane">
+    <li id="topic-head">
+					<dl class="title-row">
+						<dt><div>&nbsp;</div></dt>
+						<dd><div>{L_VIEWS}</div></dd>
+						<dd><div>{L_REPLIES}</div></dd>
+						<dd><div>{L_LAST_POST}</div></dd>
+      </dl>
+    </li>
+    <!-- BEGIN topic_list -->
+    <li>
+					<dl class="icon">
+        <dt>
+    <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med_sticky.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_read_med_announce.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
+    <div style="background-image: url('/images/posticon_unread_med_announce.png');">
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
+    <div>
+    <!-- ENDIF -->
+
+          <a href="{topic_list.URI}">{topic_list.TITLE}</a><br />
+          by <a href="{topic_list.U_POSTER}">{topic_list.USERNAME}</a> on  {topic_list.DATE} 
+          <!-- IF topic_list.PAGINATION -->
+          <span style="float:right;">{topic_list.PAGINATION}</span>
+          <!-- ENDIF -->
+          </div>
+        </dt>
+        <dd><div>{topic_list.VIEWS}</div></dd>
+        <dd><div>{topic_list.REPLIES}</div></dd>
+        <dd><div>{topic_list.LAST_POST}</div></dd>
+      </dl>
+    </li>
+    <!-- END topic_list -->
+	</ul>
     <!-- ENDIF -->
 	</div>

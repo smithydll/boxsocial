@@ -449,8 +449,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<EventInvite> invites = new List<EventInvite>();
 
-            SelectQuery query = new SelectQuery(typeof(EventInvite));
-            query.AddFields("item_id", "item_type_id", "inviter_id", "event_id");
+            SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
             query.AddCondition("event_id", EventId);
 
             DataTable invitesDataTable = db.Query(query);
@@ -559,7 +558,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (e.Page.Owner is User)
             {
-                e.Template.Parse("USER_ICON", ((User)e.Page.Owner).UserThumbnail);
+                e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
                 e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
             }
 
@@ -718,7 +717,7 @@ namespace BoxSocial.Applications.Calendar
                                 i++;
                                 if (i > 4)
                                 {
-                                    break;
+                                    continue;
                                 }
                                 listVariableCollection = e.Template.CreateChild("attendee_list");
                                 break;
@@ -726,7 +725,7 @@ namespace BoxSocial.Applications.Calendar
                                 j++;
                                 if (j > 4)
                                 {
-                                    break;
+                                    continue;
                                 }
                                 listVariableCollection = e.Template.CreateChild("not_attending_list");
                                 break;
@@ -734,7 +733,7 @@ namespace BoxSocial.Applications.Calendar
                                 k++;
                                 if (k > 4)
                                 {
-                                    break;
+                                    continue;
                                 }
                                 listVariableCollection = e.Template.CreateChild("maybe_attending_list");
                                 break;
@@ -742,7 +741,7 @@ namespace BoxSocial.Applications.Calendar
                                 l++;
                                 if (l > 4)
                                 {
-                                    break;
+                                    continue;
                                 }
                                 listVariableCollection = e.Template.CreateChild("unresponded_list");
                                 break;

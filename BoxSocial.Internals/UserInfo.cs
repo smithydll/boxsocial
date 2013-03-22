@@ -94,6 +94,8 @@ namespace BoxSocial.Internals
         private long lastVisitDateRaw;
         [DataField("user_status_messages")]
         private long userStatusMessages;
+        [DataField("user_unread_notifications")]
+        private long userUnreadNotifications;
         [DataField("user_new_password", 63)]
         private string userNewPassword;
         [DataField("user_subscription_level")]
@@ -334,6 +336,14 @@ namespace BoxSocial.Internals
             get
             {
                 return userStatusMessages;
+            }
+        }
+
+        public long UnreadNotifications
+        {
+            get
+            {
+                return userUnreadNotifications;
             }
         }
 

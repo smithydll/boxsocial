@@ -141,6 +141,31 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public EventInvite(Core core, long eventId, Primitive invitee)
+            : base(core)
+        {
+            this.ItemLoad += new ItemLoadHandler(EventInvite_ItemLoad);
+
+            try
+            {
+                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+                query.AddCondition("event_id", EventId);
+                query.AddCondition("item_id", invitee.Id);
+                query.AddCondition("item_type_id", invitee.TypeId);
+
+                DataTable inviteTable = db.Query(query);
+
+                if (inviteTable.Rows.Count == 1)
+                {
+                    loadItemInfo(inviteTable.Rows[0]);
+                }
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidEventInviteException();
+            }
+        }
+
         void EventInvite_ItemLoad()
         {
         }

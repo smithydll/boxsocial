@@ -77,6 +77,17 @@ namespace BoxSocial.Internals
                 template.Parse("IS_NOTIFICATIONS", "TRUE");
             }
 
+            if (LoggedInMember.UserInfo.UnreadNotifications > 0)
+            {
+                UpdateQuery query = new UpdateQuery(typeof(UserInfo));
+                query.AddField("user_unread_notifications", new QueryOperation("user_unread_notifications", QueryOperations.Subtraction, LoggedInMember.UserInfo.UnreadNotifications));
+                query.AddCondition("user_id", LoggedInMember.Id);
+
+                db.Query(query);
+
+                core.Template.Parse("U_UNREAD_NOTIFICATIONS", 0);
+            }
+
             core.LoadUserProfile(core.LoggedInMemberId);
             foreach (Notification notification in notifications)
             {

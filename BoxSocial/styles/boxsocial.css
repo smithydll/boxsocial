@@ -1716,3 +1716,17 @@ blockquote {
 	margin: 0px;
 	padding-right: 5px;
 }
+
+#head-nav .notifications 
+{
+    display: inline-block;
+    width: 1.2em;
+    padding: 0.2em 0.1em;
+    line-height: 1.2em;
+    background-color: #E71717;
+    border-radius: 3px;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9em;
+}

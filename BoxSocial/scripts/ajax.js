@@ -169,7 +169,7 @@ function SubmitedComment(r, e) {
 }
 
 function SubmitListItem(id) {
-	var text = $("text").val();
+	var text = $("#text").val();
 	return PostToAccount(SubmitedListItem, "pages", "lists", id, { mode: "append", save: "Add", text: text } );
 }
 
@@ -178,6 +178,7 @@ function SubmitedListItem(r, e) {
 	$("#list-list").append(nli);
 
 	$("#no-list-items").hide();
+	$("#text").val('');
 }
 
 function LoadComments(id, type, node) {
@@ -345,6 +346,12 @@ function FindFriendId() {
 	return res;
 }
 
+$(document).ready(function () {
+    $(".date-drop").hide();
+    $(".date-exp").show();
+    $(".date-mode").val('ajax');
+});
+
 function EnableDateTimePickers() {
     for(i in dtp)
     {
@@ -356,21 +363,21 @@ function EnableDateTimePickers() {
 function ParseDatePicker(n) {
     var el = $('#' + n);
     
-    return PostToPage(SubmitedDate, "api/functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "date"), new Array("date", el.val())));
+    return PostToPage(SubmitedDate, "api/functions", el, { ajax: "true", fun: "date", date: el.val() });
 }
 
 function ParseTimePicker(n) {
-	var el = $('$' + n);
-
-	return PostToPage(SubmitedTime, "api/functions", new Array(el), new Array(new Array("ajax", "true"), new Array("fun", "time"), new Array("time", el.val())));
+	var el = $('#' + n);
+	
+	return PostToPage(SubmitedTime, "api/functions", el, { ajax: "true", fun: "time", time: el.val() });
 }
 
 function SubmitedDate(r, e) {
-	e[0].value = r['messsage'];
+    e.val(r['message']);
 }
 
 function SubmitedTime(r, e) {
-	e[0].value = r['message'];
+	e.val(r['message']);
 }
 
 function ToggleAdvanced() {

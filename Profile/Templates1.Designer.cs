@@ -220,6 +220,29 @@ namespace BoxSocial.Applications.Profile {
         ///		&lt;/dl&gt;
         ///		&lt;input type=&quot;hidden&quot; [rest of string was truncated]&quot;;.
         /// </summary>
+        internal static string account_cover_photo {
+            get {
+                return ResourceManager.GetString("account_cover_photo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Display Picture&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Display Picture&lt;/legend&gt;
+        ///    &lt;!-- IF I_DISPLAY_PICTURE --&gt;
+        ///		&lt;p&gt;&lt;img src=&quot;{I_DISPLAY_PICTURE}&quot; alt=&quot;Display Picture&quot; /&gt;&lt;/p&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;photo-file&quot;&gt;Select File&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-file&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+        ///		&lt;/dl&gt;
+        ///		&lt;input type=&quot;hidden&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
         internal static string account_display_picture {
             get {
                 return ResourceManager.GetString("account_display_picture", resourceCulture);
@@ -469,29 +492,26 @@ namespace BoxSocial.Applications.Profile {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///&lt;h2&gt;{L_FEED}&lt;/h2&gt;
         ///
         ///&lt;!-- IF BREADCRUMBS --&gt;
-        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
+        ///
+        ///&lt;div id=&quot;content&quot;&gt;
+        ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
+        ///        &lt;!-- IF USER_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;);&quot;&gt;
+        ///        &lt;!-- ELSE --&gt;
+        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;!-- ENDIF --&gt;
+        ///&lt;h2&gt;{L_FEED}&lt;/h2&gt;
+        ///&lt;/div&gt;
+        ///&lt;/div&gt;
         ///
         ///&lt;script type=&quot;text/javascript&quot;&gt;
         ///&lt;!--
         ///    $(document).ready(function () {
-        ///        $(&apos;#message&apos;).focus().val(&apos;is &apos;).outerWidth($(&apos;#status-div&apos;).width() - $(&apos;#status-submit&apos;).outerWidth(true));
-        ///    });
-        ///--&gt;
-        ///&lt;/script&gt;
-        ///
-        ///	&lt;div id=&quot;pane-profile&quot;&gt;
-        ///		&lt;div id=&quot;pane-pages&quot; class=&quot;pane&quot;&gt;
-        ///			&lt;h3&gt;Pages&lt;/h3&gt;
-        ///			&lt;ul class=&quot;page-tiles&quot;&gt;
-        ///				{PAGE_LIST}
-        ///			&lt;/ul&gt;
-        ///		&lt;/div&gt;
-        ///	&lt;/div&gt;
-        ///	&lt;div id=&quot;pr [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewfeed {
             get {
@@ -501,22 +521,20 @@ namespace BoxSocial.Applications.Profile {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///&lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
-        ///&lt;p&gt;&lt;span id=&quot;subscribe&quot; class=&quot;subscribe-button&quot;&gt;&lt;a href=&quot;{U_SUBSCRIBE}&quot;&gt;{L_SUBSCRIBE}&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+        ///
         ///&lt;!-- IF BREADCRUMBS --&gt;
-        ///&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
+        ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;script type=&quot;text/javascript&quot;&gt;
-        ///&lt;!--
-        ///    $(document).ready(function () {
-        ///        $(&apos;#message&apos;).focus().val(&apos;is &apos;).outerWidth($(&apos;#status-div&apos;).width() - $(&apos;#status-submit&apos;).outerWidth(true));
-        ///    });
-        ///--&gt;
-        ///&lt;/script&gt;
-        ///
-        ///	&lt;div id=&quot;pane-profile&quot;&gt;
-        ///		&lt;div id=&quot;pane-pages&quot; class=&quot;pane&quot; [rest of string was truncated]&quot;;.
+        ///&lt;div id=&quot;content&quot;&gt;
+        ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
+        ///        &lt;!-- IF USER_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;);&quot;&gt;
+        ///        &lt;!-- ELSE --&gt;
+        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;!-- ENDIF --&gt;
+        ///&lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
+        ///&lt;p&gt;&lt;span id=&quot;subscribe&quot; class=&quot;subscribe-button&quot;&gt;&lt;a href=&quot;{U_SUBSCRIBE}&quot;&gt;{L_SUBSCRIBE}&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewstatusfeed {
             get {

@@ -75,6 +75,7 @@ namespace BoxSocial.FrontEnd
                 VariableCollection statusMessagesVariableCollection = template.CreateChild("status_messages");
 
                 statusMessagesVariableCollection.Parse("USER_DISPLAY_NAME", statusMessage.Owner.DisplayName);
+                statusMessagesVariableCollection.Parse("U_PROFILE", statusMessage.Owner.Uri);
                 statusMessagesVariableCollection.Parse("USER_NAME", statusMessage.Owner.Key);
                 statusMessagesVariableCollection.Parse("STATUS_MESSAGE", statusMessage.Message);
                 statusMessagesVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(statusMessage.GetTime(core.Tz)));

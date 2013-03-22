@@ -676,9 +676,11 @@ namespace BoxSocial.Applications.Gallery
             {
                 return cropPositionVertical;
             }
-            internal set
+            set
             {
                 SetPropertyByRef(new { cropPositionVertical }, value);
+                CoverExists = false;
+                core.Storage.DeleteFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_cover"), this.StoragePath);
             }
         }
 
@@ -688,7 +690,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 return cropPositionHorizontal;
             }
-            internal set
+            set
             {
                 SetPropertyByRef(new { cropPositionHorizontal }, value);
             }
@@ -2268,7 +2270,7 @@ namespace BoxSocial.Applications.Gallery
                 ImageMagick.ReadImageBlob(wand, data);
 
                 Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
-                double scale = width / imageSize.Width;
+                double scale = (double)width / imageSize.Width;
                 int newHeight = (int)(imageSize.Height * scale);
                 int cropY = (int)(crop * scale);
 
@@ -2302,7 +2304,7 @@ namespace BoxSocial.Applications.Gallery
                 g.SmoothingMode = SmoothingMode.HighQuality;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                double scale = width / image.Width;
+                double scale = (double)width / image.Width;
                 int newHeight = (int)(image.Height * scale);
                 int oldHeight = (int)(height / scale);
 

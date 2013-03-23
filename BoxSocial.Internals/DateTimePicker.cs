@@ -173,7 +173,7 @@ namespace BoxSocial.Internals
             dateDaysSelectBox.SelectedKey = value.Day.ToString();
 
             dateExpressionTextBox.Value = value.ToString("dd/MM/yyyy");
-            timeExpressionTextBox.Value = value.ToString("hh:mm:ss");
+            timeExpressionTextBox.Value = value.ToString("HH:mm:ss");
 
             /* Build display */
             StringBuilder sb = new StringBuilder();

@@ -190,6 +190,9 @@ namespace BoxSocial.Internals
 
             StatusMessage statusMessage = StatusMessage.Create(core, core.Session.LoggedInMember, message);
 
+            AccessControlLists acl = new AccessControlLists(core, statusMessage);
+            acl.SaveNewItemPermissions();
+
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
             ae.PublishToFeed(core.Session.LoggedInMember, statusMessage.ItemKey, "updated " + core.Session.LoggedInMember.Preposition + " status", core.Bbcode.FromStatusCode(message));
 

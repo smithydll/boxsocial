@@ -110,16 +110,16 @@ namespace BoxSocial.Applications.Profile
                     template.Parse("DEFAULT_SELECTED", " checked=\"checked\"");
                 }
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 15; i++)
                 {
                     VariableCollection themeVariableCollection = template.CreateChild("theme");
-                    double baseHue = (50.0 + i * (360 / 8.0)) % 360.0;
+                    double baseHue = (50.0 + i * (360 / 15.0)) % 360.0;
 
                     System.Drawing.Color one = Display.HlsToRgb(baseHue, 0.5F, 0.5F); // background colour
                     System.Drawing.Color two = Display.HlsToRgb(baseHue, 0.6F, 0.2F); // link colour
                     System.Drawing.Color three = Display.HlsToRgb(baseHue, 0.4F, 0.85F); // box title colour
-                    System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F - 180F, 0.7F, 0.2F); // box border
-                    System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F - 180F, 0.4F, 0.85F); // box background colour
+                    System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F, 0.7F, 0.2F); // box border
+                    System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F, 0.4F, 0.85F); // box background colour
 
                     themeVariableCollection.Parse("C_ONE", string.Format("{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B));
                     themeVariableCollection.Parse("C_TWO", string.Format("{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B));
@@ -309,8 +309,8 @@ namespace BoxSocial.Applications.Profile
                         System.Drawing.Color one = Display.HlsToRgb(baseHue, 0.5F, 0.5F); // background colour
                         System.Drawing.Color two = Display.HlsToRgb(baseHue, 0.6F, 0.2F); // link colour
                         System.Drawing.Color three = Display.HlsToRgb(baseHue, 0.4F, 0.85F); // box title colour
-                        System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F - 180F, 0.7F, 0.2F); // box border
-                        System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F - 180F, 0.4F, 0.85F); // box background colour
+                        System.Drawing.Color four = Display.HlsToRgb(baseHue - 11F, 0.7F, 0.2F); // box border
+                        System.Drawing.Color five = Display.HlsToRgb(baseHue - 11F, 0.4F, 0.85F); // box background colour
 
                         string backgroundColour = string.Format("#{0:x2}{1:x2}{2:x2}", one.R, one.G, one.B);
                         string linkColour = string.Format("#{0:x2}{1:x2}{2:x2}", two.R, two.G, two.B);
@@ -330,6 +330,9 @@ namespace BoxSocial.Applications.Profile
                         css["#pane-profile div.pane"].SetProperty("border-color", boxBorderColour);
                         css["#pane-profile div.pane"].SetProperty("color", "#000000");
 
+                        css.AddStyle("#content");
+                        css["#content"].SetProperty("background-color", boxBackgroundColour);
+
                         css.AddStyle("#profile div.pane");
                         css["#profile div.pane"].SetProperty("background-color", boxBackgroundColour);
                         css["#profile div.pane"].SetProperty("border-color", boxBorderColour);
@@ -340,21 +343,21 @@ namespace BoxSocial.Applications.Profile
                         css["#overview-profile"].SetProperty("border-color", boxBorderColour);
                         css["#overview-profile"].SetProperty("color", "#000000");
 
-                        css.AddStyle("#pane-profile div.pane h3");
-                        css["#pane-profile div.pane h3"].SetProperty("background-color", boxBorderColour);
-                        css["#pane-profile div.pane h3"].SetProperty("border-color", boxBorderColour);
-                        css["#pane-profile div.pane h3"].SetProperty("color", boxTitleColour);
+                        //css.AddStyle("#pane-profile div.pane h3");
+                        //css["#pane-profile div.pane h3"].SetProperty("background-color", boxBorderColour);
+                        //css["#pane-profile div.pane h3"].SetProperty("border-color", boxBorderColour);
+                        //css["#pane-profile div.pane h3"].SetProperty("color", boxTitleColour);
 
-                        css.AddStyle("#pane-profile div.pane h3 a");
-                        css["#pane-profile div.pane h3 a"].SetProperty("color", boxTitleColour);
+                        //css.AddStyle("#pane-profile div.pane h3 a");
+                        //css["#pane-profile div.pane h3 a"].SetProperty("color", boxTitleColour);
 
-                        css.AddStyle("#profile div.pane h3");
-                        css["#profile div.pane h3"].SetProperty("background-color", boxBorderColour);
-                        css["#profile div.pane h3"].SetProperty("border-color", boxBorderColour);
-                        css["#profile div.pane h3"].SetProperty("color", boxTitleColour);
+                        //css.AddStyle("#profile div.pane h3");
+                        //css["#profile div.pane h3"].SetProperty("background-color", boxBorderColour);
+                        //css["#profile div.pane h3"].SetProperty("border-color", boxBorderColour);
+                        //css["#profile div.pane h3"].SetProperty("color", boxTitleColour);
 
-                        css.AddStyle("#profile div.pane h3 a");
-                        css["#profile div.pane h3 a"].SetProperty("color", boxTitleColour);
+                        //css.AddStyle("#profile div.pane h3 a");
+                        //css["#profile div.pane h3 a"].SetProperty("color", boxTitleColour);
 
                         css.AddStyle("#overview-profile div.info");
                         css["#overview-profile div.info"].SetProperty("background-color", boxBorderColour);

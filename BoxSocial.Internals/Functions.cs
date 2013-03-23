@@ -814,10 +814,10 @@ namespace BoxSocial.Internals
             DateTime result = DateTime.Now;
             if (DateTime.TryParse(time, out result))
             {
-                return result.ToString("hh:mm:ss");
+                return result.ToString("HH:mm:ss");
             }
 
-            return core.Tz.Now.ToString("hh:mm:ss");
+            return core.Tz.Now.ToString("HH:mm:ss");
         }
 
         public string InterpretDateTime(string date)
@@ -825,16 +825,16 @@ namespace BoxSocial.Internals
             switch (date.ToLower())
             {
                 case "today":
-                    return core.Tz.Now.ToString("dd/MM/yyyy hh:mm:ss");
+                    return core.Tz.Now.ToString("dd/MM/yyyy HH:mm:ss");
                 case "tomorrow":
-                    return core.Tz.Now.AddDays(1).ToString("dd/MM/yyyy hh:mm:ss");
+                    return core.Tz.Now.AddDays(1).ToString("dd/MM/yyyy HH:mm:ss");
                 case "next week":
-                    return core.Tz.Now.AddDays(7).ToString("dd/MM/yyyy hh:mm:ss");
+                    return core.Tz.Now.AddDays(7).ToString("dd/MM/yyyy HH:mm:ss");
                 case "two weeks time":
-                    return core.Tz.Now.AddDays(14).ToString("dd/MM/yyyy hh:mm:ss");
+                    return core.Tz.Now.AddDays(14).ToString("dd/MM/yyyy HH:mm:ss");
             }
 
-            return core.Tz.Now.ToString("dd/MM/yyyy hh:mm:ss");
+            return core.Tz.Now.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
         public static int ParseNumber(string numeral)

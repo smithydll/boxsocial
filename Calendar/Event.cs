@@ -277,6 +277,9 @@ namespace BoxSocial.Applications.Calendar
             Access.CreateAllGrantsForOwner(core, newEvent);
             Access.CreateGrantForPrimitive(core, newEvent, EventInvite.InviteesGroupKey, "VIEW", "COMMENT");
 
+            newEvent.IsSimplePermissions = true;
+            newEvent.Update();
+
             /*if (isPublicEvent)
             {
                 Access.CreateGrantForPrimitive(core, newEvent, Friend.FriendsGroupKey, "VIEW");

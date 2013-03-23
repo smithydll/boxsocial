@@ -564,7 +564,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner is User)
             {
-                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                page.template.Parse("USER_THUMB", ((User)owner).UserThumbnail);
                 page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
@@ -605,6 +605,8 @@ namespace BoxSocial.Applications.Calendar
                 page.template.Parse("ALL_DAY_EVENTS", "TRUE");
             }
 
+            VariableCollection[] hours = new VariableCollection[24];
+
             for (int hour = 0; hour < 24; hour++)
             {
                 VariableCollection timeslotVariableCollection = page.template.CreateChild("timeslot");
@@ -612,9 +614,10 @@ namespace BoxSocial.Applications.Calendar
                 DateTime hourTime = new DateTime(year, month, day, hour, 0, 0);
 
                 timeslotVariableCollection.Parse("TIME", hourTime.ToString("h tt").ToLower());
-
-                showHourEvents(core, owner, year, month, day, hour, timeslotVariableCollection, events);
+                hours[hour] = timeslotVariableCollection;
             }
+
+            showHourEvents(core, owner, year, month, day, hours, events);
 
             List<string[]> calendarPath = new List<string[]>();
             calendarPath.Add(new string[] { "calendar", "Calendar" });
@@ -687,14 +690,24 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        private static void showHourEvents(Core core, Primitive owner, int year, int month, int day, int hour, VariableCollection timeslotVariableCollection, List<Event> events)
+        private static void showHourEvents(Core core, Primitive owner, int year, int month, int day, VariableCollection[] timeslotVariableCollections, List<Event> events)
         {
             bool hasEvents = false;
 
             long startOfDay = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endOfDay = startOfDay + 60 * 60 * 24;
 
+            long[] heights = new long[events.Count];
+            long[] tops = new long[events.Count];
+            double[] widths = new double[events.Count];
+            double[] lefts = new double[events.Count];
+            int[] eventCount = new int[96];
+            int[] eventNumber = new int[96];
+
+            int hourHeight = 32;
+
             List<Event> expired = new List<Event>();
+            int i = 0;
             foreach (Event calendarEvent in events)
             {
                 if (calendarEvent.AllDay)
@@ -715,30 +728,87 @@ namespace BoxSocial.Applications.Calendar
                     startTime = startOfDay;
                 }
 
-                long hourTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, hour, 59, 59));
+                DateTime startDateTime = core.Tz.DateTimeFromMysql(startTime);
+                DateTime endDateTime = core.Tz.DateTimeFromMysql(endTime - 1);
+                long startMinute = startDateTime.Minute;
+                long startHour = startDateTime.Hour;
+                long endMinute = endDateTime.Minute;
+                long endHour = endDateTime.Hour;
+                int startFifteen = (int)Math.Floor(startHour * 4.0 + startMinute / 15.0);
+                int endFifteen = (int)Math.Floor(endHour * 4.0 + endMinute / 15.0);
 
-                //if (calendarEvent.GetStartTime(core.tz).CompareTo(new DateTime(year, month, day, hour, 59, 59)) > 0)
-                if (startTime > hourTime)
+                for (int j = startFifteen; j <= endFifteen; j++)
                 {
-                    break;
+                    eventCount[j]++;
                 }
 
-                VariableCollection eventVariableCollection = timeslotVariableCollection.CreateChild("event");
 
-                long height = (endTime - startTime) * 24 / 60 / 60;
+                heights[i] = (endTime - startTime) * hourHeight / 60 / 60;
+                tops[i] = startMinute * 36 / 60;
+                widths[i] = 100.0;
+                lefts[i] = 100 - 100.0 / Math.Max(1, eventCount[startFifteen]);
 
-                eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
-                eventVariableCollection.Parse("HEIGHT", height.ToString());
-                eventVariableCollection.Parse("URI", calendarEvent.Uri);
-
-                hasEvents = true;
-
-                expired.Add(calendarEvent);
+                i++;
             }
 
-            if (hasEvents)
+            i = 0;
+            foreach (Event calendarEvent in events)
             {
-                timeslotVariableCollection.Parse("EVENTS", "TRUE");
+                if (calendarEvent.AllDay)
+                {
+                    continue;
+                }
+
+                long startTime = calendarEvent.StartTimeRaw;
+                long endTime = calendarEvent.EndTimeRaw;
+
+                if (endTime > endOfDay)
+                {
+                    endTime = endOfDay;
+                }
+
+                if (startTime < startOfDay)
+                {
+                    startTime = startOfDay;
+                }
+
+                DateTime startDateTime = core.Tz.DateTimeFromMysql(startTime);
+                DateTime endDateTime = core.Tz.DateTimeFromMysql(endTime - 1);
+                long startMinute = startDateTime.Minute;
+                long startHour = startDateTime.Hour;
+                long endMinute = endDateTime.Minute;
+                long endHour = endDateTime.Hour;
+                int startFifteen = (int)Math.Floor(startHour * 4.0 + startMinute / 15.0);
+                int endFifteen = (int)Math.Floor(endHour * 4.0 + endMinute / 15.0);
+
+                int maxEventsOnFifteen = 0;
+                for (int j = startFifteen; j <= endFifteen; j++)
+                {
+                    eventNumber[j]++;
+                    if (eventCount[j] > maxEventsOnFifteen)
+                    {
+                        maxEventsOnFifteen = eventCount[j];
+                    }
+                }
+
+                lefts[i] = 100 - 100.0 * eventNumber[startFifteen] / Math.Max(1, maxEventsOnFifteen);
+
+                widths[i] /= Math.Max(1, maxEventsOnFifteen);
+
+                VariableCollection eventVariableCollection = timeslotVariableCollections[startHour].CreateChild("event");
+
+                eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
+                eventVariableCollection.Parse("URI", calendarEvent.Uri);
+
+                eventVariableCollection.Parse("LEFT", lefts[i].ToString());
+                eventVariableCollection.Parse("WIDTH", widths[i].ToString());
+                eventVariableCollection.Parse("TOP", tops[i].ToString());
+                eventVariableCollection.Parse("HEIGHT", heights[i].ToString());
+
+                timeslotVariableCollections[startHour].Parse("EVENTS", "TRUE");
+
+                expired.Add(calendarEvent);
+                i++;
             }
 
             foreach (Event calendarEvent in expired)

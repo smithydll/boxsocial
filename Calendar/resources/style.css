@@ -5,12 +5,12 @@
 
 div.month div.week
 {
-	height: 77px;
+	height: 75px;
 }
 
 div.month div.week-head
 {
-	height: 22px;
+	height: 20px;
 }
 
 div.month div.week-head div.day
@@ -21,6 +21,7 @@ div.month div.week-head div.day
 	font-weight: bold;
 	text-align: center;
 	border: solid 1px #F7F7F7;
+	background-color: #FFFFFF;
 	-webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -172,8 +173,13 @@ ul#day-timeslots {
 
 ul#day-timeslots li {
 	list-style: none;
-	height: 24px;
+	height: 30px;
 	border: solid 1px #F7F7F7;
+}
+
+ul#day-timeslots li dl {
+    margin: 0;
+    padding: 0;
 }
 
 ul#day-timeslots li dl dt {
@@ -191,7 +197,7 @@ ul#day-timeslots li dl dd {
 ul.day-events {
 	list-style: none;
 	padding: 0px;
-	margin: 0 5px;
+	margin: 0;
 }
 
 ul.all-day-events {
@@ -206,6 +212,9 @@ ul#day-timeslots li ul.day-events li.event {
 	padding: 1px;
 	border: solid 1px #E7E7E7;
 	border-left: solid 5px #27DD66;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 ul.all-day-events li.event {

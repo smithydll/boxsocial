@@ -42,6 +42,8 @@ namespace BoxSocial.Internals
         private string primaryEmail;
         [DataField("user_time_zone")]
         private ushort timeZoneCode;
+        [DataField("user_language", 8)]
+        private string language;
         [DataField("user_active")]
         private bool userActivated;
         [DataField("user_activate_code", 64)]
@@ -419,6 +421,21 @@ namespace BoxSocial.Internals
             get
             {
                 return timeZone;
+            }
+        }
+
+        /// <summary>
+        /// Get's the user's language code
+        /// </summary>
+        public string Language
+        {
+            get
+            {
+                return language;
+            }
+            set
+            {
+                SetPropertyByRef(new { language }, value);
             }
         }
 

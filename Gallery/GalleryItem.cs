@@ -1077,7 +1077,7 @@ namespace BoxSocial.Applications.Gallery
                 case "image/png":
                 case "image/jpeg":
                 case "image/pjpeg":
-                    //case "image/gif": // not accepting gif at the moment
+                case "image/gif": // not accepting gif at the moment
                     break;
                 default:
                     throw new InvalidGalleryItemTypeException();
@@ -2096,6 +2096,7 @@ namespace BoxSocial.Applications.Gallery
 
                 ImageMagick.CropImage(wand, (IntPtr)square, (IntPtr)square, (IntPtr)(cropX / 2), (IntPtr)(cropY / 2));
                 ImageMagick.ResizeImage(wand, (IntPtr)(width), (IntPtr)(height), ImageMagick.Filter.Lanczos, 1.0);
+                ImageMagick.SetImagePage(wand, (IntPtr)0, (IntPtr)0, (IntPtr)0, (IntPtr)0);
 
                 byte[] newdata = ImageMagick.GetImageBlob(wand);
 
@@ -2529,15 +2530,21 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                string size = "_tiny";
+                if (ItemWidth <= 80 && ItemHeight <= 80)
+                {
+                    return UltraUri;
+                }
+
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                        Owner.UriStub, FullPath));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, FullPath, size));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_tiny/{1}",
-                        Owner.UriStub, path));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, path, size));
                 }
             }
         }
@@ -2549,15 +2556,21 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                string size = "_thumb";
+                if (ItemWidth <= 160 && ItemHeight <= 160)
+                {
+                    return UltraUri;
+                }
+
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
-                        Owner.UriStub, FullPath));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, FullPath, size));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_thumb/{1}",
-                        Owner.UriStub, path));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, path, size));
                 }
             }
         }
@@ -2569,15 +2582,21 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                string size = "_mobile";
+                if (ItemWidth <= 320 && ItemHeight <= 320)
+                {
+                    return UltraUri;
+                }
+
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_mobile/{1}",
-                        Owner.UriStub, FullPath));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, FullPath, size));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_mobile/{1}",
-                        Owner.UriStub, path));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, path, size));
                 }
             }
         }
@@ -2589,30 +2608,36 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                string size = "_display";
+                if (ItemWidth <= 640 && ItemHeight <= 640)
+                {
+                    return UltraUri;
+                }
+
                 if (parentId > 0)
                 {
                     if (!string.IsNullOrEmpty(core.Http["reload"]))
                     {
-                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}?reload=" + UnixTime.UnixTimeStamp(),
-                            Owner.UriStub, FullPath));
+                        return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, FullPath, size));
                     }
                     else
                     {
-                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                            Owner.UriStub, FullPath));
+                        return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                            Owner.UriStub, FullPath, size));
                     }
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(core.Http["reload"]))
                     {
-                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}?reload=" + UnixTime.UnixTimeStamp(),
-                            Owner.UriStub, path));
+                        return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}?reload=" + UnixTime.UnixTimeStamp(),
+                            Owner.UriStub, path, size));
                     }
                     else
                     {
-                        return core.Uri.AppendSid(string.Format("{0}images/_display/{1}",
-                            Owner.UriStub, path));
+                        return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                            Owner.UriStub, path, size));
                     }
                 }
             }
@@ -2625,6 +2650,11 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                if (ItemWidth <= 1280 && ItemHeight <= 1280)
+                {
+                    return UltraUri;
+                }
+
                 if (parentId > 0)
                 {
                     if (!string.IsNullOrEmpty(core.Http["reload"]))
@@ -2661,15 +2691,21 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                string size = "_ultra";
+                /*if (ItemWidth <= 2560 && ItemHeight <= 2560)
+                {
+                    return OriginalUri;
+                }*/
+
                 if (parentId > 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_ultra/{1}",
-                        Owner.UriStub, FullPath));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, FullPath, size));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}images/_ultra/{1}",
-                        Owner.UriStub, path));
+                    return core.Uri.AppendSid(string.Format("{0}images/{2}/{1}",
+                        Owner.UriStub, path, size));
                 }
             }
         }

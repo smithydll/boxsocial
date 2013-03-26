@@ -123,24 +123,29 @@
     <Compile Include="Feed.cs" />
     <Compile Include="FriendGroup.cs" />
     <Compile Include="Functions.cs" />
+    <Compile Include="Hashtag.cs" />
     <Compile Include="HookEventArgs.cs" />
     <Compile Include="IActionableItem.cs" />
     <Compile Include="IAppInfo.cs" />
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
+    <Compile Include="IHashtagableItem.cs" />
     <Compile Include="ILikeableItem.cs" />
     <Compile Include="InviteKey.cs" />
     <Compile Include="IPermissibleItem.cs" />
     <Compile Include="IPermissibleSubItem.cs" />
     <Compile Include="IRateableItem.cs" />
+    <Compile Include="ISearchableItem.cs" />
     <Compile Include="IShareableItem.cs" />
     <Compile Include="ISubscribeableItem.cs" />
     <Compile Include="ITagableItem.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="ItemHashtag.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemTag.cs" />
     <Compile Include="IUniqueKeyedItem.cs" />
     <Compile Include="IViewableItem.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="License.cs" />
     <Compile Include="Like.cs" />
     <Compile Include="Navigation.cs" />
@@ -159,6 +164,8 @@
     <Compile Include="PPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="SearchItemKeyword.cs" />
+    <Compile Include="SearchKeyword.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="StaticShowAttribute.cs" />
     <Compile Include="Subscription.cs" />

@@ -73,6 +73,9 @@ namespace BoxSocial.IO
         [DllImport("libMagickWand.so.4", EntryPoint = "MagickResizeImage")]
         public static extern bool ResizeImage(IntPtr mgck_wand, IntPtr columns, IntPtr rows, Filter filter_type, double blur);
 
+        [DllImport("libMagickWand.so.4", EntryPoint = "MagickSetImagePage")]
+        public static extern bool SetImagePage(IntPtr mgck_wand, IntPtr width, IntPtr height, IntPtr x, IntPtr y);
+
         [DllImport("libMagickWand.so.4", EntryPoint = "MagickCropImage")]
         public static extern bool CropImage(IntPtr mgck_wand, IntPtr columns, IntPtr rows, IntPtr x, IntPtr y);
 

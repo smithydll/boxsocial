@@ -1074,6 +1074,7 @@ namespace BoxSocial.Internals
             query.AddField("user_show_custom_styles", true);
             query.AddField("user_new_password", "");
             query.AddField("user_last_visit_ut", -30610224000L);
+            query.AddField("user_language", "en");
 
             if (db.Query(query) < 0)
             {

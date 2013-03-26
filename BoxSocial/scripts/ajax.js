@@ -541,3 +541,32 @@ function ShowPoststatus() {
     });
     return false;
 }
+
+/* http://stackoverflow.com/questions/13442897/jquery-animate-backgroundposition-not-working */
+$.cssHooks["backgroundPositionY"] = {
+    get: function (elem, computed, extra) {
+        return elem.style.backgroundPosition.split(' ')[1];
+    },
+    set: function (elem, value) {
+        var x = elem.style.backgroundPosition.split(' ')[0];
+        elem.style.backgroundPosition = x + ' ' + value;
+    }
+};
+
+$(document).ready(function () {
+    $('.info').on('mouseenter', function () {
+        if ($(this).height() == 100 && $(this).hasClass('info') && (!$(this).hasClass('overlay'))) {
+            $(this).clone().addClass('overlay').css('position', 'absolute').css('width', '775px').css('z-index', '10').prependTo($(this).parent()).animate({ height: '190px', 'backgroundPositionY': '0px' }, 500);
+
+            $('.info.overlay').on('mouseleave', function () {
+                $(this).delay('350').animate({ height: '100px', 'backgroundPositionY': '-50px' }, 500, function () {
+                    $(this).remove();
+                });
+            });
+
+            $('.info.overlay').on('mouseenter', function () {
+                $(this).clearQueue();
+            });
+        }
+    });
+});

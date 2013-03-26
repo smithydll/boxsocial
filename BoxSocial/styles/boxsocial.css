@@ -1216,6 +1216,11 @@ ul#group-members li.member div.frame ul.actions li {
 	background-color: #333333;
 	color: #FFFFFF;
 	padding-left: 180px;
+	/*overflow: hidden;*/
+}
+
+#overview-profile div.info.overlay {
+    box-shadow: 0 3px 6px #666666;
 }
 
 #overview-profile div.info a {

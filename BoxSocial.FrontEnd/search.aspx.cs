@@ -177,16 +177,15 @@ namespace BoxSocial.FrontEnd
 
             template.SetTemplate("search_results.html");
 
-            template.Parse("RESULTS", searchDataTable.Rows.Count.ToString());
-
             foreach (DataRow dr in searchDataTable.Rows)
             {
                 BoxSocial.Internals.User user = new User(core, dr, UserLoadOptions.All);
 
-                VariableCollection userVariableCollection = template.CreateChild("search_listing");
+                VariableCollection userVariableCollection = template.CreateChild("search_user");
 
                 userVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
                 userVariableCollection.Parse("ICON", user.UserIcon);
+                userVariableCollection.Parse("TILE", user.UserTile);
                 userVariableCollection.Parse("U_PROFILE", user.Uri);
                 userVariableCollection.Parse("JOIN_DATE", tz.DateTimeToString(user.UserInfo.GetRegistrationDate(tz)));
                 userVariableCollection.Parse("USER_AGE", user.Profile.AgeString);
@@ -201,7 +200,35 @@ namespace BoxSocial.FrontEnd
                     }
                 }
             }
-            
+
+            Search search = new Search(core);
+
+            List<ISearchableItem> results = search.DoSearch(query, 1, null, null);
+
+            int resultsRemoved = 0;
+            foreach (ISearchableItem result in results)
+            {
+                bool canView = true;
+                if (result is IPermissibleItem)
+                {
+                    IPermissibleItem item = (IPermissibleItem)result;
+
+                    if (!item.Access.Can("VIEW"))
+                    {
+                        canView = false;
+                        resultsRemoved++;
+                    }
+                }
+
+                if (canView)
+                {
+                    VariableCollection listingVariableCollection = template.CreateChild("search_listing");
+
+                    listingVariableCollection.Parse("BODY", result.RenderPreview());
+                }
+            }
+
+            template.Parse("RESULTS", (searchDataTable.Rows.Count + results.Count - resultsRemoved).ToString());
         }
 
         private void showFriends()

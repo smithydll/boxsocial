@@ -57,7 +57,7 @@ namespace BoxSocial.Applications.Blog
     [Permission("VIEW", "Can view this blog entry", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this blog entry", PermissionTypes.Interact)]
     [Permission("RATE", "Can rate this blog entry", PermissionTypes.Interact)]
-    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem
+    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -485,6 +485,9 @@ namespace BoxSocial.Applications.Blog
                 new FieldValuePair("post_category", category),
                 new FieldValuePair("post_simple_permissions", true));
 
+            Search search = new Search(core);
+            search.Index(blogEntry);
+
             return blogEntry;
         }
 
@@ -506,8 +509,8 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                UnixTime tz = new UnixTime(core, ((User)owner).UserInfo.TimeZoneCode);
-                return core.Uri.BuildBlogPostUri((User)owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+                UnixTime tz = new UnixTime(core, ((User)Owner).UserInfo.TimeZoneCode);
+                return core.Uri.BuildBlogPostUri((User)Owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
             }
         }
 
@@ -596,7 +599,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public bool IsItemGroupMember(User viewer, ItemKey key)
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -641,6 +644,66 @@ namespace BoxSocial.Applications.Blog
             {
                 return Info.Dislikes;
             }
+        }
+
+
+        public string IndexingString
+        {
+            get
+            {
+                return core.Bbcode.Strip(Body);
+            }
+        }
+
+        public string IndexingTitle
+        {
+            get
+            {
+                return Title;
+            }
+        }
+
+        public Template RenderPreview()
+        {
+            Template template = new Template("Blog", "blogentry");
+
+            VariableCollection blogPostVariableCollection = template.CreateChild("blog_list");
+
+            blogPostVariableCollection.Parse("TITLE", Title);
+
+            DateTime postDateTime = GetCreatedDate(core.Tz);
+
+            string postUrl = HttpUtility.HtmlEncode(string.Format("{0}blog/{1}/{2:00}/{3}",
+                    Owner.UriStub, postDateTime.Year, postDateTime.Month, PostId));
+
+            blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
+            blogPostVariableCollection.Parse("URL", postUrl);
+            blogPostVariableCollection.Parse("ID", Id);
+            blogPostVariableCollection.Parse("TYPE_ID", ItemKey.TypeId);
+
+            core.Display.ParseBbcode(blogPostVariableCollection, "POST", Body, Owner);
+
+            if (core.Session.IsLoggedIn)
+            {
+                if (Owner.IsItemOwner(core.Session.LoggedInMember))
+                {
+                    blogPostVariableCollection.Parse("IS_OWNER", "TRUE");
+                    blogPostVariableCollection.Parse("U_DELETE", DeleteUri);
+                }
+            }
+
+            if (Info.Likes > 0)
+            {
+                blogPostVariableCollection.Parse("LIKES", string.Format(" {0:d}", Info.Likes));
+                blogPostVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", Info.Dislikes));
+            }
+
+            if (Info.Comments > 0)
+            {
+                blogPostVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", Info.Comments));
+            }
+
+            return template;
         }
     }
 

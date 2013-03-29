@@ -124,7 +124,7 @@ namespace BoxSocial.Networks
             {
                 Network theNetwork = new Network(core, networkId);
 
-                if (theNetwork.IsNetworkMember(LoggedInMember))
+                if (theNetwork.IsNetworkMember(LoggedInMember.ItemKey))
                 {
                     SetRedirectUri(theNetwork.Uri);
                     core.Display.ShowMessage("Already a member", "You are already a member of this network");
@@ -255,7 +255,7 @@ namespace BoxSocial.Networks
                 {
                     Network theNetwork = new Network(core, networkId);
 
-                    if (theNetwork.IsNetworkMember(LoggedInMember))
+                    if (theNetwork.IsNetworkMember(LoggedInMember.ItemKey))
                     {
                         db.BeginTransaction();
                         db.UpdateQuery(string.Format("DELETE FROM network_members WHERE network_id = {0} AND user_id = {1};",

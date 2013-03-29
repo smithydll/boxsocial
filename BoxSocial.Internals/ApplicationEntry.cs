@@ -1226,7 +1226,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -1271,7 +1271,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(User)))
             {

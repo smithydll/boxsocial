@@ -191,7 +191,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.Session.IsLoggedIn)
             {
-                if (page.Group.IsGroupMember(core.Session.LoggedInMember))
+                if (page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -215,7 +215,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (core.Session.IsLoggedIn)
             {
-                if (page.Network.IsNetworkMember(core.Session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("CAN_COMMENT", "TRUE");
                 }

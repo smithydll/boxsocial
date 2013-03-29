@@ -987,7 +987,7 @@ namespace BoxSocial.Applications.Forum
 
             if (parent.Owner is UserGroup)
             {
-                if (!((UserGroup)parent.Owner).IsGroupOperator(core.Session.LoggedInMember))
+                if (!((UserGroup)parent.Owner).IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                 {
                     // todo: throw new exception
                     throw new UnauthorisedToCreateItemException();
@@ -1499,7 +1499,7 @@ namespace BoxSocial.Applications.Forum
                 thisForum.ReadAll(true);
             }
 
-            if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.Session.LoggedInMember)))
+            if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey)))
             {
                 page.template.Parse("U_JOIN", page.Group.JoinUri);
             }
@@ -1962,7 +1962,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public bool IsItemGroupMember(User viewer, ItemKey key)
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }

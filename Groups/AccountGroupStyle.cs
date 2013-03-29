@@ -99,7 +99,7 @@ namespace BoxSocial.Groups
             css.Generator = StyleGenerator.Advanced;
             css.Parse(core.Http.Form["css-style"]);
 
-            if (!thisGroup.IsGroupOperator(LoggedInMember))
+            if (!thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
             {
                 core.Display.ShowMessage("Cannot Edit Group", "You must be an operator of the group to edit it.");
                 return;

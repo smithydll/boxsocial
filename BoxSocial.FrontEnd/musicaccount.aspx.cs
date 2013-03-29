@@ -152,7 +152,7 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            if (!Musician.IsMusicianMember(loggedInMember))
+            if (!Musician.IsMusicianMember(loggedInMember.ItemKey))
             {
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this musician.");
             }

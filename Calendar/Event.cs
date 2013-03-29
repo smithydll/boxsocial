@@ -325,7 +325,7 @@ namespace BoxSocial.Applications.Calendar
             if (core.LoggedInMemberId == userId)
             {
                 // we can only invite people friends with us to an event
-                if (invitee.IsFriend(user))
+                if (invitee.IsFriend(user.ItemKey))
                 {
                     InsertQuery iQuery = new InsertQuery("event_invites");
                     iQuery.AddField("event_id", EventId);
@@ -380,7 +380,7 @@ namespace BoxSocial.Applications.Calendar
                 foreach (User invitee in invitees)
                 {
                     // we can only invite people friends with us to an event
-                    if (invitee.IsFriend(user))
+                    if (invitee.IsFriend(user.ItemKey))
                     {
                         friends++;
 
@@ -465,7 +465,7 @@ namespace BoxSocial.Applications.Calendar
             return invites;
         }
 
-        public bool IsInvitee(User member)
+        public bool IsInvitee(ItemKey member)
         {
             if (member != null)
             {
@@ -489,7 +489,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public bool IsAttending(User member, EventAttendance attendance)
+        public bool IsAttending(ItemKey member, EventAttendance attendance)
         {
             if (member != null)
             {
@@ -607,7 +607,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.Session.LoggedInMember))
+                if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.Session.LoggedInMember.ItemKey))
                 {
                     e.Core.Functions.Generate403();
                     return;
@@ -628,7 +628,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (!(calendarEvent is BirthdayEvent))
             {
-                if (calendarEvent.Access.Can("COMMENT") || (e.Core.Session.IsLoggedIn && calendarEvent.IsInvitee(e.Core.Session.LoggedInMember)))
+                if (calendarEvent.Access.Can("COMMENT") || (e.Core.Session.IsLoggedIn && calendarEvent.IsInvitee(e.Core.Session.LoggedInMember.ItemKey)))
                 {
                     e.Template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -883,7 +883,7 @@ namespace BoxSocial.Applications.Calendar
             return itemGroups;
         }
 
-        public bool IsItemGroupMember(User viewer, ItemKey key)
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             if (key == EventInvite.InviteesGroupKey)
             {

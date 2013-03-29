@@ -885,7 +885,7 @@ namespace BoxSocial.Internals
             return friends;
         }
 
-        public Relation GetRelations(User member)
+        public Relation GetRelations(ItemKey member)
         {
             Relation returnValue = Relation.None;
 
@@ -894,13 +894,13 @@ namespace BoxSocial.Internals
                 return Relation.None;
             }
 
-            if (member.UserId == userId)
+            if (member.Id == userId)
             {
                 return Relation.Owner;
             }
 
             DataTable relationMe = db.Query(string.Format("SELECT relation_type, relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1};",
-                    userId, member.userId));
+                    userId, member.Id));
 
             for (int i = 0; i < relationMe.Rows.Count; i++)
             {
@@ -923,7 +923,7 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
-        public bool IsFriend(User member)
+        public bool IsFriend(ItemKey member)
         {
             if ((GetRelations(member) & Relation.Friend) == Relation.Friend)
             {
@@ -935,7 +935,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsFamily(User member)
+        public bool IsFamily(ItemKey member)
         {
             if ((GetRelations(member) & Relation.Family) == Relation.Family)
             {
@@ -947,7 +947,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsBlocked(User member)
+        public bool IsBlocked(ItemKey member)
         {
             if ((GetRelations(member) & Relation.Blocked) == Relation.Blocked)
             {
@@ -1623,7 +1623,7 @@ namespace BoxSocial.Internals
             Relation viewerRelation;
             if (!sessionRelationsSet)
             {
-                viewerRelation = GetRelations(viewer);
+                viewerRelation = GetRelations(viewer.ItemKey);
                 sessionRelations = viewerRelation;
                 sessionRelationsSet = true;
             }
@@ -1668,7 +1668,7 @@ namespace BoxSocial.Internals
             Relation viewerRelation;
             if (!sessionRelationsSet)
             {
-                viewerRelation = GetRelations(viewer);
+                viewerRelation = GetRelations(viewer.ItemKey);
                 sessionRelations = viewerRelation;
                 sessionRelationsSet = true;
             }
@@ -2134,7 +2134,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -2200,19 +2200,19 @@ namespace BoxSocial.Internals
                 switch (subType)
                 {
                     case -1:
-                        if (IsFriend(core.Session.LoggedInMember))
+                        if (IsFriend(core.Session.LoggedInMember.ItemKey))
                         {
                             return true;
                         }
                         break;
                     case -2:
-                        if (IsFamily(core.Session.LoggedInMember))
+                        if (IsFamily(core.Session.LoggedInMember.ItemKey))
                         {
                             return true;
                         }
                         break;
                     case -3:
-                        if (IsBlocked(core.Session.LoggedInMember))
+                        if (IsBlocked(core.Session.LoggedInMember.ItemKey))
                         {
                             return true;
                         }
@@ -2260,7 +2260,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (viewer == null)
             {

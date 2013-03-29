@@ -77,7 +77,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (!thisGroup.IsGroupMember(LoggedInMember))
+                if (!thisGroup.IsGroupMember(LoggedInMember.ItemKey))
                 {
                     core.Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                     return;
@@ -117,13 +117,13 @@ namespace BoxSocial.Groups
                 {
                     User inviteMember = core.PrimitiveCache[core.LoadUserProfile(username)];
 
-                    if (!thisGroup.IsGroupMember(LoggedInMember))
+                    if (!thisGroup.IsGroupMember(LoggedInMember.ItemKey))
                     {
                         core.Display.ShowMessage("Error", "You must be a member of a group to invite someone to it.");
                         return;
                     }
 
-                    if (!thisGroup.IsGroupMember(inviteMember))
+                    if (!thisGroup.IsGroupMember(inviteMember.ItemKey))
                     {
                         // use their relation, otherwise you could just create a billion pending friends and still SPAM them with group invites
                         DataTable friendsTable = db.Query(string.Format("SELECT relation_time_ut FROM user_relations WHERE relation_me = {0} AND relation_you = {1} AND relation_type = 'FRIEND';",

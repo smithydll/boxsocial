@@ -136,6 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\blog.svg" />
+    <EmbeddedResource Include="templates\blogentry.html">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Content Include="templates\user_blog_notification.html" />
   </ItemGroup>
   <ItemGroup>

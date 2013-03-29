@@ -162,7 +162,7 @@ namespace BoxSocial.Musician
             {
                 Musician owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
 
-                if (owner.IsMusicianMember(member))
+                if (owner.IsMusicianMember(member.ItemKey))
                 {
                     return true;
                 }

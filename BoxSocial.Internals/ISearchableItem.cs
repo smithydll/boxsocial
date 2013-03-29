@@ -31,7 +31,17 @@ namespace BoxSocial.Internals
 {
     public interface ISearchableItem
     {
+        Primitive Owner
+        {
+            get;
+        }
+
         long Id
+        {
+            get;
+        }
+
+        ItemKey ItemKey
         {
             get;
         }
@@ -46,6 +56,17 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public Template RenderPreview();
+        string IndexingString
+        {
+            get;
+        }
+
+        string IndexingTitle
+        {
+            get;
+        }
+
+        Template RenderPreview();
+
     }
 }

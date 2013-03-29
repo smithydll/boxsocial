@@ -263,7 +263,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract bool IsItemGroupMember(User viewer, ItemKey key);
+        public abstract bool IsItemGroupMember(ItemKey viewer, ItemKey key);
         
         public IPermissibleItem PermissiveParent
         {
@@ -290,7 +290,7 @@ namespace BoxSocial.Internals
         public abstract List<User> GetPermissionUsers();
         public abstract List<User> GetPermissionUsers(string namePart);
 
-        public abstract bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey);
+        public abstract bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey);
 
         public abstract bool CanEditPermissions();
         public abstract bool CanEditItem();

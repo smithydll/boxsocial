@@ -219,7 +219,7 @@ namespace BoxSocial.Applications.Forum
         {
             if (owner is UserGroup)
             {
-                if (!((UserGroup)owner).IsGroupOperator(core.Session.LoggedInMember))
+                if (!((UserGroup)owner).IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                 {
                     // todo: throw new exception
                     throw new UnauthorisedToCreateItemException();
@@ -253,7 +253,7 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                if (core.Session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember))
+                if (core.Session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("IS_FORUM_MEMBER", "TRUE");
                 }
@@ -315,7 +315,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public bool IsItemGroupMember(User viewer, ItemKey key)
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }

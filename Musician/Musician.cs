@@ -121,7 +121,7 @@ namespace BoxSocial.Musician
 
         private Access access;
 
-        private Dictionary<User, bool> musicianMemberCache = new Dictionary<User, bool>();
+        private Dictionary<ItemKey, bool> musicianMemberCache = new Dictionary<ItemKey, bool>();
         private string iconUri = string.Empty;
         private string displayNameOwnership;
 
@@ -1042,7 +1042,7 @@ namespace BoxSocial.Musician
             return output;
         }
 
-        public bool IsMusicianMember(User user)
+        public bool IsMusicianMember(ItemKey user)
         {
             if (user != null)
             {
@@ -1059,21 +1059,21 @@ namespace BoxSocial.Musician
             return false;
         }
 
-        private void preLoadMemberCache(User member)
+        private void preLoadMemberCache(ItemKey key)
         {
             SelectQuery query = new SelectQuery("musician_members");
             query.AddCondition("musician_id", musicianId);
-            query.AddCondition("user_id", member.UserId);
+            query.AddCondition("user_id", key.Id);
 
             DataTable memberTable = db.Query(query);
 
             if (memberTable.Rows.Count > 0)
             {
-                musicianMemberCache.Add(member, true);
+                musicianMemberCache.Add(key, true);
             }
             else
             {
-                musicianMemberCache.Add(member, false);
+                musicianMemberCache.Add(key, false);
             }
         }
 
@@ -1110,7 +1110,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -1140,7 +1140,7 @@ namespace BoxSocial.Musician
             return users;
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
@@ -1154,7 +1154,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.Session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;
@@ -1164,7 +1164,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.Session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;
@@ -1174,7 +1174,7 @@ namespace BoxSocial.Musician
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsMusicianMember(core.Session.LoggedInMember);
+                return IsMusicianMember(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;

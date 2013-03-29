@@ -179,7 +179,7 @@ namespace BoxSocial.Applications.News
                 {
                     case "GROUP":
                         UserGroup group = new UserGroup(core, (long)articleTable.Rows[0]["article_item_id"]);
-                        if (group.IsGroupOperator(member))
+                        if (group.IsGroupOperator(member.ItemKey))
                         {
                             return true;
                         }

@@ -48,7 +48,7 @@ namespace BoxSocial.Applications.Calendar
             this.owner = owner;
             this.user = user;
 
-            if (!user.IsFriend(owner))
+            if (!user.IsFriend(owner.ItemKey))
             {
                 throw new InvalidEventException();
             }

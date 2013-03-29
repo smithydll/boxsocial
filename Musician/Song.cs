@@ -218,7 +218,7 @@ namespace BoxSocial.Musician
                 throw new NullCoreException();
             }
 
-            if (owner.IsMusicianMember(core.Session.LoggedInMember))
+            if (owner.IsMusicianMember(core.Session.LoggedInMember.ItemKey))
             {
                 Item item = Item.Create(core, typeof(Song), new FieldValuePair("musician_id", owner.Id),
                     new FieldValuePair("song_title", title),

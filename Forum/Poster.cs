@@ -95,7 +95,7 @@ namespace BoxSocial.Applications.Forum
                 page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/post",
                     ((GPage)page).Group.UriStub), true));
 
-                if (((GPage)page).Group.IsGroupOperator(core.Session.LoggedInMember) && topicId == 0)
+                if (((GPage)page).Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey) && topicId == 0)
                 {
                     // TODO: Global, remember to update columns to 4
                 }

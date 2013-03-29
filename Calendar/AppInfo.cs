@@ -175,7 +175,7 @@ namespace BoxSocial.Applications.Calendar
         {
             Event calendarEvent = new Event(core, itemKey.Id);
 
-            if (calendarEvent.Access.Can("COMMENT") || calendarEvent.IsInvitee(member))
+            if (calendarEvent.Access.Can("COMMENT") || calendarEvent.IsInvitee(member.ItemKey))
             {
                 return true;
             }

@@ -168,12 +168,22 @@ namespace BoxSocial.Internals
             return access;
         }
 
-        public bool Can(string permission)
+        public bool IsPublic()
         {
-            return Can(permission, (IPermissibleItem)item, false);
+            return Can("VIEW", (IPermissibleItem)item, false, User.EveryoneGroupKey);
         }
 
-        private bool Can(string permission, IPermissibleItem leaf, bool inherit)
+        public bool IsPrivateFriendsOrMembers()
+        {
+            return false;
+        }
+
+        public bool Can(string permission)
+        {
+            return Can(permission, (IPermissibleItem)item, false, Viewer.ItemKey);
+        }
+
+        private bool Can(string permission, IPermissibleItem leaf, bool inherit, ItemKey viewer)
         {
             bool allow = false;
             bool deny = false;
@@ -244,7 +254,7 @@ namespace BoxSocial.Internals
                     if (ItemKey != Item.PermissiveParentKey)
                     {
                         Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
-                        return parentAccess.Can(permission, Item, true);
+                        return parentAccess.Can(permission, Item, true, viewer);
                         //return item.PermissiveParent.Access.Can(permission, item, true);
                     }
                     else
@@ -286,7 +296,7 @@ namespace BoxSocial.Internals
                                         break;
                                 }
                             }
-                            if (grant.PrimitiveKey.Equals(User.CreatorKey) && viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
+                            if (grant.PrimitiveKey.Equals(User.CreatorKey) && viewer != null && owner.ItemKey.Equals(viewer))
                             {
                                 switch (grant.Allow)
                                 {
@@ -351,7 +361,7 @@ namespace BoxSocial.Internals
             {
                 if (owner == null && viewer != null)
                 {
-                    if (viewer.ItemKey.Equals(leaf.ItemKey))
+                    if (viewer.Equals(leaf.ItemKey))
                     {
                         return CachePermission(permission, true);
                     }
@@ -362,7 +372,7 @@ namespace BoxSocial.Internals
                 }
                 else if (ItemKey.Equals(owner.ItemKey))
                 {
-                    if (viewer != null && owner.ItemKey.Equals(viewer.ItemKey))
+                    if (viewer != null && owner.ItemKey.Equals(viewer))
                     {
                         return CachePermission(permission, true);
                     }
@@ -382,19 +392,19 @@ namespace BoxSocial.Internals
                         {
                             if (Item.PermissiveParentKey == null)
                             {
-                                return CachePermission(permission, Owner.Access.Can(permission, leaf, true));
+                                return CachePermission(permission, Owner.Access.Can(permission, leaf, true, viewer));
                             }
                             else
                             {
                                 Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
-                                return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true));
+                                return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true, viewer));
                                 //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParentKey.Type, permission), leaf, true));
                             }
                         }
                         else
                         {
                             Access parentAccess = new Access(core, new ItemKey(parents.Nodes[parents.Nodes.Count - 1].ParentId, ni.ParentTypeId), leaf);
-                            return CachePermission(permission, parentAccess.Can(permission, leaf, true));
+                            return CachePermission(permission, parentAccess.Can(permission, leaf, true, viewer));
                             //return CachePermission(permission, ((IPermissibleItem)NumberedItem.Reflect(core, new ItemKey(parents.Nodes[parents.Nodes.Count - 1].ParentId, ni.ParentTypeId))).Access.Can(permission, leaf, true));
                         }
                     }
@@ -402,12 +412,12 @@ namespace BoxSocial.Internals
                     {
                         if (Item.PermissiveParentKey == null)
                         {
-                            return CachePermission(permission, Owner.Access.Can(permission, leaf, true));
+                            return CachePermission(permission, Owner.Access.Can(permission, leaf, true, viewer));
                         }
                         else
                         {
                             Access parentAccess = new Access(core, Item.PermissiveParentKey, leaf);
-                            return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true));
+                            return CachePermission(permission, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.Type, permission), leaf, true, viewer));
                             //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParent.GetType(), permission), leaf, true));
                         }
                     }

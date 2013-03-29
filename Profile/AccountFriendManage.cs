@@ -144,7 +144,7 @@ namespace BoxSocial.Applications.Profile
 
             User friendProfile = new User(core, friendId);
 
-            bool isFriend = friendProfile.IsFriend(session.LoggedInMember);
+            bool isFriend = friendProfile.IsFriend(session.LoggedInMember.ItemKey);
 
             db.BeginTransaction();
             long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",

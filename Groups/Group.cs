@@ -64,11 +64,11 @@ namespace BoxSocial.Groups
         private UserGroupInfo groupInfo;
         private Access access;
 
-        private Dictionary<User, bool> groupMemberCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupMemberBannedCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupMemberAbsoluteCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupOperatorCache = new Dictionary<User, bool>();
+        private Dictionary<ItemKey, bool> groupMemberCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupMemberPendingCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupMemberBannedCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupMemberAbsoluteCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupOperatorCache = new Dictionary<ItemKey, bool>();
 
         public long GroupId
         {
@@ -584,12 +584,12 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        private void preLoadMemberCache(User member)
+        private void preLoadMemberCache(ItemKey itemKey)
         {
             SelectQuery query = new SelectQuery("group_members");
             query.AddFields("user_id", "group_member_approved");
             query.AddCondition("group_id", groupId);
-            query.AddCondition("user_id", member.UserId);
+            query.AddCondition("user_id", itemKey.Id);
 
             DataTable memberTable = db.Query(query);
 
@@ -598,35 +598,35 @@ namespace BoxSocial.Groups
                 switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["group_member_approved"])
                 {
                     case GroupMemberApproval.Pending:
-                        groupMemberCache.Add(member, false);
-                        groupMemberPendingCache.Add(member, true);
-                        groupMemberBannedCache.Add(member, false);
-                        groupMemberAbsoluteCache.Add(member, true);
+                        groupMemberCache.Add(itemKey, false);
+                        groupMemberPendingCache.Add(itemKey, true);
+                        groupMemberBannedCache.Add(itemKey, false);
+                        groupMemberAbsoluteCache.Add(itemKey, true);
                         break;
                     case GroupMemberApproval.Member:
-                        groupMemberCache.Add(member, true);
-                        groupMemberPendingCache.Add(member, false);
-                        groupMemberBannedCache.Add(member, false);
-                        groupMemberAbsoluteCache.Add(member, true);
+                        groupMemberCache.Add(itemKey, true);
+                        groupMemberPendingCache.Add(itemKey, false);
+                        groupMemberBannedCache.Add(itemKey, false);
+                        groupMemberAbsoluteCache.Add(itemKey, true);
                         break;
                     case GroupMemberApproval.Banned:
-                        groupMemberCache.Add(member, false);
-                        groupMemberPendingCache.Add(member, false);
-                        groupMemberBannedCache.Add(member, true);
-                        groupMemberAbsoluteCache.Add(member, false);
+                        groupMemberCache.Add(itemKey, false);
+                        groupMemberPendingCache.Add(itemKey, false);
+                        groupMemberBannedCache.Add(itemKey, true);
+                        groupMemberAbsoluteCache.Add(itemKey, false);
                         break;
                 }
             }
             else
             {
-                groupMemberCache.Add(member, false);
-                groupMemberPendingCache.Add(member, false);
-                groupMemberBannedCache.Add(member, false);
-                groupMemberAbsoluteCache.Add(member, false);
+                groupMemberCache.Add(itemKey, false);
+                groupMemberPendingCache.Add(itemKey, false);
+                groupMemberBannedCache.Add(itemKey, false);
+                groupMemberAbsoluteCache.Add(itemKey, false);
             }
         }
 
-        public bool IsGroupMemberAbsolute(User member)
+        public bool IsGroupMemberAbsolute(ItemKey member)
         {
             if (member != null)
             {
@@ -643,7 +643,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public bool IsGroupMemberPending(User member)
+        public bool IsGroupMemberPending(ItemKey member)
         {
             if (member != null)
             {
@@ -660,7 +660,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public bool IsGroupMember(User member)
+        public bool IsGroupMember(ItemKey member)
         {
             if (member != null)
             {
@@ -677,7 +677,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public bool IsGroupMemberBanned(User member)
+        public bool IsGroupMemberBanned(ItemKey member)
         {
             if (member != null)
             {
@@ -694,7 +694,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public bool IsGroupOperator(User member)
+        public bool IsGroupOperator(ItemKey member)
         {
             if (member != null)
             {
@@ -705,7 +705,7 @@ namespace BoxSocial.Groups
                 else
                 {
                     DataTable operatorTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
-                        groupId, member.UserId));
+                        groupId, member.Id));
 
                     if (operatorTable.Rows.Count > 0)
                     {
@@ -1131,7 +1131,7 @@ namespace BoxSocial.Groups
 
         public override bool CanModerateComments(User member)
         {
-            if (IsGroupOperator(member))
+            if (IsGroupOperator(member.ItemKey))
             {
                 return true;
             }
@@ -1155,7 +1155,7 @@ namespace BoxSocial.Groups
                 case "CLOSED":
                     return 0x0001;
                 case "PRIVATE":
-                    if (IsGroupMember(viewer))
+                    if (IsGroupMember(viewer.ItemKey))
                     {
                         return 0x0001;
                     }
@@ -1374,7 +1374,7 @@ namespace BoxSocial.Groups
             page.template.Parse("L_IS_ARE", langIsAre);
             page.template.Parse("U_MEMBERLIST", page.Group.MemberlistUri);
 
-            if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
+            if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
                 page.template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(page.Group.AccountUriStub));
@@ -1382,25 +1382,25 @@ namespace BoxSocial.Groups
 
             if (core.Session.IsLoggedIn)
             {
-                if (!page.Group.IsGroupMemberAbsolute(core.Session.LoggedInMember))
+                if (!page.Group.IsGroupMemberAbsolute(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("U_JOIN", page.Group.JoinUri);
                 }
                 else
                 {
-                    if (!page.Group.IsGroupOperator(core.Session.LoggedInMember))
+                    if (!page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                     {
-                        if (page.Group.IsGroupMember(core.Session.LoggedInMember))
+                        if (page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                         {
                             page.template.Parse("U_LEAVE", page.Group.LeaveUri);
                         }
-                        else if (page.Group.IsGroupMemberPending(core.Session.LoggedInMember))
+                        else if (page.Group.IsGroupMemberPending(core.Session.LoggedInMember.ItemKey))
                         {
                             page.template.Parse("U_CANCEL", page.Group.LeaveUri);
                         }
                     }
 
-                    if (page.Group.IsGroupMember(core.Session.LoggedInMember))
+                    if (page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                     {
                         page.template.Parse("U_INVITE", page.Group.InviteUri);
                     }
@@ -1447,7 +1447,7 @@ namespace BoxSocial.Groups
                 officersVariableCollection.Parse("OFFICER_TITLE", groupOfficer.OfficeTitle);
                 if (core.LoggedInMemberId > 0)
                 {
-                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
+                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                     {
                         officersVariableCollection.Parse("U_REMOVE", groupOfficer.BuildRemoveOfficerUri());
                     }
@@ -1492,7 +1492,7 @@ namespace BoxSocial.Groups
             page.template.Parse("U_FILTER_BEGINS_Y", page.Group.GetMemberlistUri("y"));
             page.template.Parse("U_FILTER_BEGINS_Z", page.Group.GetMemberlistUri("z"));
 
-            if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
+            if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
             {
                 page.template.Parse("GROUP_OPERATOR", "TRUE");
 
@@ -1535,7 +1535,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 if (core.LoggedInMemberId > 0)
                 {
-                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember))
+                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                     {
                         if (!member.IsOperator)
                         {
@@ -1825,7 +1825,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -1899,7 +1899,7 @@ namespace BoxSocial.Groups
                             return true;
                         case "REQUEST":
                         case "CLOSED":
-                            if (IsGroupMember(core.Session.LoggedInMember))
+                            if (IsGroupMember(core.Session.LoggedInMember.ItemKey))
                             {
                                 return true;
                             }
@@ -1912,7 +1912,7 @@ namespace BoxSocial.Groups
                     }
                     break;
                 case "COMMENT":
-                    if (IsGroupMember(core.Session.LoggedInMember))
+                    if (IsGroupMember(core.Session.LoggedInMember.ItemKey))
                     {
                         return true;
                     }
@@ -1926,7 +1926,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
@@ -1940,7 +1940,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.Session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;
@@ -1950,7 +1950,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.Session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;
@@ -1960,7 +1960,7 @@ namespace BoxSocial.Groups
         {
             if (core.LoggedInMemberId > 0)
             {
-                return IsGroupOperator(core.Session.LoggedInMember);
+                return IsGroupOperator(core.Session.LoggedInMember.ItemKey);
             }
 
             return false;

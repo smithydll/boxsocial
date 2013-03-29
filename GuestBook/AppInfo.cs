@@ -268,7 +268,7 @@ namespace BoxSocial.Applications.GuestBook
             {
                 UserGroup owner = new UserGroup(core, itemKey.Id);
 
-                if (owner.IsGroupMember(member))
+                if (owner.IsGroupMember(member.ItemKey))
                 {
                     return true;
                 }
@@ -289,7 +289,7 @@ namespace BoxSocial.Applications.GuestBook
             {
                 UserGroup owner = new UserGroup(core, itemKey.Id);
 
-                if (owner.IsGroupOperator(member))
+                if (owner.IsGroupOperator(member.ItemKey))
                 {
                     return true;
                 }
@@ -316,7 +316,7 @@ namespace BoxSocial.Applications.GuestBook
             {
                 Network owner = new Network(core, itemKey.Id);
 
-                if (owner.IsNetworkMember(member))
+                if (owner.IsNetworkMember(member.ItemKey))
                 {
                     return true;
                 }
@@ -393,7 +393,7 @@ namespace BoxSocial.Applications.GuestBook
             {
                 Musician.Musician owner = new Musician.Musician(core, itemKey.Id);
 
-                if (owner.IsMusicianMember(member))
+                if (owner.IsMusicianMember(member.ItemKey))
                 {
                     return true;
                 }
@@ -521,7 +521,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (e.core.Session.IsLoggedIn)
             {
-                if (thisGroup.IsGroupMember(e.core.Session.LoggedInMember))
+                if (thisGroup.IsGroupMember(e.core.Session.LoggedInMember.ItemKey))
                 {
                     template.Parse("CAN_COMMENT", "TRUE");
                 }
@@ -544,7 +544,7 @@ namespace BoxSocial.Applications.GuestBook
 
             if (e.core.Session.IsLoggedIn)
             {
-                if (theNetwork.IsNetworkMember(e.core.Session.LoggedInMember))
+                if (theNetwork.IsNetworkMember(e.core.Session.LoggedInMember.ItemKey))
                 {
                     template.Parse("CAN_COMMENT", "TRUE");
                 }

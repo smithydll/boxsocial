@@ -3,39 +3,48 @@
 <!-- IF RESULTS -->
 <h2>Search Results</h2>
 
+<p>Showing {RESULTS} search results.</p>
+
 <ul id="group-members">
-<!-- BEGIN search_listing -->
+<!-- BEGIN search_user -->
 	<li class="member">
 		<div class="frame">
 			<div class="avatar">
-				<a href="{search_listing.U_PROFILE}">
-				<!-- IF search_listing.ICON -->
-				<img src="{search_listing.ICON}" alt="{search_listing.USER_DISPLAY_NAME}" />
+				<a href="{search_user.U_PROFILE}">
+				<!-- IF search_user.TILE -->
+				<img src="{search_user.TILE}" alt="{search_user.USER_DISPLAY_NAME}" />
 				<!-- ELSE -->
-				<img src="/images/no_picture_100.png" alt="{search_listing.USER_DISPLAY_NAME}" />
+				<img src="/images/no_picture_100.png" alt="{search_user.USER_DISPLAY_NAME}" />
 				<!-- ENDIF -->
 				</a>
 			</div>
 			<ul class="actions">
-				<!-- IF search_listing.U_ADD_FRIEND -->
-				<li><a href="{search_listing.U_ADD_FRIEND}">Add to Friends</a></li>
+				<!-- IF search_user.U_ADD_FRIEND -->
+				<li><a href="{search_user.U_ADD_FRIEND}">Add to Friends</a></li>
 				<!-- ENDIF -->
 			</ul>
 			<ul class="details">
-				<li><a href="{search_listing.U_PROFILE}">{search_listing.USER_DISPLAY_NAME}</a></li>
-				<!-- IF search_listing.USER_AGE -->
-				<li>{search_listing.USER_AGE}</li>
+				<li><a href="{search_user.U_PROFILE}">{search_user.USER_DISPLAY_NAME}</a></li>
+				<!-- IF search_user.USER_AGE -->
+				<li>{search_user.USER_AGE}</li>
 				<!-- ENDIF -->
-				<!-- IF search_listing.USER_COUNTRY -->
-				<li>{search_listing.USER_COUNTRY}</li>
+				<!-- IF search_user.USER_COUNTRY -->
+				<li>{search_user.USER_COUNTRY}</li>
 				<!-- ENDIF -->
-				<li>Joined {search_listing.JOIN_DATE}</li>
-				<li><em>{search_listing.USER_CAPTION}</em></li>
+				<li>Joined {search_user.JOIN_DATE}</li>
+				<li><em>{search_user.USER_CAPTION}</em></li>
 			</ul>
 		</div>
 	</li>
-<!-- END search_listing -->
+<!-- END search_user -->
 </ul>
+
+<!-- BEGIN search_listing -->
+<div class="listing">
+{search_listing.BODY}
+</div>
+<!-- END search_listing -->
+
 <!-- ELSE -->
 <h2>Search</h2>
 

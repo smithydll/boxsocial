@@ -119,7 +119,7 @@ namespace BoxSocial.Musician
 
                 if (e.Owner.Type == "MUSIC")
                 {
-                    if (((Musician)e.Owner).IsMusicianMember(core.Session.LoggedInMember))
+                    if (((Musician)e.Owner).IsMusicianMember(core.Session.LoggedInMember.ItemKey))
                     {
                         template.Parse("U_MUSICIAN_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
                     }

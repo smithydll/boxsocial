@@ -159,7 +159,7 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            if (!Group.IsGroupOperator(loggedInMember))
+            if (!Group.IsGroupOperator(loggedInMember.ItemKey))
             {
                 core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
             }

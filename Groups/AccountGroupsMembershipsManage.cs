@@ -315,8 +315,8 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                bool isGroupMemberPending = thisGroup.IsGroupMemberPending(LoggedInMember);
-                bool isGroupMember = thisGroup.IsGroupMember(LoggedInMember);
+                bool isGroupMemberPending = thisGroup.IsGroupMemberPending(LoggedInMember.ItemKey);
+                bool isGroupMember = thisGroup.IsGroupMember(LoggedInMember.ItemKey);
 
                 DataTable operatorsTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1};",
                     thisGroup.GroupId, LoggedInMember.Id));
@@ -392,13 +392,13 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     try
                     {
                         User member = new User(core, userId);
 
-                        if (thisGroup.IsGroupMember(member))
+                        if (thisGroup.IsGroupMember(member.ItemKey))
                         {
                             // all ok, don't really need to do much, so let's do it
                             template.Parse("S_ID", string.Format("{0},{1}", groupId, userId));
@@ -471,13 +471,13 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     try
                     {
                         User member = new User(core, userId);
 
-                        if (thisGroup.IsGroupMember(member))
+                        if (thisGroup.IsGroupMember(member.ItemKey))
                         {
                             // allow to be an officer to many things
                             db.BeginTransaction();
@@ -548,7 +548,7 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     db.BeginTransaction();
                     long deletedRows = db.UpdateQuery(string.Format("DELETE FROM group_officers WHERE group_id = {0} AND user_id = {1} AND officer_title = '{2}'",
@@ -599,12 +599,12 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     try
                     {
                         User member = new User(core, userId);
-                        if (!thisGroup.IsGroupOperator(member))
+                        if (!thisGroup.IsGroupOperator(member.ItemKey))
                         {
                             db.BeginTransaction();
                             db.UpdateQuery(string.Format("INSERT INTO group_operators (group_id, user_id) VALUES ({0}, {1});",
@@ -681,7 +681,7 @@ namespace BoxSocial.Groups
 
             if (core.Display.GetConfirmBoxResult() == ConfirmBoxResult.Yes)
             {
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     if (thisGroup.Operators > 1)
                     {
@@ -737,13 +737,13 @@ namespace BoxSocial.Groups
             {
                 UserGroup thisGroup = new UserGroup(core, groupId);
 
-                if (thisGroup.IsGroupOperator(LoggedInMember))
+                if (thisGroup.IsGroupOperator(LoggedInMember.ItemKey))
                 {
                     try
                     {
                         User member = new User(core, userId);
 
-                        if (thisGroup.IsGroupMemberPending(member))
+                        if (thisGroup.IsGroupMemberPending(member.ItemKey))
                         {
                             // we can approve the pending membership
                             db.BeginTransaction();
@@ -844,7 +844,7 @@ namespace BoxSocial.Groups
                 {
                     UserGroup group = new UserGroup(core, groupId);
 
-                    if (group.IsGroupOperator(LoggedInMember))
+                    if (group.IsGroupOperator(LoggedInMember.ItemKey))
                     {
                         try
                         {

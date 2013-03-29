@@ -465,7 +465,7 @@ namespace BoxSocial.Applications.Forum
                     throw new UnauthorisedToCreateItemException();
                 }
 
-                if (!((UserGroup)forum.Owner).IsGroupOperator(core.Session.LoggedInMember))
+                if (!((UserGroup)forum.Owner).IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                 {
                     status = TopicStates.Normal;
                 }
@@ -887,7 +887,7 @@ namespace BoxSocial.Applications.Forum
 
                 if (page is GPage)
                 {
-                    if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember)))
+                    if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember.ItemKey)))
                     {
                         page.template.Parse("U_JOIN", ((GPage)page).Group.JoinUri);
                     }

@@ -97,6 +97,19 @@ namespace BoxSocial.Internals
         private void Hashtag_ItemLoad()
         {
         }
+
+        public override long Id
+        {
+            get
+            {
+                return hashtagId;
+            }
+        }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 
     public class InvalidHashtagException : Exception

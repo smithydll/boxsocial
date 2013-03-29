@@ -76,10 +76,10 @@ namespace BoxSocial.Groups
         private UserGroup parent;
         private Access access;
 
-        private Dictionary<User, bool> groupMemberCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupMemberPendingCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupMemberAbsoluteCache = new Dictionary<User, bool>();
-        private Dictionary<User, bool> groupLeaderCache = new Dictionary<User, bool>();
+        private Dictionary<ItemKey, bool> groupMemberCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupMemberPendingCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupMemberAbsoluteCache = new Dictionary<ItemKey, bool>();
+        private Dictionary<ItemKey, bool> groupLeaderCache = new Dictionary<ItemKey, bool>();
 
         public long SubGroupId
         {
@@ -329,7 +329,7 @@ namespace BoxSocial.Groups
                 case "CLOSED":
                     return 0x0001;
                 case "PRIVATE":
-                    if (IsSubGroupMember(viewer))
+                    if (IsSubGroupMember(viewer.ItemKey))
                     {
                         return 0x0001;
                     }
@@ -392,7 +392,7 @@ namespace BoxSocial.Groups
             get { throw new NotImplementedException(); }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -432,7 +432,7 @@ namespace BoxSocial.Groups
             return users;
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {
@@ -539,12 +539,12 @@ namespace BoxSocial.Groups
         {
         }
 
-        private void preLoadMemberCache(User member)
+        private void preLoadMemberCache(ItemKey key)
         {
             SelectQuery query = SubGroupMember.GetSelectQueryStub(typeof(SubGroupMember));
             query.AddFields("user_id", "sub_group_member_approved");
             query.AddCondition("sub_group_id", Id);
-            query.AddCondition("user_id", member.UserId);
+            query.AddCondition("user_id", key.Id);
 
             DataTable memberTable = db.Query(query);
 
@@ -553,36 +553,36 @@ namespace BoxSocial.Groups
                 switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["sub_group_member_approved"])
                 {
                     case GroupMemberApproval.Pending:
-                        groupMemberCache.Add(member, false);
-                        groupMemberPendingCache.Add(member, true);
-                        groupMemberAbsoluteCache.Add(member, true);
+                        groupMemberCache.Add(key, false);
+                        groupMemberPendingCache.Add(key, true);
+                        groupMemberAbsoluteCache.Add(key, true);
                         break;
                     case GroupMemberApproval.Member:
-                        groupMemberCache.Add(member, true);
-                        groupMemberPendingCache.Add(member, false);
-                        groupMemberAbsoluteCache.Add(member, true);
+                        groupMemberCache.Add(key, true);
+                        groupMemberPendingCache.Add(key, false);
+                        groupMemberAbsoluteCache.Add(key, true);
                         break;
                 }
 
                 if ((bool)memberTable.Rows[0]["sub_group_member_is_leader"])
                 {
-                    groupLeaderCache.Add(member, true);
+                    groupLeaderCache.Add(key, true);
                 }
                 else
                 {
-                    groupLeaderCache.Add(member, false);
+                    groupLeaderCache.Add(key, false);
                 }
             }
             else
             {
-                groupMemberCache.Add(member, false);
-                groupMemberPendingCache.Add(member, false);
-                groupMemberAbsoluteCache.Add(member, false);
-                groupLeaderCache.Add(member, false);
+                groupMemberCache.Add(key, false);
+                groupMemberPendingCache.Add(key, false);
+                groupMemberAbsoluteCache.Add(key, false);
+                groupLeaderCache.Add(key, false);
             }
         }
 
-        public bool IsSubGroupMember(User member)
+        public bool IsSubGroupMember(ItemKey member)
         {
             if (member != null)
             {
@@ -603,14 +603,14 @@ namespace BoxSocial.Groups
         {
             if (member != null)
             {
-                if (groupLeaderCache.ContainsKey(member))
+                if (groupLeaderCache.ContainsKey(member.ItemKey))
                 {
-                    return groupLeaderCache[member];
+                    return groupLeaderCache[member.ItemKey];
                 }
                 else
                 {
-                    preLoadMemberCache(member);
-                    return groupLeaderCache[member];
+                    preLoadMemberCache(member.ItemKey);
+                    return groupLeaderCache[member.ItemKey];
                 }
             }
             return false;
@@ -722,7 +722,7 @@ namespace BoxSocial.Groups
 
         public bool AddMember(User member, bool approved, bool isLeader, bool isDefault)
         {
-            if (Parent.IsGroupMember(member))
+            if (Parent.IsGroupMember(member.ItemKey))
             {
                 InsertQuery iQuery = new InsertQuery(typeof(SubGroupMember));
                 iQuery.AddField("user_id", member.Id);
@@ -900,7 +900,7 @@ namespace BoxSocial.Groups
 
             if (e.Core.Session.IsLoggedIn)
             {
-                if (subgroup.IsSubGroupMember(e.Core.Session.LoggedInMember))
+                if (subgroup.IsSubGroupMember(e.Core.Session.LoggedInMember.ItemKey))
                 {
                     if (!subgroup.IsSubGroupLeader(e.Core.Session.LoggedInMember))
                     {

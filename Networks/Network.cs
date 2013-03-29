@@ -67,7 +67,7 @@ namespace BoxSocial.Networks
         private NetworkInfo networkInfo;
         private Access access;
 
-        private Dictionary<User, bool> networkMemberCache = new Dictionary<User, bool>();
+        private Dictionary<ItemKey, bool> networkMemberCache = new Dictionary<ItemKey, bool>();
 
         public long NetworkId
         {
@@ -494,27 +494,27 @@ namespace BoxSocial.Networks
             return networks;
         }
 
-        public bool IsNetworkMember(User member)
+        public bool IsNetworkMember(ItemKey key)
         {
-            if (member != null)
+            if (key != null)
             {
-                if (networkMemberCache.ContainsKey(member))
+                if (networkMemberCache.ContainsKey(key))
                 {
-                    return networkMemberCache[member];
+                    return networkMemberCache[key];
                 }
                 else
                 {
                     DataTable memberTable = db.Query(string.Format("SELECT user_id FROM network_members WHERE network_id = {0} AND user_id = {1} AND member_active = 1",
-                        networkId, member.UserId));
+                        networkId, key.Id));
 
                     if (memberTable.Rows.Count > 0)
                     {
-                        networkMemberCache.Add(member, true);
+                        networkMemberCache.Add(key, true);
                         return true;
                     }
                     else
                     {
-                        networkMemberCache.Add(member, false);
+                        networkMemberCache.Add(key, false);
                         return false;
                     }
                 }
@@ -539,7 +539,7 @@ namespace BoxSocial.Networks
 
             if (rowsChanged == 1)
             {
-                networkMemberCache.Add(member, true);
+                networkMemberCache.Add(member.ItemKey, true);
                 return true;
             }
             else
@@ -607,7 +607,7 @@ namespace BoxSocial.Networks
                 return null;
             }
 
-            if (IsNetworkMember(member))
+            if (IsNetworkMember(member.ItemKey))
             {
                 return null;
             }
@@ -733,7 +733,7 @@ namespace BoxSocial.Networks
                 case NetworkTypes.University:
                 case NetworkTypes.School:
                 case NetworkTypes.Workplace:
-                    if (IsNetworkMember(member))
+                    if (IsNetworkMember(member.ItemKey))
                     {
                         return 0x0001;
                     }
@@ -749,7 +749,7 @@ namespace BoxSocial.Networks
 
         public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
-            bool isNetworkMember = IsNetworkMember(viewer);
+            bool isNetworkMember = IsNetworkMember(viewer.ItemKey);
             switch (NetworkType)
             {
                 case NetworkTypes.Country:
@@ -883,7 +883,7 @@ namespace BoxSocial.Networks
 
             if (core.Session.IsLoggedIn)
             {
-                if (page.Network.IsNetworkMember(core.Session.LoggedInMember))
+                if (page.Network.IsNetworkMember(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("U_LEAVE", page.Network.BuildLeaveUri());
                 }
@@ -1026,7 +1026,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public override bool IsItemGroupMember(User viewer, ItemKey key)
+        public override bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }
@@ -1086,7 +1086,7 @@ namespace BoxSocial.Networks
             return ppgs;
         }
 
-        public override bool GetIsMemberOfPrimitive(User viewer, ItemKey primitiveKey)
+        public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
             if (core.LoggedInMemberId > 0)
             {

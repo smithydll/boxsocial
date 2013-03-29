@@ -302,7 +302,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsItemGroupMember(User viewer, ItemKey key)
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
             return false;
         }

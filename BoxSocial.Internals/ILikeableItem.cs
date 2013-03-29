@@ -53,6 +53,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        ItemKey ItemKey
+        {
+            get;
+        }
+
         string Namespace
         {
             get;

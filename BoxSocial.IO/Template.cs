@@ -133,6 +133,14 @@ namespace BoxSocial.IO
             }
         }
 
+        public void Parse(string key, Template template)
+        {
+                if (!variables.ContainsKey(key))
+                {
+                    variables.Add(key, template.ToString());
+                }
+        }
+
         /// <summary>
         /// Parse raw data to a template, only valid for Box Social internals
         /// </summary>

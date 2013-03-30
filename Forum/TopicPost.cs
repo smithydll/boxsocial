@@ -31,7 +31,7 @@ using BoxSocial.Networks;
 namespace BoxSocial.Applications.Forum
 {
     [DataTable("forum_post")]
-    public class TopicPost : NumberedItem
+    public class TopicPost : NumberedItem, ISearchableItem, IPermissibleSubItem
     {
         [DataField("post_id", DataFieldKeys.Primary)]
         private long postId;
@@ -247,6 +247,20 @@ namespace BoxSocial.Applications.Forum
 
         void Post_ItemLoad()
         {
+            ItemDeleted += new ItemDeletedEventHandler(TopicPost_ItemDeleted);
+            ItemUpdated += new EventHandler(TopicPost_ItemUpdated);
+        }
+
+        void TopicPost_ItemUpdated(object sender, EventArgs e)
+        {
+            Search search = new Search(core);
+            search.UpdateIndex(this, new SearchField("forum_id", ForumId.ToString()));
+        }
+
+        void TopicPost_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            Search search = new Search(core);
+            search.DeleteFromIndex(this);
         }
 
         public static Dictionary<long, TopicPost> GetTopicLastPosts(Core core, List<ForumTopic> topics)
@@ -395,7 +409,12 @@ namespace BoxSocial.Applications.Forum
 
             long postId = core.Db.Query(iQuery);
 
-            return new TopicPost(core, forum, topic, postId);
+            TopicPost newPost = new TopicPost(core, forum, topic, postId);
+
+            Search search = new Search(core);
+            search.Index(newPost, new SearchField("forum_id", forum.Id.ToString()));
+
+            return newPost;
         }
 
         public ushort Permissions
@@ -424,9 +443,6 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        #region IPermissibleItem Members
-
-
         public IPermissibleItem PermissiveParent
         {
             get
@@ -435,7 +451,36 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        #endregion
+        public string IndexingString
+        {
+            get
+            {
+                return Text;
+            }
+        }
+
+        public string IndexingTitle
+        {
+            get
+            {
+                return Title;
+            }
+        }
+
+        public string IndexingTags
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public Template RenderPreview()
+        {
+            Template template = new Template("Forum", "topicpost");
+
+            return template;
+        }
     }
 
     public class InvalidPostException : Exception

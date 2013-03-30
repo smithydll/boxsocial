@@ -66,6 +66,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        string IndexingTags
+        {
+            get;
+        }
+
         Template RenderPreview();
 
     }

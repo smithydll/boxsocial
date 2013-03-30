@@ -175,7 +175,7 @@ namespace BoxSocial.Internals
 
         public bool IsPrivateFriendsOrMembers()
         {
-            return false;
+            return Can("VIEW", (IPermissibleItem)item, false, Friend.FriendsGroupKey);
         }
 
         public bool Can(string permission)

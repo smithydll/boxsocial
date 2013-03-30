@@ -371,6 +371,7 @@ namespace BoxSocial.Applications.Blog
         public BlogEntry(Core core, Primitive owner, DataRow postEntryRow) : base(core)
         {
             ItemLoad += new ItemLoadHandler(BlogEntry_ItemLoad);
+
             this.owner = owner;
 
             loadItemInfo(postEntryRow);
@@ -381,6 +382,30 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         void BlogEntry_ItemLoad()
         {
+            ItemUpdated += new EventHandler(BlogEntry_ItemUpdated);
+            ItemDeleted += new ItemDeletedEventHandler(BlogEntry_ItemDeleted);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void BlogEntry_ItemUpdated(object sender, EventArgs e)
+        {
+            Search search = new Search(core);
+            search.UpdateIndex(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void BlogEntry_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            Search search = new Search(core);
+            search.DeleteFromIndex(this);
         }
 
         /// <summary>
@@ -660,6 +685,22 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return Title;
+            }
+        }
+
+        public string IndexingTags
+        {
+            get
+            {
+                List<Tag> tags = getTags();
+                string tagstring = string.Empty;
+
+                foreach (Tag tag in tags)
+                {
+                    tagstring += " " + tag.TagText;
+                }
+
+                return tagstring;
             }
         }
 

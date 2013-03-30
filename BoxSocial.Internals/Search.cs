@@ -48,6 +48,34 @@ namespace BoxSocial.Internals
     {
     }*/
 
+    public struct SearchField
+    {
+        private string key;
+        private string value;
+
+        public string Key
+        {
+            get
+            {
+                return key;
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                return value;
+            }
+        }
+
+        public SearchField(string key, string value)
+        {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
     public class Search
     {
         Core core;
@@ -92,6 +120,36 @@ namespace BoxSocial.Internals
             Query bodyQuery = parser.Parse(input);
 
             query.Add(bodyQuery, Occur.SHOULD);
+
+            BooleanQuery accessQuery = new BooleanQuery();
+            TermQuery accessPublicQuery = new TermQuery(new Term("item_public", "1"));
+            accessQuery.Add(accessPublicQuery, Occur.SHOULD);
+
+            if (core.Session.IsLoggedIn)
+            {
+                List<long> friends = core.Session.LoggedInMember.GetFriendsWithMeIds();
+
+                BooleanQuery accessFriendQuery = new BooleanQuery();
+                TermQuery friendQuery = new TermQuery(new Term("item_public", "2"));
+                accessFriendQuery.Add(friendQuery, Occur.MUST);
+
+                string userTypeId =  ItemType.GetTypeId(typeof(User)).ToString();
+                foreach (long friendId in friends)
+                {
+                    BooleanQuery ownerQuery = new BooleanQuery();
+                    TermQuery ownerIdQuery = new TermQuery(new Term("owner_id", friendId.ToString()));
+                    TermQuery ownerTypeQuery = new TermQuery(new Term("owner_type_id", userTypeId));
+
+                    ownerQuery.Add(ownerIdQuery, Occur.MUST);
+                    ownerQuery.Add(ownerTypeQuery, Occur.MUST);
+
+                    accessFriendQuery.Add(ownerQuery, Occur.SHOULD);
+                }
+
+                accessQuery.Add(accessFriendQuery, Occur.SHOULD);
+            }
+
+            query.Add(accessQuery, Occur.MUST);
 
             if (filterByType != null)
             {
@@ -171,8 +229,34 @@ namespace BoxSocial.Internals
             return results;
         }
 
-        public bool Index(ISearchableItem item)
+        public bool Index(ISearchableItem item, params SearchField[] customFields)
         {
+            int isPublic = 1;
+
+            if (item is IPermissibleItem)
+            {
+                IPermissibleItem pitem = (IPermissibleItem)item;
+
+                isPublic = pitem.Access.IsPublic() ? 1 : 0;
+
+                if (isPublic == 0)
+                {
+                    isPublic = pitem.Access.IsPrivateFriendsOrMembers() ? 2 : 0;
+                }
+            }
+
+            if (item is IPermissibleSubItem)
+            {
+                IPermissibleItem pitem = ((IPermissibleSubItem)item).PermissiveParent;
+
+                isPublic = pitem.Access.IsPublic() ? 1 : 0;
+
+                if (isPublic == 0)
+                {
+                    isPublic = pitem.Access.IsPrivateFriendsOrMembers() ? 2 : 0;
+                }
+            }
+
             Document doc = new Document();
             /* we store numbers are strings, because a NumericField is 32 bit, and our IDs are all 64 bit.
              * These Ids are all stored to make things faster to lookup, none of the IDs are transferable,
@@ -183,8 +267,14 @@ namespace BoxSocial.Internals
             doc.Add(new Field("owner_type_id", item.Owner.ItemKey.TypeId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("application_id", item.ItemKey.ApplicationId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             /* Because of the dynamic nature of ACLs, they can only be effectively evaluated when querying results */
+            doc.Add(new Field("item_public", isPublic.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            foreach (SearchField field in customFields)
+            {
+                doc.Add(new Field(field.Key, field.Value, Field.Store.YES, Field.Index.NOT_ANALYZED));
+            }
             doc.Add(new Field("item_title", item.IndexingTitle, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("item_string", item.IndexingString, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field("item_tags", item.IndexingTags, Field.Store.YES, Field.Index.ANALYZED));
             writer.AddDocument(doc);
 
             writer.Commit();
@@ -192,12 +282,17 @@ namespace BoxSocial.Internals
             return true;
         }
 
-        public bool UpdateIndex(ISearchableItem item)
+        public bool UpdateIndex(ISearchableItem item, params SearchField[] customFields)
+        {
+            DeleteFromIndex(item);
+            return Index(item, customFields);
+        }
+
+        public bool DeleteFromIndex(ISearchableItem item)
         {
             writer.DeleteDocuments(new Term("item_id", item.Id.ToString()));
 
-            return Index(item);
+            return true;
         }
-
     }
 }

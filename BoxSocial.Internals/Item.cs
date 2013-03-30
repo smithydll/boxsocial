@@ -499,13 +499,6 @@ namespace BoxSocial.Internals
             get;
         }
 
-        protected List<ItemTag> getTags()
-        {
-            List<ItemTag> tags = new List<ItemTag>();
-
-            return tags;
-        }
-
         protected Primitive fillOwner(long ownerId, long ownerTypeId)
         {
             Primitive owner;

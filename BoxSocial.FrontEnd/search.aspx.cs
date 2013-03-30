@@ -220,6 +220,17 @@ namespace BoxSocial.FrontEnd
                     }
                 }
 
+                if (result is IPermissibleSubItem)
+                {
+                    IPermissibleItem item = ((IPermissibleSubItem)result).PermissiveParent;
+
+                    if (!item.Access.Can("VIEW"))
+                    {
+                        canView = false;
+                        resultsRemoved++;
+                    }
+                }
+
                 if (canView)
                 {
                     VariableCollection listingVariableCollection = template.CreateChild("search_listing");

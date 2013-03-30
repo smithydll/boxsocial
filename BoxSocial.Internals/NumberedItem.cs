@@ -227,6 +227,13 @@ namespace BoxSocial.Internals
             return items;
         }
 
+        protected List<Tag> getTags()
+        {
+            List<Tag> tags = Tag.GetTags(core, this);
+
+            return tags;
+        }
+
         public long Delete()
         {
             return Delete(false);

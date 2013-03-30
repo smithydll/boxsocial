@@ -700,6 +700,33 @@ namespace BoxSocial.Internals
             return friendIds;
         }
 
+        public List<long> GetFriendsWithMeIds()
+        {
+            return GetFriendsWithMeIds(255);
+        }
+
+        public List<long> GetFriendsWithMeIds(int count)
+        {
+            List<long> friendIds = new List<long>();
+
+            SelectQuery query = new SelectQuery("user_relations uf");
+            query.AddFields("uf.relation_me");
+            query.AddCondition("uf.relation_you", userId);
+            query.AddCondition("uf.relation_type", "FRIEND");
+            query.AddSort(SortOrder.Ascending, "(uf.relation_order - 1)");
+            query.AddSort(SortOrder.Ascending, "relation_time_ut");
+            query.LimitCount = count;
+
+            DataTable friendsTable = db.Query(query);
+
+            foreach (DataRow dr in friendsTable.Rows)
+            {
+                friendIds.Add((long)dr["relation_me"]);
+            }
+
+            return friendIds;
+        }
+
         /// <summary>
         /// return a maximum of the first 255
         /// </summary>

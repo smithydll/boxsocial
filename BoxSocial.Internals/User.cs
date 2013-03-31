@@ -84,7 +84,7 @@ namespace BoxSocial.Internals
     [Permission("VIEW_FAMILY", "Can see your family", PermissionTypes.View)]
     [Permission("VIEW_COLLEAGUES", "Can see your colleagues", PermissionTypes.View)]
     [PermissionGroup]
-    public class User : Primitive, ICommentableItem, IPermissibleItem
+    public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
@@ -622,6 +622,20 @@ namespace BoxSocial.Internals
 
         void User_ItemLoad()
         {
+            ItemUpdated += new EventHandler(User_ItemUpdated);
+            ItemDeleted += new ItemDeletedEventHandler(User_ItemDeleted);
+        }
+
+        void User_ItemUpdated(object sender, EventArgs e)
+        {
+            Search search = new Search(core);
+            search.UpdateIndex(this);
+        }
+
+        void User_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            Search search = new Search(core);
+            search.DeleteFromIndex(this);
         }
 
         public void LoadProfileInfo()
@@ -1198,6 +1212,9 @@ namespace BoxSocial.Internals
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
+
+            Search search = new Search(core);
+            search.Index(newUser);
 
             return newUser;
         }
@@ -2424,6 +2441,55 @@ namespace BoxSocial.Internals
         public override string StoreFile(MemoryStream file)
         {
             return core.Storage.SaveFile("zinzam.user", file);
+        }
+
+
+        public string IndexingString
+        {
+            get
+            {
+                return UserName + " " + Profile.FirstName + " " + Profile.MiddleName + " " + Profile.LastName;
+            }
+        }
+
+        public string IndexingTitle
+        {
+            get
+            {
+                return DisplayName;
+            }
+        }
+
+        public string IndexingTags
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public Template RenderPreview()
+        {
+            Template template = new Template("search_result.user.html");
+
+            template.Parse("USER_DISPLAY_NAME", DisplayName);
+            template.Parse("ICON", UserIcon);
+            template.Parse("TILE", UserTile);
+            template.Parse("U_PROFILE", Uri);
+            template.Parse("JOIN_DATE", core.Tz.DateTimeToString(UserInfo.GetRegistrationDate(core.Tz)));
+            template.Parse("USER_AGE", Profile.AgeString);
+            template.Parse("USER_COUNTRY", Profile.Country);
+
+            if (core.Session.IsLoggedIn)
+            {
+                List<long> friendIds = core.Session.LoggedInMember.GetFriendIds();
+                if (!friendIds.Contains(Id))
+                {
+                    template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(Id, true));
+                }
+            }
+
+            return template;
         }
     }
 

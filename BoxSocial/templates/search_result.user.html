@@ -1,0 +1,27 @@
+		<div class="frame">
+			<div class="avatar">
+				<a href="{U_PROFILE}">
+				<!-- IF TILE -->
+				<img src="{TILE}" alt="{USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+				</a>
+			</div>
+			<ul class="actions">
+				<!-- IF U_ADD_FRIEND -->
+				<li><a href="{U_ADD_FRIEND}">Add to Friends</a></li>
+				<!-- ENDIF -->
+			</ul>
+			<ul class="details">
+				<li><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a></li>
+				<!-- IF USER_AGE -->
+				<li>{USER_AGE}</li>
+				<!-- ENDIF -->
+				<!-- IF USER_COUNTRY -->
+				<li>{USER_COUNTRY}</li>
+				<!-- ENDIF -->
+				<li>Joined {JOIN_DATE}</li>
+				<li><em>{USER_CAPTION}</em></li>
+			</ul>
+		</div>

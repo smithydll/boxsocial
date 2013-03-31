@@ -189,12 +189,12 @@ namespace BoxSocial.Internals
             }
         }
 
-        public List<long> LoadUserProfiles(List<string> usernames)
+        public Dictionary<string, long> LoadUserProfiles(List<string> usernames)
         {
             long userTypeId = ItemKey.GetTypeId(typeof(User));
 
             List<string> usernameList = new List<string>();
-            List<long> userIds = new List<long>();
+            Dictionary<string, long> userIds = new Dictionary<string, long>();
             foreach (string username in usernames)
             {
                 PrimitiveKey key = new PrimitiveKey(username, userTypeId);
@@ -236,9 +236,9 @@ namespace BoxSocial.Internals
 					{
                         primitivesKeysCached.Add(kid, new PrimitiveId(newUser.Id, userTypeId));
 					}
-					if (!userIds.Contains(newUser.Id))
+					if (!userIds.ContainsValue(newUser.Id))
 					{
-						userIds.Add(newUser.Id);
+						userIds.Add(newUser.UserName, newUser.Id);
 					}
                 }
             }

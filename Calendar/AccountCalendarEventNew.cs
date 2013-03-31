@@ -118,7 +118,7 @@ namespace BoxSocial.Applications.Calendar
                     }
                 }
 
-                inviteeIds.AddRange(core.LoadUserProfiles(uns));
+                inviteeIds.AddRange(core.LoadUserProfiles(uns).Values);
             }
 
             DateTime startDate = new DateTime(year, month, day, 8, 0, 0);
@@ -254,7 +254,7 @@ namespace BoxSocial.Applications.Calendar
                     }
                 }
 
-                inviteeIds.AddRange(core.LoadUserProfiles(inviteesUsernamesList));
+                inviteeIds.AddRange(core.LoadUserProfiles(inviteesUsernamesList).Values);
             }
 
             try

@@ -247,8 +247,8 @@ namespace BoxSocial.Applications.Forum
 
         void Post_ItemLoad()
         {
-            ItemDeleted += new ItemDeletedEventHandler(TopicPost_ItemDeleted);
             ItemUpdated += new EventHandler(TopicPost_ItemUpdated);
+            ItemDeleted += new ItemDeletedEventHandler(TopicPost_ItemDeleted);
         }
 
         void TopicPost_ItemUpdated(object sender, EventArgs e)

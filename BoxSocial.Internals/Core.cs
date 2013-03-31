@@ -416,7 +416,7 @@ namespace BoxSocial.Internals
             userProfileCache.LoadUserProfiles(userIds);
         }
 
-        public List<long> LoadUserProfiles(List<string> usernames)
+        public Dictionary<string, long> LoadUserProfiles(List<string> usernames)
         {
             return userProfileCache.LoadUserProfiles(usernames);
         }

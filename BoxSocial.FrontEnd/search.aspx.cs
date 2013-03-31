@@ -240,6 +240,8 @@ namespace BoxSocial.FrontEnd
             }
 
             template.Parse("RESULTS", (searchDataTable.Rows.Count + results.Count - resultsRemoved).ToString());
+
+            core.Display.ParsePagination(core.Uri.BuildSearchUri(query), TopLevelPageNumber, (int)Math.Ceiling((results.Count - resultsRemoved) / 10.0));
         }
 
         private void showFriends()

@@ -426,6 +426,51 @@ namespace BoxSocial.Internals
                 }
             }
 
+            /* Match hash tags to BBcode for parsing */
+            matches = Regex.Matches(input, "(?:^|\\s)((\\#)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                string hashtag = match.Groups[1].Value;
+                if (!string.IsNullOrEmpty(hashtag))
+                {
+                    string searchUri = core.Uri.AppendCoreSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
+                    string startTag = "[url=\"" + searchUri + "\"]";
+                    string endTag = "[/url]";
+
+                    output = output.Insert(match.Groups[1].Index + offset, startTag).Insert(match.Groups[1].Index + match.Groups[1].Length + offset + startTag.Length, endTag);
+
+                    offset += (startTag + endTag).Length;
+                }
+            }
+
+            /* Match user links to BBcode for parsing */
+            matches = Regex.Matches(input, "(?:^|\\s)((\\@)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
+
+            List<string> usernames = new List<string>();
+            foreach (Match match in matches)
+            {
+                string username = match.Groups[3].Value;
+                usernames.Add(username);
+            }
+
+            Dictionary<string, long> userIds = core.LoadUserProfiles(usernames);
+
+            foreach (Match match in matches)
+            {
+                string username = match.Groups[3].Value;
+
+                if (userIds.ContainsKey(username))
+                {
+                    string startTag = "[user]" + userIds[username].ToString();
+                    string endTag = "[/user]";
+
+                    output = output.Remove(match.Groups[1].Index + offset, match.Groups[1].Value.Length).Insert(match.Groups[1].Index + offset, startTag + endTag);
+
+                    offset += (startTag + endTag).Length - match.Groups[1].Value.Length;
+                }
+            }
+
             return output;
         }
 

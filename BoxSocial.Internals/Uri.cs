@@ -516,6 +516,11 @@ namespace BoxSocial.Internals
             return AppendCoreSid("/search");
         }
 
+        public string BuildSearchUri(string query)
+        {
+            return AppendCoreSid("/search?q=" + HttpUtility.UrlEncode(query));
+        }
+
         public string BuildGroupsUri()
         {
             return AppendCoreSid("/groups");

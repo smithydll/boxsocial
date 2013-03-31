@@ -1,0 +1,43 @@
+﻿<h3>Cover Photo</h3>
+
+  <script type="text/javascript">
+      $(function () {
+          var offset = 0;
+          $("#crop-area").draggable({
+              containment: "parent",
+              revert: true,
+              start: function (event, ui) {
+                  offset = ui.position.top;
+              },
+              drag: function (event, ui) {
+                  $("#crop-t").height($("#crop-t").height() + (ui.position.top - offset));
+                  $("#crop-b").height($("#crop-b").height() - (ui.position.top - offset));
+                  offset = ui.position.top;
+
+                  $("#vcrop").val(Math.floor($("#crop-t").height() / {SCALE}));
+              }
+          });
+      });
+  </script>
+
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+	<fieldset>
+		<legend>Cover Photo</legend>
+    <!-- IF I_COVER_PHOTO -->
+		<div id="cover-photo-crop" style="background-image: url('{I_COVER_PHOTO}'); width: {WIDTH}px; height: {HEIGHT}px; position: relative; overflow: hidden;">
+            <div id="crop-t" style="height: {CROP_T}px; background-color: #000000; opacity: 0.2;"></div>
+            <div id="crop-area" style="height: {CROP_S}px;"></div>
+            <div id="crop-b" style="height: {CROP_B}px; background-color: #000000; opacity: 0.2;"></div>
+            <input type="hidden" id="vcrop" name="vcrop" value="{CROP}" />
+        </div>
+    <!-- ENDIF -->
+		<dl>
+			<dt><label for="photo-file">Select File</label></dt>
+			<dd><input type="file" id="photo-file" name="photo-file" /></dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="cover-photo" />
+	</fieldset>
+</form>

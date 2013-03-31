@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
 				}
 				else
 				{
-					return "zinzam.com";
+					return "localhost";
 				}
             }
         }
@@ -482,6 +482,11 @@ namespace BoxSocial.Internals
         public string BuildRegisterUri()
         {
             return AppendCoreSid("/register");
+        }
+
+        public string BuildOptOutUri(string emailKey)
+        {
+            return AppendCoreSid("/register/?mode=optout&key=" + emailKey);
         }
 
         public string BuildHelpUri()

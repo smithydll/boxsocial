@@ -1116,7 +1116,7 @@ namespace BoxSocial.Internals
         }
     }
 
-    [XmlRoot("zinzam-cookie")]
+    [XmlRoot("boxsocial-cookie")]
     public class SessionCookie
     {
         [XmlElement("autologinid")]

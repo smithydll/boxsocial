@@ -49,13 +49,13 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Linker.Domain, "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
             }
             catch
             {
                 try
                 {
-                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at ZinZam.com", "EXCEPTION THROWN:\n" + ex.ToString());
+                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Linker.Domain, "EXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
                 {

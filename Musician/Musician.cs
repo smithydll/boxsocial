@@ -27,6 +27,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -652,7 +653,7 @@ namespace BoxSocial.Musician
             disallowedNames.Add("privacy");
             disallowedNames.Add("terms-of-service");
             disallowedNames.Add("site-map");
-            disallowedNames.Add("zinzam");
+            disallowedNames.Add(WebConfigurationManager.AppSettings["boxsocial-title"].ToLower());
             disallowedNames.Add("blogs");
             disallowedNames.Add("profiles");
             disallowedNames.Add("search");
@@ -1338,7 +1339,7 @@ namespace BoxSocial.Musician
                 }
                 else if (e.Core.Http.Form["agree"] != "true")
                 {
-                    e.Template.Parse("ERROR", "You must accept the ZinZam Terms of Service to create register a musician.");
+                    e.Template.Parse("ERROR", "You must accept the " + e.Core.Settings.SiteTitle + " Terms of Service to create register a musician.");
                     prepareNewCaptcha(e.Core);
                 }
                 else

@@ -337,7 +337,7 @@ namespace BoxSocial.Applications.Profile
                     }
                     catch (EmailAlreadyRegisteredException)
                     {
-                        this.SetError("E-mail address has been registered with zinzam before, please add another address");
+                        this.SetError("E-mail address has been registered with " + core.Settings.SiteTitle + " before, please add another address");
                         return;
                     }
                     return;

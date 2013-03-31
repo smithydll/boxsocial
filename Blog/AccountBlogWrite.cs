@@ -383,8 +383,8 @@ namespace BoxSocial.Applications.Blog
                 AccessControlLists acl = new AccessControlLists(core, myBlogEntry);
                 acl.SaveNewItemPermissions();
 
-                postGuid = string.Format("http://zinzam.com/{0}/blog/{1:0000}/{2:00}/{3}",
-                    LoggedInMember.UserName, DateTime.Now.Year, DateTime.Now.Month, postId);
+                postGuid = core.Uri.StripSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
+                    LoggedInMember.UriStubAbsolute, DateTime.Now.Year, DateTime.Now.Month, postId));
 
                 myBlogEntry.Guid = postGuid;
                 myBlogEntry.Update();

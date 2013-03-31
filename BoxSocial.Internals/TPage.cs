@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public abstract class TPage : System.Web.UI.Page
     {
-        private string pageTitle = "ZinZam • A Global Community";
+        private string pageTitle = WebConfigurationManager.AppSettings["boxsocial-title"] + " • A Global Community";
         private string canonicalUri;
 
         public Template template;
@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                pageTitle = HttpUtility.HtmlEncode(value) + " • ZinZam";
+                pageTitle = HttpUtility.HtmlEncode(value) + " • " + Core.Settings.SiteTitle;
             }
         }
 

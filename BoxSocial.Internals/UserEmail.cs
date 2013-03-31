@@ -239,7 +239,7 @@ namespace BoxSocial.Internals
 
             if (!isRegistration)
             {
-                string activateUri = string.Format("http://zinzam.com/register/?mode=activate-email&id={0}&key={1}",
+                string activateUri = string.Format("http://" + Linker.Domain + "/register/?mode=activate-email&id={0}&key={1}",
                     emailId, activateKey);
 
                 RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_activation.eml");
@@ -248,7 +248,7 @@ namespace BoxSocial.Internals
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("USERNAME", owner.UserName);
 
-                core.Email.SendEmail(email, "ZinZam email activation", emailTemplate.ToString());
+                core.Email.SendEmail(email, core.Settings.SiteTitle + " email activation", emailTemplate.ToString());
             }
 
             UserEmail newEmail = new UserEmail(core, emailId);

@@ -1383,7 +1383,7 @@ namespace BoxSocial.Install
                 scriptsRoot = Path.Combine(root, "scripts");
                 languageRoot = Path.Combine(root, "language");
 
-                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
+                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. example.com, localhost, 127.0.0.1):");
                 domain = Console.ReadLine();
 
                 Console.WriteLine("Please enter the mysql root password:");
@@ -1419,7 +1419,7 @@ namespace BoxSocial.Install
                 stylesRoot = Path.Combine(Path.Combine(root, "styles"), "applications");
                 scriptsRoot = Path.Combine(root, "scripts");
 
-                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. zinzam.com, localhost, 127.0.0.1):");
+                Console.WriteLine("Please enter the domain name of the directory you just entered (e.g. example.com, localhost, 127.0.0.1):");
                 domain = Console.ReadLine();
 
                 Console.WriteLine("Please enter the mysql root password:");
@@ -1540,10 +1540,10 @@ namespace BoxSocial.Install
             Core core = new Core(db, template);
             UnixTime tz = new UnixTime(core, 0);
 
-            //User anonymous = User.Register(core, "Anonymous", "anonymous@zinzam.com", "Anonymous", "Anonymous");
+            //User anonymous = User.Register(core, "Anonymous", "anonymous@example.com", "Anonymous", "Anonymous");
             // blank out the anon password to make it impossible to login as
             //db.UpdateQuery("UPDATE user_info SET user_password = '' WHERE user_id = " + anonymous.Id + ";");
-			CreateUser(core, "Anonymous", "anonymous@zinzam.com", null);
+			CreateUser(core, "Anonymous", "anonymous@example.com", null);
 
             //User admin = User.Register(core, adminUsername, adminEmail, adminPassword, adminPassword);
             //adminUid = admin.Id;
@@ -1637,7 +1637,7 @@ namespace BoxSocial.Install
 
                 systemWebSection.Authentication.Mode = AuthenticationMode.Forms;
                 systemWebSection.Authentication.Forms.SlidingExpiration = true;
-                systemWebSection.Authentication.Forms.Name = "zinzam";
+                systemWebSection.Authentication.Forms.Name = "boxsocial";
             }
             Console.WriteLine("web.config path: " + configuration.FilePath);
 

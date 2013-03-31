@@ -75,18 +75,18 @@ namespace BoxSocial.FrontEnd
 
                     if (rowsChanged > 0)
                     {
-                        core.Display.ShowMessage("Opt-out of ZinZam Mailings", "You have successfully opted-out of further ZinZam mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Opt-out of " + core.Settings.SiteTitle + " Mailings", "You have successfully opted-out of further " + core.Settings.SiteTitle + " mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
                         return;
                     }
                     else
                     {
-                        core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Linker.Domain + " with the subject \"opt-out\".");
                         return;
                     }
                 }
                 else
                 {
-                    core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                    core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Linker.Domain + " with the subject \"opt-out\".");
                     return;
                 }
             }
@@ -215,7 +215,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else if ((string)Request.Form["agree"] != "true")
                 {
-                    template.Parse("ERROR", "You must accept the ZinZam Terms of Service to register an account.");
+                    template.Parse("ERROR", "You must accept the " + core.Settings.SiteTitle + " Terms of Service to register an account.");
                     prepareNewCaptcha();
                 }
                 else

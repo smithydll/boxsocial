@@ -28,6 +28,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using BoxSocial.IO;
@@ -1206,7 +1207,7 @@ namespace BoxSocial.Internals
             emailTemplate.Parse("USERNAME", userName);
             emailTemplate.Parse("PASSWORD", passwordClearText);
 
-            core.Email.SendEmail(eMail, "Welcome to ZinZam (Account Activation E-mail)", emailTemplate.ToString());
+            core.Email.SendEmail(eMail, "Welcome to " + core.Settings.SiteTitle + " (Account Activation E-mail)", emailTemplate.ToString());
 
             Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
@@ -1335,7 +1336,7 @@ namespace BoxSocial.Internals
             disallowedNames.Add("privacy");
             disallowedNames.Add("terms-of-service");
             disallowedNames.Add("site-map");
-            disallowedNames.Add("zinzam");
+            disallowedNames.Add(WebConfigurationManager.AppSettings["boxsocial-title"].ToLower());
             disallowedNames.Add("blogs");
             disallowedNames.Add("profiles");
             disallowedNames.Add("search");

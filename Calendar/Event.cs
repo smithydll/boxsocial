@@ -350,9 +350,9 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                    emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));
-                    emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
-                    emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
+                    emailTemplate.Parse("U_EVENT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventUri(core, this)));
+                    emailTemplate.Parse("U_ACCEPT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
+                    emailTemplate.Parse("U_REJECT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
 
                     core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
@@ -401,9 +401,9 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                        emailTemplate.Parse("U_EVENT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventUri(core, this)));
-                        emailTemplate.Parse("U_ACCEPT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
-                        emailTemplate.Parse("U_REJECT", "http://zinzam.com" + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
+                        emailTemplate.Parse("U_EVENT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventUri(core, this)));
+                        emailTemplate.Parse("U_ACCEPT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
+                        emailTemplate.Parse("U_REJECT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
 
                         core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);

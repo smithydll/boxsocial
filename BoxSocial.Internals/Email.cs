@@ -57,12 +57,12 @@ namespace BoxSocial.Internals
             //mailClient.c
             //SmtpMail.SmtpServer = SMTP_SERVER;
 
-            MailMessage newMessage = new MailMessage(new MailAddress(WebConfigurationManager.AppSettings["email"], "ZinZam"), new MailAddress(toAddress));
+            MailMessage newMessage = new MailMessage(new MailAddress(WebConfigurationManager.AppSettings["email"], core.Settings.SiteTitle), new MailAddress(toAddress));
             newMessage.Subject = subject;
             newMessage.IsBodyHtml = false;
             newMessage.Body = message;
 
-            newMessage.Headers.Add("X-AntiAbuse", "servername - zinzam.com");
+            newMessage.Headers.Add("X-AntiAbuse", "servername - " + Linker.Domain);
             if (core != null)
             {
                 if (core.Session.LoggedInMember != null)

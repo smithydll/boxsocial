@@ -1033,36 +1033,6 @@ namespace BoxSocial.Internals
             page.EndResponse();
         }
 
-        /*public Access GetAccessFromItem(long itemId, string tableName, string columnPrefix)
-        {
-            DataTable itemTable = db.Query(string.Format("SELECT {2}item_id, {2}item_type, {2}access FROM {1} WHERE gi.{2}id = {0};",
-                itemId, tableName, columnPrefix));
-
-            if (itemTable.Rows.Count == 1)
-            {
-                Primitive owner = null;
-                switch ((string)itemTable.Rows[0][columnPrefix + "item_type"])
-                {
-                    case "USER":
-                        owner = new Member(db, (long)itemTable.Rows[0][columnPrefix + "item_id"]);
-                        break;
-                    case "GROUP":
-                        owner = new ZinZam.Groups.Group(db, (long)itemTable.Rows[0][columnPrefix + "item_id"]);
-                        break;
-                    case "NETWORK":
-                        owner = new Network(db, (long)itemTable.Rows[0][columnPrefix + "item_id"]);
-                        break;
-                    default:
-                        throw new InvalidItemException();
-                        break;
-                }
-
-                Access photoAccess = new Access(core, (ushort)itemTable.Rows[0][columnPrefix + "access"], owner);
-
-                return photoAccess;
-            }
-        }*/
-
         public static void CheckCoreIsNotNull(Core core)
         {
             if (core == null)

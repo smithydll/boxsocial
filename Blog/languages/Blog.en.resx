@@ -139,7 +139,7 @@
     <value>Blog Preferences</value>
   </data>
   <data name="BLOG_ROLL_DESCRIPTION" xml:space="preserve">
-    <value>You can add a blog to your blog roll that exists outside of ZinZam.</value>
+    <value>You can add a blog to your blog roll that exists outside of BoxSocial.</value>
   </data>
   <data name="BLOG_TITLE" xml:space="preserve">
     <value>Blog Title</value>

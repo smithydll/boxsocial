@@ -365,7 +365,7 @@ namespace BoxSocial.Internals
             string output = "";
             string path = "/";
             output = string.Format("<a href=\"{1}\">{0}</a>",
-                    "Zinzam.com", path);
+                    Linker.Domain, path);
 
             for (int i = 0; i < parts.Count; i++)
             {

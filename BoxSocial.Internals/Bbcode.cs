@@ -1372,11 +1372,11 @@ namespace BoxSocial.Internals
                 if (e.Attributes.HasAttributes())
                 {
                     e.PrefixText = string.Empty;
-                    e.SuffixText = string.Format("(http://zinzam.com{0})", core.Uri.StripSid(e.Attributes.GetAttribute("default")));
+                    e.SuffixText = string.Format("(http://" + Linker.Domain + "{0})", core.Uri.StripSid(e.Attributes.GetAttribute("default")));
                 }
                 else
                 {
-                    e.PrefixText = "(http://zinzam.com";
+                    e.PrefixText = "(http://" + Linker.Domain;
                     e.SuffixText = ")";
                 }
             }
@@ -1600,7 +1600,7 @@ namespace BoxSocial.Internals
                 string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
                 e.RemoveContents();
 
-                e.PrefixText = "<img src=\"http://zinzam.com/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+                e.PrefixText = "<img src=\"http://" + Linker.Domain + "/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
                 e.SuffixText = string.Empty;
             }
         }

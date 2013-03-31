@@ -291,7 +291,7 @@ namespace BoxSocial.Applications.Gallery
                     emailTemplate.Parse("TO_NAME", tag.TaggedMember.DisplayName);
                     emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
                     emailTemplate.Parse("FROM_USERNAME", core.Session.LoggedInMember.UserName);
-                    emailTemplate.Parse("U_PHOTO", "http://zinzam.com" + tag.TaggedGalleryItem.BuildUri());
+                    emailTemplate.Parse("U_PHOTO", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(tag.TaggedGalleryItem.BuildUri())));
 
                     core.Email.SendEmail(tag.TaggedMember.UserInfo.PrimaryEmail, string.Format("{0} tagged you in a photo",
                         core.Session.LoggedInMember.DisplayName),

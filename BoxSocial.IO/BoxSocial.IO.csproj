@@ -53,6 +53,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\bin\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="openstacknet">
+      <HintPath>..\packages\openstack.net.1.1.0.2\lib\net40\openstacknet.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleRESTServices">
+      <HintPath>..\packages\SimpleRESTServices.1.0.6.3\lib\net40\SimpleRESTServices.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
@@ -60,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmazonS3.cs" />
+    <Compile Include="Rackspace.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />
     <Compile Include="ImageMagick.cs" />
     <Compile Include="IProse.cs" />
@@ -95,6 +105,9 @@
       <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
       <Name>BoxSocial.Forms</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

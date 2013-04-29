@@ -428,13 +428,13 @@ namespace BoxSocial.Internals
 
             /* Match hash tags to BBcode for parsing */
             matches = Regex.Matches(input, "(?:^|\\s)((\\#)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
-
+            offset = 0;
             foreach (Match match in matches)
             {
                 string hashtag = match.Groups[1].Value;
                 if (!string.IsNullOrEmpty(hashtag))
                 {
-                    string searchUri = core.Uri.AppendCoreSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
+                    string searchUri = core.Uri.AppendAbsoluteSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
                     string startTag = "[url=\"" + searchUri + "\"]";
                     string endTag = "[/url]";
 
@@ -446,7 +446,7 @@ namespace BoxSocial.Internals
 
             /* Match user links to BBcode for parsing */
             matches = Regex.Matches(input, "(?:^|\\s)((\\@)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
-
+            offset = 0;
             List<string> usernames = new List<string>();
             foreach (Match match in matches)
             {
@@ -460,14 +460,14 @@ namespace BoxSocial.Internals
             {
                 string username = match.Groups[3].Value;
 
-                if (userIds.ContainsKey(username))
+                if (userIds.ContainsKey(username.ToLower()))
                 {
-                    string startTag = "[user]" + userIds[username].ToString();
+                    string startTag = "[user]" + userIds[username.ToLower()].ToString();
                     string endTag = "[/user]";
 
                     output = output.Remove(match.Groups[1].Index + offset, match.Groups[1].Value.Length).Insert(match.Groups[1].Index + offset, startTag + endTag);
 
-                    offset += (startTag + endTag).Length - match.Groups[1].Value.Length;
+                    offset += ((startTag + endTag).Length - match.Groups[1].Value.Length);
                 }
             }
 

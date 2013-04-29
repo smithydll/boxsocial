@@ -2317,12 +2317,20 @@ namespace BoxSocial.Internals
                 switch (primitiveKey.Id)
                 {
                     case -1:
+                        if (viewer.Id == -1)
+                        {
+                            return true;
+                        }
                         if (IsFriend(viewer))
                         {
                             return true;
                         }
                         break;
                     case -2:
+                        if (viewer.Id == -2)
+                        {
+                            return true;
+                        }
                         if (IsFamily(viewer))
                         {
                             return true;
@@ -2472,6 +2480,7 @@ namespace BoxSocial.Internals
         public Template RenderPreview()
         {
             Template template = new Template("search_result.user.html");
+            template.SetProse(core.Prose);
 
             template.Parse("USER_DISPLAY_NAME", DisplayName);
             template.Parse("ICON", UserIcon);

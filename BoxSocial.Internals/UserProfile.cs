@@ -93,6 +93,18 @@ namespace BoxSocial.Internals
         private string countryName;
         private string religionTitle;
 
+        public User User
+        {
+            get
+            {
+                if (user == null || user.Id != UserId)
+                {
+                    user = core.PrimitiveCache[UserId];
+                }
+                return user;
+            }
+        }
+
         public long UserId
         {
             get
@@ -604,6 +616,9 @@ namespace BoxSocial.Internals
 
         void UserProfile_ItemUpdated(object sender, EventArgs e)
         {
+            Search search = new Search(core);
+            search.UpdateIndex(User);
+
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
 
             if (HasPropertyUpdated("sexuality"))

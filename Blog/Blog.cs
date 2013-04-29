@@ -903,7 +903,7 @@ namespace BoxSocial.Applications.Blog
 
                     if (blogEntries[i].Info.Comments > 0)
                     {
-                        blogPostVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", blogEntries[i].Info.Comments));
+                        blogPostVariableCollection.Parse("POST_COMMENTS", string.Format(" ({0:d})", blogEntries[i].Info.Comments));
                     }
 
                     if (blogEntries[i].PostId == post)

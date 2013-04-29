@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -447,7 +448,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return Owner;
+                return Forum;
             }
         }
 
@@ -477,7 +478,55 @@ namespace BoxSocial.Applications.Forum
 
         public Template RenderPreview()
         {
-            Template template = new Template("Forum", "topicpost");
+            Template template = new Template(Assembly.GetExecutingAssembly(), "topicpost");
+            template.SetProse(core.Prose);
+
+            VariableCollection postVariableCollection = template.CreateChild("post_list");
+
+            Dictionary<long, ForumMember> postersList = ForumMember.GetMembers(core, Forum.Owner, new List<long> { UserId });
+
+            postVariableCollection.Parse("SUBJECT", Title);
+            postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(GetCreatedDate(core.Tz)));
+            postVariableCollection.Parse("URI", Uri);
+            //postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
+            postVariableCollection.Parse("ID", Id.ToString());
+            core.Display.ParseBbcode(postVariableCollection, "TEXT", Text);
+            if (postersList.ContainsKey(UserId))
+            {
+                postVariableCollection.Parse("U_USER", postersList[UserId].Uri);
+                postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[UserId].UserInfo.DisplayName);
+                postVariableCollection.Parse("USER_TILE", postersList[UserId].UserTile);
+                postVariableCollection.Parse("USER_ICON", postersList[UserId].UserIcon);
+                postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(postersList[UserId].UserInfo.GetRegistrationDate(core.Tz)));
+                postVariableCollection.Parse("USER_COUNTRY", postersList[UserId].Profile.Country);
+                postVariableCollection.Parse("USER_POSTS", postersList[UserId].ForumPosts.ToString());
+                core.Display.ParseBbcode(postVariableCollection, "SIGNATURE", postersList[UserId].ForumSignature);
+
+                /*if (ranksList.ContainsKey(postersList[post.UserId].ForumRankId))
+                {
+                    postVariableCollection.Parse("USER_RANK", ranksList[postersList[UserId].ForumRankId].RankTitleText);
+                }*/
+            }
+            else
+            {
+                postVariableCollection.Parse("USER_DISPLAY_NAME", "Anonymous");
+            }
+
+            /*if (thisTopic.ReadStatus == null)
+            {*/
+                postVariableCollection.Parse("IS_READ", "FALSE");
+            /*}
+            else
+            {
+                if (thisTopic.ReadStatus.ReadTimeRaw < post.TimeCreatedRaw)
+                {
+                    postVariableCollection.Parse("IS_READ", "FALSE");
+                }
+                else
+                {
+                    postVariableCollection.Parse("IS_READ", "TRUE");
+                }
+            }*/
 
             return template;
         }

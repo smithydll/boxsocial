@@ -49,6 +49,11 @@ namespace BoxSocial.Internals
         private Dictionary<PrimitiveKey, PrimitiveId> primitivesKeysCached = new Dictionary<PrimitiveKey, PrimitiveId>();
 
         /// <summary>
+        /// A cached user Ids.
+        /// </summary>
+        private Dictionary<string, long> userIdsCached = new Dictionary<string, long>();
+
+        /// <summary>
         /// A list of primitive Ids for batched loading
         /// </summary>
         private List<PrimitiveId> batchedPrimitivesIds = new List<PrimitiveId>();
@@ -197,10 +202,21 @@ namespace BoxSocial.Internals
             Dictionary<string, long> userIds = new Dictionary<string, long>();
             foreach (string username in usernames)
             {
-                PrimitiveKey key = new PrimitiveKey(username, userTypeId);
+                PrimitiveKey key = new PrimitiveKey(username.ToLower(), userTypeId);
                 if (!primitivesKeysCached.ContainsKey(key))
                 {
                     usernameList.Add(username.ToLower());
+                }
+                else
+                {
+                    if (!userIdsCached.ContainsKey(username.ToLower()))
+                    {
+                        usernameList.Add(username.ToLower());
+                    }
+                    else
+                    {
+                        userIds.Add(username.ToLower(), userIdsCached[username.ToLower()]);
+                    }
                 }
             }
 
@@ -226,7 +242,7 @@ namespace BoxSocial.Internals
                     User newUser = new User(core, userRow, UserLoadOptions.All);
 
                     PrimitiveId pid = new PrimitiveId(newUser.Id, userTypeId);
-                    PrimitiveKey kid = new PrimitiveKey(newUser.UserName, userTypeId);
+                    PrimitiveKey kid = new PrimitiveKey(newUser.UserName.ToLower(), userTypeId);
 					
 					if (!primitivesCached.ContainsKey(pid))
 					{
@@ -240,6 +256,10 @@ namespace BoxSocial.Internals
 					{
 						userIds.Add(newUser.UserName, newUser.Id);
 					}
+                    if (!userIdsCached.ContainsKey(newUser.UserName.ToLower()))
+                    {
+                        userIdsCached.Add(newUser.UserName.ToLower(), newUser.Id);
+                    }
                 }
             }
 

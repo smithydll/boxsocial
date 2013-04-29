@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     [Permission("VIEW", "Can view this status message", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
-    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem
+    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
@@ -143,6 +143,20 @@ namespace BoxSocial.Internals
 
         private void StatusMessage_ItemLoad()
         {
+            ItemUpdated += new EventHandler(StatusMessage_ItemUpdated);
+            ItemDeleted += new ItemDeletedEventHandler(StatusMessage_ItemDeleted);
+        }
+
+        void StatusMessage_ItemUpdated(object sender, EventArgs e)
+        {
+            Search search = new Search(core);
+            search.UpdateIndex(this);
+        }
+
+        void StatusMessage_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            Search search = new Search(core);
+            search.DeleteFromIndex(this);
         }
 
         public static StatusMessage Create(Core core, User creator, string message)
@@ -165,7 +179,12 @@ namespace BoxSocial.Internals
 
             core.Db.Query(uQuery);
 
-            return new StatusMessage(core, creator, statusId, message);
+            StatusMessage newStatusMessage = new StatusMessage(core, creator, statusId, message);
+
+            Search search = new Search(core);
+            search.Index(newStatusMessage);
+
+            return newStatusMessage;
         }
 
         public static void Show(object sender, ShowUPageEventArgs e)
@@ -359,6 +378,76 @@ namespace BoxSocial.Internals
             {
                 return dislikes;
             }
+        }
+
+
+        public string IndexingString
+        {
+            get
+            {
+                return Message;
+            }
+        }
+
+        public string IndexingTitle
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public string IndexingTags
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public Template RenderPreview()
+        {
+            Template template = new Template("search_result.statusmessage.html");
+            template.SetProse(core.Prose);
+
+            VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
+
+            //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(Message), owner);
+            statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(GetTime(core.Tz)));
+
+            statusMessageVariableCollection.Parse("ID", Id.ToString());
+            statusMessageVariableCollection.Parse("TYPE_ID", ItemKey.TypeId.ToString());
+            statusMessageVariableCollection.Parse("USERNAME", Poster.DisplayName);
+            statusMessageVariableCollection.Parse("U_PROFILE", Poster.ProfileUri);
+            statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(Id));
+            statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(Id));
+            statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(Id));
+            statusMessageVariableCollection.Parse("U_PERMISSIONS", Access.AclUri);
+            statusMessageVariableCollection.Parse("USER_TILE", Poster.UserTile);
+            statusMessageVariableCollection.Parse("USER_ICON", Poster.UserIcon);
+            statusMessageVariableCollection.Parse("URI", Uri);
+
+            if (core.Session.IsLoggedIn)
+            {
+                if (Owner.Id == core.Session.LoggedInMember.Id)
+                {
+                    statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+                }
+            }
+
+            if (Info.Likes > 0)
+            {
+                statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", Info.Likes));
+                statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", Info.Dislikes));
+            }
+
+            if (Info.Comments > 0)
+            {
+                statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", Info.Comments));
+            }
+
+            return template;
         }
     }
 

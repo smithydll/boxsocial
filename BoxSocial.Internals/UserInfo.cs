@@ -105,6 +105,7 @@ namespace BoxSocial.Internals
         [DataField("user_analytics_code", 15)]
         protected string analyticsCode;
 
+        private User user;
         private string userNameOwnership;
         private UnixTime timeZone;
 

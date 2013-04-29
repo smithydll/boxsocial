@@ -117,29 +117,70 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="account_blog_manage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_blog_manage.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="ADDRESS" xml:space="preserve">
+    <value>Address</value>
   </data>
-  <data name="account_blog_preferences" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_blog_preferences.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="ADVANCED" xml:space="preserve">
+    <value>Advanced</value>
   </data>
-  <data name="account_blog_roll" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_blog_roll.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="BODY_BUILD" xml:space="preserve">
+    <value>Build</value>
   </data>
-  <data name="account_blog_roll_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_blog_roll_new.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="CONTACT_DETAILS_INFO" xml:space="preserve">
+    <value>List your contact details for your friends to access in their address book.</value>
   </data>
-  <data name="account_post" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\account_post.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="HEIGHT" xml:space="preserve">
+    <value>Height</value>
   </data>
-  <data name="blogentry" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\blogentry.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="HOME_PHONE" xml:space="preserve">
+    <value>Home Phone</value>
   </data>
-  <data name="user_blog_notification" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\user_blog_notification.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="MANAGE_BLOCK_LIST" xml:space="preserve">
+    <value>Manage Block List</value>
   </data>
-  <data name="viewblog" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\viewblog.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="MANAGE_FRIENDS" xml:space="preserve">
+    <value>Manage Friends</value>
+  </data>
+  <data name="MOBILE_PHONE" xml:space="preserve">
+    <value>Mobile Phone</value>
+  </data>
+  <data name="MY_CONTACT_DETAILS" xml:space="preserve">
+    <value>My Contact Details</value>
+  </data>
+  <data name="NAME" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ORDER" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="PERSONAL_WEBSITE" xml:space="preserve">
+    <value>Personal Website</value>
+  </data>
+  <data name="POST_CODE" xml:space="preserve">
+    <value>Post Code</value>
+  </data>
+  <data name="SIMPLE" xml:space="preserve">
+    <value>Simple</value>
+  </data>
+  <data name="STATUS_FEED" xml:space="preserve">
+    <value>Status Feed</value>
+  </data>
+  <data name="STYLE" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="SUBURB" xml:space="preserve">
+    <value>Suburb/Town</value>
+  </data>
+  <data name="THEME" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="UNBLOCK" xml:space="preserve">
+    <value>Unblock</value>
+  </data>
+  <data name="WEIGHT" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="XMPP" xml:space="preserve">
+    <value>XMPP (Jabber)</value>
   </data>
 </root>

@@ -170,17 +170,23 @@ namespace BoxSocial.Internals
 
         public bool IsPublic()
         {
-            return Can("VIEW", (IPermissibleItem)item, false, User.EveryoneGroupKey);
+            return Can("VIEW", item, false, User.EveryoneGroupKey);
         }
 
         public bool IsPrivateFriendsOrMembers()
         {
-            return Can("VIEW", (IPermissibleItem)item, false, Friend.FriendsGroupKey);
+            return Can("VIEW", item, false, Friend.FriendsGroupKey);
         }
 
         public bool Can(string permission)
         {
-            return Can(permission, (IPermissibleItem)item, false, Viewer.ItemKey);
+            ItemKey viewer = User.EveryoneGroupKey;
+            if (Viewer != null)
+            {
+                viewer = Viewer.ItemKey;
+            }
+
+            return Can(permission, item, false, viewer);
         }
 
         private bool Can(string permission, IPermissibleItem leaf, bool inherit, ItemKey viewer)

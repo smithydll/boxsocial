@@ -963,6 +963,7 @@ namespace BoxSocial.Applications.Forum
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
 					postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(post.GetCreatedDate(core.Tz)));
+                    postVariableCollection.Parse("URI", post.Uri);
 					//postVariableCollection.Parse("POST_MODIFIED", core.tz.DateTimeToString(post.GetModifiedDate(core.tz)));
                     postVariableCollection.Parse("ID", post.Id.ToString());
                     core.Display.ParseBbcode(postVariableCollection, "TEXT", post.Text);

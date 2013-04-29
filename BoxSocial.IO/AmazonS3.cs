@@ -173,6 +173,18 @@ namespace BoxSocial.IO
             return client.GetPreSignedURL(request);
         }
 
+        public string RetrieveSecureFileUri(string bin, string fileName)
+        {
+            // Secure not supported by amazon
+            GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
+            request.BucketName = bin;
+            request.Key = fileName;
+            request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
+            request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
+            request.Expires = DateTime.Now.AddHours(1);
+            return client.GetPreSignedURL(request);
+        }
+
         public override string RetrieveFileUri(string bin, string fileName, string contentType, string renderFileName)
         {
             GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();

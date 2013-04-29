@@ -69,144 +69,16 @@ namespace BoxSocial.FrontEnd
 
         private void showSearchResults()
         {
-            string query = Request["q"];
-            string email = null;
-            string firstName = null;
-            string middleName = null;
-            string lastName = null;
-            string userName = null;
-
-            Match match = null;
-
-            if (!string.IsNullOrEmpty(query))
-            {
-                match = Regex.Match(query, @"[a-z0-9&\'\.\-_\+]+@[a-z0-9\-]+\.([a-z0-9\-]+\.)*?[a-z]+", RegexOptions.IgnoreCase);
-            }
-
-            if ((match != null) && match.Success)
-            {
-                email = match.Value;
-            }
-            else
-            {
-                string[] parts = query.Split(new char[] { ' ', '\t', ',', '.', ';', '+', '_', '$', '=', '&' });
-
-                switch (parts.Length)
-                {
-                    case 1:
-                        firstName = lastName = parts[0];
-                        break;
-                    case 2:
-                        if (query.Contains(","))
-                        {
-                            firstName = parts[1];
-                            lastName = parts[0];
-                        }
-                        else
-                        {
-                            firstName = parts[0];
-                            lastName = parts[1];
-                        }
-                        break;
-                    case 3:
-                        if (query.Contains(","))
-                        {
-                            firstName = parts[1];
-                            middleName = parts[2];
-                            lastName = parts[0];
-                        }
-                        else
-                        {
-                            firstName = parts[0];
-                            middleName = parts[1];
-                            lastName = parts[2];
-                        }
-                        break;
-                }
-
-                parts = query.Split(new char[] { ' ', '\t', ';' });
-
-                if (parts.Length == 1)
-                {
-                    userName = parts[0];
-                }
-            }
-
-            SelectQuery squery = new SelectQuery("user_keys");
-            squery.AddFields(NumberedItem.GetFieldsPrefixed(typeof(BoxSocial.Internals.User)));
-            squery.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            squery.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
-            squery.AddField(new DataField("gallery_items", "gallery_item_uri"));
-            squery.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-            squery.AddJoin(JoinTypes.Inner, "user_info", "user_id", "user_id");
-            squery.AddJoin(JoinTypes.Inner, "user_profile", "user_id", "user_id");
-            squery.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
-            squery.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
-            squery.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
-
-            if (!string.IsNullOrEmpty(email))
-            {
-                squery.AddCondition("user_alternate_email", email.ToLower());
-            }
-
-            if (!string.IsNullOrEmpty(firstName))
-            {
-                squery.AddCondition(ConditionRelations.Or, "profile_name_first", firstName.ToLower());
-            }
-
-            if (!string.IsNullOrEmpty(middleName))
-            {
-                squery.AddCondition(ConditionRelations.Or, "profile_name_middle", firstName.ToLower());
-            }
-
-            if (!string.IsNullOrEmpty(lastName))
-            {
-                squery.AddCondition(ConditionRelations.Or, "profile_name_suffix", firstName.ToLower());
-            }
-
-            if (!string.IsNullOrEmpty(userName))
-            {
-                squery.AddCondition(ConditionRelations.Or, "user_keys.user_name", userName.ToLower());
-                squery.AddCondition(ConditionRelations.Or, "user_name_display", userName.ToLower());
-            }
-
-            squery.LimitCount = 10;
-            squery.LimitStart = 10 * (TopLevelPageNumber - 1);
-
-            DataTable searchDataTable = db.Query(squery);
-
             template.SetTemplate("search_results.html");
 
-            foreach (DataRow dr in searchDataTable.Rows)
-            {
-                BoxSocial.Internals.User user = new User(core, dr, UserLoadOptions.All);
-
-                VariableCollection userVariableCollection = template.CreateChild("search_user");
-
-                userVariableCollection.Parse("USER_DISPLAY_NAME", user.DisplayName);
-                userVariableCollection.Parse("ICON", user.UserIcon);
-                userVariableCollection.Parse("TILE", user.UserTile);
-                userVariableCollection.Parse("U_PROFILE", user.Uri);
-                userVariableCollection.Parse("JOIN_DATE", tz.DateTimeToString(user.UserInfo.GetRegistrationDate(tz)));
-                userVariableCollection.Parse("USER_AGE", user.Profile.AgeString);
-                userVariableCollection.Parse("USER_COUNTRY", user.Profile.Country);
-
-                if (core.Session.IsLoggedIn)
-                {
-                    List<long> friendIds = loggedInMember.GetFriendIds();
-                    if (!friendIds.Contains(user.Id))
-                    {
-                        userVariableCollection.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(user.Id, true));
-                    }
-                }
-            }
+            string query = Request["q"];
 
             Search search = new Search(core);
 
-            List<ISearchableItem> results = search.DoSearch(query, 1, null, null);
+            SearchResult results = search.DoSearch(query, TopLevelPageNumber, null, null);
 
             int resultsRemoved = 0;
-            foreach (ISearchableItem result in results)
+            foreach (ISearchableItem result in results.Items)
             {
                 bool canView = true;
                 if (result is IPermissibleItem)
@@ -239,9 +111,9 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            template.Parse("RESULTS", (searchDataTable.Rows.Count + results.Count - resultsRemoved).ToString());
+            template.Parse("RESULTS", (results.Results - resultsRemoved).ToString());
 
-            core.Display.ParsePagination(core.Uri.BuildSearchUri(query), TopLevelPageNumber, (int)Math.Ceiling((results.Count - resultsRemoved) / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildSearchUri(query), TopLevelPageNumber, (int)Math.Ceiling((results.Results - resultsRemoved) / 10.0));
         }
 
         private void showFriends()

@@ -284,6 +284,10 @@ namespace BoxSocial.Internals
             {
                 core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
             }
+            else if (core.Settings.StorageProvider == "rackspace")
+            {
+                core.Storage = new Rackspace(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+            }
             else if (core.Settings.StorageProvider == "local")
             {
                 core.Storage = new LocalStorage(core.Settings.StorageRootUserFiles, db);

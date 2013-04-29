@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -706,7 +707,8 @@ namespace BoxSocial.Applications.Blog
 
         public Template RenderPreview()
         {
-            Template template = new Template("Blog", "blogentry");
+            Template template = new Template(Assembly.GetExecutingAssembly(), "blogentry");
+            template.SetProse(core.Prose);
 
             VariableCollection blogPostVariableCollection = template.CreateChild("blog_list");
 

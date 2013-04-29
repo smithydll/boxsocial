@@ -403,6 +403,28 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;ul id=&quot;posts&quot;&gt;
+        ///  &lt;!-- BEGIN post_list --&gt;
+        ///  &lt;li&gt;
+        ///  	&lt;div class=&quot;post&quot;&gt;
+        ///      &lt;div class=&quot;postbody&quot;&gt;
+        ///  	&lt;h3 id=&quot;p{post_list.ID}&quot;&gt;&lt;a href=&quot;{post_list.URI}&quot;&gt;{post_list.SUBJECT}&lt;/a&gt;&lt;/h3&gt;
+        ///  	&lt;p&gt;
+        ///    &lt;!-- IF post_list.IS_READ --&gt;
+        ///    &lt;img src=&quot;/images/posticon_read_sml.png&quot; alt=&quot;Read&quot; /&gt;
+        ///    &lt;!-- ELSE --&gt;
+        ///    &lt;img src=&quot;/images/posticon_unread_sml.png&quot; alt=&quot;New&quot; /&gt;
+        ///    &lt;!-- ENDIF --&gt;
+        ///    by &lt;strong&gt;&lt;a href=&quot;{post_list.U_USER}&quot;&gt;{post_list.USER_DISPLAY_NAME}&lt;/a&gt;&lt;/strong&gt; on {post_list.POST_TIME}&lt;/p&gt;
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string topicpost {
+            get {
+                return ResourceManager.GetString("topicpost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///&lt;!-- INCLUDE forum_header --&gt;
         ///&lt;h2&gt;User Control Panel&lt;/h2&gt;
@@ -488,16 +510,22 @@ namespace BoxSocial.Applications.Forum {
         
         /// <summary>
         ///   Looks up a localized string similar to 	&lt;div id=&quot;profile-forum-pane&quot; class=&quot;pane&quot;&gt;
-        ///		&lt;h3&gt;{L_FORUM}&lt;/h3&gt;
-        ///		&lt;a href=&quot;{U_FORUM}&quot;&gt;{L_GO_TO_FORUM}&lt;/a&gt;
+        ///		&lt;h3&gt;&lt;a href=&quot;{U_FORUM}&quot;&gt;{L_FORUM}&lt;/a&gt;&lt;/h3&gt;
         ///    &lt;!-- IF topic_list --&gt;
-        ///    &lt;dl&gt;
-        ///      &lt;!-- BEGIN topic_list --&gt;
-        ///      &lt;dt&gt;&lt;a href=&quot;{topic_list.URI}&quot;&gt;{topic_list.TITLE}&lt;/a&gt;&lt;/dt&gt;
-        ///      &lt;!-- END topic_list --&gt;
-        ///    &lt;/dl&gt;
-        ///    &lt;!-- ENDIF --&gt;
-        ///	&lt;/div&gt;.
+        ///			&lt;ul id=&quot;topics&quot; class=&quot;pane&quot;&gt;
+        ///    &lt;li id=&quot;topic-head&quot;&gt;
+        ///					&lt;dl class=&quot;title-row&quot;&gt;
+        ///						&lt;dt&gt;&lt;div&gt;&amp;nbsp;&lt;/div&gt;&lt;/dt&gt;
+        ///						&lt;dd&gt;&lt;div&gt;{L_VIEWS}&lt;/div&gt;&lt;/dd&gt;
+        ///						&lt;dd&gt;&lt;div&gt;{L_REPLIES}&lt;/div&gt;&lt;/dd&gt;
+        ///						&lt;dd&gt;&lt;div&gt;{L_LAST_POST}&lt;/div&gt;&lt;/dd&gt;
+        ///      &lt;/dl&gt;
+        ///    &lt;/li&gt;
+        ///    &lt;!-- BEGIN topic_list --&gt;
+        ///    &lt;li&gt;
+        ///					&lt;dl class=&quot;icon&quot;&gt;
+        ///        &lt;dt&gt;
+        ///    &lt;!-- IF topic_list.IS_NORMAL_READ_UNLOCKED --&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewprofileforum {
             get {
@@ -537,19 +565,17 @@ namespace BoxSocial.Applications.Forum {
         ///	&lt;h2&gt;{TOPIC_TITLE}&lt;/h2&gt;
         ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
         ///
-        ///&lt;div class=&quot;new-stuff&quot;&gt;
+        ///  &lt;div data-role=&quot;controlgroup&quot; data-type=&quot;horizontal&quot;&gt;
         ///  &lt;!-- IF U_NEW_TOPIC --&gt;
-        ///  &lt;span class=&quot;new-topic post-button&quot;&gt;&lt;a href=&quot;{U_NEW_TOPIC}&quot;&gt;{L_NEW_TOPIC}&lt;/a&gt;&lt;/span&gt;
+        ///    &lt;a href=&quot;{U_NEW_TOPIC}&quot; data-role=&quot;button&quot; data-theme=&quot;a&quot; data-inline=&quot;true&quot;&gt;{L_NEW_TOPIC}&lt;/a&gt;
         ///  &lt;!-- ENDIF --&gt;
         ///  &lt;!-- IF U_NEW_REPLY --&gt;
-        ///	&lt;span class=&quot;new-reply post-button&quot;&gt;&lt;a href=&quot;{U_NEW_REPLY}&quot;&gt;{L_POST_REPLY}&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;a href=&quot;{U_NEW_REPLY}&quot; data-role=&quot;button&quot; data-theme=&quot;a&quot; data-inline=&quot;true&quot;&gt;{L_POST_REPLY}&lt;/a&gt;
         ///  &lt;!-- ENDIF --&gt;
-        ///&lt;/div&gt;
+        ///  &lt;/div&gt;
         ///
-        ///&lt;p&gt;&lt;strong&gt;Go to page:&lt;/strong&gt; {PAGINATION}&lt;/p&gt;
-        ///&lt;!-- IF POSTS --&gt;
-        ///&lt;ul id=&quot;posts&quot;&gt;
-        ///  &lt;!-- BE [rest of string was truncated]&quot;;.
+        ///&lt;p&gt;{PAGINATION}&lt;/p&gt;
+        ///&lt;!-- IF POSTS --&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewtopic_mobile {
             get {

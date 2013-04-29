@@ -3,13 +3,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{28571091-8A91-49BB-B69E-E33FA70B7ACE}</ProjectGuid>
+    <ProjectGuid>{ED96ADC7-527B-4486-B8FC-5A98D11DFE37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BoxSocial.Applications.Calendar</RootNamespace>
-    <AssemblyName>Calendar</AssemblyName>
+    <RootNamespace>BoxSocial.Applications.Requirements</RootNamespace>
+    <AssemblyName>Requirements</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -43,9 +43,8 @@
     <WarningLevel>3</WarningLevel>
     <NoWarn>649,169</NoWarn>
     <OutputType>Library</OutputType>
-    <RootNamespace>BoxSocial.Applications.Calendar</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Requirements</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,7 +56,7 @@
     <NoWarn>649 169</NoWarn>
     <OutputType>Library</OutputType>
     <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>BoxSocial.Applications.Calendar</RootNamespace>
+    <RootNamespace>BoxSocial.Applications.Requirements</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
@@ -68,29 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountCalendar.cs" />
-    <Compile Include="AccountCalendarEventDelete.cs" />
-    <Compile Include="AccountCalendarEventInvite.cs" />
-    <Compile Include="AccountCalendarEventNew.cs" />
-    <Compile Include="AccountCalendarManage.cs" />
-    <Compile Include="AccountCalendarTaskMarkComplete.cs" />
-    <Compile Include="AccountCalendarTaskNew.cs" />
-    <Compile Include="AppInfo.cs" />
-    <Compile Include="BirthdayEvent.cs" />
-    <Compile Include="Calendar.cs" />
-    <Compile Include="Event.cs" />
-    <Compile Include="EventEmailInvite.cs" />
-    <Compile Include="EventInvite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Task.cs" />
-    <Compile Include="Templates.Designer.cs">
-      <DependentUpon>Templates.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
@@ -105,57 +82,6 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Groups\Groups.csproj">
-      <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
-      <Name>Groups</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Networks\Networks.csproj">
-      <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
-      <Name>Networks</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="resources\calendar.png" />
-    <Content Include="resources\script.js" />
-    <Content Include="resources\style.css" />
-    <Content Include="templates\account_calendar_event_new.html" />
-    <Content Include="templates\account_calendar_manage.html" />
-    <Content Include="templates\account_calendar_task_new.html" />
-    <Content Include="templates\todayupcommingevents.mobile.html" />
-    <Content Include="templates\todaymonthpanel.html" />
-    <Content Include="templates\todaytaskspanel.html" />
-    <Content Include="templates\todayupcommingevents.html" />
-    <Content Include="templates\viewcalendarday.html" />
-    <Content Include="templates\viewcalendarevent.html" />
-    <Content Include="templates\viewcalendarmonth.html">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="templates\viewcalendartask.html" />
-    <Content Include="templates\viewcalendartasks.html" />
-    <Content Include="templates\viewcalendaryear.html">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="languages\Calendar.en.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Templates.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="resources\calendar.svg" />
-    <Content Include="templates\email_event_invite.html" />
-    <Content Include="templates\user_event_notification.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -179,11 +105,10 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="languages\Requirements.en.resx" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Calendar.en.resx"</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Calendar.en.resx"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -191,4 +116,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Requirements.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Requirements.en.resx"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

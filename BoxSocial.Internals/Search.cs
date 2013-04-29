@@ -76,6 +76,34 @@ namespace BoxSocial.Internals
         }
     }
 
+    public struct SearchResult
+    {
+        private int results;
+        private List<ISearchableItem> items;
+
+        public int Results
+        {
+            get
+            {
+                return results;
+            }
+        }
+
+        public List<ISearchableItem> Items
+        {
+            get
+            {
+                return items;
+            }
+        }
+
+        public SearchResult(List<ISearchableItem> items, int results)
+        {
+            this.items = items;
+            this.results = results;
+        }
+    }
+
     public class Search
     {
         Core core;
@@ -103,7 +131,7 @@ namespace BoxSocial.Internals
             writer.Dispose();
         }
 
-        public List<ISearchableItem> DoSearch(string input, int pageNumber, Primitive filterByOwner, Type filterByType)
+        public SearchResult DoSearch(string input, int pageNumber, Primitive filterByOwner, Type filterByType)
         {
             int perPage = 10;
             int start = (pageNumber - 1) * perPage;
@@ -119,7 +147,7 @@ namespace BoxSocial.Internals
             BooleanQuery query = new BooleanQuery();
             Query bodyQuery = parser.Parse(input);
 
-            query.Add(bodyQuery, Occur.SHOULD);
+            query.Add(bodyQuery, Occur.MUST);
 
             BooleanQuery accessQuery = new BooleanQuery();
             TermQuery accessPublicQuery = new TermQuery(new Term("item_public", "1"));
@@ -203,9 +231,12 @@ namespace BoxSocial.Internals
             // Force each application with results to load
             for (int i = 0; i < applicationIds.Count; i++)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, applicationIds[i]);
+                if (applicationIds[i] > 0)
+                {
+                    ApplicationEntry ae = new ApplicationEntry(core, applicationIds[i]);
 
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                }
             }
 
             foreach (ItemKey key in itemKeys)
@@ -226,7 +257,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return results;
+            return new SearchResult(results, totalResults);
         }
 
         public bool Index(ISearchableItem item, params SearchField[] customFields)

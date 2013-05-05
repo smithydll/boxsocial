@@ -146,7 +146,7 @@ namespace BoxSocial.Internals
 
             loadItemInfo(type, core.Db.ReaderQuery(query));
 
-            if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
+            if (type.IsSubclassOf(typeof(NumberedItem)))
             {
                 core.ItemCache.RegisterItem((NumberedItem)this);
             }
@@ -1208,7 +1208,14 @@ namespace BoxSocial.Internals
 			}
 			else
 			{
-				throw new InvalidItemException(type.FullName);
+                if (!suppressReturnItem)
+                {
+                    throw new InvalidItemException(type.FullName);
+                }
+                else
+                {
+                    return null;
+                }
 			}
 		}
 

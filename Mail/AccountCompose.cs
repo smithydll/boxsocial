@@ -68,22 +68,221 @@ namespace BoxSocial.Applications.Mail
         {
             SetTemplate("account_compose");
 
+            long messageId = core.Functions.FormLong("id", 0);
+            bool edit = false;
+
             UserSelectBox toUserSelectBox = new UserSelectBox(core, "to");
+            UserSelectBox ccUserSelectBox = new UserSelectBox(core, "cc");
             TextBox subjectTextBox = new TextBox("subject");
             TextBox messageTextBox = new TextBox("message");
             messageTextBox.IsFormatted = true;
 
+            Message message = null;
+            try
+            {
+                message = new Message(core, messageId);
+                if (message.SenderId == core.Session.LoggedInMember.Id)
+                {
+                    edit = true;
+                }
+                else
+                {
+                    core.Functions.Generate403();
+                }
+            }
+            catch (InvalidMessageException)
+            {
+            }
+
+            if (edit)
+            {
+                subjectTextBox.Value = message.Subject;
+                messageTextBox.Value = message.Text;
+
+                List<MessageRecipient> recipients = message.GetRecipients();
+
+                foreach (MessageRecipient recipient in recipients)
+                {
+                    switch (recipient.RecipientType)
+                    {
+                        case RecipientType.To:
+                            toUserSelectBox.AddUserId(recipient.UserId);
+                            break;
+                        case RecipientType.Cc:
+                            ccUserSelectBox.AddUserId(recipient.UserId);
+                            break;
+                    }
+                }
+
+                if (message.Draft)
+                {
+                    template.Parse("SAVE_DRAFT", "TRUE");
+                }
+                else
+                {
+                    template.Parse("SAVE_DRAFT", "FALSE");
+                }
+            }
+            else
+            {
+                template.Parse("SAVE_DRAFT", "TRUE");
+            }
+
             template.Parse("S_TO", toUserSelectBox);
-            //template.Parse("S_SUBJECT", subjectTextBox);
-            //template.Parse("S_MESSAGE", messageTextBox);
+            template.Parse("S_CC", ccUserSelectBox);
+
+            template.Parse("S_SUBJECT", subjectTextBox);
+            template.Parse("S_MESSAGE", messageTextBox);
+
+            if (core.Http.Form["save"] != null)
+            {
+                AccountCompose_Save(this, new EventArgs());
+            }
+
+            if (core.Http.Form["send"] != null)
+            {
+                AccountCompose_Send(this, new EventArgs());
+            }
         }
 
         void AccountCompose_Save(object sender, EventArgs e)
         {
+            try
+            {
+                SaveOrSend(true);
+            }
+            catch (TooManyMessageRecipientsException)
+            {
+                DisplayError("Too many recipients selected.");
+            }
         }
 
         void AccountCompose_Send(object sender, EventArgs e)
         {
+            try
+            {
+                SaveOrSend(false);
+            }
+            catch (TooManyMessageRecipientsException)
+            {
+                DisplayError("Too many recipients selected.");
+            }
+        }
+
+        private void SaveOrSend(bool draft)
+        {
+            long messageId = core.Functions.FormLong("id", 0);
+            string subject = core.Http.Form["subject"];
+            string text = core.Http.Form["message"];
+            Dictionary<User, RecipientType> recipients = new Dictionary<User, RecipientType>();
+
+            recipients.Add(core.Session.LoggedInMember, RecipientType.Sender);
+
+            List<long> toRecipients = UserSelectBox.FormUsers(core, "to");
+            List<long> ccRecipients = UserSelectBox.FormUsers(core, "cc");
+
+            foreach (long id in toRecipients)
+            {
+                core.PrimitiveCache.LoadUserProfile(id);
+            }
+
+            foreach (long id in ccRecipients)
+            {
+                core.PrimitiveCache.LoadUserProfile(id);
+            }
+
+            foreach (long id in toRecipients)
+            {
+                if (core.PrimitiveCache[id] != null)
+                {
+                    recipients.Add(core.PrimitiveCache[id], RecipientType.To);
+                }
+            }
+
+            foreach (long id in ccRecipients)
+            {
+                if (core.PrimitiveCache[id] != null)
+                {
+                    recipients.Add(core.PrimitiveCache[id], RecipientType.Cc);
+                }
+            }
+
+            if (recipients.Count > 1)
+            {
+                if (messageId > 0)
+                {
+                    bool send = false;
+                    Message message = new Message(core, messageId);
+                    if (message.Draft && (!draft))
+                    {
+                        send = true;
+                        message.Draft = draft;
+                    }
+                    message.Subject = subject;
+                    message.Text = text;
+
+                    /* Check recipient list */
+                    List<MessageRecipient> savedRecipients = message.GetRecipients();
+
+                    foreach (MessageRecipient r in savedRecipients)
+                    {
+                        bool flag = false;
+                        foreach (User user in recipients.Keys)
+                        {
+                            if (r.UserId == user.Id && r.RecipientType == recipients[user])
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (!flag)
+                        {
+                            r.Delete();
+                        }
+                    }
+
+                    foreach (User user in recipients.Keys)
+                    {
+                        bool flag = false;
+                        foreach (MessageRecipient r in savedRecipients)
+                        {
+                            if (r.UserId == user.Id && r.RecipientType == recipients[user])
+                            {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (!flag)
+                        {
+                            message.AddRecipient(user, recipients[user]);
+                        }
+                    }
+
+                    if (send)
+                    {
+
+                    }
+
+                    message.Update();
+
+                    SetRedirectUri(BuildUri("inbox"));
+                    core.Display.ShowMessage("Message Updated", "Your mail message has been saved.");
+                }
+                else
+                {
+                    Message message = Message.Create(core, draft, subject, text, recipients);
+                    if (draft)
+                    {
+                        SetRedirectUri(BuildUri("inbox"));
+                        core.Display.ShowMessage("Message saved", "Your mail message has been saved.");
+                    }
+                    else
+                    {
+                        SetRedirectUri(BuildUri("inbox"));
+                        core.Display.ShowMessage("Message sent", "Your mail message has been sent.");
+                    }
+                }
+            }
         }
     }
 }

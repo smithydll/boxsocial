@@ -333,6 +333,9 @@
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
+  <data name="DATE" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="DATE_OF_BIRTH" xml:space="preserve">
     <value>Date of Birth</value>
   </data>

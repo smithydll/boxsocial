@@ -200,6 +200,7 @@ namespace BoxSocial.FrontEnd
 
             accountModules.Sort();
  
+            ApplicationEntry ae = null;
             foreach (AccountModule accountModule in accountModules)
             {
                 VariableCollection modulesVariableCollection = template.CreateChild("module_list");
@@ -216,7 +217,6 @@ namespace BoxSocial.FrontEnd
 
                 if (module == accountModule.Key)
                 {
-                    ApplicationEntry ae = null;
                     if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
                     {
                         ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
@@ -279,7 +279,22 @@ namespace BoxSocial.FrontEnd
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
                     //try
+                    if (ae != null)
                     {
+                        if (ae.HasStyleSheet)
+                        {
+                            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+
+                            styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                        }
+
+                        if (ae.HasJavascript)
+                        {
+                            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+
+                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                        }
+
                         asm.ModuleVector(core);
                     }
                     /*catch (Exception ex)

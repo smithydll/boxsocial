@@ -29,6 +29,15 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Mail
 {
+    public enum FolderTypes : byte
+    {
+        Custom = 0x00,
+        Inbox = 0x01,
+        Draft = 0x02,
+        Outbox = 0x03,
+        SentItems = 0x04,
+    }
+
 	[DataTable("mail_folders")]
 	public class MailFolder : NumberedItem, INestableItem
 	{
@@ -48,6 +57,32 @@ namespace BoxSocial.Applications.Mail
         private string parents;
 		[DataField("folder_messages")]
         private long folderMessages;
+        [DataField("folder_type")]
+        private byte folderType;
+
+        public string FolderName
+        {
+            get
+            {
+                return folderName;
+            }
+        }
+
+        public FolderTypes FolderType
+        {
+            get
+            {
+                return (FolderTypes)folderType;
+            }
+        }
+
+        public long MessageCount
+        {
+            get
+            {
+                return folderMessages;
+            }
+        }
 		
 		public int Order
 		{
@@ -72,6 +107,21 @@ namespace BoxSocial.Applications.Mail
                 return ItemType.GetTypeId(typeof(MailFolder));
             }
         }
+
+        public MailFolder(Core core, long folderId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MailFolder_ItemLoad);
+
+            try
+            {
+                LoadItem(folderId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
 		
 		public MailFolder(Core core, DataRow folderRow)
             : base (core)
@@ -88,11 +138,47 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
+        public MailFolder(Core core, User user, string name)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MailFolder_ItemLoad);
+
+            try
+            {
+                LoadItem(new FieldValuePair("owner_id", user.Id), new FieldValuePair("folder_parent", 0), new FieldValuePair("folder_name", name));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
+
         void MailFolder_ItemLoad()
         {
         }
 
-        public MailFolder Create(Core core, MailFolder parent, string title)
+        public static MailFolder Create(Core core, FolderTypes type, string title)
+        {
+            return Create(core, core.Session.LoggedInMember, type, title);
+        }
+
+        public static MailFolder Create(Core core, User owner, FolderTypes type, string title)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            /* TODO: Fix */
+            Item item = Item.Create(core, typeof(MailFolder), new FieldValuePair("owner_id", owner.Id),
+                new FieldValuePair("folder_type", (byte)type),
+                new FieldValuePair("folder_parent", 0),
+                new FieldValuePair("folder_name", title));
+
+            return (MailFolder)item;
+        }
+
+        public static MailFolder Create(Core core, MailFolder parent, string title)
         {
             if (core == null)
             {
@@ -105,6 +191,66 @@ namespace BoxSocial.Applications.Mail
                 new FieldValuePair("folder_name", title));
 
             return (MailFolder)item;
+        }
+
+        public List<Message> GetMessages(int page, int perPage)
+        {
+            List<Message> messages = new List<Message>();
+
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
+            query.AddCondition("message_folder_id", folderId);
+            if (((FolderTypes)folderType) != FolderTypes.Draft)
+            {
+                query.AddCondition("message_draft", false);
+            }
+            query.AddSort(SortOrder.Descending, "message_time_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable messagesDataTable = db.Query(query);
+
+            foreach (DataRow row in messagesDataTable.Rows)
+            {
+                messages.Add(new Message(core, row));
+            }
+
+            return messages;
+        }
+
+        public static MailFolder GetFolder(Core core, FolderTypes folder, User user)
+        {
+            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            query.AddCondition("folder_type", (byte)folder);
+            query.AddCondition("owner_id", user.Id);
+
+            DataTable inboxDataTable = core.Db.Query(query);
+
+            if (inboxDataTable.Rows.Count == 1)
+            {
+                return new MailFolder(core, inboxDataTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
+
+        public static List<MailFolder> GetFolders(Core core, User user)
+        {
+            List<MailFolder> folders = new List<MailFolder>();
+            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            query.AddCondition("owner_id", user.Id);
+
+            DataTable inboxDataTable = core.Db.Query(query);
+
+            foreach (DataRow row in inboxDataTable.Rows)
+            {
+                folders.Add(new MailFolder(core, row));
+            }
+
+            return folders;
         }
 		
 		public override long Id

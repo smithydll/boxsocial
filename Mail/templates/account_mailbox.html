@@ -1,1 +1,37 @@
-﻿
+﻿<p></p>
+
+<!-- IF mail_item -->
+<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
+
+			<ul id="inbox-messages" class="pane">
+    <li id="inbox-head">
+					<dl class="title-row">
+						<dt><div>&nbsp;</div></dt>
+						<dd><div>{L_SENDER}</div></dd>
+						<dd><div>{L_DATE}</div></dd>
+      </dl>
+    </li>
+<!-- BEGIN mail_item -->
+    <li>
+					<dl class="icon">
+        <dt>
+    <!-- IF mail_item.IS_NORMAL_READ -->
+    <div style="min-height: 20px; background-image: url('/images/posticon_read_med.png');">
+    <!-- ENDIF -->
+    <!-- IF mail_item.IS_NORMAL_UNREAD -->
+    <div style="min-height: 20px; background-image: url('/images/posticon_unread_med.png');">
+    <!-- ENDIF -->
+          <a href="{mail_item.URI}">{mail_item.SUBJECT}</a><br />
+          </div>
+        </dt>
+        <dd><div><a href="{mail_item.U_SENDER}">{mail_item.SENDER}</a></div></dd>
+        <dd><div>{mail_item.DATE}</div></dd>
+      </dl>
+    </li>
+<!-- END mail_item -->
+</ul>
+
+<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
+<!-- ELSE -->
+    <p>{L_NO_MAIL_MESSAGES}</p>
+<!-- ENDIF -->

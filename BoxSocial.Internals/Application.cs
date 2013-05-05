@@ -283,6 +283,10 @@ namespace BoxSocial.Internals
         {
         }
 
+        public virtual void InitialisePrimitive(Primitive owner)
+        {
+        }
+
         public abstract ApplicationInstallationInfo Install();
 
         public ApplicationInstallationInfo GetInstallInfo()

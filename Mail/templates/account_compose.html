@@ -1,25 +1,27 @@
-﻿<h3>Compose Message</h3>
+﻿<h3>{COMPOSE_MESSAGE}</h3>
 
 <form action="{S_ACCOUNT}" method="post">
 	<fieldset>
-		<legend>Compose Message</legend>
+		<legend>{L_COMPOSE_MESSAGE}</legend>
 		<dl>
             <dt><label for="to">To</label></dt>
 			<dd>{S_TO}</dd>
 			<dt><label for="subject">Subject</label></dt>
-			<dd><input type="text" id="subject" name="subject" value="{S_SUBJECT}" style="width: 100%;" /></dd>
+			<dd>{S_SUBJECT}</dd>
 			<dt><label for="post">Message</label></dt>
 			<dd>
-				<textarea id="post" name="post" style="margin: 0px; width: 100%; height: 250px;" cols="70" rows="15">{S_MESSAGE}</textarea>
+				{S_MESSAGE}
 			</dd>
 			<dt></dt>
 			<dd>
-				<input type="submit" name="save" value="Save (draft)" />
-				<input type="submit" name="send" value="Send" />
+                <!-- IF SAVE_DRAFT -->
+				<input type="submit" name="save" value="{L_SAVE_DRAFT}" />
+                <!-- ENDIF -->
+				<input type="submit" name="send" value="{L_SEND}" />
 			</dd>
 		</dl>
-		<input type="hidden" name="module" value="pages" />
-		<input type="hidden" name="sub" value="write" />
+		<input type="hidden" name="module" value="mail" />
+		<input type="hidden" name="sub" value="compose" />
 		<!-- IF S_ID -->
 		<input type="hidden" name="id" value="{S_ID}" />
 		<!-- ENDIF -->

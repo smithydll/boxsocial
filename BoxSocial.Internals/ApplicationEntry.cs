@@ -800,6 +800,8 @@ namespace BoxSocial.Internals
                     }
                 }
 
+                newApplication.InitialisePrimitive(owner);
+
                 InsertQuery iQuery = new InsertQuery("primitive_apps");
                 iQuery.AddField("application_id", applicationId);
                 iQuery.AddField("item_id", owner.Id);

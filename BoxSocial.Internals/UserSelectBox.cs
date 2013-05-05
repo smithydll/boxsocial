@@ -125,6 +125,11 @@ namespace BoxSocial.Internals
             script = new ScriptProperty();
         }
 
+        public void AddUserId(long userId)
+        {
+            this.userIds.Add(userId);
+        }
+
         public override string ToString()
         {
             core.PrimitiveCache.LoadUserProfiles(userIds);

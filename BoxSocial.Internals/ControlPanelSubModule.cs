@@ -556,7 +556,17 @@ namespace BoxSocial.Internals
         public int CompareTo(object obj)
         {
             if (!(obj is ControlPanelSubModule)) return -1;
-            return Order.CompareTo(((ControlPanelSubModule)obj).Order);
+            int thisValue = Order;
+            int thatValue = ((ControlPanelSubModule)obj).Order;
+            if (thisValue == -1)
+            {
+                thisValue = int.MaxValue;
+            }
+            if (thatValue == -1)
+            {
+                thatValue = int.MaxValue;
+            }
+            return thisValue.CompareTo(thatValue);
         }
 
         protected void ParseBbcode(string templateVar, string input)

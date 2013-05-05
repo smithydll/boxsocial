@@ -98,8 +98,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                //return Properties.Resources.style;
-				return null;
+                return Properties.Resources.style;
             }
         }
 
@@ -118,6 +117,17 @@ namespace BoxSocial.Applications.Mail
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
+        }
+
+        public override void InitialisePrimitive(Primitive owner)
+        {
+            if (owner is User)
+            {
+                MailFolder.Create(core, (User)owner, FolderTypes.Inbox, "Inbox");
+                MailFolder.Create(core, (User)owner, FolderTypes.Draft, "Drafts");
+                MailFolder.Create(core, (User)owner, FolderTypes.Outbox, "Outbox");
+                MailFolder.Create(core, (User)owner, FolderTypes.SentItems, "Sent Items");
+            }
         }
 
         public override ApplicationInstallationInfo Install()

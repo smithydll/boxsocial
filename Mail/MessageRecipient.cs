@@ -40,9 +40,9 @@ namespace BoxSocial.Applications.Mail
 	[DataTable("mail_message_recipients")]
 	public class MessageRecipient : Item
 	{
-		[DataField("message_id", DataFieldKeys.Index)] 
+		[DataField("message_id", typeof(Message), DataFieldKeys.Index)] 
 		private long messageId;
-		[DataField("user_id", DataFieldKeys.Index)]
+		[DataField("user_id", typeof(User), DataFieldKeys.Index)]
 		private long userId;
 		[DataField("sender_id")]
 		private long senderId;
@@ -58,6 +58,58 @@ namespace BoxSocial.Applications.Mail
 		private bool hasForwarded;
 		[DataField("message_folder_id")]
 		private long messageFolderId;
+        [DataField("recipient_type")]
+        private byte recipientType;
+        [DataField("recipient_read_time_ut")]
+        private long readTime;
+
+        public long MessageId
+        {
+            get
+            {
+                return messageId;
+            }
+        }
+
+        public long UserId
+        {
+            get
+            {
+                return userId;
+            }
+        }
+
+        public long SenderId
+        {
+            get
+            {
+                return senderId;
+            }
+        }
+
+        public bool IsRead
+        {
+            get
+            {
+                return isRead;
+            }
+        }
+
+        public long ReadTimeRaw
+        {
+            get
+            {
+                return readTime;
+            }
+        }
+
+        public RecipientType RecipientType
+        {
+            get
+            {
+                return (RecipientType)recipientType;
+            }
+        }
 		
 		public MessageRecipient(Core core, DataRow recipientRow)
             : base(core)
@@ -73,38 +125,53 @@ namespace BoxSocial.Applications.Mail
                 throw new InvalidMessageRecipientException();
             }
         }
+
+        public MessageRecipient(Core core, User recipient, long messageId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MessageRecipient_ItemLoad);
+
+            try
+            {
+                LoadItem(new FieldValuePair("user_id", recipient.Id), new FieldValuePair("message_id", messageId));
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMessageRecipientException();
+            }
+        }
 		
 		void MessageRecipient_ItemLoad()
 		{
 		}
-		
-		public static MessageRecipient Create(Core core, Message message, User recipient, RecipientType type)
-		{
-			return Create(core, message, recipient, type, false);
-		}
-			
-		public static MessageRecipient Create(Core core, Message message, User recipient, RecipientType type, bool suppress)
+
+		public static void Create(Core core, Message message, User recipient, RecipientType type, MailFolder folder)
 		{
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-			Item newItem = Item.Create(core, typeof(MessageRecipient), suppress,
+			Item.Create(core, typeof(MessageRecipient), true,
                 new FieldValuePair("message_id", message.Id),
+                new FieldValuePair("sender_id", message.SenderId),
                 new FieldValuePair("user_id", recipient.Id),
+                new FieldValuePair("message_folder_id", folder.Id),
                 new FieldValuePair("recipient_type", (byte)type));
-			
-			if (newItem != null)
-			{
-				return (MessageRecipient)newItem;
-			}
-			else
-			{
-				return null;
-			}
+
 		}
-		
+
+        public void MarkRead()
+        {
+            UpdateQuery uquery = new UpdateQuery(typeof(MessageRecipient));
+            uquery.AddField("is_read", true);
+            uquery.AddField("recipient_read_time_ut", UnixTime.UnixTimeStamp());
+            uquery.AddCondition("message_id", messageId);
+            uquery.AddCondition("user_id", userId);
+
+            db.Query(uquery);
+        }
+
 		public override string Uri {
 			get
 			{

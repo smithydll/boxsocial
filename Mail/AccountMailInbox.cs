@@ -66,6 +66,127 @@ namespace BoxSocial.Applications.Mail
         void AccountMailInbox_Show(object sender, EventArgs e)
         {
             SetTemplate("account_mailbox");
+
+            if (LoggedInMember.UserInfo.UnseenMail > 0)
+            {
+                UpdateQuery query = new UpdateQuery(typeof(UserInfo));
+                query.AddField("user_unseen_mail", new QueryOperation("user_unseen_mail", QueryOperations.Subtraction, LoggedInMember.UserInfo.UnseenMail));
+                query.AddCondition("user_id", LoggedInMember.Id);
+
+                db.Query(query);
+
+                core.Template.Parse("U_UNSEEN_MAIL", "FALSE");
+            }
+
+            List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
+
+            int p = core.Functions.RequestInt("p", 1);
+
+            foreach (MailFolder f in folders)
+            {
+                if (f.FolderType == FolderTypes.Inbox) continue;
+
+                VariableCollection modulesVariableCollection = core.Template.CreateChild("account_links");
+
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("folder", f.FolderName);
+
+                modulesVariableCollection.Parse("TITLE", f.FolderName);
+                modulesVariableCollection.Parse("SUB", Key);
+                modulesVariableCollection.Parse("MODULE", ModuleKey);
+                modulesVariableCollection.Parse("URI", BuildUri(args));
+            }
+
+            string folder = "Inbox";
+            if (!string.IsNullOrEmpty(core.Http.Query["folder"]))
+            {
+                folder = core.Http.Query["folder"];
+            }
+
+
+            MailFolder mailFolder = null;
+            try
+            {
+                mailFolder = new MailFolder(core, core.Session.LoggedInMember, folder);
+            }
+            catch (InvalidMailFolderException)
+            {
+                if (folder == "Inbox")
+                {
+                    mailFolder = MailFolder.Create(core, FolderTypes.Inbox, folder);
+                    MailFolder.Create(core, FolderTypes.Draft, "Drafts");
+                    MailFolder.Create(core, FolderTypes.Outbox, "Outbox");
+                    MailFolder.Create(core, FolderTypes.SentItems, "Sent Items");
+                }
+                else
+                {
+                    core.Functions.Generate404();
+                    return;
+                }
+            }
+
+            List<Message> messages = mailFolder.GetMessages(p, 20);
+
+            List<long> messageIds = new List<long>();
+            Dictionary<long, MessageRecipient> readStatus = new Dictionary<long, MessageRecipient>();
+
+            if (messages.Count > 0)
+            {
+                foreach (Message message in messages)
+                {
+                    messageIds.Add(message.Id);
+                }
+
+                SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
+                query.AddCondition("user_id", core.Session.LoggedInMember.Id);
+                query.AddCondition("message_id", ConditionEquality.In, messageIds);
+
+                DataTable recipientDataTable = db.Query(query);
+
+                foreach (DataRow row in recipientDataTable.Rows)
+                {
+                    MessageRecipient recipient = new MessageRecipient(core, row);
+                    readStatus.Add(recipient.MessageId, recipient);
+                }
+            }
+
+            foreach (Message message in messages)
+            {
+                VariableCollection messageVariableCollection = template.CreateChild("mail_item");
+
+                bool isRead = false;
+
+                if (readStatus.ContainsKey(message.Id))
+                {
+                    if (readStatus[message.Id].IsRead)
+                    {
+                        isRead = true;
+                    }
+                }
+
+                if (isRead)
+                {
+                    messageVariableCollection.Parse("IS_NORMAL_READ", "TRUE");
+                }
+                else
+                {
+                    messageVariableCollection.Parse("IS_NORMAL_UNREAD", "TRUE");
+                }
+
+                messageVariableCollection.Parse("SUBJECT", message.Subject);
+                messageVariableCollection.Parse("URI", message.Uri);
+                if (message.SenderId > 0)
+                {
+                    messageVariableCollection.Parse("SENDER", message.Sender.DisplayName);
+                    messageVariableCollection.Parse("U_SENDER", message.Sender.Uri);
+                }
+                messageVariableCollection.Parse("DATE", core.Tz.DateTimeToString(message.GetSentDate(core.Tz)));
+            }
+
+            Dictionary<string, string> a = new Dictionary<string,string>();
+            a.Add("folder", mailFolder.FolderName);
+
+            core.Display.ParsePagination(template, "PAGINATION", BuildUri(a), p, (int)(Math.Ceiling(mailFolder.MessageCount / 20.0)));
         }
     }
 }

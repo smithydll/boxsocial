@@ -838,6 +838,11 @@ namespace BoxSocial.Internals
                     template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
 
                     template.Parse("U_UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
+
+                    if (session.LoggedInMember.UserInfo.UnseenMail > 0)
+                    {
+                        template.Parse("U_UNSEEN_MAIL", core.Uri.BuildAccountSubModuleUri("mail", "inbox"));
+                    }
                 }
             }
 

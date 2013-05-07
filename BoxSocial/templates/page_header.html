@@ -94,7 +94,9 @@ div#rc-bottom {
         <div id="dialog-message"></div>
 		<div id="head">
 			<h1 id="page-title"><a href="{U_HOME}"><span>{HEADING}</span></a></h1>
-			<h2 id="sub-title">A Global Community</h2>
+            <!-- IF SITE_SLOGAN -->
+			<h2 id="sub-title">{SITE_SLOGAN}</h2>
+            <!-- ENDIF -->
 			<div id="head-nav">
 				<!-- IF LOGGED_IN -->
 				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
@@ -104,7 +106,7 @@ div#rc-bottom {
                 <!-- ENDIF -->
                 </a>
                 <!-- IF U_UNSEEN_MAIL -->
-                <a href="{U_UNSEEN_MAIL}"><span class="mail-notifications">☺</span></a>
+                <a href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
                 <!-- ENDIF -->
                 |
 				<a href="{U_SIGNOUT}">{L_SIGNOUT}</a> |

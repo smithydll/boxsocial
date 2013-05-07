@@ -629,14 +629,12 @@ namespace BoxSocial.Internals
 
         void User_ItemUpdated(object sender, EventArgs e)
         {
-            Search search = new Search(core);
-            search.UpdateIndex(this);
+            core.Search.UpdateIndex(this);
         }
 
         void User_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
-            Search search = new Search(core);
-            search.DeleteFromIndex(this);
+            core.Search.DeleteFromIndex(this);
         }
 
         public void LoadProfileInfo()
@@ -1214,8 +1212,7 @@ namespace BoxSocial.Internals
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
 
-            Search search = new Search(core);
-            search.Index(newUser);
+            core.Search.Index(newUser);
 
             return newUser;
         }
@@ -2449,7 +2446,7 @@ namespace BoxSocial.Internals
 
         public override string StoreFile(MemoryStream file)
         {
-            return core.Storage.SaveFile("zinzam.user", file);
+            return core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), file);
         }
 
 

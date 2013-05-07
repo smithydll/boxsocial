@@ -906,6 +906,12 @@ namespace BoxSocial.Applications.Blog
                         blogPostVariableCollection.Parse("POST_COMMENTS", string.Format(" ({0:d})", blogEntries[i].Info.Comments));
                     }
 
+                    if (blogEntries[i].Access.IsPublic())
+                    {
+                        blogPostVariableCollection.Parse("SHAREABLE", "TRUE");
+                        blogPostVariableCollection.Parse("PUBLIC", "TRUE");
+                    }
+
                     if (blogEntries[i].PostId == post)
                     {
                         comments = blogEntries[i].Comments;

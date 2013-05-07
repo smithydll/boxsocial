@@ -378,10 +378,10 @@ namespace BoxSocial.Applications.Blog
 
                 db.BeginTransaction();
 
-                BlogEntry myBlogEntry = BlogEntry.Create(core, myBlog, title, postBody, license, status, category, postTimeRaw);
+                BlogEntry myBlogEntry = BlogEntry.Create(core, AccessControlLists.GetNewItemPermissionsToken(core), myBlog, title, postBody, license, status, category, postTimeRaw);
 
-                AccessControlLists acl = new AccessControlLists(core, myBlogEntry);
-                acl.SaveNewItemPermissions();
+                /*AccessControlLists acl = new AccessControlLists(core, myBlogEntry);
+                acl.SaveNewItemPermissions();*/
 
                 postGuid = core.Uri.StripSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                     LoggedInMember.UriStubAbsolute, DateTime.Now.Year, DateTime.Now.Month, postId));

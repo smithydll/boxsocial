@@ -394,8 +394,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="e"></param>
         void BlogEntry_ItemUpdated(object sender, EventArgs e)
         {
-            Search search = new Search(core);
-            search.UpdateIndex(this);
+            core.Search.UpdateIndex(this);
         }
 
         /// <summary>
@@ -405,8 +404,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="e"></param>
         void BlogEntry_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
-            Search search = new Search(core);
-            search.DeleteFromIndex(this);
+            core.Search.DeleteFromIndex(this);
         }
 
         /// <summary>
@@ -479,7 +477,7 @@ namespace BoxSocial.Applications.Blog
         /// <exception cref="NullCoreException">Throws exception when core token is null</exception>
         /// <exception cref="InvalidBlogException">Throws exception when blog token is null</exception>
         /// <exception cref="UnauthorisedToCreateItemException">Throws exception when unauthorised to create a new BlogEntry</exception>
-        public static BlogEntry Create(Core core, Blog blog, string title, string body, byte license, string status, short category, long postTime)
+        public static BlogEntry Create(Core core, AccessControlToken token, Blog blog, string title, string body, byte license, string status, short category, long postTime)
         {
             if (core == null)
             {
@@ -511,8 +509,10 @@ namespace BoxSocial.Applications.Blog
                 new FieldValuePair("post_category", category),
                 new FieldValuePair("post_simple_permissions", true));
 
-            Search search = new Search(core);
-            search.Index(blogEntry);
+            AccessControlLists acl = new AccessControlLists(core, blogEntry);
+            acl.SaveNewItemPermissions(token);
+
+            core.Search.Index(blogEntry);
 
             return blogEntry;
         }
@@ -570,8 +570,6 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        #region IPermissibleItem Members
-
         /// <summary>
         /// Returns the parent object for ACLs.
         /// </summary>
@@ -590,8 +588,6 @@ namespace BoxSocial.Applications.Blog
                 return new ItemKey(ownerId, typeof(Blog));
             }
         }
-
-        #endregion
 
         public Access Access
         {

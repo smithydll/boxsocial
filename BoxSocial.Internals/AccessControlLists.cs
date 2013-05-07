@@ -535,12 +535,33 @@ namespace BoxSocial.Internals
             acg.Delete();
         }
 
+        public static AccessControlToken GetNewItemPermissionsToken(Core core)
+        {
+            return GetNewItemPermissionsToken(core, null, "permissions");
+        }
+
+        public static AccessControlToken GetNewItemPermissionsToken(Core core, IPermissibleItem item, string fieldName)
+        {
+            AccessControlToken token = new AccessControlToken(core, item);
+
+            List<PrimitivePermissionGroup> groups = PermissionGroupSelectBox.FormPermissionGroups(core, fieldName);
+
+            token.AddGroups(groups);
+
+            return token;
+        }
+
+        public void SaveNewItemPermissions(string fieldName)
+        {
+            SaveNewItemPermissions(GetNewItemPermissionsToken(core, item, fieldName));
+        }
+
         public void SaveNewItemPermissions()
         {
             SaveNewItemPermissions("permissions");
         }
 
-        public void SaveNewItemPermissions(string fieldName)
+        public void SaveNewItemPermissions(AccessControlToken token)
         {
             if (itemPermissions == null)
             {
@@ -557,7 +578,7 @@ namespace BoxSocial.Internals
 
             if (itemPermissions != null)
             {
-                List<PrimitivePermissionGroup> groups = PermissionGroupSelectBox.FormPermissionGroups(core, fieldName);
+                List<PrimitivePermissionGroup> groups = token.Groups;
 
                 if (groups.Count > 0)
                 {

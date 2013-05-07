@@ -111,28 +111,45 @@ namespace BoxSocial.Internals
         Analyzer analyzer;
         IndexWriter writer;
 
+        bool initialised;
+
         public Search(Core core)
         {
             this.core = core;
-
-            directory = FSDirectory.Open(HttpContext.Current.Server.MapPath("./lucene/"));
-            analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
-            writer = new IndexWriter(directory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);
-
-            IndexReader red = IndexReader.Open(directory, true);
-            int totDocs = red.MaxDoc;
-            red.Dispose();
-
-
+            initialised = false;
         }
 
-        ~Search()
+        private void Initialise()
         {
-            writer.Dispose();
+            if (!initialised)
+            {
+                directory = FSDirectory.Open(HttpContext.Current.Server.MapPath("./lucene/"));
+                analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
+
+                IndexReader red = IndexReader.Open(directory, true);
+                int totDocs = red.MaxDoc;
+                red.Dispose();
+                initialised = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (initialised)
+            {
+                if (writer != null)
+                {
+                    writer.Dispose();
+                }
+                analyzer.Dispose();
+                directory.Dispose();
+            }
         }
 
         public SearchResult DoSearch(string input, int pageNumber, Primitive filterByOwner, Type filterByType)
         {
+            Initialise();
+
             int perPage = 10;
             int start = (pageNumber - 1) * perPage;
 
@@ -262,6 +279,8 @@ namespace BoxSocial.Internals
 
         public bool Index(ISearchableItem item, params SearchField[] customFields)
         {
+            Initialise();
+
             int isPublic = 1;
 
             if (item is IPermissibleItem)
@@ -306,22 +325,42 @@ namespace BoxSocial.Internals
             doc.Add(new Field("item_title", item.IndexingTitle, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("item_string", item.IndexingString, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field("item_tags", item.IndexingTags, Field.Store.YES, Field.Index.ANALYZED));
+
+            if (writer == null)
+            {
+                writer = new IndexWriter(directory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);
+            }
+            
             writer.AddDocument(doc);
 
             writer.Commit();
+            writer.Dispose();
+            writer = null;
             
             return true;
         }
 
         public bool UpdateIndex(ISearchableItem item, params SearchField[] customFields)
         {
+            Initialise();
+
             DeleteFromIndex(item);
             return Index(item, customFields);
         }
 
         public bool DeleteFromIndex(ISearchableItem item)
         {
+            Initialise();
+
+            if (writer == null)
+            {
+                writer = new IndexWriter(directory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);
+            }
+            
             writer.DeleteDocuments(new Term("item_id", item.Id.ToString()));
+
+            writer.Dispose();
+            writer = null;
 
             return true;
         }

@@ -254,14 +254,12 @@ namespace BoxSocial.Applications.Forum
 
         void TopicPost_ItemUpdated(object sender, EventArgs e)
         {
-            Search search = new Search(core);
-            search.UpdateIndex(this, new SearchField("forum_id", ForumId.ToString()));
+            core.Search.UpdateIndex(this, new SearchField("forum_id", ForumId.ToString()));
         }
 
         void TopicPost_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
-            Search search = new Search(core);
-            search.DeleteFromIndex(this);
+            core.Search.DeleteFromIndex(this);
         }
 
         public static Dictionary<long, TopicPost> GetTopicLastPosts(Core core, List<ForumTopic> topics)
@@ -412,8 +410,7 @@ namespace BoxSocial.Applications.Forum
 
             TopicPost newPost = new TopicPost(core, forum, topic, postId);
 
-            Search search = new Search(core);
-            search.Index(newPost, new SearchField("forum_id", forum.Id.ToString()));
+            core.Search.Index(newPost, new SearchField("forum_id", forum.Id.ToString()));
 
             return newPost;
         }

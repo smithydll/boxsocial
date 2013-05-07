@@ -789,6 +789,7 @@ namespace BoxSocial.Internals
             template.Parse("TITLE", page.PageTitle); // the set page title function sanitises
             template.Parse("HEADING", page.Core.Settings.SiteTitle);
             template.Parse("SITE_TITLE", page.Core.Settings.SiteTitle);
+            template.Parse("SITE_SLOGAN", page.Core.Settings.SiteSlogan);
             template.Parse("YEAR", DateTime.Now.Year.ToString());
 
             if (page.CanonicalUri != null)

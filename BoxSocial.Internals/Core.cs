@@ -53,6 +53,7 @@ namespace BoxSocial.Internals
         private Linker uri;
         private Settings applicationSettings;
         private Storage storage;
+        private Search search;
 
         internal TPage page;
 
@@ -226,6 +227,18 @@ namespace BoxSocial.Internals
             internal set
             {
                 storage = value;
+            }
+        }
+
+        public Search Search
+        {
+            get
+            {
+                return search;
+            }
+            internal set
+            {
+                search = value;
             }
         }
 

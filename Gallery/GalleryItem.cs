@@ -993,17 +993,15 @@ namespace BoxSocial.Applications.Gallery
 
                 }*/
 
-                FileInfo fi = new FileInfo(TPage.GetStorageFilePath(storagePath));
-
                 if (owner is User)
                 {
                     Gallery parent = new Gallery(core, (User)owner, parentId);
-                    Gallery.UpdateGalleryInfo(core, parent, (long)itemId, -1, -fi.Length);
+                    Gallery.UpdateGalleryInfo(core, parent, (long)itemId, -1, -ItemBytes);
                 }
 
                 UpdateQuery uQuery = new UpdateQuery("user_info");
                 uQuery.AddField("user_gallery_items", new QueryOperation("user_gallery_items", QueryOperations.Subtraction, 1));
-                uQuery.AddField("user_bytes", new QueryOperation("user_bytes", QueryOperations.Subtraction, fi.Length));
+                uQuery.AddField("user_bytes", new QueryOperation("user_bytes", QueryOperations.Subtraction, ItemBytes));
                 uQuery.AddCondition("user_id", userId);
 
                 db.Query(uQuery);
@@ -1015,7 +1013,7 @@ namespace BoxSocial.Applications.Gallery
                 else
                 {
                     // delete the storage file
-                    File.Delete(TPage.GetStorageFilePath(storagePath));
+                    core.Storage.DeleteFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), storagePath);
                 }
             }
             else

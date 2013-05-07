@@ -75,11 +75,18 @@
     <div class="cornered-posting">
 		<div class="blog-post normal-writing">
 			<h3><a href="{blog_list.URL}">{blog_list.TITLE}</a></h3>
+            <!-- IF blog_list.PUBLIC -->
+            <p>Public</p>
+            <!-- ELSE -->
+            <p>Limited</p>
+            <!-- ENDIF -->
 			<p class="blog-date">{blog_list.DATE}</p>
 			<p>{blog_list.POST}</p>
             <div class="r-stuff light">
                 <span class="img-button like-item"><a href="#" onclick="return LikeItem({blog_list.ID},{blog_list.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{blog_list.LIKES}</span></a></span><!--
+                <!-- IF blog_list.SHAREABLE -->
                 --><span class="img-button share-item"><a href="#" onclick="return ShareItem({blog_list.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
+                <!-- ENDIF -->
                 --><span class="img-button comment-item"><a href="{blog_list.URL}#comments" title="Expand comments">{L_COMMENTS}<span class="likes">{blog_list.POST_COMMENTS}</span></a></span><!--
                 <!-- IF blog_list.IS_OWNER -->
                 --><span class="img-button delete-item"><a href="{blog_list.U_DELETE}" title="Delete Status"><span class="sprite delete-sprite"></span></a></span><!--

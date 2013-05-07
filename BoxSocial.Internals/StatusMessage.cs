@@ -149,14 +149,12 @@ namespace BoxSocial.Internals
 
         void StatusMessage_ItemUpdated(object sender, EventArgs e)
         {
-            Search search = new Search(core);
-            search.UpdateIndex(this);
+            core.Search.UpdateIndex(this);
         }
 
         void StatusMessage_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
-            Search search = new Search(core);
-            search.DeleteFromIndex(this);
+            core.Search.DeleteFromIndex(this);
         }
 
         public static StatusMessage Create(Core core, User creator, string message)
@@ -181,8 +179,7 @@ namespace BoxSocial.Internals
 
             StatusMessage newStatusMessage = new StatusMessage(core, creator, statusId, message);
 
-            Search search = new Search(core);
-            search.Index(newStatusMessage);
+            core.Search.Index(newStatusMessage);
 
             return newStatusMessage;
         }

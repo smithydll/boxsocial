@@ -270,6 +270,11 @@ namespace BoxSocial.Internals
                 {
                     statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", item.Info.Comments));
                 }
+
+                if (item.Access.IsPublic())
+                {
+                    statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                }
             }
 
             core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.UserInfo.StatusMessages / 10.0));

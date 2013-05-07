@@ -616,8 +616,7 @@ namespace BoxSocial.Internals
 
         void UserProfile_ItemUpdated(object sender, EventArgs e)
         {
-            Search search = new Search(core);
-            search.UpdateIndex(User);
+            core.Search.UpdateIndex(User);
 
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
 

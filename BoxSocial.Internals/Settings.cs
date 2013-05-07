@@ -38,6 +38,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string SiteSlogan
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["boxsocial-slogan"];
+            }
+        }
+
         public string StorageProvider
         {
             get

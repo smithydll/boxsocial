@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public abstract class TPage : System.Web.UI.Page
     {
-        private string pageTitle = WebConfigurationManager.AppSettings["boxsocial-title"] + " • A Global Community";
+        private string pageTitle;
         private string canonicalUri;
 
         public Template template;
@@ -158,90 +158,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static Object StoragePathLock = new object();
-        public static string StoragePath = null;
-
-        public static string GetStorageFilePath(string fileName)
-        {
-            return GetStorageFilePath(fileName, StorageFileType.Original);
-        }
-
-        public static string GetStorageFilePath(string fileName, StorageFileType fileType)
-        {
-            string topLevelDirectory = fileName.Substring(0, 1).ToLower();
-            string secondLevelDirectory = fileName.Substring(0, 2).ToLower();
-            switch (fileType)
-            {
-                case StorageFileType.Display:
-                    return Path.Combine(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_display"), fileName);
-                case StorageFileType.Thumbnail:
-                    return Path.Combine(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_thumb"), fileName);
-                case StorageFileType.Icon:
-                    return Path.Combine(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_icon"), fileName);
-                case StorageFileType.Tile:
-                    return Path.Combine(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tile"), fileName);
-                case StorageFileType.Tiny:
-                    return Path.Combine(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tiny"), fileName);
-                default:
-                    return Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), fileName);
-            }
-        }
-
-        public static void EnsureStoragePathExists(string fileName)
-        {
-            EnsureStoragePathExists(fileName, StorageFileType.Original);
-        }
-
-        public static void EnsureStoragePathExists(string fileName, StorageFileType fileType)
-        {
-            string topLevelDirectory = fileName.Substring(0, 1).ToLower();
-            string secondLevelDirectory = fileName.Substring(0, 2).ToLower();
-
-            if (!Directory.Exists(Path.Combine(StoragePath, topLevelDirectory)))
-            {
-                Directory.CreateDirectory(Path.Combine(StoragePath, topLevelDirectory));
-            }
-
-            if (!Directory.Exists(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory)))
-            {
-                Directory.CreateDirectory(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory));
-            }
-
-            switch (fileType)
-            {
-                case StorageFileType.Display:
-                    if (!Directory.Exists(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_display")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_display"));
-                    }
-                    break;
-                case StorageFileType.Thumbnail:
-                    if (!Directory.Exists(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_thumb")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_thumb"));
-                    }
-                    break;
-                case StorageFileType.Icon:
-                    if (!Directory.Exists(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_icon")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_icon"));
-                    }
-                    break;
-                case StorageFileType.Tile:
-                    if (!Directory.Exists(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tile")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tile"));
-                    }
-                    break;
-                case StorageFileType.Tiny:
-                    if (!Directory.Exists(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tiny")))
-                    {
-                        Directory.CreateDirectory(Path.Combine(Path.Combine(Path.Combine(StoragePath, topLevelDirectory), secondLevelDirectory), "_tiny"));
-                    }
-                    break;
-            }
-        }
-
         public TPage()
         {
             timer = new Stopwatch();
@@ -271,15 +187,10 @@ namespace BoxSocial.Internals
             core = new Core(db, template);
 
             core.Settings = new Settings(core);
-            // TODO: REMOVE
-            lock (StoragePathLock)
-            {
-                if (StoragePath == null)
-                {
-                    StoragePath = Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]);
-                }
-            }
-            // END REMOVE
+            core.Search = new Search(core);
+
+            pageTitle = core.Settings.SiteTitle + (!string.IsNullOrEmpty(core.Settings.SiteSlogan) ? " • " + core.Settings.SiteSlogan : string.Empty);
+
             if (core.Settings.StorageProvider == "amazon_s3")
             {
                 core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
@@ -287,6 +198,10 @@ namespace BoxSocial.Internals
             else if (core.Settings.StorageProvider == "rackspace")
             {
                 core.Storage = new Rackspace(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+            }
+            else if (core.Settings.StorageProvider == "azure")
+            {
+                // provision: not supported
             }
             else if (core.Settings.StorageProvider == "local")
             {
@@ -437,6 +352,7 @@ namespace BoxSocial.Internals
                 }
 
                 core.Prose.Close();
+                core.Search.Dispose();
                 //core.Dispose();
                 //core = null;
 
@@ -454,6 +370,7 @@ namespace BoxSocial.Internals
             }
 
             core.Prose.Close();
+            core.Search.Dispose();
             //core.Dispose();
             //core = null;
         }

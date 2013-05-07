@@ -68,7 +68,9 @@
         <!-- ELSE -->
         <div class="r-stuff light">
             <span class="img-button like-item"><a href="#" onclick="return LikeItem({status_messages.ID},{status_messages.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{status_messages.LIKES}</span></a></span><!--
+            <!-- IF status_messages.SHAREABLE -->
             --><span class="img-button share-item"><a href="#" onclick="return ShareItem({status_messages.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
+            <!-- ENDIF -->
             --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));" title="Expand comments">Comments<span class="likes">{status_messages.COMMENTS}</span></a></span><!--
             <!-- IF status_messages.IS_OWNER -->
             --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="Permissions"><span class="sprite permissions-sprite"></span></a></span><!--

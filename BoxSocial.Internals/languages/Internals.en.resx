@@ -515,6 +515,9 @@
   <data name="NEW" xml:space="preserve">
     <value>New</value>
   </data>
+  <data name="NEW_MESSAGES" xml:space="preserve">
+    <value>New Messages</value>
+  </data>
   <data name="NEXT" xml:space="preserve">
     <value>Next</value>
   </data>

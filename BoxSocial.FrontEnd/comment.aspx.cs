@@ -89,7 +89,7 @@ namespace BoxSocial.FrontEnd
                     core.Ajax.SendRawText("errorFetchingComment", "");
                 }
 
-                EndResponse();
+                return;
             }
 
             if (mode == "fetch")

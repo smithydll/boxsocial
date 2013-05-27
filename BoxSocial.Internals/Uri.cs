@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
 
         public string BuildStatusUri(User member)
         {
-            return AppendSid(string.Format("{0}profile/status",
+            return AppendSid(string.Format("{0}status-feed",
                 member.UriStub));
         }
 

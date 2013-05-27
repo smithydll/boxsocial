@@ -49,12 +49,27 @@ namespace BoxSocial.Internals
             get;
         }
 
+        ItemKey OwnerKey
+        {
+            get;
+        }
+
         string Namespace
         {
             get;
         }
 
+        string ShareString
+        {
+            get;
+        }
+
         string Uri
+        {
+            get;
+        }
+
+        string ShareUri
         {
             get;
         }

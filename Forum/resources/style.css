@@ -101,7 +101,7 @@ ul#topics li {
 	border-bottom: 1px solid #CCCCCC;
 }
 
-ul#topics li div {
+ul#topics li div.forum-info, ul#topics li div.topic-info, ul#topics li#topic-head div {
 	margin: 5px;
 }
 
@@ -233,10 +233,7 @@ dl.icon {
 
 }
 
-dl.icon dt div {
-	padding-left: 45px;		
-	background-repeat: no-repeat;
-	background-position: 10px 50%;
+dl.icon dt div {		
 	font-weight: normal;
 	text-align: left;
 }
@@ -303,4 +300,11 @@ ul#posts .corners-bottom, ul#posts .corners-bottom > span {
 
 ul#posts div.post {
     background-color: #EEEEEE;
+}
+
+div.topic-icon, div.forum-icon {
+    float: left;
+    width: 20px;
+    height: 20px;
+    margin: 5px 10px 0 0;
 }

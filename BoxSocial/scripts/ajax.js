@@ -89,20 +89,16 @@ function ItemLiked(r, e) {
     }
 }
 
-function ShareItem(itemId, itemType, node) {
-    return false;
-}
-
-function ItemShared(r, e) {
-}
-
 function SendStatus(u) {
     return PostToAccount(SentStatus, "profile", "status", -1, { message: $('#message').val(), 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
 }
 
 function SentStatus(r, e, a) {
-	$('#status-form').hide();
-	$('#status-message').show().text(r['message']).html((a != null ? a + ' ' : '') + $('#status-message').show().text() + ' <em>Updated a second ago</em>');
+    $('#status-form').hide();
+    if (r['update'] == 'true') {
+        $('#status-message').show().text(r['message']).html((a != null ? a + ' ' : '') + $('#status-message').show().text() + ' <em>Updated a second ago</em>');
+        $('.status-feed').prepend(r['template']);
+    }
 }
 
 function DeleteComment(id, iid) {
@@ -260,14 +256,15 @@ function ProcessAjaxResult(doc) {
 	}
 	else if (type == 'Array')
 	{
-	    return { 'array': GetNode(doc, 'array') };
+	    return { code: GetNode(doc, 'code'), 'array': GetNode(doc, 'array') };
 	}
 	else if (type == 'Dictionary') {
-	    var a = new Array();
+	var a = {};
 	    var xmlDoc = $.parseXML(doc);
 	    var xml = $(doc);
 	    var e = xml.find('array').find('item').each(function () {
-	        a.push({ id: $(this).find('id').text(), value: $(this).find('value').text() });
+	        //a.push({ key: $(this).find('key').text(), value: $(this).find('value').text() });
+	        a[$(this).find('key').text()] = $(this).find('value').text();
 	    });
 		return a;
     }
@@ -436,8 +433,12 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    if ($(".permission-group-droplist .textbox").length > 0) {
-        $(".permission-group-droplist .textbox").each(function () {
+    preparePermissionsList('');
+});
+
+function preparePermissionsList(id) {
+    if ($(id + ".permission-group-droplist .textbox").length > 0) {
+        $(id + ".permission-group-droplist .textbox").each(function () {
             var itemId = $(this).siblings('.item-id').val();
             var itemTypeId = $(this).siblings('.item-type-id').val();
             var textbox = $(this);
@@ -498,7 +499,7 @@ $(document).ready(function () {
             });
         });
     };
-});
+}
 
 function DeleteStatus(i) {
     return PostToAccount(DeletedStatus, "profile", "status", -1, { mode: "delete", id: i }, i);
@@ -540,6 +541,36 @@ function ShowPoststatus() {
         resizable: false
     });
     return false;
+}
+
+function ShareItem(itemId, itemType) {
+    return PostToPage(ShowShareContent, "api/share?ajax=true&mode=post&item=" + itemId + "&type=" + itemType, null, { ajax: "true" }, { item: itemId, type: itemType });
+}
+
+function ShowShareContent(r, e, a) {
+    $("#share-form").html(r['message']);
+    preparePermissionsList('#share-permissions');
+    $("#share-form").dialog({
+        modal: true,
+        width: 640,
+        resizable: false,
+        buttons: {
+            Cancel: function () {
+                $(this).dialog("close");
+            },
+            Share: function () {
+                PostToPage(SharedContent, "api/share", null, { ajax: 'true', 'share-message': $('#share-message').val(), item: a['item'], type: a['type'], 'share-permissions-ids': $('#share-permissions-ids').val(), 'share-permissions-text': $('#share-permissions-text').val() }, '');
+                $(this).dialog("close");
+                $("#share-form").html("Post shared");
+                var successDialog = $("#share-form").dialog({ buttons: { OK: function () { $(this).dialog("close"); } } });
+                setTimeout(function () { successDialog.dialog("close") }, 2000);
+            }
+        }
+    });
+}
+
+function SharedContent(r, e, a) {
+    SentStatus(r, e, a);
 }
 
 /* http://stackoverflow.com/questions/13442897/jquery-animate-backgroundposition-not-working */

@@ -160,7 +160,7 @@ namespace BoxSocial.Internals
             core.Http.End();
         }
 
-        public void SendDictionary(string ajaxCode, Dictionary<long, string> arrayItems)
+        public void SendDictionary(string ajaxCode, Dictionary<string, string> arrayItems)
         {
             XmlSerializer xs;
             StringWriter stw;
@@ -170,9 +170,9 @@ namespace BoxSocial.Internals
 
             List<AjaxDictionaryItem> ajaxArrayItems = new List<AjaxDictionaryItem>();
 
-            foreach (long id in arrayItems.Keys)
+            foreach (string key in arrayItems.Keys)
             {
-                ajaxArrayItems.Add(new AjaxDictionaryItem(id, arrayItems[id]));
+                ajaxArrayItems.Add(new AjaxDictionaryItem(key, arrayItems[key]));
             }
 
             am.ResponseDictionary = ajaxArrayItems.ToArray();
@@ -319,8 +319,8 @@ namespace BoxSocial.Internals
 
     public class AjaxDictionaryItem
     {
-        [XmlElement("id")]
-        public long Id;
+        [XmlElement("key")]
+        public string Key;
         [XmlElement("value")]
         public string Value;
 
@@ -329,9 +329,9 @@ namespace BoxSocial.Internals
 
         }
 
-        public AjaxDictionaryItem(long id, string value)
+        public AjaxDictionaryItem(string key, string value)
         {
-            this.Id = id;
+            this.Key = key;
             this.Value = value;
         }
     }

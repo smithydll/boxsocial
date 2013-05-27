@@ -366,6 +366,9 @@
   <data name="EVERYONE" xml:space="preserve">
     <value>Everyone</value>
   </data>
+  <data name="EXPAND_COMMENTS" xml:space="preserve">
+    <value>Expand Comments</value>
+  </data>
   <data name="FAMILY" xml:space="preserve">
     <value>Family</value>
   </data>
@@ -452,6 +455,9 @@
   </data>
   <data name="LIKE" xml:space="preserve">
     <value>Like</value>
+  </data>
+  <data name="LIMITED" xml:space="preserve">
+    <value>Limited</value>
   </data>
   <data name="LOCATION" xml:space="preserve">
     <value>Location</value>
@@ -556,6 +562,12 @@
   </data>
   <data name="PREV" xml:space="preserve">
     <value>Prev</value>
+  </data>
+  <data name="PRIVATE" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="PUBLIC" xml:space="preserve">
+    <value>Public</value>
   </data>
   <data name="PUBLISH" xml:space="preserve">
     <value>Publish</value>

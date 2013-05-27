@@ -1,0 +1,37 @@
+<!-- BEGIN status_messages -->
+  <li class="status-post" id="status-{status_messages.ID}">
+        <!-- IF status_messages.USER_ICON -->
+		<div class="status-disp-pic">
+			<img src="{status_messages.USER_ICON}" alt="{status_messages.USER_DISPLAY_NAME}" />
+		</div>
+		<!-- ENDIF -->
+        <!-- IF $_IS_MOBILE -->
+        <div class="status-body" style="cursor: pointer;" onclick="window.location.href = '{status_messages.URI}';">
+        <!-- ELSE -->
+		<div class="status-body" style="cursor: pointer;" onclick="LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));">
+        <!-- ENDIF -->
+            <p><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
+			<p>{status_messages.STATUS_MESSAGE}</p>
+		</div>
+        <!-- IF $_IS_MOBILE -->
+        <!-- ELSE -->
+        <div class="r-stuff light">
+            <span class="img-button like-item"><a href="#" onclick="return LikeItem({status_messages.ID},{status_messages.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{status_messages.LIKES}</span></a></span><!--
+            <!-- IF status_messages.SHAREABLE -->
+            --><span class="img-button share-item"><a href="{U_SHARE}" onclick="return ShareItem({status_messages.ID},{status_messages.TYPE_ID});" title="Share"><span class="sprite share-sprite"></span><span class="shares">{status_messages.SHARES}</span></a></span><!--
+            <!-- ENDIF -->
+            --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));" title="{L_EXPAND_COMMENTS}}">{L_COMMENTS}<span class="likes">{status_messages.COMMENTS}</span></a></span><!--
+            <!-- IF status_messages.IS_OWNER -->
+            <!-- IF status_messages.IS_PUBLIC -->
+            --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="{L_PUBLIC}"><span class="sprite permissions-sprite"></span><span class="perms">{L_PUBLIC}</span></a></span><!--
+            <!-- ELSE -->
+            --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="{L_LIMITED}"><span class="sprite permissions-sprite"></span><span class="perms">{L_LIMITED}</span></a></span><!--
+            <!-- ENDIF -->
+            --><span class="img-button delete-item"><a href="{status_messages.U_DELETE}" onclick="return DeleteStatus({status_messages.ID});" title="Delete Status"><span class="sprite delete-sprite"></span></a></span><!--
+            <!-- ENDIF -->
+            -->
+        </div>
+        <!-- ENDIF -->
+        <div class="status-body comment-pane" id="status-comments-{status_messages.ID}" style="display: none;"></div>
+  </li>
+  <!-- END status_messages -->

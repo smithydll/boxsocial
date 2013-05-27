@@ -202,14 +202,14 @@ namespace BoxSocial.Internals
         /*
          * TODO: show status feed history
          */
-        public static void Show(Core core, TPage page, User owner)
+        public static void Show(Core core, ShowUPageEventArgs e)
         {
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-            if (!owner.Access.Can("VIEW"))
+            if (!e.Page.Owner.Access.Can("VIEW"))
             {
                 core.Functions.Generate403();
                 return;
@@ -217,27 +217,27 @@ namespace BoxSocial.Internals
 
             core.Template.SetTemplate("Profile", "viewstatusfeed");
 
-            if (core.Session.IsLoggedIn && owner == core.Session.LoggedInMember)
+            if (core.Session.IsLoggedIn && e.Page.Owner == core.Session.LoggedInMember)
             {
                 core.Template.Parse("OWNER", "TRUE");
 
             }
 
-            core.Template.Parse("U_PROFILE", owner.ProfileUri);
-            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+            core.Template.Parse("U_PROFILE", ((User)e.Page.Owner).ProfileUri);
+            core.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
 
-            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", owner.ItemKey);
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", e.Page.Owner.ItemKey);
 
             core.Template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
 
-            List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber);
+            List<StatusMessage> items = StatusFeed.GetItems(core, (User)e.Page.Owner, e.Page.TopLevelPageNumber);
 
             foreach (StatusMessage item in items)
             {
                 VariableCollection statusMessageVariableCollection = core.Template.CreateChild("status_messages");
 
                 //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
-                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(item.Message), owner);
+                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(item.Message), e.Page.Owner);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(item.GetTime(core.Tz)));
 
                 statusMessageVariableCollection.Parse("ID", item.Id.ToString());
@@ -273,21 +273,32 @@ namespace BoxSocial.Internals
 
                 if (item.Access.IsPublic())
                 {
+                    statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
                     statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                    statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
+
+                    if (item.Info.SharedTimes > 0)
+                    {
+                        statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
+                    }
                 }
             }
 
-            core.Display.ParsePagination(core.Uri.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.UserInfo.StatusMessages / 10.0));
+            core.Display.ParsePagination(core.Uri.BuildStatusUri((User)e.Page.Owner), e.Page.TopLevelPageNumber, (int)Math.Ceiling(((User)e.Page.Owner).UserInfo.StatusMessages / 10.0));
 
             /* pages */
-            core.Display.ParsePageList(owner, true);
+            core.Display.ParsePageList(e.Page.Owner, true);
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
             breadCrumbParts.Add(new string[] { "*profile", "Profile" });
             breadCrumbParts.Add(new string[] { "status-feed", "Status Feed" });
 
-            owner.ParseBreadCrumbs(breadCrumbParts);
+            e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
+        }
+
+        public static void ShowMore(Core core, ShowUPageEventArgs e)
+        {
         }
     }
 }

@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.Forum
             /* */
             SelectBox actionsSelectBox = new SelectBox("mode");
 
-            long forumId = core.Functions.RequestLong("fid", 0);
+            long forumId = core.Functions.RequestLong("f", 0);
             Forum thisForum = null;
             ForumSettings settings = null;
 
@@ -248,8 +248,9 @@ namespace BoxSocial.Applications.Forum
         {
             AuthoriseRequestSid();
 
-            long topicId = core.Functions.FormLong("t", 0);
-            long forumId = core.Functions.FormLong("id", 0);
+            long topicId = core.Functions.RequestLong("t", 0);
+            long forumId = core.Functions.RequestLong("f", 0);
+            long updated = 0;
             Forum forum = null;
 
             if (topicId > 0)
@@ -278,6 +279,8 @@ namespace BoxSocial.Applications.Forum
                     }
 
                     topic.Update();
+
+                    updated = 1;
                 }
             }
             else
@@ -304,9 +307,19 @@ namespace BoxSocial.Applications.Forum
                         forum.UnLockTopics(topicIds);
                         break;
                 }
+
+                updated = topicIds.Count;
             }
 
-            core.Display.ShowMessage("Locked", "The selected topics have been locked.");
+            switch (e.Mode)
+            {
+                case "lock":
+                    core.Display.ShowMessage("Locked", "The selected topics (" + updated.ToString() + ") have been locked.");
+                    break;
+                case "unlock":
+                    core.Display.ShowMessage("Unlocked", "The selected topics (" + updated.ToString() + ") have been unlocked.");
+                    break;
+            }
             SetRedirectUri(BuildUri());
         }
 
@@ -315,22 +328,36 @@ namespace BoxSocial.Applications.Forum
             AuthoriseRequestSid();
 
             long topicId = core.Functions.FormLong("t", 0);
+            long updated = 0;
             ForumTopic topic = null;
 
-            try
+            if (topicId > 0)
             {
-                topic = new ForumTopic(core, topicId);
+                try
+                {
+                    topic = new ForumTopic(core, topicId);
+                }
+                catch (InvalidTopicException)
+                {
+                    return;
+                }
+
+                if (topic.Forum.Access.Can("DELETE_TOPICS"))
+                {
+                    // TODO: statistics updating
+                    //topic.Delete();
+                }
             }
-            catch (InvalidTopicException)
+            else
             {
-                return;
+                // Not deleting a single topic, locking from the MCP
+
+                List<long> topicIds = core.Functions.FormLongArray("checkbox");
             }
 
-            if (topic.Forum.Access.Can("DELETE_TOPICS"))
-            {
-                // TODO: statistics updating
-                //topic.Delete();
-            }
+            core.Display.ShowMessage("Locked", "The selected topics (" + updated.ToString() + ") have been deleted.");
+
+            SetRedirectUri(BuildUri());
         }
 
         void McpMain_Move(object sender, ModuleModeEventArgs e)

@@ -216,6 +216,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
                     patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });
                     patterns.Add(new string[] { @"^/api/like(/|)$", @"/like.aspx" });
+                    patterns.Add(new string[] { @"^/api/share(/|)$", @"/share.aspx" });
                     patterns.Add(new string[] { @"^/api/subscribe(/|)$", @"/subscribe.aspx" });
                     patterns.Add(new string[] { @"^/api/functions(/|)$", @"/functions.aspx" });
                     patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });

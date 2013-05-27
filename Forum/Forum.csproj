@@ -128,6 +128,7 @@
     <Content Include="resources\forum.png" />
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
+    <Content Include="templates\account_forum_delete.html" />
     <Content Include="templates\account_forum_edit.html" />
     <Content Include="templates\account_forum_manage.html" />
     <Content Include="templates\account_forum_member_edit.html" />

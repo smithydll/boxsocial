@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     [Permission("VIEW", "Can view this status message", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
-    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem
+    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
@@ -46,6 +46,8 @@ namespace BoxSocial.Internals
         private byte likes;
         [DataField("status_dislikes")]
         private byte dislikes;
+        [DataField("status_shares")]
+        private long shares;
         [DataField("status_time_ut")]
         private long timeRaw;
         [DataField("status_simple_permissions")]
@@ -67,6 +69,14 @@ namespace BoxSocial.Internals
             get
             {
                 return (User)Owner;
+            }
+        }
+
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, ItemType.GetTypeId(typeof(User)));
             }
         }
 
@@ -92,6 +102,14 @@ namespace BoxSocial.Internals
             get
             {
                 return statusMessage;
+            }
+        }
+
+        public string ShareString
+        {
+            get
+            {
+                return "[quote=\"[iurl=\"" + Uri + "\"]" + Owner.DisplayName + "[/iurl]\"]" + Message + "[/quote]";
             }
         }
 
@@ -263,6 +281,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string ShareUri
+        {
+            get
+            {
+                return core.Uri.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
+            }
+        }
+
         public long Comments
         {
             get
@@ -377,6 +403,13 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long SharedTimes
+        {
+            get
+            {
+                return shares;
+            }
+        }
 
         public string IndexingString
         {

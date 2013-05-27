@@ -101,6 +101,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool ImplementsShareable
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.Shareable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public bool ImplementsCommentable
         {
             get

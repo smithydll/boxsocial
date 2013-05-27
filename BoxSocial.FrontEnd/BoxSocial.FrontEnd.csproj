@@ -150,6 +150,9 @@
     <Compile Include="session.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="share.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="sitemap.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

@@ -61,6 +61,15 @@ namespace BoxSocial.Applications.Forum {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_forum_delete {
+            get {
+                return ResourceManager.GetString("account_forum_delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- IF EDIT --&gt;
         ///&lt;h3&gt;{L_EDIT_FORUM}&lt;/h3&gt;
         ///&lt;p&gt;Manage forums.&lt;/p&gt;
@@ -525,7 +534,9 @@ namespace BoxSocial.Applications.Forum {
         ///    &lt;li&gt;
         ///					&lt;dl class=&quot;icon&quot;&gt;
         ///        &lt;dt&gt;
-        ///    &lt;!-- IF topic_list.IS_NORMAL_READ_UNLOCKED --&gt; [rest of string was truncated]&quot;;.
+        ///
+        ///    &lt;div class=&quot;topic-info&quot;&gt;
+        ///    &lt;!-- IF topic_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewprofileforum {
             get {

@@ -1740,3 +1740,8 @@ blockquote {
     background-repeat: no-repeat;
     background-position: -80px -96px;
 }
+
+#share-form {
+    display: none;
+    width: 640px;
+}

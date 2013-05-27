@@ -122,10 +122,10 @@ namespace BoxSocial.FrontEnd
             {
                 friends = loggedInMember.SearchFriendNames(needle, 1, 10);
 
-                Dictionary<long, string> friendNames = new Dictionary<long, string>();
+                Dictionary<string, string> friendNames = new Dictionary<string, string>();
                 for (int i = 0; i < friends.Count; i++)
                 {
-                    friendNames.Add(friends[i].Id, friends[i].DisplayName);
+                    friendNames.Add(friends[i].Id.ToString(), friends[i].DisplayName);
                 }
 
                 core.Ajax.SendDictionary("friends", friendNames);

@@ -68,6 +68,10 @@ namespace BoxSocial.Applications.Profile
         {
             AuthoriseRequestSid();
 
+            Template template = new Template("pane.statusmessage.html");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
             string message = core.Http.Form["message"];
 
             StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
@@ -75,7 +79,39 @@ namespace BoxSocial.Applications.Profile
             AccessControlLists acl = new AccessControlLists(core, newMessage);
             acl.SaveNewItemPermissions();
 
-            core.Ajax.SendRawText("Success", message);
+            VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
+
+            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(newMessage.Message), Owner);
+            statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(newMessage.GetTime(core.Tz)));
+
+            statusMessageVariableCollection.Parse("ID", newMessage.Id.ToString());
+            statusMessageVariableCollection.Parse("TYPE_ID", newMessage.ItemKey.TypeId.ToString());
+            statusMessageVariableCollection.Parse("USERNAME", newMessage.Poster.DisplayName);
+            statusMessageVariableCollection.Parse("U_PROFILE", newMessage.Poster.ProfileUri);
+            statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_PERMISSIONS", newMessage.Access.AclUri);
+            statusMessageVariableCollection.Parse("USER_TILE", newMessage.Poster.UserTile);
+            statusMessageVariableCollection.Parse("USER_ICON", newMessage.Poster.UserIcon);
+            statusMessageVariableCollection.Parse("URI", newMessage.Uri);
+
+            statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+
+            if (newMessage.Access.IsPublic())
+            {
+                statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                statusMessageVariableCollection.Parse("U_SHARE", newMessage.ShareUri);
+            }
+
+            Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+            returnValues.Add("update", "true");
+            returnValues.Add("message", message);
+            returnValues.Add("template", template.ToString());
+
+            core.Ajax.SendDictionary("statusPosted", returnValues);
         }
 
         void AccountStatus_Delete(object sender, EventArgs e)

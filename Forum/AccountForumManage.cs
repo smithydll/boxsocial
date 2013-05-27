@@ -67,8 +67,10 @@ namespace BoxSocial.Applications.Forum
         {
             AddModeHandler("new", new ModuleModeHandler(AccountForumManage_New));
             AddModeHandler("edit", new ModuleModeHandler(AccountForumManage_New));
+            AddModeHandler("delete", new ModuleModeHandler(AccountForumManage_Delete));
             AddSaveHandler("new", new EventHandler(AccountForumManage_New_Save));
             AddSaveHandler("edit", new EventHandler(AccountForumManage_Edit_Save));
+            AddSaveHandler("delete", new EventHandler(AccountForumManage_Delete_Save));
             AddModeHandler("move-up", new ModuleModeHandler(AccountForumManage_Move));
             AddModeHandler("move-down", new ModuleModeHandler(AccountForumManage_Move));
         }
@@ -134,6 +136,7 @@ namespace BoxSocial.Applications.Forum
                     forumVariableCollection.Parse("U_MOVE_UP", BuildUri("forum", "move-up", forum.Id));
                     forumVariableCollection.Parse("U_MOVE_DOWN", BuildUri("forum", "move-down", forum.Id));
                     forumVariableCollection.Parse("U_EDIT_PERMISSION", core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", forum.Id, ItemType.GetTypeId(typeof(Forum))), true));
+                    forumVariableCollection.Parse("U_DELETE", BuildUri("forum", "delete", forum.Id));
                 }
             }
 
@@ -495,6 +498,37 @@ namespace BoxSocial.Applications.Forum
                     core.Display.ShowMessage("Forum moved down", "You have moved the forum down in the list.");
                     break;
             }
+        }
+
+        void AccountForumManage_Delete(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_forum_delete");
+
+            long id = core.Functions.RequestLong("id", 0);
+
+            template.Parse("S_ID", id);
+        }
+
+        void AccountForumManage_Delete_Save(object sender, EventArgs e)
+        {
+
+            long forumId = core.Functions.FormLong("id", 0);
+
+            Forum forum;
+
+            try
+            {
+                forum = new Forum(core, forumId);
+            }
+            catch (InvalidForumException)
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            forum.Delete();
+
+            core.Display.ShowMessage("Forum deleted", "The forum has been deleted.");
         }
     }
 }

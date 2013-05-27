@@ -69,6 +69,7 @@ namespace BoxSocial.Internals
         public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void RatingHandler(ItemRatedEventArgs e);
         public delegate void LikeHandler(ItemLikedEventArgs e);
+        public delegate void ShareHandler(ItemSharedEventArgs e);
         public delegate void SubscribeHandler(ItemSubscribedEventArgs e);
         public delegate void UnsubscribeHandler(ItemUnsubscribedEventArgs e);
         public delegate List<PrimitivePermissionGroup> PermissionGroupHandler(Core core, Primitive owner);
@@ -85,6 +86,7 @@ namespace BoxSocial.Internals
         private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
         private Dictionary<long, RatingHandler> ratingHandles = new Dictionary<long, RatingHandler>();
         private Dictionary<long, LikeHandler> likeHandles = new Dictionary<long, LikeHandler>();
+        private Dictionary<long, ShareHandler> shareHandles = new Dictionary<long, ShareHandler>();
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
         private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
@@ -540,6 +542,7 @@ namespace BoxSocial.Internals
 
             RegisterCoreCommentHandles();
             RegisterCoreLikeHandles();
+            RegisterCoreShareHandles();
         }
 
         private void RegisterCoreCommentHandles()
@@ -551,6 +554,11 @@ namespace BoxSocial.Internals
         {
             RegisterLikeHandle(ItemKey.GetTypeId(typeof(Comment)), commentLiked);
             RegisterLikeHandle(ItemKey.GetTypeId(typeof(StatusMessage)), statusLiked);
+        }
+
+        private void RegisterCoreShareHandles()
+        {
+            RegisterShareHandle(ItemKey.GetTypeId(typeof(StatusMessage)), statusShared);
         }
 
         private void commentLiked(ItemLikedEventArgs e)
@@ -569,6 +577,12 @@ namespace BoxSocial.Internals
                 Db.UpdateQuery(string.Format("UPDATE user_status_messages SET status_likes = status_likes + {1} WHERE status_id = {0};",
                     e.ItemId, 1));
             }
+        }
+
+        private void statusShared(ItemSharedEventArgs e)
+        {
+            Db.UpdateQuery(string.Format("UPDATE user_status_messages SET status_shares = status_shares + {1} WHERE status_id = {0};",
+                e.ItemId, 1));
         }
 
         private bool statusMessageCanPostComment(ItemKey itemKey, User member)
@@ -808,6 +822,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void ItemShared(ItemKey itemKey, User sharer)
+        {
+            if (shareHandles.ContainsKey(itemKey.TypeId))
+            {
+
+                shareHandles[itemKey.TypeId](new ItemSharedEventArgs(sharer, itemKey));
+            }
+            else
+            {
+                if (!itemKey.ImplementsShareable)
+                {
+                    throw new InvalidItemException();
+                }
+            }
+        }
+
         public void ItemSubscribed(ItemKey itemKey, User subscriber)
         {
             if (subscribeHandles.ContainsKey(itemKey.TypeId))
@@ -878,6 +908,14 @@ namespace BoxSocial.Internals
             if (!likeHandles.ContainsKey(itemTypeId))
             {
                 likeHandles.Add(itemTypeId, itemliked);
+            }
+        }
+
+        public void RegisterShareHandle(long itemTypeId, Core.ShareHandler itemShared)
+        {
+            if (!shareHandles.ContainsKey(itemTypeId))
+            {
+                shareHandles.Add(itemTypeId, itemShared);
             }
         }
 

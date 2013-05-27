@@ -498,6 +498,17 @@ namespace BoxSocial.Applications.Forum
             long postAdjust = forumPosts;
             long topicAdjust = forumTopics;
             List<long> parentIds = new List<long>();
+            List<long> childIds = new List<long>();
+            childIds.Add(Id);
+
+            List<Forum> children = GetForums();
+
+            /* Delete Children First */
+            foreach (Forum child in children)
+            {
+                childIds.Add(child.Id);
+                child.Delete(true);
+            }
 
             if (!e.ParentDeleted)
             {
@@ -519,8 +530,8 @@ namespace BoxSocial.Applications.Forum
                 /* Update forum statistics */
                 {
                     UpdateQuery uQuery = new UpdateQuery(typeof(ForumSettings));
-                    uQuery.AddField("settings_posts", new QueryOperation("settings_posts", QueryOperations.Subtraction, postAdjust));
-                    uQuery.AddField("settings_topics", new QueryOperation("settings_topics", QueryOperations.Subtraction, topicAdjust));
+                    uQuery.AddField("forum_posts", new QueryOperation("forum_posts", QueryOperations.Subtraction, postAdjust));
+                    uQuery.AddField("forum_topics", new QueryOperation("forum_topics", QueryOperations.Subtraction, topicAdjust));
                     uQuery.AddCondition("forum_item_id", ownerKey.Id);
                     uQuery.AddCondition("forum_item_type_id", ownerKey.TypeId);
 
@@ -530,7 +541,7 @@ namespace BoxSocial.Applications.Forum
                 /* Delete topics */
                 {
                     DeleteQuery dQuery = new DeleteQuery(typeof(ForumTopic));
-                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, childIds);
 
                     db.Query(dQuery);
                 }
@@ -538,7 +549,7 @@ namespace BoxSocial.Applications.Forum
                 /* Delete posts and update post counts */
                 {
                     DeleteQuery dQuery = new DeleteQuery(typeof(TopicPost));
-                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, childIds);
 
                     db.Query(dQuery);
                 }
@@ -546,7 +557,7 @@ namespace BoxSocial.Applications.Forum
                 /* */
                 {
                     DeleteQuery dQuery = new DeleteQuery(typeof(TopicReadStatus));
-                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, childIds);
 
                     db.Query(dQuery);
                 }
@@ -554,7 +565,7 @@ namespace BoxSocial.Applications.Forum
                 /* */
                 {
                     DeleteQuery dQuery = new DeleteQuery(typeof(ForumReadStatus));
-                    dQuery.AddCondition("forum_id", ConditionEquality.In, parentIds);
+                    dQuery.AddCondition("forum_id", ConditionEquality.In, childIds);
 
                     db.Query(dQuery);
                 }
@@ -916,27 +927,41 @@ namespace BoxSocial.Applications.Forum
 
         public void LockTopics(List<long> topicIds)
         {
-            if (Access.Can("LOCK_TOPICS"))
+            if (topicIds.Count > 0)
             {
-                UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
-                uQuery.AddField("topic_locked", true);
-                uQuery.AddCondition("forum_id", Id);
-                uQuery.AddCondition("topic_id",  ConditionEquality.In, topicIds);
+                if (Access.Can("LOCK_TOPICS"))
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+                    uQuery.AddField("topic_locked", true);
+                    uQuery.AddCondition("forum_id", Id);
+                    uQuery.AddCondition("topic_id", ConditionEquality.In, topicIds);
 
-                db.Query(uQuery);
+                    db.Query(uQuery);
+                }
+                /*else
+                {
+                    throw new UnauthorisedToUpdateItemException();
+                }*/
             }
         }
 
         public void UnLockTopics(List<long> topicIds)
         {
-            if (Access.Can("LOCK_TOPICS"))
+            if (topicIds.Count > 0)
             {
-                UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
-                uQuery.AddField("topic_locked", false);
-                uQuery.AddCondition("forum_id", Id);
-                uQuery.AddCondition("topic_id", ConditionEquality.In, topicIds);
+                if (Access.Can("LOCK_TOPICS"))
+                {
+                    UpdateQuery uQuery = new UpdateQuery(typeof(ForumTopic));
+                    uQuery.AddField("topic_locked", false);
+                    uQuery.AddCondition("forum_id", Id);
+                    uQuery.AddCondition("topic_id", ConditionEquality.In, topicIds);
 
-                db.Query(uQuery);
+                    db.Query(uQuery);
+                }
+                /*else
+                {
+                    throw new UnauthorisedToUpdateItemException();
+                }*/
             }
         }
 
@@ -1413,7 +1438,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?fid={1}",
+                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?f={1}",
                         Owner.UriStubAbsolute, forumId), true);
                 }
             }

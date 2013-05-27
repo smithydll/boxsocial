@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
             }
 
             /* Match hash tags to BBcode for parsing */
-            matches = Regex.Matches(input, "(?:^|\\s)((\\#)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
+            matches = Regex.Matches(input, "(?:^|\\s)((\\#)([a-z0-9]+)?)", RegexOptions.IgnoreCase);
             offset = 0;
             foreach (Match match in matches)
             {
@@ -445,7 +445,7 @@ namespace BoxSocial.Internals
             }
 
             /* Match user links to BBcode for parsing */
-            matches = Regex.Matches(input, "(?:^|\\s)((\\@)([a-zA-z0-9]+)?)", RegexOptions.IgnoreCase);
+            matches = Regex.Matches(input, "(?:^|\\s)((\\@)([a-z0-9]+)?)", RegexOptions.IgnoreCase);
             offset = 0;
             List<string> usernames = new List<string>();
             foreach (Match match in matches)

@@ -1665,7 +1665,14 @@ namespace BoxSocial.Internals
             Relation viewerRelation;
             if (!sessionRelationsSet)
             {
-                viewerRelation = GetRelations(viewer.ItemKey);
+                if (viewer == null)
+                {
+                    viewerRelation = Relation.None;
+                }
+                else
+                {
+                    viewerRelation = GetRelations(viewer.ItemKey);
+                }
                 sessionRelations = viewerRelation;
                 sessionRelationsSet = true;
             }

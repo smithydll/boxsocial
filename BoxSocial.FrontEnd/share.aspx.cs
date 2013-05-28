@@ -127,7 +127,7 @@ namespace BoxSocial.FrontEnd
             ae.PublishToFeed(core.Session.LoggedInMember, newStatus.ItemKey, "updated " + core.Session.LoggedInMember.Preposition + " status", core.Bbcode.FromStatusCode(message));
 
             Share.ShareItem(core, itemKey);
-            core.ItemShared(itemKey, loggedInMember);
+
             if (Request.Form["ajax"] == "true")
             {
                 Template template = new Template("pane.statusmessage.html");

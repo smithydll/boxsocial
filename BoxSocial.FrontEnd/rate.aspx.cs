@@ -99,7 +99,6 @@ namespace BoxSocial.FrontEnd
             try
             {
                 Rating.Vote(core, itemKey, rating);
-				Core.ItemRated(itemKey, rating, loggedInMember);
 
                 core.Ajax.SendStatus("voteAccepted");
             }

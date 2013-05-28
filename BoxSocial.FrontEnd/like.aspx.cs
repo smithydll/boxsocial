@@ -114,7 +114,6 @@ namespace BoxSocial.FrontEnd
                         break;
                 }
                 Like.LikeItem(core, itemKey, like);
-                Core.ItemLiked(itemKey, like, loggedInMember);
 
                 core.Ajax.SendStatus("likeAccepted");
             }

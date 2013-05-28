@@ -159,8 +159,6 @@ namespace BoxSocial.Applications.Gallery
 			
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
             core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gallery)), galleryCanPostComment, galleryCanDeleteComment, galleryAdjustCommentCount, galleryCommentPosted);
-
-            core.RegisterRatingHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoRated);
         }
 
         /// <summary>
@@ -199,19 +197,6 @@ namespace BoxSocial.Applications.Gallery
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-        }
-
-        /// <summary>
-        /// Callback on a gallery item being rated.
-        /// </summary>
-        /// <param name="e">An EventArgs that contains the event data</param>
-        private void photoRated(ItemRatedEventArgs e)
-        {
-            /*UpdateQuery uQuery = new UpdateQuery("gallery_items");
-            uQuery.se*/
-            core.Db.BeginTransaction();
-            core.Db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
-                e.Rating, e.ItemId));
         }
 
         /// <summary>

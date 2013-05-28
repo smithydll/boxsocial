@@ -110,7 +110,6 @@
     <Compile Include="Classification.cs" />
     <Compile Include="CombinedFeed.cs" />
     <Compile Include="Comment.cs" />
-    <Compile Include="CommentHandle.cs" />
     <Compile Include="Confirmation.cs" />
     <Compile Include="ContentPreviewCache.cs" />
     <Compile Include="ControlPanelModule.cs" />

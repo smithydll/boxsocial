@@ -64,9 +64,6 @@ namespace BoxSocial.Internals
         public delegate void HookHandler(HookEventArgs e);
         public delegate void LoadHandler(Core core, object sender);
         public delegate void PageHandler(Core core, object sender);
-        public delegate bool CommentHandler(ItemKey itemKey, User viewer);
-        public delegate void CommentCountHandler(ItemKey itemKey, int adjustment);
-        public delegate void CommentPostedHandler(CommentPostedEventArgs e);
         public delegate void SubscribeHandler(ItemSubscribedEventArgs e);
         public delegate void UnsubscribeHandler(ItemUnsubscribedEventArgs e);
         public delegate List<PrimitivePermissionGroup> PermissionGroupHandler(Core core, Primitive owner);
@@ -80,7 +77,6 @@ namespace BoxSocial.Internals
         private Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
         private Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
-        private Dictionary<long, CommentHandle> commentHandles = new Dictionary<long, CommentHandle>();
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
         private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
@@ -534,61 +530,6 @@ namespace BoxSocial.Internals
             AddPrimitiveType(typeof(ApplicationEntry));
             FindAllPrimitivesLoaded();
 
-            RegisterCoreCommentHandles();
-        }
-
-        private void RegisterCoreCommentHandles()
-        {
-            RegisterCommentHandle(ItemKey.GetTypeId(typeof(StatusMessage)), statusMessageCanPostComment, statusMessageCanDeleteComment, statusMessageAdjustCommentCount, statusMessageCommentPosted, statusMessageCommentDeleted);
-        }
-
-        private bool statusMessageCanPostComment(ItemKey itemKey, User member)
-        {
-            try
-            {
-                StatusMessage message = new StatusMessage(this, itemKey.Id);
-
-                if (message.Access.Can("COMMENT"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            catch
-            {
-                throw new InvalidItemException();
-            }
-        }
-
-        private bool statusMessageCanDeleteComment(ItemKey itemKey, User member)
-        {
-            StatusMessage message = new StatusMessage(this, itemKey.Id);
-
-            if (message.Owner.Id == member.UserId)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void statusMessageCommentPosted(CommentPostedEventArgs e)
-        {
-        }
-
-        private void statusMessageCommentDeleted(CommentPostedEventArgs e)
-        {
-        }
-
-        private void statusMessageAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            Db.UpdateQuery(string.Format("UPDATE user_status_messages SET comments = comments + {1} WHERE status_id = {0};",
-                itemKey.Id, adjustment));
         }
 
         public void DisposeOf()
@@ -668,83 +609,27 @@ namespace BoxSocial.Internals
             Functions.Generate404();
         }
 
-        public bool CanPostComment(ItemKey itemKey)
-        {
-            if (commentHandles.ContainsKey(itemKey.TypeId))
-            {
-                return commentHandles[itemKey.TypeId].CanPostComment(itemKey, session.LoggedInMember);
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }
-        }
-
-        public bool CanDeleteComment(ItemKey itemKey)
-        {
-            if (commentHandles.ContainsKey(itemKey.TypeId))
-            {
-                return commentHandles[itemKey.TypeId].CanDeleteComment(itemKey, session.LoggedInMember);
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }
-        }
-
         public void AdjustCommentCount(ItemKey itemKey, int adjustment)
         {
-            if (commentHandles.ContainsKey(itemKey.TypeId))
+            ItemInfo ii = null;
+
+            if (ii is ICommentableItem)
             {
-                commentHandles[itemKey.TypeId].AdjustCommentCount(itemKey, adjustment);
+                try
+                {
+                    ii = new ItemInfo(this, itemKey);
+                }
+                catch (InvalidIteminfoException)
+                {
+                    ii = ItemInfo.Create(this, itemKey);
+                }
+
+                ii.AdjustComments(adjustment);
+                ii.Update();
             }
             else
             {
                 throw new InvalidItemException();
-            }
-
-            ItemInfo ii = null;
-
-            try
-            {
-                ii = new ItemInfo(this, itemKey);
-            }
-            catch (InvalidIteminfoException)
-            {
-                ii = ItemInfo.Create(this, itemKey);
-            }
-
-            ii.AdjustComments(adjustment);
-            ii.Update();
-        }
-
-        public void CommentPosted(ItemKey itemKey, Comment comment, User poster)
-        {
-            if (commentHandles.ContainsKey(itemKey.TypeId))
-            {
-                commentHandles[itemKey.TypeId].CommentPosted(comment, poster, itemKey);
-            }
-            else
-            {
-                if (!itemKey.ImplementsCommentable)
-                {
-                    throw new InvalidItemException();
-                }
-            }
-        }
-
-        public void CommentDeleted(ItemKey itemKey, Comment comment, User poster)
-        {
-            if (commentHandles.ContainsKey(itemKey.TypeId))
-            {
-                commentHandles[itemKey.TypeId].CommentDeleted(comment, poster, itemKey);
-            }
-            else
-            {
-                if (!itemKey.ImplementsCommentable)
-                {
-                    throw new InvalidItemException();
-                }
             }
         }
 
@@ -788,24 +673,6 @@ namespace BoxSocial.Internals
         public void RegisterApplicationPage(AppPrimitives primitives, string expression, Core.PageHandler pageHandle, int order, bool staticPage)
         {
             pages.Add(new PageHandle(primitives, expression, pageHandle, order, staticPage));
-        }
-
-        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount)
-        {
-            RegisterCommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, null, null);
-        }
-
-        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted)
-        {
-            RegisterCommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, null);
-        }
-
-        public void RegisterCommentHandle(long itemTypeId, Core.CommentHandler canPostComment, Core.CommentHandler canDeleteComment, Core.CommentCountHandler adjustCommentCount, Core.CommentPostedHandler commentPosted, Core.CommentPostedHandler commentDeleted)
-        {
-            if (!commentHandles.ContainsKey(itemTypeId))
-            {
-                commentHandles.Add(itemTypeId, new CommentHandle(itemTypeId, canPostComment, canDeleteComment, adjustCommentCount, commentPosted, commentDeleted));
-            }
         }
 
         public void RegisterSubscribeHandle(long itemTypeId, Core.SubscribeHandler itemSubscribed)

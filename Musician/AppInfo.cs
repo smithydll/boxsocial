@@ -117,69 +117,6 @@ namespace BoxSocial.Musician
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.FootHooks += new Core.HookHandler(core_FootHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
-
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gig)), gigCanPostComment, gigCanDeleteComment, gigAdjustCommentCount, gigCommentPosted);
-        }
-
-        private void gigCommentPosted(CommentPostedEventArgs e)
-        {
-        }
-
-        private bool gigCanPostComment(ItemKey itemKey, User member)
-        {
-            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
-            query.AddCondition("gig_id", itemKey.Id);
-
-            DataTable gigTable = core.Db.Query(query);
-
-            if (gigTable.Rows.Count == 1)
-            {
-                Musician owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
-
-                if (owner.Access.Can("COMMENT_GIGS"))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }
-        }
-
-        private bool gigCanDeleteComment(ItemKey itemKey, User member)
-        {
-            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig), false);
-            query.AddCondition("gig_id", itemKey.Id);
-
-            DataTable gigTable = core.Db.Query(query);
-
-            if (gigTable.Rows.Count == 1)
-            {
-                Musician owner = new Musician(core, (long)gigTable.Rows[0]["musician_id"]);
-
-                if (owner.IsMusicianMember(member.ItemKey))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }
-        }
-
-        private void gigAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            Item.IncrementItemColumn(core, typeof(Gig), itemKey.Id, "gig_comments", adjustment);
         }
 
         public override ApplicationInstallationInfo Install()

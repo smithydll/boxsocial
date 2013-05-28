@@ -50,6 +50,7 @@ namespace BoxSocial.FrontEnd
             long itemId;
             long itemTypeId;
 			ItemKey itemKey = null;
+            ICommentableItem thisItem = null;
             long commentId = -1;
             bool isAjax = false;
 
@@ -162,10 +163,9 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
 
-                NumberedItem thisItem = null;
                 try
                 {
-                    thisItem = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                    thisItem = (ICommentableItem)NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
                 }
                 catch (Exception ex)
                 {
@@ -299,7 +299,7 @@ namespace BoxSocial.FrontEnd
 
                     try
                     {
-                        if (!core.CanDeleteComment(thisComment.ItemKey))
+                        if (!thisComment.PermissiveParent.Access.Can("DELETE_COMMENTS"))
                         {
                             core.Ajax.ShowMessage(isAjax, "permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                         }
@@ -330,11 +330,7 @@ namespace BoxSocial.FrontEnd
                         //Notification.DeleteItem(itemType, itemId);
                     }
 
-                    core.LoadUserProfile(thisComment.UserId);
-                    User poster = core.PrimitiveCache[thisComment.UserId];
-                    Core.CommentDeleted(thisComment.ItemKey, thisComment, poster);
-                    Core.AdjustCommentCount(thisComment.ItemKey, -1);
-
+                    Comment.CommentDeleted(core, thisComment.ItemKey);
                 }
                 catch (InvalidCommentException)
                 {
@@ -388,11 +384,32 @@ namespace BoxSocial.FrontEnd
 
             /* save comment in the database */
 
+            Item item = null;
             try
             {
-                if (!Core.CanPostComment(itemKey))
+                item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                if (item is ICommentableItem)
                 {
-                    core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
+                    thisItem = (ICommentableItem)item;
+
+                    IPermissibleItem pItem = null;
+                    if (item is IPermissibleItem)
+                    {
+                        pItem = (IPermissibleItem)item;
+                    }
+                    else
+                    {
+                        pItem = thisItem.Owner;
+                    }
+
+                    if (!pItem.Access.Can("COMMENT"))
+                    {
+                        core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
+                    }
+                }
+                else
+                {
+                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Item", "The comment you have attempted to post is invalid. (0x07)");
                 }
             }
             catch (InvalidItemException)
@@ -406,8 +423,7 @@ namespace BoxSocial.FrontEnd
                 commentObject = Comment.Create(Core, itemKey, comment);
                 commentId = commentObject.CommentId;
 
-                Core.AdjustCommentCount(itemKey, 1);
-                Core.CommentPosted(itemKey, commentObject, loggedInMember);
+                Comment.Commented(core, itemKey);
             }
             catch (NotLoggedInException)
             {
@@ -463,11 +479,8 @@ namespace BoxSocial.FrontEnd
                 commentsVariableCollection.Parse("USER_TILE", loggedInMember.UserTile);
                 commentsVariableCollection.Parse("USER_ICON", loggedInMember.UserIcon);
 
-                ICommentableItem thisItem = null;
                 try
                 {
-                    thisItem = (ICommentableItem)NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
-
                     if (core.Session.IsLoggedIn)
                     {
                         if (thisItem.Owner.CanModerateComments(loggedInMember))

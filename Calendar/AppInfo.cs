@@ -117,8 +117,6 @@ namespace BoxSocial.Applications.Calendar
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
-			
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Event)), eventCanPostComment, eventCanDeleteComment, eventAdjustCommentCount, eventCommentPosted);
         }
 
         public override ApplicationInstallationInfo Install()
@@ -143,77 +141,6 @@ namespace BoxSocial.Applications.Calendar
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-        }
-
-        /// <summary>
-        /// Callback on a comment being posted to an event.
-        /// </summary>
-        /// <param name="e">An EventArgs that contains the event data</param>
-        private void eventCommentPosted(CommentPostedEventArgs e)
-        {
-            // Notify of a new comment
-            Event calendarEvent = new Event(core, e.ItemId);
-            User owner = (User)calendarEvent.Owner;
-
-            ApplicationEntry ae = new ApplicationEntry(core, owner, "Calendar");
-
-            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_event_notification");
-            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(calendarEvent));
-            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
-            notificationTemplate.Parse("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
-
-            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), notificationTemplate.ToString());
-        }
-
-        /// <summary>
-        /// Determines if a user can post a comment to an event.
-        /// </summary>
-        /// <param name="itemId">Event id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool eventCanPostComment(ItemKey itemKey, User member)
-        {
-            Event calendarEvent = new Event(core, itemKey.Id);
-
-            if (calendarEvent.Access.Can("COMMENT") || calendarEvent.IsInvitee(member.ItemKey))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Determines if a user can delete a comment from an event
-        /// </summary>
-        /// <param name="itemId">Event id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool eventCanDeleteComment(ItemKey itemKey, User member)
-        {
-            Event calendarEvent = new Event(core, itemKey.Id);
-
-            if (calendarEvent.UserId == member.UserId)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Adjusts the comment count for the event
-        /// </summary>
-        /// <param name="itemId">Event id</param>
-        /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void eventAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            core.Db.UpdateQuery(string.Format("UPDATE events SET event_comments = event_comments + {1} WHERE event_id = {0};",
-                itemKey.Id, adjustment));
         }
 
         [Show(@"calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]

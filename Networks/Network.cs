@@ -55,6 +55,7 @@ namespace BoxSocial.Networks
     /// </summary>
     [DataTable("network_keys", "NETWORK")]
     [Primitive("NETWORK", NetworkLoadOptions.All, "network_id", "network_network")]
+    [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     public class Network : Primitive, ICommentableItem, IPermissibleItem
     {
         [DataField("network_id", DataFieldKeys.Primary)]

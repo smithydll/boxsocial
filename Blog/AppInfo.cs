@@ -163,8 +163,6 @@ namespace BoxSocial.Applications.Blog
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
-			
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(BlogEntry)), blogCanPostComment, blogCanDeleteComment, blogAdjustCommentCount, blogCommentPosted);
         }
 
         /// <summary>
@@ -201,78 +199,6 @@ namespace BoxSocial.Applications.Blog
         void core_LoadApplication(Core core, object sender)
         {
             this.core = core;
-        }
-
-        /// <summary>
-        /// Callback on a comment being posted to the blog.
-        /// </summary>
-        /// <param name="e">An EventArgs that contains the event data</param>
-        private void blogCommentPosted(CommentPostedEventArgs e)
-        {
-            // Notify of a new comment
-            BlogEntry blogEntry = new BlogEntry(core, e.ItemId);
-            User owner = (User)blogEntry.Owner;
-
-            ApplicationEntry ae = new ApplicationEntry(core, owner, "Blog");
-
-            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_blog_notification");
-            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(blogEntry));
-            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
-            notificationTemplate.Parse("COMMENT", Functions.TrimStringToWord(e.Comment.Body, Notification.NOTIFICATION_MAX_BODY));
-
-            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your blog.", e.Poster.Id), notificationTemplate.ToString());
-        }
-
-        /// <summary>
-        /// Determines if a user can post a comment to a blog post.
-        /// </summary>
-        /// <param name="itemId">Blog post id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool blogCanPostComment(ItemKey itemKey, User member)
-        {
-            BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
-            Blog myBlog = new Blog(core, (User)blogEntry.Owner);
-
-            if (myBlog.Access.Can("COMMENT_ITEMS"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Determines if a user can delete a comment from a blog post
-        /// </summary>
-        /// <param name="itemId">Blog post id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool blogCanDeleteComment(ItemKey itemKey, User member)
-        {
-            BlogEntry blogEntry = new BlogEntry(core, itemKey.Id);
-
-            if (blogEntry.OwnerId == member.UserId)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Adjusts the comment count for the blog post.
-        /// </summary>
-        /// <param name="itemId">Blog post id</param>
-        /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void blogAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            core.Db.UpdateQuery(string.Format("UPDATE blog_postings SET post_comments = post_comments + {1} WHERE post_id = {0};",
-                itemKey.Id, adjustment));
         }
 
         /// <summary>

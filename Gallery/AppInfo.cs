@@ -156,9 +156,6 @@ namespace BoxSocial.Applications.Gallery
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
-			
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(GalleryItem)), photoCanPostComment, photoCanDeleteComment, photoAdjustCommentCount, photoCommentPosted);
-            core.RegisterCommentHandle(ItemKey.GetTypeId(typeof(Gallery)), galleryCanPostComment, galleryCanDeleteComment, galleryAdjustCommentCount, galleryCommentPosted);
         }
 
         /// <summary>
@@ -199,83 +196,6 @@ namespace BoxSocial.Applications.Gallery
             this.core = core;
         }
 
-        /// <summary>
-        /// Callback on a comment being posted to a gallery item.
-        /// </summary>
-        /// <param name="e">An EventArgs that contains the event data</param>
-        private void photoCommentPosted(CommentPostedEventArgs e)
-        {
-        }
-
-        private void galleryCommentPosted(CommentPostedEventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Determines if a user can post a comment to a gallery item.
-        /// </summary>
-        /// <param name="itemId">Gallery item id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can post a comment, false otherwise</returns>
-        private bool photoCanPostComment(ItemKey itemKey, User member)
-        {
-            GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
-            Gallery gallery = new Gallery(core, galleryItem.ParentId);
-
-            return gallery.Access.Can("COMMENT_ITEMS");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="itemKey"></param>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        private bool galleryCanPostComment(ItemKey itemKey, User member)
-        {
-            Gallery gallery = new Gallery(core, itemKey.Id);
-
-            return gallery.Access.Can("COMMENT");
-        }
-
-        /// <summary>
-        /// Determines if a user can delete a comment from a gallery item
-        /// </summary>
-        /// <param name="itemId">Gallery item id</param>
-        /// <param name="member">User to interrogate</param>
-        /// <returns>True if the user can delete a comment, false otherwise</returns>
-        private bool photoCanDeleteComment(ItemKey itemKey, User member)
-        {
-            GalleryItem galleryItem = new GalleryItem(core, itemKey.Id);
-            return galleryItem.Owner.CanDeleteItem();
-        }
-
-        private bool galleryCanDeleteComment(ItemKey itemKey, User member)
-        {
-            Gallery gallery = new Gallery(core, itemKey.Id);
-            return gallery.Owner.CanDeleteItem();
-        }
-
-        /// <summary>
-        /// Adjusts the comment count for the gallery item.
-        /// </summary>
-        /// <param name="itemId">Gallery item id</param>
-        /// <param name="adjustment">Amount to adjust the comment count by</param>
-        private void photoAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            core.Db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_item_id = {0};",
-                itemKey.Id, adjustment));
-
-            core.Db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_item_comments = gallery_item_comments + {1} WHERE gallery_id = (SELECT gallery_id FROM gallery_items WHERE gallery_item_id = {0});",
-                itemKey.Id, adjustment));
-        }
-
-        private void galleryAdjustCommentCount(ItemKey itemKey, int adjustment)
-        {
-            core.Db.UpdateQuery(string.Format("UPDATE user_galleries SET gallery_comments = gallery_comments + {1} WHERE gallery_id = {0};",
-                itemKey.Id, adjustment));
-        }
-        
         [Show(@"^/gallery(|/)$", AppPrimitives.Member | AppPrimitives.Musician | AppPrimitives.Group | AppPrimitives.Network)]
         private void showRootGallery(Core core, object sender)
         {

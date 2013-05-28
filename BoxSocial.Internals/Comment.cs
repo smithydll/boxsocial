@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
 {
 
     [DataTable("comments")]
-    public sealed class Comment : NumberedItem, ILikeableItem
+    public sealed class Comment : NumberedItem, ILikeableItem, IPermissibleSubItem
     {
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 1023;
@@ -64,6 +64,8 @@ namespace BoxSocial.Internals
         private string commentHash;
         [DataField("comment_deleted")]
         private bool deleted;
+
+        private ICommentableItem item;
 
         public long CommentId
         {
@@ -460,6 +462,63 @@ namespace BoxSocial.Internals
             {
                 return dislikes;
             }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                return PermissiveParent.Owner;
+            }
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                if (item == null || item.ItemKey.Id != ItemKey.Id || item.ItemKey.TypeId != ItemKey.TypeId)
+                {
+                    item = (ICommentableItem)NumberedItem.Reflect(core, ItemKey);
+                }
+                if (item is IPermissibleItem)
+                {
+                    return (IPermissibleItem)item;
+                }
+                else
+                {
+                    return item.Owner;
+                }
+            }
+        }
+
+        public static void Commented(Core core, ItemKey itemKey)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (itemKey.Id < 1)
+            {
+                throw new InvalidItemException();
+            }
+
+            core.AdjustCommentCount(itemKey, 1);
+        }
+
+        public static void CommentDeleted(Core core, ItemKey itemKey)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (itemKey.Id < 1)
+            {
+                throw new InvalidItemException();
+            }
+
+            core.AdjustCommentCount(itemKey, -1);
         }
     }
 

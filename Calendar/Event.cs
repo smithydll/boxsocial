@@ -853,7 +853,7 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

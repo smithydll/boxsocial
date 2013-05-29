@@ -2362,7 +2362,12 @@ namespace BoxSocial.Install
                 Console.WriteLine(ex.ToString());
             }
 
+            Access.CreateAllGrantsForOwner(core, newUser);
             Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW_STATUS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
 
             return userId;
 		}

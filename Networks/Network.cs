@@ -1112,8 +1112,15 @@ namespace BoxSocial.Networks
             return false;
         }
 
-        public override bool GetDefaultCan(string permission)
+        public override bool GetDefaultCan(string permission, ItemKey viewer)
         {
+            switch (permission)
+            {
+                case "COMMENT":
+                    return IsNetworkMember(viewer);
+                case "DELETE_COMMENTS":
+                    return false;
+            }
             return false;
         }
 

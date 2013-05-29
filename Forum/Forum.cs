@@ -2022,7 +2022,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

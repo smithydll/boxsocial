@@ -1382,7 +1382,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             switch (permission)
             {

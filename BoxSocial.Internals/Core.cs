@@ -613,7 +613,7 @@ namespace BoxSocial.Internals
         {
             ItemInfo ii = null;
 
-            if (ii is ICommentableItem)
+            if (itemKey.ImplementsCommentable)
             {
                 try
                 {

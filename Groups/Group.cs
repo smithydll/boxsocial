@@ -49,6 +49,7 @@ namespace BoxSocial.Groups
     [Permission("VIEW", "Can view the group", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
+    [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
     public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
     {
         public static int GROUPS_PER_PAGE = 10;
@@ -1967,8 +1968,15 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override bool GetDefaultCan(string permission)
+        public override bool GetDefaultCan(string permission, ItemKey viewer)
         {
+            switch (permission)
+            {
+                case "COMMENT":
+                    return IsGroupMember(viewer);
+                case "DELETE_COMMENTS":
+                    return IsGroupOperator(viewer);
+            }
             return false;
         }
 

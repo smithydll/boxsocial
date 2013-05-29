@@ -236,7 +236,7 @@ namespace BoxSocial.Internals
             {
                 VariableCollection statusMessageVariableCollection = core.Template.CreateChild("status_messages");
 
-                //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+                //statusMessageVariableCollection.Parse("STATUS_MESSAGE", core.Functions.Tldr(item.Message));
                 core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(item.Message), e.Page.Owner);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(item.GetTime(core.Tz)));
 

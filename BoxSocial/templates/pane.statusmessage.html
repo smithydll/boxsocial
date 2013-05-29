@@ -28,6 +28,12 @@
             --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="{L_LIMITED}"><span class="sprite permissions-sprite"></span><span class="perms">{L_LIMITED}</span></a></span><!--
             <!-- ENDIF -->
             --><span class="img-button delete-item"><a href="{status_messages.U_DELETE}" onclick="return DeleteStatus({status_messages.ID});" title="Delete Status"><span class="sprite delete-sprite"></span></a></span><!--
+            <!-- ELSE -->
+            <!-- IF status_messages.IS_PUBLIC -->
+            --><span class="img-button permissions-item" title="{L_PUBLIC}"><span class="perms">{L_PUBLIC}</span></span><!--
+            <!-- ELSE -->
+            --><span class="img-button permissions-item" title="{L_LIMITED}"><span class="perms">{L_LIMITED}</span></span><!--
+            <!-- ENDIF -->
             <!-- ENDIF -->
             -->
         </div>

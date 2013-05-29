@@ -1287,7 +1287,7 @@ namespace BoxSocial.Applications.Blog
         /// </summary>
         /// <param name="permission"></param>
         /// <returns></returns>
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

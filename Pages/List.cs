@@ -569,7 +569,7 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

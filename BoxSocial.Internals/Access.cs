@@ -470,7 +470,7 @@ namespace BoxSocial.Internals
                     else
                     {
                         //HttpContext.Current.Response.Write(" cached result 0x03");
-                        return CachePermission(permission, viewer, leaf.GetDefaultCan(permission));
+                        return CachePermission(permission, viewer, leaf.GetDefaultCan(permission, viewer));
                     }
                 }
                 else if (ItemKey.Equals(owner.ItemKey))
@@ -483,7 +483,7 @@ namespace BoxSocial.Internals
                     else
                     {
                         //HttpContext.Current.Response.Write(" cached result 0x05");
-                        return CachePermission(permission, viewer, leaf.GetDefaultCan(permission));
+                        return CachePermission(permission, viewer, leaf.GetDefaultCan(permission, viewer));
                     }
                 }
                 else

@@ -71,7 +71,6 @@ namespace BoxSocial.Internals
     [Permission("VIEW", "Can view user profile", PermissionTypes.View)]
     [Permission("VIEW_STATUS", "Can view your status", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
-    //[Permission("COMMENT_STATUS", "Can comment on your status", PermissionTypes.Interact)]
     [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
     [Permission("DELETE_STATUS", "Can status messages", PermissionTypes.Delete)]
     [Permission("VIEW_NAME", "Can see your real name", PermissionTypes.View)]
@@ -1205,9 +1204,11 @@ namespace BoxSocial.Internals
             emailTemplate.Parse("USERNAME", userName);
             emailTemplate.Parse("PASSWORD", passwordClearText);
 
-            core.Email.SendEmail(eMail, "Welcome to " + core.Settings.SiteTitle + " (Account Activation E-mail)", emailTemplate.ToString());
+            core.Email.SendEmail(eMail, "Activate your account. Welcome to " + core.Settings.SiteTitle, emailTemplate.ToString());
 
+            Access.CreateAllGrantsForOwner(core, newUser);
             Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW_STATUS");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
             Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
@@ -2147,7 +2148,9 @@ namespace BoxSocial.Internals
 
         public new long Update()
         {
-            throw new Exception("Cannot update user key table.");
+            //throw new Exception("Cannot update user key table.");
+            // we will pretend we did, but we didn't
+            return 1;
         }
 
         public override Access Access
@@ -2171,7 +2174,16 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetPropertyByRef(new { simplePermissions }, value);
+                if (simplePermissions != value)
+                {
+                    simplePermissions = value;
+
+                    UpdateQuery uQuery = new UpdateQuery(typeof(User));
+                    uQuery.AddField("user_simple_permissions", simplePermissions);
+                    uQuery.AddCondition("user_id", Id);
+
+                    db.Query(uQuery);
+                }
             }
         }
 
@@ -2409,7 +2421,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public override bool GetDefaultCan(string permission)
+        public override bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

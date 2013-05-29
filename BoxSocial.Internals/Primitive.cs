@@ -296,7 +296,7 @@ namespace BoxSocial.Internals
         public abstract bool CanEditItem();
         public abstract bool CanDeleteItem();
 
-        public abstract bool GetDefaultCan(string permission);
+        public abstract bool GetDefaultCan(string permission, ItemKey viewer);
 
         public abstract string DisplayTitle
         {

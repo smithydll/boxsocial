@@ -984,5 +984,10 @@ namespace BoxSocial.Internals
                     return 0;
             }
         }
+
+        public string Tldr(string input)
+        {
+            return HttpUtility.HtmlDecode(core.Bbcode.Tldr(HttpUtility.HtmlEncode(input)));
+        }
     }
 }

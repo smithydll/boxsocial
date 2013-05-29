@@ -462,7 +462,7 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override bool GetDefaultCan(string permission)
+        public override bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

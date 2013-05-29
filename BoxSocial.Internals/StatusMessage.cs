@@ -38,7 +38,7 @@ namespace BoxSocial.Internals
         private long statusId;
         [DataField("user_id", DataFieldKeys.Index)]
         private long ownerId;
-        [DataField("status_message", 255)]
+        [DataField("status_message", 1023)]
         private string statusMessage;
         [DataField("comments")]
         private long comments;
@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "[quote=\"[iurl=\"" + Uri + "\"]" + Owner.DisplayName + "[/iurl]\"]" + Message + "[/quote]";
+                return core.Functions.Tldr("[share=\"[iurl=\"" + Uri + "\"]" + Owner.DisplayName + "[/iurl]\"]" + Message + "[/share]");
             }
         }
 
@@ -371,7 +371,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool GetDefaultCan(string permission)
+        public bool GetDefaultCan(string permission, ItemKey viewer)
         {
             return false;
         }

@@ -115,6 +115,7 @@ namespace BoxSocial.Internals
             private string suffixText;
             private bool inList;
             private int quoteDepth;
+            private int shareDepth;
             private bool handled;
             private bool abortParse;
             private bool noContents;
@@ -194,6 +195,14 @@ namespace BoxSocial.Internals
                 }
             }
 
+            public int ShareDepth
+            {
+                get
+                {
+                    return shareDepth;
+                }
+            }
+
             public BbcodeParseMode Mode
             {
                 get
@@ -257,7 +266,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, Primitive postOwner, bool inList, int quoteDepth, BbcodeParseMode mode, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, Primitive postOwner, bool inList, int quoteDepth, int shareDepth, BbcodeParseMode mode, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
                 this.core = core;
                 this.tag = tag;
@@ -268,13 +277,14 @@ namespace BoxSocial.Internals
                 this.suffixText = suffixText;
                 this.inList = inList;
                 this.quoteDepth = quoteDepth;
+                this.shareDepth = shareDepth;
                 this.mode = mode;
                 this.handled = handled;
                 this.abortParse = abortParse;
                 this.owner = postOwner;
             }
 
-            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, int quoteDepth, BbcodeParseMode mode, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
+            public BbcodeEventArgs(Core core, string contents, BbcodeTag tag, BbcodeOptions options, User postOwner, bool inList, int quoteDepth, int shareDepth, BbcodeParseMode mode, ref string prefixText, ref string suffixText, ref bool handled, ref bool abortParse)
             {
                 this.core = core;
                 this.tag = tag;
@@ -285,6 +295,7 @@ namespace BoxSocial.Internals
                 this.suffixText = suffixText;
                 this.inList = inList;
                 this.quoteDepth = quoteDepth;
+                this.shareDepth = shareDepth;
                 this.mode = mode;
                 this.handled = handled;
                 this.abortParse = abortParse;
@@ -588,6 +599,7 @@ namespace BoxSocial.Internals
             int end = strLength;
             int quoteDepth = 0;
             int shareStart = 0;
+            int shareDepth = 0;
 
             StringBuilder newOutput = new StringBuilder();
             int lastEndIndex = 0;
@@ -667,6 +679,7 @@ namespace BoxSocial.Internals
                             if (Tag.Equals("share"))
                             {
                                 quoteDepth++;
+                                shareDepth++;
                             }
                         }
                     }
@@ -739,7 +752,7 @@ namespace BoxSocial.Internals
                                     int tempIndex = tempTag.indexStart + tempTag.StartLength;
                                     string contents = input.Substring(tempIndex, i - tempIndex - tempTag.EndLength + 1);
 
-                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(core, contents, tempTag, options, postOwner, (inList > 0), quoteDepth, mode, ref insertStart, ref insertEnd, ref handled, ref abortParse);
+                                    BbcodeEventArgs eventArgs = new BbcodeEventArgs(core, contents, tempTag, options, postOwner, (inList > 0), quoteDepth, shareDepth, mode, ref insertStart, ref insertEnd, ref handled, ref abortParse);
                                     BbcodeHooks(eventArgs);
 
                                     insertStart = eventArgs.PrefixText;
@@ -1071,20 +1084,27 @@ namespace BoxSocial.Internals
             {
                 case BbcodeParseMode.Tldr:
                     // Preserve
-                    if (e.QuoteDepth == 1)
+                    if (e.ShareDepth == 1)
                     {
                         e.AbortParse();
                     }
-                    else if (e.QuoteDepth > 1)
-                    {
-                        e.PrefixText = string.Empty;
-                        e.SuffixText = string.Empty;
-                        e.RemoveContents();
-                    }
                     else
                     {
-                        e.PrefixText = string.Empty;
-                        e.SuffixText = string.Empty;
+                        if (e.QuoteDepth == 1)
+                        {
+                            e.AbortParse();
+                        }
+                        else if (e.QuoteDepth > 1)
+                        {
+                            e.PrefixText = string.Empty;
+                            e.SuffixText = string.Empty;
+                            e.RemoveContents();
+                        }
+                        else
+                        {
+                            e.PrefixText = string.Empty;
+                            e.SuffixText = string.Empty;
+                        }
                     }
                     break;
                 case BbcodeParseMode.StripTags:

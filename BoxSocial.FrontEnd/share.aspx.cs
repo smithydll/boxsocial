@@ -78,7 +78,7 @@ namespace BoxSocial.FrontEnd
 
                     template.Parse("S_SHARE_MESSAGE", messageTextBox);
                     template.Parse("S_SHARE_PERMISSIONS", permissionSelectBox);
-                    core.Display.ParseBbcode(template, "S_SHARED_STRING", item.ShareString, core.Session.LoggedInMember);
+                    core.Display.ParseBbcode(template, "S_SHARED_STRING", core.Functions.Tldr("[share=\"[iurl=\"" + item.Uri + "\"]" + item.Owner.DisplayName + "[/iurl]\"]" + item.ShareString + "[/share]"), core.Session.LoggedInMember);
                 }
                 catch
                 {
@@ -116,7 +116,7 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            string message = (string)core.Http.Form["share-message"] + "\n\n" + item.ShareString;
+            string message = (string)core.Http.Form["share-message"] + "\n\n" + core.Functions.Tldr("[share=\"[iurl=\"" + item.Uri + "\"]" + item.Owner.DisplayName + "[/iurl]\"]" + item.ShareString + "[/share]");
 
             StatusMessage newStatus = StatusMessage.Create(core, core.Session.LoggedInMember, message);
 

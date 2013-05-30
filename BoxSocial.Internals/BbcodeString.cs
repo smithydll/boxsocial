@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
             {
                 if (body.Length > 0 && length == 0)
                 {
-                    length = core.Bbcode.Strip(body).Length;
+                    length = core.Bbcode.Flatten(body).Length;
                 }
 
                 return length;

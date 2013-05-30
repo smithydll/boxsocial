@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Functions.Tldr("[share=\"[iurl=\"" + Uri + "\"]" + Owner.DisplayName + "[/iurl]\"]" + Message + "[/share]");
+                return core.Bbcode.FromStatusCode(Message);
             }
         }
 
@@ -240,10 +240,35 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
                 statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
 
+                if (e.Core.Session.IsLoggedIn)
+                {
+                    if (item.Owner.Id == e.Core.Session.LoggedInMember.Id)
+                    {
+                        statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+                    }
+                }
+
                 if (item.Likes > 0)
                 {
                     statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Likes));
                     statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Dislikes));
+                }
+
+                if (item.Info.Comments > 0)
+                {
+                    statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", item.Info.Comments));
+                }
+
+                if (item.Access.IsPublic())
+                {
+                    statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                    statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                    statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
+
+                    if (item.Info.SharedTimes > 0)
+                    {
+                        statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
+                    }
                 }
 
                 /* pages */

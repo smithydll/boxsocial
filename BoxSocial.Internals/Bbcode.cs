@@ -48,8 +48,9 @@ namespace BoxSocial.Internals
     public enum BbcodeParseMode : byte
     {
         Normal = 0x00,
-        StripTags = 0x01,
+        Flatten = 0x01,
         Tldr = 0x02,
+        StripTags = 0x04,
     }
 
     public class Bbcode
@@ -1036,6 +1037,10 @@ namespace BoxSocial.Internals
                     }
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = "\n--- Quote: " + Parse(e.Attributes.GetAttribute("default"), null, e.Owner, false, null, null, e.Mode) + " wrote: ---\n";
@@ -1108,6 +1113,10 @@ namespace BoxSocial.Internals
                     }
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = "\n--- " + Parse(e.Attributes.GetAttribute("default"), null, e.Owner, false, null, null, e.Mode) + " originally shared: ---\n";
@@ -1159,6 +1168,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = "*";
                     e.SuffixText = "*";
                     break;
@@ -1182,6 +1195,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = "_";
                     e.SuffixText = "_";
                     break;
@@ -1205,6 +1222,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1228,6 +1246,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = "--";
                     e.SuffixText = "--";
                     break;
@@ -1247,10 +1269,16 @@ namespace BoxSocial.Internals
             switch (e.Mode)
             {
                 case BbcodeParseMode.Tldr:
-                    // Preserve
-                    e.AbortParse();
+                    // Remove code blocks
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    e.RemoveContents();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = "--- Code ---";
                     e.SuffixText = "------";
                     break;
@@ -1282,6 +1310,12 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
                     if (e.Attributes.GetAttribute("default") != null)
@@ -1347,6 +1381,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = " *";
                     e.SuffixText = string.Empty;
                     break;
@@ -1370,6 +1408,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1395,6 +1434,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1427,6 +1467,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1450,6 +1491,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1473,6 +1515,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1496,6 +1539,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1522,6 +1566,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.SuffixText = string.Empty;
                     break;
@@ -1567,6 +1612,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = string.Empty;
@@ -1628,6 +1677,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.SuffixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Flatten:
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = string.Empty;
@@ -1674,6 +1727,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1704,6 +1758,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1734,6 +1789,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1766,6 +1822,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1835,6 +1892,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1897,6 +1955,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1924,6 +1983,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1952,6 +2012,7 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
@@ -1981,6 +2042,9 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.AbortParse();
+                    break;
+                case BbcodeParseMode.Flatten:
                     key = e.Contents;
                     e.RemoveContents();
 
@@ -2076,17 +2140,32 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Strip(string input)
+        public string Flatten(string input)
+        {
+            return Parse(input, null, null, false, null, null, BbcodeParseMode.Flatten);
+        }
+
+        public string Flatten(string input, User viewer)
+        {
+            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.Flatten);
+        }
+
+        public string Flatten(string input, User viewer, Primitive postOwner)
+        {
+            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.Flatten);
+        }
+
+        public string StripTags(string input)
         {
             return Parse(input, null, null, false, null, null, BbcodeParseMode.StripTags);
         }
 
-        public string Strip(string input, User viewer)
+        public string StripTags(string input, User viewer)
         {
             return Parse(input, viewer, null, false, null, null, BbcodeParseMode.StripTags);
         }
 
-        public string Strip(string input, User viewer, Primitive postOwner)
+        public string StripTags(string input, User viewer, Primitive postOwner)
         {
             return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.StripTags);
         }

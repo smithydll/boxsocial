@@ -19,26 +19,9 @@
         <div class="info">
         <!-- ENDIF -->
 			<h2><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a></h2>
-			<!-- IF OWNER -->
-			<p id="status-message" onclick="$('#status-message').hide();$('#status-form').show();$('#message').focus().val('is ').outerWidth($('#status-div').width() - $('#status-submit').outerWidth(true));" style="cursor: pointer;">
-			    <!-- IF STATUS_MESSAGE -->
-			    {STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em>
-			    <!-- ELSE -->
-			    Click here to change your status message.
-			    <!-- ENDIF -->
-			</p>
-			<div id="status-div">
-			    <form action="/account" method="post" id="status-form" style="display: none;" onsubmit="return SendStatus();" onblur="$('#status-message').show();$('#status-form').hide();">
-			        <p><input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
-			        <input type="hidden" name="module" value="profile" />
-			        <input type="hidden" name="sub" value="status" /></p>
-			    </form>
-			</div>
-			<!-- ELSE -->
-			    <!-- IF STATUS_MESSAGE -->
-			    <p id="status-message">{STATUS_MESSAGE} <em>Updated {STATUS_UPDATED}</em></p>
-			    <!-- ENDIF -->
-			<!-- ENDIF -->
+            <!-- IF USER_AUTOBIOGRAPHY -->
+            <p id="status-message">{USER_AUTOBIOGRAPHY}</p>
+            <!-- ENDIF -->
 		<div class="cheat-clear"></div>
 	</div>
     </div>
@@ -117,12 +100,6 @@
 		<!-- END app_panel_side -->
 	</div>
 	<div id="profile">
-	<!-- IF USER_AUTOBIOGRAPHY -->
-	<div id="profile-autobiography" class="pane normal-writing">
-	<h3>Auto Biography</h3>
-	<p>{USER_AUTOBIOGRAPHY}</p>
-	</div>
-	<!-- ENDIF -->
 	<div id="profile-friends-pane" class="pane">
 	<h3>{USER_DISPLAY_NAME_OWNERSHIP} Friends ({FRIENDS})</h3>
 	<!-- IF FRIENDS -->

@@ -403,7 +403,7 @@ namespace BoxSocial.Internals
                     break;
                 case ShowMessageOptions.Stripped:
                     // TODO: stripped bbcode parse
-                    core.Template.Parse("MESSAGE_BODY", core.Bbcode.Strip(message));
+                    core.Template.Parse("MESSAGE_BODY", core.Bbcode.Flatten(message));
                     break;
             }
 

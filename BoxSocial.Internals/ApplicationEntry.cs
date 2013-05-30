@@ -969,7 +969,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.UserInfo.EmailNotifications)
                 {
-                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(subject))), emailBody.ToString());
                 }
             }
         }
@@ -985,9 +985,9 @@ namespace BoxSocial.Internals
                     RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "notification.eml");
 
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
-                    emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
+                    emailTemplate.Parse("NOTIFICATION_MESSAGE", HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(body)).Replace("<br />", "\n")));
 
-                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Strip(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(subject))), emailTemplate.ToString());
                 }
             }
         }

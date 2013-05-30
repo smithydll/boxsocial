@@ -330,7 +330,7 @@ namespace BoxSocial.FrontEnd
                         //Notification.DeleteItem(itemType, itemId);
                     }
 
-                    Comment.CommentDeleted(core, thisComment.ItemKey);
+                    Comment.CommentDeleted(core, thisComment.CommentedItemKey);
                 }
                 catch (InvalidCommentException)
                 {

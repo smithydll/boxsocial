@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
 {
 
     [DataTable("comments")]
-    public sealed class Comment : NumberedItem, ILikeableItem, IPermissibleSubItem
+    public sealed class Comment : NumberedItem, ILikeableItem, IShareableItem, IPermissibleSubItem
     {
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 1023;
@@ -83,7 +83,7 @@ namespace BoxSocial.Internals
             }
         }
 		
-		public ItemKey ItemKey
+		public ItemKey CommentedItemKey
 		{
 			get
 			{
@@ -476,9 +476,9 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (item == null || item.ItemKey.Id != ItemKey.Id || item.ItemKey.TypeId != ItemKey.TypeId)
+                if (item == null || item.ItemKey.Id != CommentedItemKey.Id || item.ItemKey.TypeId != CommentedItemKey.TypeId)
                 {
-                    item = (ICommentableItem)NumberedItem.Reflect(core, ItemKey);
+                    item = (ICommentableItem)NumberedItem.Reflect(core, CommentedItemKey);
                 }
                 if (item is IPermissibleItem)
                 {
@@ -519,6 +519,38 @@ namespace BoxSocial.Internals
             }
 
             core.AdjustCommentCount(itemKey, -1);
+        }
+
+        public long SharedTimes
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return new ItemKey(UserId, ItemKey.GetTypeId(typeof(User)));
+            }
+        }
+
+        public string ShareString
+        {
+            get
+            {
+                return core.Bbcode.FromStatusCode(Body);
+            }
+        }
+
+        public string ShareUri
+        {
+            get
+            {
+                return core.Uri.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", CommentedItemKey.Id, CommentedItemKey.TypeId), true);
+            }
         }
     }
 

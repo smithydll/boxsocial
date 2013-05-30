@@ -1594,7 +1594,7 @@ namespace BoxSocial.Internals
 	                                }
 	                                catch (Exception ex)
 	                                {
-	                                    core.Display.ShowMessage("Type error on load", core.Bbcode.Strip(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + " of value " + itemRow[columnName].ToString() + "\n\n" + ex));
+	                                    core.Display.ShowMessage("Type error on load", core.Bbcode.Flatten(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + " of value " + itemRow[columnName].ToString() + "\n\n" + ex));
 	                                }
 	                            }
 	                            else

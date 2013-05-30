@@ -673,7 +673,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.Bbcode.Strip(Body);
+                return core.Bbcode.Flatten(Body);
             }
         }
 
@@ -765,7 +765,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return "[quote=\"[iurl=\"" + Uri + "\"]" + Owner.DisplayName + "[/iurl]\"]" + core.Functions.Tldr(Body) + "[/quote]";
+                return Functions.TrimStringToWord(HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body))), 256, true);
             }
         }
 

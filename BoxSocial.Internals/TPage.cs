@@ -131,9 +131,9 @@ namespace BoxSocial.Internals
             }
             set
             {
-                if (core != null && core.Uri != null)
+                if (core != null && core.Hyperlink != null)
                 {
-                    canonicalUri = core.Uri.StripSid(value);
+                    canonicalUri = core.Hyperlink.StripSid(value);
                 }
                 else
                 {
@@ -218,7 +218,7 @@ namespace BoxSocial.Internals
             core.Display = new Display(core);
             core.Email = new Email(core);
             core.Ajax = new Ajax(core);
-            core.Uri = new Linker(core);
+            core.Hyperlink = new Hyperlink(core);
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -231,7 +231,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (httpContext.Request.Url.Host.ToLower() == Linker.Domain)
+                if (httpContext.Request.Url.Host.ToLower() == Hyperlink.Domain)
                 {
                     Core.PagePath = httpContext.Request.RawUrl.TrimEnd(new char[] { '/' });
                 }

@@ -72,7 +72,7 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_manage");
 
-            template.Parse("U_CREATE_GROUP", core.Uri.AppendSid("/groups/register"));
+            template.Parse("U_CREATE_GROUP", core.Hyperlink.AppendSid("/groups/register"));
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(GroupOperator));
             query.AddFields(Item.GetFieldsPrefixed(typeof(UserGroup)));
@@ -96,7 +96,7 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("U_VIEW", thisGroup.Uri);
                 groupVariableCollection.Parse("U_MEMBERLIST", thisGroup.MemberlistUri);
-                groupVariableCollection.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(thisGroup, "groups", "edit"));
+                groupVariableCollection.Parse("U_EDIT", core.Hyperlink.BuildAccountSubModuleUri(thisGroup, "groups", "edit"));
                 groupVariableCollection.Parse("U_DELETE", thisGroup.DeleteUri);
 
                 switch (thisGroup.GroupType)
@@ -129,7 +129,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("mode", "delete");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
+                core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid(Owner.AccountUriStub, true)),
                     "Are you sure you want to delete this group?",
                     "When you delete this group, all information is also deleted and cannot be undone. Deleting a group is final.",
                     hiddenFieldList);

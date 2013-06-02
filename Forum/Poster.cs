@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                page.template.Parse("S_POST", core.Uri.AppendSid(string.Format("{0}forum/post",
+                page.template.Parse("S_POST", core.Hyperlink.AppendSid(string.Format("{0}forum/post",
                     ((GPage)page).Group.UriStub), true));
 
                 if (((GPage)page).Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey) && topicId == 0)

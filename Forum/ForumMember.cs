@@ -327,13 +327,13 @@ namespace BoxSocial.Applications.Forum
 
         public static string GenerateMemberlistUri(Core core, Primitive primitive)
         {
-            return core.Uri.AppendSid(string.Format("{0}forum/memberlist",
+            return core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist",
                 primitive.UriStub));
         }
 
         public static string GenerateMemberlistUri(Core core, Primitive primitive, string filter)
         {
-            return core.Uri.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
                 primitive.UriStub, filter));
         }
 
@@ -344,7 +344,7 @@ namespace BoxSocial.Applications.Forum
 
             if (e.Core.Session.IsLoggedIn && e.Core.Session.LoggedInMember != null)
             {
-                e.Template.Parse("S_POST", e.Core.Uri.AppendSid(string.Format("{0}forum/ucp",
+                e.Template.Parse("S_POST", e.Core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
                     e.Page.Owner.UriStub), true));
 				
 				try
@@ -441,7 +441,7 @@ namespace BoxSocial.Applications.Forum
 
                 core.Display.ShowMessage("Profile Updated", "Your forum profile has been saved in the database.");
 
-                page.template.Parse("REDIRECT_URI", core.Uri.AppendSid(string.Format("{0}forum/ucp",
+                page.template.Parse("REDIRECT_URI", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
                     page.Owner.UriStub)));
             }
         }

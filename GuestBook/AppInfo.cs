@@ -237,7 +237,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNIN", core.Hyperlink.BuildLoginUri());
 
             template.Parse("IS_USER_GUESTBOOK", "TRUE");
 
@@ -263,7 +263,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNIN", core.Hyperlink.BuildLoginUri());
 
             core.Display.DisplayComments(template, thisGroup, thisGroup);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, thisGroup));
@@ -286,7 +286,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNIN", core.Hyperlink.BuildLoginUri());
 
             core.Display.DisplayComments(template, theNetwork, theNetwork);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, theNetwork));
@@ -306,7 +306,7 @@ namespace BoxSocial.Applications.GuestBook
                 template.Parse("CAN_COMMENT", "TRUE");
             }
 
-            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNIN", core.Hyperlink.BuildLoginUri());
 
             core.Display.DisplayComments(template, anApplication, anApplication);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, anApplication));
@@ -330,7 +330,7 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
-            template.Parse("U_SIGNIN", core.Uri.BuildLoginUri());
+            template.Parse("U_SIGNIN", core.Hyperlink.BuildLoginUri());
 
             core.Display.DisplayComments(template, musician, musician);
             template.Parse("U_VIEW_ALL", GuestBook.Uri(core, musician));

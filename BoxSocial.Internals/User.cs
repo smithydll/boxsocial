@@ -279,7 +279,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}profile",
+                return core.Hyperlink.AppendSid(string.Format("{0}profile",
                     UriStub));
             }
         }
@@ -1195,7 +1195,7 @@ namespace BoxSocial.Internals
             }
 
             string activateUri = string.Format("{0}register/?mode=activate&id={1}&key={2}",
-                Linker.Uri, userId, activateKey);
+                Hyperlink.Uri, userId, activateKey);
 
             RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "registration_welcome.eml");
 
@@ -1806,9 +1806,9 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    if (core.Http.Domain != Linker.Domain)
+                    if (core.Http.Domain != Hyperlink.Domain)
                     {
-                        return Linker.Uri + "user/" + UserName.ToLower() + "/";
+                        return Hyperlink.Uri + "user/" + UserName.ToLower() + "/";
                     }
                     else
                     {
@@ -1837,11 +1837,11 @@ namespace BoxSocial.Internals
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    return core.Uri.AppendAbsoluteSid(UriStub);
+                    return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }
                 else
                 {
-                    return core.Uri.AppendAbsoluteSid(string.Format("http://{0}/",
+                    return core.Hyperlink.AppendAbsoluteSid(string.Format("http://{0}/",
                             domain));
                 }
             }
@@ -1851,7 +1851,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -1862,7 +1862,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}contacts/friends",
+            return core.Hyperlink.AppendSid(string.Format("{0}contacts/friends",
                 primitive.UriStub));
         }
 
@@ -1873,7 +1873,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}contacts/friends?filter={1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}contacts/friends?filter={1}",
                 primitive.UriStub, filter));
         }
 
@@ -1936,7 +1936,7 @@ namespace BoxSocial.Internals
             core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
 
             core.Template.Parse("U_PROFILE", page.User.Uri);
-            core.Template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
+            core.Template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
 
             core.Template.Parse("IS_PROFILE", "TRUE");
 
@@ -1960,8 +1960,8 @@ namespace BoxSocial.Internals
 
             if (core.LoggedInMemberId > 0)
             {
-                core.Template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(page.User.UserId));
-                core.Template.Parse("U_BLOCK_USER", core.Uri.BuildBlockUserUri(page.User.UserId));
+                core.Template.Parse("U_ADD_FRIEND", core.Hyperlink.BuildAddFriendUri(page.User.UserId));
+                core.Template.Parse("U_BLOCK_USER", core.Hyperlink.BuildBlockUserUri(page.User.UserId));
             }
 
             string langFriends = (page.User.UserInfo.Friends != 1) ? "friends" : "friend";
@@ -2068,7 +2068,7 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("TILE", friend.UserTile);
             }
 
-            string pageUri = e.Core.Uri.BuildFriendsUri(e.Page.User);
+            string pageUri = e.Core.Hyperlink.BuildFriendsUri(e.Page.User);
             e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(e.Page.User.UserInfo.Friends / 18.0));
 
             /* pages */
@@ -2094,13 +2094,13 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (Linker.Domain == core.Uri.CurrentDomain)
+                if (Hyperlink.Domain == core.Hyperlink.CurrentDomain)
                 {
                     return "/account/";
                 }
                 else
                 {
-                    return Linker.Uri + "account/";
+                    return Hyperlink.Uri + "account/";
                 }
             }
         }
@@ -2511,7 +2511,7 @@ namespace BoxSocial.Internals
                 List<long> friendIds = core.Session.LoggedInMember.GetFriendIds();
                 if (!friendIds.Contains(Id))
                 {
-                    template.Parse("U_ADD_FRIEND", core.Uri.BuildAddFriendUri(Id, true));
+                    template.Parse("U_ADD_FRIEND", core.Hyperlink.BuildAddFriendUri(Id, true));
                 }
             }
 

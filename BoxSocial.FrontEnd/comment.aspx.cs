@@ -181,7 +181,7 @@ namespace BoxSocial.FrontEnd
                 template.Medium = core.Template.Medium;
                 template.SetProse(core.Prose);
 
-                template.Parse("U_SIGNIN", Core.Uri.BuildLoginUri());
+                template.Parse("U_SIGNIN", Core.Hyperlink.BuildLoginUri());
 
                 if (thisItem is IPermissibleItem)
                 {
@@ -472,9 +472,9 @@ namespace BoxSocial.FrontEnd
                 commentsVariableCollection.Parse("ID", commentId.ToString());
                 commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
                 commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);
-                commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(commentId));
-                commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(commentId));
-                commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(commentId));
+                commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(commentId));
+                commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(commentId));
+                commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(commentId));
                 commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
                 commentsVariableCollection.Parse("USER_TILE", loggedInMember.UserTile);
                 commentsVariableCollection.Parse("USER_ICON", loggedInMember.UserIcon);

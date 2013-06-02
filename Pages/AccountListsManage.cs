@@ -90,10 +90,10 @@ namespace BoxSocial.Applications.Pages
                 listVariableCollection.Parse("TYPE", l.Type.ToString());
                 listVariableCollection.Parse("ITEMS", core.Functions.LargeIntegerToString(l.Items));
 
-                listVariableCollection.Parse("U_VIEW", core.Uri.BuildListUri(LoggedInMember, l.Path));
-                listVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteListUri(l.Id));
+                listVariableCollection.Parse("U_VIEW", core.Hyperlink.BuildListUri(LoggedInMember, l.Path));
+                listVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildDeleteListUri(l.Id));
                 listVariableCollection.Parse("U_PERMISSIONS", l.Access.AclUri);
-                listVariableCollection.Parse("U_EDIT", core.Uri.BuildEditListUri(l.Id));
+                listVariableCollection.Parse("U_EDIT", core.Hyperlink.BuildEditListUri(l.Id));
             }
 
             DataTable listTypesTable = db.Query("SELECT list_type_id, list_type_title FROM list_types ORDER BY list_type_title ASC");
@@ -198,7 +198,7 @@ namespace BoxSocial.Applications.Pages
                             Page page = Page.Create(core, core.Session.LoggedInMember, title, ref slug, listPage.Id, "", PageStatus.PageList, 0, Classifications.None);
                         }
 
-                        SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
+                        SetRedirectUri(core.Hyperlink.BuildAccountSubModuleUri(ModuleKey, "lists"));
                         core.Display.ShowMessage("List Saved", "You have saved the list");
                         return;
                     }
@@ -285,7 +285,7 @@ namespace BoxSocial.Applications.Pages
                     // Can ignore
                 }
 
-                SetRedirectUri(core.Uri.BuildAccountSubModuleUri(ModuleKey, "lists"));
+                SetRedirectUri(core.Hyperlink.BuildAccountSubModuleUri(ModuleKey, "lists"));
                 core.Display.ShowMessage("List Deleted", "You have deleted a list.");
                 return;
             }
@@ -385,7 +385,7 @@ namespace BoxSocial.Applications.Pages
                     }
                     else
                     {
-                        SetRedirectUri(core.Uri.BuildListUri(LoggedInMember, list.Path));
+                        SetRedirectUri(core.Hyperlink.BuildListUri(LoggedInMember, list.Path));
                         core.Display.ShowMessage("List Updated", "You have successfully appended an item to your list.");
                     }
                 }

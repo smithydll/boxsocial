@@ -66,8 +66,8 @@ namespace BoxSocial.Applications.GuestBook
 
         public string BuildConversationUri(User user)
         {
-            return core.Uri.AppendSid(string.Format("{0}/{1}",
-                    core.Uri.StripSid(Uri), user.UserName));
+            return core.Hyperlink.AppendSid(string.Format("{0}/{1}",
+                    core.Hyperlink.StripSid(Uri), user.UserName));
         }
 
         public Primitive Owner

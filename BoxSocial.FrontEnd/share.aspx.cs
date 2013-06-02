@@ -124,7 +124,7 @@ namespace BoxSocial.FrontEnd
             acl.SaveNewItemPermissions("share-permissions");
 
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
-            ae.PublishToFeed(core.Session.LoggedInMember, newStatus.ItemKey, "updated " + core.Session.LoggedInMember.Preposition + " status", core.Bbcode.FromStatusCode(message));
+            ae.PublishToFeed(core.Session.LoggedInMember, newStatus.ItemKey, "shared", core.Bbcode.FromStatusCode(message));
 
             Share.ShareItem(core, itemKey);
 
@@ -136,16 +136,16 @@ namespace BoxSocial.FrontEnd
 
                 VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
 
-                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(newStatus.Message), core.Session.LoggedInMember);
+                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(newStatus.Message), core.Session.LoggedInMember, true, string.Empty, string.Empty);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(newStatus.GetTime(core.Tz)));
 
                 statusMessageVariableCollection.Parse("ID", newStatus.Id.ToString());
                 statusMessageVariableCollection.Parse("TYPE_ID", newStatus.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", newStatus.Poster.DisplayName);
                 statusMessageVariableCollection.Parse("U_PROFILE", newStatus.Poster.ProfileUri);
-                statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(newStatus.Id));
-                statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(newStatus.Id));
-                statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(newStatus.Id));
+                statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(newStatus.Id));
+                statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(newStatus.Id));
+                statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(newStatus.Id));
                 statusMessageVariableCollection.Parse("U_PERMISSIONS", newStatus.Access.AclUri);
                 statusMessageVariableCollection.Parse("USER_TILE", newStatus.Poster.UserTile);
                 statusMessageVariableCollection.Parse("USER_ICON", newStatus.Poster.UserIcon);

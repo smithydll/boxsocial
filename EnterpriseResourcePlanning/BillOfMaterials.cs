@@ -115,7 +115,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}bom/{1}",
+                return core.Hyperlink.AppendSid(string.Format("{0}bom/{1}",
                         BomDocument.Owner.UriStub, BomDocument.DocumentKey));
             }
         }

@@ -197,7 +197,7 @@ namespace BoxSocial.Groups
                 hiddenFieldList.Add("mode", "join");
                 hiddenFieldList.Add("id", groupId.ToString());
 
-                core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
+                core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid(Owner.AccountUriStub, true)),
                     "Confirm join group",
                     "Do you want to join the group `" + thisGroup.DisplayName + "`?",
                     hiddenFieldList);
@@ -659,7 +659,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("mode", "resign-operator");
             hiddenFieldList.Add("id", groupId.ToString());
 
-            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
+            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid(Owner.AccountUriStub, true)),
                 "Are you sure you want to resign as operator from this group?",
                 "When you resign as operator from this group, you can only become operator again if appointed by another operator. Once you confirm resignation it is final.",
                 hiddenFieldList);
@@ -813,7 +813,7 @@ namespace BoxSocial.Groups
             hiddenFieldList.Add("mode", "ban-member");
             hiddenFieldList.Add("id", string.Format("{0},{1}", groupId, userId));
 
-            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid("/account/", true)),
+            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid("/account/", true)),
                 "Are you sure you want to ban this member?",
                 "Banning a member from the group prevents them from seeing, or participating in the group.",
                 hiddenFieldList);

@@ -94,11 +94,11 @@ namespace BoxSocial.Internals
 
             if (Owner == LoggedInMember)
             {
-                template.Parse("U_APPLICATIONS", core.Uri.AppendCoreSid("/applications"));
+                template.Parse("U_APPLICATIONS", core.Hyperlink.AppendCoreSid("/applications"));
             }
             else
             {
-                template.Parse("U_APPLICATIONS", core.Uri.AppendCoreSid(string.Format("/applications?type={0}&id={1}",
+                template.Parse("U_APPLICATIONS", core.Hyperlink.AppendCoreSid(string.Format("/applications?type={0}&id={1}",
                     Owner.TypeId, Owner.Id)));
             }
         }

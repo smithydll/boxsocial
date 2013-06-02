@@ -9,8 +9,9 @@
     list-style: none;
     background-color: #ffffff;
     border-radius: 5px;
-	margin: 0 1px 10px 1px;
+	margin: 0 0 10px 0;
     padding: 4px 5px 5px 5px;
+    border: 1px solid #eeeeee;
     border-top: 1px solid #dddddd !important;
 }
 
@@ -22,8 +23,6 @@
     background-color: #eeeeee;
     border: 1px solid #dddddd;
     border-top: none;
-    padding-bottom: 4px;
-    margin: 0 0 10px 0;
 }
 
 #compose-status h3 {

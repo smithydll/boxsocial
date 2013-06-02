@@ -54,7 +54,7 @@ namespace BoxSocial.FrontEnd
 
                 string sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 
-                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + path, true));
+                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + path, true));
             }
             catch (InvalidDnsRecordException)
             {

@@ -436,8 +436,8 @@ namespace BoxSocial.Internals
 
         public string BuildUri(ICommentableItem item)
         {
-            return core.Uri.AppendSid(string.Format("{0}?c={2}&#c{1}",
-                    core.Uri.StripSid(item.Uri), commentId, commentId));
+            return core.Hyperlink.AppendSid(string.Format("{0}?c={2}&#c{1}",
+                    core.Hyperlink.StripSid(item.Uri), commentId, commentId));
         }
 
         public override string Uri
@@ -549,7 +549,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", CommentedItemKey.Id, CommentedItemKey.TypeId), true);
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", CommentedItemKey.Id, CommentedItemKey.TypeId), true);
             }
         }
     }

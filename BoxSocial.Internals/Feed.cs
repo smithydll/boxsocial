@@ -45,6 +45,10 @@ namespace BoxSocial.Internals
             query.LimitCount = 64;
 
             List<long> friendIds = owner.GetFriendIds(16);
+            if (core.Session.IsLoggedIn)
+            {
+                friendIds.Add(core.LoggedInMemberId);
+            }
 
             if (friendIds.Count > 0)
             {
@@ -98,7 +102,7 @@ namespace BoxSocial.Internals
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
                     core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
-                    core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId]);
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 

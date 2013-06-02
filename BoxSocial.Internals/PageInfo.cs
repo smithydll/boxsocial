@@ -134,7 +134,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}{1}",
+                return core.Hyperlink.AppendSid(string.Format("{0}{1}",
                     Owner.UriStub, FullPath));
             }
         }

@@ -48,7 +48,7 @@ namespace BoxSocial.FrontEnd
             {
                 try
                 {
-                    if (domain != Linker.Domain)
+                    if (domain != Hyperlink.Domain)
 					{
 						record = new DnsRecord(core, domain);
 					}
@@ -65,11 +65,11 @@ namespace BoxSocial.FrontEnd
 
                         if (!string.IsNullOrEmpty(redirect))
                         {
-                            Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                            Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                         }
                         else
                         {
-                            Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/", true));
+                            Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
                         }
                     }
                     else if (core.LoggedInMemberId > 0)
@@ -83,7 +83,7 @@ namespace BoxSocial.FrontEnd
 
                         sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
 
-                        Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                        Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                     }
                 }
                 catch (InvalidDnsRecordException)
@@ -137,7 +137,7 @@ namespace BoxSocial.FrontEnd
                                 db.UpdateQuery(string.Format("UPDATE user_info SET user_new_password = '{0}', user_activate_code = '{1}' WHERE user_id = {2}",
                                     Mysql.Escape(newPassword), Mysql.Escape(activateCode), userEmail.Owner.Id));
 
-                                string activateUri = string.Format(Linker.Uri + "register/?mode=activate-password&id={0}&key={1}",
+                                string activateUri = string.Format(Hyperlink.Uri + "register/?mode=activate-password&id={0}&key={1}",
                                     userEmail.Owner.Id, activateCode);
 
                                 // send the e-mail
@@ -221,14 +221,14 @@ namespace BoxSocial.FrontEnd
                         {
                             string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
 
-                            core.Uri.Sid = sessionId;
+                            core.Hyperlink.Sid = sessionId;
                             if (!string.IsNullOrEmpty(redirect))
                             {
-                                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                             }
                             else
                             {
-                                Response.Redirect(core.Uri.AppendSid("http://" + record.Domain + "/", true));
+                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
                             }
                             return;
                         }
@@ -236,7 +236,7 @@ namespace BoxSocial.FrontEnd
                         {
                             if (redirect.StartsWith("/account"))
                             {
-                                redirect = core.Uri.AppendSid(core.Uri.StripSid(redirect), true);
+                                redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
                             }
                             Response.Redirect(redirect, true);
                         }
@@ -267,7 +267,7 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
-                template.Parse("U_FORGOT_PASSWORD", core.Uri.AppendSid("/sign-in/?mode=reset-password"));
+                template.Parse("U_FORGOT_PASSWORD", core.Hyperlink.AppendSid("/sign-in/?mode=reset-password"));
             }
 
             template.Parse("DOMAIN", domain);

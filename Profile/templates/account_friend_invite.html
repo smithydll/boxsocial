@@ -1,4 +1,8 @@
 <h3>Invite a Friend to {SITE_TITLE}</h3>
+
+<!-- IF S_CANNOT_INVITE -->
+<p>Sorry, you have no invites left to send.</p>
+<!-- ELSE -->
 <p>Invite a friend to join {SITE_TITLE}, just enter their e-mail address below:</p>
 <form action="{S_ACCOUNT}" method="post">
 <fieldset>
@@ -34,3 +38,4 @@
     <input type="hidden" name="save" value="" />
 </fieldset>
 </form>
+<!-- ENDIF -->

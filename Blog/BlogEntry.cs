@@ -536,7 +536,7 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 UnixTime tz = new UnixTime(core, ((User)Owner).UserInfo.TimeZoneCode);
-                return core.Uri.BuildBlogPostUri((User)Owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+                return core.Hyperlink.BuildBlogPostUri((User)Owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
             }
         }
 
@@ -544,7 +544,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("blog", "write", "delete", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("blog", "write", "delete", Id, true);
             }
         }
 
@@ -765,7 +765,31 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return Functions.TrimStringToWord(HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body))), 256, true);
+                string strippedBody = HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body)));
+
+                if (string.IsNullOrEmpty(strippedBody.Trim()))
+                {
+                    List<string> images = core.Bbcode.ExtractImages(Body, Owner, false, true);
+
+                    if (images.Count > 0)
+                    {
+                        return "[img]" + images[0] + "[/img]";
+                    }
+
+                    return string.Empty;
+                }
+                else
+                {
+                    List<string> images = core.Bbcode.ExtractImages(Body, Owner, true, true);
+                    string floatImage = string.Empty;
+
+                    if (images.Count > 0)
+                    {
+                        floatImage = "[float=left][img]" + images[0] + "[/img][/float]";
+                    }
+
+                    return floatImage + Functions.TrimStringToWord(strippedBody, 256, true);
+                }
             }
         }
 
@@ -773,7 +797,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
             }
         }
     }

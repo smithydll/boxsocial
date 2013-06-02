@@ -137,12 +137,12 @@ namespace BoxSocial.Groups
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
                             emailTemplate.Parse("GROUP_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("U_GROUP", core.Uri.StripSid(thisGroup.UriStubAbsolute));
-                            emailTemplate.Parse("U_JOIN", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(thisGroup.JoinUri)));
+                            emailTemplate.Parse("U_GROUP", core.Hyperlink.StripSid(thisGroup.UriStubAbsolute));
+                            emailTemplate.Parse("U_JOIN", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(thisGroup.JoinUri)));
 
                             ApplicationEntry ae = Application.GetExecutingApplication(core, LoggedInMember);
                             ae.SendNotification(inviteMember, string.Format("[user]{0}[/user] invited you to join a group.", core.LoggedInMemberId), string.Format("[url={0}]Join {1}[/url]",
-                                core.Uri.StripSid(core.Uri.AppendAbsoluteSid(thisGroup.JoinUri)), thisGroup.TitleName), emailTemplate);
+                                core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(thisGroup.JoinUri)), thisGroup.TitleName), emailTemplate);
 
                             SetRedirectUri(thisGroup.Uri);
                             core.Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");

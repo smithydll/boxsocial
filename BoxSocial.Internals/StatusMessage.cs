@@ -227,16 +227,16 @@ namespace BoxSocial.Internals
                 VariableCollection statusMessageVariableCollection = e.Core.Template.CreateChild("status_messages");
 
                 //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
-                e.Core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", e.Core.Bbcode.FromStatusCode(item.Message), e.Page.Owner);
+                e.Core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", e.Core.Bbcode.FromStatusCode(item.Message), e.Page.Owner, true, string.Empty, string.Empty);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", e.Core.Tz.DateTimeToString(item.GetTime(e.Core.Tz)));
 
                 statusMessageVariableCollection.Parse("ID", item.Id.ToString());
                 statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
                 statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
-                statusMessageVariableCollection.Parse("U_QUOTE", e.Core.Uri.BuildCommentQuoteUri(item.Id));
-                statusMessageVariableCollection.Parse("U_REPORT", e.Core.Uri.BuildCommentReportUri(item.Id));
-                statusMessageVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_QUOTE", e.Core.Hyperlink.BuildCommentQuoteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_REPORT", e.Core.Hyperlink.BuildCommentReportUri(item.Id));
+                statusMessageVariableCollection.Parse("U_DELETE", e.Core.Hyperlink.BuildCommentDeleteUri(item.Id));
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
                 statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
 
@@ -301,7 +301,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}status-feed/{1}",
+                return core.Hyperlink.AppendSid(string.Format("{0}status-feed/{1}",
                         Owner.UriStub, Id));
             }
         }
@@ -310,7 +310,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
             }
         }
 
@@ -468,16 +468,16 @@ namespace BoxSocial.Internals
             VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
 
             //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
-            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(Message), owner);
+            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(Message), owner, true, string.Empty, string.Empty);
             statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(GetTime(core.Tz)));
 
             statusMessageVariableCollection.Parse("ID", Id.ToString());
             statusMessageVariableCollection.Parse("TYPE_ID", ItemKey.TypeId.ToString());
             statusMessageVariableCollection.Parse("USERNAME", Poster.DisplayName);
             statusMessageVariableCollection.Parse("U_PROFILE", Poster.ProfileUri);
-            statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(Id));
-            statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(Id));
-            statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(Id));
+            statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(Id));
+            statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(Id));
+            statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(Id));
             statusMessageVariableCollection.Parse("U_PERMISSIONS", Access.AclUri);
             statusMessageVariableCollection.Parse("USER_TILE", Poster.UserTile);
             statusMessageVariableCollection.Parse("USER_ICON", Poster.UserIcon);

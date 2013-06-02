@@ -1545,12 +1545,12 @@ namespace BoxSocial.Applications.Gallery
         {
             if (reload)
             {
-                return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}?reload=true",
+                return core.Hyperlink.AppendSid(string.Format("{0}gallery/{1}/{2}?reload=true",
                     owner.UriStub, galleryPath, photoPath));
             }
             else
             {
-                return core.Uri.AppendSid(string.Format("{0}gallery/{1}/{2}",
+                return core.Hyperlink.AppendSid(string.Format("{0}gallery/{1}/{2}",
                     owner.UriStub, galleryPath, photoPath));
             }
         }
@@ -1563,7 +1563,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the photo</returns>
         public static string BuildPhotoUri(Core core, Primitive owner, string photoPath)
         {
-            return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}gallery/{1}",
                 owner.UriStub, photoPath));
         }
 
@@ -1574,7 +1574,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(Core core, UserGroup thisGroup)
         {
-            return core.Uri.AppendSid(string.Format("{0}gallery/?mode=upload",
+            return core.Hyperlink.AppendSid(string.Format("{0}gallery/?mode=upload",
                 thisGroup.UriStub));
         }
 
@@ -1585,7 +1585,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the upload form</returns>
         public static string BuildGalleryUpload(Core core, Network theNetwork)
         {
-            return core.Uri.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
+            return core.Hyperlink.AppendSid(string.Format("/network/gallery/{0}/?mode=upload",
                 theNetwork.NetworkNetwork));
         }
 
@@ -1596,7 +1596,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>URI pointing to the gallery</returns>
         public static string BuildGalleryUri(Core core, Primitive owner)
         {
-            return core.Uri.AppendSid(string.Format("{0}gallery",
+            return core.Hyperlink.AppendSid(string.Format("{0}gallery",
                 owner.UriStub));
         }
 
@@ -1614,7 +1614,7 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
-                return core.Uri.AppendSid(string.Format("{0}gallery/{1}",
+                return core.Hyperlink.AppendSid(string.Format("{0}gallery/{1}",
                     owner.UriStub, path));
             }
         }
@@ -1885,7 +1885,7 @@ namespace BoxSocial.Applications.Gallery
 
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());
             e.Template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
-            e.Template.Parse("U_COMMENTS", e.Core.Uri.BuildGalleryCommentsUri(e.Page.Owner, galleryPath));
+            e.Template.Parse("U_COMMENTS", e.Core.Hyperlink.BuildGalleryCommentsUri(e.Page.Owner, galleryPath));
         }
 
         /// <summary>
@@ -1925,7 +1925,7 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 //return core.Uri.BuildAccountSubModuleUri("galleries", "galleries", "new", galleryId, true);
-                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/galleries/?mode=new&id=" + Id.ToString(), true);
+                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "galleries/galleries/?mode=new&id=" + Id.ToString(), true);
             }
         }
 
@@ -1937,7 +1937,7 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 //return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
-                return core.Uri.AppendSid(Owner.AccountUriStub + "galleries/upload?id=" + Id.ToString(), true);
+                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "galleries/upload?id=" + Id.ToString(), true);
             }
         }
         
@@ -1948,7 +1948,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", Id, ItemKey.TypeId), true);
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", Id, ItemKey.TypeId), true);
             }
         }
 

@@ -239,7 +239,7 @@ namespace BoxSocial.Internals
 
             if (!isRegistration)
             {
-                string activateUri = string.Format("http://" + Linker.Domain + "/register/?mode=activate-email&id={0}&key={1}",
+                string activateUri = string.Format("http://" + Hyperlink.Domain + "/register/?mode=activate-email&id={0}&key={1}",
                     emailId, activateKey);
 
                 RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_activation.eml");

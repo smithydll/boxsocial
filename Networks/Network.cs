@@ -824,9 +824,9 @@ namespace BoxSocial.Networks
         {
             get
             {
-                if (core.Http.Domain != Linker.Domain)
+                if (core.Http.Domain != Hyperlink.Domain)
                 {
-                    return Linker.Uri + "network/" + NetworkNetwork + "/";
+                    return Hyperlink.Uri + "network/" + NetworkNetwork + "/";
                 }
                 else
                 {
@@ -840,7 +840,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(UriStub);
+                return core.Hyperlink.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -848,7 +848,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -856,24 +856,24 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}members",
+                return core.Hyperlink.AppendSid(string.Format("{0}members",
                     UriStub));
             }
         }
 
         public string BuildJoinUri()
         {
-            return core.Uri.BuildAccountSubModuleUri("networks", "memberships", "join", NetworkId);
+            return core.Hyperlink.BuildAccountSubModuleUri("networks", "memberships", "join", NetworkId);
         }
 
         public string BuildLeaveUri()
         {
-            return core.Uri.BuildAccountSubModuleUri("networks", "memberships", "leave", NetworkId);
+            return core.Hyperlink.BuildAccountSubModuleUri("networks", "memberships", "leave", NetworkId);
         }
 
         public string BuildMemberListUri()
         {
-            return core.Uri.AppendSid(string.Format("/network/{0}/members",
+            return core.Hyperlink.AppendSid(string.Format("/network/{0}/members",
                 NetworkNetwork));
         }
 

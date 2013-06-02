@@ -168,7 +168,7 @@ namespace BoxSocial.FrontEnd
 					}
                 }
 
-                core.Http.Redirect(core.Uri.BuildLoginUri(core.Uri.StripSid(core.Uri.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
+                core.Http.Redirect(core.Hyperlink.BuildLoginUri(core.Hyperlink.StripSid(core.Hyperlink.BuildAccountSubModuleUri((Primitive)null, module, submodule, args.ToArray()))));
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace BoxSocial.FrontEnd
                         accountModule.DisplayError("");
 
                         core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Linker.Domain, ex.ToString());
+                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
                     }
 
                     modulesVariableCollection.Parse("CURRENT", "TRUE");
@@ -294,9 +294,8 @@ namespace BoxSocial.FrontEnd
 
                             javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                         }
-
-                        asm.ModuleVector(core);
                     }
+                    asm.ModuleVector(core);
                     /*catch (Exception ex)
                     {
                         throw new Exception(ex.ToString() + "\n\n\n" + db.ErrorList + "\n\n" + db.QueryList);

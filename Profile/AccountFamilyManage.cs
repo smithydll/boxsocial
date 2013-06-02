@@ -81,8 +81,8 @@ namespace BoxSocial.Applications.Profile
 
                 familyVariableCollection.Parse("NAME", (string)familyTable.Rows[i]["user_name"]);
 
-                familyVariableCollection.Parse("U_BLOCK", core.Uri.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"]));
-                familyVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"]));
+                familyVariableCollection.Parse("U_BLOCK", core.Hyperlink.BuildBlockUserUri((long)(int)familyTable.Rows[i]["user_id"]));
+                familyVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildDeleteFamilyUri((long)(int)familyTable.Rows[i]["user_id"]));
             }
         }
 

@@ -1373,12 +1373,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId == 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/",
                         Owner.UriStub));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/{1}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/{1}",
                         Owner.UriStub, forumId));
                 }
             }
@@ -1388,7 +1388,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}forum/post?f={1}&mode=post",
+                return core.Hyperlink.AppendSid(string.Format("{0}forum/post?f={1}&mode=post",
                     Owner.UriStub, forumId));
             }
         }
@@ -1399,12 +1399,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId == 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/?mark=topics",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/?mark=topics",
                         Owner.UriStub));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/{1}?mark=topics",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/{1}?mark=topics",
                         Owner.UriStub, forumId));
                 }
             }
@@ -1416,12 +1416,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId == 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/?mark=forums",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/?mark=forums",
                         Owner.UriStub));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/{1}?mark=forums",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/{1}?mark=forums",
                         Owner.UriStub, forumId));
                 }
             }
@@ -1433,12 +1433,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (forumId == 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/mcp",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/mcp",
                         Owner.UriStubAbsolute), true);
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/mcp?f={1}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/mcp?f={1}",
                         Owner.UriStubAbsolute, forumId), true);
                 }
             }

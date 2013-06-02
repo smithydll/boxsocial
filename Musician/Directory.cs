@@ -32,10 +32,10 @@ namespace BoxSocial.Musician
         {
             e.Template.SetTemplate("Musician", "music_directory");
 
-            e.Template.Parse("U_MUSIC_ARTISTS", e.Core.Uri.AppendSid("/music/directory/all"));
-            e.Template.Parse("U_MUSIC_GENRES", e.Core.Uri.AppendSid("/music/directory/genres"));
+            e.Template.Parse("U_MUSIC_ARTISTS", e.Core.Hyperlink.AppendSid("/music/directory/all"));
+            e.Template.Parse("U_MUSIC_GENRES", e.Core.Hyperlink.AppendSid("/music/directory/genres"));
 
-            e.Template.Parse("U_FILTER_ALL", e.Core.Uri.AppendSid("/music/directory/all"));
+            e.Template.Parse("U_FILTER_ALL", e.Core.Hyperlink.AppendSid("/music/directory/all"));
             e.Template.Parse("U_FILTER_BEGINS_A", GetDirectoryUri(e.Core, "a"));
             e.Template.Parse("U_FILTER_BEGINS_B", GetDirectoryUri(e.Core, "b"));
             e.Template.Parse("U_FILTER_BEGINS_C", GetDirectoryUri(e.Core, "c"));
@@ -108,7 +108,7 @@ namespace BoxSocial.Musician
                 genrePath = "/" + genrePath.TrimEnd(new char[] { '/' });
             }
 
-            return core.Uri.AppendSid(string.Format("/music/directory{0}?filter={1}",
+            return core.Hyperlink.AppendSid(string.Format("/music/directory{0}?filter={1}",
                     genrePath, filter));
         }
 

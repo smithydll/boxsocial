@@ -33,14 +33,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Linker
+    public class Hyperlink
     {
         private Core core;
         public bool SecureUrls;
         public bool SidUrls;
         private string sid = String.Empty;
 
-        public Linker(Core core)
+        public Hyperlink(Core core)
         {
             this.core = core;
         }

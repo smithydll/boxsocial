@@ -1,10 +1,10 @@
 	<div id="today-feed" style="margin-right: 260px; border: solid 1px #EEEEEE; margin-bottom: 5px;">
-		<h4><!--a href="/{USERNAME}/feed"-->Feed<!--/a--></h4>
+		<h4 class="today-day"><!--a href="/{USERNAME}/feed"-->Feed<!--/a--></h4>
 		<!-- IF HAS_FEED_ITEMS -->
 		<ul id="today-feeds">
 			<!-- BEGIN feed_days_list -->
-			<li>
-				<h4>{feed_days_list.DAY}</h4>
+			<li class="today-feed">
+				<h4 class="today-day">{feed_days_list.DAY}</h4>
 				<!-- BEGIN feed_days_list.feed_item -->
 				<ul class="feed-list">
                     <li class="feed-item" id="feed-item-{feed_days_list.feed_item.ID}">
@@ -15,7 +15,7 @@
 		            </div>
 		            <!-- ENDIF -->
                     <div class="feed-text">
-					    <p>{feed_days_list.feed_item.TEXT}</p>
+					    {feed_days_list.feed_item.TEXT}
                     </div>
                     <div class="r-stuff light">
                         <!--

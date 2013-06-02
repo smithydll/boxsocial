@@ -52,6 +52,24 @@ namespace BoxSocial.Internals
 
         }
 
+        public static Dictionary<string, InviteKey> GetInvites(Core core, string emailKey)
+        {
+            Dictionary<string, InviteKey> keys = new Dictionary<string, InviteKey>();
+
+            SelectQuery query = new SelectQuery(typeof(InviteKey));
+            query.AddCondition("email_key", emailKey);
+
+            DataTable inviteDataTable = core.Db.Query(query);
+
+            foreach (DataRow row in inviteDataTable.Rows)
+            {
+                InviteKey newKey = new InviteKey(core, row);
+                keys.Add(newKey.emailHash, newKey);
+            }
+
+            return keys;
+        }
+
         public override string Uri
         {
             get

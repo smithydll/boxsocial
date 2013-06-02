@@ -115,7 +115,7 @@ namespace BoxSocial.Internals
         public void CreateTemplate()
         {
             template = new Template(core.Http.TemplatePath, "1301.html");
-            template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
+            template.Parse("U_ACCOUNT", core.Hyperlink.AppendSid(Owner.AccountUriStub, true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);
@@ -295,7 +295,7 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri()
         {
-            return core.Uri.AppendSid(string.Format("{0}{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}{1}",
                 Owner.AccountUriStub, Key));
         }
 
@@ -306,18 +306,18 @@ namespace BoxSocial.Internals
         /// <returns>URI built</returns>
         protected string BuildUri(string sub)
         {
-            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
+            return core.Hyperlink.AppendSid(string.Format("{0}{1}/{2}",
                 Owner.AccountUriStub, Key, sub));
         }
 
         public string BuildModuleUri(string sub, string mode, bool appendSid)
         {
-            return core.Uri.BuildAccountSubModuleUri(Owner, Key, sub, mode, appendSid);
+            return core.Hyperlink.BuildAccountSubModuleUri(Owner, Key, sub, mode, appendSid);
         }
 
         public string BuildModuleUri(string sub, string mode, long id)
         {
-            return core.Uri.BuildAccountSubModuleUri(Owner, Key, sub, mode, id);
+            return core.Hyperlink.BuildAccountSubModuleUri(Owner, Key, sub, mode, id);
         }
 
         /// <summary>
@@ -344,13 +344,13 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return core.Uri.AppendSid(string.Format("{0}{1}/{2}{3}",
+            return core.Hyperlink.AppendSid(string.Format("{0}{1}/{2}{3}",
                 Owner.AccountUriStub, Key, sub, argumentList));
         }
 
         public string BuildUri(string module, string sub, params string[] arguments)
         {
-            return core.Uri.BuildAccountSubModuleUri(Owner, module, sub, false, arguments);
+            return core.Hyperlink.BuildAccountSubModuleUri(Owner, module, sub, false, arguments);
         }
 
         /// <summary>

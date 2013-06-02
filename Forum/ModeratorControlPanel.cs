@@ -163,7 +163,7 @@ namespace BoxSocial.Applications.Forum
                         ApplicationEntry ae = new ApplicationEntry(core, this.page.Owner, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Linker.Domain, ex.ToString());
+                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
                     }
                 }
             }

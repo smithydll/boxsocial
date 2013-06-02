@@ -356,9 +356,9 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_NAMES", core.Session.LoggedInMember.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
                         /* TODO: EMAIL KEY PERMS */
-                        emailTemplate.Parse("U_EVENT", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(Event.BuildEventUri(core, calendarEvent))));
-                        emailTemplate.Parse("U_ACCEPT", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, calendarEvent))));
-                        emailTemplate.Parse("U_REJECT", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(Event.BuildEventRejectUri(core, calendarEvent))));
+                        emailTemplate.Parse("U_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventUri(core, calendarEvent))));
+                        emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, calendarEvent))));
+                        emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, calendarEvent))));
 
                         core.Email.SendEmail(email, string.Format("{0} has invited you to {1}.",
                             core.Session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate.ToString());

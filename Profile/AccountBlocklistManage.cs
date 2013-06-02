@@ -81,7 +81,7 @@ namespace BoxSocial.Applications.Profile
 
                 friendsVariableCollection.Parse("NAME", (string)blockTable.Rows[i]["user_name"]);
 
-                friendsVariableCollection.Parse("U_UNBLOCK", core.Uri.BuildUnBlockUserUri((long)blockTable.Rows[i]["user_id"]));
+                friendsVariableCollection.Parse("U_UNBLOCK", core.Hyperlink.BuildUnBlockUserUri((long)blockTable.Rows[i]["user_id"]));
             }
         }
 
@@ -126,7 +126,7 @@ namespace BoxSocial.Applications.Profile
                             hiddenFieldList.Add("mode", "block");
                             hiddenFieldList.Add("id", blockId.ToString());
 
-                            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
+                            core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid(Owner.AccountUriStub, true)),
                                 "Delete as friend?",
                                 "Do you also want to delete this person from your friends list?",
                                 hiddenFieldList);

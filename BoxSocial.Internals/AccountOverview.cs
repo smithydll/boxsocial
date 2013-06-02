@@ -35,7 +35,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "Overview";
+                return core.Prose.GetString("OVERVIEW");
             }
         }
 

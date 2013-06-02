@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Web;
@@ -49,7 +50,7 @@ namespace BoxSocial.FrontEnd
             // create a new confimation code
             Confirmation confirm = Confirmation.Create(core, session.SessionId, captchaString, 1);
 
-            template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+            template.Parse("U_CAPTCHA", core.Hyperlink.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -75,18 +76,18 @@ namespace BoxSocial.FrontEnd
 
                     if (rowsChanged > 0)
                     {
-                        core.Display.ShowMessage("Opt-out of " + core.Settings.SiteTitle + " Mailings", "You have successfully opted-out of further " + core.Settings.SiteTitle + " mailings. If you continue to receive mailings send an e-mail to contact@zinzam.com with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Opt-out of " + core.Settings.SiteTitle + " Mailings", "You have successfully opted-out of further " + core.Settings.SiteTitle + " mailings. If you continue to receive mailings send an e-mail to contact@" + Hyperlink.Domain + " with the subject \"opt-out\".");
                         return;
                     }
                     else
                     {
-                        core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Linker.Domain + " with the subject \"opt-out\".");
+                        core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Hyperlink.Domain + " with the subject \"opt-out\".");
                         return;
                     }
                 }
                 else
                 {
-                    core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Linker.Domain + " with the subject \"opt-out\".");
+                    core.Display.ShowMessage("Cannot Opt-out", "The opt-out key you have given is missing or incomplete. To manually opt-out send an e-mail to contact@" + Hyperlink.Domain + " with the subject \"opt-out\".");
                     return;
                 }
             }
@@ -160,81 +161,108 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
-                // submit the form
-                template.Parse("USERNAME", (string)Request.Form["username"]);
-                template.Parse("EMAIL", (string)Request.Form["email"]);
-                template.Parse("CONFIRM_EMAIL", (string)Request.Form["confirm-email"]);
+                string emailKey = Request.QueryString["key"];
+                bool continueSignup = false;
 
-                DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
-                    Mysql.Escape(session.SessionId)));
+                Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
 
-                if (confirmTable.Rows.Count != 1)
+                if (core.Settings.SignupMode == "invite")
                 {
-                    template.Parse("ERROR", "Captcha is invalid, please try again.");
-                    prepareNewCaptcha();
-                }
-                else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)Request.Form["captcha"]).ToLower())
-                {
-                    template.Parse("ERROR", "Captcha is invalid, please try again.");
-                    prepareNewCaptcha();
-                }
-                else if (!BoxSocial.Internals.User.CheckUserNameValid(Request.Form["username"]))
-                {
-                    template.Parse("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
-                    prepareNewCaptcha();
-                }
-                else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, Request.Form["username"]))
-                {
-                    template.Parse("ERROR", "Username is already taken, please choose another one.");
-                    prepareNewCaptcha();
-                }
-                else if (!BoxSocial.Internals.User.CheckEmailValid(Request.Form["email"]))
-                {
-                    template.Parse("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
-                    prepareNewCaptcha();
-                }
-                else if (!BoxSocial.Internals.User.CheckEmailUnique(core, Request.Form["email"]))
-                {
-                    template.Parse("ERROR", "The e-mail address you have entered has already been registered.");
-                    prepareNewCaptcha();
-                }
-                else if (Request.Form["email"] != Request.Form["confirm-email"])
-                {
-                    template.Parse("ERROR", "The e-mail addresses you entered do not match, may sure you have entered your e-mail address correctly.");
-                    prepareNewCaptcha();
-                }
-                else if (Request.Form["password"] != Request.Form["confirm-password"])
-                {
-                    template.Parse("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
-                    prepareNewCaptcha();
-                }
-                else if (((string)Request.Form["password"]).Length < 6)
-                {
-                    template.Parse("ERROR", "The password you entered is too short. Please choose a strong password of 6 characters or more.");
-                    prepareNewCaptcha();
-                }
-                else if ((string)Request.Form["agree"] != "true")
-                {
-                    template.Parse("ERROR", "You must accept the " + core.Settings.SiteTitle + " Terms of Service to register an account.");
-                    prepareNewCaptcha();
+                    if (keys.Count == 0)
+                    {
+                        continueSignup = false;
+                    }
+                    else
+                    {
+                        continueSignup = true;
+                    }
                 }
                 else
                 {
-                    if (BoxSocial.Internals.User.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
+                    continueSignup = true;
+                }
+
+                if (continueSignup)
+                {
+                    // submit the form
+                    template.Parse("USERNAME", (string)Request.Form["username"]);
+                    template.Parse("EMAIL", (string)Request.Form["email"]);
+                    template.Parse("CONFIRM_EMAIL", (string)Request.Form["confirm-email"]);
+
+                    DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
+                        Mysql.Escape(session.SessionId)));
+
+                    if (confirmTable.Rows.Count != 1)
                     {
-                        template.Parse("ERROR", "Bad registration details");
+                        template.Parse("ERROR", "Captcha is invalid, please try again.");
+                        prepareNewCaptcha();
+                    }
+                    else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)Request.Form["captcha"]).ToLower())
+                    {
+                        template.Parse("ERROR", "Captcha is invalid, please try again.");
+                        prepareNewCaptcha();
+                    }
+                    else if (!BoxSocial.Internals.User.CheckUserNameValid(Request.Form["username"]))
+                    {
+                        template.Parse("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
+                        prepareNewCaptcha();
+                    }
+                    else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, Request.Form["username"]))
+                    {
+                        template.Parse("ERROR", "Username is already taken, please choose another one.");
+                        prepareNewCaptcha();
+                    }
+                    else if (!BoxSocial.Internals.User.CheckEmailValid(Request.Form["email"]))
+                    {
+                        template.Parse("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
+                        prepareNewCaptcha();
+                    }
+                    else if (!BoxSocial.Internals.User.CheckEmailUnique(core, Request.Form["email"]))
+                    {
+                        template.Parse("ERROR", "The e-mail address you have entered has already been registered.");
+                        prepareNewCaptcha();
+                    }
+                    else if (Request.Form["email"] != Request.Form["confirm-email"])
+                    {
+                        template.Parse("ERROR", "The e-mail addresses you entered do not match, may sure you have entered your e-mail address correctly.");
+                        prepareNewCaptcha();
+                    }
+                    else if (Request.Form["password"] != Request.Form["confirm-password"])
+                    {
+                        template.Parse("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
+                        prepareNewCaptcha();
+                    }
+                    else if (((string)Request.Form["password"]).Length < 6)
+                    {
+                        template.Parse("ERROR", "The password you entered is too short. Please choose a strong password of 6 characters or more.");
+                        prepareNewCaptcha();
+                    }
+                    else if ((string)Request.Form["agree"] != "true")
+                    {
+                        template.Parse("ERROR", "You must accept the " + core.Settings.SiteTitle + " Terms of Service to register an account.");
                         prepareNewCaptcha();
                     }
                     else
                     {
-                        // captcha is a use once thing, destroy all for this session
-                        db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 1 AND session_id = '{0}'",
-                            Mysql.Escape(session.SessionId)));
+                        if (BoxSocial.Internals.User.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
+                        {
+                            template.Parse("ERROR", "Bad registration details");
+                            prepareNewCaptcha();
+                        }
+                        else
+                        {
+                            // captcha is a use once thing, destroy all for this session
+                            db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 1 AND session_id = '{0}'",
+                                Mysql.Escape(session.SessionId)));
 
-                        //Response.Redirect("/", true);
-                        core.Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
-                        return; /* stop processing the display of this page */
+                            //Response.Redirect("/", true);
+                            core.Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
+                            return; /* stop processing the display of this page */
+                        }
                     }
+                }
+                else
+                {
                 }
             }
 

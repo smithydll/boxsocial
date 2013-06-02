@@ -81,16 +81,16 @@ namespace BoxSocial.Applications.Profile
 
             VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
 
-            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(newMessage.Message), Owner);
+            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(newMessage.Message), Owner, true, string.Empty, string.Empty);
             statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(newMessage.GetTime(core.Tz)));
 
             statusMessageVariableCollection.Parse("ID", newMessage.Id.ToString());
             statusMessageVariableCollection.Parse("TYPE_ID", newMessage.ItemKey.TypeId.ToString());
             statusMessageVariableCollection.Parse("USERNAME", newMessage.Poster.DisplayName);
             statusMessageVariableCollection.Parse("U_PROFILE", newMessage.Poster.ProfileUri);
-            statusMessageVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(newMessage.Id));
-            statusMessageVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(newMessage.Id));
-            statusMessageVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(newMessage.Id));
+            statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(newMessage.Id));
             statusMessageVariableCollection.Parse("U_PERMISSIONS", newMessage.Access.AclUri);
             statusMessageVariableCollection.Parse("USER_TILE", newMessage.Poster.UserTile);
             statusMessageVariableCollection.Parse("USER_ICON", newMessage.Poster.UserIcon);

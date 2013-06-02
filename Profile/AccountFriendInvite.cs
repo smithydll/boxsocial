@@ -69,6 +69,11 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_friend_invite");
 
+            if (core.Settings.SignupMode == "invite" && core.Session.LoggedInMember.UserInfo.Invites >= core.Settings.MaxInvitesPerUser)
+            {
+                template.Parse("S_CANNOT_INVITE", "TRUE");
+            }
+
             Save(new EventHandler(AccountFriendInvite_Send));
         }
 
@@ -133,9 +138,9 @@ namespace BoxSocial.Applications.Profile
                         emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                         emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
-                        emailTemplate.Parse("U_REGISTER", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Uri.BuildRegisterUri())));
-                        emailTemplate.Parse("U_PROFILE", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
-                        emailTemplate.Parse("U_OPTOUT", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Uri.BuildOptOutUri(emailKey))));
+                        emailTemplate.Parse("U_REGISTER", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildRegisterUri())));
+                        emailTemplate.Parse("U_PROFILE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
+                        emailTemplate.Parse("U_OPTOUT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildOptOutUri(emailKey))));
 
                         core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle + ".",
                             LoggedInMember.DisplayName),
@@ -151,7 +156,7 @@ namespace BoxSocial.Applications.Profile
                     {
                         UserEmail email = new UserEmail(core, friendEmail);
                         core.Display.ShowMessage("Already Member", string.Format("This person is already a member of " + core.Settings.SiteTitle + ". To add them to your friends list <a href=\"{0}\">click here</a>.",
-                            core.Uri.BuildAddFriendUri(email.UserId)));
+                            core.Hyperlink.BuildAddFriendUri(email.UserId)));
                         return;
                     }
                     catch (InvalidUserEmailException)
@@ -197,9 +202,9 @@ namespace BoxSocial.Applications.Profile
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                             emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
-                            emailTemplate.Parse("U_REGISTER", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Uri.BuildRegisterUri())));
-                            emailTemplate.Parse("U_PROFILE", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
-                            emailTemplate.Parse("U_OPTOUT", core.Uri.StripSid(core.Uri.AppendAbsoluteSid(core.Uri.BuildOptOutUri(emailKey))));
+                            emailTemplate.Parse("U_REGISTER", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildRegisterUri())));
+                            emailTemplate.Parse("U_PROFILE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
+                            emailTemplate.Parse("U_OPTOUT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildOptOutUri(emailKey))));
 
                             core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle + ".",
                                 LoggedInMember.DisplayName),

@@ -214,14 +214,14 @@ namespace BoxSocial.Groups
 
         public string GetUri(string filter)
         {
-            return core.Uri.AppendSid(UriStub + "?filter=" + filter);
+            return core.Hyperlink.AppendSid(UriStub + "?filter=" + filter);
         }
 
         public override string Uri
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -229,7 +229,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "join", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "join", Id, true);
             }
         }
 
@@ -237,7 +237,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "leave", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "leave", Id, true);
             }
         }
 
@@ -245,7 +245,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "members", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "members", Id, true);
             }
         }
 
@@ -253,7 +253,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "edit", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "edit", Id, true);
             }
         }
 
@@ -261,7 +261,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "delete", Id, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Parent, "groups", "subgroups", "delete", Id, true);
             }
         }
 

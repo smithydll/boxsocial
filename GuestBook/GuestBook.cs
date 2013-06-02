@@ -36,31 +36,31 @@ namespace BoxSocial.Applications.GuestBook
 
         public static string Uri(Core core, User member)
         {
-            return core.Uri.AppendSid(string.Format("{0}profile/comments",
+            return core.Hyperlink.AppendSid(string.Format("{0}profile/comments",
                 member.UriStub));
         }
 
         public static string Uri(Core core, UserGroup thisGroup)
         {
-            return core.Uri.AppendSid(string.Format("{0}comments",
+            return core.Hyperlink.AppendSid(string.Format("{0}comments",
                 thisGroup.UriStub));
         }
 
         public static string Uri(Core core, Network theNetwork)
         {
-            return core.Uri.AppendSid(string.Format("{0}comments",
+            return core.Hyperlink.AppendSid(string.Format("{0}comments",
                 theNetwork.UriStub));
         }
 
         public static string Uri(Core core, ApplicationEntry anApplication)
         {
-            return core.Uri.AppendSid(string.Format("{0}comments",
+            return core.Hyperlink.AppendSid(string.Format("{0}comments",
                 anApplication.UriStub));
         }
 
         public static string Uri(Core core, Musician.Musician musician)
         {
-            return core.Uri.AppendSid(string.Format("{0}comments",
+            return core.Hyperlink.AppendSid(string.Format("{0}comments",
                 musician.UriStub));
         }
 
@@ -98,7 +98,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(page.template, page.User, page.User, UserGuestBookHook);
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination("COMMENT_PAGINATION", core.Uri.BuildGuestBookUri(page.User), page.TopLevelPageNumber, (int)Math.Ceiling(page.User.Comments / 10.0));
+            core.Display.ParsePagination("COMMENT_PAGINATION", core.Hyperlink.BuildGuestBookUri(page.User), page.TopLevelPageNumber, (int)Math.Ceiling(page.User.Comments / 10.0));
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
@@ -167,7 +167,7 @@ namespace BoxSocial.Applications.GuestBook
             core.Display.DisplayComments(page.template, page.User, page.User, commenters, comments, UserGuestBookHook);
 
             page.template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
-            core.Display.ParsePagination("COMMENT_PAGINATION", core.Uri.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), page.TopLevelPageNumber, (int)Math.Ceiling(comments / 10.0));
+            core.Display.ParsePagination("COMMENT_PAGINATION", core.Hyperlink.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), page.TopLevelPageNumber, (int)Math.Ceiling(comments / 10.0));
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 

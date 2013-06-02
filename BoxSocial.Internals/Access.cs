@@ -545,7 +545,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", item.Id, item.ItemKey.TypeId), true);
         }
 
         public static string BuildAclUri(Core core, IPermissibleItem item, bool simple)
@@ -555,7 +555,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}&aclmode={2}", item.Id, item.ItemKey.TypeId, (simple ? "simple" : "detailed")), true);
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}&aclmode={2}", item.Id, item.ItemKey.TypeId, (simple ? "simple" : "detailed")), true);
         }
 
         public static void LoadGrants(Core core, List<IPermissibleItem> items)

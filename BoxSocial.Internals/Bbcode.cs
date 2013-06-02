@@ -442,6 +442,62 @@ namespace BoxSocial.Internals
             }
         }
 
+        public List<string> ExtractImages(string input, Primitive owner, bool forceThumbnail, bool firstOnly)
+        {
+            List<string> imageUris = new List<string>();
+            MatchCollection matches = Regex.Matches(input, "\\[img\\](((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png))))\\[/img\\]", RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                string imageUri = match.Groups[0].Value;
+                imageUris.Add(imageUri);
+
+                if (firstOnly)
+                {
+                    return imageUris;
+                }
+            }
+
+            if (owner != null)
+            {
+                matches = Regex.Matches(input, "\\[inline\\](([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png))))\\[/inline\\]", RegexOptions.IgnoreCase);
+
+                foreach (Match match in matches)
+                {
+                    string imageUri = null;
+                    if (forceThumbnail)
+                    {
+                        imageUri = owner.UriStubAbsolute + "/images/_icon/" + match.Groups[1].Value;
+                    }
+                    else
+                    {
+                        imageUri = owner.UriStubAbsolute + "/images/_display/" + match.Groups[1].Value;
+                    }
+                    imageUris.Add(imageUri);
+
+                    if (firstOnly)
+                    {
+                        return imageUris;
+                    }
+                }
+
+                matches = Regex.Matches(input, "\\[thumb\\](([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png))))\\[/thumb\\]", RegexOptions.IgnoreCase);
+
+                foreach (Match match in matches)
+                {
+                    string imageUri = owner.UriStubAbsolute + "/images/_icon/" + match.Groups[1].Value;
+                    imageUris.Add(imageUri);
+
+                    if (firstOnly)
+                    {
+                        return imageUris;
+                    }
+                }
+            }
+
+            return imageUris;
+        }
+
         public string FromStatusCode(string input)
         {
             string output = input;
@@ -476,7 +532,7 @@ namespace BoxSocial.Internals
                 string hashtag = match.Groups[1].Value;
                 if (!string.IsNullOrEmpty(hashtag))
                 {
-                    string searchUri = core.Uri.AppendAbsoluteSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
+                    string searchUri = core.Hyperlink.AppendAbsoluteSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
                     string startTag = "[url=\"" + searchUri + "\"]";
                     string endTag = "[/url]";
 
@@ -513,7 +569,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return output;
+            return output.Trim(new char[] { '\n' });
         }
 
         public string ParseUrls(string input)
@@ -906,7 +962,7 @@ namespace BoxSocial.Internals
             input = newOutput.ToString();
             double time = ((double)(DateTime.Now.Ticks - start)) / 10000000;
 
-            if (mode != BbcodeParseMode.Tldr)
+            if (mode == BbcodeParseMode.Normal)
             {
                 input = input.Replace("\r\n", "\n");
                 input = input.Replace("\n", "<br />");
@@ -1576,7 +1632,7 @@ namespace BoxSocial.Internals
                         if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$", RegexOptions.Compiled))
                             e.AbortParse();
                         string styles = string.Empty;
-                        styles = "float: " + e.Attributes.GetAttribute("default");
+                        styles = "float: " + e.Attributes.GetAttribute("default") + "; margin-right: 10px";
 
                         if (e.Attributes.HasAttribute("width"))
                         {
@@ -1684,11 +1740,11 @@ namespace BoxSocial.Internals
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = string.Empty;
-                        e.SuffixText = string.Format("(http://" + Linker.Domain + "{0})", core.Uri.StripSid(e.Attributes.GetAttribute("default")));
+                        e.SuffixText = string.Format("(http://" + Hyperlink.Domain + "{0})", core.Hyperlink.StripSid(e.Attributes.GetAttribute("default")));
                     }
                     else
                     {
-                        e.PrefixText = "(http://" + Linker.Domain;
+                        e.PrefixText = "(http://" + Hyperlink.Domain;
                         e.SuffixText = ")";
                     }
                     break;
@@ -1697,17 +1753,17 @@ namespace BoxSocial.Internals
                     {
                         if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
                         {
-                            e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                            e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
                         }
                         else
                         {
-                            e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                            e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
                         }
                         e.SuffixText = "</a>";
                     }
                     else
                     {
-                        e.PrefixText = "<a href=\"" + core.Uri.AppendSid(e.Contents) + "\">";
+                        e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Contents) + "\">";
                         e.SuffixText = "</a>";
                     }
                     break;
@@ -1727,6 +1783,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    e.RemoveContents();
+                    break;
                 case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
@@ -1738,8 +1798,23 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_display/";
-                        e.SuffixText = "\" />";
+                        if (Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase))
+                        {
+                            e.PrefixText = "<img alt=\"Bbcode image\" src=\"";
+                            e.SuffixText = "\" />";
+                        }
+                        else
+                        {
+                            if (e.Owner == null)
+                            {
+                                e.AbortParse();
+                            }
+                            else
+                            {
+                                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_display/";
+                                e.SuffixText = "\" />";
+                            }
+                        }
                     }
                     break;
             }
@@ -1758,19 +1833,31 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    e.RemoveContents();
+                    break;
                 case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    if (e.Owner == null)
+                    if (Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase))
                     {
-                        e.AbortParse();
+                        e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100px; max-height: 100px;\" src=\"";
+                        e.SuffixText = "\" />";
                     }
                     else
                     {
-                        e.PrefixText = "<img alt=\"Bbcode image\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_icon/";
-                        e.SuffixText = "\" />";
+                        if (e.Owner == null)
+                        {
+                            e.AbortParse();
+                        }
+                        else
+                        {
+                            e.PrefixText = "<img alt=\"Bbcode image\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_icon/";
+                            e.SuffixText = "\" />";
+                        }
                     }
                     break;
             }
@@ -1789,6 +1876,10 @@ namespace BoxSocial.Internals
                     e.AbortParse();
                     break;
                 case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    e.RemoveContents();
+                    break;
                 case BbcodeParseMode.Flatten:
                     e.PrefixText = string.Empty;
                     e.PrefixText = string.Empty;
@@ -1797,7 +1888,7 @@ namespace BoxSocial.Internals
                     if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
                     if (TagAllowed(e.Tag.Tag, e.Options))
                     {
-                        e.PrefixText = "<img alt=\"Bbcode image\" src=\"";
+                        e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"";
                         e.SuffixText = "\" />";
                     }
                     else
@@ -1924,7 +2015,7 @@ namespace BoxSocial.Internals
 
                         if (strings.ContainsKey("html"))
                         {
-                            e.PrefixText = strings["html"];
+                            e.PrefixText = "</p>" + strings["html"] + "<p>";
                             e.SuffixText = string.Empty;
                         }
                         else
@@ -1963,7 +2054,7 @@ namespace BoxSocial.Internals
                     string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
                     e.RemoveContents();
 
-                    e.PrefixText = "<img src=\"http://" + Linker.Domain + "/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+                    e.PrefixText = "<img src=\"http://" + Hyperlink.Domain + "/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
                     e.SuffixText = string.Empty;
                     break;
             }

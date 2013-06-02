@@ -61,9 +61,9 @@ namespace BoxSocial.Applications.Forum
             template = new Template(core.Http.TemplatePath, "1301.html");
             if (Owner != null)
             {
-                formSubmitUri = core.Uri.AppendSid(Owner.UriStub + "forum/mcp", true);
-                template.Parse("U_MCP", core.Uri.AppendSid(Owner.UriStub + "forum/mcp/", true));
-                template.Parse("S_MCP", core.Uri.AppendSid(Owner.UriStub + "forum/mcp/", true));
+                formSubmitUri = core.Hyperlink.AppendSid(Owner.UriStub + "forum/mcp", true);
+                template.Parse("U_MCP", core.Hyperlink.AppendSid(Owner.UriStub + "forum/mcp/", true));
+                template.Parse("S_MCP", core.Hyperlink.AppendSid(Owner.UriStub + "forum/mcp/", true));
             }
             template.AddPageAssembly(Assembly.GetCallingAssembly());
             template.SetProse(core.Prose);
@@ -86,7 +86,7 @@ namespace BoxSocial.Applications.Forum
 
         protected new string BuildUri(Core core, string sub)
         {
-            return core.Uri.AppendSid(string.Format("{0}{1}/{2}",
+            return core.Hyperlink.AppendSid(string.Format("{0}{1}/{2}",
                 Owner.UriStub + "forum/mcp/", ModuleKey, sub));
         }
 

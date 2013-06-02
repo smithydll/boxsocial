@@ -209,7 +209,7 @@ namespace BoxSocial.FrontEnd
                         ApplicationEntry ae = new ApplicationEntry(core, AnApplication, accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Linker.Domain, ex.ToString());
+                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
                     }
                 }
             }

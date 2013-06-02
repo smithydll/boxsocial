@@ -350,9 +350,9 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                     emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                    emailTemplate.Parse("U_EVENT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventUri(core, this)));
-                    emailTemplate.Parse("U_ACCEPT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
-                    emailTemplate.Parse("U_REJECT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
+                    emailTemplate.Parse("U_EVENT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventUri(core, this)));
+                    emailTemplate.Parse("U_ACCEPT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventAcceptUri(core, this)));
+                    emailTemplate.Parse("U_REJECT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventRejectUri(core, this)));
 
                     core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
@@ -401,9 +401,9 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
                         emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                        emailTemplate.Parse("U_EVENT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventUri(core, this)));
-                        emailTemplate.Parse("U_ACCEPT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventAcceptUri(core, this)));
-                        emailTemplate.Parse("U_REJECT", "http://" + Linker.Domain + core.Uri.StripSid(Event.BuildEventRejectUri(core, this)));
+                        emailTemplate.Parse("U_EVENT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventUri(core, this)));
+                        emailTemplate.Parse("U_ACCEPT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventAcceptUri(core, this)));
+                        emailTemplate.Parse("U_REJECT", "http://" + Hyperlink.Domain + core.Hyperlink.StripSid(Event.BuildEventRejectUri(core, this)));
 
                         core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
@@ -538,18 +538,18 @@ namespace BoxSocial.Applications.Calendar
 
         public static string BuildEventUri(Core core, Event calendarEvent)
         {
-            return core.Uri.AppendSid(string.Format("{0}calendar/event/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}calendar/event/{1}",
                 calendarEvent.Owner.Uri, calendarEvent.EventId));
         }
 
         public static string BuildEventAcceptUri(Core core, Event calendarEvent)
         {
-            return core.Uri.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
+            return core.Hyperlink.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
         }
 
         public static string BuildEventRejectUri(Core core, Event calendarEvent)
         {
-            return core.Uri.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
+            return core.Hyperlink.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
         }
 
         public static void Show(object sender, ShowPPageEventArgs e)
@@ -590,14 +590,14 @@ namespace BoxSocial.Applications.Calendar
 
             if (e.Core.LoggedInMemberId == e.Page.Owner.Id && e.Page.Owner.GetType() == typeof(User))
             {
-                e.Template.Parse("U_NEW_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
+                e.Template.Parse("U_NEW_EVENT", e.Core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", e.Core.Tz.Now.Year),
                     string.Format("month={0}", e.Core.Tz.Now.Month),
                     string.Format("day={0}", e.Core.Tz.Now.Day)));
                 if (!(calendarEvent is BirthdayEvent))
                 {
-                    e.Template.Parse("U_EDIT_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "new-event", "edit", e.ItemId, true));
-                    e.Template.Parse("U_DELETE_EVENT", e.Core.Uri.BuildAccountSubModuleUri("calendar", "delete-event", e.ItemId, true));
+                    e.Template.Parse("U_EDIT_EVENT", e.Core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", "edit", e.ItemId, true));
+                    e.Template.Parse("U_DELETE_EVENT", e.Core.Hyperlink.BuildAccountSubModuleUri("calendar", "delete-event", e.ItemId, true));
                     e.Template.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(e.Core, calendarEvent));
                 }
             }

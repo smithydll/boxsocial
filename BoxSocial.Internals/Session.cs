@@ -613,7 +613,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            core.Uri.Sid = sessionId;
+            core.Hyperlink.Sid = sessionId;
 
             if (record == null)
             {
@@ -683,15 +683,15 @@ namespace BoxSocial.Internals
                     sessionId = (string)Request.QueryString["sid"];
                 }
 
-                if ((Linker.Domain != core.Uri.CurrentDomain) && (sessionId != (string)Request.QueryString["sid"]) && (!string.IsNullOrEmpty((string)Request.QueryString["sid"])))
+                if ((Hyperlink.Domain != core.Hyperlink.CurrentDomain) && (sessionId != (string)Request.QueryString["sid"]) && (!string.IsNullOrEmpty((string)Request.QueryString["sid"])))
                 {
                     sessionData = new SessionCookie();
                     sessionId = (string)Request.QueryString["sid"];
                 }
 
-                if ((core.Uri.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
+                if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(Linker.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
                     //return;
                 }
@@ -738,7 +738,7 @@ namespace BoxSocial.Internals
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
                     loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info | UserLoadOptions.Icon);
-                    core.Uri.Sid = sessionId;
+                    core.Hyperlink.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
                     {
@@ -831,7 +831,7 @@ namespace BoxSocial.Internals
             long userId = (sessionData != null && sessionData.userId > 0) ? sessionData.userId : 0;
 
 			// If the current domain is not the root domain, and the session is empty
-            if ((core.Uri.CurrentDomain != Linker.Domain) && string.IsNullOrEmpty(sessionId))
+            if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
             {
             }
             else

@@ -133,6 +133,7 @@
     <Compile Include="IAppInfo.cs" />
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
+    <Compile Include="Identicon.cs" />
     <Compile Include="IHashtagableItem.cs" />
     <Compile Include="ILikeableItem.cs" />
     <Compile Include="InviteKey.cs" />
@@ -199,7 +200,7 @@
     <Compile Include="TPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Uri.cs" />
+    <Compile Include="Hyperlink.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserEmail.cs" />
     <Compile Include="UserInfo.cs" />

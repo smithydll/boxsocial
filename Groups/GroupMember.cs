@@ -172,13 +172,13 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", true, "mode=make-officer", string.Format("id={0},{1}", groupId, userId));
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", true, "mode=make-officer", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
         public string RemoveOfficerUri(string title)
         {
-            return core.Uri.BuildAccountSubModuleUri("groups", "memberships", true,
+            return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", true,
                 "mode=remove-officer", string.Format("id={0},{1},{2}", groupId, userId, HttpUtility.UrlEncode(Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(title)))));
         }
 
@@ -186,7 +186,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", true, "mode=make-operator", string.Format("id={0},{1}", groupId, userId));
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", true, "mode=make-operator", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
@@ -194,7 +194,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", true, "mode=ban-member", string.Format("id={0},{1}", groupId, userId));
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", true, "mode=ban-member", string.Format("id={0},{1}", groupId, userId));
             }
         }
 
@@ -202,7 +202,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", true, "mode=approve", string.Format("id={0},{1}", groupId, userId));
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", true, "mode=approve", string.Format("id={0},{1}", groupId, userId));
             }
         }
 

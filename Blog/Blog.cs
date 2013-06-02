@@ -720,14 +720,14 @@ namespace BoxSocial.Applications.Blog
             {
                 core.Display.ParsePageList(page.User, true);
                 page.template.Parse("U_PROFILE", page.User.Uri);
-                page.template.Parse("U_FRIENDS", core.Uri.BuildFriendsUri(page.User));
+                page.template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
 
                 page.template.Parse("USER_THUMB", page.User.UserThumbnail);
                 page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
 
                 if (page.User.UserId == core.LoggedInMemberId)
                 {
-                    page.template.Parse("U_POST", core.Uri.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
+                    page.template.Parse("U_POST", core.Hyperlink.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
                 }
             }
 
@@ -785,23 +785,23 @@ namespace BoxSocial.Applications.Blog
 
             if (!string.IsNullOrEmpty(category))
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, category));
+                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, category));
             }
             else if (post > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogPostRssUri(page.User, year, month, post));
+                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogPostRssUri(page.User, year, month, post));
             }
             else if (month > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, year, month));
+                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year, month));
             }
             else if (year > 0)
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User, year));
+                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year));
             }
             else
             {
-                page.template.Parse("U_RSS", core.Uri.BuildBlogRssUri(page.User));
+                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User));
             }
 
             if (rss)
@@ -817,23 +817,23 @@ namespace BoxSocial.Applications.Blog
                 doc.channels[0].description = string.Format("RSS Feed for {0} blog", page.User.DisplayNameOwnership);
                 if (!string.IsNullOrEmpty(category))
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, category));
+                    doc.channels[0].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, category));
                 }
                 else if (post > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month, post));
+                    doc.channels[0].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month, post));
                 }
                 else if (month > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month));
+                    doc.channels[0].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, year, month));
                 }
                 else if (year > 0)
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, year));
+                    doc.channels[0].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, year));
                 }
                 else
                 {
-                    doc.channels[0].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User));
+                    doc.channels[0].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User));
                 }
                 doc.channels[0].category = "Blog";
 
@@ -844,8 +844,8 @@ namespace BoxSocial.Applications.Blog
 
                     doc.channels[0].items[i] = new RssDocumentItem();
                     doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.Session.LoggedInMember, page.User);
-                    doc.channels[0].items[i].link = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
-                    doc.channels[0].items[i].guid = core.Uri.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
+                    doc.channels[0].items[i].link = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
+                    doc.channels[0].items[i].guid = core.Hyperlink.StripSid(Blog.BuildAbsoluteUri(core, page.User, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
 
                     doc.channels[0].items[i].pubdate = postDateTime.ToString();
 
@@ -1051,12 +1051,12 @@ namespace BoxSocial.Applications.Blog
 
             if (member.UserInfo.ProfileHomepage == "/blog")
             {
-                return core.Uri.AppendSid(string.Format("{0}",
+                return core.Hyperlink.AppendSid(string.Format("{0}",
                     member.UriStub));
             }
             else
             {
-                return core.Uri.AppendSid(string.Format("{0}blog",
+                return core.Hyperlink.AppendSid(string.Format("{0}blog",
                     member.UriStub));
             }
         }
@@ -1076,12 +1076,12 @@ namespace BoxSocial.Applications.Blog
 
             if (member.UserInfo.ProfileHomepage == "/blog")
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("{0}",
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}",
                     member.UriStubAbsolute));
             }
             else
             {
-                return core.Uri.AppendAbsoluteSid(string.Format("{0}blog",
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}blog",
                     member.UriStubAbsolute));
             }
         }
@@ -1100,7 +1100,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}blog/category/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}blog/category/{1}",
                 member.UriStub, category));
         }
 
@@ -1111,7 +1111,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}blog/tag/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}blog/tag/{1}",
                 member.UriStub, tag));
         }
 
@@ -1129,7 +1129,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/category/{1}",
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}blog/category/{1}",
                 member.UriStubAbsolute, category));
         }
 
@@ -1147,7 +1147,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}",
+            return core.Hyperlink.AppendSid(string.Format("{0}blog/{1:0000}",
                 member.UriStub, year));
         }
 
@@ -1165,7 +1165,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}",
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}",
                 member.UriStubAbsolute, year));
         }
 
@@ -1184,7 +1184,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}",
+            return core.Hyperlink.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStub, year, month));
         }
 
@@ -1203,7 +1203,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}",
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}",
                 member.UriStubAbsolute, year, month));
         }
 
@@ -1223,7 +1223,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
+            return core.Hyperlink.AppendSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStub, year, month, postId));
         }
 
@@ -1243,7 +1243,7 @@ namespace BoxSocial.Applications.Blog
                 throw new NullCoreException();
             }
 
-            return core.Uri.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
+            return core.Hyperlink.AppendAbsoluteSid(string.Format("{0}blog/{1:0000}/{2:00}/{3}",
                 member.UriStubAbsolute, year, month, postId));
         }
         

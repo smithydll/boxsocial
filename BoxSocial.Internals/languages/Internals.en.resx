@@ -548,6 +548,9 @@
   <data name="ONE_STAR" xml:space="preserve">
     <value>One star</value>
   </data>
+  <data name="OVERVIEW" xml:space="preserve">
+    <value>Overview</value>
+  </data>
   <data name="OWNER" xml:space="preserve">
     <value>Owner</value>
   </data>

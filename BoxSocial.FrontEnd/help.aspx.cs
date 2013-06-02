@@ -52,7 +52,7 @@ namespace BoxSocial.FrontEnd
                 {
                     VariableCollection topicsVariableCollection = template.CreateChild("topics");
 
-                    topicsVariableCollection.Parse("URI", core.Uri.AppendSid(string.Format("/help/{0}",
+                    topicsVariableCollection.Parse("URI", core.Hyperlink.AppendSid(string.Format("/help/{0}",
                         (string)topicRow["topic_slug"])));
                     topicsVariableCollection.Parse("TITLE", (string)topicRow["topic_title"]);
                 }

@@ -338,12 +338,12 @@ namespace BoxSocial.Applications.Forum
             {
                 if (core.IsMobile)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}?m={2}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/topic-{1}?m={2}",
                         Forum.Owner.UriStub, topicId, postId));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}?m={2}#p{2}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/topic-{1}?m={2}#p{2}",
                         Forum.Owner.UriStub, topicId, postId));
                 }
             }
@@ -353,7 +353,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}forum/post?p={1}&mode=reply",
+                return core.Hyperlink.AppendSid(string.Format("{0}forum/post?p={1}&mode=reply",
                     Forum.Owner.UriStub, postId));
             }
         }

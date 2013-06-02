@@ -244,11 +244,11 @@ namespace BoxSocial.Applications.Forum
 
         public static void ShowForumHeader(Core core, PPage page)
         {
-            page.template.Parse("U_FORUM_INDEX", core.Uri.AppendSid(string.Format("{0}forum",
+            page.template.Parse("U_FORUM_INDEX", core.Hyperlink.AppendSid(string.Format("{0}forum",
                 page.Owner.UriStub)));
-            page.template.Parse("U_UCP", core.Uri.AppendSid(string.Format("{0}forum/ucp",
+            page.template.Parse("U_UCP", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
                 page.Owner.UriStub)));
-            page.template.Parse("U_MEMBERS", core.Uri.AppendSid(string.Format("{0}forum/memberlist",
+            page.template.Parse("U_MEMBERS", core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist",
                 page.Owner.UriStub)));
 
             if (page is GPage)
@@ -262,7 +262,7 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("IS_FORUM_MEMBER", "FALSE");
                 }
             }
-            page.template.Parse("U_FAQ", core.Uri.AppendSid(string.Format("{0}forum/help",
+            page.template.Parse("U_FAQ", core.Hyperlink.AppendSid(string.Format("{0}forum/help",
                 page.Owner.UriStub)));
         }
 

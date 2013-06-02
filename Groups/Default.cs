@@ -34,7 +34,7 @@ namespace BoxSocial.Groups
         {
             e.Template.SetTemplate("Groups", "groups_default");
 
-            e.Template.Parse("U_CREATE_GROUP", e.Core.Uri.AppendSid("/groups/register"));
+            e.Template.Parse("U_CREATE_GROUP", e.Core.Hyperlink.AppendSid("/groups/register"));
 
             List<Category> categories = Category.GetAll(e.Core);
 
@@ -73,8 +73,8 @@ namespace BoxSocial.Groups
             }
 
             e.Template.Parse("CATEGORY_TITLE", category.Title);
-            e.Template.Parse("U_CREATE_GROUP_C", e.Core.Uri.AppendSid("/groups/register?category=" + category.Id.ToString()));
-            e.Template.Parse("U_CREATE_GROUP", e.Core.Uri.AppendSid("/groups/register?category=" + category.Id.ToString()));
+            e.Template.Parse("U_CREATE_GROUP_C", e.Core.Hyperlink.AppendSid("/groups/register?category=" + category.Id.ToString()));
+            e.Template.Parse("U_CREATE_GROUP", e.Core.Hyperlink.AppendSid("/groups/register?category=" + category.Id.ToString()));
 
             List<UserGroup> groups = UserGroup.GetUserGroups(e.Core, category, e.Page.TopLevelPageNumber);
 

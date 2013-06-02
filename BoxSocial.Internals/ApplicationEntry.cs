@@ -621,9 +621,9 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (core.Http.Domain != Linker.Domain)
+                if (core.Http.Domain != Hyperlink.Domain)
                 {
-                    return Linker.Uri + "application/" + assemblyName + "/";
+                    return Hyperlink.Uri + "application/" + assemblyName + "/";
                 }
                 else
                 {
@@ -637,7 +637,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(UriStub);
+                return core.Hyperlink.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -645,7 +645,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -657,7 +657,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                return core.Uri.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
+                return core.Hyperlink.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
                     assemblyName, typeId, id));
             }
         }
@@ -1134,18 +1134,18 @@ namespace BoxSocial.Internals
 
                 if (page.AnApplication.HasInstalled(viewer))
                 {
-                    core.Template.Parse("U_UNINSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                    core.Template.Parse("U_UNINSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
                 }
                 else
                 {
-                    core.Template.Parse("U_INSTALL", core.Uri.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                    core.Template.Parse("U_INSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
                 }
 
                 if (core.Session.LoggedInMember.Id == page.AnApplication.CreatorId)
                 {
-                    core.Template.Parse("U_MANAGE", core.Uri.AppendSid(page.AnApplication.AccountUriStub));
+                    core.Template.Parse("U_MANAGE", core.Hyperlink.AppendSid(page.AnApplication.AccountUriStub));
                 }
             }
 

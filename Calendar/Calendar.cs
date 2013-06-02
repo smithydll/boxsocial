@@ -278,19 +278,19 @@ namespace BoxSocial.Applications.Calendar
 
         private static string BuildDateUri(Core core, Primitive owner, int year, int month, int day)
         {
-            return core.Uri.AppendSid(string.Format("{0}calendar/{1}/{2}/{3}",
+            return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}/{2}/{3}",
                 owner.UriStub, year, month, day));
         }
 
         private static string BuildMonthUri(Core core, Primitive owner, int year, int month)
         {
-            return core.Uri.AppendSid(string.Format("{0}calendar/{1}/{2}",
+            return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}/{2}",
                 owner.UriStub, year, month));
         }
 
         private static string BuildYearUri(Core core, Primitive owner, int year)
         {
-            return core.Uri.AppendSid(string.Format("{0}calendar/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}",
                 owner.UriStub, year));
         }
 
@@ -442,7 +442,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.Tz.Now.Month) ? core.Tz.Now.Day : 1))));
@@ -574,7 +574,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", core.Uri.BuildAccountSubModuleUri("calendar", "new-event", true,
+                page.template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", day)));

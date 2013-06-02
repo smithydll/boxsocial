@@ -106,6 +106,8 @@ namespace BoxSocial.Internals
         private byte userSubscriptionLevel;
         [DataField("user_analytics_code", 15)]
         protected string analyticsCode;
+        [DataField("user_invites")]
+        private long userInvites;
 
         private User user;
         private string userNameOwnership;
@@ -458,6 +460,14 @@ namespace BoxSocial.Internals
             get
             {
                 return blogSubscriptions;
+            }
+        }
+
+        public long Invites
+        {
+            get
+            {
+                return userInvites;
             }
         }
 

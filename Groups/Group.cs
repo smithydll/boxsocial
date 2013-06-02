@@ -1196,9 +1196,9 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    if (core.Http.Domain != Linker.Domain)
+                    if (core.Http.Domain != Hyperlink.Domain)
                     {
-                        return Linker.Uri + "group/" + Slug.ToLower() + "/";
+                        return Hyperlink.Uri + "group/" + Slug.ToLower() + "/";
                     }
                     else
                     {
@@ -1227,11 +1227,11 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    return core.Uri.AppendAbsoluteSid(UriStub);
+                    return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }
                 else
                 {
-                    return core.Uri.AppendAbsoluteSid(string.Format("http://{0}/",
+                    return core.Hyperlink.AppendAbsoluteSid(string.Format("http://{0}/",
                             domain));
                 }
             }
@@ -1241,7 +1241,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -1249,14 +1249,14 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}members",
+                return core.Hyperlink.AppendSid(string.Format("{0}members",
                     UriStub));
             }
         }
 
         public string GetMemberlistUri(string filter)
         {
-            return core.Uri.AppendSid(string.Format("{0}members?filter={1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}members?filter={1}",
                     UriStub, filter));
         }
 
@@ -1264,7 +1264,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "groups", "delete", GroupId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "groups", "delete", GroupId, true);
             }
         }
 
@@ -1272,7 +1272,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "join", GroupId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", "join", GroupId, true);
             }
         }
 
@@ -1280,7 +1280,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "leave", GroupId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", "leave", GroupId, true);
             }
         }
 
@@ -1288,7 +1288,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "invite", GroupId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "invite", GroupId, true);
             }
         }
 
@@ -1296,7 +1296,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("groups", "memberships", "resign-operator", GroupId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri("groups", "memberships", "resign-operator", GroupId, true);
             }
         }
 
@@ -1379,7 +1379,7 @@ namespace BoxSocial.Groups
             if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
             {
                 page.template.Parse("IS_OPERATOR", "TRUE");
-                page.template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(page.Group.AccountUriStub));
+                page.template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(page.Group.AccountUriStub));
             }
 
             if (core.Session.IsLoggedIn)
@@ -1575,7 +1575,7 @@ namespace BoxSocial.Groups
             // create a new confimation code
             Confirmation confirm = Confirmation.Create(core, core.Session.SessionId, captchaString, 2);
 
-            core.Template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+            core.Template.Parse("U_CAPTCHA", core.Hyperlink.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         internal static void ShowRegister(object sender, ShowPageEventArgs e)
@@ -2019,7 +2019,7 @@ namespace BoxSocial.Groups
 
         internal static string BuildCategoryUri(Core core, Internals.Category category)
         {
-            return core.Uri.AppendSid("/groups/" + category.Path);
+            return core.Hyperlink.AppendSid("/groups/" + category.Path);
         }
 
         public override string StoreFile(MemoryStream file)

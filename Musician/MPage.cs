@@ -71,7 +71,7 @@ namespace BoxSocial.Musician
             }
 
             // We do not have customised domains for musician
-            if (/*string.IsNullOrEmpty(mus.Domain) ||*/ Linker.Domain == core.Http.Domain)
+            if (/*string.IsNullOrEmpty(mus.Domain) ||*/ Hyperlink.Domain == core.Http.Domain)
             {
                 core.PagePath = core.PagePath.Substring(Musician.Key.Length + 1 + 6);
             }
@@ -121,7 +121,7 @@ namespace BoxSocial.Musician
                 {
                     if (((Musician)e.Owner).IsMusicianMember(core.Session.LoggedInMember.ItemKey))
                     {
-                        template.Parse("U_MUSICIAN_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
+                        template.Parse("U_MUSICIAN_ACCOUNT", core.Hyperlink.AppendSid(e.Owner.AccountUriStub));
                     }
                 }
 

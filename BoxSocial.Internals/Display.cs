@@ -365,7 +365,7 @@ namespace BoxSocial.Internals
             string output = "";
             string path = "/";
             output = string.Format("<a href=\"{1}\">{0}</a>",
-                    Linker.Domain, path);
+                    Hyperlink.Domain, path);
 
             for (int i = 0; i < parts.Count; i++)
             {
@@ -613,10 +613,10 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(typeof(Comment)));
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
                     commentsVariableCollection.Parse("U_PROFILE", commentPoster.ProfileUri);
-                    commentsVariableCollection.Parse("U_QUOTE", core.Uri.BuildCommentQuoteUri(comment.Id));
-                    commentsVariableCollection.Parse("U_REPORT", core.Uri.BuildCommentReportUri(comment.Id));
-                    commentsVariableCollection.Parse("U_DELETE", core.Uri.BuildCommentDeleteUri(comment.Id));
-                    commentsVariableCollection.Parse("U_LIKE", core.Uri.BuildLikeItemUri(comment.ItemTypeId, comment.Id));
+                    commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(comment.Id));
+                    commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(comment.Id));
+                    commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(comment.Id));
+                    commentsVariableCollection.Parse("U_LIKE", core.Hyperlink.BuildLikeItemUri(comment.ItemTypeId, comment.Id));
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
                     commentsVariableCollection.Parse("USER_ICON", commentPoster.UserIcon);
@@ -803,26 +803,26 @@ namespace BoxSocial.Internals
             /*
              * URIs
              */
-            template.Parse("U_HOME", page.Core.Uri.BuildHomeUri());
-            template.Parse("U_ABOUT", page.Core.Uri.BuildAboutUri());
-            template.Parse("U_SAFETY", page.Core.Uri.BuildSafetyUri());
-            template.Parse("U_PRIVACY", page.Core.Uri.BuildPrivacyUri());
-            template.Parse("U_TOS", page.Core.Uri.BuildTermsOfServiceUri());
-            template.Parse("U_SIGNIN", page.Core.Uri.BuildLoginUri());
-            template.Parse("U_SIGNOUT", page.Core.Uri.BuildLogoutUri());
-            template.Parse("U_REGISTER", page.Core.Uri.BuildRegisterUri());
-            template.Parse("U_HELP", page.Core.Uri.BuildHelpUri());
-            template.Parse("U_SITEMAP", page.Core.Uri.BuildSitemapUri());
-            template.Parse("U_COPYRIGHT", page.Core.Uri.BuildCopyrightUri());
-            template.Parse("U_SEARCH", page.Core.Uri.BuildSearchUri());
-            template.Parse("S_SEARCH", page.Core.Uri.BuildSearchUri());
+            template.Parse("U_HOME", page.Core.Hyperlink.BuildHomeUri());
+            template.Parse("U_ABOUT", page.Core.Hyperlink.BuildAboutUri());
+            template.Parse("U_SAFETY", page.Core.Hyperlink.BuildSafetyUri());
+            template.Parse("U_PRIVACY", page.Core.Hyperlink.BuildPrivacyUri());
+            template.Parse("U_TOS", page.Core.Hyperlink.BuildTermsOfServiceUri());
+            template.Parse("U_SIGNIN", page.Core.Hyperlink.BuildLoginUri());
+            template.Parse("U_SIGNOUT", page.Core.Hyperlink.BuildLogoutUri());
+            template.Parse("U_REGISTER", page.Core.Hyperlink.BuildRegisterUri());
+            template.Parse("U_HELP", page.Core.Hyperlink.BuildHelpUri());
+            template.Parse("U_SITEMAP", page.Core.Hyperlink.BuildSitemapUri());
+            template.Parse("U_COPYRIGHT", page.Core.Hyperlink.BuildCopyrightUri());
+            template.Parse("U_SEARCH", page.Core.Hyperlink.BuildSearchUri());
+            template.Parse("S_SEARCH", page.Core.Hyperlink.BuildSearchUri());
 
-            template.Parse("U_FOOT_GROUPS", page.Core.Uri.BuildGroupsUri());
-            template.Parse("U_FOOT_NETWORKS", page.Core.Uri.BuildNetworksUri());
+            template.Parse("U_FOOT_GROUPS", page.Core.Hyperlink.BuildGroupsUri());
+            template.Parse("U_FOOT_NETWORKS", page.Core.Hyperlink.BuildNetworksUri());
 
-            template.Parse("U_FOOT_MUSIC", page.Core.Uri.BuildMusicUri());
-            template.Parse("U_FOOT_MUSIC_DIRECTORY", page.Core.Uri.BuildMusicDirectoryUri());
-            template.Parse("U_FOOT_MUSIC_CHART", page.Core.Uri.BuildMusicChartUri());
+            template.Parse("U_FOOT_MUSIC", page.Core.Hyperlink.BuildMusicUri());
+            template.Parse("U_FOOT_MUSIC_DIRECTORY", page.Core.Hyperlink.BuildMusicDirectoryUri());
+            template.Parse("U_FOOT_MUSIC_CHART", page.Core.Hyperlink.BuildMusicChartUri());
 
             if (session != null)
             {
@@ -836,13 +836,13 @@ namespace BoxSocial.Internals
                     template.Parse("USER_TILE", session.LoggedInMember.UserTile);
                     template.Parse("USER_ICON", session.LoggedInMember.UserIcon);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
-                    template.Parse("U_ACCOUNT", core.Uri.BuildAccountUri());
+                    template.Parse("U_ACCOUNT", core.Hyperlink.BuildAccountUri());
 
                     template.Parse("U_UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
 
                     if (session.LoggedInMember.UserInfo.UnseenMail > 0)
                     {
-                        template.Parse("U_UNSEEN_MAIL", core.Uri.BuildAccountSubModuleUri("mail", "inbox"));
+                        template.Parse("U_UNSEEN_MAIL", core.Hyperlink.BuildAccountSubModuleUri("mail", "inbox"));
                     }
                 }
             }

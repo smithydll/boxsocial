@@ -75,5 +75,32 @@ namespace BoxSocial.Internals
             this.core = core;
         }
 
+        public string SignupMode
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["signup-mode"];
+            }
+        }
+
+        public int MaxSignups
+        {
+            get
+            {
+                int max = 0;
+                int.TryParse(WebConfigurationManager.AppSettings["signups-max"], out max);
+                return max;
+            }
+        }
+
+        public int MaxInvitesPerUser
+        {
+            get
+            {
+                int max = 0;
+                int.TryParse(WebConfigurationManager.AppSettings["invites-user-max"], out max);
+                return max;
+            }
+        }
     }
 }

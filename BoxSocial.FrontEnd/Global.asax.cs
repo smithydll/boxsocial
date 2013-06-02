@@ -73,9 +73,9 @@ namespace BoxSocial.FrontEnd
             string[] redir = httpContext.Request.RawUrl.Split(';');
             string host = httpContext.Request.Url.Host.ToLower();
 
-            if (host == "www." + Linker.Domain)
+            if (host == "www." + Hyperlink.Domain)
             {
-                Response.Redirect(Linker.Uri);
+                Response.Redirect(Hyperlink.Uri);
                 return;
             }
 
@@ -127,7 +127,7 @@ namespace BoxSocial.FrontEnd
 
             if (!httpContext.Request.RawUrl.Contains("404.aspx"))
             {
-                if (host == Linker.Domain)
+                if (host == Hyperlink.Domain)
                 {
                     return;
                 }
@@ -144,7 +144,7 @@ namespace BoxSocial.FrontEnd
             if (currentURI != null)
             {
                 List<string[]> patterns = new List<string[]>();
-                if (host != Linker.Domain)
+                if (host != Hyperlink.Domain)
                 {
                     SelectQuery query = new SelectQuery("dns_records");
                     query.AddFields("dns_domain", "dns_owner_id", "dns_owner_type", "dns_owner_key");

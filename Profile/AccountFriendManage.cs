@@ -89,10 +89,10 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 friendsVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendsVariableCollection.Parse("U_BLOCK", core.Uri.BuildBlockUserUri(friend.Id));
-                friendsVariableCollection.Parse("U_DELETE", core.Uri.BuildDeleteFriendUri(friend.Id));
-                friendsVariableCollection.Parse("U_PROMOTE", core.Uri.BuildPromoteFriendUri(friend.Id));
-                friendsVariableCollection.Parse("U_DEMOTE", core.Uri.BuildDemoteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_BLOCK", core.Hyperlink.BuildBlockUserUri(friend.Id));
+                friendsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildDeleteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_PROMOTE", core.Hyperlink.BuildPromoteFriendUri(friend.Id));
+                friendsVariableCollection.Parse("U_DEMOTE", core.Hyperlink.BuildDemoteFriendUri(friend.Id));
             }
 
             core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.UserInfo.Friends / 50.0));
@@ -164,7 +164,7 @@ namespace BoxSocial.Applications.Profile
 
             if (!isFriend)
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Uri.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Hyperlink.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
             }
             else
             {

@@ -1295,7 +1295,7 @@ namespace BoxSocial.Internals
 
             if (thePage.Access.Can("EDIT"))
             {
-                core.Template.Parse("U_EDIT", core.Uri.BuildAccountSubModuleUri(owner, "pages", "write", "edit", thePage.PageId, true));
+                core.Template.Parse("U_EDIT", core.Hyperlink.BuildAccountSubModuleUri(owner, "pages", "write", "edit", thePage.PageId, true));
             }
         }
 
@@ -1311,7 +1311,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}{1}",
+                return core.Hyperlink.AppendSid(string.Format("{0}{1}",
                     owner.UriStub, FullPath));
             }
         }

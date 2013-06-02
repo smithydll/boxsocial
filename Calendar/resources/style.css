@@ -135,7 +135,7 @@ div#today-tasks {
 	padding: 5px;
 }
 
-div#today-calendar h4, div#today-feed h4, div#today-tasks h4 {
+div#today-calendar h4, div#today-feed h4.today-day, div#today-tasks h4 {
 	margin-bottom: 5px;
 	margin-top: 4px;
 }

@@ -47,41 +47,7 @@ namespace BoxSocial.FrontEnd
                 template.Parse("DATE_STRING", tz.Now.ToLongDateString());
 
                 ShowUnseenNotifications();
-                ShowStatusUpdates();
             }
-        }
-
-        private void ShowStatusUpdates()
-        {
-            Template template = new Template(core.Http.TemplatePath, "statusmessagespanel.html");
-            template.Medium = core.Template.Medium;
-            template.SetProse(core.Prose);
-
-            /* My status */
-            StatusMessage myStatusMessage = StatusFeed.GetLatest(core, loggedInMember);
-
-            if (myStatusMessage != null)
-            {
-                template.Parse("USER_DISPLAY_NAME", loggedInMember.DisplayName);
-                template.Parse("STATUS_MESSAGE", myStatusMessage.Message);
-                template.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(myStatusMessage.GetTime(core.Tz)));
-            }
-
-            /* Friends status */
-            List<StatusMessage> statusMessages = StatusFeed.GetFriendItems(core, loggedInMember, 3);
-
-            foreach (StatusMessage statusMessage in statusMessages)
-            {
-                VariableCollection statusMessagesVariableCollection = template.CreateChild("status_messages");
-
-                statusMessagesVariableCollection.Parse("USER_DISPLAY_NAME", statusMessage.Owner.DisplayName);
-                statusMessagesVariableCollection.Parse("U_PROFILE", statusMessage.Owner.Uri);
-                statusMessagesVariableCollection.Parse("USER_NAME", statusMessage.Owner.Key);
-                statusMessagesVariableCollection.Parse("STATUS_MESSAGE", statusMessage.Message);
-                statusMessagesVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(statusMessage.GetTime(core.Tz)));
-            }
-
-            core.AddSidePanel(template);
         }
 
         private void ShowUnseenNotifications()
@@ -122,11 +88,11 @@ namespace BoxSocial.FrontEnd
 
                 if (loggedInMember != null)
                 {
-                    template.Parse("U_INVITE", core.Uri.BuildAccountSubModuleUri("friends", "invite"));
-                    template.Parse("U_WRITE_BLOG", core.Uri.BuildAccountSubModuleUri("blog", "write"));
+                    template.Parse("U_INVITE", core.Hyperlink.BuildAccountSubModuleUri("friends", "invite"));
+                    template.Parse("U_WRITE_BLOG", core.Hyperlink.BuildAccountSubModuleUri("blog", "write"));
                 }
 
-                template.Parse("U_FORGOT_PASSWORD", core.Uri.AppendSid("/sign-in/?mode=reset-password"));
+                template.Parse("U_FORGOT_PASSWORD", core.Hyperlink.AppendSid("/sign-in/?mode=reset-password"));
             }
             EndResponse();
         }

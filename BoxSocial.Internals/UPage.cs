@@ -75,7 +75,7 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (string.IsNullOrEmpty(User.Domain) || Linker.Domain == core.Http.Domain)
+            if (string.IsNullOrEmpty(User.Domain) || Hyperlink.Domain == core.Http.Domain)
             {
                 core.PagePath = core.PagePath.Substring(User.UserName.Length + 1 + 5);
             }

@@ -57,7 +57,12 @@ div.pane
 
 a {
 	text-decoration: none;
-	color: #002299;
+	color: #002288;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #2244aa;
 }
 
 p {
@@ -576,14 +581,14 @@ ul.comment-list li {
 	overflow: hidden;
 	border-radius: 5px;
 	background-color: #ffffff;
+	border: 1px solid #eeeeee;
+	border-top: none;
 }
 
 ul.comment-list li:hover {
     background-color: #eeeeee;
     border: 1px solid #dddddd;
     border-top: none;
-    padding-bottom: 0;
-    margin: 0 0 4px 0;
 }
 
 ul.comment-list li h4 {
@@ -846,7 +851,7 @@ tr:hover td {
 
 #new-stuff, #x-stuff, .r-stuff
 {
-	padding: 10px 2px;
+	padding: 5px 2px;
 }
 
 #x-stuff {
@@ -1267,12 +1272,10 @@ ul#today-feeds {
 	margin: 0 5px;
 }
 
-ul#today-feeds li {
+ul#today-feeds li.today-feed {
 	list-style: none;
 	margin: 5px 0;
 	padding: 5px 3px;
-	border-top: solid 1px #EEEEEE;
-	border-bottom: solid 1px #EEEEEE;
 }
 
 #synopsis {
@@ -1663,12 +1666,24 @@ li.droplist-user img {
 
 ul.feed-list {
     padding: 0;
-    margin: 0;
+    margin: 15px 0;
 }
 
 ul.feed-list li.feed-item {
-    margin: 5px 0;
-    padding: 5px 0;
+    list-style: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+	margin: 0 0 10px 0;
+    padding: 4px 5px 5px 5px;
+    border: 1px solid #eeeeee;
+    border-top: 1px solid #dddddd !important;
+    overflow: auto;
+}
+
+ul.feed-list li.feed-item:hover {
+    background-color: #eeeeee;
+    border: 1px solid #dddddd;
+    border-top: none;
 }
 
 ul.feed-list li.feed-item h5 {
@@ -1711,6 +1726,7 @@ blockquote {
     border: 1px solid #CCCCCC;
     margin: 2px;
     padding: 3px;
+    overflow: auto;
 }
 
 .account-table p.time {
@@ -1744,4 +1760,5 @@ blockquote {
 #share-form {
     display: none;
     width: 640px;
+    text-align: left;
 }

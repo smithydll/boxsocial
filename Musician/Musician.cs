@@ -932,7 +932,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return core.Uri.AppendAbsoluteSid(UriStub);
+                return core.Hyperlink.AppendAbsoluteSid(UriStub);
             }
         }
 
@@ -940,7 +940,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return core.Uri.AppendSid(UriStub);
+                return core.Hyperlink.AppendSid(UriStub);
             }
         }
 
@@ -948,13 +948,13 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}fans",
+                return core.Hyperlink.AppendSid(string.Format("{0}fans",
                     UriStub));
             }
         }
         public string GetFansUri(string filter)
         {
-            return core.Uri.AppendSid(string.Format("{0}fans?filter={1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}fans?filter={1}",
                     UriStub, filter));
         }
 
@@ -1266,7 +1266,7 @@ namespace BoxSocial.Musician
             // create a new confimation code
             Confirmation confirm = Confirmation.Create(core, core.Session.SessionId, captchaString, 3);
 
-            core.Template.Parse("U_CAPTCHA", core.Uri.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
+            core.Template.Parse("U_CAPTCHA", core.Hyperlink.AppendSid("/captcha.aspx?secureid=" + confirm.ConfirmId.ToString(), true));
         }
 
         internal static void ShowRegister(object sender, ShowPageEventArgs e)
@@ -1385,7 +1385,7 @@ namespace BoxSocial.Musician
             e.Template.Parse("U_MUSICIAN", e.Page.Musician.Uri);
             //e.Template.Parse("U_BECOME_FAN", e.Page.Musician.BecomeFanUri);
 
-            e.Template.Parse("U_MUSICIAN_ACCOUNT", e.Core.Uri.AppendSid(e.Page.Musician.AccountUriStub));
+            e.Template.Parse("U_MUSICIAN_ACCOUNT", e.Core.Hyperlink.AppendSid(e.Page.Musician.AccountUriStub));
 
             if (e.Page.Musician.Members > 1)
             {

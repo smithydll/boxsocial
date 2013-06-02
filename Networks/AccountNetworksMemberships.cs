@@ -236,7 +236,7 @@ namespace BoxSocial.Networks
                 hiddenFieldList.Add("sub", "leave");
                 hiddenFieldList.Add("id", networkId.ToString());
 
-                core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
+                core.Display.ShowConfirmBox(core.Hyperlink.AppendSid(Owner.AccountUriStub, true), "Leave network?", "Are you sure you want to leave this network?", hiddenFieldList);
             }
             else
             {

@@ -187,7 +187,7 @@ namespace BoxSocial.Applications.Forum
                         Dictionary<string, string> hiddenFieldList = GetModeHiddenFieldList();
                         hiddenFieldList.Add("id", theRank.Id.ToString());
 
-                        core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Uri.AppendSid(Owner.AccountUriStub, true)),
+                        core.Display.ShowConfirmBox(HttpUtility.HtmlEncode(core.Hyperlink.AppendSid(Owner.AccountUriStub, true)),
                             "Delete the rank?",
                             "Do you really want to delete this rank?",
                             hiddenFieldList);

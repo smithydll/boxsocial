@@ -388,7 +388,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return core.Uri.BuildAccountSubModuleUri("mail", "read", messageId);
+                return core.Hyperlink.BuildAccountSubModuleUri("mail", "read", messageId);
             }
         }
     }

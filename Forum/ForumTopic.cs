@@ -792,12 +792,12 @@ namespace BoxSocial.Applications.Forum
 
                 if (forumId == 0)
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/topic-{1}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/topic-{1}",
                         Forum.Owner.UriStub, topicId));
                 }
                 else
                 {
-                    return core.Uri.AppendSid(string.Format("{0}forum/{1}/topic-{2}",
+                    return core.Hyperlink.AppendSid(string.Format("{0}forum/{1}/topic-{2}",
                         Forum.Owner.UriStub, Forum.Id, topicId));
                 }
 
@@ -808,7 +808,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return core.Uri.AppendSid(string.Format("{0}forum/post?t={1}&mode=reply",
+                return core.Hyperlink.AppendSid(string.Format("{0}forum/post?t={1}&mode=reply",
                     Forum.Owner.UriStub, topicId));
             }
         }

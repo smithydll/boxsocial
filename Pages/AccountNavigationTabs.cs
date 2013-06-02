@@ -99,7 +99,7 @@ namespace BoxSocial.Applications.Pages
             hiddenFields.Add("sub", Key);
             hiddenFields.Add("mode", "delete");
 
-            if (core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true), "Delete?", "Are you sure you want to delete this tab?", hiddenFields) == ConfirmBoxResult.Yes)
+            if (core.Display.ShowConfirmBox(core.Hyperlink.AppendSid(Owner.AccountUriStub, true), "Delete?", "Are you sure you want to delete this tab?", hiddenFields) == ConfirmBoxResult.Yes)
             {
                 try
                 {

@@ -62,7 +62,7 @@ namespace BoxSocial.Internals
             newMessage.IsBodyHtml = false;
             newMessage.Body = message;
 
-            newMessage.Headers.Add("X-AntiAbuse", "servername - " + Linker.Domain);
+            newMessage.Headers.Add("X-AntiAbuse", "servername - " + Hyperlink.Domain);
             if (core != null)
             {
                 if (core.Session.LoggedInMember != null)

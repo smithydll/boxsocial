@@ -50,7 +50,7 @@ namespace BoxSocial.Internals
         private Display display;
         private Email email;
         private Ajax ajax;
-        private Linker uri;
+        private Hyperlink hyperlink;
         private Settings applicationSettings;
         private Storage storage;
         private Search search;
@@ -340,17 +340,17 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// Gets the Uri Builder
+        /// Gets the Hyperlink Builder
         /// </summary>
-        public Linker Uri
+        public Hyperlink Hyperlink
         {
             get
             {
-                return uri;
+                return hyperlink;
             }
             internal set
             {
-                uri = value;
+                hyperlink = value;
             }
         }
 

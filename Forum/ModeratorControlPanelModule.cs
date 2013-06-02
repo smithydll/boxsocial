@@ -55,7 +55,7 @@ namespace BoxSocial.Applications.Forum
         public new void CreateTemplate()
         {
             template = new Template(core.Http.TemplatePath, "1301.html");
-            template.Parse("U_ACCOUNT", core.Uri.AppendSid(Owner.AccountUriStub, true));
+            template.Parse("U_ACCOUNT", core.Hyperlink.AppendSid(Owner.AccountUriStub, true));
             if (assembly != null)
             {
                 template.AddPageAssembly(assembly);

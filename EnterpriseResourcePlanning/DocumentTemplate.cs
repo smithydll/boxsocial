@@ -204,7 +204,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return core.Uri.AppendSid(Owner.AccountUriStub + "templates/edit?id=" + Id, true);
+                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "templates/edit?id=" + Id, true);
             }
         }
 
@@ -212,7 +212,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return core.Uri.AppendSid(Owner.AccountUriStub + "templates/delete?id=" + Id, true);
+                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "templates/delete?id=" + Id, true);
             }
         }
 

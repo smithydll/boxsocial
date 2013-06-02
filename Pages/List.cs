@@ -265,13 +265,13 @@ namespace BoxSocial.Applications.Pages
 
         public static string BuildListsUri(Core core, User member)
         {
-            return core.Uri.AppendSid(string.Format("{0}lists",
+            return core.Hyperlink.AppendSid(string.Format("{0}lists",
                 member.UriStub));
         }
 
         public static string BuildListUri(Core core, List list)
         {
-            return core.Uri.AppendSid(string.Format("{0}lists/{1}",
+            return core.Hyperlink.AppendSid(string.Format("{0}lists/{1}",
                 list.owner.UriStub, list.path));
         }
 
@@ -480,7 +480,7 @@ namespace BoxSocial.Applications.Pages
 
                     if (list.Owner.Id == e.Core.LoggedInMemberId)
                     {
-                        listVariableCollection.Parse("U_DELETE", e.Core.Uri.BuildRemoveFromListUri(listItem.ListItemId));
+                        listVariableCollection.Parse("U_DELETE", e.Core.Hyperlink.BuildRemoveFromListUri(listItem.ListItemId));
                     }
                 }
 
@@ -508,7 +508,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return core.Uri.BuildListUri(Owner, path);
+                return core.Hyperlink.BuildListUri(Owner, path);
             }
         }
 

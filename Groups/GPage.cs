@@ -70,7 +70,7 @@ namespace BoxSocial.Groups
                 return;
             }
 
-            if (string.IsNullOrEmpty(Group.Domain) || Linker.Domain == core.Http.Domain)
+            if (string.IsNullOrEmpty(Group.Domain) || Hyperlink.Domain == core.Http.Domain)
             {
                 core.PagePath = core.PagePath.Substring(Group.Slug.Length + 1 + 6);
             }
@@ -142,7 +142,7 @@ namespace BoxSocial.Groups
                 {
                     if (core.Session.IsLoggedIn && ((UserGroup)e.Owner).IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                     {
-                        template.Parse("U_GROUP_ACCOUNT", core.Uri.AppendSid(e.Owner.AccountUriStub));
+                        template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(e.Owner.AccountUriStub));
                     }
                 }
 

@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Gallery
                 hiddenFieldList.Add("mode", "confirm");
                 hiddenFieldList.Add("id", ugi.Id.ToString());
 
-                core.Display.ShowConfirmBox(core.Uri.AppendSid(Owner.AccountUriStub, true),
+                core.Display.ShowConfirmBox(core.Hyperlink.AppendSid(Owner.AccountUriStub, true),
                     "Confirm Delete Photo",
                     string.Format("Are you sure you want to delete the photo `{0}`",
                     ugi.Path), hiddenFieldList);
